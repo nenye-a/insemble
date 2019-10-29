@@ -1,6 +1,8 @@
 class Location(object):
-    '''
+
+    """
     This method initializes a Retail Location
+
     :param address: The address the of the retail location
     :type string: ex "75 Federal St # 15, Boston, MA 02110, USA"
     :param census: The demographic details surrounding a particular location, specifically ethnicities making up that location within a given radius
@@ -13,10 +15,9 @@ class Location(object):
     :type integer:
     :param safety: safety rating of the region in which the location falls
     :type float:
-    :param nearby: most prevalent stores within a given radius of location
+    :param nearby: top 5 most prevalent stores within a given radius of location
     :type list: ex ["restaurant", "cafe", "middle_eastern", "sushi", "auto_care"]
-
-    '''
+    """
     def __init__(self, address, census, pop, income, traffic, safety, nearby, radius):
         self.address = address
         self.census = census

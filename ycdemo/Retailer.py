@@ -1,5 +1,5 @@
 class Retailer(object):
-    '''
+    """
     This method initializes a Retailer
 
     :param name: name of retail or restaurant establishment
@@ -9,7 +9,7 @@ class Retailer(object):
     :param cost: a number indicating the price range of the retailer
     :type float:
 
-    '''
+    """
     def __init__(self, name, place_type, cost):
         self.name = name
         self.place_type = place_type
