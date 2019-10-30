@@ -8,31 +8,21 @@ from tensorflow import keras
 GOOG_KEY = "AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U"
 
 '''
-Function to build machine learning data set for evaluation
 
-:param focus_area: area of focus - can be the string name of any city, state, or nation 
+Function generates base data set for machine learning use. For a given city, state, or nation, function provides
+unique existing locations, retail establishments, and their results. Function will randomly generates entries until 
+the number of entries requested (length) is met.
+
+:param area: area of focus - can be the string name of any city, state, or nation 
 :type str: ex  "New York, New York"
-:param area_type: type of area provided, street, city, nation
-:type str: city
 :param length: number of entries desired in the data set
 :type int: 1,2,3,4...
-:param shuffle: boolean detailing whether or not the system to shuffle data set upon release
 
-:return data_set: a pandas data set in which the columns are the key elements for tensor flow including the ratings
-
-Key columns:
-    Location Street
-    Location City
-    Location State
-    Location Demographic 1 - n as form of %
-    Location Income 1 - n as form of %
-    Location nearby stores 1 - n (In the form of one-hot retialer)
+:return list: tuples (location object, retailer object, linked performance) 
     
-:type 
-
 '''
 
-def build_data_set(focus_area, radius, length, shuffle=None):
+def build_data_set(focus_area, length):
 
     return data_set
 
