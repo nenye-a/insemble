@@ -254,6 +254,7 @@ def generate_retailer_profile(name, location):
 
         try:
             price = data.json()['businesses'][0]['price']
+            price = len(price)
         except Exception:
             price = np.nan
             result_valid = False
