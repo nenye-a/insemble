@@ -23,7 +23,7 @@ and evaluated by tensor flow. Retailer categories are displayed as multi-hot arr
 
 def build_tensor_set(input_data_set):
     # pending debugging in estimator_model
-    return data_set
+    return input_data_set
 
 
 '''
@@ -46,30 +46,10 @@ def get_simple_k_model():
     return model
 
 '''
-Function that uses tensorflow estimators to provide a linear regression model for training & final execution 
+Function that uses tensorflow keras to provide a linear regression model for training & final execution 
 '''
 
 
 if __name__ == "__main__":
-
-    # receiving information from New York for now
-    raw_data_set = mg.build_data_set("New York", 50)
-    df, df_catagorical, df_numerical = build_tensor_set(raw_data_set)
-
-    likes_target = df.pop("likes")
-    ratings_target = df.pop("ratings")
-    photo_target = df.pop("photo_count")
-
-    # only receiving ratings for the near term. Generate actual data set (needed if not using input funciton)
-    dataset = tf.data.Dataset.from_tensor_slices((df.values, ratings_target.values))
-
-    full_dataset = dataset.shuffle()
-    train_dataset = full_dataset.take(100)
-    test_dataset = full_dataset.skip(100)
-    val_dataset = test_dataset.take(100)
-    test_dataset = test_dataset.skip(100)
-
-
-    print(result)
-
-    return
+    # TODO a lot!
+    K = 1

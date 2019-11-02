@@ -11,8 +11,10 @@ from Retailer import Retailer
 #please don't share
 GOOG_KEY = "DELETED_GOOGLE_API_KEY"
 YELP_KEY= "DELETED_BASE64_STRING-poMH0Lvj1ijZcLNF79agt7HrozEGy-RaRp2Dn5ojcCYNCEWqvoC0NsYK2XXYx"
-FRSQ_ID = "DELETED_BASE64_STRING"
-FRSQ_SECRET = "DELETED_BASE64_STRING"
+# FRSQ_ID = "DELETED_BASE64_STRING" # Colin's Foursquare ID
+# FRSQ_SECRET = "DELETED_BASE64_STRING" # Colin's Foursquare Secret
+FRSQ_ID = "DELETED_BASE64_STRING" # Nenye's Foursquare ID
+FRSQ_SECRET = "DELETED_BASE64_STRING" # Nenye's Foursquare Secrete
 CRIME_KEY = "DELETED_BASE64_STRING"
 MONGO_KEY = "4deeabe1-0fa2-4ee7-a4e6-372ba9f46de8"
 
@@ -303,7 +305,6 @@ def get_performance(name, lat, lng):
         id = data['response']['venues'][0]['id']
     except Exception:
         print("Error getting id from name {0}, lat {1} and lng {2}".format(name, lat, lng))
-        print(data.json())
         return np.nan, np.nan, np.nan, False
 
     #url_likes = 'https://api.foursquare.com/v2/venues/{0}/likes'.format(id)
@@ -326,14 +327,14 @@ def get_performance(name, lat, lng):
     try:
         ratings = data['response']['venue']['rating']
     except Exception:
-        print("Error getting likes from name {0}, lat {1} and lng {2}".format(name, lat, lng))
+        print("Error getting ratings from name {0}, lat {1} and lng {2}".format(name, lat, lng))
         print(data)
         ratings = np.nan
         result_valid = False
     try:
         photo_count = data['response']['venue']['photos']['count']
     except Exception:
-        print("Error getting likes from name {0}, lat {1} and lng {2}".format(name, lat, lng))
+        print("Error getting photo count from name {0}, lat {1} and lng {2}".format(name, lat, lng))
         print(data)
         photo_count = np.nan
         result_valid = False
