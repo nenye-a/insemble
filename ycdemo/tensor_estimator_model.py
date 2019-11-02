@@ -2,6 +2,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import tensorflow as tf
 import location_builder as lb
 import model_generate_dataset as mg
+import pickle
 import numpy as np
 import pandas as pd
 import sklearn as sk
@@ -28,7 +29,7 @@ def build_tensor_set(input_data_set):
         data_row = {}
 
         # get the general information imported
-        data_row.udpate(location.census)
+        data_row.update(location.census)
         data_row.update({"population": location.pop})
         data_row.update({"income": location.income})
         data_row.update({"traffic": location.traffic})
@@ -39,13 +40,23 @@ def build_tensor_set(input_data_set):
         # get general information for retailer imported to data set
         data_row.update({"cost": retailer.cost})
 
-        # add each value for the type of store as a multi-hot (warning NaNs will need to be replaced later)
-        for store_type in retailer.place_type:
-            data_row.update({store_type: 1})
+        # TODO remove try once data is updated to no longer provide NANs
+        try:
+            for store_type in retailer.place_type:
+                data_row.update({store_type: 1})
+        except:
+            continue
+
+        l, r, p = lb.get_performance(retailer.name, location.lat,
+                                                         location.lng)  # test line
+
+        print(l)
 
         # let's get the performance of a specific retailer lat & longitude. If not successful, let's move on
         try:
+            print("Got it")
             likes, ratings, photo_count = lb.get_performance(retailer.name, location.lat, location.lng) # requires location to have long & lat
+            print("No Exceptions")
             data_row.update({"likes": likes, "ratings": ratings, "photo_count": photo_count})
         except:
             continue
@@ -65,79 +76,61 @@ def build_tensor_set(input_data_set):
 
     return data_set, categorical_columns, numerical_columns
 
-
-'''
-Function that builds and provides a very simple Keras model for training.
-'''
-
-def get_simple_k_model():
-    model = keras.Sequential([
-        keras.layers.Dense(16, activation="relu"),
-        keras.layers.Dense(16, activation="relu"),
-        keras.layers.Dense(1)
-    ])
-
-    optimizer = tf.keras.optimizers.RMSprop(0.001)
-
-    model.compile(loss='mse',
-                  optimizer=optimizer,
-                  metrics=['mae', 'mse'])
-
-    return model
-
 '''
 Function that uses tensorflow estimators to provide a linear regression model for training & final execution 
 '''
 
+if __name__ == "__main__":
 
-def run_estimator_tensor():
     def make_input_fn(data, num_epochs=10, shuffle=True, batch_size=32):
-      def input_function():
-        new_ds = data
-        if shuffle:
-          new_ds = new_ds.shuffle(1000)
-        new_ds = new_ds.batch(batch_size).repeat(num_epochs)
-        return new_ds
-      return input_function
+        def input_function():
+            new_ds = data
+            if shuffle:
+                new_ds = new_ds.shuffle(1000)
+            new_ds = new_ds.batch(batch_size).repeat(num_epochs)
+            return new_ds
+        return input_function
 
-    # receiving information from New York for now
-    raw_data_set = mg.build_data_set("New York", 50)
+    # receiving information from picle file for now (future to use mg.build_data_set("New York", 10000))
+    with open('data.pickle', 'rb') as f:
+        raw_data_set = pickle.load(f)
+
     df, df_catagorical, df_numerical = build_tensor_set(raw_data_set)
-
-    likes_target = df.pop("likes")
-    ratings_target = df.pop("ratings")
-    photo_target = df.pop("photo_count")
 
     # build the estimator feature columns
     feature_columns = []
     for feature_name in df_numerical:
         feature_columns.append(tf.feature_column.numeric_column(feature_name, dtype=tf.float32))
 
+    likes_target = df.pop("likes")
+    ratings_target = df.pop("ratings")
+    photo_target = df.pop("photo_count")
+
+    # TODO: normalize the data set
+
+    df_stats = df.describe().transpose()
+
+    def norm(x_data_set):
+        return (x_data_set - df_stats['mean'])/df_stats['std']
+
+    df = norm(df)
+
     # only receiving ratings for the near term. Generate actual data set (needed if not using input funciton)
     dataset = tf.data.Dataset.from_tensor_slices((df.values, ratings_target.values))
 
     full_dataset = dataset.shuffle()
-    train_dataset = full_dataset.take(100)
-    test_dataset = full_dataset.skip(100)
-    val_dataset = test_dataset.take(100)
+    train_dataset = full_dataset.take(15)
+    test_dataset = full_dataset.skip(15)
+    val_dataset = test_dataset.take(15)
     test_dataset = test_dataset.skip(100)
 
     train_input_fn = make_input_fn(train_dataset)
     eval_input_fn = make_input_fn(val_dataset, num_epochs=1, shuffle=False)
     # test_input_fun = make_input_fn(test_dataset, num_epochs=1, shuffle=False)
 
-    #build & leverage use of a pre-build Linear Regressor leveraging Tensorflow
+    # build & leverage use of a pre-build Linear Regressor leveraging Tensorflow
     linear_est = tf.estimator.LinearClassifier(feature_columns=feature_columns)
     linear_est.train(train_input_fn)
     result = linear_est.evaluate(eval_input_fn)
 
     print(result)
-
-    return
-
-
-'''
-Function that evaluates machine learning using Scikit
-'''
-
-def 
