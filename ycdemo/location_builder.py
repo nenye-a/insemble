@@ -14,6 +14,7 @@ YELP_KEY= "5j79CVtQUMZdcsAbR6ygGC8n0ao3nADNVUmvpkhj1kUmYm9smdV76djfbceSoFfbFC-po
 FRSQ_ID = "1H2JSWUCK0MGC4SKOVNGXVF3G5421KFDL30UF1EBMTQSHYQQ"
 FRSQ_SECRET = "G2FVXGNFR3D04GF0QJBI50XAJGVT3S2V0DYNEQTVPZZLGLQI"
 CRIME_KEY = "Sy1yUKcHl58o442f6qT7185UF1WYx7Qh6UdqrEMf"
+MONGO_KEY = "4deeabe1-0fa2-4ee7-a4e6-372ba9f46de8"
 
 '''
 This method takes in a text query, such as a retailer name, address, or city, and generates a location from it. 
@@ -318,19 +319,16 @@ def get_performance(name, lat, lng):
         likes = data['response']['venue']['likes']['count']
     except Exception:
         print("Error getting likes from name {0}, lat {1} and lng {2}".format(name, lat, lng))
-        print(data.json())
         likes = np.nan
     try:
         ratings = data['response']['venue']['rating']
     except Exception:
         print("Error getting likes from name {0}, lat {1} and lng {2}".format(name, lat, lng))
-        print(data.json())
         ratings = np.nan
     try:
         photo_count = data['response']['venue']['photos']['count']
     except Exception:
         print("Error getting likes from name {0}, lat {1} and lng {2}".format(name, lat, lng))
-        print(data.json())
         photo_count = np.nan
     return likes, ratings, photo_count
 
