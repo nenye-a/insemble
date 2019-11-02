@@ -5,8 +5,10 @@ import pickle
 import numpy as np
 import pandas as pd
 import math
+#from pymongo import MongoClient
 
 GOOG_KEY = "DELETED_GOOGLE_API_KEY"
+MDB_CONNECTION = "DELETED_MONGODB_URL"
 
 '''
 
