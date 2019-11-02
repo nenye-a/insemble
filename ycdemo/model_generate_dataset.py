@@ -1,6 +1,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import requests
-import ycdemo.location_builder as lb
+import location_builder as lb
+import pickle
 import numpy as np
 import pandas as pd
 import math
@@ -29,7 +30,7 @@ def build_data_set(focus_area, length):
     # 20 results per query
     # need to make 2500 queries
     # take sqrt and it's 50 on each x,y
-    num_queries = 1
+    num_queries = 4
     locations, ll_radius = segment_region(focus_area, num_queries)
     # assuming 1 latitude degree is 69 mi, 111045 m
     # assuming 1 longitude degree is 55 mi, 88514 m
@@ -41,6 +42,7 @@ def build_data_set(focus_area, length):
 
     dataset = set()
 
+    print("iterating through {0} focus area locations to build dataset".format(len(locations)))
     for location in locations:
         lat, lng = location
         restaurant_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={0}&type={1}&radius={2}&key={3}".format(
@@ -48,20 +50,46 @@ def build_data_set(focus_area, length):
         retailer_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={0}&type={1}&radius={2}&key={3}".format(
             str(lat) + "," + str(lng), type_s, radius, GOOG_KEY)
 
+        print("getting nearby restaurants and retailers for {0},{1}".format(lat, lng))
         restaurant_data = requests.get(url=restaurant_URL)
         retailer_data = requests.get(url=retailer_URL)
 
+        try:
+            restaurant_data.json()["results"]
+            retailer_data.json()["results"]
+        except Exception:
+            print("Error getting nearby restaurant or retailer details from {0} and lng {1}".format(lat, lng))
+            print(restaurant_data.json())
+            print(retailer_data.json())
+            continue
+
+        print("building location profiles for search results...")
         for restaurant in restaurant_data.json()["results"]:
-            address = restaurant["vicinity"]
+            try:
+                address = restaurant["vicinity"]
+            except:
+                print("Error getting address of nearby restaurant from location at lat {0} and lng {1}".format(lat, lng))
+                print(restaurant_data.json())
+                continue
+
             rest_loc = lb.generate_location_profile(address, radius)
             rest_rtlr = lb.generate_retailer_profile(restaurant["name"], focus_area)
             dataset.add((rest_loc, rest_rtlr))
 
         for retailer in retailer_data.json()["results"]:
-            address = retailer["vicinity"]
+            try:
+                address = retailer["vicinity"]
+            except:
+                print("Error getting address of nearby retailer at location at lat {0} and lng {1}".format(lat, lng))
+                print(restaurant_data.json())
+                continue
+
             rtlr_loc = lb.generate_location_profile(address, radius)
             rtlr_rtlr = lb.generate_retailer_profile(retailer["name"], focus_area)
             dataset.add((rtlr_loc, rtlr_rtlr))
+
+        print("location profiles built for nearby stores")
+        print("{0} businesses in dataset now".format(len(dataset)))
 
         if len(dataset) > length:
             break
@@ -74,6 +102,8 @@ def segment_region(focus_area, num_queries):
 
     URL = "https://maps.googleapis.DELETED_BASE64_STRING?input={0}&inputtype=textquery&fields=geometry&key={1}".format(
         format_input, GOOG_KEY)
+
+    print("querying {0} regions in the {1} focus area".format(num_queries, focus_area))
     data = requests.get(url=URL)
     x_min = data.json()["candidates"][0]["geometry"]["viewport"]["southwest"]["lat"]
     x_max = data.json()["candidates"][0]["geometry"]["viewport"]["northeast"]["lat"]
@@ -135,8 +165,18 @@ def google_text_search(query, query_type=None, pagetoken=None):
 '''
 
 if __name__ == "__main__":
+    ####
+    #### TODO: timestamps on print statements.
+    #### TODO: pickle files
+    #### TODO: save data from all queries so never need to query twice. Save entire result with ID hashing
+    ####
     focus_area = "New York, New York"
-    print(segment_region(focus_area, 2500)[0])
+    length = 17
+    dataset = build_data_set(focus_area, length)
+
+    with open('data.pickle', 'wb') as f:
+        # Pickle the 'data' dictionary using the highest protocol available.
+        pickle.dump(dataset, f)
 
 
     #loc_list = list(segment_region(focus_area, 2500)[0])
