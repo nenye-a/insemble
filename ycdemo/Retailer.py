@@ -18,6 +18,8 @@ class Retailer(object):
         self.cost = cost
         self.locations = locations
 
+    '''
     def __eq__(self, obj):
         return isinstance(obj, Retailer) and obj.name == self.name
 
+    '''

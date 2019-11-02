@@ -15,8 +15,10 @@ class Location(object):
     :type traffic: int
     :param safety: safety rating of the region in which the location falls
     :type safety: float
-    :param nearby: top 5 most prevalent stores within a given radius of location
-    :type nearby: list, ex ["restaurant", "cafe", "middle_eastern", "sushi", "auto_care"]
+    :param nearby: nearby stores and number of occurrences within a given radius of location
+    :type nearby: dictionary, ex {"restaurant": 7, "cafe": 6, "middle_eastern": 2, "sushi": 1, "auto_care": 1}
+    :param radius: radius (m) in which other parameters are tracked
+    :type radius: float
     """
     def __init__(self, address, census, pop, income, traffic, safety, nearby, radius):
         self.address = address
@@ -27,12 +29,13 @@ class Location(object):
         self.safety = safety
         self.nearby = nearby
         self.radius = radius
-        self.sqf
-        self.floors
+        self.sqf = None
+        self.floors = None
 
+    '''
     def __eq__(self, obj):
         ####
         #### TODO: function to compare similar addresses
         ####
         return isinstance(obj, Location) and obj.address == self.address
-
+    '''
