@@ -1,9 +1,9 @@
 import requests
 import json
 import time
-from yelp.client import Client
-from ycdemo.Location import Location
-from ycdemo.Retailer import Retailer
+import numpy as np
+from Location import Location
+from Retailer import Retailer
 
 #### TODO: keep secret by using environment variables
 #### TODO: consolidate APIs (to use fewer if possible)
@@ -34,8 +34,15 @@ def get_loc_from_input(input):
     URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input={0}&inputtype=textquery&fields=geometry&key={1}".format(
         format_input, GOOG_KEY)
     data = requests.get(url=URL)
-    lat = data.json()["candidates"][0]["geometry"]["location"]["lat"]
-    lng = data.json()["candidates"][0]["geometry"]["location"]["lng"]
+
+    try:
+        lat = data.json()["candidates"][0]["geometry"]["location"]["lat"]
+        lng = data.json()["candidates"][0]["geometry"]["location"]["lng"]
+    except Exception:
+        print("Error getting location from input {0}".format(input))
+        print(data.json())
+        lat = np.nan
+        lng = np.nan
 
     return lat, lng
 
@@ -56,15 +63,26 @@ def generate_location_profile(address, radius):
         sGeo = "tract"
         URL = "http://www.spatialjusticetest.org/api.php?fLat={0}&fLon={1}&sGeo={2}&fRadius={3}".format(lat,lng,sGeo,radius)
         data = requests.get(url = URL)
-        census = {"asian":float(data.json()["asian"]), "black":float(data.json()["black"]), "hispanic":float(data.json()["hispanic"]),
+
+        try:
+
+            census = {"asian":float(data.json()["asian"]), "black":float(data.json()["black"]), "hispanic":float(data.json()["hispanic"]),
                   "indian":float(data.json()["indian"]), "multi":float(data.json()["multi"]), "white":float(data.json()["white"])}
 
 
-        ####
-        #### TODO: exception handling, incorporate radius
-        ####
-        pop = int(data.json()["pop"])
-        income = float(data.json()["income"])
+            ####
+            #### TODO: exception handling, incorporate radius
+            ####
+            pop = int(data.json()["pop"])
+            income = float(data.json()["income"])
+
+        except Exception:
+            print("Error getting demographics from lat {0} and lng {1}".format(lat, lng))
+            print(data.json())
+            census = np.nan
+            pop = np.nan
+            income = np.nan
+
         return census, pop, income
 
     def get_nearby_stores(lat, lng):
@@ -77,7 +95,14 @@ def generate_location_profile(address, radius):
         data = requests.get(url, params={'latitude': lat, 'longitude': lng},
                             headers={'Authorization': 'bearer %s' % YELP_KEY})
 
-        businesses = data.json()["businesses"]
+        try:
+            businesses = data.json()["businesses"]
+            businesses[0]["categories"]
+
+        except Exception:
+            print("Error getting nearby stores from lat {0} and lng {1}".format(lat, lng))
+            print(data.json())
+            return np.nan
 
         nearby = {}
         for bus in businesses:
@@ -116,7 +141,7 @@ def generate_location_profile(address, radius):
     census, pop, income = get_demographics(lat, lng)
     nearby = get_nearby_stores(lat,lng)
     ####
-    #### TODO: reorganize locations inputs without traffic & safety
+    #### TODO: reorganize locations inputs without traffic. incorporate safety
     ####
 
     #return Location object
@@ -149,7 +174,13 @@ def generate_retailer_profile(name, location):
         locations = set()
 
         for result in data.json()['results']:
-            lat, lng = result['geometry']['location']['lat'], result['geometry']['location']['lat']
+            try:
+                lat, lng = result['geometry']['location']['lat'], result['geometry']['location']['lat']
+            except Exception:
+                print("Error getting retail locations from name {0} and location {1}".format(name, location))
+                print(data.json())
+                lat = np.nan
+                lng = np.nan
             locations.add((lat, lng))
 
         more_pages = True
@@ -165,7 +196,13 @@ def generate_retailer_profile(name, location):
                         invalid = False
 
                 for result in data.json()['results']:
-                    lat, lng = result['geometry']['location']['lat'], result['geometry']['location']['lat']
+                    try:
+                        lat, lng = result['geometry']['location']['lat'], result['geometry']['location']['lat']
+                    except Exception:
+                        print("Error getting retail locations from name {0} and location {1}".format(name, location))
+                        print(data.json())
+                        lat = np.nan
+                        lng = np.nan
                     locations.add((lat, lng))
             except:
                 more_pages = False
@@ -184,6 +221,13 @@ def generate_retailer_profile(name, location):
         print(data.json())
         types = set()
         #### TODO: ensure right retailer
+        try:
+            data.json()['businesses'][0]['categories']
+        except Exception:
+            print("Error getting retail categories from name {0} and location {1}".format(name, location))
+            print(data.json())
+            return np.nan, np.nan
+
         for cat in data.json()['businesses'][0]['categories']:
             types.add(cat["alias"])
 
@@ -198,7 +242,7 @@ def generate_retailer_profile(name, location):
     types, price = get_placedetails(name, location)
 
     #return Retailer object
-    return Retailer(name,types,price,locations)
+    return Retailer(name, types, price, locations)
 
 '''
 This method gets the performance indicators for a retailer at a particular location
@@ -228,7 +272,13 @@ def get_performance(name, lat, lng):
     )
     resp = requests.get(url=url_search, params=params)
     data = json.loads(resp.text)
-    id = data['response']['venues'][0]['id']
+
+    try:
+        id = data['response']['venues'][0]['id']
+    except Exception:
+        print("Error getting id from name {0}, lat {1} and lng {2}".format(name, lat, lng))
+        print(data.json())
+        return np.nan, np.nan, np.nan
 
     #url_likes = 'https://api.foursquare.com/v2/venues/{0}/likes'.format(id)
     url_stats = 'https://api.foursquare.com/v2/venues/{0}'.format(id)
@@ -240,9 +290,24 @@ def get_performance(name, lat, lng):
     )
     resp = requests.get(url=url_stats, params=params)
     data = json.loads(resp.text)
-    likes = data['response']['venue']['likes']['count']
-    ratings = data['response']['venue']['rating']
-    photo_count = data['response']['venue']['photos']['count']
+    try:
+        likes = data['response']['venue']['likes']['count']
+    except Exception:
+        print("Error getting likes from name {0}, lat {1} and lng {2}".format(name, lat, lng))
+        print(data.json())
+        likes = np.nan
+    try:
+        ratings = data['response']['venue']['rating']
+    except Exception:
+        print("Error getting likes from name {0}, lat {1} and lng {2}".format(name, lat, lng))
+        print(data.json())
+        ratings = np.nan
+    try:
+        photo_count = data['response']['venue']['photos']['count']
+    except Exception:
+        print("Error getting likes from name {0}, lat {1} and lng {2}".format(name, lat, lng))
+        print(data.json())
+        photo_count = np.nan
     return likes, ratings, photo_count
 
 if __name__ == "__main__":
