@@ -2,8 +2,8 @@ import requests
 import json
 import time
 from yelp.client import Client
-from Location import Location
-from Retailer import Retailer
+from ycdemo.Location import Location
+from ycdemo.Retailer import Retailer
 
 #### TODO: keep secret by using environment variables
 #### TODO: consolidate APIs (to use fewer if possible)
@@ -13,6 +13,7 @@ GOOG_KEY = "AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U"
 YELP_KEY= "5j79CVtQUMZdcsAbR6ygGC8n0ao3nADNVUmvpkhj1kUmYm9smdV76djfbceSoFfbFC-poMH0Lvj1ijZcLNF79agt7HrozEGy-RaRp2Dn5ojcCYNCEWqvoC0NsYK2XXYx"
 FRSQ_ID = "1H2JSWUCK0MGC4SKOVNGXVF3G5421KFDL30UF1EBMTQSHYQQ"
 FRSQ_SECRET = "G2FVXGNFR3D04GF0QJBI50XAJGVT3S2V0DYNEQTVPZZLGLQI"
+CRIME_KEY = "Sy1yUKcHl58o442f6qT7185UF1WYx7Qh6UdqrEMf"
 
 '''
 This method takes in a text query, such as a retailer name, address, or city, and generates a location from it. 
@@ -101,6 +102,14 @@ def generate_location_profile(address, radius):
         ####
         "https://private-anon-79b1042c48-crimeometer.apiary-mock.com/v1/incidents/stats?lat=lat&lon=lon&distance=distance&datetime_ini=datetime_ini&datetime_end=datetime_end,&source=source"
 
+        URL = "https://api.crimeometer.com/v1/incidents/raw-data?lat={0}&lon={1}&distance={2}&datetime_ini={3}&datetime_end={4}".format(lat, lng, radius+"m", start, end)
+        headers = {
+            'Content-Type': 'application/json',
+            'x-api-key': CRIME_KEY
+        }
+        data = requests.get(URL, headers=headers)
+
+
         pass
 
     lat, lng = get_loc_from_input(address)
@@ -178,7 +187,10 @@ def generate_retailer_profile(name, location):
         for cat in data.json()['businesses'][0]['categories']:
             types.add(cat["alias"])
 
-        price = data.json()['businesses'][0]['price']
+        try:
+            price = data.json()['businesses'][0]['price']
+        except Exception:
+            price = None
 
         return types, price
 
