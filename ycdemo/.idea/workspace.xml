@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dc5b0786-a954-438e-a9d8-dc0de2aa1b4b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/model_predict_rating.py" beforeDir="false" afterPath="$PROJECT_DIR$/model_generate_dataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ycdemo.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ycdemo.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/location_builder.py" beforeDir="false" afterPath="$PROJECT_DIR$/location_builder.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model_generate_dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/model_generate_dataset.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -24,8 +28,8 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/model_predict_rating.py" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -80,7 +84,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
