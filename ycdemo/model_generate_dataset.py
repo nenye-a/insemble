@@ -19,7 +19,7 @@ the number of entries requested (length) is met.
 :param length: number of entries desired in the data set
 :type int: 1,2,3,4...
 
-:return list: tuples (location object, retailer object, linked performance) 
+:return set: tuples (location object, retailer object) 
     
 '''
 
@@ -64,7 +64,12 @@ def build_data_set(focus_area, length):
             continue
 
         print("building location profiles for search results...")
+
         for restaurant in restaurant_data.json()["results"]:
+            if len(dataset) >= length:
+                print("{0} businesses in dataset now. Finished".format(len(dataset)))
+                return dataset
+
             try:
                 address = restaurant["vicinity"]
             except:
@@ -72,11 +77,17 @@ def build_data_set(focus_area, length):
                 print(restaurant_data.json())
                 continue
 
-            rest_loc = lb.generate_location_profile(address, radius)
-            rest_rtlr = lb.generate_retailer_profile(restaurant["name"], focus_area)
-            dataset.add((rest_loc, rest_rtlr))
+            rest_loc, location_valid = lb.generate_location_profile(address, radius)
+            rest_rtlr, retailer_valid = lb.generate_retailer_profile(restaurant["name"], focus_area)
+
+            if location_valid and retailer_valid:
+                dataset.add((rest_loc, rest_rtlr))
 
         for retailer in retailer_data.json()["results"]:
+            if len(dataset) >= length:
+                print("{0} businesses in dataset now. Finished".format(len(dataset)))
+                return dataset
+
             try:
                 address = retailer["vicinity"]
             except:
@@ -84,9 +95,11 @@ def build_data_set(focus_area, length):
                 print(restaurant_data.json())
                 continue
 
-            rtlr_loc = lb.generate_location_profile(address, radius)
-            rtlr_rtlr = lb.generate_retailer_profile(retailer["name"], focus_area)
-            dataset.add((rtlr_loc, rtlr_rtlr))
+            rtlr_loc, location_valid  = lb.generate_location_profile(address, radius)
+            rtlr_rtlr, retailer_valid = lb.generate_retailer_profile(retailer["name"], focus_area)
+
+            if location_valid and retailer_valid:
+                dataset.add((rtlr_loc, rtlr_rtlr))
 
         print("location profiles built for nearby stores")
         print("{0} businesses in dataset now".format(len(dataset)))
@@ -167,14 +180,14 @@ def google_text_search(query, query_type=None, pagetoken=None):
 if __name__ == "__main__":
     ####
     #### TODO: timestamps on print statements.
-    #### TODO: pickle files
+    #### TODO: update location objects with ids for queries if we have them
     #### TODO: save data from all queries so never need to query twice. Save entire result with ID hashing
     ####
     focus_area = "New York, New York"
-    length = 17
+    length = 30
     dataset = build_data_set(focus_area, length)
 
-    with open('data.pickle', 'wb') as f:
+    with open('data2.pickle', 'wb') as f:
         # Pickle the 'data' dictionary using the highest protocol available.
         pickle.dump(dataset, f)
 
