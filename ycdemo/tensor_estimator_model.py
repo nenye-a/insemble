@@ -23,6 +23,7 @@ and evaluated by tensor flow. Retailer categories are displayed as multi-hot arr
 
 def build_tensor_set(input_data_set):
 
+    counter = 0
     data_set = []
     for location, retailer in input_data_set:
 
@@ -40,26 +41,19 @@ def build_tensor_set(input_data_set):
         # get general information for retailer imported to data set
         data_row.update({"cost": retailer.cost})
 
-        # TODO remove try once data is updated to no longer provide NANs
-        try:
-            for store_type in retailer.place_type:
-                data_row.update({store_type: 1})
-        except:
+        for store_type in retailer.place_type:
+            data_row.update({store_type: 1})
+
+        likes, ratings, photo_count, is_valid = lb.get_performance(retailer.name, location.lat, location.lng) # requires location to have long & lat
+        data_row.update({"likes": likes, "ratings": ratings, "photo_count": photo_count})
+
+        # counter += 1  # temporary counter
+
+        if not is_valid:
             continue
 
-        l, r, p = lb.get_performance(retailer.name, location.lat,
-                                                         location.lng)  # test line
 
-        print(l)
-
-        # let's get the performance of a specific retailer lat & longitude. If not successful, let's move on
-        try:
-            print("Got it")
-            likes, ratings, photo_count = lb.get_performance(retailer.name, location.lat, location.lng) # requires location to have long & lat
-            print("No Exceptions")
-            data_row.update({"likes": likes, "ratings": ratings, "photo_count": photo_count})
-        except:
-            continue
+        # print(counter)
 
         data_set.append(data_row)
 
@@ -74,7 +68,13 @@ def build_tensor_set(input_data_set):
     for columnName in data_set.columns.values:
         numerical_columns.append(columnName)
 
+    # store data_frame in memory
+    with open('data_set.pickle', 'wb') as file:
+        # Pickle the 'data' dictionary using the highest protocol available.
+        pickle.dump(data_set, file)
+
     return data_set, categorical_columns, numerical_columns
+
 
 '''
 Function that uses tensorflow estimators to provide a linear regression model for training & final execution 
@@ -92,7 +92,7 @@ if __name__ == "__main__":
         return input_function
 
     # receiving information from picle file for now (future to use mg.build_data_set("New York", 10000))
-    with open('data.pickle', 'rb') as f:
+    with open('data2.pickle', 'rb') as f:
         raw_data_set = pickle.load(f)
 
     df, df_catagorical, df_numerical = build_tensor_set(raw_data_set)
@@ -109,7 +109,9 @@ if __name__ == "__main__":
     # TODO: normalize the data set
 
     df_stats = df.describe().transpose()
-
+    print(df_stats)
+    print("\n")
+    print(df)
     def norm(x_data_set):
         return (x_data_set - df_stats['mean'])/df_stats['std']
 

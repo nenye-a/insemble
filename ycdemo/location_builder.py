@@ -11,8 +11,10 @@ from Retailer import Retailer
 #please don't share
 GOOG_KEY = "AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U"
 YELP_KEY= "5j79CVtQUMZdcsAbR6ygGC8n0ao3nADNVUmvpkhj1kUmYm9smdV76djfbceSoFfbFC-poMH0Lvj1ijZcLNF79agt7HrozEGy-RaRp2Dn5ojcCYNCEWqvoC0NsYK2XXYx"
-FRSQ_ID = "1H2JSWUCK0MGC4SKOVNGXVF3G5421KFDL30UF1EBMTQSHYQQ"
-FRSQ_SECRET = "G2FVXGNFR3D04GF0QJBI50XAJGVT3S2V0DYNEQTVPZZLGLQI"
+# FRSQ_ID = "1H2JSWUCK0MGC4SKOVNGXVF3G5421KFDL30UF1EBMTQSHYQQ" # Colin's Foursquare ID
+# FRSQ_SECRET = "G2FVXGNFR3D04GF0QJBI50XAJGVT3S2V0DYNEQTVPZZLGLQI" # Colin's Foursquare Secret
+FRSQ_ID = "MGR4TUKM5PGIKAUXIZXY3PZP23XKB3BBDBLQJUUHMYTO4S4D" # Nenye's Foursquare ID
+FRSQ_SECRET = "HHH4BGZ1QIBOIT5ZRVAOICC0OVX1J1U23ECFZ24CZBUKX1MV" # Nenye's Foursquare Secrete
 CRIME_KEY = "Sy1yUKcHl58o442f6qT7185UF1WYx7Qh6UdqrEMf"
 MONGO_KEY = "4deeabe1-0fa2-4ee7-a4e6-372ba9f46de8"
 
@@ -252,6 +254,7 @@ def generate_retailer_profile(name, location):
 
         try:
             price = data.json()['businesses'][0]['price']
+            price = len(price)
         except Exception:
             price = np.nan
             result_valid = False
@@ -303,7 +306,6 @@ def get_performance(name, lat, lng):
         id = data['response']['venues'][0]['id']
     except Exception:
         print("Error getting id from name {0}, lat {1} and lng {2}".format(name, lat, lng))
-        print(data.json())
         return np.nan, np.nan, np.nan, False
 
     #url_likes = 'https://api.foursquare.com/v2/venues/{0}/likes'.format(id)
@@ -326,14 +328,14 @@ def get_performance(name, lat, lng):
     try:
         ratings = data['response']['venue']['rating']
     except Exception:
-        print("Error getting likes from name {0}, lat {1} and lng {2}".format(name, lat, lng))
+        print("Error getting ratings from name {0}, lat {1} and lng {2}".format(name, lat, lng))
         print(data)
         ratings = np.nan
         result_valid = False
     try:
         photo_count = data['response']['venue']['photos']['count']
     except Exception:
-        print("Error getting likes from name {0}, lat {1} and lng {2}".format(name, lat, lng))
+        print("Error getting photo count from name {0}, lat {1} and lng {2}".format(name, lat, lng))
         print(data)
         photo_count = np.nan
         result_valid = False
