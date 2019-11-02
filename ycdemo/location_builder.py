@@ -27,6 +27,7 @@ def get_loc_from_input(input):
     ####
     #### TODO: exception handling, error checking to find the right locations/retailer names
     ####
+    result_valid = True
 
     # parse string address for something readable by google
     format_input = input.replace(" ", "+")
@@ -43,8 +44,9 @@ def get_loc_from_input(input):
         print(data.json())
         lat = np.nan
         lng = np.nan
+        result_valid = False
 
-    return lat, lng
+    return lat, lng, result_valid
 
 
 '''
@@ -54,12 +56,13 @@ This method creates a location profile for a particular address. It pulls in inf
 :type address: string
 :param radius: radius to use for surrounding influence drivers
 :type radius: float
-:return: Location object with demographic and local details
-:rtype: Location
+:return: Location object with demographic and local details. Boolean indicating whether the data is good
+:rtype: Tuple (Location, Boolean)
 '''
 def generate_location_profile(address, radius):
 
     def get_demographics(lat, lng):
+        result_valid = True
         sGeo = "tract"
         URL = "http://www.spatialjusticetest.org/api.php?fLat={0}&fLon={1}&sGeo={2}&fRadius={3}".format(lat,lng,sGeo,radius)
         data = requests.get(url = URL)
@@ -82,12 +85,13 @@ def generate_location_profile(address, radius):
             census = np.nan
             pop = np.nan
             income = np.nan
+            result_valid = False
 
-        return census, pop, income
+        return census, pop, income, result_valid
 
     def get_nearby_stores(lat, lng):
         # client = Client(YELP_KEY)
-
+        result_valid = True
         ####
         #### TODO: need to incorporate proximity & radius
         ####
@@ -102,7 +106,8 @@ def generate_location_profile(address, radius):
         except Exception:
             print("Error getting nearby stores from lat {0} and lng {1}".format(lat, lng))
             print(data.json())
-            return np.nan
+            result_valid = False
+            return np.nan, result_valid
 
         nearby = {}
         for bus in businesses:
@@ -112,7 +117,7 @@ def generate_location_profile(address, radius):
                 except Exception:
                     nearby[cat["alias"]] = 1
 
-        return nearby
+        return nearby, result_valid
 
     def get_footraffic(address):
         ####
@@ -137,15 +142,23 @@ def generate_location_profile(address, radius):
 
         pass
 
-    lat, lng = get_loc_from_input(address)
-    census, pop, income = get_demographics(lat, lng)
-    nearby = get_nearby_stores(lat,lng)
+    lat, lng, valid = get_loc_from_input(address)
+    if not valid:
+        return None, valid
+
+    census, pop, income, valid2 = get_demographics(lat, lng)
+    nearby, valid3 = get_nearby_stores(lat, lng)
     ####
     #### TODO: reorganize locations inputs without traffic. incorporate safety
     ####
 
+    if valid and valid2 and valid3:
+        location_valid = True
+    else:
+        location_valid = False
+
     #return Location object
-    return Location(address, census, pop, income, None, None, nearby, None)
+    return Location(address, lat, lng, census, pop, income, None, None, nearby, None), location_valid
 
 '''
 This method creates a retailer profile for a particular retailer. It pulls in information from various APIs to create Retailers
@@ -159,6 +172,8 @@ This method creates a retailer profile for a particular retailer. It pulls in in
 '''
 def generate_retailer_profile(name, location):
     def get_locations(name, location):
+        result_valid = True
+
         ####
         #### TODO: make location param optional
         #### TODO: error checking for retailer names
@@ -176,12 +191,10 @@ def generate_retailer_profile(name, location):
         for result in data.json()['results']:
             try:
                 lat, lng = result['geometry']['location']['lat'], result['geometry']['location']['lat']
+                locations.add((lat, lng))
             except Exception:
-                print("Error getting retail locations from name {0} and location {1}".format(name, location))
+                print("Error getting retail locations from name {0} and location {1}. Not adding.".format(name, location))
                 print(data.json())
-                lat = np.nan
-                lng = np.nan
-            locations.add((lat, lng))
 
         more_pages = True
         while more_pages:
@@ -198,22 +211,26 @@ def generate_retailer_profile(name, location):
                 for result in data.json()['results']:
                     try:
                         lat, lng = result['geometry']['location']['lat'], result['geometry']['location']['lat']
+                        locations.add((lat, lng))
                     except Exception:
-                        print("Error getting retail locations from name {0} and location {1}".format(name, location))
+                        print("Error getting retail locations from name {0} and location {1}. Not adding.".format(name, location))
                         print(data.json())
-                        lat = np.nan
-                        lng = np.nan
-                    locations.add((lat, lng))
-            except:
+
+            except Exception:
                 more_pages = False
 
-        return locations
+            if len(locations) == 0:
+                result_valid = False
+        return locations, result_valid
 
     def get_placedetails(name, location):
+        result_valid = True
         input = name + " " + location
 
         #### TODO: may want to aggregate types over all locations
-        lat, lng = get_loc_from_input(input)
+        lat, lng, valid = get_loc_from_input(input)
+        if not valid:
+            return None, None, False
         url = "https://api.yelp.com/v3/businesses/search"
         data = requests.get(url, params={'term': name, 'latitude': lat, 'longitude': lng},
                             headers={'Authorization': 'bearer %s' % YELP_KEY})
@@ -226,7 +243,8 @@ def generate_retailer_profile(name, location):
         except Exception:
             print("Error getting retail categories from name {0} and location {1}".format(name, location))
             print(data.json())
-            return np.nan, np.nan
+            result_valid = False
+            return np.nan, np.nan, result_valid
 
         for cat in data.json()['businesses'][0]['categories']:
             types.add(cat["alias"])
@@ -234,15 +252,21 @@ def generate_retailer_profile(name, location):
         try:
             price = data.json()['businesses'][0]['price']
         except Exception:
-            price = None
+            price = np.nan
+            result_valid = False
 
-        return types, price
+        return types, price, result_valid
 
-    locations = get_locations(name, location)
-    types, price = get_placedetails(name, location)
+    locations, valid = get_locations(name, location)
+    types, price, valid2 = get_placedetails(name, location)
+
+    if valid and valid2:
+        retailer_valid = True
+    else:
+        retailer_valid = False
 
     #return Retailer object
-    return Retailer(name, types, price, locations)
+    return Retailer(name, types, price, locations), retailer_valid
 
 '''
 This method gets the performance indicators for a retailer at a particular location
