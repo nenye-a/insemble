@@ -278,10 +278,11 @@ This method gets the performance indicators for a retailer at a particular locat
 :type lat: float
 :param lng: longitude
 :type lng: float
-:return: likes, ratings, photo count
-:rtype: tuple(float)
+:return: likes, ratings, photo count, result_valid
+:rtype: tuple(float, float, float, boolean)
 '''
 def get_performance(name, lat, lng):
+    result_valid = True
     ####
     #### TODO: handling if multiple results are returned. currently just factors for 1
     #### TODO: currently only incorporates likes, ratings, and photo_count, but should expand to use geolocation data
@@ -303,7 +304,7 @@ def get_performance(name, lat, lng):
     except Exception:
         print("Error getting id from name {0}, lat {1} and lng {2}".format(name, lat, lng))
         print(data.json())
-        return np.nan, np.nan, np.nan
+        return np.nan, np.nan, np.nan, False
 
     #url_likes = 'https://api.foursquare.com/v2/venues/{0}/likes'.format(id)
     url_stats = 'https://api.foursquare.com/v2/venues/{0}'.format(id)
@@ -319,18 +320,24 @@ def get_performance(name, lat, lng):
         likes = data['response']['venue']['likes']['count']
     except Exception:
         print("Error getting likes from name {0}, lat {1} and lng {2}".format(name, lat, lng))
+        print(data)
         likes = np.nan
+        result_valid = False
     try:
         ratings = data['response']['venue']['rating']
     except Exception:
         print("Error getting likes from name {0}, lat {1} and lng {2}".format(name, lat, lng))
+        print(data)
         ratings = np.nan
+        result_valid = False
     try:
         photo_count = data['response']['venue']['photos']['count']
     except Exception:
         print("Error getting likes from name {0}, lat {1} and lng {2}".format(name, lat, lng))
+        print(data)
         photo_count = np.nan
-    return likes, ratings, photo_count
+        result_valid = False
+    return likes, ratings, photo_count, result_valid
 
 if __name__ == "__main__":
     retailer = 'Souvla'
