@@ -5,8 +5,10 @@ import pickle
 import numpy as np
 import pandas as pd
 import math
+#from pymongo import MongoClient
 
 GOOG_KEY = "AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U"
+MDB_CONNECTION = "mongodb+srv://webbco:5c.wyz$L#um4QR@@cluster0-c2jyp.mongodb.net/test?retryWrites=true&w=majority"
 
 '''
 
