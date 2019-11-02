@@ -135,3 +135,9 @@ def run_estimator_tensor():
 
     return
 
+
+'''
+Function that evaluates machine learning using Scikit
+'''
+
+def 
