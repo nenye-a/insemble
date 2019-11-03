@@ -5,10 +5,9 @@ import numpy as np
 import pandas as pd
 import math
 from smart_search import *
-#from pymongo import MongoClient
 
 GOOG_KEY = "AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U"
-MDB_CONNECTION = "mongodb+srv://webbco:cmongodb1@cluster0-c2jyp.mongodb.net/test?retryWrites=true&w=majority"
+MILES_TO_M = 1609.34
 
 '''
 
@@ -32,11 +31,12 @@ def build_data_set(focus_area, length):
     # 20 results per query
     # need to make 2500 queries
     # take sqrt and it's 50 on each x,y
-    num_queries = 4
+    num_queries = 2500
     locations, ll_radius = segment_region(focus_area, num_queries)
     # assuming 1 latitude degree is 69 mi, 111045 m
     # assuming 1 longitude degree is 55 mi, 88514 m
-    radius = ll_radius*88514
+    # NOTE: radius (in miles) doesn't use segment radius
+    radius = 0.5
 
     ####TODO: put as global constant
     type_r = "restaurant"
@@ -48,26 +48,26 @@ def build_data_set(focus_area, length):
     for location in locations:
         lat, lng = location
         restaurant_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={0}&type={1}&radius={2}&key={3}".format(
-        str(lat)+","+str(lng), type_r, radius, GOOG_KEY)
+        str(lat)+","+str(lng), type_r, radius*MILES_TO_M, GOOG_KEY)
         retailer_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={0}&type={1}&radius={2}&key={3}".format(
-            str(lat) + "," + str(lng), type_s, radius, GOOG_KEY)
+            str(lat) + "," + str(lng), type_s, radius*MILES_TO_M, GOOG_KEY)
 
         print("getting nearby restaurants and retailers for {0},{1}".format(lat, lng))
         restaurant_data = smart_search(restaurant_URL)
         retailer_data = smart_search(retailer_URL)
 
         try:
-            restaurant_data.json()["results"]
-            retailer_data.json()["results"]
+            restaurant_data["results"]
+            retailer_data["results"]
         except Exception:
             print("Error getting nearby restaurant or retailer details from {0} and lng {1}".format(lat, lng))
-            print(restaurant_data.json())
-            print(retailer_data.json())
+            print(restaurant_data)
+            print(retailer_data)
             continue
 
         print("building location profiles for search results...")
 
-        for restaurant in restaurant_data.json()["results"]:
+        for restaurant in restaurant_data["results"]:
             if len(dataset) >= length:
                 print("{0} businesses in dataset now. Finished".format(len(dataset)))
                 return dataset
@@ -76,16 +76,22 @@ def build_data_set(focus_area, length):
                 address = restaurant["vicinity"]
             except:
                 print("Error getting address of nearby restaurant from location at lat {0} and lng {1}".format(lat, lng))
-                print(restaurant_data.json())
+                print(restaurant_data)
                 continue
 
             rest_loc, location_valid = lb.generate_location_profile(address, radius)
             rest_rtlr, retailer_valid = lb.generate_retailer_profile(restaurant["name"], focus_area)
 
             if location_valid and retailer_valid:
-                dataset.add((rest_loc, rest_rtlr))
+                rest_likes, rest_ratings, rest_photo_count, rest_performance_valid = lb.get_performance(rest_rtlr.name,
+                                                                                                        rest_loc.lat,
+                                                                                                        rest_loc.lng)
+                if rest_performance_valid:
+                    dataset.add((rest_loc, rest_rtlr, rest_likes, rest_ratings, rest_photo_count))
+                    upload_dataset(rest_loc, rest_rtlr, rest_likes, rest_ratings, rest_photo_count)
+                    print("new restaurant profile for {0} at {1}, {2}".format(rest_rtlr.name, rest_loc.lat, rest_loc.lng))
 
-        for retailer in retailer_data.json()["results"]:
+        for retailer in retailer_data["results"]:
             if len(dataset) >= length:
                 print("{0} businesses in dataset now. Finished".format(len(dataset)))
                 return dataset
@@ -94,14 +100,22 @@ def build_data_set(focus_area, length):
                 address = retailer["vicinity"]
             except:
                 print("Error getting address of nearby retailer at location at lat {0} and lng {1}".format(lat, lng))
-                print(restaurant_data.json())
+                print(restaurant_data)
                 continue
 
             rtlr_loc, location_valid  = lb.generate_location_profile(address, radius)
             rtlr_rtlr, retailer_valid = lb.generate_retailer_profile(retailer["name"], focus_area)
 
             if location_valid and retailer_valid:
-                dataset.add((rtlr_loc, rtlr_rtlr))
+                rtlr_likes, rtlr_ratings, rtlr_photo_count, rtlr_performance_valid = lb.get_performance(rtlr_rtlr.name,
+                                                                                                        rtlr_loc.lat,
+                                                                                                        rtlr_loc.lng)
+
+                if rtlr_performance_valid:
+                    dataset.add((rtlr_loc, rtlr_rtlr, rtlr_likes, rtlr_ratings, rtlr_photo_count))
+                    upload_dataset(rtlr_loc, rtlr_rtlr, rtlr_likes, rtlr_ratings, rtlr_photo_count)
+                    print("new retailer profile for {0} at {1}, {2}".format(rtlr_rtlr.name, rtlr_loc.lat, rtlr_loc.lng))
+
 
         print("location profiles built for nearby stores")
         print("{0} businesses in dataset now".format(len(dataset)))
@@ -120,10 +134,10 @@ def segment_region(focus_area, num_queries):
 
     print("querying {0} regions in the {1} focus area".format(num_queries, focus_area))
     data = smart_search(URL)
-    x_min = data.json()["candidates"][0]["geometry"]["viewport"]["southwest"]["lat"]
-    x_max = data.json()["candidates"][0]["geometry"]["viewport"]["northeast"]["lat"]
-    y_min = data.json()["candidates"][0]["geometry"]["viewport"]["southwest"]["lng"]
-    y_max = data.json()["candidates"][0]["geometry"]["viewport"]["northeast"]["lng"]
+    x_min = data["candidates"][0]["geometry"]["viewport"]["southwest"]["lat"]
+    x_max = data["candidates"][0]["geometry"]["viewport"]["northeast"]["lat"]
+    y_min = data["candidates"][0]["geometry"]["viewport"]["southwest"]["lng"]
+    y_max = data["candidates"][0]["geometry"]["viewport"]["northeast"]["lng"]
 
     axis_queries = math.sqrt(num_queries)
     x_increment = (x_max-x_min)/axis_queries
@@ -185,13 +199,9 @@ if __name__ == "__main__":
     #### TODO: update location objects with ids for queries if we have them
     #### TODO: save data from all queries so never need to query twice. Save entire result with ID hashing
     ####
-    focus_area = "New York, New York"
-    length = 30
+    focus_area = "Los Angeles, California"
+    length = 1000
     dataset = build_data_set(focus_area, length)
-
-    with open('data2.pickle', 'wb') as f:
-        # Pickle the 'data' dictionary using the highest protocol available.
-        pickle.dump(dataset, f)
 
 
     #loc_list = list(segment_region(focus_area, 2500)[0])

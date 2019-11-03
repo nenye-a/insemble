@@ -38,6 +38,11 @@ class Location(object):
         self.sqf = None
         self.floors = None
 
+    def to_json(self):
+        return({"address": self.address, "lat": self.lat, "lng": self.lng, "census": self.census, "pop": self.pop,
+                "income": self.income, "traffic": self.traffic, "safety": self.safety, "nearby": self.nearby,
+                "radius": self.radius})
+
     '''
     def __eq__(self, obj):
         ####
