@@ -1,9 +1,9 @@
-import requests
 import json
 import time
 import numpy as np
 from Location import Location
 from Retailer import Retailer
+from smart_search import *
 
 #### TODO: keep secret by using environment variables
 #### TODO: consolidate APIs (to use fewer if possible)
@@ -37,7 +37,7 @@ def get_loc_from_input(input):
 
     URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input={0}&inputtype=textquery&fields=geometry&key={1}".format(
         format_input, GOOG_KEY)
-    data = requests.get(url=URL)
+    data = smart_search(URL)
 
     try:
         lat = data.json()["candidates"][0]["geometry"]["location"]["lat"]
@@ -68,7 +68,7 @@ def generate_location_profile(address, radius):
         result_valid = True
         sGeo = "tract"
         URL = "http://www.spatialjusticetest.org/api.php?fLat={0}&fLon={1}&sGeo={2}&fRadius={3}".format(lat,lng,sGeo,radius)
-        data = requests.get(url = URL)
+        data = smart_search(URL)
 
         try:
 
@@ -99,7 +99,7 @@ def generate_location_profile(address, radius):
         #### TODO: need to incorporate proximity & radius
         ####
         url = "https://api.yelp.com/v3/businesses/search"
-        data = requests.get(url, params={'latitude': lat, 'longitude': lng},
+        data = smart_search(url, params={'latitude': lat, 'longitude': lng},
                             headers={'Authorization': 'bearer %s' % YELP_KEY})
 
         try:
@@ -140,7 +140,7 @@ def generate_location_profile(address, radius):
             'Content-Type': 'application/json',
             'x-api-key': CRIME_KEY
         }
-        data = requests.get(URL, headers=headers)
+        data = smart_search(URL, headers=headers)
 
 
         pass
@@ -187,7 +187,7 @@ def generate_retailer_profile(name, location):
         # parse string address for something readable by google
         format_input = input.replace(" ", "+")
         URL = "https://maps.googleapis.com/maps/api/place/textsearch/json?query={0}&key={1}".format(format_input, GOOG_KEY)
-        data = requests.get(url=URL)
+        data = smart_search(URL)
 
         locations = set()
 
@@ -207,7 +207,7 @@ def generate_retailer_profile(name, location):
 
                 invalid = True
                 while invalid:
-                    data = requests.get(url=URL)
+                    data = smart_search(URL)
                     if data.json()['status'] == 'OK':
                         invalid = False
 
@@ -235,7 +235,7 @@ def generate_retailer_profile(name, location):
         if not valid:
             return None, None, False
         url = "https://api.yelp.com/v3/businesses/search"
-        data = requests.get(url, params={'term': name, 'latitude': lat, 'longitude': lng},
+        data = smart_search(url, params={'term': name, 'latitude': lat, 'longitude': lng},
                             headers={'Authorization': 'bearer %s' % YELP_KEY})
 
         print(data.json())
@@ -299,7 +299,7 @@ def get_performance(name, lat, lng):
         ll=str(lat)+","+str(lng),
         intent='match',
     )
-    resp = requests.get(url=url_search, params=params)
+    resp = smart_search(url=url_search, params=params)
     data = json.loads(resp.text)
 
     try:
@@ -316,7 +316,7 @@ def get_performance(name, lat, lng):
         client_secret=FRSQ_SECRET,
         v='20191028'
     )
-    resp = requests.get(url=url_stats, params=params)
+    resp = smart_search(url=url_stats, params=params)
     data = json.loads(resp.text)
     try:
         likes = data['response']['venue']['likes']['count']
@@ -349,4 +349,9 @@ if __name__ == "__main__":
     #print(get_performance(retailer, lat, lng))
     #businesses = generate_retailer_profile("Broken Yolk Cafe", "California")["businesses"]
 
-    print(generate_retailer_profile("Broken Yolk Cafe", "California"))
+
+    #print(generate_retailer_profile("Broken Yolk Cafe", "California"))
+
+    URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input={0}&inputtype=textquery&fields=geometry&key={1}".format(
+        "New+York", GOOG_KEY)
+    print(smart_search(URL, None).json())

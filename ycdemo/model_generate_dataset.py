@@ -1,14 +1,14 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
-import requests
 import location_builder as lb
 import pickle
 import numpy as np
 import pandas as pd
 import math
+from smart_search import *
 #from pymongo import MongoClient
 
 GOOG_KEY = "AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U"
-MDB_CONNECTION = "mongodb+srv://webbco:5c.wyz$L#um4QR@@cluster0-c2jyp.mongodb.net/test?retryWrites=true&w=majority"
+MDB_CONNECTION = "mongodb+srv://webbco:cmongodb1@cluster0-c2jyp.mongodb.net/test?retryWrites=true&w=majority"
 
 '''
 
@@ -53,8 +53,8 @@ def build_data_set(focus_area, length):
             str(lat) + "," + str(lng), type_s, radius, GOOG_KEY)
 
         print("getting nearby restaurants and retailers for {0},{1}".format(lat, lng))
-        restaurant_data = requests.get(url=restaurant_URL)
-        retailer_data = requests.get(url=retailer_URL)
+        restaurant_data = smart_search(restaurant_URL)
+        retailer_data = smart_search(retailer_URL)
 
         try:
             restaurant_data.json()["results"]
@@ -119,7 +119,7 @@ def segment_region(focus_area, num_queries):
         format_input, GOOG_KEY)
 
     print("querying {0} regions in the {1} focus area".format(num_queries, focus_area))
-    data = requests.get(url=URL)
+    data = smart_search(URL)
     x_min = data.json()["candidates"][0]["geometry"]["viewport"]["southwest"]["lat"]
     x_max = data.json()["candidates"][0]["geometry"]["viewport"]["northeast"]["lat"]
     y_min = data.json()["candidates"][0]["geometry"]["viewport"]["southwest"]["lng"]
