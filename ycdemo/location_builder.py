@@ -1,6 +1,7 @@
 import json
 import time
 import numpy as np
+import urllib.parse
 from Location import Location
 from Retailer import Retailer
 from smart_search import *
@@ -34,7 +35,8 @@ def get_loc_from_input(input):
     result_valid = True
 
     # parse string address for something readable by google
-    format_input = input.replace(" ", "+")
+    #format_input = input.replace(" ", "+")
+    format_input = urllib.parse.quote(input)
 
     URL = "https://maps.googleapis.DELETED_BASE64_STRING?input={0}&inputtype=textquery&fields=geometry&key={1}".format(
         format_input, GOOG_KEY)
@@ -92,28 +94,59 @@ def generate_location_profile(address, radius):
         result_valid = True
         ####
         #### TODO: need to incorporate proximity (closer stores... more influence)
-        ####
-        url = "https://api.yelp.com/v3/businesses/search"
-        data = smart_search(url, params={'latitude': lat, 'longitude': lng, 'radius': int(radius*MILES_TO_M)},
-                            headers={'Authorization': 'bearer %s' % YELP_KEY})
+        #### replace yelp
+        # url = "https://api.yelp.com/v3/businesses/search"
+        # data = smart_search(url, params={'latitude': lat, 'longitude': lng, 'radius': int(radius*MILES_TO_M)},
+        #                     headers={'Authorization': 'bearer %s' % YELP_KEY})
+        #
+        # try:
+        #     businesses = data["businesses"]
+        #     businesses[0]["categories"]
+        #
+        # except Exception:
+        #     print("Error getting nearby stores from lat {0} and lng {1}".format(lat, lng))
+        #     print(data)
+        #     result_valid = False
+        #     return np.nan, result_valid
+        #
+        # nearby = {}
+        # for bus in businesses:
+        #     for cat in bus["categories"]:
+        #         try:
+        #             nearby[cat["alias"]] = nearby[cat["alias"]] + 1
+        #         except Exception:
+        #             nearby[cat["alias"]] = 1
+        #
+        # #############
+
+        nearby = {}
+        #### TODO: ensure right retailer
+
+        url_search = 'https://api.foursquare.com/v2/venues/search'
+        params = dict(
+            client_id=<CLIENT_ID>
+            client_secret=<CLIENT_SECRET>
+            v='20191028',
+            ll=str(lat) + "," + str(lng),
+            intent='browse',
+            radius=radius*MILES_TO_M
+        )
+        data = smart_search(url_search, params=params)
 
         try:
-            businesses = data["businesses"]
-            businesses[0]["categories"]
-
+            data['response']['venues'][0]['categories'][0]
         except Exception:
-            print("Error getting nearby stores from lat {0} and lng {1}".format(lat, lng))
+            print("Error getting Foursquare retail categories from {0}, {1} with radius {2}".format(lat, lng, radius))
             print(data)
             result_valid = False
             return np.nan, result_valid
 
-        nearby = {}
-        for bus in businesses:
-            for cat in bus["categories"]:
+        for venue in data['response']['venues']:
+            for cat in venue["categories"]:
                 try:
-                    nearby[cat["alias"]] = nearby[cat["alias"]] + 1
+                    nearby[cat["name"]] = nearby[cat["name"]] + 1
                 except Exception:
-                    nearby[cat["alias"]] = 1
+                    nearby[cat["name"]] = 1
 
         return nearby, result_valid
 
@@ -180,7 +213,7 @@ def generate_retailer_profile(name, location):
         input = name+" "+location
 
         # parse string address for something readable by google
-        format_input = input.replace(" ", "+")
+        format_input = urllib.parse.quote(input)
         URL = "https://maps.googleapis.com/maps/api/place/textsearch/json?query={0}&key={1}".format(format_input, GOOG_KEY)
 
         data = smart_search(URL)
@@ -226,36 +259,57 @@ def generate_retailer_profile(name, location):
         lat, lng, valid = get_loc_from_input(input)
         if not valid:
             return None, None, False
-        url = "https://api.yelp.com/v3/businesses/search"
-        data = smart_search(url, params={'term': name, 'latitude': lat, 'longitude': lng},
-                            headers={'Authorization': 'bearer %s' % YELP_KEY})
 
         types = set()
         #### TODO: ensure right retailer
+
+        url_search = 'https://api.foursquare.com/v2/venues/search'
+        params = dict(
+            client_id=<CLIENT_ID>
+            client_secret=<CLIENT_SECRET>
+            v='20191028',
+            name=name,
+            ll=str(lat) + "," + str(lng),
+            intent='checkin',
+        )
+        data = smart_search(url_search, params=params)
+
         try:
-            data['businesses'][0]['categories']
+            id = data['response']['venues'][0]['id']
         except Exception:
-            print("Error getting retail categories from name {0} and location {1}".format(name, location))
+            print("Error getting id on Foursquare from name {0}, lat {1} and lng {2}".format(name, lat, lng))
+            print(data)
+            return np.nan, np.nan, False
+
+        url_stats = 'https://api.foursquare.com/v2/venues/{0}'.format(id)
+
+        params = dict(
+            client_id=<CLIENT_ID>
+            client_secret=<CLIENT_SECRET>
+            v='20191028'
+        )
+        data = smart_search(url_stats, params=params)
+
+        try:
+            data['response']['venue']['categories'][0]
+        except Exception:
+            print("Error getting Foursquare retail categories from name {0} and location {1}".format(name, location))
             print(data)
             result_valid = False
             return np.nan, np.nan, result_valid
 
-        for cat in data['businesses'][0]['categories']:
-            types.add(cat["alias"])
+        for cat in data['response']['venue']['categories']:
+            types.add(cat["name"])
 
         try:
-            price = data['businesses'][0]['price']
-            price = len(price)
+            price = data['response']['venue']['price']['tier']
         except Exception:
             price = np.nan
             result_valid = False
 
         return types, price, result_valid
 
-    print("status: searching for locations")
     locations, valid = get_locations(name, location)
-
-    print("status: searching for place details")
     types, price, valid2 = get_placedetails(name, location)
 
     if valid and valid2:
@@ -299,6 +353,7 @@ def get_performance(name, lat, lng):
         id = data['response']['venues'][0]['id']
     except Exception:
         print("Error getting id from name {0}, lat {1} and lng {2}".format(name, lat, lng))
+        print(data)
         return np.nan, np.nan, np.nan, False
 
     #url_likes = 'https://api.foursquare.com/v2/venues/{0}/likes'.format(id)
@@ -321,10 +376,7 @@ def get_performance(name, lat, lng):
     try:
         ratings = data['response']['venue']['rating']
     except Exception:
-        print("Error getting ratings from name {0}, lat {1} and lng {2}".format(name, lat, lng))
-        print(data)
         ratings = np.nan
-        result_valid = False
     try:
         photo_count = data['response']['venue']['photos']['count']
     except Exception:

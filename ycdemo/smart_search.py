@@ -8,8 +8,8 @@ client = Connect.get_connection()
 db = client.spaceData
 searches = db.searches
 searches.create_index([("url",  1), ("params", 1), ("headers", 1)], unique=True)
-dataset = db.dataset
-dataset.create_index([("name",  1), ("lat", 1), ("lng", 1)], unique=True)
+dataset2 = db.dataset2
+dataset2.create_index([("name",  1), ("lat", 1), ("lng", 1)], unique=True)
 
 def smart_search(URL, params=None, headers=None):
 
@@ -29,14 +29,18 @@ def smart_search(URL, params=None, headers=None):
         "headers": headers,
     }
 
-    if params != None and headers != None:
-        result = requests.get(URL, params=params, headers=headers).json()
-    elif params != None and headers == None:
-        result = requests.get(URL, params=params).json()
-    elif params == None and headers != None:
-        result = requests.get(URL, headers=headers).json()
-    else:
-        result = requests.get(URL).json()
+    try:
+        if params != None and headers != None:
+            result = requests.get(URL, params=params, headers=headers).json()
+        elif params != None and headers == None:
+            result = requests.get(URL, params=params).json()
+        elif params == None and headers != None:
+            result = requests.get(URL, headers=headers).json()
+        else:
+            result = requests.get(URL).json()
+    except Exception:
+        print("Error querying requests")
+        return None
 
     search["result"] = result
     searches.insert_one(search)
@@ -75,12 +79,12 @@ def upload_dataset(location, retailer, likes, ratings, photo_count):
         "photo_count": photo_count
     }
     # search in internal database
-    db_return = dataset.find_one({"name": entry["name"], "lat": entry["lat"], "lng": entry["lng"]})
+    db_return = dataset2.find_one({"name": entry["name"], "lat": entry["lat"], "lng": entry["lng"]})
     if db_return != None:
         print("Entry already exists for name: {0} at {1}, {2}".format(entry["name"], entry["lat"], entry["lng"]))
         return
 
-    dataset.insert_one(entry)
+    dataset2.insert_one(entry)
 
 if __name__ == "__main__":
 
