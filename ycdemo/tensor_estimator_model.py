@@ -5,7 +5,7 @@ import model_generate_dataset as mg
 import pickle
 import numpy as np
 import pandas as pd
-import sklearn as sk
+from sklearn.model_selection import train_test_split
 from tensorflow import keras
 
 
@@ -59,7 +59,7 @@ def build_tensor_set(input_data_set):
 
     #  convert to pandas data_frame and remove all the NaNs generated in the creation of the data_frame
     data_set = pd.DataFrame(data_set)
-    data_set.fillna(0)
+    data_set = data_set.fillna(0)
 
     # currently no categorical columns, all columns are numerical
     categorical_columns = []
@@ -82,57 +82,76 @@ Function that uses tensorflow estimators to provide a linear regression model fo
 
 if __name__ == "__main__":
 
-    def make_input_fn(data, num_epochs=10, shuffle=True, batch_size=32):
+    def make_input_fn(data_df, label_df, num_epochs=10, shuffle=True, batch_size=32):
         def input_function():
-            new_ds = data
+            ds = tf.data.Dataset.from_tensor_slices((dict(data_df), label_df))
             if shuffle:
-                new_ds = new_ds.shuffle(1000)
-            new_ds = new_ds.batch(batch_size).repeat(num_epochs)
-            return new_ds
+                ds = ds.shuffle(1000)
+            ds = ds.batch(batch_size).repeat(num_epochs)
+            return ds
+
         return input_function
 
-    # receiving information from picle file for now (future to use mg.build_data_set("New York", 10000))
-    with open('data2.pickle', 'rb') as f:
-        raw_data_set = pickle.load(f)
+    # FIXME: added callout to use existing model instead of regenerating one using API calls
+    df = pd.read_csv('dfog.csv') # to be removed when the above is fixed
+    df.drop(columns='Unnamed: 0', inplace=True)
+    print(df)
 
-    df, df_catagorical, df_numerical = build_tensor_set(raw_data_set)
+    # # receiving information from picle file for now (future to use mg.build_data_set("New York", 10000))
+    # with open('data2.pickle', 'rb') as f:
+    #     raw_data_set = pickle.load(f)
+    #
+    # df, df_catagorical, df_numerical = build_tensor_set(raw_data_set)
+
+    # using ratings as the lavel of success, and removing other success metrics
+    likes_target = df.pop("likes")
+    photo_target = df.pop("photo_count")
+
+    train_set, test_set = train_test_split(df, test_size=.2)
+    train_set, val_set = train_test_split(train_set, test_size=.5)
+
+    # using ratings as the label for success
+    train_labels = train_set.pop("ratings")
+    val_labels = val_set.pop("ratings")
+    test_labels = test_set.pop("ratings")
 
     # build the estimator feature columns
+    df_numerical = []
+    for columnName in train_set.columns.values:
+        df_numerical.append(columnName)
     feature_columns = []
     for feature_name in df_numerical:
         feature_columns.append(tf.feature_column.numeric_column(feature_name, dtype=tf.float32))
 
-    likes_target = df.pop("likes")
-    ratings_target = df.pop("ratings")
-    photo_target = df.pop("photo_count")
+    # TODO: normalize the data set when running large datasets
+    # df_stats = df.describe().transpose()
+    #
+    # def norm(x_data_set):
+    #
+    #     return (x_data_set - df_stats['mean'])/df_stats['std']
+    #
+    # df = norm(df)
+    #
+    # df.to_csv('normalized.csv')
 
-    # TODO: normalize the data set
+    train_input_fn = make_input_fn(train_set, train_labels)
+    eval_input_fn = make_input_fn(val_set, val_labels, num_epochs=1, shuffle=False)
+    test_input_fun = make_input_fn(test_set, test_labels, num_epochs=1, shuffle=False)
 
-    df_stats = df.describe().transpose()
-    print(df_stats)
-    print("\n")
-    print(df)
-    def norm(x_data_set):
-        return (x_data_set - df_stats['mean'])/df_stats['std']
 
-    df = norm(df)
-
-    # only receiving ratings for the near term. Generate actual data set (needed if not using input funciton)
-    dataset = tf.data.Dataset.from_tensor_slices((df.values, ratings_target.values))
-
-    full_dataset = dataset.shuffle()
-    train_dataset = full_dataset.take(15)
-    test_dataset = full_dataset.skip(15)
-    val_dataset = test_dataset.take(15)
-    test_dataset = test_dataset.skip(100)
-
-    train_input_fn = make_input_fn(train_dataset)
-    eval_input_fn = make_input_fn(val_dataset, num_epochs=1, shuffle=False)
-    # test_input_fun = make_input_fn(test_dataset, num_epochs=1, shuffle=False)
+    def my_mae(labels, predictions):
+        mae_metric = tf.keras.metrics.MeanAbsoluteError()
+        print(labels)
+        print(predictions)
+        mae_metric.update_state(y_true=labels, y_pred=predictions['predictions'])
+        return {'mae': mae_metric}
 
     # build & leverage use of a pre-build Linear Regressor leveraging Tensorflow
-    linear_est = tf.estimator.LinearClassifier(feature_columns=feature_columns)
+    linear_est = tf.estimator.LinearRegressor(feature_columns=feature_columns)
+    linear_est = tf.estimator.add_metrics(linear_est, my_mae)
     linear_est.train(train_input_fn)
     result = linear_est.evaluate(eval_input_fn)
-
     print(result)
+
+    final = list(linear_est.predict(test_input_fun))
+    print(final)
