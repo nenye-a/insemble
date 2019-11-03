@@ -93,7 +93,7 @@ if __name__ == "__main__":
         return input_function
 
     # FIXME: added callout to use existing model instead of regenerating one using API calls
-    df = pd.read_csv('dfog.csv') # to be removed when the above is fixed
+    df = pd.read_csv('test_files/dfog.csv') # to be removed when the above is fixed
     df.drop(columns='Unnamed: 0', inplace=True)
     print(df)
 
@@ -103,7 +103,7 @@ if __name__ == "__main__":
     #
     # df, df_catagorical, df_numerical = build_tensor_set(raw_data_set)
 
-    # using ratings as the lavel of success, and removing other success metrics
+    # using ratings as the level of success, and removing other success metrics
     likes_target = df.pop("likes")
     photo_target = df.pop("photo_count")
 
@@ -138,7 +138,7 @@ if __name__ == "__main__":
     eval_input_fn = make_input_fn(val_set, val_labels, num_epochs=1, shuffle=False)
     test_input_fun = make_input_fn(test_set, test_labels, num_epochs=1, shuffle=False)
 
-
+    # metric function for linear regressor
     def my_mae(labels, predictions):
         mae_metric = tf.keras.metrics.MeanAbsoluteError()
         print(labels)
