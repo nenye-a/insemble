@@ -4,6 +4,9 @@ import pickle
 import numpy as np
 import pandas as pd
 import math
+import time
+import random
+import urllib.parse
 from smart_search import *
 
 GOOG_KEY = "AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U"
@@ -32,7 +35,10 @@ def build_data_set(focus_area, length):
     # need to make 2500 queries
     # take sqrt and it's 50 on each x,y
     num_queries = 2500
-    locations, ll_radius = segment_region(focus_area, num_queries)
+    locations_set, ll_radius = segment_region(focus_area, num_queries)
+    locations = list(locations_set)
+    random.shuffle(locations)
+
     # assuming 1 latitude degree is 69 mi, 111045 m
     # assuming 1 longitude degree is 55 mi, 88514 m
     # NOTE: radius (in miles) doesn't use segment radius
@@ -67,30 +73,6 @@ def build_data_set(focus_area, length):
 
         print("building location profiles for search results...")
 
-        for restaurant in restaurant_data["results"]:
-            if len(dataset) >= length:
-                print("{0} businesses in dataset now. Finished".format(len(dataset)))
-                return dataset
-
-            try:
-                address = restaurant["vicinity"]
-            except:
-                print("Error getting address of nearby restaurant from location at lat {0} and lng {1}".format(lat, lng))
-                print(restaurant_data)
-                continue
-
-            rest_loc, location_valid = lb.generate_location_profile(address, radius)
-            rest_rtlr, retailer_valid = lb.generate_retailer_profile(restaurant["name"], focus_area)
-
-            if location_valid and retailer_valid:
-                rest_likes, rest_ratings, rest_photo_count, rest_performance_valid = lb.get_performance(rest_rtlr.name,
-                                                                                                        rest_loc.lat,
-                                                                                                        rest_loc.lng)
-                if rest_performance_valid:
-                    dataset.add((rest_loc, rest_rtlr, rest_likes, rest_ratings, rest_photo_count))
-                    upload_dataset(rest_loc, rest_rtlr, rest_likes, rest_ratings, rest_photo_count)
-                    print("new restaurant profile for {0} at {1}, {2}".format(rest_rtlr.name, rest_loc.lat, rest_loc.lng))
-
         for retailer in retailer_data["results"]:
             if len(dataset) >= length:
                 print("{0} businesses in dataset now. Finished".format(len(dataset)))
@@ -104,18 +86,47 @@ def build_data_set(focus_area, length):
                 continue
 
             rtlr_loc, location_valid  = lb.generate_location_profile(address, radius)
+            time.sleep(.7)
             rtlr_rtlr, retailer_valid = lb.generate_retailer_profile(retailer["name"], focus_area)
+            time.sleep(.7)
 
             if location_valid and retailer_valid:
                 rtlr_likes, rtlr_ratings, rtlr_photo_count, rtlr_performance_valid = lb.get_performance(rtlr_rtlr.name,
                                                                                                         rtlr_loc.lat,
                                                                                                         rtlr_loc.lng)
+                time.sleep(.7)
 
                 if rtlr_performance_valid:
-                    dataset.add((rtlr_loc, rtlr_rtlr, rtlr_likes, rtlr_ratings, rtlr_photo_count))
+                    dataset.add((rtlr_loc.lat, rtlr_loc.lng))
                     upload_dataset(rtlr_loc, rtlr_rtlr, rtlr_likes, rtlr_ratings, rtlr_photo_count)
                     print("new retailer profile for {0} at {1}, {2}".format(rtlr_rtlr.name, rtlr_loc.lat, rtlr_loc.lng))
 
+        for restaurant in restaurant_data["results"]:
+            if len(dataset) >= length:
+                print("{0} businesses in dataset now. Finished".format(len(dataset)))
+                return dataset
+
+            try:
+                address = restaurant["vicinity"]
+            except:
+                print("Error getting address of nearby restaurant from location at lat {0} and lng {1}".format(lat, lng))
+                print(restaurant_data)
+                continue
+
+            rest_loc, location_valid = lb.generate_location_profile(address, radius)
+            time.sleep(.7)
+            rest_rtlr, retailer_valid = lb.generate_retailer_profile(restaurant["name"], focus_area)
+            time.sleep(.7)
+
+            if location_valid and retailer_valid:
+                rest_likes, rest_ratings, rest_photo_count, rest_performance_valid = lb.get_performance(rest_rtlr.name,
+                                                                                                        rest_loc.lat,
+                                                                                                        rest_loc.lng)
+                time.sleep(.7)
+                if rest_performance_valid:
+                    dataset.add((rest_loc.lat, rest_loc.lng))
+                    upload_dataset(rest_loc, rest_rtlr, rest_likes, rest_ratings, rest_photo_count)
+                    print("new restaurant profile for {0} at {1}, {2}".format(rest_rtlr.name, rest_loc.lat, rest_loc.lng))
 
         print("location profiles built for nearby stores")
         print("{0} businesses in dataset now".format(len(dataset)))
@@ -127,7 +138,7 @@ def build_data_set(focus_area, length):
 
 def segment_region(focus_area, num_queries):
 
-    format_input = focus_area.replace(" ", "+")
+    format_input = urllib.parse.quote(focus_area)
 
     URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input={0}&inputtype=textquery&fields=geometry&key={1}".format(
         format_input, GOOG_KEY)
@@ -200,7 +211,7 @@ if __name__ == "__main__":
     #### TODO: save data from all queries so never need to query twice. Save entire result with ID hashing
     ####
     focus_area = "Los Angeles, California"
-    length = 1000
+    length = 15000
     dataset = build_data_set(focus_area, length)
 
 
