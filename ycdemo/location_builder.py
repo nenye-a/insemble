@@ -25,23 +25,24 @@ This method takes in a text query, such as a retailer name, address, or city, an
 
 :param input: query to search
 :type input: string, ex: "soulva hayes st"
-:return:  latitude and longitude of the queried location
-:rtype: float tuple, ex: (33.5479999,-117.6711493)
+:return:  (latitude, longitude, result valid) for the queried location, along with boolean indicating a successful search
+:rtype: tuple (Float, Float, Boolean), ex: (33.5479999,-117.6711493, True)
 '''
 def get_loc_from_input(input):
     ####
-    #### TODO: exception handling, error checking to find the right locations/retailer names
+    #### TODO: error checking to find the right locations/retailer names
     ####
     result_valid = True
 
     # parse string address for something readable by google
-    #format_input = input.replace(" ", "+")
     format_input = urllib.parse.quote(input)
-
     URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input={0}&inputtype=textquery&fields=geometry&key={1}".format(
         format_input, GOOG_KEY)
-    data = smart_search(URL)
 
+    # search for location
+    data = smart_search(URL, 'google', 'findplacefromtext')
+
+    # get lat, lng pairs and give invalid result if nonexistant for input
     try:
         lat = data["candidates"][0]["geometry"]["location"]["lat"]
         lng = data["candidates"][0]["geometry"]["location"]["lng"]
@@ -67,20 +68,27 @@ This method creates a location profile for a particular address. It pulls in inf
 '''
 def generate_location_profile(address, radius):
 
-    def get_demographics(lat, lng, radius):
+    def get_demographics(lat, lng, radius, count=0):
         result_valid = True
+
+        # search demographics from justice map
         sGeo = "tract"
         URL = "http://www.spatialjusticetest.org/api.php?fLat={0}&fLon={1}&sGeo={2}&fRadius={3}".format(lat,lng,sGeo,radius)
-        data = smart_search(URL)
+        data = smart_search(URL, 'justicemap', 'normal')
 
         try:
-
             census = {"asian":float(data["asian"]), "black":float(data["black"]), "hispanic":float(data["hispanic"]),
                   "indian":float(data["indian"]), "multi":float(data["multi"]), "white":float(data["white"])}
             pop = int(data["pop"])
             income = float(data["income"])
 
+        # if no demographic results, expand the radius by .1 mi until demographic results obtained or timeout at 4 tries
         except Exception:
+            if count <= 4:
+                radius += .1
+                count += 1
+                return get_demographics(lat, lng, radius, count)
+
             print("Error getting demographics from lat {0} and lng {1}".format(lat, lng))
             print(data)
             census = np.nan
@@ -88,40 +96,17 @@ def generate_location_profile(address, radius):
             income = np.nan
             result_valid = False
 
-        return census, pop, income, result_valid
+        return census, pop, income, radius, result_valid
 
     def get_nearby_stores(lat, lng, radius):
         result_valid = True
         ####
         #### TODO: need to incorporate proximity (closer stores... more influence)
-        #### replace yelp
-        # url = "https://api.yelp.com/v3/businesses/search"
-        # data = smart_search(url, params={'latitude': lat, 'longitude': lng, 'radius': int(radius*MILES_TO_M)},
-        #                     headers={'Authorization': 'bearer %s' % YELP_KEY})
-        #
-        # try:
-        #     businesses = data["businesses"]
-        #     businesses[0]["categories"]
-        #
-        # except Exception:
-        #     print("Error getting nearby stores from lat {0} and lng {1}".format(lat, lng))
-        #     print(data)
-        #     result_valid = False
-        #     return np.nan, result_valid
-        #
-        # nearby = {}
-        # for bus in businesses:
-        #     for cat in bus["categories"]:
-        #         try:
-        #             nearby[cat["alias"]] = nearby[cat["alias"]] + 1
-        #         except Exception:
-        #             nearby[cat["alias"]] = 1
-        #
-        # #############
 
         nearby = {}
         #### TODO: ensure right retailer
 
+        # search for nearby stores in radius
         url_search = 'https://api.foursquare.com/v2/venues/search'
         params = dict(
             client_id=FRSQ_ID,
@@ -131,16 +116,18 @@ def generate_location_profile(address, radius):
             intent='browse',
             radius=radius*MILES_TO_M
         )
-        data = smart_search(url_search, params=params)
+        data = smart_search(url_search, 'foursquare', 'venues_search', params=params)
 
+        # check to make sure categories field is present
         try:
-            data['response']['venues'][0]['categories'][0]
+            data['response']['venues'][0]['categories']
         except Exception:
             print("Error getting Foursquare retail categories from {0}, {1} with radius {2}".format(lat, lng, radius))
             print(data)
             result_valid = False
             return np.nan, result_valid
 
+        # add categories of nearby venues to dictionary counter to keep track
         for venue in data['response']['venues']:
             for cat in venue["categories"]:
                 try:
@@ -168,19 +155,20 @@ def generate_location_profile(address, radius):
             'Content-Type': 'application/json',
             'x-api-key': CRIME_KEY
         }
-        data = smart_search(URL, headers=headers)
+        data = smart_search(URL, 'crimeometer', 'normal', headers=headers)
 
 
         pass
 
     lat, lng, valid = get_loc_from_input(address)
+
     if not valid:
         return None, valid
 
-    census, pop, income, valid2 = get_demographics(lat, lng, radius)
+    census, pop, income, census_radius, valid2 = get_demographics(lat, lng, radius)
     nearby, valid3 = get_nearby_stores(lat, lng, radius)
     ####
-    #### TODO: reorganize locations inputs without traffic. incorporate safety
+    #### TODO: reorganize locations inputs without traffic & remove field from dataset. incorporate safety
     ####
 
     if valid and valid2 and valid3:
@@ -189,7 +177,7 @@ def generate_location_profile(address, radius):
         location_valid = False
 
     #return Location object
-    return Location(address, lat, lng, census, pop, income, None, None, nearby, radius), location_valid
+    return Location(address, lat, lng, census, pop, income, None, None, nearby, census_radius), location_valid
 
 '''
 This method creates a retailer profile for a particular retailer. It pulls in information from various APIs to create Retailers
@@ -206,20 +194,18 @@ def generate_retailer_profile(name, location):
         result_valid = True
 
         ####
-        #### TODO: make location param optional
-        #### TODO: error checking for retailer names
+        #### TODO: make location param optional (for places with locations spanning multiple states)
         #### TODO: check if all loctions pulled are indeed that retailer
         ####
         input = name+" "+location
 
-        # parse string address for something readable by google
+        # parse string address for something readable by google. search
         format_input = urllib.parse.quote(input)
         URL = "https://maps.googleapis.com/maps/api/place/textsearch/json?query={0}&key={1}".format(format_input, GOOG_KEY)
+        data = smart_search(URL, 'google', 'textsearch')
 
-        data = smart_search(URL)
-
+        # add all retailer locations from search return to set
         locations = set()
-
         for result in data['results']:
             try:
                 lat, lng = result['geometry']['location']['lat'], result['geometry']['location']['lat']
@@ -228,13 +214,13 @@ def generate_retailer_profile(name, location):
                 print("Error getting retail locations from name {0} and location {1}. Not adding.".format(name, location))
                 print(data)
 
+        # if additional pages exist, continue searching on next pages for retailer locations
         more_pages = True
         while more_pages:
             try:
                 page_token = data['next_page_token']
                 URL = "https://maps.googleapis.com/maps/api/place/textsearch/json?query={0}&key={1}&pagetoken={2}".format(input, GOOG_KEY, page_token)
-
-                data = repeat_search(URL)
+                data = repeat_search(URL, "google", "textsearch")
 
                 for result in data['results']:
                     try:
@@ -260,19 +246,21 @@ def generate_retailer_profile(name, location):
         if not valid:
             return None, None, False
 
-        types = set()
         #### TODO: ensure right retailer
+        ####TODO: fix v and implement database updates
 
+        # search for a particular retailer at location
+        types = set()
         url_search = 'https://api.foursquare.com/v2/venues/search'
         params = dict(
             client_id=FRSQ_ID,
             client_secret=FRSQ_SECRET,
             v='20191028',
-            name=name,
+            query=name,
             ll=str(lat) + "," + str(lng),
             intent='checkin',
         )
-        data = smart_search(url_search, params=params)
+        data = smart_search(url_search, 'foursquare', 'venues_search', params=params)
 
         try:
             id = data['response']['venues'][0]['id']
@@ -281,31 +269,33 @@ def generate_retailer_profile(name, location):
             print(data)
             return np.nan, np.nan, False
 
+        # use venue id to search details about a retailer
         url_stats = 'https://api.foursquare.com/v2/venues/{0}'.format(id)
-
         params = dict(
             client_id=FRSQ_ID,
             client_secret=FRSQ_SECRET,
             v='20191028'
         )
-        data = smart_search(url_stats, params=params)
+        data = smart_search(url_stats, 'foursquare', 'venue_details', params=params)
 
+        # if venue has no categories, return invalid
         try:
-            data['response']['venue']['categories'][0]
+            data['response']['venue']['categories']
         except Exception:
             print("Error getting Foursquare retail categories from name {0} and location {1}".format(name, location))
             print(data)
             result_valid = False
             return np.nan, np.nan, result_valid
 
+        # collect all category types to store in Retailer object
         for cat in data['response']['venue']['categories']:
             types.add(cat["name"])
 
+        # get price for a retailer
         try:
             price = data['response']['venue']['price']['tier']
         except Exception:
             price = np.nan
-            result_valid = False
 
         return types, price, result_valid
 
@@ -338,6 +328,8 @@ def get_performance(name, lat, lng):
     #### TODO: handling if multiple results are returned. currently just factors for 1
     #### TODO: currently only incorporates likes, ratings, and photo_count, but should expand to use geolocation data
     ####
+
+    # search a retailer at location to get id
     url_search = 'https://api.foursquare.com/v2/venues/search'
     params = dict(
         client_id=FRSQ_ID,
@@ -347,8 +339,9 @@ def get_performance(name, lat, lng):
         ll=str(lat)+","+str(lng),
         intent='match',
     )
-    data = smart_search(url_search, params=params)
+    data = smart_search(url_search, 'foursquare', 'venues_search', params=params)
 
+    # get id for retailer, return invalid if error
     try:
         id = data['response']['venues'][0]['id']
     except Exception:
@@ -356,15 +349,14 @@ def get_performance(name, lat, lng):
         print(data)
         return np.nan, np.nan, np.nan, False
 
-    #url_likes = 'https://api.foursquare.com/v2/venues/{0}/likes'.format(id)
+    # get details for retailer based on id
     url_stats = 'https://api.foursquare.com/v2/venues/{0}'.format(id)
-
     params = dict(
         client_id=FRSQ_ID,
         client_secret=FRSQ_SECRET,
         v='20191028'
     )
-    data = smart_search(url_stats, params=params)
+    data = smart_search(url_stats, 'foursquare', 'venue_details', params=params)
 
     try:
         likes = data['response']['venue']['likes']['count']
@@ -373,10 +365,12 @@ def get_performance(name, lat, lng):
         print(data)
         likes = np.nan
         result_valid = False
+
     try:
         ratings = data['response']['venue']['rating']
     except Exception:
         ratings = np.nan
+
     try:
         photo_count = data['response']['venue']['photos']['count']
     except Exception:
@@ -384,9 +378,11 @@ def get_performance(name, lat, lng):
         print(data)
         photo_count = np.nan
         result_valid = False
+
     return likes, ratings, photo_count, result_valid
 
 if __name__ == "__main__":
+    ###### DEBUG CODE #######
     retailer = 'Souvla'
     city = 'Hayes st San francisco'
     #lat, lng = get_loc_from_addr(retailer+" "+city)
