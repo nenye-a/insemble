@@ -17,6 +17,7 @@ FRSQ_ID = "DELETED_BASE64_STRING" # Nenye's Foursquare ID
 FRSQ_SECRET = "DELETED_BASE64_STRING" # Nenye's Foursquare Secrete
 CRIME_KEY = "DELETED_BASE64_STRING"
 MONGO_KEY = "4deeabe1-0fa2-4ee7-a4e6-372ba9f46de8"
+MILES_TO_M = 1609.34
 
 '''
 This method takes in a text query, such as a retailer name, address, or city, and generates a location from it. 
@@ -40,11 +41,11 @@ def get_loc_from_input(input):
     data = smart_search(URL)
 
     try:
-        lat = data.json()["candidates"][0]["geometry"]["location"]["lat"]
-        lng = data.json()["candidates"][0]["geometry"]["location"]["lng"]
+        lat = data["candidates"][0]["geometry"]["location"]["lat"]
+        lng = data["candidates"][0]["geometry"]["location"]["lng"]
     except Exception:
         print("Error getting location from input {0}".format(input))
-        print(data.json())
+        print(data)
         lat = np.nan
         lng = np.nan
         result_valid = False
@@ -57,14 +58,14 @@ This method creates a location profile for a particular address. It pulls in inf
 
 :param address: street address of establishment
 :type address: string
-:param radius: radius to use for surrounding influence drivers
+:param radius: radius(mi) to use for surrounding influence drivers
 :type radius: float
 :return: Location object with demographic and local details. Boolean indicating whether the data is good
 :rtype: Tuple (Location, Boolean)
 '''
 def generate_location_profile(address, radius):
 
-    def get_demographics(lat, lng):
+    def get_demographics(lat, lng, radius):
         result_valid = True
         sGeo = "tract"
         URL = "http://www.spatialjusticetest.org/api.php?fLat={0}&fLon={1}&sGeo={2}&fRadius={3}".format(lat,lng,sGeo,radius)
@@ -72,19 +73,14 @@ def generate_location_profile(address, radius):
 
         try:
 
-            census = {"asian":float(data.json()["asian"]), "black":float(data.json()["black"]), "hispanic":float(data.json()["hispanic"]),
-                  "indian":float(data.json()["indian"]), "multi":float(data.json()["multi"]), "white":float(data.json()["white"])}
-
-
-            ####
-            #### TODO: exception handling, incorporate radius
-            ####
-            pop = int(data.json()["pop"])
-            income = float(data.json()["income"])
+            census = {"asian":float(data["asian"]), "black":float(data["black"]), "hispanic":float(data["hispanic"]),
+                  "indian":float(data["indian"]), "multi":float(data["multi"]), "white":float(data["white"])}
+            pop = int(data["pop"])
+            income = float(data["income"])
 
         except Exception:
             print("Error getting demographics from lat {0} and lng {1}".format(lat, lng))
-            print(data.json())
+            print(data)
             census = np.nan
             pop = np.nan
             income = np.nan
@@ -92,23 +88,22 @@ def generate_location_profile(address, radius):
 
         return census, pop, income, result_valid
 
-    def get_nearby_stores(lat, lng):
-        # client = Client(YELP_KEY)
+    def get_nearby_stores(lat, lng, radius):
         result_valid = True
         ####
-        #### TODO: need to incorporate proximity & radius
+        #### TODO: need to incorporate proximity (closer stores... more influence)
         ####
         url = "https://api.yelp.com/v3/businesses/search"
-        data = smart_search(url, params={'latitude': lat, 'longitude': lng},
+        data = smart_search(url, params={'latitude': lat, 'longitude': lng, 'radius': int(radius*MILES_TO_M)},
                             headers={'Authorization': 'bearer %s' % YELP_KEY})
 
         try:
-            businesses = data.json()["businesses"]
+            businesses = data["businesses"]
             businesses[0]["categories"]
 
         except Exception:
             print("Error getting nearby stores from lat {0} and lng {1}".format(lat, lng))
-            print(data.json())
+            print(data)
             result_valid = False
             return np.nan, result_valid
 
@@ -149,8 +144,8 @@ def generate_location_profile(address, radius):
     if not valid:
         return None, valid
 
-    census, pop, income, valid2 = get_demographics(lat, lng)
-    nearby, valid3 = get_nearby_stores(lat, lng)
+    census, pop, income, valid2 = get_demographics(lat, lng, radius)
+    nearby, valid3 = get_nearby_stores(lat, lng, radius)
     ####
     #### TODO: reorganize locations inputs without traffic. incorporate safety
     ####
@@ -161,7 +156,7 @@ def generate_location_profile(address, radius):
         location_valid = False
 
     #return Location object
-    return Location(address, lat, lng, census, pop, income, None, None, nearby, None), location_valid
+    return Location(address, lat, lng, census, pop, income, None, None, nearby, radius), location_valid
 
 '''
 This method creates a retailer profile for a particular retailer. It pulls in information from various APIs to create Retailers
@@ -187,37 +182,34 @@ def generate_retailer_profile(name, location):
         # parse string address for something readable by google
         format_input = input.replace(" ", "+")
         URL = "https://maps.googleapis.com/maps/api/place/textsearch/json?query={0}&key={1}".format(format_input, GOOG_KEY)
+
         data = smart_search(URL)
 
         locations = set()
 
-        for result in data.json()['results']:
+        for result in data['results']:
             try:
                 lat, lng = result['geometry']['location']['lat'], result['geometry']['location']['lat']
                 locations.add((lat, lng))
             except Exception:
                 print("Error getting retail locations from name {0} and location {1}. Not adding.".format(name, location))
-                print(data.json())
+                print(data)
 
         more_pages = True
         while more_pages:
             try:
-                page_token = data.json()['next_page_token']
+                page_token = data['next_page_token']
                 URL = "https://maps.googleapis.com/maps/api/place/textsearch/json?query={0}&key={1}&pagetoken={2}".format(input, GOOG_KEY, page_token)
 
-                invalid = True
-                while invalid:
-                    data = smart_search(URL)
-                    if data.json()['status'] == 'OK':
-                        invalid = False
+                data = repeat_search(URL)
 
-                for result in data.json()['results']:
+                for result in data['results']:
                     try:
                         lat, lng = result['geometry']['location']['lat'], result['geometry']['location']['lat']
                         locations.add((lat, lng))
                     except Exception:
                         print("Error getting retail locations from name {0} and location {1}. Not adding.".format(name, location))
-                        print(data.json())
+                        print(data)
 
             except Exception:
                 more_pages = False
@@ -238,22 +230,21 @@ def generate_retailer_profile(name, location):
         data = smart_search(url, params={'term': name, 'latitude': lat, 'longitude': lng},
                             headers={'Authorization': 'bearer %s' % YELP_KEY})
 
-        print(data.json())
         types = set()
         #### TODO: ensure right retailer
         try:
-            data.json()['businesses'][0]['categories']
+            data['businesses'][0]['categories']
         except Exception:
             print("Error getting retail categories from name {0} and location {1}".format(name, location))
-            print(data.json())
+            print(data)
             result_valid = False
             return np.nan, np.nan, result_valid
 
-        for cat in data.json()['businesses'][0]['categories']:
+        for cat in data['businesses'][0]['categories']:
             types.add(cat["alias"])
 
         try:
-            price = data.json()['businesses'][0]['price']
+            price = data['businesses'][0]['price']
             price = len(price)
         except Exception:
             price = np.nan
@@ -261,7 +252,10 @@ def generate_retailer_profile(name, location):
 
         return types, price, result_valid
 
+    print("status: searching for locations")
     locations, valid = get_locations(name, location)
+
+    print("status: searching for place details")
     types, price, valid2 = get_placedetails(name, location)
 
     if valid and valid2:
@@ -299,8 +293,7 @@ def get_performance(name, lat, lng):
         ll=str(lat)+","+str(lng),
         intent='match',
     )
-    resp = smart_search(url=url_search, params=params)
-    data = json.loads(resp.text)
+    data = smart_search(url_search, params=params)
 
     try:
         id = data['response']['venues'][0]['id']
@@ -316,8 +309,8 @@ def get_performance(name, lat, lng):
         client_secret=<CLIENT_SECRET>
         v='20191028'
     )
-    resp = smart_search(url=url_stats, params=params)
-    data = json.loads(resp.text)
+    data = smart_search(url_stats, params=params)
+
     try:
         likes = data['response']['venue']['likes']['count']
     except Exception:
@@ -354,4 +347,4 @@ if __name__ == "__main__":
 
     URL = "https://maps.googleapis.DELETED_BASE64_STRING?input={0}&inputtype=textquery&fields=geometry&key={1}".format(
         "New+York", GOOG_KEY)
-    print(smart_search(URL, None).json())
+    print(smart_search(URL, None))
