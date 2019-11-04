@@ -1,5 +1,5 @@
 import pandas as pd
-from MongoConnect import Connect
+from mongo_connect import Connect
 import numpy as np
 
 

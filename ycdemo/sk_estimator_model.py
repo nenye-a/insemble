@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import math, statistics
 import re
-import db_model_commune
+import insemble_data_tools
 import sklearn as sk
 from sklearn.model_selection import train_test_split
 from sklearn import linear_model
@@ -12,7 +12,7 @@ from sklearn import linear_model
 if __name__ == "__main__":
 
     #df, ids, cc = db_model_commune.build_data_set(2200, price=True)
-    df, ids, cc = db_model_commune.get_data_set("sk-3")
+    df, ids, cc = insemble_data_tools.get_data_set("sk-3")
 
     #db_model_commune.save_data_set("sk-3", ids)
 
