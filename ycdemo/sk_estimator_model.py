@@ -19,8 +19,6 @@ if __name__ == "__main__":
     # using likes as the metric
     photo_target = df.pop("photo_count")
 
-    df.rename(columns=lambda x: re.sub('[^0-9a-zA-Z]+', '_', x), inplace=True)
-
     print(df.describe().transpose())
     df.describe().transpose().to_csv('leStats.csv')
 
