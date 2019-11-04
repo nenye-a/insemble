@@ -4,7 +4,5 @@ import urllib
 class Connect(object):
     @staticmethod
     def get_connection():
-        # return MongoClient("DELETED_MONGODB_URL"
-        # return MongoClient("mongodb+srv://nenye:DELETED_EMAIL/test?DELETED_RETRY_WRITES")
-        print(mongo_uri)
+        mongo_uri = "DELETED_MONGODB_URL"
         return MongoClient(mongo_uri)
