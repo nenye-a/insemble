@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import tensorflow as tf
-import db_model_commune
+import insemble_data_tools
 import pandas as pd
 import sklearn as sk
 from sklearn.model_selection import train_test_split
@@ -26,9 +26,9 @@ def make_input_fn(data_df, label_df, num_epochs=10, shuffle=True, batch_size=200
 
 if __name__ == "__main__":
 
-    df, ids, cc = db_model_commune.build_data_set(1000, price=True)
+    df, ids, cc = insemble_data_tools.build_data_set(1000, price=True)
 
-    db_model_commune.save_data_set("te-1", ids)
+    insemble_data_tools.save_data_set("te-1", ids)
 
     # using likes as the metric
     photo_target = df.pop("photo_count")
