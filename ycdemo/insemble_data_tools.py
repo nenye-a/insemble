@@ -1,7 +1,8 @@
 import pandas as pd
 from mongo_connect import Connect
+import matplotlib.pyplot as plt
 import numpy as np
-
+import re
 
 """
 File stores communication methods, and functions to communicate and interact with the database for the purposes of
@@ -43,7 +44,6 @@ def build_data_set(length, price=False, ratings=False, existing_ids=None):
     for db_item in db_space_cursor:
 
         # store the id of this entry so that we can reconstruct specific training set if necessary
-        data_ids
         data_ids.add(db_item["_id"])
 
         # initialize row that will be added to the database
@@ -66,7 +66,7 @@ def build_data_set(length, price=False, ratings=False, existing_ids=None):
         if price:
             p = db_item["ratings"]
             if np.isnan(p):
-                p = 2  # assume 2 is average price
+                p = -1  # flag that p doesn't exist
             data_row.update({"price": p})
         data_row.update(retailer["place_type"])
 
@@ -76,7 +76,7 @@ def build_data_set(length, price=False, ratings=False, existing_ids=None):
         if ratings:
             rate = db_item["ratings"]
             if np.isnan(rate):
-                rate = 7.5  # assume 7.5 is average rating
+                continue
             data_row.update({"ratings": rate})
 
         data_set.append(data_row)
@@ -84,6 +84,9 @@ def build_data_set(length, price=False, ratings=False, existing_ids=None):
     #  convert to pandas data_frame and remove all the NaNs generated in the creation of the data_frame
     data_set = pd.DataFrame(data_set)
     data_set = data_set.fillna(0)
+
+    # clean up the column names for each row
+    data_set.rename(columns=lambda x: re.sub('[^0-9a-zA-Z]+', '_', x), inplace=True)
 
     categorical_columns = []  # currently no categorical columns
 
@@ -130,13 +133,35 @@ def get_data_set(name):
 
     return build_data_set(1, existing_ids=id_list)
 
+
+'''
+generate label_series and remove anything
+'''
+
+
+def generate_label_series(data_set, desired_label):
+
+    stock_labels = ["ratings", "photo_count", "likes"]
+    stock_labels = [x for x in stock_labels if x in list(data_set.columns)]
+
+    try:
+        label_series = data_set[desired_label]
+    except KeyError:
+        print("Label column not in data set")
+        return
+
+    df = data_set.drop([x for x in stock_labels if x != desired_label], axis=1)
+
+    return df, label_series
+
+
 if __name__ == "__main__":
 
-    test, ids, cc  = build_data_set(10)
+    test, ids, cc  = get_data_set("sk-1")
 
-    print(test)
+    data, labels = generate_label_series(test, "photo_count")
 
-    print(save_data_set("test", ids))
-    K = get_data_set("test")
+    print(data.head())
+    print(labels.head())
 
-    print(K)
+    print("likes" in list(data.columns))
