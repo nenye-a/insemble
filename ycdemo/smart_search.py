@@ -2,7 +2,7 @@ import requests
 import pprint
 import pickle
 import dns
-from MongoConnect import Connect
+from mongo_connect import Connect
 
 # initiate database collections
 client = Connect.get_connection()
