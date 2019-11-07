@@ -2,6 +2,7 @@ import pandas as pd
 from mongo_connect import Connect
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 import re
 
 """
@@ -26,7 +27,7 @@ Given a length, pull a fresh data set from the data base for testing and validat
 '''
 
 
-def build_data_set(length, price=False, ratings=False, existing_ids=None):
+def build_data_set(length, price=False, ratings=False, existing_ids=None, classification=False, class_number=3):
 
     # initialize our database connections
     db_space = client.spaceData
@@ -64,9 +65,9 @@ def build_data_set(length, price=False, ratings=False, existing_ids=None):
 
         # get the retailer related fields
         if price:
-            p = db_item["ratings"]
+            p = retailer["price"]
             if np.isnan(p):
-                p = -1  # flag that p doesn't exist
+                p = 2  # flag that p doesn't exist
             data_row.update({"price": p})
         data_row.update(retailer["place_type"])
 
@@ -77,6 +78,8 @@ def build_data_set(length, price=False, ratings=False, existing_ids=None):
             rate = db_item["ratings"]
             if np.isnan(rate):
                 continue
+            if classification:
+                 rate = np.ceil((rate - 4) / 6 * class_number)
             data_row.update({"ratings": rate})
 
         data_set.append(data_row)
@@ -93,6 +96,57 @@ def build_data_set(length, price=False, ratings=False, existing_ids=None):
     # return the pandas data_set in addition to list of ids
     return data_set, data_ids, categorical_columns
 
+
+'''
+Meant to balance ratings in the middle layer to below
+'''
+
+def balance_ratings_set(data_set_x, data_set_y):
+    df = data_set_x.copy()
+    labels = data_set_y.copy()
+
+    df["label"] = labels
+
+    removed = df[df["label"] < 8.5]
+    removed = removed[removed["label"]>5.5]
+    keptl = df[df["label"] <= 5.5]
+    keptr = df[8.5 <= df["label"]]
+
+    len(df)
+    removed = removed[:int(len(removed)/3)]
+    print(len(keptl))
+    keptl = keptl.append(removed, ignore_index=True)
+    print(len(keptl))
+    keptl = keptl.append(keptr)
+    print(len(keptl))
+
+    df["label"].hist(bins=100)
+    keptl["label"].hist(bins=100)
+    plt.show()
+
+    return keptl.drop("label", axis=1), keptl["label"]
+
+def balance_ratings_set_classification(data_set_x, data_set_y, class_number=3):
+
+    df = data_set_x.copy()
+    label = data_set_y.copy()
+
+    df["label"] = label
+
+    scale = []
+    min_num = len(df)
+
+    for x in range(class_number):
+        class_rows = df[df["label"] == x+1]
+        scale.append(class_rows)
+        if len(class_rows) < min_num:
+            min_num = len(class_rows)
+
+    balanced_df = pd.DataFrame()
+    for x in range(class_number):
+        balanced_df = balanced_df.append(scale[x].head(min_num))
+
+    return balanced_df.drop("label", axis=1), balanced_df["label"]
 
 '''
 Saves a list of ids into the database
@@ -120,7 +174,7 @@ def save_data_set(name, ids):
 Get an existing data_set from the database 
 '''
 
-def get_data_set(name):
+def get_data_set(name, price=False, ratings=False, classification=False, class_number=3):
 
     db_learn = client.learn
 
@@ -131,7 +185,7 @@ def get_data_set(name):
         print("Could not find value in database... check your spelling!")
         return False
 
-    return build_data_set(1, existing_ids=id_list)
+    return build_data_set(1, price, ratings, existing_ids=id_list, classification=classification, class_number=class_number)
 
 
 '''
@@ -150,7 +204,7 @@ def generate_label_series(data_set, desired_label):
         print("Label column not in data set")
         return
 
-    df = data_set.drop([x for x in stock_labels if x != desired_label], axis=1)
+    df = data_set.drop(stock_labels, axis=1)
 
     return df, label_series
 
