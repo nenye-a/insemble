@@ -236,7 +236,7 @@ if __name__ == "__main__":
     #### TODO: timestamps on print statements.
     ####
     focus_area = "Los Angeles, California"
-    length = 15000
+    length = 2000
     dataset = build_data_set(focus_area, length)
 
 
