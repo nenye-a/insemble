@@ -224,7 +224,7 @@ def generate_retailer_profile(name, location):
 
                 for result in data['results']:
                     try:
-                        lat, lng = result['geometry']['location']['lat'], result['geometry']['location']['lat']
+                        lat, lng = result['geometry']['location']['lat'], result['geometry']['location']['lng']
                         locations.add((lat, lng))
                     except Exception:
                         print("Error getting retail locations from name {0} and location {1}. Not adding.".format(name, location))
@@ -379,7 +379,16 @@ def get_performance(name, lat, lng):
         photo_count = np.nan
         result_valid = False
 
-    return likes, ratings, photo_count, result_valid
+    try:
+        createdAt = data['response']['venue']['createdAt']
+        age = (time.time() - createdAt) / 60 / 60 / 24 / 365  # age in years since the venue was created on foursquare
+    except Exception:
+        print("Error getting createdAt from name {0}, lat {1} and lng {2}".format(name, lat, lng))
+        print(data)
+        age = np.nan
+        result_valid = False
+
+    return likes, ratings, age, photo_count, result_valid
 
 if __name__ == "__main__":
     ###### DEBUG CODE #######

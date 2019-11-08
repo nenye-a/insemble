@@ -100,13 +100,13 @@ def build_data_set(focus_area, length):
 
             #get performance metrics for retailer at location
             if location_valid and retailer_valid:
-                rtlr_likes, rtlr_ratings, rtlr_photo_count, rtlr_performance_valid = lb.get_performance(rtlr_rtlr.name,
+                rtlr_likes, rtlr_ratings, rtlr_age, rtlr_photo_count, rtlr_performance_valid = lb.get_performance(rtlr_rtlr.name,
                                                                                                         rtlr_loc.lat,
                                                                                                         rtlr_loc.lng)
                 #time.sleep(.7)
                 # upload to dataset
                 if rtlr_performance_valid:
-                    new_entry = upload_dataset(rtlr_loc, rtlr_rtlr, rtlr_likes, rtlr_ratings, rtlr_photo_count)
+                    new_entry = upload_dataset(rtlr_loc, rtlr_rtlr, rtlr_age, rtlr_likes, rtlr_ratings, rtlr_photo_count)
                     if new_entry:
                         dataset.add((rtlr_rtlr.name, rtlr_loc.lat, rtlr_loc.lng))
                         print("new retailer profile for {0} at {1}, {2}".format(rtlr_rtlr.name, rtlr_loc.lat, rtlr_loc.lng))
@@ -133,13 +133,13 @@ def build_data_set(focus_area, length):
 
             # get performance metrics for restaurant at location
             if location_valid and retailer_valid:
-                rest_likes, rest_ratings, rest_photo_count, rest_performance_valid = lb.get_performance(rest_rtlr.name,
+                rest_likes, rest_ratings, rest_age, rest_photo_count, rest_performance_valid = lb.get_performance(rest_rtlr.name,
                                                                                                         rest_loc.lat,
                                                                                                         rest_loc.lng)
                 #time.sleep(.7)
                 # upload to dataset
                 if rest_performance_valid:
-                    new_entry = upload_dataset(rest_loc, rest_rtlr, rest_likes, rest_ratings, rest_photo_count)
+                    new_entry = upload_dataset(rest_loc, rest_rtlr, rest_age, rest_likes, rest_ratings, rest_photo_count)
                     if new_entry:
                         dataset.add((rest_rtlr.name, rest_loc.lat, rest_loc.lng))
                         print("new restaurant profile for {0} at {1}, {2}".format(rest_rtlr.name, rest_loc.lat, rest_loc.lng))
@@ -233,7 +233,9 @@ def google_text_search(query, query_type=None, pagetoken=None):
 
 if __name__ == "__main__":
     ####
+    #### TODO: fix los angeles dataset to have correct retail locations (latitude, longitude)
     #### TODO: timestamps on print statements.
+    ####
     ####
     focus_area = "Los Angeles, California"
     length = 2000
