@@ -140,17 +140,21 @@ This method uploads Location and Retailer objects along with their performance m
 :return: boolean indicating whether a new entry was created in the database
 :rtype: boolean 
 '''
-def upload_dataset(location, retailer, likes, ratings, photo_count):
+def upload_dataset(location, retailer, age, likes, ratings, photo_count):
     entry = {
         "name": retailer.name,
         "lat": location.lat,
         "lng": location.lng,
         "Location": location.to_json(),
         "Retailer": retailer.to_json(),
+        "age": age,
         "likes": likes,
         "ratings": ratings,
         "photo_count": photo_count
     }
+
+    # TODO: manage age updates when new data comes in
+    # TODO: add last updated tag to dataset entries (or see if mongodb has)
 
     # search in internal database, return false if entry already exists
     db_return = dataset2.find_one({"name": entry["name"], "lat": entry["lat"], "lng": entry["lng"]})
