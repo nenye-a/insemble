@@ -1,8 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { Container, Row, Col, ButtonGroup, Button } from "shards-react";
+import { Container, Row, Col, ButtonGroup, Button, Slider } from "shards-react";
 import { NavLink } from "react-router-dom";
+import EthnicButtons from "./EthnicButtons";
 
 
 import SidebarMainNavbar from "./SidebarMainNavbar";
@@ -58,18 +59,37 @@ class MainSidebar extends React.Component {
         <SidebarSearch />
 
         {/* Page Header :: Actions */}
-        <Row className="p-8">
-          <Col sm="12" className="p-8 col d-flex align-items-center">
-            <ButtonGroup size="sm" className="d-inline-flex mb-3 mb-sm-0 mx-auto">
-              <Button theme="white" tag={NavLink} to="/analytics">
-                Insights
-              </Button>
-              <Button theme="white" tag={NavLink} to="/ecommerce">
-                Spaces
-              </Button>
-            </ButtonGroup>
-          </Col>
-        </Row>
+        <Col sm="12" className="my-8 col d-flex align-items-center">
+          <ButtonGroup size="sm" className="my-3 d-inline-flex mb-3 mb-sm-0 mx-auto">
+            <Button theme="white" tag={NavLink} to="/analytics">
+              Insights
+            </Button>
+            <Button theme="white" tag={NavLink} to="/ecommerce">
+              Spaces
+            </Button>
+          </ButtonGroup>
+        </Col>
+        <h6 className="mt-2 main-sidebar__nav-title">{"Category"}</h6>
+        <h6 className="main-sidebar__nav-title">{"Demographic"}</h6>
+        <EthnicButtons />
+        <h6 className="main-sidebar__nav-title">{"Region"}</h6>
+        <h6 className="main-sidebar__nav-title">{"Income"}</h6>
+        <Slider
+          theme="royal-blue"
+          className="my-4"
+          connect
+          start={[10000, 80000]}
+          range={{ min: 0, max: 300000 }}
+        />
+        <h6 className="main-sidebar__nav-title">{"Population"}</h6>
+        <Slider
+          theme="royal-blue"
+          className="my-4"
+          connect
+          start={[15, 50]}
+          range={{ min: 0, max: 100 }}
+          tooltips
+        />
 
         <SidebarNavItems />
       </Col>
