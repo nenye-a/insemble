@@ -54,15 +54,15 @@ def test_predictions():
     # SVC but from Grid search
     svc = svm.SVC(gamma='scale')
     parameters = {'kernel':('linear', 'rbf', 'poly', 'sigmoid'), 'C':[0.5, 1, 10], 'decision_function_shape': ('ovo', 'ovr')}
-    clf_rating = GridSearchCV(svc, param_grid=parameters)
-    print(clf_rating.get_params())
+    # clf_rating = GridSearchCV(svc, param_grid=parameters)
+    # print(clf_rating.get_params())
 
     # SVC classification
     # clf_rating = svm.SVC(decision_function_shape="ovr", gamma='scale', probability=False, C=1,
     #                      class_weight={0: ".1", 1: ".4"})
 
     # # K_neigbors classification
-    # clf_rating = neighbors.KNeighborsClassifier()
+    clf_rating = neighbors.KNeighborsClassifier()
     # Gradient Boosting
     # clf_rating = GradientBoostingClassifier(n_estimators=150, learning_rate=1.0,
     #                                  max_depth=3)
