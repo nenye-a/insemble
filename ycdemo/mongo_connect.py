@@ -1,6 +1,9 @@
 from pymongo import MongoClient
 import urllib
 
+#### TODO: keep key secret by using environment variables
+
+
 class Connect(object):
     @staticmethod
     def get_connection():
