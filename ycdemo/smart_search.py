@@ -8,6 +8,8 @@ from mongo_connect import Connect
 client = Connect.get_connection()
 db = client.spaceData
 searches = db.searches
+
+# TODO: figure out if can reduce index creation & reduce redundancy
 searches.create_index([("url",  1), ("params", 1), ("headers", 1)], unique=True)
 hosts = ['google', 'yelp', 'foursquare', 'justicemap']
 for host in hosts:
@@ -34,7 +36,7 @@ already been performed. Every new search is cached in database.
 '''
 def smart_search(URL, host, search_type, params=None, headers=None):
 
-    #search in internal databases
+    # search in internal databases
     host_db_return = searches[host].find_one({"url": URL, "params": params, "headers": headers})
     if host_db_return != None:
         return host_db_return["result"]
@@ -93,6 +95,9 @@ database.
 :rtype result: dictionary
 '''
 def repeat_search(URL, host, search_type, params=None, headers=None):
+    ####
+    #### FIXME: consolidate funcitons with smart search (no redundant code)
+    ####
     # search in internal database
     host_db_return = searches[host].find_one({"url": URL, "params": params, "headers": headers})
     if host_db_return != None:

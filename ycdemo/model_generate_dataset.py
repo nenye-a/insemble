@@ -45,7 +45,7 @@ def build_data_set(focus_area, length):
 
     # get list of random locations to query
     num_queries = 2500
-    locations_set, ll_radius = segment_region(focus_area, num_queries)
+    locations_set = segment_region(focus_area, num_queries)
     locations = list(locations_set)
     random.shuffle(locations)
 
@@ -65,6 +65,10 @@ def build_data_set(focus_area, length):
         print("getting nearby restaurants and retailers for {0},{1}".format(lat, lng))
         restaurant_data = smart_search(restaurant_URL, 'google', 'nearbysearch')
         retailer_data = smart_search(retailer_URL, 'google', 'nearbysearch')
+
+        #####
+        ##### FIXME: change exception errors to specific exceptions
+        #####
 
         # verify data yields results
         try:
@@ -86,7 +90,7 @@ def build_data_set(focus_area, length):
 
             try:
                 address = retailer["vicinity"]
-            except:
+            except Exception:
                 print("Error getting address of nearby retailer at location at lat {0} and lng {1}".format(lat, lng))
                 print(restaurant_data)
                 continue
@@ -165,6 +169,10 @@ This method generates coordinates evenly distributed across a desired focus area
 '''
 def segment_region(focus_area, num_queries):
 
+    ####
+    #### FIXME: take in desired radius and ensure we're querying whole region
+    ####
+
     format_input = urllib.parse.quote(focus_area)
 
     URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input={0}&inputtype=textquery&fields=geometry&key={1}".format(
@@ -180,62 +188,18 @@ def segment_region(focus_area, num_queries):
     axis_queries = math.sqrt(num_queries)
     x_increment = (x_max-x_min)/axis_queries
     y_increment = (y_max-y_min)/axis_queries
-    ll_radius = math.sqrt(x_increment**2+y_increment**2) / 2
 
     locations = set()
     for i in range(int(axis_queries)):
         for j in range(int(axis_queries)):
             locations.add((x_min + i*x_increment, y_min + j*y_increment))
 
-    return locations, ll_radius
-
-
-'''
-#Old/inactive 
-
-def google_text_search(query, query_type=None, pagetoken=None):
-
-    # build our query
-    query_url = "query={}".format(query.replace(" ", "+"))
-    key_url = "key={}".format(GOOG_KEY)
-    parameters = [query_url, key_url]
-
-    # no need to add type if not necessary
-    if query_type:
-        type_url = "type={}".format(query_type)
-        parameters.append(type_url)
-
-    # no need to add pagination support if not necessary
-    if pagetoken:
-        pagetoken_url = "pagetoken={}".format(pagetoken)
-        parameters.append(pagetoken_url)
-
-    # build URL
-    url = "https://maps.googleapis.com/maps/api/place/textsearch/json?"
-    for param in parameters:
-        url = url + param + "&"
-    url = url[:-1]  # Remove the last "&" character from the string
-
-    data = requests.get(url=url).json()
-    results = data["results"]
-
-    # Try to import any ensuing pages recursively
-    try:
-        next_page_data = google_text_search(query, query_type, data["next_page_token"])
-        while not next_page_data: # there is a short delay when accessing next page results
-            next_page_data = google_text_search(query, query_type, data["next_page_token"])
-        results = results + next_page_data
-    except KeyError:
-        pass
-
-    return results
-'''
+    return locations
 
 if __name__ == "__main__":
     ####
-    #### TODO: fix los angeles dataset to have correct retail locations (latitude, longitude)
-    #### TODO: timestamps on print statements.
-    ####
+    #### FIXME: fix los angeles dataset to have correct retail locations (latitude, longitude)
+    #### TODO: add log file with timestamps on print statements.
     ####
     focus_area = "Los Angeles, California"
     length = 2000

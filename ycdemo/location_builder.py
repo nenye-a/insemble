@@ -195,7 +195,7 @@ def generate_retailer_profile(name, location):
 
         ####
         #### TODO: make location param optional (for places with locations spanning multiple states)
-        #### TODO: check if all loctions pulled are indeed that retailer
+        #### TODO: check if all locations pulled are indeed that retailer
         ####
         input = name+" "+location
 
@@ -206,9 +206,12 @@ def generate_retailer_profile(name, location):
 
         # add all retailer locations from search return to set
         locations = set()
+        ####
+        #### FIXME: adjust repetitive calls to the same blocks of code. merge to one function
+        ####
         for result in data['results']:
             try:
-                lat, lng = result['geometry']['location']['lat'], result['geometry']['location']['lat']
+                lat, lng = result['geometry']['location']['lat'], result['geometry']['location']['lng']
                 locations.add((lat, lng))
             except Exception:
                 print("Error getting retail locations from name {0} and location {1}. Not adding.".format(name, location))
