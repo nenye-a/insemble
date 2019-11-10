@@ -13,6 +13,7 @@ baseConfig[1].entry = [
   'webpack/hot/only-dev-server',
   'whatwg-fetch',
   '@babel/polyfill',
+  './frontend/src/index',
   './frontend/js/index',
 ];
 
