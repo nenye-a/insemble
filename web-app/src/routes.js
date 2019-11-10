@@ -6,7 +6,8 @@ import { DefaultLayout, HeaderNavigation, IconSidebar } from "./layouts";
 
 // Route Views
 import Analytics from "./views/Analytics";
-import OnlineStore from "./views/OnlineStore";
+import Insights from "./views/Insights";
+import Spaces from "./views/Spaces";
 import BlogOverview from "./views/BlogOverview";
 import UserProfile from "./views/UserProfile";
 import UserProfileLite from "./views/UserProfileLite";
@@ -38,7 +39,12 @@ export default [
     path: "/",
     exact: true,
     layout: DefaultLayout,
-    component: () => <Redirect to="/ecommerce" />
+    component: () => <Redirect to="/spaces" />
+  },
+  {
+    path: "/insights",
+    layout: DefaultLayout,
+    component: Insights
   },
   {
     path: "/analytics",
@@ -46,9 +52,9 @@ export default [
     component: Analytics
   },
   {
-    path: "/ecommerce",
+    path: "/spaces",
     layout: DefaultLayout,
-    component: OnlineStore
+    component: Spaces
   },
   {
     path: "/blog-overview",

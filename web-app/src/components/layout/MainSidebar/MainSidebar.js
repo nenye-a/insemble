@@ -65,10 +65,10 @@ class MainSidebar extends React.Component {
         {/* Page Header :: Actions */}
         <Col sm="12" className="my-8 col d-flex align-items-center">
           <ButtonGroup size="sm" className="my-3 d-inline-flex mb-3 mb-sm-0 mx-auto">
-            <Button theme="white" tag={NavLink} to="/analytics">
+            <Button theme="white" tag={NavLink} to="/insights">
               Insights
             </Button>
-            <Button theme="white" tag={NavLink} to="/ecommerce">
+            <Button theme="white" tag={NavLink} to="/spaces">
               Spaces
             </Button>
           </ButtonGroup>
