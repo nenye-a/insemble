@@ -19,3 +19,4 @@ sklearn
 dnspython
 pymongo
 xgboost
+djongo
