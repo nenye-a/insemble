@@ -1,7 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { Col } from "shards-react";
+import { Container, Row, Col, ButtonGroup, Button } from "shards-react";
+import { NavLink } from "react-router-dom";
+
 
 import SidebarMainNavbar from "./SidebarMainNavbar";
 import SidebarSearch from "./SidebarSearch";
@@ -54,6 +56,21 @@ class MainSidebar extends React.Component {
       >
         <SidebarMainNavbar hideLogoText={this.props.hideLogoText} />
         <SidebarSearch />
+
+        {/* Page Header :: Actions */}
+        <Row className="p-8">
+          <Col sm="12" className="p-8 col d-flex align-items-center">
+            <ButtonGroup size="sm" className="d-inline-flex mb-3 mb-sm-0 mx-auto">
+              <Button theme="white" tag={NavLink} to="/analytics">
+                Insights
+              </Button>
+              <Button theme="white" tag={NavLink} to="/ecommerce">
+                Spaces
+              </Button>
+            </ButtonGroup>
+          </Col>
+        </Row>
+
         <SidebarNavItems />
       </Col>
     );
