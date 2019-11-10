@@ -57,7 +57,6 @@ def build_data_set(length, price=False, ratings=False, existing_ids=None, classi
         data_row.update(location["census"])
         data_row.update({"pop": location["pop"]})
         data_row.update({"income": location["income"]})
-        #data_row.update(location["nearby"])
 
         for nearby in location["nearby"]:
             newName = "nearby_" + nearby
@@ -71,15 +70,25 @@ def build_data_set(length, price=False, ratings=False, existing_ids=None, classi
             data_row.update({"price": p})
         data_row.update(retailer["place_type"])
 
+        # get other important information
+        data_row.update({"age": db_item["age"]})
+
         # get performance information
         data_row.update({"likes": db_item["likes"]})
         data_row.update({"photo_count": db_item["photo_count"]})
+
+
+
         if ratings:
             rate = db_item["ratings"]
             if np.isnan(rate):
                 continue
             if classification:
-                 rate = np.ceil((rate - 4) / 6 * class_number)
+                if rate < 7.8: rate = 0
+                elif rate >= 8.1: rate = 1
+                else: continue
+                #rate = np.floor((rate - 5) / 5 * class_number)
+
             data_row.update({"ratings": rate})
 
         data_set.append(data_row)
@@ -87,9 +96,12 @@ def build_data_set(length, price=False, ratings=False, existing_ids=None, classi
     #  convert to pandas data_frame and remove all the NaNs generated in the creation of the data_frame
     data_set = pd.DataFrame(data_set)
     data_set = data_set.fillna(0)
-
     # clean up the column names for each row
     data_set.rename(columns=lambda x: re.sub('[^0-9a-zA-Z]+', '_', x), inplace=True)
+
+    for x in data_set.columns:
+        if data_set[x].sum() < 3:
+            data_set.drop(x, axis=1, inplace=True)
 
     categorical_columns = []  # currently no categorical columns
 
@@ -126,7 +138,33 @@ def balance_ratings_set(data_set_x, data_set_y):
 
     return keptl.drop("label", axis=1), keptl["label"]
 
-def balance_ratings_set_classification(data_set_x, data_set_y, class_number=3):
+def balance_ratings_set_classification1(data_set_x, data_set_y, class_number=3):
+
+    df = data_set_x.copy()
+    label = data_set_y.copy()
+
+    df["label"] = label
+
+    scale = []
+    min_num = len(df)
+
+    for x in range(class_number):
+        class_rows = df[df["label"] == x]
+        scale.append(class_rows)
+        if len(class_rows) < min_num:
+            min_num = len(class_rows)
+
+    balanced_df = pd.DataFrame()
+    for x in range(class_number):
+        if len(scale[x]) == min_num:
+            balanced_df = balanced_df.append(scale[x].head(min_num))
+        else:
+            balanced_df = balanced_df.append(scale[x].head(min_num))
+
+
+    return balanced_df.drop("label", axis=1), balanced_df["label"]
+
+def balance_ratings_set_classification2(data_set_x, data_set_y, class_number=3):
 
     df = data_set_x.copy()
     label = data_set_y.copy()

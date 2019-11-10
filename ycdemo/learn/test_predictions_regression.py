@@ -41,10 +41,10 @@ def test_predictions():
     scaled_train_rating_y = scaler_rating_y.transform(np.array(train_rating_y).reshape(-1, 1))
 
     # ridge regression
-    reg_rating = linear_model.Ridge(alpha=12)
+    # reg_rating = linear_model.Ridge(alpha=12)
 
     # SVR regression
-    # reg_rating = svm.SVR()
+    reg_rating = svm.SVR(gamma='scale', C= 1.2, )
 
     # XGB regression
     # param = {'max_depth': 4, 'eta': 1, 'objective': 'binary:logistic','lambda': 2, 'verbosity': 2 }
