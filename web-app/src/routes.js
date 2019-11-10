@@ -38,7 +38,7 @@ export default [
     path: "/",
     exact: true,
     layout: DefaultLayout,
-    component: () => <Redirect to="/analytics" />
+    component: () => <Redirect to="/ecommerce" />
   },
   {
     path: "/analytics",
