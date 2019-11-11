@@ -1,4 +1,6 @@
 from .base import *  # noqa
+from pymongo import MongoClient
+import urllib
 
 
 DEBUG = True
@@ -9,9 +11,17 @@ SECRET_KEY = 'secret'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': base_dir_join('db.sqlite3'),
-    }
+        'ENGINE': 'djongo',
+        'NAME': 'mongoconnect',
+        'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote('helicop251') + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
+        'USER': 'nenye',
+        'PASSWORD': 'helicop251',
+    },
+    # boiler plate connection to sqlite3 database
+    # 'backup': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': base_dir_join('db.sqlite3'),
+    # }
 }
 
 STATIC_ROOT = base_dir_join('staticfiles')
