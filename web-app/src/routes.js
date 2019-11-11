@@ -23,6 +23,7 @@ import TransactionHistory from "./views/TransactionHistory";
 import Calendar from "./views/Calendar";
 import AddNewPost from "./views/AddNewPost";
 import Errors from "./views/Errors";
+import NoDeals from "./views/NoDeals";
 import ComponentsOverview from "./views/ComponentsOverview";
 import Tables from "./views/Tables";
 import BlogPosts from "./views/BlogPosts";
@@ -136,6 +137,11 @@ export default [
     path: "/errors",
     layout: BlankIconSidebarLayout,
     component: Errors
+  },
+  {
+    path: "/no-deals",
+    layout: LandlordLayout,
+    component: NoDeals
   },
   {
     path: "/components-overview",

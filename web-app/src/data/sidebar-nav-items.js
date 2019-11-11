@@ -11,15 +11,10 @@ export default function () {
       to: '/find-tenants',
       htmlBefore: '<i class="material-icons">&#xE8D1;</i>',
       htmlAfter: '',
-    }, {
-      title: 'Property Insights',
-      to: '/blog-overview',
-      htmlBefore: '<i class="material-icons">table_chart</i>',
-      htmlAfter: '',
-    }, 
+    },
     {
       title: 'Pending Deals',
-      to: '/blog-overview',
+      to: '/no-deals',
       htmlBefore: '<i class="material-icons">edit</i>',
       htmlAfter: '',
     }],
