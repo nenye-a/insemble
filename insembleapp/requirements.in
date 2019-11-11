@@ -20,3 +20,5 @@ dnspython
 pymongo
 xgboost
 djongo
+mongoengine
+djangorestframework
