@@ -18,6 +18,7 @@ import ForgotPassword from "./views/ForgotPassword";
 import ChangePassword from "./views/ChangePassword";
 import FileManagerList from "./views/FileManagerList";
 import Explore from "./views/Explore";
+import TenantDeepDive from "./views/TenantDeepDive";
 import FindTenants from "./views/FindTenants";
 import TransactionHistory from "./views/TransactionHistory";
 import Calendar from "./views/Calendar";
@@ -112,6 +113,11 @@ export default [
     path: "/explore",
     layout: LandlordLayout,
     component: Explore
+  },
+  {
+    path: "/tenant-deep-dive",
+    layout: HeaderNavigation,
+    component: TenantDeepDive
   },
   {
     path: "/find-tenants",
