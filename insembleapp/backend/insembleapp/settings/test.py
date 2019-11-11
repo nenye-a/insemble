@@ -7,16 +7,25 @@ SECRET_KEY = 'test'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'mongoconnect',
+        'NAME': 'appbackend',
         'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote('helicop251') + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
         'USER': 'nenye',
         'PASSWORD': 'helicop251',
     },
-    # removed connection to sqlite3 in order to use original mongo connection
-    # 'backup': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': base_dir_join('db.sqlite3'),
-    # }
+    'spaceData': {
+        'ENGINE': 'djongo',
+        'NAME': 'spaceData',
+        'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote('helicop251') + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
+        'USER': 'nenye',
+        'PASSWORD': 'helicop251',
+    },
+    'learn': {
+        'ENGINE': 'djongo',
+        'NAME': 'learn',
+        'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote('helicop251') + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
+        'USER': 'nenye',
+        'PASSWORD': 'helicop251',
+    },
 }
 
 STATIC_ROOT = base_dir_join('staticfiles')

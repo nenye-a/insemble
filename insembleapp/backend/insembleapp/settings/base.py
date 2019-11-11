@@ -4,7 +4,8 @@ import os
 
 from decouple import config  # noqa
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))))
 
 
 def base_dir_join(*args):
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     'django_js_reverse',
     'webpack_loader',
     'import_export',
+    'rest_framework',
 
     'common',
     'users',
@@ -52,6 +54,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
 
 ROOT_URLCONF = 'insembleapp.urls'
 

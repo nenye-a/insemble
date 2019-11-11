@@ -4,6 +4,14 @@ from django.views.generic import TemplateView
 
 import django_js_reverse.views
 
+from rest_framework import routers, serializers, viewsets
+from .api import PairedLocationViewSet # RetailerViewSet, LocationViewSet, 
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+# TODO: register location and retailer api once necessary
+router.register(r'pairedlocation', PairedLocationViewSet, basename='paired')
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -15,4 +23,6 @@ urlpatterns = [
     # instantiate the other urls
     url(r'^(?:.*)/?$', TemplateView.as_view(template_name='insembleapp/index.html'), name='home'),
     # url(r'^$', TemplateView.as_view(template_name='exampleapp/itworks.html'), name='home'),
+
+    url(r'^', include(router.urls)),
 ]
