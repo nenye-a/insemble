@@ -27,12 +27,12 @@ const MainNavbar = ({ layout, stickyTop }) => {
                 <img
                   id="main-logo"
                   className="d-inline-block align-top mr-1 ml-3"
-                  style={{ maxWidth: "25px" }}
-                  src={require("../../../images/shards-dashboards-logo.svg")}
-                  alt="Retailer Dashboard"
+                  style={{ maxHeight: "25px" }}
+                  src={require("../../../images/insemble_i.png")}
+                  alt="Owner Dashboard"
                 />
                 <span className="d-none d-md-inline ml-1">
-                  Retailer Dashboard
+                  Owner Dashboard
                 </span>
               </div>
             </NavbarBrand>

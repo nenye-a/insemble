@@ -2,7 +2,7 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 
 // Layout Types
-import { DefaultLayout, HeaderNavigation, IconSidebar, LandlordLayout } from "./layouts";
+import { DefaultLayout, HeaderNavigation, IconSidebar, LandlordLayout, TenantSpaces } from "./layouts";
 
 // Route Views
 import Analytics from "./views/Analytics";
@@ -61,7 +61,7 @@ export default [
   },
   {
     path: "/spaces",
-    layout: DefaultLayout,
+    layout: TenantSpaces,
     component: Spaces
   },
   {
