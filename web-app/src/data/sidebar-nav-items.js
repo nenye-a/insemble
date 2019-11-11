@@ -17,12 +17,8 @@ export default function () {
       htmlBefore: '<i class="material-icons">view_module</i>',
       items: [
         {
-          title: "Overview",
-          to: "/components-overview"
-        },
-        {
-          title: "Blog Posts",
-          to: "/blog-posts"
+          title: "Main",
+          to: "/tenant-deep-dive"
         }
       ]
     },

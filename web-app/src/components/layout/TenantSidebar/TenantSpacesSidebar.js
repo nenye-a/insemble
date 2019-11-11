@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { Container, Row, Col, ButtonGroup, Button, Slider, Collapse, DropdownMenu, DropdownItem, DropdownToggle, Dropdown, NavItem } from "shards-react";
 import { NavLink } from "react-router-dom";
 import EthnicButtons from "./EthnicButtons";
-import UserActions from "./UserActions";
+import MatchActions from "./MatchActions";
 
 
 import RegionSearch from "./RegionSearch";
@@ -15,8 +15,9 @@ import SidebarNavItem from "./SidebarNavItem";
 
 import { Store } from "../../../flux";
 import DropdownInputGroups from "../../components-overview/DropdownInputGroups";
+import CurrentActions from "./CurrentActions";
 
-class LandlordSidebar extends React.Component {
+class TenantSpacesSidebar extends React.Component {
   constructor(props) {
     super(props);
 
@@ -61,21 +62,35 @@ class LandlordSidebar extends React.Component {
       >
         <SidebarMainNavbar hideLogoText={this.props.hideLogoText} />
         <SidebarSearch />
-        <SidebarNavItems />
+
+        {/* Page Header :: Actions */}
+        <Col sm="12" className="my-8 col d-flex align-items-center">
+          <ButtonGroup size="sm" className="my-3 d-inline-flex mb-3 mb-sm-0 mx-auto">
+            <Button theme="white" tag={NavLink} to="/insights">
+              Insights
+            </Button>
+            <Button theme="white" tag={NavLink} to="/spaces">
+              Spaces
+            </Button>
+          </ButtonGroup>
+        </Col>
+        
+        <MatchActions />
+        <CurrentActions />
       </Col>
     );
   }
 }
 
-LandlordSidebar.propTypes = {
+TenantSpacesSidebar.propTypes = {
   /**
    * Whether to hide the logo text, or not.
    */
   hideLogoText: PropTypes.bool
 };
 
-LandlordSidebar.defaultProps = {
+TenantSpacesSidebar.defaultProps = {
   hideLogoText: false
 };
 
-export default LandlordSidebar;
+export default TenantSpacesSidebar;
