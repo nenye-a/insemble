@@ -7,5 +7,5 @@ SECRET_KEY = 'test'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'mongoconnect',
+        'NAME': 'appbackend',
         'HOST': 'DELETED_MONGODB_URL
