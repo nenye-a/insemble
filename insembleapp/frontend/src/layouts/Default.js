@@ -3,13 +3,13 @@ import PropTypes from "prop-types";
 import { Container, Row, Col } from "shards-react";
 
 import MainNavbar from "..DELETED_BASE64_STRING";
-import MainSidebar from "..DELETED_BASE64_STRING";
+import TenantSidebar from "..DELETED_BASE64_STRING";
 import MainFooter from "../components/layout/MainFooter";
 
 const DefaultLayout = ({ children, noNavbar, noFooter }) => (
   <Container fluid>
     <Row>
-      <MainSidebar />
+      <TenantSidebar />
       <Col
         className="main-content p-0"
         lg={{ size: 10, offset: 2 }}
