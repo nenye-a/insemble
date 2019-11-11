@@ -2,11 +2,12 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 
 // Layout Types
-import { DefaultLayout, HeaderNavigation, IconSidebar } from "./layouts";
+import { DefaultLayout, HeaderNavigation, IconSidebar, LandlordLayout } from "./layouts";
 
 // Route Views
 import Analytics from "./views/Analytics";
-import OnlineStore from "./views/OnlineStore";
+import Insights from "./views/Insights";
+import Spaces from "./views/Spaces";
 import BlogOverview from "./views/BlogOverview";
 import UserProfile from "./views/UserProfile";
 import UserProfileLite from "./views/UserProfileLite";
@@ -16,11 +17,13 @@ import Register from "./views/Register";
 import ForgotPassword from "./views/ForgotPassword";
 import ChangePassword from "./views/ChangePassword";
 import FileManagerList from "./views/FileManagerList";
-import FileManagerCards from "./views/FileManagerCards";
+import Explore from "./views/Explore";
+import FindTenants from "./views/FindTenants";
 import TransactionHistory from "./views/TransactionHistory";
 import Calendar from "./views/Calendar";
 import AddNewPost from "./views/AddNewPost";
 import Errors from "./views/Errors";
+import NoDeals from "./views/NoDeals";
 import ComponentsOverview from "./views/ComponentsOverview";
 import Tables from "./views/Tables";
 import BlogPosts from "./views/BlogPosts";
@@ -38,7 +41,17 @@ export default [
     path: "/",
     exact: true,
     layout: DefaultLayout,
-    component: () => <Redirect to="/analytics" />
+    component: () => <Redirect to="/spaces" />
+  },
+  {
+    path: "/insights",
+    layout: DefaultLayout,
+    component: Insights
+  },
+  {
+    path: "/landlord",
+    layout: LandlordLayout,
+    component: Insights
   },
   {
     path: "/analytics",
@@ -46,9 +59,9 @@ export default [
     component: Analytics
   },
   {
-    path: "/ecommerce",
+    path: "/spaces",
     layout: DefaultLayout,
-    component: OnlineStore
+    component: Spaces
   },
   {
     path: "/blog-overview",
@@ -96,9 +109,14 @@ export default [
     component: FileManagerList
   },
   {
-    path: "/file-manager-cards",
-    layout: DefaultLayout,
-    component: FileManagerCards
+    path: "/explore",
+    layout: LandlordLayout,
+    component: Explore
+  },
+  {
+    path: "/find-tenants",
+    layout: LandlordLayout,
+    component: FindTenants
   },
   {
     path: "/transaction-history",
@@ -119,6 +137,11 @@ export default [
     path: "/errors",
     layout: BlankIconSidebarLayout,
     component: Errors
+  },
+  {
+    path: "/no-deals",
+    layout: LandlordLayout,
+    component: NoDeals
   },
   {
     path: "/components-overview",
