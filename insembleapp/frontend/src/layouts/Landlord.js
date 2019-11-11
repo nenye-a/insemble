@@ -6,8 +6,8 @@ import MainNavbar from "..DELETED_BASE64_STRING";
 import LandlordSidebar from "..DELETED_BASE64_STRING";
 import MainFooter from "../components/layout/MainFooter";
 
-const IconSidebarLayout = ({ children, noNavbar, noFooter }) => (
-  <Container fluid className="icon-sidebar-nav">
+const LandlordLayout = ({ children, noNavbar, noFooter }) => (
+  <Container fluid>
     <Row>
       <LandlordSidebar />
       <Col
@@ -25,7 +25,7 @@ const IconSidebarLayout = ({ children, noNavbar, noFooter }) => (
   </Container>
 );
 
-IconSidebarLayout.propTypes = {
+LandlordLayout.propTypes = {
   /**
    * Whether to display the navbar, or not.
    */
@@ -36,9 +36,9 @@ IconSidebarLayout.propTypes = {
   noFooter: PropTypes.bool
 };
 
-IconSidebarLayout.defaultProps = {
+LandlordLayout.defaultProps = {
   noNavbar: false,
   noFooter: false
 };
 
-export default IconSidebarLayout;
+export default LandlordLayout;
