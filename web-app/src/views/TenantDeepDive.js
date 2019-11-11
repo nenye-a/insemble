@@ -14,11 +14,16 @@ import {
 } from "shards-react";
 
 import Sessions from "../components/explore/Sessions";
+import AtAGlance from "../components/tenant-deep-dive/AtAGlance";
+import SiteComparison from "../components/tenant-deep-dive/SiteComparison";
+import Buildout from "../components/tenant-deep-dive/Buildout";
+import About from "../components/tenant-deep-dive/About";
 import UsersByDevice from "../components/explore/UsersByDevice";
 import PageTitle from "../components/common/PageTitle";
-import { NavLink } from "react-router-dom";
+import MapContainer from "./MapContainer";
+import Iframe from 'react-iframe'
 
-class Explore extends React.Component {
+class TenantDeepDive extends React.Component {
   constructor(props) {
     super(props);
 
@@ -221,118 +226,66 @@ class Explore extends React.Component {
 
     return (
       <Container fluid className="main-content-container px-4">
+        <Iframe url="https://www.google.com/maps/embed/v1/search?key=DELETED_GOOGLE_API_KEY&q=Ritual+Coffee+San+Francisco"
+        width="100%"
+        height="300px"
+        id="myId"
+        className="mx-auto"
+        display="initial"
+        position="relative"/>
+
         {/* Page Header */}
         <Row noGutters className="page-header py-4">
-          <PageTitle sm="4" title="Expanding Retailers" subtitle="Your top" className="text-sm-left" />
-        </Row>
-
-        {/* First Row of Posts */}
-        <Row>
-          {PostsListOne.map((post, idx) => (
-            <Col lg="3" md="6" sm="12" className="mb-4" key={idx}>
-              <Card tag={NavLink} to="/tenant-deep-dive" small className="card-post card-post--1">
-                <div
-                  className="card-post__image"
-                  style={{ backgroundImage: `url(${post.backgroundImage})` }}
-                >
-                  <Badge
-                    pill
-                    className={`card-post__category bg-${post.categoryTheme}`}
-                  >
-                    {post.category}
-                  </Badge>
-                  <div className="card-post__author d-flex">
-                    <a
-                      href="#"
-                      className="card-post__author-avatar card-post__author-avatar--small"
-                      style={{ backgroundImage: `url('${post.authorAvatar}')` }}
-                    >
-                      Written by {post.author}
-                    </a>
-                  </div>
-                </div>
-                <CardBody>
-                  <h5 className="card-title">
-                    <a href="#" className="text-fiord-blue">
-                      {post.title}
-                    </a>
-                  </h5>
-                  <p className="card-text d-inline-block mb-3">{post.body}</p>
-                  <span className="text-muted">{post.date}</span>
-                </CardBody>
-                <CardFooter className="border-top d-flex">
-                  <div className="my-auto ml-auto">
-                    <Button size="sm" theme="white">
-                      <i className="far fa-bookmark mx-1" /> Connect
-                    </Button>
-                  </div>
-                </CardFooter>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-
-        <Row noGutters className="page-header py-4">
-          <PageTitle sm="4" title="Your Location" subtitle="Area Statistics" className="text-sm-left" />
+          <div className="user-details__avatar" position="absolute" top="30">
+            <img src={require("../images/avatars/0.jpg")} alt={"Coffe Shop"} />
+          </div>
+          <PageTitle title="Ritual Coffee" subtitle="Coffee, Local" className="ml-4 mt-3" />
         </Row>
 
         {/* Second Row of Posts */}
         <Row>
-          {/* Sessions */}
-          <Col lg="8" md="12" sm="12" className="mb-4">
-            <Sessions />
+          {/* At A Glance */}
+          <Col lg="7" md="12" sm="12" className="mb-4">
+            <AtAGlance />
           </Col>
 
-          {/* Users by Device */}
-          <Col lg="4" md="6" sm="6" className="mb-4">
-            <UsersByDevice />
+          {/* About */}
+          <Col lg="5" md="6" sm="6" className="mb-4">
+            <About />
           </Col>
         </Row>
 
-        <Row noGutters className="page-header py-4">
-          <PageTitle sm="4" title="Your Top Categories" className="text-sm-left" />
+        <Row noGutters className="page-header py-2">
+          <PageTitle sm="4" title="Site Comparison" className="text-sm-left" />
         </Row>
 
+        {/* Site Comparison */}
         <Row>
-          {PostsListTwo.map((post, idx) => (
-            <Col lg="6" sm="12" className="mb-4" key={idx}>
-              <Card small className="card-post card-post--aside card-post--1">
-                <div
-                  className="card-post__image"
-                  style={{ backgroundImage: `url('${post.backgroundImage}')` }}
-                >
-                  <Badge
-                    pill
-                    className={`card-post__category bg-${post.categoryTheme}`}
-                  >
-                    {post.category}
-                  </Badge>
-                  <div className="card-post__author d-flex">
-                    <a
-                      href="#"
-                      className="card-post__author-avatar card-post__author-avatar--small"
-                      style={{ backgroundImage: `url('${post.authorAvatar}')` }}
-                    >
-                      Written by Anna Ken
-                    </a>
-                  </div>
-                </div>
-                <CardBody>
-                  <h5 className="card-title">
-                    <a className="text-fiord-blue" href="#">
-                      {post.title}
-                    </a>
-                  </h5>
-                  <p className="card-text d-inline-block mb-3">{post.body}</p>
-                  <span className="text-muted">{post.date}</span>
-                </CardBody>
-              </Card>
-            </Col>
-          ))}
+          {/* Site Comparison */}
+          <Col lg="6" md="6" sm="6" className="mb-4">
+            <SiteComparison />
+          </Col>
+
+          {/* Site Comparison */}
+          <Col lg="6" md="6" sm="6" className="mb-4">
+            <SiteComparison />
+          </Col>
         </Row>
 
         <Row noGutters className="page-header py-4">
-          <PageTitle sm="4" title="Your Customer Journey" className="text-sm-left" />
+          <PageTitle sm="4" title="Buildout" className="text-sm-left" />
+        </Row>
+
+        {/* Buildout */}
+        <Row>
+          {/* Site Comparison */}
+          <Col className="mb-4">
+            <Buildout />
+          </Col>
+        </Row>
+
+        <Row noGutters className="page-header py-4">
+          <PageTitle sm="4" title="Customer Journey" className="text-sm-left" />
         </Row>
 
         {/* Fourth Row of posts */}
@@ -438,4 +391,4 @@ class Explore extends React.Component {
   }
 }
 
-export default Explore;
+export default TenantDeepDive;
