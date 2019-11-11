@@ -3,13 +3,13 @@ import PropTypes from "prop-types";
 import { Container, Row, Col } from "shards-react";
 
 import MainNavbar from "../components/layout/MainNavbar/MainNavbar";
-import TenantSidebar from "../components/layout/TenantSidebar/TenantSidebar";
+import LandlordSidebar from "../components/layout/LandlordSidebar/LandlordSidebar";
 import MainFooter from "../components/layout/MainFooter";
 
-const DefaultLayout = ({ children, noNavbar, noFooter }) => (
+const LandlordLayout = ({ children, noNavbar, noFooter }) => (
   <Container fluid>
     <Row>
-      <TenantSidebar />
+      <LandlordSidebar />
       <Col
         className="main-content p-0"
         lg={{ size: 10, offset: 2 }}
@@ -25,7 +25,7 @@ const DefaultLayout = ({ children, noNavbar, noFooter }) => (
   </Container>
 );
 
-DefaultLayout.propTypes = {
+LandlordLayout.propTypes = {
   /**
    * Whether to display the navbar, or not.
    */
@@ -36,9 +36,9 @@ DefaultLayout.propTypes = {
   noFooter: PropTypes.bool
 };
 
-DefaultLayout.defaultProps = {
+LandlordLayout.defaultProps = {
   noNavbar: false,
   noFooter: false
 };
 
-export default DefaultLayout;
+export default LandlordLayout;

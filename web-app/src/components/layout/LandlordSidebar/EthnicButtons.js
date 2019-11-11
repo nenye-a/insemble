@@ -2,10 +2,10 @@ import React from "react";
 import { Row, Col, Button } from "shards-react";
 
 const EthnicButtons = () => (
-  <Row className="mb-3 mt-2">
+  <Row className="mt-2 mx-auto">
     <Col>
       <Button outline size="sm" theme="royal-blue" className="mb-2 mr-1">
-        Asian
+        BOOOO
       </Button>
       <Button outline size="sm" theme="royal-blue" className="mb-2 mr-1">
         Black
