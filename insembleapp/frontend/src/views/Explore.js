@@ -16,6 +16,7 @@ import {
 import Sessions from "../components/explore/Sessions";
 import UsersByDevice from "../components/explore/UsersByDevice";
 import PageTitle from "../components/common/PageTitle";
+import { NavLink } from "react-router-dom";
 
 class Explore extends React.Component {
   constructor(props) {
@@ -215,23 +216,21 @@ class Explore extends React.Component {
   render() {
     const {
       PostsListOne,
-      PostsListTwo,
-      PostsListThree,
-      PostsListFour
+      PostsListTwo
     } = this.state;
 
     return (
       <Container fluid className="main-content-container px-4">
         {/* Page Header */}
         <Row noGutters className="page-header py-4">
-          <PageTitle sm="4" title="For You" subtitle="Great Expanding Businesses" className="text-sm-left" />
+          <PageTitle sm="4" title="Expanding Retailers" subtitle="Your top" className="text-sm-left" />
         </Row>
 
         {/* First Row of Posts */}
         <Row>
           {PostsListOne.map((post, idx) => (
             <Col lg="3" md="6" sm="12" className="mb-4" key={idx}>
-              <Card small className="card-post card-post--1">
+              <Card tag={NavLink} to="/tenant-deep-dive" small className="card-post card-post--1">
                 <div
                   className="card-post__image"
                   style={{ backgroundImage: `url(${post.backgroundImage})` }}
