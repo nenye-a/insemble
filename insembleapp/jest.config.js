@@ -8,9 +8,7 @@ module.exports = {
   moduleNameMapper: {
     '^.+\\.(css|scss)$': 'identity-obj-proxy',
   },
-  transformIgnorePatterns: [
-    'node_modules/*',
-  ],
+  transformIgnorePatterns: ['node_modules/*'],
   modulePaths: [
     // 'frontend',
     // 'frontend/js', // may not be useful. TODO: Remove front/js tags
@@ -18,12 +16,8 @@ module.exports = {
     'frontend/src',
     'frontend/src/app',
   ],
-  snapshotSerializers: [
-    'enzyme-to-json/serializer',
-  ],
-  setupFiles: [
-    './jest-setup.js',
-  ],
+  snapshotSerializers: ['enzyme-to-json/serializer'],
+  setupFiles: ['./jest-setup.js'],
   collectCoverageFrom: [
     // 'frontend/js/**/*.{js,jsx}', // may not be useful anymore
     'frontend/src/**/*.{js,jsx}',
