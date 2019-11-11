@@ -13,3 +13,10 @@ whitenoise
 psutil
 ipython
 sentry-sdk
+tensorflow
+pandas
+sklearn
+dnspython
+pymongo
+xgboost
+djongo
