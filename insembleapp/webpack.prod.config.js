@@ -10,7 +10,8 @@ baseConfig[0].mode = 'production';
 baseConfig[1].mode = 'production';
 baseConfig[1].devtool = 'source-map';
 
-baseConfig[1].entry = ['whatwg-fetch', '@babel/polyfill', './frontend/js/index.js'];
+// baseConfig[1].entry = ['whatwg-fetch', '@babel/polyfill', './frontend/js/index.js'];
+baseConfig[1].entry = ['whatwg-fetch', '@babel/polyfill', './frontend/src/index.js'];
 
 baseConfig[1].output = {
   path: path.resolve('./frontend/webpack_bundles/'),

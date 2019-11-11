@@ -13,7 +13,7 @@ baseConfig[1].entry = [
   'webpack/hot/only-dev-server',
   'whatwg-fetch',
   '@babel/polyfill',
-  './frontend/js/index',
+  './frontend/src/index',
 ];
 
 baseConfig[0].output['publicPath'] = 'http://localhost:3000/frontend/bundles/';
