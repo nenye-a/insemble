@@ -215,9 +215,7 @@ class Explore extends React.Component {
   render() {
     const {
       PostsListOne,
-      PostsListTwo,
-      PostsListThree,
-      PostsListFour
+      PostsListTwo
     } = this.state;
 
     return (
