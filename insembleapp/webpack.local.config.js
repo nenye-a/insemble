@@ -14,7 +14,6 @@ baseConfig[1].entry = [
   'whatwg-fetch',
   '@babel/polyfill',
   './frontend/src/index',
-  './frontend/js/index',
 ];
 
 baseConfig[0].output['publicPath'] = 'http://localhost:3000/frontend/bundles/';
