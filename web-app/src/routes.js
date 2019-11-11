@@ -2,7 +2,7 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 
 // Layout Types
-import { DefaultLayout, HeaderNavigation, IconSidebar } from "./layouts";
+import { DefaultLayout, HeaderNavigation, IconSidebar, LandlordLayout } from "./layouts";
 
 // Route Views
 import Analytics from "./views/Analytics";
@@ -17,7 +17,8 @@ import Register from "./views/Register";
 import ForgotPassword from "./views/ForgotPassword";
 import ChangePassword from "./views/ChangePassword";
 import FileManagerList from "./views/FileManagerList";
-import FileManagerCards from "./views/FileManagerCards";
+import Explore from "./views/Explore";
+import FindTenants from "./views/FindTenants";
 import TransactionHistory from "./views/TransactionHistory";
 import Calendar from "./views/Calendar";
 import AddNewPost from "./views/AddNewPost";
@@ -44,6 +45,11 @@ export default [
   {
     path: "/insights",
     layout: DefaultLayout,
+    component: Insights
+  },
+  {
+    path: "/landlord",
+    layout: LandlordLayout,
     component: Insights
   },
   {
@@ -102,9 +108,14 @@ export default [
     component: FileManagerList
   },
   {
-    path: "/file-manager-cards",
-    layout: DefaultLayout,
-    component: FileManagerCards
+    path: "/explore",
+    layout: LandlordLayout,
+    component: Explore
+  },
+  {
+    path: "/find-tenants",
+    layout: LandlordLayout,
+    component: FindTenants
   },
   {
     path: "/transaction-history",

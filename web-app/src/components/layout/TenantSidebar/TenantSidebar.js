@@ -16,7 +16,7 @@ import SidebarNavItem from "./SidebarNavItem";
 import { Store } from "../../../flux";
 import DropdownInputGroups from "../../components-overview/DropdownInputGroups";
 
-class MainSidebar extends React.Component {
+class TenantSidebar extends React.Component {
   constructor(props) {
     super(props);
 
@@ -109,15 +109,15 @@ class MainSidebar extends React.Component {
   }
 }
 
-MainSidebar.propTypes = {
+TenantSidebar.propTypes = {
   /**
    * Whether to hide the logo text, or not.
    */
   hideLogoText: PropTypes.bool
 };
 
-MainSidebar.defaultProps = {
+TenantSidebar.defaultProps = {
   hideLogoText: false
 };
 
-export default MainSidebar;
+export default TenantSidebar;
