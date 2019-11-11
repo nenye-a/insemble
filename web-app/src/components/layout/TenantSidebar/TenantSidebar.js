@@ -1,18 +1,22 @@
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { Container, Row, Col, ButtonGroup, Button, Slider } from "shards-react";
+import { Container, Row, Col, ButtonGroup, Button, Slider, Collapse, DropdownMenu, DropdownItem, DropdownToggle, Dropdown, NavItem } from "shards-react";
 import { NavLink } from "react-router-dom";
 import EthnicButtons from "./EthnicButtons";
+import UserActions from "./UserActions";
 
 
+import RegionSearch from "./RegionSearch";
 import SidebarMainNavbar from "./SidebarMainNavbar";
 import SidebarSearch from "./SidebarSearch";
 import SidebarNavItems from "./SidebarNavItems";
+import SidebarNavItem from "./SidebarNavItem";
 
 import { Store } from "../../../flux";
+import DropdownInputGroups from "../../components-overview/DropdownInputGroups";
 
-class MainSidebar extends React.Component {
+class TenantSidebar extends React.Component {
   constructor(props) {
     super(props);
 
@@ -61,22 +65,33 @@ class MainSidebar extends React.Component {
         {/* Page Header :: Actions */}
         <Col sm="12" className="my-8 col d-flex align-items-center">
           <ButtonGroup size="sm" className="my-3 d-inline-flex mb-3 mb-sm-0 mx-auto">
-            <Button theme="white" tag={NavLink} to="/analytics">
+            <Button theme="white" tag={NavLink} to="/insights">
               Insights
             </Button>
-            <Button theme="white" tag={NavLink} to="/ecommerce">
+            <Button theme="white" tag={NavLink} to="/spaces">
               Spaces
             </Button>
           </ButtonGroup>
         </Col>
-        <h6 className="mt-2 main-sidebar__nav-title">{"Category"}</h6>
+        <Slider
+          theme="royal-blue"
+          className="my-4 col mx-2"
+          connect
+          start={[10000, 80000]}
+          range={{ min: 0, max: 300000 }}
+        />
+        <UserActions />
         <h6 className="main-sidebar__nav-title">{"Demographic"}</h6>
         <EthnicButtons />
         <h6 className="main-sidebar__nav-title">{"Region"}</h6>
+        <Button setState={true} outline size="sm" theme="royal-blue" className="my-2 ml-3">
+        Los Angeles
+        </Button>
+        <RegionSearch />
         <h6 className="main-sidebar__nav-title">{"Income"}</h6>
         <Slider
           theme="royal-blue"
-          className="my-4"
+          className="my-4 col mx-2"
           connect
           start={[10000, 80000]}
           range={{ min: 0, max: 300000 }}
@@ -84,28 +99,25 @@ class MainSidebar extends React.Component {
         <h6 className="main-sidebar__nav-title">{"Population"}</h6>
         <Slider
           theme="royal-blue"
-          className="my-4"
+          className="my-4 col mx-2"
           connect
-          start={[15, 50]}
-          range={{ min: 0, max: 100 }}
-          tooltips
+          start={[5000, 10000]}
+          range={{ min: 0, max: 15000 }}
         />
-
-        <SidebarNavItems />
       </Col>
     );
   }
 }
 
-MainSidebar.propTypes = {
+TenantSidebar.propTypes = {
   /**
    * Whether to hide the logo text, or not.
    */
   hideLogoText: PropTypes.bool
 };
 
-MainSidebar.defaultProps = {
+TenantSidebar.defaultProps = {
   hideLogoText: false
 };
 
-export default MainSidebar;
+export default TenantSidebar;
