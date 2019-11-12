@@ -14,7 +14,7 @@ import {
 import colors from "../../utils/colors";
 import Chart from "../../utils/chart";
 
-class SiteComparison extends React.Component {
+class RetailerSite extends React.Component {
   constructor(props) {
     super(props);
 
@@ -56,49 +56,49 @@ class SiteComparison extends React.Component {
         <CardBody className="d-flex flex-column">
           <Container>
             <Row>
-              <Col>Demographics
-              </Col>
               <Col>
-                {/* Chart */}
-              <canvas
-                width="100"
-                ref={this.canvasRef}
-                className="analytics-users-by-device mt-3 mb-4"
-              />
+                  {/* Chart */}
+                <canvas
+                  width="100"
+                  ref={this.canvasRef}
+                  className="analytics-users-by-device mt-3 mb-4"
+                />
 
-              {/* Legend */}
-              <div className="ubd-stats__legend w-75 m-auto pb-4">
-                {labels.map((label, idx) => (
-                  <div key={idx} className="ubd-stats__item">
-                    {label.icon && (
-                      <div
-                        dangerouslySetInnerHTML={{ __html: label.icon }}
-                        style={{ color: label.iconColor }}
-                      />
-                    )}
-                    <span className="ubd-stats__category">{label.title}</span>
-                    <span className="ubd-stats__value">{label.value}%</span>
-                  </div>
-                ))}
-              </div>
+                {/* Legend */}
+                <div className="ubd-stats__legend w-75 m-auto pb-4">
+                  {labels.map((label, idx) => (
+                    <div key={idx} className="ubd-stats__item">
+                      {label.icon && (
+                        <div
+                          dangerouslySetInnerHTML={{ __html: label.icon }}
+                          style={{ color: label.iconColor }}
+                        />
+                      )}
+                      <span className="ubd-stats__category">{label.title}</span>
+                      <span className="ubd-stats__value">{label.value}%</span>
+                    </div>
+                  ))}
+                </div>
+              </Col>
+              <Col>Demographics
               </Col>
             </Row>
             <Row >
-              <Col>Income
-              </Col>
               <Col>$125,230 per year
               </Col>
+              <Col>Income
+              </Col>
             </Row>
             <Row>
-              <Col>Street Traffic
-              </Col>
               <Col>68,879 as of 11/6
               </Col>
+              <Col>Street Traffic
+              </Col>
             </Row>
             <Row>
-              <Col>Ecosystem
-              </Col>
               <Col>Excersise, Japanese Restaurant, Technology Office
+              </Col>
+              <Col>Ecosystem
               </Col>
             </Row>
 
@@ -153,7 +153,7 @@ class SiteComparison extends React.Component {
   }
 }
 
-SiteComparison.propTypes = {
+RetailerSite.propTypes = {
   /**
    * The card's title.
    */
@@ -172,8 +172,8 @@ SiteComparison.propTypes = {
   chartConfig: PropTypes.object
 };
 
-SiteComparison.defaultProps = {
-  title: "Site Comparison",
+RetailerSite.defaultProps = {
+  title: "Retailer Site",
   chartConfig: Object.create(null),
   chartOptions: Object.create(null),
   chartData: {
@@ -195,4 +195,4 @@ SiteComparison.defaultProps = {
   }
 };
 
-export default SiteComparison;
+export default RetailerSite;
