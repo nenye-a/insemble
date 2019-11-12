@@ -21,7 +21,6 @@ class Explore extends React.Component {
     super(props);
 
     this.state = {
-      LocationsList: [],
       // First list of posts.
       PostsListOne: [
         {
@@ -191,20 +190,8 @@ class Explore extends React.Component {
     };
   }
 
-  componentDidMount() {
-    fetch('/api/pair')
-    .then(res => res.json())
-    .then((data) => {
-      this.setState({ LocationsList: data })
-    })
-    .catch(console.log)
-  }
-
   render() {
-    const {
-      PostsListOne,
-      LocationsList
-    } = this.state;
+    const {PostsListOne} = this.state;
 
     return (
       <Container fluid className="main-content-container px-4">
@@ -213,33 +200,39 @@ class Explore extends React.Component {
           <PageTitle sm="4" title="Matches" subtitle="Your top" className="text-sm-left" />
         </Row>
 
-
         {/* First Row of Posts */}
         <Row>
-          {LocationsList.map((retailer, idx) => (
+          {PostsListOne.map((post, idx) => (
             <Col lg="3" md="6" sm="12" className="mb-4" key={idx}>
               <Card tag={NavLink} to="/tenant-deep-dive" small className="card-post card-post--1">
                 <div
                   className="card-post__image"
-                  style={{ backgroundImage: `url(${retailer.photo_prefix}500x500${retailer.photo_suffix})` }} //replace this
+                  style={{ backgroundImage: `url(${post.backgroundImage})` }}
                 >
                   <Badge
                     pill
-                    className={`card-post__category bg-${"royal-blue"}`} // warn
+                    className={`card-post__category bg-${post.categoryTheme}`}
                   >
-                    {"Insemble"}
+                    {post.category}
                   </Badge>
+                  <div className="card-post__author d-flex">
+                    <a
+                      href="#"
+                      className="card-post__author-avatar card-post__author-avatar--small"
+                      style={{ backgroundImage: `url('${post.authorAvatar}')` }}
+                    >
+                      Written by {post.author}
+                    </a>
+                  </div>
                 </div>
                 <CardBody>
                   <h5 className="card-title">
                     <a href="#" className="text-fiord-blue">
-                      {retailer.name}
+                      {post.title}
                     </a>
                   </h5>
-                  
-                  <p className="card-text d-inline-block mb-3">{retailer.census.asian}</p>
-                  <span className="text-muted">{retailer.income}</span>
-                  
+                  <p className="card-text d-inline-block mb-3">{post.body}</p>
+                  <span className="text-muted">{post.date}</span>
                 </CardBody>
                 <CardFooter className="border-top d-flex">
                   <div className="my-auto ml-auto">
