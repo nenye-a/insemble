@@ -16,7 +16,7 @@ import RangeDatePicker from "../common/RangeDatePicker";
 import colors from "../../utils/colors";
 import Chart from "../../utils/chart";
 
-class Sessions extends React.Component {
+class Details extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -80,7 +80,7 @@ class Sessions extends React.Component {
   }
 }
 
-Sessions.propTypes = {
+Details.propTypes = {
   /**
    * The component's title.
    */
@@ -95,8 +95,8 @@ Sessions.propTypes = {
   chartOptions: PropTypes.object
 };
 
-Sessions.defaultProps = {
-  title: "Sessions",
+Details.defaultProps = {
+  title: "Details",
   chartData: {
     labels: [
       "09:00 PM",
@@ -159,4 +159,4 @@ Sessions.defaultProps = {
   }
 };
 
-export default Sessions;
+export default Details;

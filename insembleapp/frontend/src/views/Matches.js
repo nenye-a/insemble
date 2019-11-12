@@ -13,9 +13,8 @@ import {
   Button
 } from "shards-react";
 
-import Sessions from "../components/explore/Sessions";
-import UsersByDevice from "../components/explore/UsersByDevice";
 import PageTitle from "../components/common/PageTitle";
+import { NavLink } from "react-router-dom";
 
 class Explore extends React.Component {
   constructor(props) {
@@ -26,8 +25,8 @@ class Explore extends React.Component {
       PostsListOne: [
         {
           backgroundImage: require("../images/content-management/1.jpeg"),
-          category: "Business",
-          categoryTheme: "dark",
+          category: "Insemble",
+          categoryTheme: "royal-blue",
           author: "Anna Kunis",
           authorAvatar: require("../images/avatars/1.jpg"),
           title: "Ritual Coffee",
@@ -35,8 +34,8 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/2.jpeg"),
-          category: "Travel",
-          categoryTheme: "info",
+          category: "Insemble",
+          categoryTheme: "royal-blue",
           author: "James Jamerson",
           authorAvatar: require("../images/avatars/2.jpg"),
           title: "Coffee Cultures",
@@ -44,7 +43,7 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/3.jpeg"),
-          category: "Technology",
+          category: "Insemble",
           categoryTheme: "royal-blue",
           author: "Peet's Coffee",
           authorAvatar: require("../images/avatars/2.jpg"),
@@ -53,8 +52,8 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/4.jpeg"),
-          category: "Business",
-          categoryTheme: "warning",
+          category: "Insemble",
+          categoryTheme: "royal-blue",
           author: "Patties Express",
           authorAvatar: require("../images/avatars/3.jpg"),
           title: "Patties Express",
@@ -62,8 +61,8 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/1.jpeg"),
-          category: "Business",
-          categoryTheme: "dark",
+          category: "Insemble",
+          categoryTheme: "royal-blue",
           author: "Anna Kunis",
           authorAvatar: require("../images/avatars/1.jpg"),
           title: "Corepower Yoga",
@@ -71,8 +70,8 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/2.jpeg"),
-          category: "Travel",
-          categoryTheme: "info",
+          category: "Regional",
+          categoryTheme: "dark",
           author: "James Jamerson",
           authorAvatar: require("../images/avatars/2.jpg"),
           title: "Leo's Tacos",
@@ -80,7 +79,7 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/1.jpeg"),
-          category: "Business",
+          category: "Regional",
           categoryTheme: "dark",
           author: "Anna Kunis",
           authorAvatar: require("../images/avatars/1.jpg"),
@@ -89,8 +88,8 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/2.jpeg"),
-          category: "Travel",
-          categoryTheme: "info",
+          category: "Regional",
+          categoryTheme: "dark",
           author: "James Jamerson",
           authorAvatar: require("../images/avatars/2.jpg"),
           title: "Coffee Cultures",
@@ -98,8 +97,8 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/3.jpeg"),
-          category: "Technology",
-          categoryTheme: "royal-blue",
+          category: "Regional",
+          categoryTheme: "dark",
           author: "Peet's Coffee",
           authorAvatar: require("../images/avatars/2.jpg"),
           title: "Peet's Coffee",
@@ -107,8 +106,8 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/4.jpeg"),
-          category: "Business",
-          categoryTheme: "warning",
+          category: "Regional",
+          categoryTheme: "dark",
           author: "Patties Express",
           authorAvatar: require("../images/avatars/3.jpg"),
           title: "Patties Express",
@@ -116,7 +115,7 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/1.jpeg"),
-          category: "Business",
+          category: "Regional",
           categoryTheme: "dark",
           author: "Anna Kunis",
           authorAvatar: require("../images/avatars/1.jpg"),
@@ -125,8 +124,8 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/2.jpeg"),
-          category: "Travel",
-          categoryTheme: "info",
+          category: "Regional",
+          categoryTheme: "dark",
           author: "James Jamerson",
           authorAvatar: require("../images/avatars/2.jpg"),
           title: "Leo's Tacos",
@@ -134,7 +133,7 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/1.jpeg"),
-          category: "Business",
+          category: "Regional",
           categoryTheme: "dark",
           author: "Anna Kunis",
           authorAvatar: require("../images/avatars/1.jpg"),
@@ -143,8 +142,8 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/2.jpeg"),
-          category: "Travel",
-          categoryTheme: "info",
+          category: "Regional",
+          categoryTheme: "dark",
           author: "James Jamerson",
           authorAvatar: require("../images/avatars/2.jpg"),
           title: "Coffee Cultures",
@@ -152,8 +151,8 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/3.jpeg"),
-          category: "Technology",
-          categoryTheme: "royal-blue",
+          category: "Regional",
+          categoryTheme: "dark",
           author: "Peet's Coffee",
           authorAvatar: require("../images/avatars/2.jpg"),
           title: "Peet's Coffee",
@@ -161,8 +160,8 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/4.jpeg"),
-          category: "Business",
-          categoryTheme: "warning",
+          category: "Regional",
+          categoryTheme: "dark",
           author: "Patties Express",
           authorAvatar: require("../images/avatars/3.jpg"),
           title: "Patties Express",
@@ -170,7 +169,7 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/1.jpeg"),
-          category: "Business",
+          category: "Regional",
           categoryTheme: "dark",
           author: "Anna Kunis",
           authorAvatar: require("../images/avatars/1.jpg"),
@@ -179,8 +178,8 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/2.jpeg"),
-          category: "Travel",
-          categoryTheme: "info",
+          category: "Regional",
+          categoryTheme: "dark",
           author: "James Jamerson",
           authorAvatar: require("../images/avatars/2.jpg"),
           title: "Leo's Tacos",
@@ -198,14 +197,14 @@ class Explore extends React.Component {
       <Container fluid className="main-content-container px-4">
         {/* Page Header */}
         <Row noGutters className="page-header py-4">
-          <PageTitle sm="4" title="For You" subtitle="Great Expanding Businesses" className="text-sm-left" />
+          <PageTitle sm="4" title="Matches" subtitle="Your top" className="text-sm-left" />
         </Row>
 
         {/* First Row of Posts */}
         <Row>
           {PostsListOne.map((post, idx) => (
             <Col lg="3" md="6" sm="12" className="mb-4" key={idx}>
-              <Card small className="card-post card-post--1">
+              <Card tag={NavLink} to="/tenant-deep-dive" small className="card-post card-post--1">
                 <div
                   className="card-post__image"
                   style={{ backgroundImage: `url(${post.backgroundImage})` }}

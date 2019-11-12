@@ -7,8 +7,8 @@ export default function () {
       htmlBefore: '<i class="material-icons">&#xE917;</i>',
       htmlAfter: '',
     }, {
-      title: 'Find Tenants',
-      to: '/find-tenants',
+      title: 'Matches',
+      to: '/matches',
       htmlBefore: '<i class="material-icons">&#xE8D1;</i>',
       htmlAfter: '',
     },
@@ -17,12 +17,8 @@ export default function () {
       htmlBefore: '<i class="material-icons">view_module</i>',
       items: [
         {
-          title: "Overview",
-          to: "/components-overview"
-        },
-        {
-          title: "Blog Posts",
-          to: "/blog-posts"
+          title: "Main",
+          to: "/tenant-deep-dive"
         }
       ]
     },
