@@ -287,7 +287,6 @@ class Explore extends React.Component {
             </Col>
           ))}
         </Row>
-  
 
         <Row noGutters className="page-header py-4">
           <PageTitle sm="4" title="Your Location" subtitle="Area Statistics" className="text-sm-left" />
