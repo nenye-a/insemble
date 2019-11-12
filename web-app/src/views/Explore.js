@@ -13,8 +13,8 @@ import {
   Button
 } from "shards-react";
 
-import Sessions from "../components/explore/Sessions";
-import UsersByDevice from "../components/explore/UsersByDevice";
+import Details from "../components/explore/Details";
+import Demographics from "../components/explore/Demographics";
 import PageTitle from "../components/common/PageTitle";
 import { NavLink } from "react-router-dom";
 
@@ -27,8 +27,8 @@ class Explore extends React.Component {
       PostsListOne: [
         {
           backgroundImage: require("../images/content-management/1.jpeg"),
-          category: "Business",
-          categoryTheme: "dark",
+          category: "Insemble",
+          categoryTheme: "royal-blue",
           author: "Anna Kunis",
           authorAvatar: require("../images/avatars/1.jpg"),
           title: "Ritual Coffee",
@@ -36,8 +36,8 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/2.jpeg"),
-          category: "Travel",
-          categoryTheme: "info",
+          category: "Insemble",
+          categoryTheme: "royal-blue",
           author: "James Jamerson",
           authorAvatar: require("../images/avatars/2.jpg"),
           title: "Coffee Cultures",
@@ -45,7 +45,7 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/3.jpeg"),
-          category: "Technology",
+          category: "Insemble",
           categoryTheme: "royal-blue",
           author: "Peet's Coffee",
           authorAvatar: require("../images/avatars/2.jpg"),
@@ -54,8 +54,8 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/4.jpeg"),
-          category: "Business",
-          categoryTheme: "warning",
+          category: "Insemble",
+          categoryTheme: "royal-blue",
           author: "Patties Express",
           authorAvatar: require("../images/avatars/3.jpg"),
           title: "Patties Express",
@@ -63,8 +63,8 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/1.jpeg"),
-          category: "Business",
-          categoryTheme: "dark",
+          category: "Insemble",
+          categoryTheme: "royal-blue",
           author: "Anna Kunis",
           authorAvatar: require("../images/avatars/1.jpg"),
           title: "Corepower Yoga",
@@ -72,8 +72,8 @@ class Explore extends React.Component {
         },
         {
           backgroundImage: require("../images/content-management/2.jpeg"),
-          category: "Travel",
-          categoryTheme: "info",
+          category: "Regional",
+          categoryTheme: "dark",
           author: "James Jamerson",
           authorAvatar: require("../images/avatars/2.jpg"),
           title: "Leo's Tacos",
@@ -223,7 +223,7 @@ class Explore extends React.Component {
       <Container fluid className="main-content-container px-4">
         {/* Page Header */}
         <Row noGutters className="page-header py-4">
-          <PageTitle sm="4" title="Expanding Retailers" subtitle="Your top" className="text-sm-left" />
+          <PageTitle sm="4" title="Matches" subtitle="Explore Your top" className="text-sm-left" />
         </Row>
 
         {/* First Row of Posts */}
@@ -278,14 +278,14 @@ class Explore extends React.Component {
 
         {/* Second Row of Posts */}
         <Row>
-          {/* Sessions */}
+          {/* Details */}
           <Col lg="8" md="12" sm="12" className="mb-4">
-            <Sessions />
+            <Details />
           </Col>
 
           {/* Users by Device */}
           <Col lg="4" md="6" sm="6" className="mb-4">
-            <UsersByDevice />
+            <Demographics />
           </Col>
         </Row>
 
