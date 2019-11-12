@@ -70,7 +70,7 @@ class TenantSpacesSidebar extends React.Component {
               Insights
             </Button>
             <Button theme="white" tag={NavLink} to="/spaces">
-              Spaces
+              Matches
             </Button>
           </ButtonGroup>
         </Col>
