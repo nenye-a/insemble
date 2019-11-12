@@ -15,7 +15,7 @@ class LocationSerializer(serializers.Serializer):
     nearby = serializers.JSONField()
     radius = serializers.DecimalField(max_digits=3, decimal_places=2)
     sqf = serializers.IntegerField()
-    floors = serializers.IntegerField
+    floors = serializers.IntegerField()
 
 # Retailer Serializer
 class RetailerSerializer(serializers.Serializer):
