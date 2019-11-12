@@ -13,15 +13,14 @@ import {
   Button
 } from "shards-react";
 
-import Sessions from "../components/explore/Sessions";
 import AtAGlance from "../components/tenant-deep-dive/AtAGlance";
-import SiteComparison from "../components/tenant-deep-dive/SiteComparison";
+import YourSite from "../components/tenant-deep-dive/YourSite";
 import Buildout from "../components/tenant-deep-dive/Buildout";
 import About from "../components/tenant-deep-dive/About";
-import UsersByDevice from "../components/explore/UsersByDevice";
 import PageTitle from "../components/common/PageTitle";
 import MapContainer from "./MapContainer";
 import Iframe from 'react-iframe'
+import RetailerSite from "../components/tenant-deep-dive/RetailerSite";
 
 class TenantDeepDive extends React.Component {
   constructor(props) {
@@ -263,12 +262,12 @@ class TenantDeepDive extends React.Component {
         <Row>
           {/* Site Comparison */}
           <Col lg="6" md="6" sm="6" className="mb-4">
-            <SiteComparison />
+            <YourSite />
           </Col>
 
           {/* Site Comparison */}
           <Col lg="6" md="6" sm="6" className="mb-4">
-            <SiteComparison />
+            <RetailerSite />
           </Col>
         </Row>
 
@@ -314,22 +313,22 @@ class TenantDeepDive extends React.Component {
                   <tbody>
                     <tr>
                       <td>1</td>
-                      <td>Russian Federation</td>
+                      <td>Home</td>
                       <td>45</td>
                     </tr>
                     <tr>
                       <td>2</td>
-                      <td>Estonia</td>
+                      <td>Work</td>
                       <td>25</td>
                     </tr>
                     <tr>
                       <td>3</td>
-                      <td>Cyprus</td>
+                      <td>Sandwich Shop</td>
                       <td>10</td>
                     </tr>
                     <tr>
                       <td>4</td>
-                      <td>Liberia</td>
+                      <td>Park</td>
                       <td>10</td>
                     </tr>
                   </tbody>
@@ -350,7 +349,7 @@ class TenantDeepDive extends React.Component {
                         Rank
                       </th>
                       <th scope="col" className="border-0">
-                        Coming From
+                        Going To
                       </th>
                       <th scope="col" className="border-0">
                         Percentage
@@ -360,22 +359,22 @@ class TenantDeepDive extends React.Component {
                   <tbody>
                     <tr>
                       <td>1</td>
-                      <td>Russian Federation</td>
+                      <td>Home</td>
                       <td>45</td>
                     </tr>
                     <tr>
                       <td>2</td>
-                      <td>Estonia</td>
+                      <td>Work</td>
                       <td>25</td>
                     </tr>
                     <tr>
                       <td>3</td>
-                      <td>Cyprus</td>
+                      <td>Sandwich Shop</td>
                       <td>10</td>
                     </tr>
                     <tr>
                       <td>4</td>
-                      <td>Liberia</td>
+                      <td>Park</td>
                       <td>10</td>
                     </tr>
                   </tbody>

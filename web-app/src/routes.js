@@ -2,7 +2,7 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 
 // Layout Types
-import { DefaultLayout, HeaderNavigation, IconSidebar, LandlordLayout } from "./layouts";
+import { DefaultLayout, HeaderNavigation, IconSidebar, LandlordLayout, TenantSpaces } from "./layouts";
 
 // Route Views
 import Analytics from "./views/Analytics";
@@ -19,7 +19,7 @@ import ChangePassword from "./views/ChangePassword";
 import FileManagerList from "./views/FileManagerList";
 import Explore from "./views/Explore";
 import TenantDeepDive from "./views/TenantDeepDive";
-import FindTenants from "./views/FindTenants";
+import Matches from "./views/Matches";
 import TransactionHistory from "./views/TransactionHistory";
 import Calendar from "./views/Calendar";
 import AddNewPost from "./views/AddNewPost";
@@ -61,7 +61,7 @@ export default [
   },
   {
     path: "/spaces",
-    layout: DefaultLayout,
+    layout: TenantSpaces,
     component: Spaces
   },
   {
@@ -120,9 +120,9 @@ export default [
     component: TenantDeepDive
   },
   {
-    path: "/find-tenants",
+    path: "/matches",
     layout: LandlordLayout,
-    component: FindTenants
+    component: Matches
   },
   {
     path: "/transaction-history",
