@@ -6,6 +6,8 @@ from .types.Retailer import Retailer
 from .types.PairedLocation import PairedLocation
 from .serializers import *
 
+import logging
+
 # # Location viewsets
 # class LocationViewSet(viewsets.ViewSet):
 
@@ -68,14 +70,16 @@ class PairedLocationViewSet(viewsets.ViewSet):
     A simple ViewSet for listing or retrieving users.
     """
     def list(self, request):
-
+        # logging.info()
         queryset = PairedLocation.get_paired_locations()
         serializer = PairedLocationSerializer(queryset, many=True)
         return Response(serializer.data)
+        # return Response([1,2,3,4])
 
     def retrieve(self, request, pk=None):
 
         queryset = PairedLocation.get_paired_location(pk)
         p_location = get_object_or_404(queryset, pk=pk) # make sure to adjust this to retreive a specific retailer
         serializer = PairedLocationSerializer(p_location)
-        return Response(serializer.data)
+        # return Response(serializer.data)
+        return Response([])
