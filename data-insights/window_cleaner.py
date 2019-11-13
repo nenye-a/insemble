@@ -5,7 +5,7 @@ from location_builder import *
 import math
 import statistics as stat
 
-def update_database(dataset):
+def update_database_age(dataset):
     # iterate through dataset 2
 
     retailers_checked = set()
@@ -16,41 +16,55 @@ def update_database(dataset):
         try:
             entry['age']
         except Exception:
-            l, r, age, p, v = get_performance(name, entry['lat'], entry['lng'])
+            l, r, age, p, pp, ps, v = get_performance(name, entry['lat'], entry['lng'])
             dataset.update_one({'_id': entry['_id']}, {'$set': {"age": age}})
 
-        # check if each entry has Retailer: Avg likes, avg ratings
-        '''
-        commented out b/c locations data just has latitudes
-        
-        if name in retailers_checked:
-            continue
-             
+        retailers_checked.add(name)
+
+def update_database_photo(dataset):
+    # iterate through dataset 2
+
+    retailers_checked = set()
+    cursor = dataset.find()
+    count = 0
+    for entry in cursor:
+        if count % 250 == 0:
+            print("processed {} entries".format(count))
+        name = entry['name']
+        # check if each entry has photo
         try:
-            entry['Retailer']['likes']
-            entry['Retailer']['ratings']
+            entry['photo']
+            entry['icon']
         except Exception:
-            ## for avg likes and ratings, take retailer name and locations and get venues/details for each of those locations
-            ## totalling averages from that search
-            total_likes = []
-            total_ratings = []
-            for location in entry['Retailer']['locations']:
-                print(location)
-                lat = location[0]
-                lng = location[1]
+            format_input = urllib.parse.quote(entry['name']+', '+entry['Location']['address'])
+            URL = "https://maps.googleapis.DELETED_BASE64_STRING?input={0}&inputtype=textquery&fields=icon,photos&key={1}".format(
+                format_input, GOOG_KEY)
+            data = smart_search(URL, 'google', 'findplacefromtext')
 
-                likes, ratings, a, p, v = get_performance(name, lat, lng)
-                total_likes.append(likes)
-                total_ratings.append(ratings)
+            try:
+                icon = data['candidates'][0]['icon']
+            except Exception:
+                print("Error getting icon from name {0}, lat {1} and lng {2}".format(entry['name'], entry['lat'], entry['lng']))
+                print(data)
+                icon = np.nan
 
-            avg_likes = stat.mean(total_likes)
-            avg_ratings = stat.mean(total_ratings)
+            ##### FIXME: add alternate smart search for photo requests to pull url (regular tries to get .json objects)
+            try:
+                photo_ref = data['candidates'][0]['photos'][0]['photo_reference']
+                URL = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=500&maxheight=500&photoreference={}&key={}'.format(photo_ref, GOOG_KEY)
+                data2 = requests.get(URL)
+                photo = data2.url
+            except Exception:
+                print("Error getting photo from name {0}, lat {1} and lng {2}".format(entry['name'], entry['lat'],
+                                                                                     entry['lng']))
+                print(data)
+                photo = np.nan
 
-            dataset.update_one({'_id': entry['_id']}, {'$set': {"Retailer.likes": avg_likes}})
-            dataset.update_one({'_id': entry['_id']}, {'$set': {"Retailer.ratings": avg_ratings}})
-        '''
+            dataset.update_one({'_id': entry['_id']}, {'$set': {"icon": icon}})
+            dataset.update_one({'_id': entry['_id']}, {'$set': {"photo": photo}})
 
         retailers_checked.add(name)
+        count += 1
 
 if __name__ == "__main__":
     # initiate database collections
@@ -58,4 +72,4 @@ if __name__ == "__main__":
     db = client.spaceData
     dataset2 = db.dataset2
 
-    update_database(dataset2)
+    update_database_photo(dataset2)
