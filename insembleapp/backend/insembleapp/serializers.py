@@ -44,5 +44,5 @@ class PairedLocationSerializer(serializers.Serializer):
     ratings = serializers.DecimalField(max_digits=3, decimal_places=2)
     photo_count = serializers.IntegerField()
     age = serializers.FloatField()
-    photo_prefix = serializers.URLField()
-    photo_suffix = serializers.CharField()
+    photo = serializers.URLField()
+    icon = serializers.URLField()
