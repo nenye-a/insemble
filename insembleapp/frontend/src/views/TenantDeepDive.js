@@ -236,7 +236,7 @@ class TenantDeepDive extends React.Component {
         {/* Page Header */}
         <Row noGutters className="page-header py-4">
           <div className="user-details__avatar" position="absolute" top="30">
-            <img src={require("../images/avatars/0.jpg")} alt={"Coffe Shop"} />
+            <img src={require("../images/logos/ritual-logo.jpg")} alt={"Coffe Shop"} />
           </div>
           <PageTitle title="Ritual Coffee" subtitle="Coffee, Local" className="ml-4 mt-3" />
         </Row>

@@ -221,7 +221,7 @@ class Explore extends React.Component {
               <Card tag={NavLink} to="/tenant-deep-dive" small className="card-post card-post--1">
                 <div
                   className="card-post__image"
-                  style={{ backgroundImage: `url(${retailer.photo_prefix}500x500${retailer.photo_suffix})` }} //replace this
+                  style={{ backgroundImage: `url(${retailer.photo})` }} //replace this
                 >
                   <Badge
                     pill
@@ -229,6 +229,14 @@ class Explore extends React.Component {
                   >
                     {"Insemble"}
                   </Badge>
+                  <div className="card-post__author d-flex">
+                    <a
+                      href="#"
+                      className="card-post__author-avatar card-post__author-avatar--small"
+                      style={{ backgroundImage: `url('${retailer.icon}')` }}
+                    >
+                    </a>
+                  </div>
                 </div>
                 <CardBody>
                   <h5 className="card-title">

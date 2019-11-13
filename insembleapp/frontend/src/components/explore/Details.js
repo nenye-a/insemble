@@ -38,40 +38,37 @@ class Details extends React.Component {
             <Row className="mb-3">
               <Col className="w-50">
                 <span>Average Price</span>
-                <span>{"DELETED_EMAIL"}</span>
+                <span>{"$$"}</span>
               </Col>
             </Row>
             <Row>
               <Col className="w-50">
                 <span>Average Income</span>
-                <span>{"remote"}</span>
+                <span>{"$125,230 per year"}</span>
               </Col>
             </Row>
             <Row>
               <Col className="w-50">
                 <span>Walkability Score</span>
-                <span>{"remote"}</span>
+                <span>{"7.5/10"}</span>
               </Col>
             </Row>
+            <span>Top Influences</span>
             <Row>
-              <Col className="w-50">
-                <span>Top Influences</span>
-                <span>{"remote"}</span>
-              </Col>
+              <div className="user-details__tags p-4">
+              {userData.tags.map((tag, idx) => (
+                <Badge
+                  pill
+                  theme="light"
+                  className="text-light text-uppercase mb-2 border mr-1"
+                  key={idx}
+                >
+                  {tag}
+                </Badge>
+              ))}
+              </div>
             </Row>
-          </div>
-          <span>Top Influences</span>
-          <div className="user-details__tags p-4">
-            {userData.tags.map((tag, idx) => (
-              <Badge
-                pill
-                theme="light"
-                className="text-light text-uppercase mb-2 border mr-1"
-                key={idx}
-              >
-                {tag}
-              </Badge>
-            ))}
+          
           </div>
           
         </CardBody>

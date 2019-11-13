@@ -391,7 +391,17 @@ def get_performance(name, lat, lng):
         age = np.nan
         result_valid = False
 
-    return likes, ratings, age, photo_count, result_valid
+    #### FIXME: replace foursquare photos with google photos
+    try:
+        photo_prefix = data['response']['venue']['bestPhoto']['prefix']
+        photo_suffix = data['response']['venue']['bestPhoto']['suffix']
+    except Exception:
+        print("Error getting best photo from name {0}, lat {1} and lng {2}".format(name, lat, lng))
+        print(data)
+        photo_prefix = np.nan
+        photo_suffix = np.nan
+
+    return likes, ratings, age, photo_count, photo_prefix, photo_suffix, result_valid
 
 if __name__ == "__main__":
     ###### DEBUG CODE #######
