@@ -21,7 +21,7 @@ class PairedLocation(object):
     db_space = client.spaceData
 
     def __init__(self, _id, name, lat, lng, address, census, pop, income, traffic, safety, nearby, radius,
-                    place_type, price, locations, likes, ratings, photo_count, age, p_prefix, p_suffix):
+                    place_type, price, locations, likes, ratings, photo_count, age, photo, icon):
         
         self._id = _id
         self.name = name
@@ -47,8 +47,8 @@ class PairedLocation(object):
         self.photo_count = photo_count
         self.age = age
 
-        self.photo_prefix = p_prefix
-        self.photo_suffix = p_suffix
+        self.photo = photo
+        self.icon = icon
 
     @staticmethod
     def get_paired_locations(n=100):
@@ -97,11 +97,11 @@ class PairedLocation(object):
             if np.isnan(ratings):
                 ratings = None
 
-            p_prefix = db_item["photo_prefix"]
-            p_suffix = db_item["photo_suffix"]
+            p_prefix = db_item["photo"]
+            p_suffix = db_item["icon"]
             
             paired_locations.append(PairedLocation(_id, name, lat, lng, address, census, pop, income, None, None, nearby,
-                                        radius, place_type, price, locations, likes, ratings, photo_count, age, p_prefix, p_suffix))
+                                        radius, place_type, price, locations, likes, ratings, photo_count, age, photo, icon))
         
         return paired_locations
 
