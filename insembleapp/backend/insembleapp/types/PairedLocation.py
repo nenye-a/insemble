@@ -97,8 +97,8 @@ class PairedLocation(object):
             if np.isnan(ratings):
                 ratings = None
 
-            p_prefix = db_item["photo"]
-            p_suffix = db_item["icon"]
+            photo = db_item["photo"]
+            icon = db_item["icon"]
             
             paired_locations.append(PairedLocation(_id, name, lat, lng, address, census, pop, income, None, None, nearby,
                                         radius, place_type, price, locations, likes, ratings, photo_count, age, photo, icon))
