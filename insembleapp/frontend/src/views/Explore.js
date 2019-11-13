@@ -32,56 +32,56 @@ class Explore extends React.Component {
       LocationsList: [],
       PostsListOne: [
         {
-          backgroundImage: require("../images/content-management/1.jpeg"),
+          backgroundImage: require("../images/retailers/1.jpg"),
           category: "Insemble",
           categoryTheme: "royal-blue",
           author: "Anna Kunis",
-          authorAvatar: require("../images/avatars/1.jpg"),
+          authorAvatar: require("../images/logos/ritual-logo.jpg"),
           title: "Ritual Coffee",
           date: "28 February 2019"
         },
         {
-          backgroundImage: require("../images/content-management/2.jpeg"),
+          backgroundImage: require("../images/retailers/2.jpg"),
           category: "Insemble",
           categoryTheme: "royal-blue",
           author: "James Jamerson",
-          authorAvatar: require("../images/avatars/2.jpg"),
+          authorAvatar: require("../images/logos/coffeecultures-logo.jpg"),
           title: "Coffee Cultures",
           date: "29 February 2019"
         },
         {
-          backgroundImage: require("../images/content-management/3.jpeg"),
+          backgroundImage: require("../images/retailers/3.jpg"),
           category: "Insemble",
           categoryTheme: "royal-blue",
           author: "Peet's Coffee",
-          authorAvatar: require("../images/avatars/2.jpg"),
+          authorAvatar: require("../images/logos/peets-logo.jpeg"),
           title: "Peet's Coffee",
           date: "29 February 2019"
         },
         {
-          backgroundImage: require("../images/content-management/4.jpeg"),
+          backgroundImage: require("../images/retailers/4.jpg"),
           category: "Insemble",
           categoryTheme: "royal-blue",
           author: "Patties Express",
-          authorAvatar: require("../images/avatars/3.jpg"),
+          authorAvatar: require("../images/logos/patties-logo.png"),
           title: "Patties Express",
           date: "29 February 2019"
         },
         {
-          backgroundImage: require("../images/content-management/1.jpeg"),
+          backgroundImage: require("../images/retailers/5.jpg"),
           category: "Insemble",
           categoryTheme: "royal-blue",
           author: "Anna Kunis",
-          authorAvatar: require("../images/avatars/1.jpg"),
+          authorAvatar: require("../images/logos/corepower-logo.jpg"),
           title: "Corepower Yoga",
           date: "28 February 2019"
         },
         {
-          backgroundImage: require("../images/content-management/2.jpeg"),
+          backgroundImage: require("../images/retailers/6.jpg"),
           category: "Regional",
           categoryTheme: "dark",
           author: "James Jamerson",
-          authorAvatar: require("../images/avatars/2.jpg"),
+          authorAvatar: require("../images/logos/leos-logo.jpg"),
           title: "Leo's Tacos",
           date: "29 February 2019"
         }
@@ -91,7 +91,7 @@ class Explore extends React.Component {
       // Second list of posts.
       PostsListTwo: [
         {
-          backgroundImage: require("../images/content-management/5.jpeg"),
+          backgroundImage: require("../images/types/1.jpg"),
           category: "Travel",
           categoryTheme: "info",
           author: "Anna Ken",
@@ -99,11 +99,11 @@ class Explore extends React.Component {
           title:
             "Coffee Shops",
           body:
-            "Conviction up partiality as delightful is discovered. Yet jennings resolved disposed exertion you off. Left did fond drew fat head poor jet pan flying over...",
+            "Over the past few years, the independent, hole-in-the-wall coffee shop scene has exploded, meaning you have more options than ever in your search...",
           date: "29 February 2019"
         },
         {
-          backgroundImage: require("../images/content-management/6.jpeg"),
+          backgroundImage: require("../images/types/2.jpg"),
           category: "Business",
           categoryTheme: "dark",
           author: "John James",
@@ -111,11 +111,11 @@ class Explore extends React.Component {
           title:
             "Healthy Experiences",
           body:
-            "Discovered had get considered projection who favourable. Necessary up knowledge it tolerably. Unwilling departure education to admitted speaking...",
+            "Consumers are placing more value on health and wellness than on material objects these days, and the definition of health and wellness has evolved...",
           date: "29 February 2019"
         }, 
         {
-          backgroundImage: require("../images/content-management/6.jpeg"),
+          backgroundImage: require("../images/types/3.jpg"),
           category: "Business",
           categoryTheme: "dark",
           author: "John James",
@@ -123,11 +123,11 @@ class Explore extends React.Component {
           title:
             "Mediterranean",
           body:
-            "Discovered had get considered projection who favourable. Necessary up knowledge it tolerably. Unwilling departure education to admitted speaking...",
+            "There's no shortage of mediterranean desire in San Francisco, but with a convenient dining model that's supported by creative and flavorful...",
           date: "29 February 2019"
         }, 
         {
-          backgroundImage: require("../images/content-management/6.jpeg"),
+          backgroundImage: require("../images/types/4.jpeg"),
           category: "Business",
           categoryTheme: "dark",
           author: "John James",
@@ -135,7 +135,7 @@ class Explore extends React.Component {
           title:
             "Mexican Restaurant",
           body:
-            "Discovered had get considered projection who favourable. Necessary up knowledge it tolerably. Unwilling departure education to admitted speaking...",
+            "Mexican-style food has entered the mainstream American diet, largely due to a growing Hispanic immigrant population that has increased demand...",
           date: "29 February 2019"
         }
       ],
@@ -318,21 +318,6 @@ class Explore extends React.Component {
                   className="card-post__image"
                   style={{ backgroundImage: `url('${post.backgroundImage}')` }}
                 >
-                  <Badge
-                    pill
-                    className={`card-post__category bg-${post.categoryTheme}`}
-                  >
-                    {post.category}
-                  </Badge>
-                  <div className="card-post__author d-flex">
-                    <a
-                      href="#"
-                      className="card-post__author-avatar card-post__author-avatar--small"
-                      style={{ backgroundImage: `url('${post.authorAvatar}')` }}
-                    >
-                      Written by Anna Ken
-                    </a>
-                  </div>
                 </div>
                 <CardBody>
                   <h5 className="card-title">
@@ -378,22 +363,22 @@ class Explore extends React.Component {
                   <tbody>
                     <tr>
                       <td>1</td>
-                      <td>Russian Federation</td>
+                      <td>Home</td>
                       <td>45</td>
                     </tr>
                     <tr>
                       <td>2</td>
-                      <td>Estonia</td>
+                      <td>Work</td>
                       <td>25</td>
                     </tr>
                     <tr>
                       <td>3</td>
-                      <td>Cyprus</td>
+                      <td>Sandwich Shop</td>
                       <td>10</td>
                     </tr>
                     <tr>
                       <td>4</td>
-                      <td>Liberia</td>
+                      <td>Park</td>
                       <td>10</td>
                     </tr>
                   </tbody>
@@ -414,7 +399,7 @@ class Explore extends React.Component {
                         Rank
                       </th>
                       <th scope="col" className="border-0">
-                        Coming From
+                        Going To
                       </th>
                       <th scope="col" className="border-0">
                         Percentage
@@ -424,22 +409,22 @@ class Explore extends React.Component {
                   <tbody>
                     <tr>
                       <td>1</td>
-                      <td>Russian Federation</td>
+                      <td>Home</td>
                       <td>45</td>
                     </tr>
                     <tr>
                       <td>2</td>
-                      <td>Estonia</td>
+                      <td>Work</td>
                       <td>25</td>
                     </tr>
                     <tr>
                       <td>3</td>
-                      <td>Cyprus</td>
+                      <td>Sandwich Shop</td>
                       <td>10</td>
                     </tr>
                     <tr>
                       <td>4</td>
-                      <td>Liberia</td>
+                      <td>Park</td>
                       <td>10</td>
                     </tr>
                   </tbody>
@@ -449,6 +434,7 @@ class Explore extends React.Component {
           </Col>
         
         </Row>
+
 
       </Container>
     );
