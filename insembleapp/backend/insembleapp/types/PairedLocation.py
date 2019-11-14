@@ -1,19 +1,26 @@
-# from .mongoconnect import Connect
-import numpy as np
+# import importlib
+#
+# importlib.import_module('data_insights')
 
+import sys
+from django.conf import settings
+
+sys.path.append(settings.INSIGHTS_DIR)
+
+import numpy as np
 from pymongo import MongoClient
 import urllib
 import logging
 
-logger = logging.getLogger(__name__)
+from mongo_connect import Connect # ignore errors, works with Django run serfver
+import location_methods as lm # ignore errors, works with Django run server
 
-#### TODO: keep key secret by using environment variables
-
-class Connect(object):
-    @staticmethod
-    def get_connection():
-        mongo_uri = "mongodb+srv://nenye:" + urllib.parse.quote("helicop251") + "@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE"
-        return MongoClient(mongo_uri)
+# code to connect to database if must be handled from here
+# class Connect(object):
+#     @staticmethod
+#     def get_connection():
+#         mongo_uri = "mongodb+srv://nenye:" + urllib.parse.quote("helicop251") + "@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE"
+#         return MongoClient(mongo_uri)
 
 class PairedLocation(object):
 
@@ -22,10 +29,10 @@ class PairedLocation(object):
 
     def __init__(self, _id, name, lat, lng, address, census, pop, income, traffic, safety, nearby, radius,
                     place_type, price, locations, likes, ratings, photo_count, age, photo, icon):
-        
+
         self._id = _id
         self.name = name
-        
+
         self.lat = lat
         self.lng = lng
         self.address = address
@@ -41,7 +48,7 @@ class PairedLocation(object):
         self.place_type = place_type
         self.price = price
         self.locations = locations
-        
+
         self.likes = likes
         self.ratings = ratings
         self.photo_count = photo_count
@@ -59,9 +66,9 @@ class PairedLocation(object):
         db_space_cursor = PairedLocation.db_space.dataset2.aggregate([{"$sample": {"size": n}}])
 
         paired_locations = []
-        
+
         for db_item in db_space_cursor:
-            
+
             _id = db_item["_id"]
 
             location = db_item["Location"]
@@ -99,16 +106,23 @@ class PairedLocation(object):
 
             photo = db_item["photo"]
             icon = db_item["icon"]
-            
+
             paired_locations.append(PairedLocation(_id, name, lat, lng, address, census, pop, income, None, None, nearby,
                                         radius, place_type, price, locations, likes, ratings, photo_count, age, photo, icon))
-        
+
         return paired_locations
 
     @staticmethod
     def get_paired_location(_id):
         return # TODO: return a location object with the corresponding _id
-    
+
+    @staticmethod
+    def get_matches(address):
+        return lm.generate_location_matches(address)
+
     def to_json(self):
         return # TODO: actually return JSON version of Location retailer pair
 
+
+if __name__ == '__main__':
+    print(lm.generate_location_matches("Los Angeles"))

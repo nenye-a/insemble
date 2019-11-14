@@ -1,6 +1,6 @@
-from .mongoconnect import Connect
+#from .mongoconnect import Connect
 
-class Location(object):
+class EmptyLocation(object):
 
     """
     This method initializes a Retail Location
@@ -53,7 +53,7 @@ class Location(object):
         return # TODO: input or update an item in the data_base (return True or False)
 
     def copy(self):
-        return Location(self.address, self.lat, self.lng, self.census, self.pop, self.income, 
+        return EmptyLocation(self.address, self.lat, self.lng, self.census, self.pop, self.income, 
                             self.traffic, self.safety, self.nearby, self.radius)
     
     def to_json(self):
