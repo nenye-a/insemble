@@ -17,13 +17,15 @@ class LocationSerializer(serializers.Serializer):
     sqf = serializers.IntegerField()
     floors = serializers.IntegerField()
 
+
 # Retailer Serializer
 class RetailerSerializer(serializers.Serializer):
-    
+
     name = serializers.CharField(max_length=100, required=True)
     place_type = serializers.JSONField()
     price = serializers.IntegerField(default=2)
     locations = serializers.JSONField()
+
 
 # Serializer for location & retailer combined objects
 class PairedLocationSerializer(serializers.Serializer):
