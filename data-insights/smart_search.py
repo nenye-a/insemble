@@ -9,6 +9,7 @@ client = Connect.get_connection()
 db = client.spaceData
 searches = db.searches
 
+#### TODO: migrate to insemble_data_tools
 # TODO: figure out if can reduce index creation & reduce redundancy
 searches.create_index([("url",  1), ("params", 1), ("headers", 1)], unique=True)
 hosts = ['google', 'yelp', 'foursquare', 'justicemap']

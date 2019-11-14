@@ -19,7 +19,7 @@ import Buildout from "../components/tenant-deep-dive/Buildout";
 import About from "../components/tenant-deep-dive/About";
 import PageTitle from "../components/common/PageTitle";
 import MapContainer from "./MapContainer";
-import Iframe from 'react-iframe'
+import Iframe from 'react-iframe';
 import RetailerSite from "../components/tenant-deep-dive/RetailerSite";
 
 class TenantDeepDive extends React.Component {

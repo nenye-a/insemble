@@ -71,6 +71,7 @@ def generate_location_profile(address, radius):
     def get_demographics(lat, lng, radius, count=0):
         result_valid = True
 
+        #### FIXME: move sGeo to constant at top of code
         # search demographics from justice map
         sGeo = "tract"
         URL = "http://www.spatialjusticetest.org/api.php?fLat={0}&fLon={1}&sGeo={2}&fRadius={3}".format(lat,lng,sGeo,radius)
@@ -343,6 +344,8 @@ def get_performance(name, lat, lng):
         intent='match',
     )
     data = smart_search(url_search, 'foursquare', 'venues_search', params=params)
+
+    #### TODO: run test to see whether search results return the right retailer
 
     # get id for retailer, return invalid if error
     try:
