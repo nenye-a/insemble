@@ -30,6 +30,7 @@ class RetailerSerializer(serializers.Serializer):
 # Serializer for location & retailer combined objects
 class PairedLocationSerializer(serializers.Serializer):
 
+    _id = serializers.CharField()
     name = serializers.CharField(max_length=100, required=True)
     lat = serializers.FloatField()
     lng = serializers.FloatField()
