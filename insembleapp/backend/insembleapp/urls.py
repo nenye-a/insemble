@@ -6,12 +6,12 @@ from django.views.generic import TemplateView
 import django_js_reverse.views
 
 from rest_framework import routers, serializers, viewsets
-from .api import PairedLocationViewSet # RetailerViewSet, LocationViewSet, 
+from .api import PairedLocationViewSet, TenantMatchesViewset
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
-# TODO: register location and retailer api once necessary
 router.register(r'api/pair', PairedLocationViewSet, basename='pair')
+router.register(r'api/tmatches', TenantMatchesViewset, basename='tmatches')
 
 
 urlpatterns = [
@@ -22,10 +22,7 @@ urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='insembleapp/index.html'), name='home'),
 
     # instantiate the other urls
-    # url(r'^(?:.*)/?$', TemplateView.as_view(template_name='insembleapp/index.html'), name='home'),
-    url(r'^(?!api)(?:.*)/?$', TemplateView.as_view(template_name='insembleapp/index.html'), name='home'),
+    url(r'^(?!sock)(?!js)(?!api)(?:.*)/?$', TemplateView.as_view(template_name='insembleapp/index.html'), name='home'),
 
     url(r'^', include(router.urls)),
-    # path('', include(router.urls)),
-    # path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

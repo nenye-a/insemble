@@ -1,7 +1,3 @@
-# import importlib
-#
-# importlib.import_module('data_insights')
-
 import sys
 from django.conf import settings
 
@@ -69,56 +65,80 @@ class PairedLocation(object):
 
         for db_item in db_space_cursor:
 
-            _id = db_item["_id"]
-
-            location = db_item["Location"]
-            retailer = db_item["Retailer"]
-
-            # get the location related fields imported
-            lat = location["lat"]
-            lng = location["lng"]
-            census = location["census"]
-            address = location["address"]
-            pop = location["pop"]
-            income = location["income"]
-            nearby = location["nearby"]
-            radius = location["radius"]
-
-            # get the retailer related fields
-            name = retailer["name"]
-            price = retailer["price"]
-            if np.isnan(price):
-                price = 2  # flag that p doesn't exist
-            locations = retailer["locations"]
-
-            place_type = retailer["place_type"]
-
-            # get other important information
-            age =  db_item["age"]
-
-            # get performance information
-            likes = db_item["likes"]
-            photo_count = db_item["photo_count"]
-
-            ratings = db_item["ratings"]
-            if np.isnan(ratings):
-                ratings = None
-
-            photo = db_item["photo"]
-            icon = db_item["icon"]
-
-            paired_locations.append(PairedLocation(_id, name, lat, lng, address, census, pop, income, None, None, nearby,
-                                        radius, place_type, price, locations, likes, ratings, photo_count, age, photo, icon))
+            paired_locations.append(PairedLocation.convert_db_item(db_item))
 
         return paired_locations
 
     @staticmethod
     def get_paired_location(_id):
-        return # TODO: return a location object with the corresponding _id
+        
+        db_item = PairedLocation.db_space.dataset2.find_one({"_id": _id})
+        return PairedLocation.convert_db_item(db_item)
 
     @staticmethod
-    def get_matches(address):
-        return lm.generate_location_matches(address)
+    def get_matches(address=None, _id=None):
+        
+        try:
+            if _id:
+                db_item = PairedLocation.db_space.dataset2.find_one({"_id": _id})
+                matches = lm.generate_location_matches(db_item["location"]["address"])
+            else:
+                matches = lm.generate_location_matches(address)
+        except KeyError:
+            raise KeyError
+        
+        matched_locations = []
+
+        for db_item in matches:
+            matched_locations.append(PairedLocation.convert_db_item(db_item))
+
+        return matched_locations
+
+    @staticmethod
+    def convert_db_item(db_item):
+        """
+        Receives database item and converts it into Paired location
+        """
+        _id = db_item["_id"]
+
+        location = db_item["Location"]
+        retailer = db_item["Retailer"]
+
+        # get the location related fields imported
+        lat = location["lat"]
+        lng = location["lng"]
+        census = location["census"]
+        address = location["address"]
+        pop = location["pop"]
+        income = location["income"]
+        nearby = location["nearby"]
+        radius = location["radius"]
+
+        # get the retailer related fields
+        name = retailer["name"]
+        price = retailer["price"]
+        if np.isnan(price):
+            price = 2  # flag that p doesn't exist
+        locations = retailer["locations"]
+
+        place_type = retailer["place_type"]
+
+        # get other important information
+        age =  db_item["age"]
+
+        # get performance information
+        likes = db_item["likes"]
+        photo_count = db_item["photo_count"]
+
+        ratings = db_item["ratings"]
+        if np.isnan(ratings):
+            ratings = None
+
+        photo = db_item["photo"]
+        icon = db_item["icon"]
+
+        return PairedLocation(_id, name, lat, lng, address, census, pop, income, None, None, nearby,
+                    radius, place_type, price, locations, likes, ratings, photo_count, age, photo, icon)
 
     def to_json(self):
         return # TODO: actually return JSON version of Location retailer pair

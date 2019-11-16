@@ -99,6 +99,8 @@ def build_data_set(length, price=False, ratings=False, existing_ids=None, classi
     # clean up the column names for each row
     data_set.rename(columns=lambda x: re.sub('[^0-9a-zA-Z]+', '_', x), inplace=True)
 
+    # check if column is sparse. If too sparse, drop column
+    # TODO: change 3 from magic number (provide context)
     for x in data_set.columns:
         if data_set[x].sum() < 3:
             data_set.drop(x, axis=1, inplace=True)

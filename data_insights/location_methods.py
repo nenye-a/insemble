@@ -1,11 +1,12 @@
 import pandas as pd
 import geopy.distance
 from mongo_connect import Connect
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import math
 import re
 from location_builder import generate_location_profile
+
 
 # TODO: Implement these methods in application code base.
 
@@ -93,8 +94,6 @@ def generate_location_matches(location_address):
     distances_items = []
     in_area_retailers = set()
 
-    print("searching")
-
     for item in db_space_cursor:
 
         # if your already in the area, we don't want to add you as a potential match
@@ -149,14 +148,6 @@ def generate_location_matches(location_address):
     distance_table["weighted_diff"] = distance_table[["cen_diff", "pop_diff", "income_diff", "cat_diff"]].dot(weight)
     distance_table = distance_table[distance_table["weighted_diff"] < 0.24]
 
-    plt.figure(1)
-    distance_table.weighted_diff.hist(bins=100)
-
-    plt.figure(2)
-    distance_table.ratings.hist()
-
-    plt.show()
-
     # sort by ratings and provide back
     distance_table = distance_table.sort_values("ratings")
 
@@ -169,5 +160,5 @@ def generate_location_matches(location_address):
     return return_list
 
 
-if __name__ == '__main__':
-    generate_location_profile("Los Angeles")
+# if __name__ == '__main__':
+#     generate_location_profile("Los Angeles")
