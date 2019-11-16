@@ -212,13 +212,12 @@ class Explore extends React.Component {
         <Row noGutters className="page-header py-4">
           <PageTitle sm="4" title="Matches" subtitle="Your top" className="text-sm-left" />
         </Row>
-
-
         {/* First Row of Posts */}
         <Row>
           {LocationsList.map((retailer, idx) => (
             <Col lg="3" md="6" sm="12" className="mb-4" key={idx}>
-              <Card tag={NavLink} to="/tenant-deep-dive" small className="card-post card-post--1">
+              <Card tag={NavLink} to = {{pathname: "/tenant-deep-dive", match: retailer}} 
+              small className="card-post card-post--1">
                 <div
                   className="card-post__image"
                   style={{ backgroundImage: `url(${retailer.photo})` }} //replace this

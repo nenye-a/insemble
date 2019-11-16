@@ -18,6 +18,7 @@ class RetailerSite extends React.Component {
   constructor(props) {
     super(props);
 
+    this.match = this.props.match
     this.canvasRef = React.createRef();
   }
 
@@ -36,16 +37,35 @@ class RetailerSite extends React.Component {
         },
         ...this.props.chartOptions
       },
-      data: this.props.chartData
+      data: {
+        labels: Object.keys(this.match.census),
+        datasets: [
+          {
+            hoverBorderColor: colors.white.toRGBA(1),
+            data: Object.values(this.match.census), 
+            backgroundColor: [
+              colors.primary.toRGBA(1),
+              colors.primary.toRGBA(0.8),
+              colors.primary.toRGBA(0.6),
+              colors.primary.toRGBA(0.4),
+              colors.primary.toRGBA(0.2),
+              colors.primary.toRGBA(0.1)
+            ]
+          }
+        ]
+      }
     };
 
     new Chart(this.canvasRef.current, chartConfig);
   }
 
   render() {
+    
+    const retailer = this.match
+    console.log(retailer)
     const { title } = this.props;
-    const labels = this.getParsedLabels();
-
+    const labels = Object.keys(retailer.census)
+    
     return (
       <Card small className="ubd-stats h-100">
         <CardHeader className="border-bottom">
@@ -63,19 +83,13 @@ class RetailerSite extends React.Component {
                   ref={this.canvasRef}
                   className="analytics-users-by-device mt-3 mb-4"
                 />
-
                 {/* Legend */}
                 <div className="ubd-stats__legend w-75 m-auto pb-4">
                   {labels.map((label, idx) => (
                     <div key={idx} className="ubd-stats__item">
-                      {label.icon && (
-                        <div
-                          dangerouslySetInnerHTML={{ __html: label.icon }}
-                          style={{ color: label.iconColor }}
-                        />
-                      )}
-                      <span className="ubd-stats__category">{label.title}</span>
-                      <span className="ubd-stats__value">{label.value}%</span>
+                     
+                      <span className="ubd-stats__category">{label}</span>
+                      <span className="ubd-stats__value">{retailer.census[label]}%</span>
                     </div>
                   ))}
                 </div>
@@ -84,7 +98,7 @@ class RetailerSite extends React.Component {
               </Col>
             </Row>
             <Row >
-              <Col>$125,230 per year
+              <Col>${retailer.income} per year
               </Col>
               <Col>Income
               </Col>
