@@ -23,7 +23,7 @@ urlpatterns = [
 
     # instantiate the other urls
     # url(r'^(?:.*)/?$', TemplateView.as_view(template_name='insembleapp/index.html'), name='home'),
-    url(r'^(?!api)(?:.*)/?$$', TemplateView.as_view(template_name='insembleapp/index.html'), name='home'),
+    url(r'^(?!api)(?:.*)/?$', TemplateView.as_view(template_name='insembleapp/index.html'), name='home'),
 
     url(r'^', include(router.urls)),
     # path('', include(router.urls)),

@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
-from .types.Location import Location
+from .types.EmptyLocation import EmptyLocation
 from .types.Retailer import Retailer
 from .types.PairedLocation import PairedLocation
 from .serializers import *
@@ -70,7 +70,6 @@ class PairedLocationViewSet(viewsets.ViewSet):
     A simple ViewSet for listing or retrieving users.
     """
     def list(self, request):
-        # logging.info()
         queryset = PairedLocation.get_paired_locations()
         serializer = PairedLocationSerializer(queryset, many=True)
         return Response(serializer.data)

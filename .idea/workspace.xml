@@ -1,7 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="79ae0e81-6081-4cec-8378-71d07948e27e" name="Default Changelist" comment="" />
+    <list default="true" id="79ae0e81-6081-4cec-8378-71d07948e27e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/data_insights/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/.idea/ycdemo.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/Location.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/Retailer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/data2.pickle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/data_a.pickle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/insemble_data_tools.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/learn/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/learn/archive/test_predictions_archive.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/learn/check_duplicates.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/learn/graph_errors.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/learn/iterative_test_data.pickle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/learn/iterative_test_data_realistic.pickle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/learn/sk_estimator_model.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/learn/tensor_estimator_model_linearReg.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/learn/tensor_k_model_regression.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/learn/test_predictions_classification.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/learn/test_predictions_regression.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/list.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/location_builder.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/location_methods.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/model_generate_dataset.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/mongo_connect.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/mxn_locations.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/mxn_locations_filtered.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/smart_search.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/test_files/data.pickle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/test_files/data2.pickle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/test_files/data_set.pickle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/test_files/dfog.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/test_files/dfog.csv.numbers" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/test_files/explorePandas.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/test_files/normalized.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/test_files/stats3.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data_insights/window_cleaner.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/insembleapp/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/types/EmptyLocation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/insemble.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/insemble.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/.idea/ycdemo.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/Location.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/Retailer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/data2.pickle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/data_a.pickle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/insemble_data_tools.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/learn/archive/test_predictions_archive.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/learn/check_duplicates.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/learn/graph_errors.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/learn/iterative_test_data.pickle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/learn/iterative_test_data_realistic.pickle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/learn/sk_estimator_model.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/learn/tensor_estimator_model_linearReg.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/learn/tensor_k_model_regression.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/learn/test_predictions_classification.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/learn/test_predictions_regression.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/list.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/location_builder.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/location_methods.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/model_generate_dataset.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/mongo_connect.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/mxn_locations.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/mxn_locations_filtered.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/smart_search.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/test_files/data.pickle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/test_files/data2.pickle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/test_files/data_set.pickle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/test_files/dfog.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/test_files/dfog.csv.numbers" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/test_files/explorePandas.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/test_files/normalized.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/test_files/stats3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-insights/window_cleaner.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/settings/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/settings/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/types/Location.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/types/PairedLocation.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/types/PairedLocation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/types/mongoconnect.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/manage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/jquery-webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/jquery-webpack-stats.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/requirements.in" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/requirements.in" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/webpack-stats.json" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,7 +108,8 @@
   </component>
   <component name="ProjectId" id="1TP3HP13jYqWqrm3w7Mmsvmyfib" />
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/insembleapp/backend/insembleapp/types/PairedLocation.py" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -26,6 +122,54 @@
         </RuleState>
       </list>
     </option>
+  </component>
+  <component name="RunManager" selected="Python.PairedLocation">
+    <configuration name="PairedLocation" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="insemble" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="$PROJECT_DIR$/insemble-venv/bin/python" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/insembleapp/backend/insembleapp/types" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/insembleapp/backend/insembleapp/types/PairedLocation.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="location_methods" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="insemble" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="$PROJECT_DIR$/insemble-venv/bin/python" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/data_insights" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data_insights/location_methods.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.location_methods" />
+      <item itemvalue="Python.PairedLocation" />
+    </list>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -45,7 +189,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

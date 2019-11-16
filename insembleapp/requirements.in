@@ -22,3 +22,4 @@ xgboost
 djongo
 mongoengine
 djangorestframework
+geopy
