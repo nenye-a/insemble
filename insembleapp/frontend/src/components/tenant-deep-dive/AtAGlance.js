@@ -17,13 +17,13 @@ class AtAGlance extends React.Component {
   }
 
   render() {
-    const { title } = this.props;
+    const retailer = this.props.match
 
     return (
       <Card small className="h-100">
         {/* Card Header */}
         <CardHeader className="border-bottom">
-          <h6 className="m-0">{title}</h6>
+          <h6 className="m-0">At A Glance</h6>
           <div className="block-handle" />
         </CardHeader>
 
@@ -32,12 +32,12 @@ class AtAGlance extends React.Component {
             <Row>
               <Col sm="6">
                 <h6>High Performance</h6>
-                <div>Ritual Coffee is rated highly in locations comparable to yours.</div>
+                <div>{retailer.name} is rated highly ({retailer.ratings}) in locations comparable to yours.</div>
               </Col>
               
               <Col sm="6">
                 <h6>Customer Relevance</h6>
-                <div>Customers visit your location when grabbing a coffee</div>
+                <div>Customers visit your location when [NEED TO BASE ON CATEGORY or JOURNEY]</div>
               </Col>
             </Row>
           </Container>
@@ -47,9 +47,5 @@ class AtAGlance extends React.Component {
     );
   }
 }
-
-AtAGlance.defaultProps = {
-  title: "At A Glance",
-};
 
 export default AtAGlance;
