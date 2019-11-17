@@ -142,7 +142,3 @@ class PairedLocation(object):
 
     def to_json(self):
         return # TODO: actually return JSON version of Location retailer pair
-
-
-if __name__ == '__main__':
-    print(lm.generate_location_matches("Los Angeles"))

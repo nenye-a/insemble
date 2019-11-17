@@ -1,68 +1,79 @@
 from django.http import Http404
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
+
 import urllib
-from .types.EmptyLocation import EmptyLocation
+import logging
+
+from .types.Venue import Venue
 from .types.Retailer import Retailer
 from .types.PairedLocation import PairedLocation
 from .serializers import *
+from users.models import User
+from users.serializers import UserSerializer
 
-import logging
 
-# # Location viewsets
-# class LocationViewSet(viewsets.ViewSet):
 
-#     permission_classes= [
-#         permissions.AllowAny
-#     ]
+## Venue viewsets
+class VenueViewSet(LoginRequiredMixin, viewsets.ViewSet):
+    
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
 
-#     """
-#     A simple ViewSet for listing or retrieving users.
-#     """
-#     def list(self, request):
+    permission_classes= [
+        permissions.AllowAny
+    ]
 
-#         # FIXME: create method to retreive all Locations in the Location class
-#         queryset = Location.objects.all()
-#         serializer = LocationSerializer(queryset, many=True)
-#         return Response(serializer.data)
+    """
+    A simple ViewSet for listing or retrieving venues.
+    """
+    def list(self, request):
 
-#     def retrieve(self, request, pk=None):
+        queryset = Venue.get_venues(paired=True)
+        serializer = VenueSerializer(queryset, many=True)
+        return Response(serializer.data)
 
-#         # FIXME: create method to retreive all Locations in the Retailer class
-#         queryset = Location.objects.all()
-#         location = get_object_or_404(queryset, pk=pk) # make sure to adjust this to retreive a specific location
-#         serializer = LocationSerializer(location)
-#         return Response(serializer.data)
+    def retrieve(self, request, pk=None):
+        print(pk)
+        p_location = Venue.get_venue(pk)
+        serializer = VenueSerializer(p_location)
+        return Response(serializer.data)
 
-# # Retailer viewsets
-# class RetailerViewSet(viewsets.ViewSet):
+## Retailer viewsets
+class RetailerViewSet(LoginRequiredMixin, viewsets.ViewSet):
+    
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
 
-#     permission_classes= [
-#         permissions.AllowAny
-#     ]
+    permission_classes= [
+        permissions.AllowAny
+    ]
 
-#     """
-#     A simple ViewSet for listing or retrieving users.
-#     """
-#     def list(self, request):
+    """
+    A simple ViewSet for listing or retrieving retailers.
+    """
+    def list(self, request):
 
-#         # FIXME: create method to retreive all Retailer in the Location class
-#         queryset = Retailer.objects.all()
-#         serializer = RetailerSerializer(queryset, many=True)
-#         return Response(serializer.data)
+        queryset = Retailer.get_retailers()
+        serializer = RetailerSerializer(queryset, many=True)
+        return Response(serializer.data)
 
-#     def retrieve(self, request, pk=None):
+    def retrieve(self, request, pk=None):
 
-#         # FIXME: create method to retreive all Retailer in the Retailer class
-#         queryset = Retailer.objects.all()
-#         retailer = get_object_or_404(queryset, pk=pk) # make sure to adjust this to retreive a specific retailer
-#         serializer = RetailerSerializer(retailer)
-#         return Response(serializer.data)
+        retailer = Retailer.get_retailer(pk)
+        serializer = RetailerSerializer(retailer)
+        return Response(serializer.data)
 
 
 # viewset to access generic paired location viewset
-class PairedLocationViewSet(viewsets.ViewSet):
-
+class PairedLocationViewSet(LoginRequiredMixin, viewsets.ViewSet):
+    
+    login_url = '/login'
+    redirect_field_name = 'login'
+    
     permission_classes= [
         permissions.AllowAny
     ]
@@ -83,8 +94,11 @@ class PairedLocationViewSet(viewsets.ViewSet):
         return Response(serializer.data) 
 
 # viewset to access any space matches that you generate
-class SpaceMatchesViewset(viewsets.ViewSet):
+class SpaceMatchesViewSet(LoginRequiredMixin, viewsets.ViewSet):
 
+    login_url = '/login'
+    redirect_field_name = 'login'
+    
     permission_classes= [
         permissions.AllowAny
     ]
@@ -96,8 +110,11 @@ class SpaceMatchesViewset(viewsets.ViewSet):
         pass
 
 # viewset to access any tenant matches that you have
-class TenantMatchesViewset(viewsets.ViewSet):
+class TenantMatchesViewSet(LoginRequiredMixin, viewsets.ViewSet):
 
+    login_url = '/login'
+    redirect_field_name = 'login'
+    
     permission_classes= [
         permissions.AllowAny
     ]
@@ -138,6 +155,26 @@ class TenantMatchesViewset(viewsets.ViewSet):
         serializer = PairedLocationSerializer(matches, many=True)
         return Response(serializer.data)
 
+class UserViewSet(viewsets.ModelViewSet):
+
+    login_url = '/login'
+    redirect_field_name = 'login'
     
-    
-    
+    """
+    A simple ViewSet for listing or retrieving users.
+    """
+
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.AllowAny]
+
+    # def list(self, request):
+    #     queryset = User.objects.all()
+    #     serializer = UserSerializer(queryset, many=True)
+    #     return Response(serializer.data)
+
+    # def retrieve(self, request, pk=None):
+    #     queryset = User.objects.all()
+    #     user = get_object_or_404(queryset, pk=pk)
+    #     serializer = UserSerializer(user)
+    #     return Response(serializer.data)
