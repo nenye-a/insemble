@@ -20,15 +20,23 @@ class Spaces extends React.PureComponent {
       `/raw/758852bbc1979f6c4522ab4e92d1c92cba8fb0dc/data.json`
     ].join("")
 
-    fetch(url)
+    // fetch(url)
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     this.setState({ markers: data.photos });
+    //   });
+
+      fetch('/api/pair')
       .then(res => res.json())
       .then(data => {
-        this.setState({ markers: data.photos });
+        this.setState({ markers: data });
+
       });
+
   }
 
   render() {
-    // console.log(this.state.markers)
+    console.log(this.state.markers)
     // console.log("loaded")
     return (
       <Container fluid className="main-content-container m-0">

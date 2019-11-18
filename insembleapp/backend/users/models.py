@@ -14,7 +14,7 @@ class User(AbstractBaseUser, PermissionsMixin, IndexedTimeStampedModel):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     company = models.CharField(max_length=255)
-
+    
     is_broker = models.BooleanField(
         default=False,
         help_text=_('Designates whether the user is a broker.'),

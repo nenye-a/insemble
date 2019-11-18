@@ -19,7 +19,7 @@ from .serializers import *
 class VenueViewSet(viewsets.ViewSet):
 
     permission_classes= [
-        permissions.IsAuthenticated
+        permissions.AllowAny
     ]
 
     """
@@ -63,7 +63,7 @@ class VenueViewSet(viewsets.ViewSet):
 class RetailerViewSet(viewsets.ViewSet):
 
     permission_classes= [
-        permissions.IsAuthenticated
+        permissions.AllowAny
     ]
 
     """
@@ -110,7 +110,7 @@ class RetailerViewSet(viewsets.ViewSet):
 class PairedLocationViewSet(viewsets.ViewSet):
 
     permission_classes= [
-        permissions.IsAuthenticated
+        permissions.AllowAny
     ]
     
     """
@@ -132,7 +132,7 @@ class PairedLocationViewSet(viewsets.ViewSet):
 class SpaceMatchesViewSet(viewsets.ViewSet):
     
     permission_classes= [
-        permissions.IsAuthenticated
+        permissions.AllowAny
     ]
 
     def list(self, request):
@@ -148,7 +148,7 @@ class TenantMatchesViewSet(viewsets.ViewSet):
     redirect_field_name = 'login'
     
     permission_classes= [
-        permissions.IsAuthenticated
+        permissions.AllowAny
     ]
 
     def list(self,request):
