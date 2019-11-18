@@ -16,6 +16,8 @@ import {
   Button
 } from "shards-react";
 
+import {NavLink} from "react-router-dom";
+
 const Login = () => (
   <Container fluid className="main-content-container h-100 px-4">
     <Row noGutters className="h-100">
@@ -62,8 +64,10 @@ const Login = () => (
                 theme="accent"
                 className="d-table mx-auto"
                 type="submit"
+                tag={NavLink}
+                to="/spaces"
               >
-                Access Account
+                Login
               </Button>
             </Form>
           </CardBody>

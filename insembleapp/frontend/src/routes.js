@@ -2,7 +2,7 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 
 // Layout Types
-import { DefaultLayout, HeaderNavigation, IconSidebar, LandlordLayout, TenantSpaces, Tenant } from "./layouts";
+import { DefaultLayout, HeaderNavigation, IconSidebar, LandlordLayout, TenantSpaces, Tenant, LoginLayout } from "./layouts";
 
 // Route Views
 import Analytics from "./views/Analytics";
@@ -42,8 +42,8 @@ export default [
   {
     path: "/",
     exact: true,
-    layout: DefaultLayout,
-    component: () => <Redirect to="/spaces" />
+    layout: LoginLayout,
+    component: () => <Redirect to="/login" />
   },
   {
     path: "/insights",
@@ -87,7 +87,7 @@ export default [
   },
   {
     path: "/login",
-    layout: BlankIconSidebarLayout,
+    layout: LoginLayout,
     component: Login
   },
   {

@@ -71,11 +71,11 @@ class MapWithAMarkerClusterer extends React.Component {
   }
 
   componentWillMount() {
-    this.setState({ markers: []})
+    this.setState({ marker: []})
   }
 
   componentDidMount() {
-    this.setState({ markers: this.props.markers });
+    this.setState({ marker: [] });
   }
 
 
@@ -101,20 +101,21 @@ class MapWithAMarkerClusterer extends React.Component {
   
   renderRedirect = () => {
     if (this.state.redirect) {
-      return <Redirect to = {{pathname: "/location-deep-dive", match: this.state.marker}} />
+      return <Redirect to = {{pathname: "/location-deep-dive", match: "turkey"}} />
     }
   }
 
   render(){
-    // console.log(this.props.markers)
+    console.log(this.props.markers)
     const markers = this.props.markers
-    // console.log("loaded 2")
+    //console.log("loaded 2")
     // console.log(Object.values(markers))
+    // console.log(markers)
 
     return (
       <GoogleMap
-        defaultZoom={3}
-        defaultCenter={{ lat: 25.0391667, lng: 121.525 }}
+        defaultZoom={10}
+        defaultCenter={{ lat: 34.0522, lng: -118.2437 }}
       >
         {this.renderRedirect()}
         <MarkerClusterer
@@ -127,8 +128,9 @@ class MapWithAMarkerClusterer extends React.Component {
             <Marker 
               onClick={this.handleMarkerClick}
               {...marker}
-              key={marker.photo_id}
-              position={{ lat: marker.latitude, lng: marker.longitude }}
+              key={marker._id}
+              icon= {require("../images/logos/marker.png")}
+              position={{ lat: marker.lat, lng: marker.lng }}
             />
           ))}
         </MarkerClusterer>

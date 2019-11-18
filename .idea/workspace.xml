@@ -3,15 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="79ae0e81-6081-4cec-8378-71d07948e27e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-insights/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data_insights/Location.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_insights/Location.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.py" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.py" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.py" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/backend/users/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/users/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/users/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/insembleapp/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/webpack-stats.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
