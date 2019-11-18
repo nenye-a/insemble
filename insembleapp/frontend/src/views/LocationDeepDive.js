@@ -32,9 +32,11 @@ class LocationDeepDive extends React.Component {
   }
 
   render(){
+    console.log("here we go")
     console.log(this.props)
-    console.log("printed props")
-    //const location = this.props.location.match
+    // console.log(this.marker)
+    // console.log("printed props")
+    // const location = this.props.location.match
     const location = {
       name: "PizzaRev",
       address:"5608 Van Nuys Boulevard, Van Nuys", 
