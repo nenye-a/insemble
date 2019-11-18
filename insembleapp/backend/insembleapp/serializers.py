@@ -84,4 +84,8 @@ class PairedLocationSerializer(serializers.Serializer):
     age = serializers.FloatField()
     photo = serializers.URLField()
     icon = serializers.URLField()
+
+# Serializer of paired location including the map_rating field    
+class MapSerializer(PairedLocationSerializer):
     
+    map_rating = serializers.DecimalField(max_digits=3, decimal_places=2)
