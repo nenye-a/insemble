@@ -1,18 +1,43 @@
 import React from "react";
 import { Container, Row, Col, ButtonGroup, Button } from "shards-react";
+import { Map, HeatMap, GoogleApiWrapper, Marker } from 'google-maps-react';
 import MapContainer from "./MapContainer";
+import MapWithAMarkerClusterer from "./MapContainer"
+import MapComponent from "./MapContainer"
 import Iframe from 'react-iframe'
+const fetch = require("isomorphic-fetch");
 
+class Spaces extends React.PureComponent {
+  componentWillMount() {
+    this.setState({ markers: [] })
+  }
 
-const Spaces = () => (
-  
-  <Iframe url=    "https://www.google.com/maps/d/u/0/embed?mid=1qiZ6gGmV-pByhj4HCgnRUxQtvH8ONHcD"
-      width="100%"
-      height="750px"
-      id="myId"
-      className="mx-auto"
-      display="initial"
-      position="relative"/>
-);
+  componentDidMount() {
+    const url = [
+      // Length issue
+      `https://gist.githubusercontent.com`,
+      `/farrrr/dfda7dd7fccfec5474d3`,
+      `/raw/DELETED_LONG_HEX_STRING/data.json`
+    ].join("")
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({ markers: data.photos });
+      });
+  }
+
+  render() {
+    // console.log(this.state.markers)
+    // console.log("loaded")
+    return (
+      <Container fluid className="main-content-container m-0">
+        <Row>
+          <MapComponent {...this.state.markers}/>
+        </Row>
+      </Container>
+    )
+  }
+}
 
 export default Spaces;
