@@ -56,12 +56,13 @@ class Retailer(object):
             print("Retailer creation unsuccessful")
             return False
         
+        print("In Progress")
         # Retailer(name, types, price, locations), retailer_valid
         retailer = {
             "name": temp.name,
-            "place_type": temp.place_type,
+            "place_type": list(temp.place_type),
             "price": temp.price,
-            "locations": temp.locations,
+            "locations": [list(x) for x in list(temp.locations)],
             "about_text": about_text,
             "preferences": preferences,
             "requirements": requirements,
@@ -70,10 +71,13 @@ class Retailer(object):
             "icon": icon
         }
         
-        try:
-            Retailer.db_retailer.insert(retailer)
-        except:
-            return False
+        print(" ")
+        [print(retailer[x]) for x in retailer]
+        # try:
+        Retailer.db_retailer.insert(retailer)
+        print("Success")
+        # except:
+        #     return False
         return True
 
     @staticmethod

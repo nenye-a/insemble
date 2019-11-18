@@ -23,6 +23,9 @@ SECURE_HSTS_PRELOAD = True
 
 DEBUG = True
 
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/api/pair"
+
 ADMINS = (
     ('Admin', 'nenye@insemblegroup.com'),
     ('Admin', 'colin@insemblegroup.com'),
@@ -47,6 +50,7 @@ INSTALLED_APPS = [
 
     'common',
     'users',
+    'knox',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +58,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware', # TODO: make sure to provide once live
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -65,6 +69,11 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        ('knox.auth.TokenAuthentication')
+        # 'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
     ]
 }
 

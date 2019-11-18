@@ -1,4 +1,5 @@
 from django.http import Http404
+from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -12,19 +13,13 @@ from .types.Venue import Venue
 from .types.Retailer import Retailer
 from .types.PairedLocation import PairedLocation
 from .serializers import *
-from users.models import User
-from users.serializers import UserSerializer
-
 
 
 ## Venue viewsets
-class VenueViewSet(LoginRequiredMixin, viewsets.ViewSet):
-    
-    login_url = '/login/'
-    redirect_field_name = 'redirect_to'
+class VenueViewSet(viewsets.ViewSet):
 
     permission_classes= [
-        permissions.AllowAny
+        permissions.IsAuthenticated
     ]
 
     """
@@ -42,14 +37,33 @@ class VenueViewSet(LoginRequiredMixin, viewsets.ViewSet):
         serializer = VenueSerializer(p_location)
         return Response(serializer.data)
 
-## Retailer viewsets
-class RetailerViewSet(LoginRequiredMixin, viewsets.ViewSet):
+    def create(self, request):
+        serializer = VenueSerializer(data=request.data, partial=True)
+        
+        #TODO: update to make use of the other optional fields
+        try:
+            address = serializer.initial_data["address"]
+            owner_username = serializer.initial_data["owner_username"]
+            Venue.add_venue(address, owner_username)
+            return Response(serializer.initial_data, status=status.HTTP_201_CREATED)
+        except:
+            return Response("Failed request", status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, pk=None):
+        pass
+
+    def partial_update(self, request, pk=None):
+        pass
+
+    def destroy(self, request, pk=None):
+        pass
     
-    login_url = '/login/'
-    redirect_field_name = 'redirect_to'
+
+## Retailer viewsets
+class RetailerViewSet(viewsets.ViewSet):
 
     permission_classes= [
-        permissions.AllowAny
+        permissions.IsAuthenticated
     ]
 
     """
@@ -67,15 +81,36 @@ class RetailerViewSet(LoginRequiredMixin, viewsets.ViewSet):
         serializer = RetailerSerializer(retailer)
         return Response(serializer.data)
 
+    def create(self, request):
+        
+        #TODO: update to make use of the other optional fields
+        
+        serializer = RetailerSerializer(data=request.data, partial=True)
+        
+        try:
+            name = serializer.initial_data["name"]
+            location = serializer.initial_data["location"]
+            owner_username = serializer.initial_data["owner_username"]
+            Retailer.add_retailer(name, location, owner_username)
+            return Response(serializer.initial_data, status=status.HTTP_201_CREATED)
+        except:
+            return Response("Failed request", status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, pk=None):
+        pass
+
+    def partial_update(self, request, pk=None):
+        pass
+
+    def destroy(self, request, pk=None):
+        pass
+
 
 # viewset to access generic paired location viewset
-class PairedLocationViewSet(LoginRequiredMixin, viewsets.ViewSet):
-    
-    login_url = '/login'
-    redirect_field_name = 'login'
-    
+class PairedLocationViewSet(viewsets.ViewSet):
+
     permission_classes= [
-        permissions.AllowAny
+        permissions.IsAuthenticated
     ]
     
     """
@@ -94,13 +129,10 @@ class PairedLocationViewSet(LoginRequiredMixin, viewsets.ViewSet):
         return Response(serializer.data) 
 
 # viewset to access any space matches that you generate
-class SpaceMatchesViewSet(LoginRequiredMixin, viewsets.ViewSet):
-
-    login_url = '/login'
-    redirect_field_name = 'login'
+class SpaceMatchesViewSet(viewsets.ViewSet):
     
     permission_classes= [
-        permissions.AllowAny
+        permissions.IsAuthenticated
     ]
 
     def list(self, request):
@@ -110,13 +142,13 @@ class SpaceMatchesViewSet(LoginRequiredMixin, viewsets.ViewSet):
         pass
 
 # viewset to access any tenant matches that you have
-class TenantMatchesViewSet(LoginRequiredMixin, viewsets.ViewSet):
+class TenantMatchesViewSet(viewsets.ViewSet):
 
     login_url = '/login'
     redirect_field_name = 'login'
     
     permission_classes= [
-        permissions.AllowAny
+        permissions.IsAuthenticated
     ]
 
     def list(self,request):
@@ -154,27 +186,3 @@ class TenantMatchesViewSet(LoginRequiredMixin, viewsets.ViewSet):
         
         serializer = PairedLocationSerializer(matches, many=True)
         return Response(serializer.data)
-
-class UserViewSet(viewsets.ModelViewSet):
-
-    login_url = '/login'
-    redirect_field_name = 'login'
-    
-    """
-    A simple ViewSet for listing or retrieving users.
-    """
-
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.AllowAny]
-
-    # def list(self, request):
-    #     queryset = User.objects.all()
-    #     serializer = UserSerializer(queryset, many=True)
-    #     return Response(serializer.data)
-
-    # def retrieve(self, request, pk=None):
-    #     queryset = User.objects.all()
-    #     user = get_object_or_404(queryset, pk=pk)
-    #     serializer = UserSerializer(user)
-    #     return Response(serializer.data)
