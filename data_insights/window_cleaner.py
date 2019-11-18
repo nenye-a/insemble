@@ -66,10 +66,12 @@ def update_database_photo(dataset):
         retailers_checked.add(name)
         count += 1
 
+
+
 if __name__ == "__main__":
     # initiate database collections
-    client = Connect.get_connection()
-    db = client.spaceData
-    dataset2 = db.dataset2
-
-    update_database_photo(dataset2)
+    # client = Connect.get_connection()
+    # db = client.spaceData
+    # dataset2 = db.dataset2
+    #
+    # update_database_photo(dataset2)
