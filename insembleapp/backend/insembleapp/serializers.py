@@ -36,12 +36,12 @@ class RetailerSerializer(serializers.Serializer):
 # Serializer for venue combined objects
 class VenueSerializer(serializers.Serializer):
 
-    _id = serializers.CharField()
-    name = serializers.CharField(max_length=100, required=True)
+    _id = serializers.CharField(allow_null=True)
+    name = serializers.CharField(max_length=100)
     lat = serializers.FloatField()
     lng = serializers.FloatField()
     census = serializers.JSONField()
-    address = serializers.CharField()
+    address = serializers.CharField(required=True)
     pop = serializers.JSONField()
     income = serializers.FloatField()
     nearby = serializers.JSONField()
@@ -51,7 +51,7 @@ class VenueSerializer(serializers.Serializer):
     ratings = serializers.DecimalField(max_digits=3, decimal_places=2)
     photo_count = serializers.IntegerField()
     current_retailer_tenure = serializers.FloatField()
-    retailer = RetailerSerializer(allow_null=True)
+    retailer = serializers.CharField()
     photo = serializers.URLField()
     icon = serializers.URLField()
     traffic = serializers.JSONField(allow_null=True)
@@ -59,7 +59,7 @@ class VenueSerializer(serializers.Serializer):
     venue_age = serializers.FloatField()
     about_text = serializers.CharField(max_length=800)
     has_retailer = serializers.BooleanField(allow_null=True, default=False)
-    owner_username = serializers.CharField()
+    owner_username = serializers.CharField(required=True)
 
 
 # Serializer for location & retailer combined objects (Deprecated)

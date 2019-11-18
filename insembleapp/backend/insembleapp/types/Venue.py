@@ -14,15 +14,16 @@ class Venue(object):
 
     client = Connect.get_connection()
     db_space = client.spaceData.dataset2
+    db_venue = client.spaceData.venues
 
     RADIUS = 0.5
 
     # self, _id, name, lat, lng, address, census, pop, income, traffic, safety, nearby, radius,
     # place_type, price, locations, likes, ratings, photo_count, age, photo, icon):
 
-    def __init__(self, _id, lat, lng, address, census, pop, income, traffic=None, safety=None, nearby=None,
+    def __init__(self, _id, lat, lng, address, census, pop, income, traffic=None, safety=None, nearby=None, sqft = None,
                 venue_age=None, has_retailer=False, current_retailer_tenure=None, retailer=None, likes=None, ratings=None,
-                photo_count=None, photo=None, icon=None, owner_username=None, about_text=None):
+                photo_count=None, photo=None, icon=None, owner_username=None, about_text=None, name=None):
         """
 
         :param _id:
@@ -63,7 +64,7 @@ class Venue(object):
         self.venue_age = venue_age
         self.radius = Venue.RADIUS
         self.about_text = about_text
-        # TODO: self.sqft = sqft (to be implemented)
+        self.sqft = sqft
 
         # link space to reatiler
         self.has_retailer = has_retailer
@@ -72,11 +73,9 @@ class Venue(object):
         # retailer specific indicators
         self.retailer = retailer
         
-        self.name = "Vacant"
-        if retailer:
-            self.name = retailer.name # TODO: assert that retailer is a retailer object
+        # name of the actual space (not of the retailer)
+        self.name = name
         
-
         # space/retailer performance
         self.likes = likes
         self.ratings = ratings
@@ -84,7 +83,7 @@ class Venue(object):
         self.photo = photo
         self.icon = icon
 
-        # venenue ownership
+        # venue ownership
         self.owner_username = owner_username
 
     @staticmethod
@@ -93,16 +92,14 @@ class Venue(object):
         Get locations that contain retailers, limited to n=100 items unless specified otherwise.
         '''
         if paired:
-            # implement the following once has_retailer has been propogated accross the database:
-            # db_space_cursor = Venue.db_space.aggregate([{"$match":{"has_retailer": "True"}},
-            #                                                         {"$sample": {"size": n}}])
-            db_space_cursor = Venue.db_space.aggregate([{"$sample": {"size": n}}])
+            db_venu_cursor = Venue.db_venue.aggregate([{"$match":{"has_retailer": "True"}},
+                                                                    {"$sample": {"size": n}}])
         else:
-            db_space_cursor = Venue.db_space.aggregate([{"$match":{"has_retailer": "False"}},
+            db_venue_cursor = Venue.db_venue.aggregate([{"$match":{"has_retailer": "False"}},
                                                                     {"$sample": {"size": n}}])
 
         locations = []
-        for db_item in db_space_cursor:
+        for db_item in db_venue_cursor:
             locations.append(Venue.convert_db_item(db_item))
 
         return locations
@@ -110,7 +107,7 @@ class Venue(object):
     @staticmethod
     def get_venue(_id):
         
-        db_item = Venue.db_space.find_one({"_id": ObjectId(_id)})
+        db_item = Venue.db_venue.find_one({"_id": ObjectId(_id)})
         print(db_item)
         return Venue.convert_db_item(db_item)
 
@@ -119,7 +116,7 @@ class Venue(object):
 
         try:
             if _id:
-                db_item = Venue.db_space.find_one({"_id": ObjectId(_id)})
+                db_item = Venue.db_venue.find_one({"_id": ObjectId(_id)})
                 matches = lm.generate_location_matches(db_item["location"]["address"])
             else:
                 matches = lm.generate_location_matches(address)
@@ -134,19 +131,29 @@ class Venue(object):
         return matched_locations
     
 
-    @staticmethod
-    def add_venue(address, owner_username, about_text=None, venue_age=None, photo=None, icon=None):
+    # @staticmethod
+    # def add_venue(**kwargs):
+        
+    #     # try:
+    #     #     Venue.db_venue.insert(kwargs)
+    #     # except:
+    #     #     return False
+    #     # return True
 
-        temp, is_valid = lm.generate_location_profile(address)
+    @staticmethod
+    def add_venue(address, owner_username, about_text=None, venue_age=None, photo=None, icon=None, name=None,):
+
+        temp, is_valid = lm.generate_location_profile(address, 0.5)
         if not is_valid:
             print("Unable to find location")
             return False
 
         # TODO: implement traffic
         # TODO: implement safety
-        # TODO: implement venue_age
 
-        location = {
+        retailer = None
+
+        document = {
             "address": temp.address,
             "lat": temp.lat,
             "lng": temp.lng,
@@ -155,30 +162,20 @@ class Venue(object):
             "traffic": None,
             "safety": None,
             "nearby": temp.nearby,
-            "radius": Venue.RADIUS
-        }
-
-        retailer = {
-            "name": "Vacant",
-            "place_type": None,
-            "price": None,
-            "location": None
-        }
-
-        document = {
-            "Location": location,
-            "Retailer": retailer,
+            "radius": Venue.RADIUS,
+            "retailer": retailer,
             "has_Retailer": False,
-            "lat": temp.lat,
-            "lng": temp.lng,
             "photo": photo,
             "icon": icon,
             "about_text": about_text,
-            "current_retailer_tenure": None
+            "current_retailer_tenure": None,
+            "venue_age": venue_age,
+            "name": name,
+            "owner_user": owner_username
         }
 
         try:
-            Venue.db_space.update(document)
+            Venue.db_venue.insert(document)
         except:
             return False
         return True
@@ -189,7 +186,7 @@ class Venue(object):
         # TODO: check keyword content to make sure nothing incorrectly formatted gets placed in the database
         
         try:
-            Venue.db_space.update(
+            Venue.db_venue.update(
                 {"_id":ObjectId(_id)},
                 {"$set": kwargs}
             )
@@ -206,50 +203,37 @@ class Venue(object):
         """
         Receives database item and converts it into venue location
         """
+        
         _id = db_item["_id"]
-
-        # location related fields
-        location = db_item["Location"]
-
-        lat = location["lat"]
-        lng = location["lng"]
-        census = location["census"]
-        address = location["address"]
-        pop = location["pop"]
-        income = location["income"]
-        nearby = location["nearby"]
+        name = db_item["name"]
+        lat = db_item["lat"]
+        lng = db_item["lng"]
+        census = db_item["census"]
+        address = db_item["address"]
+        pop = db_item["pop"]
+        income = db_item["income"]
+        nearby = db_item["nearby"]
 
         about_text = None
-        if 'about_text' in location: about_text = location['about_text']
+        if 'about_text' in db_item: about_text = db_item['about_text']
+
+        venue_age= db_item["venue_age"]
 
         # TODO: implement traffic
         # TODO: implement safety
-        # TODO: implement venue_age
 
         # user field
         owner_username = None
         if 'owner_username' in db_item: owner_username = db_item['owner_username']
 
         has_retailer = None
-        # retailer related fields
         if 'has_retailer' not in db_item or db_item['has_retailer'] == 'False':
-            pass
-            # TODO: remove above when the below is implemented:
-            # TODO: place in data_base when "has_retailer" has been implemented in the data_base
-            # return Venue(_id=_id, lat=lat, lng=lng, address=address, census=census, pop=pop, income=income,
-            #             nearby=nearby, owner_username=owner_username)
-
-        # has_retailer = db_item["has_retailer"]
-        current_retailer_tenure = db_item["age"] # TODO: change "age" in database to "current_retailer_tenure"
+            return Venue(_id=_id, lat=lat, lng=lng, address=address, census=census, pop=pop, income=income,
+                        nearby=nearby, owner_username=owner_username, venue_age=venue_age, name=name)
         
-        temp = db_item["Retailer"]
-        # retailer = db_item["Retailer"] # TODO: convert into actual retailer item
-        price = temp["price"]
-        if np.isnan(price):
-            price = Retailer.DEFAULT_PRICE  # flag that p doesn't exist
-        retailer = Retailer(temp["name"], place_type=temp["place_type"], price=price, locations=temp["locations"])
-
-        # get performance information
+        current_retailer_tenure = db_item["current_retailer_age"]
+        retailer = db_item["retailer"]
+        
         likes = db_item["likes"]
         photo_count = db_item["photo_count"]
 
@@ -257,11 +241,10 @@ class Venue(object):
         if np.isnan(ratings):
             ratings = None
 
-        # TODO: determine how to handle retailer vs. venue specific photos and icons
         photo = db_item["photo"]
         icon = db_item["icon"]
 
         return Venue(_id=_id, lat=lat, lng=lng, address=address, census=census, pop=pop, income=income, nearby=nearby, 
                     has_retailer=True, current_retailer_tenure=current_retailer_tenure, retailer=retailer, likes=likes, 
-                    ratings=ratings, photo_count=photo_count, photo=photo, icon=icon, owner_username=owner_username)
+                    ratings=ratings, photo_count=photo_count, photo=photo, icon=icon, owner_username=owner_username, name=name)
 
