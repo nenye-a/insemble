@@ -73,11 +73,11 @@ class Retailer(object):
         
         print(" ")
         [print(retailer[x]) for x in retailer]
-        # try:
-        Retailer.db_retailer.insert(retailer)
-        print("Success")
-        # except:
-        #     return False
+        try:
+            Retailer.db_retailer.insert(retailer)
+            print("Success")
+        except:
+            return False
         return True
 
     @staticmethod
