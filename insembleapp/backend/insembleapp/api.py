@@ -11,7 +11,7 @@ import logging
 
 from .types.Venue import Venue
 from .types.Retailer import Retailer
-from .types.PairedLocation import PairedLocation
+from .types.Location import PairedLocation, MapLocation
 from .serializers import *
 
 
@@ -26,7 +26,6 @@ class VenueViewSet(viewsets.ViewSet):
     A simple ViewSet for listing or retrieving venues.
     """
     def list(self, request):
-
         queryset = Venue.get_venues(paired=True)
         serializer = VenueSerializer(queryset, many=True)
         return Response(serializer.data)
@@ -136,16 +135,26 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
     ]
 
     def list(self, request):
-        pass
+        raise Http404('<h1>Page not found</h1>')
 
     def retreive(self, request, pk=None):
         pass
+    
+    def create(self, request):
+        try:
+            address = request.data["address"]
+            place_type = {}
+            if "place_type" in request.data:
+                place_type = request.data["place_type"]
+        except:
+            return Response("Response must include 'address', prefereably of best location.")
+        
+        matches = MapLocation.get_tenant_matches(address, place_type)
+        serializer = MapSerializer(matches, many=True)
+        return Response(serializer.data)
 
 # viewset to access any tenant matches that you have
 class TenantMatchesViewSet(viewsets.ViewSet):
-
-    login_url = '/login'
-    redirect_field_name = 'login'
     
     permission_classes= [
         permissions.AllowAny
