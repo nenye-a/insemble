@@ -141,7 +141,7 @@ class Venue(object):
     #     # return True
 
     @staticmethod
-    def add_venue(address, owner_username, about_text=None, venue_age=None, photo=None, icon=None, name=None,):
+    def add_venue(address, owner_username, about_text=None, venue_age=None, photo=None, icon=None, name=None):
 
         temp, is_valid = lm.generate_location_profile(address, 0.5)
         if not is_valid:

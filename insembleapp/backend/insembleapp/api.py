@@ -39,11 +39,24 @@ class VenueViewSet(viewsets.ViewSet):
     def create(self, request):
         serializer = VenueSerializer(data=request.data, partial=True)
         
-        #TODO: update to make use of the other optional fields
         try:
-            address = serializer.initial_data["address"]
-            owner_username = serializer.initial_data["owner_username"]
-            Venue.add_venue(address, owner_username)
+            insert_request = serializer.initial_data
+
+            address = insert_request["address"]
+            owner_username = insert_request["owner_username"]
+            about_text = None
+            if insert_request["about_text"]: about_text = insert_request["about_text"]
+            venue_age = None
+            if insert_request["venue_age"]: venue_age = insert_request["venue_age"]
+            photo = None
+            if insert_request["photo"]: photo = insert_request["photo"]
+            icon = None
+            if insert_request["icon"]: icon = insert_request["icon"]
+            name = None
+            if insert_request["name"]: name = insrt_request["name"]
+
+            Venue.add_venue(address, owner_username, about_text=about_text, venue_age=venue_age,
+                             photo=photo, icon=icon, name=name)
             return Response(serializer.initial_data, status=status.HTTP_201_CREATED)
         except:
             return Response("Failed request", status=status.HTTP_400_BAD_REQUEST)
@@ -79,18 +92,32 @@ class RetailerViewSet(viewsets.ViewSet):
         retailer = Retailer.get_retailer(pk)
         serializer = RetailerSerializer(retailer)
         return Response(serializer.data)
-
+                     
     def create(self, request):
         
         #TODO: update to make use of the other optional fields
         
         serializer = RetailerSerializer(data=request.data, partial=True)
-        
+
         try:
-            name = serializer.initial_data["name"]
-            location = serializer.initial_data["location"]
-            owner_username = serializer.initial_data["owner_username"]
-            Retailer.add_retailer(name, location, owner_username)
+            insert_request = serializer.data
+
+            name = insert_request["name"]
+            location = insert_request["location"]
+            owner_username = insert_request["owner_username"]
+            about_text = None
+            if insert_request["about_text"]: about_text = insert_request["about_text"]
+            preferences = None
+            if insert_request["preferences"]: preferences = insert_request["preferences"]
+            requirements = None
+            if insert_request["requirements"]: requirements = insert_request["requirements"]
+            photo = None
+            if insert_request["photo"]: photo = insert_request["photo"]
+            icon = None
+            if insert_request["icon"]: icon = insert_request["icon"]
+
+            Retailer.add_retailer(name, location, owner_username, about_text=about_text, preferences=preferences,
+                            requirements=requirements, photo=photo, icon=icon)
             return Response(serializer.initial_data, status=status.HTTP_201_CREATED)
         except:
             return Response("Failed request", status=status.HTTP_400_BAD_REQUEST)
