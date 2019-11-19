@@ -11,6 +11,8 @@ import { NavLink } from "react-router-dom";
 import { Redirect } from 'react-router-dom'
 
 const { MarkerClusterer } = require("react-google-maps/lib/components/addons/MarkerClusterer");
+import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
+
 
 // const MapWithAMarkerClusterer = compose(
 //   withProps({
@@ -101,13 +103,26 @@ class MapWithAMarkerClusterer extends React.Component {
   
   renderRedirect = () => {
     if (this.state.redirect) {
-      return <Redirect to = {{pathname: "/location-deep-dive", match: "turkey"}} />
+      return <Redirect to = {{pathname: "/location-deep-dive-demo", match: this.state.marker}} />
     }
   }
 
   render(){
-    console.log(this.props.markers)
     const markers = this.props.markers
+    const positions = Object.values(markers).map(marker => { return { "lat": marker.lat, "lng": marker.lng}});
+    console.log(positions)
+    const points = [
+      {lat: 34.0622, lng: -118.2437, weight: 2},
+      {lat: 34.0522, lng: -118.2437, weight: 3},
+      {lat: 34.0422, lng: -118.2437, weight: 1},
+      {lat: 34.0222, lng: -118.2437, weight: 2},
+      {lat: 34.0122, lng: -118.2437, weight: 3},
+      {lat: 34.0722, lng: -118.2437, weight: 1},
+      ]
+    const data = points.map(({lat, lng, weight}) => (
+      {location: new google.maps.LatLng(lat, lng),
+      weight: weight}))
+    
     //console.log("loaded 2")
     // console.log(Object.values(markers))
     // console.log(markers)
@@ -116,6 +131,17 @@ class MapWithAMarkerClusterer extends React.Component {
       <GoogleMap
         defaultZoom={10}
         defaultCenter={{ lat: 34.0522, lng: -118.2437 }}
+        // yesIWantToUseGoogleMapApiInternals
+        // onGoogleApiLoaded={({map, maps}) => {
+        //   console.log(points[0]);
+        //   console.log("logged points")
+        //   const heatmap = new maps.visualization.HeatmapLayer({
+        //     data: points.map(point => (
+        //       {location: new maps.LatLng(point['location'][1], point['location'][0]),
+        //       weight: point['weight']}))
+        //   });
+        //   heatmap.setMap(map);
+        // }}
       >
         {this.renderRedirect()}
         <MarkerClusterer
@@ -126,14 +152,20 @@ class MapWithAMarkerClusterer extends React.Component {
         >
           {Object.values(markers).map(marker => (
             <Marker 
-              onClick={this.handleMarkerClick}
-              {...marker}
+              onClick={()=>this.handleMarkerClick(marker)}
               key={marker._id}
               icon= {require("../images/logos/marker.png")}
               position={{ lat: marker.lat, lng: marker.lng }}
             />
           ))}
         </MarkerClusterer>
+        <HeatMapLayer
+          // data={positions}
+          // options={{radius:20}}
+          data= {data}
+          opacity={1}
+          radius={20}
+          />
       </GoogleMap>
     );
   }
@@ -157,7 +189,9 @@ const MapComponent = withScriptjs(withGoogleMap(MapWithAMarkerClusterer))
 
 export default (markers) => (
   <MapComponent
-    googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U&v=3.exp&libraries=geometry,drawing,places"
+    // googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U&v=3.exp&libraries=places,visualization"
+
+    googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U&v=3.exp&libraries=geometry,drawing,places,visualization"
     loadingElement={<div style={{ height: `100%` }} />}
     containerElement={<div style={{ height: "95vh", width: "100%" }} />}
     mapElement={<div style={{ height: `100%` }} />}

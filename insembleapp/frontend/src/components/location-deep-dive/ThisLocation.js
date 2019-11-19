@@ -8,7 +8,8 @@ import {
   Row,
   Col,
   FormSelect, 
-  Container
+  Container, 
+  Badge
 } from "shards-react";
 
 import colors from "../../utils/colors";
@@ -60,12 +61,10 @@ class RetailerSite extends React.Component {
   }
 
   render() {
-    
-    const retailer = this.match
-    console.log(retailer)
+    const location = this.match
     const { title } = this.props;
-    const labels = Object.keys(retailer.census)
-    
+    const labels = Object.keys(location.census)
+
     return (
       <Card small className="ubd-stats h-100">
         <CardHeader className="border-bottom">
@@ -75,46 +74,65 @@ class RetailerSite extends React.Component {
 
         <CardBody className="d-flex flex-column">
           <Container>
+            <Row >
+              <Col className="d-flex flex-column justify-content-center align-items-center">${location.income} per year
+              </Col>
+              <Col className="d-flex flex-column justify-content-center align-items-center" style={{fontWeight: "bold"}}>Median Household Income
+              </Col>
+            </Row>
+            {/* <Row>
+              <Col>Daytime Population
+              </Col>
+              <Col>68,879 as of 11/6
+              </Col>
+            </Row> */}
             <Row>
               <Col>
-                  {/* Chart */}
-                <canvas
-                  width="100"
-                  ref={this.canvasRef}
-                  className="analytics-users-by-device mt-3 mb-4"
-                />
-                {/* Legend */}
-                <div className="ubd-stats__legend w-75 m-auto pb-4">
-                  {labels.map((label, idx) => (
-                    <div key={idx} className="ubd-stats__item">
-                     
-                      <span className="ubd-stats__category">{label}</span>
-                      <span className="ubd-stats__value">{retailer.census[label]}%</span>
-                    </div>
+                <div className="user-details__tags py-4 justify-content-center align-items-center">
+                  {Object.keys(location.nearby).map((category, idx) => (
+                    <Badge
+                      pill
+                      theme="light"
+                      className="text-light text-uppercase mb-2 border mr-1"
+                      key={idx}
+                    >
+                      {category}
+                    </Badge>
                   ))}
                 </div>
               </Col>
-              <Col>Demographics
-              </Col>
-            </Row>
-            <Row >
-              <Col>${retailer.income} per year
-              </Col>
-              <Col>Income
+              <Col className="d-flex flex-column justify-content-center align-items-center" style={{fontWeight: "bold"}}>Nearby Stores
               </Col>
             </Row>
             <Row>
-              <Col>68,879 as of 11/6
+              <Col className="d-flex flex-column justify-content-center align-items-center">
+                {/* Chart */}
+              <canvas
+                width="100"
+                ref={this.canvasRef}
+                className="analytics-users-by-device mt-3 mb-4"
+              />
+
+              {/* Legend */}
+              <div className="ubd-stats__legend w-75 m-auto pb-4">
+                {labels.map((label, idx) => (
+                  <div key={idx} className="ubd-stats__item px-1">
+                    {label.icon && (
+                      <div
+                        dangerouslySetInnerHTML={{ __html: label.icon }}
+                        style={{ color: label.iconColor }}
+                      />
+                    )}
+                    <span className="ubd-stats__category">{label}</span>
+                    <span className="ubd-stats__value">{location.census[label]}%</span>
+                  </div>
+                ))}
+              </div>
               </Col>
-              <Col>Street Traffic
+              <Col className="d-flex flex-column justify-content-center align-items-center" style={{fontWeight: "bold"}}>Demographics
               </Col>
             </Row>
-            <Row>
-              <Col>Excersise, Japanese Restaurant, Technology Office
-              </Col>
-              <Col>Ecosystem
-              </Col>
-            </Row>
+            
 
 
           </Container>
