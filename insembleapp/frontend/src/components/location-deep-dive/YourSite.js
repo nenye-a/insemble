@@ -8,7 +8,8 @@ import {
   Row,
   Col,
   FormSelect, 
-  Container
+  Container, 
+  Badge
 } from "shards-react";
 
 import colors from "../../utils/colors";
@@ -18,6 +19,60 @@ class YourSite extends React.Component {
   constructor(props) {
     super(props);
 
+    this.match = {address: "3319 West Pico Boulevard, Los Angeles",
+    age: 8.12950058718354,
+    census: {
+    asian: 25.3, 
+    black: 14.7,
+    hispanic: 54.6,
+    indian: 0.9,
+    multi: 4.2,
+    white: 4.4,
+    },
+    icon: "https://maps.gstatic.com/mapfiles/place_api/icons/shopping-71.png",
+    income: 37809,
+    lat: 34.0474429,
+    likes: 3,
+    lng: -118.316412,
+    length: 2,
+    name: "Chocolate Cafe",
+    nearby: {
+    Bakery: 1,
+    Bar: 1,
+    "Bus Line": 1,
+    Café: 1,
+    Church: 1,
+    "Cocktail Bar": 2,
+    "Coffee Shop": 1,
+    "Cosmetics Shop": 1,
+    "Dessert Shop": 1,
+    "Donut Shop": 2,
+    "Food": 1,
+    "General Entertainment": 1,
+    "Historic Site": 1,
+    "Italian Restaurant": 1,
+    "Mexican Restaurant": 2,
+    "Miscellaneous Shop": 1,
+    "Mobile Phone Shop": 1,
+    "Moving Target": 1,
+    "Other Repair Shop": 2,
+    "Park": 1,
+    "Pizza Place": 1,
+    "Rental Car Location": 1,
+    Road: 1,
+    "Sandwich Place": 1,
+    Theater: 1,
+    },
+    photo: "https://lh3.googleusercontent.com/p/AF1QipO-DELETED_BASE64_STRING-w500-h500",
+    photo_count: 9,
+    place_type: {
+    "Mexican Restaurant": 1
+    },
+    pop: 14644,
+    price: 1,
+    radius: "0.50",
+    ratings: "7.10",
+    _id: "5dbeb266d39442d972e2a0a7"}
     this.canvasRef = React.createRef();
   }
 
@@ -36,15 +91,33 @@ class YourSite extends React.Component {
         },
         ...this.props.chartOptions
       },
-      data: this.props.chartData
+      data: {
+        labels: Object.keys(this.match.census),
+        datasets: [
+          {
+            hoverBorderColor: colors.white.toRGBA(1),
+            data: Object.values(this.match.census), 
+            backgroundColor: [
+              colors.primary.toRGBA(1),
+              colors.primary.toRGBA(0.8),
+              colors.primary.toRGBA(0.6),
+              colors.primary.toRGBA(0.4),
+              colors.primary.toRGBA(0.2),
+              colors.primary.toRGBA(0.1)
+            ]
+          }
+        ]
+      }
     };
 
     new Chart(this.canvasRef.current, chartConfig);
   }
 
   render() {
+    const location = this.match
+    console.log(location)
     const { title } = this.props;
-    const labels = this.getParsedLabels();
+    const labels = Object.keys(location.census)
 
     return (
       <Card small className="ubd-stats h-100">
@@ -55,10 +128,40 @@ class YourSite extends React.Component {
 
         <CardBody className="d-flex flex-column">
           <Container>
+            <Row >
+              <Col className="d-flex flex-column justify-content-center align-items-center" style={{fontWeight: "bold"}}>Median Household Income
+              </Col>
+              <Col className="d-flex flex-column justify-content-center align-items-center">${location.income} per year
+              </Col>
+            </Row>
+            {/* <Row>
+              <Col>Daytime Population
+              </Col>
+              <Col>68,879 as of 11/6
+              </Col>
+            </Row> */}
             <Row>
-              <Col>Demographics
+              <Col className="d-flex flex-column justify-content-center align-items-center" style={{fontWeight: "bold"}}>Nearby Stores
               </Col>
               <Col>
+                <div className="user-details__tags py-4 justify-content-center align-items-center">
+                  {Object.keys(location.nearby).map((category, idx) => (
+                    <Badge
+                      pill
+                      theme="light"
+                      className="text-light text-uppercase mb-2 border mr-1"
+                      key={idx}
+                    >
+                      {category}
+                    </Badge>
+                  ))}
+                </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col className="d-flex flex-column justify-content-center align-items-center" style={{fontWeight: "bold"}}>Demographics
+              </Col>
+              <Col className="d-flex flex-column justify-content-center align-items-center">
                 {/* Chart */}
               <canvas
                 width="100"
@@ -69,38 +172,21 @@ class YourSite extends React.Component {
               {/* Legend */}
               <div className="ubd-stats__legend w-75 m-auto pb-4">
                 {labels.map((label, idx) => (
-                  <div key={idx} className="ubd-stats__item">
+                  <div key={idx} className="ubd-stats__item px-1">
                     {label.icon && (
                       <div
                         dangerouslySetInnerHTML={{ __html: label.icon }}
                         style={{ color: label.iconColor }}
                       />
                     )}
-                    <span className="ubd-stats__category">{label.title}</span>
-                    <span className="ubd-stats__value">{label.value}%</span>
+                    <span className="ubd-stats__category">{label}</span>
+                    <span className="ubd-stats__value">{location.census[label]}%</span>
                   </div>
                 ))}
               </div>
               </Col>
             </Row>
-            <Row >
-              <Col>Income
-              </Col>
-              <Col>$125,230 per year
-              </Col>
-            </Row>
-            <Row>
-              <Col>Street Traffic
-              </Col>
-              <Col>68,879 as of 11/6
-              </Col>
-            </Row>
-            <Row>
-              <Col>Ecosystem
-              </Col>
-              <Col>Excersise, Japanese Restaurant, Technology Office
-              </Col>
-            </Row>
+            
 
 
           </Container>
