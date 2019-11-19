@@ -13,6 +13,7 @@ from users.views import DangerousLoginView
 router = routers.DefaultRouter()
 router.register(r'api/pair', PairedLocationViewSet, basename='pair')
 router.register(r'api/tmatches', TenantMatchesViewSet, basename='tmatches')
+router.register(r'api/lmatches', SpaceMatchesViewSet, 'lmatches')
 router.register(r'api/venue', VenueViewSet, basename='venue')
 router.register(r'api/retailer', RetailerViewSet, basename='retailer')
 

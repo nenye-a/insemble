@@ -93,7 +93,7 @@ class PairedLocation(object):
             matched_locations.append(PairedLocation.convert_db_item(db_item))
 
         return matched_locations
-
+    
     @staticmethod
     def convert_db_item(db_item):
         """
@@ -142,3 +142,59 @@ class PairedLocation(object):
 
     def to_json(self):
         return # TODO: actually return JSON version of Location retailer pair
+
+class MapLocation(PairedLocation):
+    def __init__(self, _id, name, lat, lng, address, census, pop, income, traffic, safety, nearby, radius,
+                    place_type, price, locations, likes, ratings, photo_count, age, photo, icon, map_rating):
+        super().__init__(_id, name, lat, lng, address, census, pop, income, traffic, safety, nearby, radius,
+                    place_type, price, locations, likes, ratings, photo_count, age, photo, icon)
+
+        self.map_rating = map_rating
+        
+    @staticmethod
+    def get_tenant_matches(address, place_type):
+        return [MapLocation.convert_db_item(x) for x in lm.generate_tenant_matches(address, place_type)]
+    
+    @staticmethod
+    def convert_db_item(db_item):
+        _id = db_item["_id"]
+
+        location = db_item["Location"]
+        retailer = db_item["Retailer"]
+
+        # get the location related fields imported
+        lat = location["lat"]
+        lng = location["lng"]
+        census = location["census"]
+        address = location["address"]
+        pop = location["pop"]
+        income = location["income"]
+        nearby = location["nearby"]
+        radius = location["radius"]
+
+        # get the retailer related fields
+        name = retailer["name"]
+        price = retailer["price"]
+        if np.isnan(price):
+            price = 2  # flag that p doesn't exist
+        locations = retailer["locations"]
+
+        place_type = retailer["place_type"]
+
+        # get other important information
+        age =  db_item["age"]
+
+        # get performance information
+        likes = db_item["likes"]
+        photo_count = db_item["photo_count"]
+
+        ratings = db_item["ratings"]
+        if np.isnan(ratings):
+            ratings = None
+
+        photo = db_item["photo"]
+        icon = db_item["icon"]
+        map_rating = db_item["map_rating"]
+
+        return MapLocation(_id, name, lat, lng, address, census, pop, income, None, None, nearby,
+                    radius, place_type, price, locations, likes, ratings, photo_count, age, photo, icon, map_rating)

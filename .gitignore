@@ -4,3 +4,7 @@ insemble-venv/
 colin-venv/
 /colin-venv
 
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+

@@ -107,7 +107,7 @@ def generate_location_matches(location_address):
         if mile_distance < 0.5: # we don't want those that are less than half a mile
             in_area_retailers.add(item["name"])
             continue
-
+        
         distances_dict = {}
         item_dict = {}
         id = item["_id"]
@@ -159,7 +159,7 @@ def generate_location_matches(location_address):
 
     return return_list
 
-def generate_tenant_matches(location_address):
+def generate_tenant_matches(location_address, my_place_type={}):
     """
     Given a location, this will generate all the matching retailers within our database that are a match for the profile.
     All items will be ranked by performance (which is considered ranking), accompanied by an algorithmic guess of
@@ -177,7 +177,8 @@ def generate_tenant_matches(location_address):
     db_space = client.spaceData
 
     # TODO: make this request less expensive than it currently is. See if we can do some parsing on the mongo side
-    db_space_cursor = db_space.dataset2.find({})
+    # db_space_cursor = db_space.dataset2.find({})
+    db_space_cursor = db_space.dataset2.aggregate([{"$sample": {"size": 2000}}])
 
     location_retailer_pairs = {}
     distances_items = []
@@ -237,14 +238,23 @@ def generate_tenant_matches(location_address):
     distance_table["weighted_diff"] = distance_table[["cen_diff", "pop_diff", "income_diff", "cat_diff"]].dot(weight)
     distance_table = distance_table[distance_table["weighted_diff"] < 0.24]
 
-    # sort by ratings and provide back
+    # sort by ratings
     distance_table = distance_table.sort_values("ratings")
 
     # calculate and return the objects that are the closest organized by ratings
     return_list = []
     for index in range(len(distance_table)):
         index_id = distance_table["id"].iloc[index]
-        return_list.append(location_retailer_pairs[index_id])
+        location_data = location_retailer_pairs[index_id]
+        bonus = 1
+
+        # provide ratings bonus of 10% for every category is in the area:    
+        for category in my_place_type:
+            if category in location_data["Retailer"]["place_type"]:
+                bonus += 0.1
+
+        location_data["map_rating"] = location_data["ratings"]*bonus
+        return_list.append(location_data)
 
     return return_list
 
