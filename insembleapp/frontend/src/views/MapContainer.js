@@ -12,57 +12,8 @@ import { Redirect } from 'react-router-dom'
 
 const { MarkerClusterer } = require("react-google-DELETED_BASE64_STRING");
 import HeatMapLayer from 'react-google-DELETED_BASE64_STRING';
+import SearchBox from 'react-google-maps/lib/components/places/SearchBox'
 
-
-// const MapWithAMarkerClusterer = compose(
-//   withProps({
-//     googleMapURL: "https://maps.googleapis.com/maps/api/js?key=DELETED_GOOGLE_API_KEY&v=3.exp&libraries=geometry,drawing,places",
-//     loadingElement: <div style={{ height: `100%` }} />,
-//     containerElement: <div style={{ height: "95vh", width: "100%" }} />,
-//     mapElement: <div style={{ height: `100%` }} />,
-//   }),
-//   withHandlers({
-//     onMarkerClustererClick: () => (markerClusterer) => {
-//       const clickedMarkers = markerClusterer.getMarkers()
-//       console.log(`Current clicked markers length: ${clickedMarkers.length}`)
-//       console.log(clickedMarkers)
-//     },
-//     onMarkerClick: () => (marker) => {
-//       // link to post view page
-//       //
-//       //
-//       //
-//       //
-//       //
-//       console.log('Go to the marker post page')
-//       return to = "/location-deep-dive" 
-//       window.location = '/location-deep-dive'
-//     }
-//   }),
-//   withScriptjs,
-//   withGoogleMap
-// )(props =>
-//   <GoogleMap
-//     defaultZoom={3}
-//     defaultCenter={{ lat: 25.0391667, lng: 121.525 }}
-//   >
-//     <MarkerClusterer
-//       onClick={props.onMarkerClustererClick}
-//       averageCenter
-//       enableRetinaIcons
-//       gridSize={60}
-//     >
-//       {props.markers.map(marker => (
-//         <Marker 
-//           onClick={props.onMarkerClick}
-//           {...marker}
-//           key={marker.photo_id}
-//           position={{ lat: marker.latitude, lng: marker.longitude }}
-//         />
-//       ))}
-//     </MarkerClusterer>
-//   </GoogleMap>
-// );
 class MapWithAMarkerClusterer extends React.Component {
   constructor(props) {
     super(props);
@@ -88,17 +39,8 @@ class MapWithAMarkerClusterer extends React.Component {
   }
 
   handleMarkerClick (marker) {
-      // link to post view page
-      //
-      //
-      //
-      //
-      //
       console.log('Go to the marker post page')
       this.setState({redirect: true, marker: marker})
-      
-      // return to = "/location-deep-dive" 
-      // window.location = '/location-deep-dive'
     }
   
   renderRedirect = () => {
@@ -108,20 +50,24 @@ class MapWithAMarkerClusterer extends React.Component {
   }
 
   render(){
-    const markers = this.props.markers
-    const positions = Object.values(markers).map(marker => { return { "lat": marker.lat, "lng": marker.lng}});
-    console.log(positions)
-    const points = [
-      {lat: 34.0622, lng: -118.2437, weight: 2},
-      {lat: 34.0522, lng: -118.2437, weight: 3},
-      {lat: 34.0422, lng: -118.2437, weight: 1},
-      {lat: 34.0222, lng: -118.2437, weight: 2},
-      {lat: 34.0122, lng: -118.2437, weight: 3},
-      {lat: 34.0722, lng: -118.2437, weight: 1},
-      ]
-    const data = points.map(({lat, lng, weight}) => (
-      {location: new google.maps.LatLng(lat, lng),
-      weight: weight}))
+    const markers = this.props.markers.markers
+    const heats = this.props.markers.heats
+    console.log("these are the props")
+    // console.log(positions)
+    // const points = [
+    //   {lat: 34.0622, lng: -118.2437, weight: 2},
+    //   {lat: 34.0522, lng: -118.2437, weight: 3},
+    //   {lat: 34.0422, lng: -118.2437, weight: 1},
+    //   {lat: 34.0222, lng: -118.2437, weight: 2},
+    //   {lat: 34.0122, lng: -118.2437, weight: 3},
+    //   {lat: 34.0722, lng: -118.2437, weight: 1},
+    //   ]
+    // const data = points.map(({lat, lng, weight}) => (
+    //   {location: new google.maps.LatLng(lat, lng),
+    //   weight: weight}))
+    const data = heats.map(({lat, lng, map_rating}) => (
+        {location: new google.maps.LatLng(lat, lng),
+        weight: map_rating}))
     
     //console.log("loaded 2")
     // console.log(Object.values(markers))
@@ -131,20 +77,18 @@ class MapWithAMarkerClusterer extends React.Component {
       <GoogleMap
         defaultZoom={10}
         defaultCenter={{ lat: 34.0522, lng: -118.2437 }}
-        // yesIWantToUseGoogleMapApiInternals
-        // onGoogleApiLoaded={({map, maps}) => {
-        //   console.log(points[0]);
-        //   console.log("logged points")
-        //   const heatmap = new maps.visualization.HeatmapLayer({
-        //     data: points.map(point => (
-        //       {location: new maps.LatLng(point['location'][1], point['location'][0]),
-        //       weight: point['weight']}))
-        //   });
-        //   heatmap.setMap(map);
-        // }}
       >
         {this.renderRedirect()}
-        <MarkerClusterer
+        {/* Just markers */}
+        {Object.values(markers).map(marker => (
+            <Marker 
+              onClick={()=>this.handleMarkerClick(marker)}
+              key={marker._id}
+              // icon= {require("../images/logos/marker.png")}
+              position={{ lat: marker.lat, lng: marker.lng }}
+            />
+          ))}
+        {/* <MarkerClusterer
           onClick={this.handleMarkerClustererClick}
           averageCenter
           enableRetinaIcons
@@ -158,13 +102,11 @@ class MapWithAMarkerClusterer extends React.Component {
               position={{ lat: marker.lat, lng: marker.lng }}
             />
           ))}
-        </MarkerClusterer>
+        </MarkerClusterer> */}
         <HeatMapLayer
-          // data={positions}
-          // options={{radius:20}}
           data= {data}
+          options={{radius:20}}
           opacity={1}
-          radius={20}
           />
       </GoogleMap>
     );
@@ -173,27 +115,13 @@ class MapWithAMarkerClusterer extends React.Component {
 
 const MapComponent = withScriptjs(withGoogleMap(MapWithAMarkerClusterer))
 
-// MapWithAMarkerClusterer.defaultProps = {
-//   googleMapURL: "https://maps.googleapis.com/maps/api/js?key=DELETED_GOOGLE_API_KEY&v=3.exp&libraries=geometry,drawing,places",
-//   loadingElement: <div style={{ height: `100%` }} />,
-//   containerElement: <div style={{ height: "95vh", width: "100%" }} />,
-//   mapElement: <div style={{ height: `100%` }} />,
-// }
-
-// MapWithAMarkerClusterer.propTypes = {
-//   googleMapURL: PropTypes.string,
-//   loadingElement: PropTypes.element,
-//   containerElement: PropTypes.element,
-//   mapElement: PropTypes.element
-// }
-
 export default (markers) => (
   <MapComponent
     // googleMapURL="https://maps.googleapis.com/maps/api/js?key=DELETED_GOOGLE_API_KEY&v=3.exp&libraries=places,visualization"
 
     googleMapURL="https://maps.googleapis.com/maps/api/js?key=DELETED_GOOGLE_API_KEY&v=3.exp&libraries=geometry,drawing,places,visualization"
     loadingElement={<div style={{ height: `100%` }} />}
-    containerElement={<div style={{ height: "95vh", width: "100%" }} />}
+    containerElement={<div style={{ height: "700px", width: "100%" }} />}
     mapElement={<div style={{ height: `100%` }} />}
     markers={markers}
   />

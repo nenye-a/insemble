@@ -9,7 +9,7 @@ const fetch = require("isomorphic-fetch");
 
 class Spaces extends React.PureComponent {
   componentWillMount() {
-    this.setState({ markers: [] })
+    this.setState({ markers: [], heats: []})
   }
 
   componentDidMount() {
@@ -26,14 +26,30 @@ class Spaces extends React.PureComponent {
     //     this.setState({ markers: data.photos });
     //   });
 
-      fetch('/api/pair')
-      .then(res => res.json())
-      .then(data => {
-        this.setState({ markers: data });
+    // 'api/tmatches/address="1101 W 23rd St, Los Angeles, CA 90007f"
 
-      });
+    fetch('/api/pair')
+    .then(res => res.json())
+    .then(data => {
+      this.setState({ markers: data });
 
-    // const response = await fetch('/api/lmatches', {
+    });
+
+    fetch('/api/lmatches/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+         address: '1101 W 23rd St, Los Angeles, CA 90007',
+      }),
+    }).then(res => res.json())
+    .then(data => {
+      this.setState({ heats: data });
+      console.log(this.state.heats)
+      console.log("printed responses")
+
+    });
+
+    // const response = await fetch('/api/lmatches/', {
     //   method: 'POST',
     //   headers: { 'Content-Type': 'application/json' },
     //   body: JSON.stringify({
@@ -41,16 +57,17 @@ class Spaces extends React.PureComponent {
     //   }),
     // })
     // console.log(await response.json())
+    // console.log("printed responses")
 
   }
 
   render() {
-    console.log(this.state.markers)
+    // console.log(this.state.markers)
     // console.log("loaded")
     return (
       <Container fluid className="main-content-container m-0">
         <Row>
-          <MapComponent {...this.state.markers}/>
+          <MapComponent {...this.state}/>
         </Row>
       </Container>
     )
