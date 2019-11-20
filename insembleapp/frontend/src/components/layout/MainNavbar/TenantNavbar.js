@@ -46,6 +46,7 @@ const TenantNavbar = ({ layout, stickyTop }) => {
               Map
             </Button>
           </ButtonGroup>
+          {/* Filler div */}
           <div className="w-100 d-none d-md-flex d-lg-flex"/>
           <NavbarNav />
           <NavbarToggle />

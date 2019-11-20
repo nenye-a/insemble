@@ -150,6 +150,10 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
             return Response("Response must include 'address', prefereably of best location.")
         
         matches = MapLocation.get_tenant_matches(address, place_type)
+
+        print("Map Ratings & ratings")
+        [print(x.map_rating, x.ratings) for x in matches]
+
         serializer = MapSerializer(matches, many=True)
         return Response(serializer.data)
 
