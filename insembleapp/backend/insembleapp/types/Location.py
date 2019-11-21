@@ -10,6 +10,7 @@ import logging
 
 from mongo_connect import Connect # ignore errors, works with Django run serfver
 import location_methods as lm # ignore errors, works with Django run server
+import location_builder as lb
 
 # code to connect to database if must be handled from here
 # class Connect(object):
@@ -198,3 +199,16 @@ class MapLocation(PairedLocation):
 
         return MapLocation(_id, name, lat, lng, address, census, pop, income, None, None, nearby,
                     radius, place_type, price, locations, likes, ratings, photo_count, age, photo, icon, map_rating)
+
+def return_location(lat, lng):
+
+    census, pop, income, census_radius, valid2 = lb.get_demographics(lat, lng, 0.5)
+    nearby, valid3 = lb.get_nearby_stores(lat, lng, 0.5)
+
+    if valid2 and valid3:
+        return {
+            "census": census,
+            "pop": pop,
+            "income": income,
+            "nearby": nearby
+        }

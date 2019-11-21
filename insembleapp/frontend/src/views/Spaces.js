@@ -26,7 +26,8 @@ class Spaces extends React.PureComponent {
     //     this.setState({ markers: data.photos });
     //   });
 
-    // 'api/tmatches/address="1101 W 23rd St, Los Angeles, CA 90007f"
+    // 'api/tmatches/address=1101 W 23rd St, Los Angeles, CA 90007'
+    // 'api/location/lat=######&lng=#########'
 
     fetch('/api/pair')
     .then(res => res.json())

@@ -11,7 +11,7 @@ import logging
 
 from .types.Venue import Venue
 from .types.Retailer import Retailer
-from .types.Location import PairedLocation, MapLocation
+from .types.Location import PairedLocation, MapLocation, return_location
 from .serializers import *
 
 
@@ -199,3 +199,29 @@ class TenantMatchesViewSet(viewsets.ViewSet):
         
         serializer = PairedLocationSerializer(matches, many=True)
         return Response(serializer.data)
+
+class LocationInfoViewSet(viewsets.ViewSet):
+
+    permission_classes = [
+        permissions.AllowAny
+    ]
+
+    def retrieve(self, rqeuest, pk=None):
+        args = pk.split('&')
+        d = {}
+
+        # parse the arguments
+        for arg in args:
+            arg = arg.split("=")
+            d[arg[0]] = arg[1]
+        
+        lat = None
+        lng = None
+        if "lat" in d and "lng" in d: 
+            lat = d["lat"]
+            lng = d["lng"]
+            return return_location(lat, lng)
+        else:
+            raise Exception("lat and lng both required in request. Please resubmit with params /lat=##&lng=##")
+
+        
