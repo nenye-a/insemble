@@ -88,4 +88,4 @@ class PairedLocationSerializer(serializers.Serializer):
 # Serializer of paired location including the map_rating field    
 class MapSerializer(PairedLocationSerializer):
     
-    map_rating = serializers.DecimalField(max_digits=3, decimal_places=2)
+    map_rating = serializers.FloatField()

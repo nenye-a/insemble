@@ -178,12 +178,13 @@ def generate_tenant_matches(location_address, my_place_type={}):
 
     # TODO: make this request less expensive than it currently is. See if we can do some parsing on the mongo side
     # db_space_cursor = db_space.dataset2.find({})
-    db_space_cursor = db_space.dataset2.aggregate([{"$sample": {"size": 2000}}])
+    db_space_cursor = db_space.dataset2.aggregate([{"$sample": {"size": 3000}}])
 
     location_retailer_pairs = {}
     distances_items = []
     in_area_retailers = set()
 
+    count = 0
     for item in db_space_cursor:
 
         # if your already in the area, we don't want to add you as a potential match
@@ -197,7 +198,8 @@ def generate_tenant_matches(location_address, my_place_type={}):
         if mile_distance < 0.5: # we don't want those that are less than half a mile
             in_area_retailers.add(item["name"])
             continue
-
+        count += 1
+        print(count)
         distances_dict = {}
         item_dict = {}
         id = item["_id"]
@@ -217,7 +219,13 @@ def generate_tenant_matches(location_address, my_place_type={}):
         # store the distance diff and relate to the id
         distances = location_difference(my_location_vector, item_dict)
         distances_dict["id"] = id
-        distances_dict["ratings"] = item["ratings"]
+
+        # convert all nans into nulls
+        rate = item["ratings"]
+        if np.isnan(rate):
+            rate = None
+        distances_dict["ratings"] = rate
+
         distances_dict.update(distances)
         distances_items.append(distances_dict)
 
@@ -246,16 +254,22 @@ def generate_tenant_matches(location_address, my_place_type={}):
     for index in range(len(distance_table)):
         index_id = distance_table["id"].iloc[index]
         location_data = location_retailer_pairs[index_id]
-        bonus = 1
+        penalty = 1
 
-        # provide ratings bonus of 10% for every category is in the area:    
+        # provide ratings penalty of 10% for every category is in the area:
         for category in my_place_type:
             if category in location_data["Retailer"]["place_type"]:
-                bonus += 0.1
+                penalty -= 0.1
 
-        location_data["map_rating"] = location_data["ratings"]*bonus
+        location_data["map_rating"] = (location_data["ratings"]*penalty)*19/3 + (1-19/3*5)
+
+        if np.isnan(location_data["map_rating"]):
+            location_data["map_rating"] = None
+
         return_list.append(location_data)
 
+    print("#################################################################################")
+    print(len(return_list))
     return return_list
 
 # if __name__ == '__main__':

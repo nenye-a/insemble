@@ -13,7 +13,6 @@ import { Redirect } from 'react-router-dom'
 const { MarkerClusterer } = require("react-google-DELETED_BASE64_STRING");
 import HeatMapLayer from 'react-google-DELETED_BASE64_STRING';
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox'
-const _ = require("lodash");
 
 class MapWithAMarkerClusterer extends React.Component {
   constructor(props) {
@@ -25,56 +24,12 @@ class MapWithAMarkerClusterer extends React.Component {
   }
 
   componentWillMount() {
-    const refs = {}
-
-    this.setState({
-      // bounds: new google.maps.LatLngBounds([new google.maps.LatLng(33.7036519, -118.6681759), new google.maps.LatLng(34.3373061, -118.1552891)]),
-      bounds: null,
-      center: {
-        lat: 34.0522342, lng: -118.2436849
-      },
-      markers: [],
-      onMapMounted: ref => {
-        refs.map = ref;
-      },
-      onBoundsChanged: () => {
-        this.setState({
-          bounds: refs.map.getBounds(),
-          center: refs.map.getCenter(),
-        })
-      },
-      onSearchBoxMounted: ref => {
-        refs.searchBox = ref;
-      },
-      onPlacesChanged: () => {
-        const places = refs.searchBox.getPlaces();
-        const bounds = new google.maps.LatLngBounds();
-
-        places.forEach(place => {
-          if (place.geometry.viewport) {
-            bounds.union(place.geometry.viewport)
-          } else {
-            bounds.extend(place.geometry.location)
-          }
-        });
-        const nextMarkers = places.map(place => ({
-          position: place.geometry.location,
-        }));
-        const nextCenter = _.get(nextMarkers, '0.position', this.state.center);
-
-        this.setState({
-          center: nextCenter,
-          markers: nextMarkers,
-        });
-        // refs.map.fitBounds(bounds);
-      },
-    })
+    this.setState({ marker: []})
   }
-  
 
-  // componentDidMount() {
-  //   this.setState({ marker: [] });
-  // }
+  componentDidMount() {
+    this.setState({ marker: [] });
+  }
 
 
   handleMarkerClustererClick (markerClusterer) {
@@ -87,31 +42,17 @@ class MapWithAMarkerClusterer extends React.Component {
       console.log('Go to the marker post page')
       this.setState({redirect: true, marker: marker})
     }
-
-  handleSearchClick (marker) {
-    console.log(marker)
-    console.log('Go to the marker post page')
-    // fetch('api/location/lat=34.0522795&lng=-118.3089333')
-    // .then(res => res.json())
-    // .then(data => {
-    //   console.log(data)
-    //   console.log("going to marker page actually")
-    //   this.setState({redirect: true, marker: data})});
-
-    // });
-    // this.setState({redirect: true, marker: marker})
-  }
   
   renderRedirect = () => {
     if (this.state.redirect) {
-      
       return <Redirect to = {{pathname: "/location-deep-dive-demo", match: this.state.marker}} />
     }
   }
 
   render(){
-    const i_markers = this.props.markers.markers
+    const markers = this.props.markers.markers
     const heats = this.props.markers.heats
+    console.log("these are the props")
     // console.log(positions)
     // const points = [
     //   {lat: 34.0622, lng: -118.2437, weight: 2},
@@ -139,7 +80,7 @@ class MapWithAMarkerClusterer extends React.Component {
       >
         {this.renderRedirect()}
         {/* Just markers */}
-        {Object.values(i_markers).map(marker => (
+        {Object.values(markers).map(marker => (
             <Marker 
               onClick={()=>this.handleMarkerClick(marker)}
               key={marker._id}
@@ -153,7 +94,7 @@ class MapWithAMarkerClusterer extends React.Component {
           enableRetinaIcons
           gridSize={60}
         >
-          {Object.values(i_markers).map(marker => (
+          {Object.values(markers).map(marker => (
             <Marker 
               onClick={()=>this.handleMarkerClick(marker)}
               key={marker._id}
@@ -167,33 +108,6 @@ class MapWithAMarkerClusterer extends React.Component {
           options={{radius:20}}
           opacity={1}
           />
-        <SearchBox
-          ref={this.state.onSearchBoxMounted}
-          bounds={this.state.bounds}
-          controlPosition={google.maps.ControlPosition.TOP}
-          onPlacesChanged={this.state.onPlacesChanged}
-        >
-          <input
-            type="text"
-            placeholder="Search an address or retailer"
-            style={{
-              boxSizing: `border-box`,
-              border: `1px solid transparent`,
-              width: `300px`,
-              height: `32px`,
-              marginTop: `17px`,
-              padding: `0 12px`,
-              borderRadius: `3px`,
-              boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
-              fontSize: `14px`,
-              outline: `none`,
-              textOverflow: `ellipses`,
-            }}
-          />
-        </SearchBox>
-        {this.state.markers.map((marker, index) =>
-          <Marker onClick={()=>this.handleSearchClick(marker)} key={index} position={marker.position} />
-        )}
       </GoogleMap>
     );
   }
