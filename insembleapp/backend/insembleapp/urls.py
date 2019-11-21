@@ -16,6 +16,7 @@ router.register(r'api/tmatches', TenantMatchesViewSet, basename='tmatches')
 router.register(r'api/lmatches', SpaceMatchesViewSet, 'lmatches')
 router.register(r'api/venue', VenueViewSet, basename='venue')
 router.register(r'api/retailer', RetailerViewSet, basename='retailer')
+router.register(r'api/location', LocationInfoViewSet, basename="location")
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

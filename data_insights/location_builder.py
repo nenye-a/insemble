@@ -56,6 +56,76 @@ def get_loc_from_input(input):
     return lat, lng, result_valid
 
 
+def get_demographics(lat, lng, radius, count=0):
+    result_valid = True
+
+    #### FIXME: move sGeo to constant at top of code
+    # search demographics from justice map
+    sGeo = "tract"
+    URL = "http://www.spatialjusticetest.org/api.php?fLat={0}&fLon={1}&sGeo={2}&fRadius={3}".format(lat,lng,sGeo,radius)
+    data = smart_search(URL, 'justicemap', 'normal')
+
+    try:
+        census = {"asian":float(data["asian"]), "black":float(data["black"]), "hispanic":float(data["hispanic"]),
+              "indian":float(data["indian"]), "multi":float(data["multi"]), "white":float(data["white"])}
+        pop = int(data["pop"])
+        income = float(data["income"])
+
+    # if no demographic results, expand the radius by .1 mi until demographic results obtained or timeout at 4 tries
+    except Exception:
+        if count <= 4:
+            radius += .1
+            count += 1
+            return get_demographics(lat, lng, radius, count)
+
+        print("Error getting demographics from lat {0} and lng {1}".format(lat, lng))
+        print(data)
+        census = np.nan
+        pop = np.nan
+        income = np.nan
+        result_valid = False
+
+    return census, pop, income, radius, result_valid
+
+def get_nearby_stores(lat, lng, radius):
+    result_valid = True
+    ####
+    #### TODO: need to incorporate proximity (closer stores... more influence)
+
+    nearby = {}
+    #### TODO: ensure right retailer
+
+    # search for nearby stores in radius
+    url_search = 'https://api.foursquare.com/v2/venues/search'
+    params = dict(
+        client_id=FRSQ_ID,
+        client_secret=FRSQ_SECRET,
+        v='20191028',
+        ll=str(lat) + "," + str(lng),
+        intent='browse',
+        radius=radius*MILES_TO_M
+    )
+    data = smart_search(url_search, 'foursquare', 'venues_search', params=params)
+
+    # check to make sure categories field is present
+    try:
+        data['response']['venues'][0]['categories']
+    except Exception:
+        print("Error getting Foursquare retail categories from {0}, {1} with radius {2}".format(lat, lng, radius))
+        print(data)
+        result_valid = False
+        return np.nan, result_valid
+
+    # add categories of nearby venues to dictionary counter to keep track
+    for venue in data['response']['venues']:
+        for cat in venue["categories"]:
+            try:
+                nearby[cat["name"]] = nearby[cat["name"]] + 1
+            except Exception:
+                nearby[cat["name"]] = 1
+
+    return nearby, result_valid
+
 '''
 This method creates a location profile for a particular address. It pulls in information from various APIs to create Locations
 
@@ -67,76 +137,6 @@ This method creates a location profile for a particular address. It pulls in inf
 :rtype: Tuple (Location, Boolean)
 '''
 def generate_location_profile(address, radius):
-
-    def get_demographics(lat, lng, radius, count=0):
-        result_valid = True
-
-        #### FIXME: move sGeo to constant at top of code
-        # search demographics from justice map
-        sGeo = "tract"
-        URL = "http://www.spatialjusticetest.org/api.php?fLat={0}&fLon={1}&sGeo={2}&fRadius={3}".format(lat,lng,sGeo,radius)
-        data = smart_search(URL, 'justicemap', 'normal')
-
-        try:
-            census = {"asian":float(data["asian"]), "black":float(data["black"]), "hispanic":float(data["hispanic"]),
-                  "indian":float(data["indian"]), "multi":float(data["multi"]), "white":float(data["white"])}
-            pop = int(data["pop"])
-            income = float(data["income"])
-
-        # if no demographic results, expand the radius by .1 mi until demographic results obtained or timeout at 4 tries
-        except Exception:
-            if count <= 4:
-                radius += .1
-                count += 1
-                return get_demographics(lat, lng, radius, count)
-
-            print("Error getting demographics from lat {0} and lng {1}".format(lat, lng))
-            print(data)
-            census = np.nan
-            pop = np.nan
-            income = np.nan
-            result_valid = False
-
-        return census, pop, income, radius, result_valid
-
-    def get_nearby_stores(lat, lng, radius):
-        result_valid = True
-        ####
-        #### TODO: need to incorporate proximity (closer stores... more influence)
-
-        nearby = {}
-        #### TODO: ensure right retailer
-
-        # search for nearby stores in radius
-        url_search = 'https://api.foursquare.com/v2/venues/search'
-        params = dict(
-            client_id=FRSQ_ID,
-            client_secret=FRSQ_SECRET,
-            v='20191028',
-            ll=str(lat) + "," + str(lng),
-            intent='browse',
-            radius=radius*MILES_TO_M
-        )
-        data = smart_search(url_search, 'foursquare', 'venues_search', params=params)
-
-        # check to make sure categories field is present
-        try:
-            data['response']['venues'][0]['categories']
-        except Exception:
-            print("Error getting Foursquare retail categories from {0}, {1} with radius {2}".format(lat, lng, radius))
-            print(data)
-            result_valid = False
-            return np.nan, result_valid
-
-        # add categories of nearby venues to dictionary counter to keep track
-        for venue in data['response']['venues']:
-            for cat in venue["categories"]:
-                try:
-                    nearby[cat["name"]] = nearby[cat["name"]] + 1
-                except Exception:
-                    nearby[cat["name"]] = 1
-
-        return nearby, result_valid
 
     def get_footraffic(address):
         ####
@@ -157,7 +157,6 @@ def generate_location_profile(address, radius):
             'x-api-key': CRIME_KEY
         }
         data = smart_search(URL, 'crimeometer', 'normal', headers=headers)
-
 
         pass
 
