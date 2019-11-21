@@ -37,6 +37,7 @@ class LocationDeepDiveDemo extends React.Component {
     // console.log(this.marker)
     // console.log("printed props")
     const location = this.props.location.match
+    const address = "3250 West Olympic Boulevard, Los Angeles"
     // const location = {
     //   name: "PizzaRev",
     //   address:"5608 Van Nuys Boulevard, Van Nuys", 
@@ -63,7 +64,7 @@ class LocationDeepDiveDemo extends React.Component {
     return (
       <Container fluid className="main-content-container px-4">
         {/* TODO: Change los angeles from static input  */}
-        <Iframe url={"https://www.google.com/maps/embed/v1/search?key=DELETED_GOOGLE_API_KEY&q="+location.address.split(" ").join("+")+"+Los+Angeles"}
+        <Iframe url={"https://www.google.com/maps/embed/v1/search?key=DELETED_GOOGLE_API_KEY&q="+address.split(" ").join("+")+"+Los+Angeles"}
         width="100%"
         height="300px"
         id="myId"
@@ -82,7 +83,7 @@ class LocationDeepDiveDemo extends React.Component {
             />
           </div>
           
-          <PageTitle title={location.address} subtitle="Stats for" className="ml-3 mt-0" />
+          <PageTitle title={address} subtitle="Stats for" className="ml-3 mt-0" />
         </Row>
 
         <Row noGutters className="page-header py-2">
