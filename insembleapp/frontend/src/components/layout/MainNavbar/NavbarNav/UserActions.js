@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types"
 import { logout } from "../../../../redux/actions/auth"
@@ -40,6 +40,10 @@ class UserActions extends React.Component {
     const { isAuthenticated, user } = this.props.auth;
     // const authLinks = ();
 
+    if(this.props.isAuthenticated) {
+      return <Redirect to="/"/>;
+    }
+    
     return (
       <NavItem tag={Dropdown} caret toggle={this.toggleUserActions}>
         <DropdownToggle caret tag={NavLink} className="text-nowrap px-3">
