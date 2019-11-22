@@ -25,10 +25,6 @@ import {NavLink} from "react-router-dom";
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    // this.state = {
-    //   email: "",
-    //   password: "",
-    // };
     this.emailInput = React.createRef()
     this.passwordInput = React.createRef()
   }
@@ -40,17 +36,11 @@ class Login extends React.Component {
 
   onSubmit = e => {
     e.preventDefault();
-    console.log(this.emailInput.current.value)
-    console.log(this.passwordInput.current.value)
     this.props.login(
       this.emailInput.current.value,
       this.passwordInput.current.value
     )
   }
-
-  onChange = e => this.setState({
-    [e.target.name]: e.target.value
-  });
 
   render() {
     
