@@ -1,5 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import PropTypes from "prop-types"
+import { logout } from "../../../../redux/actions/auth"
+
 import {
   Dropdown,
   DropdownToggle,
@@ -10,15 +14,20 @@ import {
   NavLink
 } from "shards-react";
 
-export default class UserActions extends React.Component {
+class UserActions extends React.Component {
   constructor(props) {
     super(props);
-
+    
     this.state = {
       visible: false
     };
 
     this.toggleUserActions = this.toggleUserActions.bind(this);
+  }
+
+  static PropTypes = {
+    auth: PropTypes.object.isRequired,
+    logout: PropTypes.func.isRequired
   }
 
   toggleUserActions() {
@@ -28,6 +37,9 @@ export default class UserActions extends React.Component {
   }
 
   render() {
+    const { isAuthenticated, user } = this.props.auth;
+    // const authLinks = ();
+
     return (
       <NavItem tag={Dropdown} caret toggle={this.toggleUserActions}>
         <DropdownToggle caret tag={NavLink} className="text-nowrap px-3">
@@ -42,17 +54,8 @@ export default class UserActions extends React.Component {
           <DropdownItem tag={Link} to="user-profile">
             <i className="material-icons">&#xE7FD;</i> Profile
           </DropdownItem>
-          <DropdownItem tag={Link} to="edit-user-profile">
-            <i className="material-icons">&#xE8B8;</i> Edit Profile
-          </DropdownItem>
-          <DropdownItem tag={Link} to="file-manager-list">
-            <i className="material-icons">&#xE2C7;</i> Files
-          </DropdownItem>
-          <DropdownItem tag={Link} to="transaction-history">
-            <i className="material-icons">&#xE896;</i> Transactions
-          </DropdownItem>
-          <DropdownItem divider />
-          <DropdownItem tag={Link} to="/" className="text-danger">
+          {/* <DropdownItem tag={Link} to="/" className="text-danger" onClick={this.props.logout}> */}
+          <DropdownItem onClick={this.props.logout} className="text-danger">
             <i className="material-icons text-danger">&#xE879;</i> Logout
           </DropdownItem>
         </Collapse>
@@ -60,3 +63,9 @@ export default class UserActions extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  auth: state.auth
+})
+
+export default connect(mapStateToProps, {logout})(UserActions);
