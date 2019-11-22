@@ -19,7 +19,7 @@ certifi==2019.9.11        # via requests, sentry-sdk
 cffi==1.13.2              # via brotlipy, cryptography
 chardet==3.0.4            # via requests
 cryptography==2.8         # via django-rest-knox
-
+dataclasses==0.7          # via djongo (may need to be placed back in)
 decorator==4.4.1          # via ipython, traitlets
 defusedxml==0.6.0         # via odfpy
 diff-match-patch==20181111  # via django-import-export
