@@ -8,9 +8,11 @@ from decouple import config  # noqa
 BASE_DIR = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
 
-INSIGHTS_DIR = os.path.abspath(os.path.join(BASE_DIR, '../../data_insights'))
+# Path to include data_insights when in insemble folder
+# INSIGHTS_DIR = os.path.abspath(os.path.join(BASE_DIR, '../../data_insights'))
 
-sys.path.append(INSIGHTS_DIR)
+INSIGHTS_DIR = os.path.abspath(os.path.join(BASE_DIR, 'data_insights'))
+# sys.path.append(INSIGHTS_DIR)
 
 def base_dir_join(*args):
     return os.path.join(BASE_DIR, *args)
