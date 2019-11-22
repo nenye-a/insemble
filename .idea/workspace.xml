@@ -2,15 +2,35 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="79ae0e81-6081-4cec-8378-71d07948e27e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/backend/users/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/users/api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/backend/users/auth_urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/users/auth_urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.js" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/views/Login.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/views/Login.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/jquery-webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/jquery-webpack-stats.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/exampleapp/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/exampleapp/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/exampleapp/apps.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/exampleapp/models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/exampleapp/tests/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/exampleapp/views.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/App.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/app/example-DELETED_BASE64_STRING.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/app/example-app/components/ColorChanger/__tests__/ColorChanger.snaps.spec.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/app/example-app/components/ColorChanger/__tests__/__snapshots__/ColorChanger.snaps.spec.js.snap" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/app/example-app/components/ColorChanger/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/app/example-app/components/ColorChanger/style.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/app/example-DELETED_BASE64_STRING.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/app/example-app/components/ColorDisplay/__tests__/ColorDisplay.snaps.spec.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/app/example-app/components/ColorDisplay/__tests__/__snapshots__/ColorDisplay.snaps.spec.js.snap" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/app/example-app/components/ColorDisplay/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/app/example-app/components/ColorDisplay/style.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/app/example-app/components/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/app/example-app/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/bootstrap-includes.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/constants/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/jquery-index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/pages/Home.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/routes/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/utils/SentryBoundary.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/utils/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/.js/utils/urls.js" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
