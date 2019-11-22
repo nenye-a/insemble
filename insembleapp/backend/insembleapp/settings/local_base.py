@@ -13,23 +13,23 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'appbackend',
-        'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote('helicop251') + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
+        'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote(config('MONGO_DB_PASS', cast=str)) + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
         'USER': 'nenye',
-        'PASSWORD': 'helicop251',
+        'PASSWORD': config('MONGO_DB_PASS', cast=str),
     },
     'spaceData': {
         'ENGINE': 'djongo',
         'NAME': 'spaceData',
-        'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote('helicop251') + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
+        'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote(config('MONGO_DB_PASS', cast=str)) + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
         'USER': 'nenye',
-        'PASSWORD': 'helicop251',
+        'PASSWORD': config('MONGO_DB_PASS', cast=str),
     },
     'learn': {
         'ENGINE': 'djongo',
         'NAME': 'learn',
-        'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote('helicop251') + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
+        'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote(config('MONGO_DB_PASS', cast=str)) + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
         'USER': 'nenye',
-        'PASSWORD': 'helicop251',
+        'PASSWORD': config('MONGO_DB_PASS', cast=str),
     },
 }
 
