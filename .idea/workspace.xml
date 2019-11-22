@@ -3,12 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="79ae0e81-6081-4cec-8378-71d07948e27e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.py" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.py" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/backend/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/users/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/webpack-stats.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.js" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.js" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.js" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/views/Login.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/views/Login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/jquery-webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/jquery-webpack-stats.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/package.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -22,7 +24,15 @@
   <component name="ProjectId" id="1TP3HP13jYqWqrm3w7Mmsvmyfib" />
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$DELETED_BASE64_STRING.py" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.tools" />
+  </component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings module-name="insemble" is-module-sdk="true">
+        <option name="myUseModuleSdk" value="true" />
+        <option name="myModuleName" value="insemble" />
+      </console-settings>
+    </option>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
