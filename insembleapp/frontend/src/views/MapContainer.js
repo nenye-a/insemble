@@ -5,6 +5,7 @@ import {
   withGoogleMap,
   GoogleMap,
   Marker,
+  InfoWindow
 } from "react-google-maps";
 import PropTypes from 'prop-types'; 
 import { NavLink } from "react-router-dom";
@@ -19,7 +20,7 @@ class MapWithAMarkerClusterer extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {redirect: false}
+    this.state = {redirect: false, isMarkerShown: false, markerPosition: null, markerAddress: null}
     this.handleMarkerClustererClick = this.handleMarkerClustererClick.bind(this);
     this.handleMarkerClick = this.handleMarkerClick.bind(this);
   }
@@ -67,6 +68,20 @@ class MapWithAMarkerClusterer extends React.Component {
           markers: nextMarkers,
         });
         // refs.map.fitBounds(bounds);
+      },
+      onMapClick: (e) => {
+        console.log(e.latLng.lat().toString().split(".").join(""))
+        console.log("stringed")
+        console.log('api/location/lat='+e.latLng.lat().toString().split(".").join("")+'&lng='+e.latLng.lng().toString().split(".").join(""))
+        fetch('api/location/lat='+e.latLng.lat().toString().split(".").join("")+'&lng='+e.latLng.lng().toString().split(".").join(""))
+        .then(res => res.json())
+        .then(data => {
+          console.log(data)
+          console.log("request made")
+          this.setState({markerPosition: e.latLng, isMarkerShown:true, marker: data})});
+
+        console.log(this.state.marker)
+        console.log("pressed")
       },
     })
   }
@@ -136,17 +151,32 @@ class MapWithAMarkerClusterer extends React.Component {
       <GoogleMap
         defaultZoom={10}
         defaultCenter={{ lat: 34.0522, lng: -118.2437 }}
+        defaultOptions={{
+          maxZoom: 15,
+          minZoom: 7, 
+        }}
+        onClick={this.state.onMapClick}
+        
       >
         {this.renderRedirect()}
+        {this.state.isMarkerShown && 
+        <Marker position={this.state.markerPosition}> 
+          
+          <InfoWindow>
+            {/* TODO: Make smaller and solve for middle-of-nowhere case. also make it come back when pressed again */}
+            <h1>{this.state.marker.address}</h1>
+          </InfoWindow>
+          
+        </Marker> }
         {/* Just markers */}
-        {Object.values(i_markers).map(marker => (
+        {/* {Object.values(i_markers).map(marker => (
             <Marker 
               onClick={()=>this.handleMarkerClick(marker)}
               key={marker._id}
               // icon= {require("../images/logos/marker.png")}
               position={{ lat: marker.lat, lng: marker.lng }}
             />
-          ))}
+          ))} */}
         {/* <MarkerClusterer
           onClick={this.handleMarkerClustererClick}
           averageCenter

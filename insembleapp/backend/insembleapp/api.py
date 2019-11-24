@@ -38,7 +38,7 @@ class VenueViewSet(viewsets.ViewSet):
 
     def create(self, request):
         serializer = VenueSerializer(data=request.data, partial=True)
-        
+
         try:
             insert_request = serializer.initial_data
 
@@ -69,7 +69,7 @@ class VenueViewSet(viewsets.ViewSet):
 
     def destroy(self, request, pk=None):
         pass
-    
+
 
 ## Retailer viewsets
 class RetailerViewSet(viewsets.ViewSet):
@@ -92,11 +92,11 @@ class RetailerViewSet(viewsets.ViewSet):
         retailer = Retailer.get_retailer(pk)
         serializer = RetailerSerializer(retailer)
         return Response(serializer.data)
-                     
+
     def create(self, request):
-        
+
         #TODO: update to make use of the other optional fields
-        
+
         serializer = RetailerSerializer(data=request.data, partial=True)
 
         try:
@@ -138,7 +138,7 @@ class PairedLocationViewSet(viewsets.ViewSet):
     permission_classes= [
         permissions.AllowAny
     ]
-    
+
     """
     A simple ViewSet for listing or retrieving users.
     """
@@ -152,11 +152,11 @@ class PairedLocationViewSet(viewsets.ViewSet):
         # TODO: Test it
         p_location = PairedLocation.get_paired_location(pk)
         serializer = PairedLocationSerializer(p_location)
-        return Response(serializer.data) 
+        return Response(serializer.data)
 
 # viewset to access any space matches that you generate
 class SpaceMatchesViewSet(viewsets.ViewSet):
-    
+
     permission_classes= [
         permissions.AllowAny
     ]
@@ -164,9 +164,9 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
     def list(self, request):
         raise Http404('<h1>Page not found</h1>')
 
-    def retreive(self, request, pk=None):
+    def retrieve(self, request, pk=None):
         pass
-    
+
     def create(self, request):
         try:
             address = request.data["address"]
@@ -175,7 +175,7 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
                 place_type = request.data["place_type"]
         except:
             return Response("Response must include 'address', prefereably of best location.")
-        
+
         matches = MapLocation.get_tenant_matches(address, place_type)
 
         print("Map Ratings & ratings")
@@ -186,19 +186,19 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
 
 # viewset to access any tenant matches that you have
 class TenantMatchesViewSet(viewsets.ViewSet):
-    
+
     permission_classes= [
         permissions.AllowAny
     ]
 
     def list(self,request):
         raise Http404('<h1>Page not found</h1>')
-    
+
     def retrieve(self, request, pk=None):
         """
         Retreive takes in the following keywords and determines the best matches to return:
 
-        address: address of location that needs matches, this can be provied in lieu of an id. 
+        address: address of location that needs matches, this can be provied in lieu of an id.
                  If both are provided, id will be used to generate the match. (Required if no id provided).
         id: database id of location that needs matches, this can be provided in lieu of an address.
             If both are provided, id will be used to generate the match (Required if no address).
@@ -207,12 +207,12 @@ class TenantMatchesViewSet(viewsets.ViewSet):
         """
         args = pk.split("&")
         d = {}
-        
+
         # parse the arguments
         for arg in args:
             arg = arg.split("=")
             d[arg[0]] = arg[1]
-        
+
         # genreate matches if request was correctly provided. Otherwise, catch Key error and reject reject request.
         matches = []
         try:
@@ -223,7 +223,7 @@ class TenantMatchesViewSet(viewsets.ViewSet):
                 matches = PairedLocation.get_matches(address=address)
         except KeyError:
             return Response("Request must include an 'id' or an 'address'.")
-        
+
         serializer = PairedLocationSerializer(matches, many=True)
         return Response(serializer.data)
 
@@ -233,7 +233,11 @@ class LocationInfoViewSet(viewsets.ViewSet):
         permissions.AllowAny
     ]
 
-    def retrieve(self, rqeuest, pk=None):
+    def list(self, request):
+        return Response({"detail": "Duh"})
+
+    def retrieve(self, request, pk=None):
+        # return Response({"detail": "Duhfwer"})
         args = pk.split('&')
         d = {}
 
@@ -241,14 +245,15 @@ class LocationInfoViewSet(viewsets.ViewSet):
         for arg in args:
             arg = arg.split("=")
             d[arg[0]] = arg[1]
-        
+
         lat = None
         lng = None
-        if "lat" in d and "lng" in d: 
-            lat = d["lat"]
-            lng = d["lng"]
-            return return_location(lat, lng)
+        if "lat" in d and "lng" in d:
+            lat_string = d["lat"]
+            lng_string = d["lng"]
+            lat = float(lat_string[:2]+'.'+lat_string[2:])
+            lng = float(lng_string[:4]+'.'+lng_string[4:])
+            return Response(return_location(lat, lng))
         else:
             raise Exception("lat and lng both required in request. Please resubmit with params /lat=##&lng=##")
 
-        

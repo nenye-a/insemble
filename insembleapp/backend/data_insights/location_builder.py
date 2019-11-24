@@ -5,6 +5,8 @@ import urllib.parse
 from Location import Location
 from Retailer import Retailer
 from smart_search import *
+import geopy.distance
+
 
 #### TODO: keep secret by using environment variables
 #### TODO: consolidate APIs (to use fewer if possible)
@@ -54,6 +56,32 @@ def get_loc_from_input(input):
         result_valid = False
 
     return lat, lng, result_valid
+
+def get_address_from_loc(lat, lng):
+    URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?&location={},{}&rankby=distance&type=establishment&key={}".format(lat,lng,
+        GOOG_KEY)
+    result_valid = True
+    data = smart_search(URL, 'google', 'nearbysearch')
+
+    try:
+        address = data['results'][0]['vicinity']
+    except Exception:
+        print("Error getting address from input lat: {}, lng: {}".format(lat, lng))
+        print(data)
+        address = np.nan
+        result_valid = False
+        return address, result_valid
+
+    my_geo, item_geo = (data['results'][0]['geometry']['location']['lat'], data['results'][0]['geometry']['location']['lng']), (lat, lng)
+    meter_distance = geopy.distance.distance(my_geo, item_geo).meters
+    if meter_distance > 30:
+        print("Error: nearby address too far from input lat: {}, lng: {}".format(lat, lng))
+        print(data)
+        print("distance:", meter_distance)
+        result_valid = False
+        return np.nan, result_valid
+
+    return address, result_valid
 
 
 def get_demographics(lat, lng, radius, count=0):

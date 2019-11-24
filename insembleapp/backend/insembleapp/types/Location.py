@@ -72,13 +72,13 @@ class PairedLocation(object):
 
     @staticmethod
     def get_paired_location(_id):
-        
+
         db_item = PairedLocation.db_space.dataset2.find_one({"_id": _id})
         return PairedLocation.convert_db_item(db_item)
 
     @staticmethod
     def get_matches(address=None, _id=None):
-        
+
         try:
             if _id:
                 db_item = PairedLocation.db_space.dataset2.find_one({"_id": _id})
@@ -87,14 +87,14 @@ class PairedLocation(object):
                 matches = lm.generate_location_matches(address)
         except KeyError:
             raise KeyError
-        
+
         matched_locations = []
 
         for db_item in matches:
             matched_locations.append(PairedLocation.convert_db_item(db_item))
 
         return matched_locations
-    
+
     @staticmethod
     def convert_db_item(db_item):
         """
@@ -151,11 +151,11 @@ class MapLocation(PairedLocation):
                     place_type, price, locations, likes, ratings, photo_count, age, photo, icon)
 
         self.map_rating = map_rating
-        
+
     @staticmethod
     def get_tenant_matches(address, place_type):
         return [MapLocation.convert_db_item(x) for x in lm.generate_tenant_matches(address, place_type)]
-    
+
     @staticmethod
     def convert_db_item(db_item):
         _id = db_item["_id"]
@@ -202,13 +202,20 @@ class MapLocation(PairedLocation):
 
 def return_location(lat, lng):
 
+    address, valid = lb.get_address_from_loc(lat, lng)
     census, pop, income, census_radius, valid2 = lb.get_demographics(lat, lng, 0.5)
     nearby, valid3 = lb.get_nearby_stores(lat, lng, 0.5)
+    #### TODO: implement all_valid and return up front
+    if valid and valid2 and valid3:
+        all_valid = True
+    else:
+        all_valid = False
 
     if valid2 and valid3:
         return {
+            "address": address,
             "census": census,
             "pop": pop,
             "income": income,
-            "nearby": nearby
+            "nearby": nearby,
         }
