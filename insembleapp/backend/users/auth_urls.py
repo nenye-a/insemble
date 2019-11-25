@@ -10,5 +10,5 @@ urlpatterns= [
     url(r'api/auth/register', RegisterAPI.as_view(), name='register'),
     url(r'api/auth/login', LoginAPI.as_view(), name='login'),
     url(r'api/auth/user', UserAPI.as_view(), name='user'),
-    url(r'api/auth/logut', knox_views.LoginView.as_view(), name='knox_logout')
+    url(r'api/auth/logout', knox_views.LoginView.as_view(), name='knox_logout')
 ]

@@ -29,6 +29,7 @@ urlpatterns = [
                 TemplateView.as_view(template_name='insembleapp/index.html'), name='home'),
     # enable bakend routes
     url(r'^', include(router.urls)),
+    url(r'api/map', CategoryMapAPI.as_view(), name='map'),
     url(r'^', include('users.auth_urls'))
     
 ]
