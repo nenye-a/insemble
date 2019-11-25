@@ -1,23 +1,19 @@
 import React from "react"; 
 import {
   Row, 
-  Text, 
   Container, 
   Col
 } from "shards-react"; 
-const { compose, withProps, withHandlers } = require("recompose");
 import {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
   Marker,
+  Circle,
   InfoWindow
 } from "react-google-maps";
-import PropTypes from 'prop-types'; 
-import { NavLink } from "react-router-dom";
 import { Redirect } from 'react-router-dom'
 
-const { MarkerClusterer } = require("react-google-maps/lib/components/addons/MarkerClusterer");
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox'
 const _ = require("lodash");
@@ -38,19 +34,16 @@ class MapWithAMarkerClusterer extends React.Component {
       //bounds: new google.maps.LatLngBounds(new google.maps.LatLng(33.7036519, -118.6681759), new google.maps.LatLng(34.3373061, -118.1552891)),
       bounds: null,
       center: {
-        lat: 34.0522342, lng: -118.2436849
+        lat: this.props.markers.lat, lng: this.props.markers.lng
       },
       markers: [],
       onMapMounted: ref => {
         refs.map = ref;
-        if (!this.state.redirect){
-          this.setState({
-            bounds: refs.map.getBounds(),
-            center: refs.map.getCenter(),
-          })
-          console.log('state set')
-        }
-        
+        this.setState({
+          bounds: refs.map.getBounds(),
+          center: refs.map.getCenter(),
+        })
+        console.log('state set')
       },
       onBoundsChanged: () => {
         this.setState({
@@ -81,24 +74,26 @@ class MapWithAMarkerClusterer extends React.Component {
           center: nextCenter,
           markers: nextMarkers,
         });
-        refs.map.fitBounds(bounds);
+        //refs.map.fitBounds(bounds);
       },
       onMapClick: (e) => {
+        console.log(e.latLng.lat().toString().split(".").join(""))
+        console.log("stringed")
+        console.log('api/location/lat='+e.latLng.lat().toString().split(".").join("")+'&lng='+e.latLng.lng().toString().split(".").join(""))
         fetch('api/location/lat='+e.latLng.lat().toString().split(".").join("")+'&lng='+e.latLng.lng().toString().split(".").join("")+'&radius=1')
         .then(res => res.json())
         .then(data => {
+          console.log(data)
+          console.log("request made")
           this.setState({markerPosition: e.latLng, isMarkerShown:true, marker: data})});
+
+        console.log(this.state.marker)
+        console.log("pressed")
       },
 
 
     })
   }
-  
-
-  // componentDidMount() {
-  //   this.setState({ marker: [] });
-  // }
-
 
   handleMarkerClustererClick (markerClusterer) {
     const clickedMarkers = markerClusterer.getMarkers()
@@ -133,96 +128,69 @@ class MapWithAMarkerClusterer extends React.Component {
   }
 
   render(){
-    const i_markers = this.props.markers.markers
-    const heats = this.props.markers.heats
-    // console.log(positions)
-    // const points = [
-    //   {lat: 34.0622, lng: -118.2437, weight: 2},
-    //   {lat: 34.0522, lng: -118.2437, weight: 3},
-    //   {lat: 34.0422, lng: -118.2437, weight: 1},
-    //   {lat: 34.0222, lng: -118.2437, weight: 2},
-    //   {lat: 34.0122, lng: -118.2437, weight: 3},
-    //   {lat: 34.0722, lng: -118.2437, weight: 1},
-    //   ]
-    // const data = points.map(({lat, lng, weight}) => (
-    //   {location: new google.maps.LatLng(lat, lng),
-    //   weight: weight}))
-    const data = heats.map(({lat, lng, map_rating}) => (
-        {location: new google.maps.LatLng(lat, lng),
-        weight: map_rating}))
-    
-    //console.log("loaded 2")
-    // console.log(Object.values(markers))
-    // console.log(markers)
+    const lat = this.props.markers.lat
+    const lng = this.props.markers.lng
 
     return (
       <GoogleMap
         ref={this.state.onMapMounted}
-        defaultZoom={10}
-        defaultCenter={{ lat: 34.0522, lng: -118.2437 }}
+        defaultZoom={18}
+        defaultCenter={{ lat: lat, lng: lng }}
         defaultOptions={{
-          maxZoom: 15,
           minZoom: 7, 
         }}
         onClick={this.state.onMapClick}
         onBoundsChanged={this.state.onBoundsChanged}
+        
       >
         {this.renderRedirect()}
-        {this.state.isMarkerShown && 
-        <Marker position={this.state.markerPosition} onClick={()=>this.handleMarkerClick(this.state.marker)} icon={{url: "http://maps.google.com/mapfiles/kml/paddle/purple-circle.png"}}> 
-          
-          <InfoWindow>
-            {/* TODO: Make smaller and solve for middle-of-nowhere case. also make it come back when pressed again */}
-            <Container>
-              <Row>
-                <h6>{this.state.marker.address}</h6>
-              </Row>
-              <Row className="py-1">
-                <Col className="d-flex flex-column justify-content-center align-items-center" style={{fontWeight: "bold"}}>Median Income
-                </Col>
-                <Col className="d-flex flex-column justify-content-center align-items-center">${this.state.marker.income}
-                </Col>
-              </Row>
-              <Row className="py-1">
-                <Col className="d-flex flex-column justify-content-center align-items-center" style={{fontWeight: "bold"}}>Half-mile popuplation
-                </Col>
-                <Col className="d-flex flex-column justify-content-center align-items-center">{this.state.marker.pop}
-                </Col>
-              </Row>
-            </Container>
-           
-          </InfoWindow>
-          
-        </Marker> }
-        {/* Just markers */}
-        {/* {Object.values(i_markers).map(marker => (
-            <Marker 
-              onClick={()=>this.handleMarkerClick(marker)}
-              key={marker._id}
-              // icon= {require("../images/logos/marker.png")}
-              position={{ lat: marker.lat, lng: marker.lng }}
-            />
-          ))} */}
-        {/* <MarkerClusterer
-          onClick={this.handleMarkerClustererClick}
-          averageCenter
-          enableRetinaIcons
-          gridSize={60}
-        >
-          {Object.values(i_markers).map(marker => (
-            <Marker 
-              onClick={()=>this.handleMarkerClick(marker)}
-              key={marker._id}
-              icon= {require("../images/logos/marker.png")}
-              position={{ lat: marker.lat, lng: marker.lng }}
-            />
-          ))}
-        </MarkerClusterer> */}
-        <HeatMapLayer
-          data= {data}
-          options={{radius:20}}
-          opacity={1}
-          />
+        {/* icons from https://sites.google.com/site/gmapsdevelopment/ */}
+        <Marker position={{ lat: lat, lng: lng }} icon={{url: "http://maps.google.com/mapfiles/kml/paddle/purple-circle.png"}}> 
+        </Marker> 
+        {/* Should map this to condense */}
+        <Circle
+          defaultCenter={{
+            lat: lat,
+            lng: lng
+          }}
+          radius={1609.34}
+          options={{
+            strokeColor: '#634FA2',
+            strokeOpacity: 0.8,
+            strokeWeight: 1,
+            fillColor: '#634FA2',
+            fillOpacity: 0.1,
+          }}
+        />
+        <Circle
+          defaultCenter={{
+            lat: lat,
+            lng: lng
+          }}
+          radius={4828.03}
+          options={{
+            strokeColor: '#634FA2',
+            strokeOpacity: 0.8,
+            strokeWeight: 1,
+            fillColor: '#634FA2',
+            fillOpacity: 0.1,
+          }}
+        />
+        <Circle
+          defaultCenter={{
+            lat: lat,
+            lng: lng
+          }}
+          radius={8046.72}
+          options={{
+            strokeColor: '#634FA2',
+            strokeOpacity: 0.8,
+            strokeWeight: 1,
+            fillColor: '#634FA2',
+            fillOpacity: 0.1,
+          }}
+        />
+
         <SearchBox
           ref={this.state.onSearchBoxMounted}
           bounds={this.state.bounds}
@@ -231,7 +199,7 @@ class MapWithAMarkerClusterer extends React.Component {
         >
           <input
             type="text"
-            placeholder="Search an address or retailer"
+            placeholder="Search for nearby retailers"
             style={{
               boxSizing: `border-box`,
               border: `1px solid transparent`,
@@ -263,7 +231,7 @@ export default (markers) => (
 
     googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U&v=3.exp&libraries=geometry,drawing,places,visualization"
     loadingElement={<div style={{ height: `100%` }} />}
-    containerElement={<div style={{ height: "700px", width: "100%" }} />}
+    containerElement={<div style={{ height: "300px", width: "100%" }} />}
     mapElement={<div style={{ height: `100%` }} />}
     markers={markers}
   />

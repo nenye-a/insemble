@@ -248,12 +248,14 @@ class LocationInfoViewSet(viewsets.ViewSet):
 
         lat = None
         lng = None
-        if "lat" in d and "lng" in d:
+        radius = None
+        if "lat" in d and "lng" in d and "radius" in d:
             lat_string = d["lat"]
             lng_string = d["lng"]
+            radius = float(d["radius"])
             lat = float(lat_string[:2]+'.'+lat_string[2:])
             lng = float(lng_string[:4]+'.'+lng_string[4:])
-            return Response(return_location(lat, lng))
+            return Response(return_location(lat, lng, radius))
         else:
-            raise Exception("lat and lng both required in request. Please resubmit with params /lat=##&lng=##")
+            raise Exception("lat, lng, and radius required in request. Please resubmit with params /lat=##&lng=##&radius=##")
 
