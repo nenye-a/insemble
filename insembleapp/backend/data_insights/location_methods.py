@@ -1,7 +1,6 @@
 import pandas as pd
 import geopy.distance
 from mongo_connect import Connect
-# import matplotlib.pyplot as plt
 import numpy as np
 import math
 import re
@@ -107,7 +106,7 @@ def generate_location_matches(location_address):
         if mile_distance < 0.5: # we don't want those that are less than half a mile
             in_area_retailers.add(item["name"])
             continue
-        
+
         distances_dict = {}
         item_dict = {}
         id = item["_id"]
@@ -177,8 +176,10 @@ def generate_tenant_matches(location_address, my_place_type={}):
     db_space = client.spaceData
 
     # TODO: make this request less expensive than it currently is. See if we can do some parsing on the mongo side
-    # db_space_cursor = db_space.dataset2.find({})
-    db_space_cursor = db_space.dataset2.aggregate([{"$sample": {"size": 3000}}])
+    db_space_cursor = db_space.dataset2.find({})
+
+    # sample_size = 3000
+    # db_space_cursor = db_space.dataset2.aggregate([{"$sample": {"size": sample_size}}])
 
     location_retailer_pairs = {}
     distances_items = []
@@ -198,8 +199,9 @@ def generate_tenant_matches(location_address, my_place_type={}):
         if mile_distance < 0.5: # we don't want those that are less than half a mile
             in_area_retailers.add(item["name"])
             continue
+
         count += 1
-        print(count)
+        print("{} locations and counting".format(count)) if count % 1000 == 0 else 1
         distances_dict = {}
         item_dict = {}
         id = item["_id"]
@@ -210,17 +212,20 @@ def generate_tenant_matches(location_address, my_place_type={}):
 
         # compare against our current location
         item_dict.update(location["census"])
-        item_dict.update({"pop": location["pop"]})
-        item_dict.update({"income": location["income"]})
-        for nearby in location["nearby"]:
-            new_name = "nearby_" + nearby
-            item_dict.update({new_name: location["nearby"][nearby]})
+        item_dict["pop"] = location["pop"]
+        item_dict["income"] = location["income"]
+        item_dict.update(location["nearby"])
+
+        # for nearby in location["nearby"]:
+        #     new_name = "nearby_" + nearby
+        #     item_dict[new_name] = location["nearby"][nearby]
 
         # store the distance diff and relate to the id
         distances = location_difference(my_location_vector, item_dict)
         distances_dict["id"] = id
 
         # convert all nans into nulls
+
         rate = item["ratings"]
         if np.isnan(rate):
             rate = None
@@ -228,8 +233,6 @@ def generate_tenant_matches(location_address, my_place_type={}):
 
         distances_dict.update(distances)
         distances_items.append(distances_dict)
-
-    print("searched")
 
     distance_table = pd.DataFrame(distances_items)
     distance_stats = distance_table.describe()
@@ -242,9 +245,13 @@ def generate_tenant_matches(location_address, my_place_type={}):
                                (distance_stats[diff]["max"] - distance_stats[diff]["min"])
 
     # calculate and trim by weighted difference. Less than 30% diff okay (roughly 1% of all the locations per histogram)
-    weight = pd.DataFrame(pd.Series([0.25, 0.20, 0.3, 0.25], index=["cen_diff", "pop_diff", "income_diff", "cat_diff"]))
+    weight = pd.DataFrame(pd.Series([0.2, 0.23, 0.33, 0.24], index=["cen_diff", "pop_diff", "income_diff", "cat_diff"]))
     distance_table["weighted_diff"] = distance_table[["cen_diff", "pop_diff", "income_diff", "cat_diff"]].dot(weight)
-    distance_table = distance_table[distance_table["weighted_diff"] < 0.24]
+
+    decent_rating = 7
+    diff_cutoff = 0.24
+    distance_table = distance_table[distance_table["weighted_diff"] < diff_cutoff]
+    distance_table = distance_table[distance_table["ratings"] > decent_rating]
 
     # sort by ratings
     distance_table = distance_table.sort_values("ratings")
@@ -256,10 +263,10 @@ def generate_tenant_matches(location_address, my_place_type={}):
         location_data = location_retailer_pairs[index_id]
         penalty = 1
 
-        # provide ratings penalty of 10% for every category is in the area:
+        # provide ratings penalty of 5% for every category is in the area:
         for category in my_place_type:
             if category in location_data["Retailer"]["place_type"]:
-                penalty -= 0.1
+                penalty -= 0.05
 
         location_data["map_rating"] = (location_data["ratings"]*penalty)*19/3 + (1-19/3*5)
 
@@ -268,9 +275,97 @@ def generate_tenant_matches(location_address, my_place_type={}):
 
         return_list.append(location_data)
 
-    print("#################################################################################")
-    print(len(return_list))
+    print("Match generation complete. Number of locations is: {}".format(len(return_list)))
+    print(return_list)
     return return_list
+
+def location_heat_map(retail_data):
+    """
+    receives retailer object, and returns list of places that correspond to locations of interest
+
+    :param retail_data: dictionary of the following form
+    request.data = {
+        "income": 120,000,
+        "primary_categories": ["restaurant", "pizza"],
+    }
+
+    :return: object of the following form:
+    result = {
+        "length": sizeOfResults,        # size of results
+        "results": [{                   # list of all heatmap points
+            "lat": latitude_value,      # latitude of point
+            "lng": longitude_value,     # longitude of point
+            "map_rating": heat          # heat will range from 1-20
+        },{
+            "lat": latitude_value,
+            "lng": longitude_value,
+            "map_rating":
+        }]
+    }
+    """
+    client = Connect.get_connection()
+    db_space = client.spaceData
+
+    data = {}
+    data["income"] = retail_data["income"]
+    for category in retail_data["primary_categories"]:
+        data[category] = 1
+
+    # query our database for samples to evaluate
+    db_space_cursor = db_space.dataset2.find({}) # grab the whole database
+
+    # samples_size = 200  # 200 points only for testing purposes
+    # db_space_cursor = db_space.dataset2.aggregate([{"$sample": {"size": samples_size}}])
+
+    # Loop to determine closest retailer to base request off of.
+    distance_list = []
+    for item in db_space_cursor:
+
+        location = item["Location"]
+        retailer = item["Retailer"]
+
+        item_dict = {}
+        id = item["_id"]
+
+        item_dict["income"] = location["income"]
+        item_dict.update(retailer["place_type"])
+
+        difframe = pd.DataFrame([data, item_dict])
+        difframe = difframe.fillna(0)
+        diff = np.abs(difframe.iloc[1].subtract(difframe.iloc[0]))
+
+        income_diff = diff["income"]
+        type_diff = diff.drop(["income"]).sum()
+
+        distance_list.append({
+            "id": id,
+            "place_type": retailer["place_type"],
+            "address": location["address"],
+            "ratings": item["ratings"],
+            "income_diff": income_diff,
+            "type_diff": type_diff,
+
+        })
+
+    distance_df = pd.DataFrame(distance_list)
+    distance_stats = distance_df.describe()
+
+    # normalize all the distances
+    for diff in distance_df.columns:
+        if diff == "id" or diff == "place_type" or diff == "address" or diff == "ratings":
+            continue
+        distance_df[diff] = (distance_df[diff] - distance_stats[diff]["min"]) / \
+                            (distance_stats[diff]["max"] - distance_stats[diff]["min"])
+
+    # select best rated item within distance
+    weight = pd.DataFrame(pd.Series([0.6, 0.4], index=["income_diff", "type_diff"]))
+    distance_df["weighted_diff"] = distance_df[["income_diff", "type_diff"]].dot(weight)
+    distance_df = distance_df[distance_df["weighted_diff"] < 0.2]
+
+    # generate tenant matches based in info
+    comparable_item = distance_df.loc[distance_df["ratings"].idxmax()]
+    return generate_tenant_matches(comparable_item.loc["address"], comparable_item.loc["place_type"])
+
 
 # if __name__ == '__main__':
 #     generate_location_profile("Los Angeles")

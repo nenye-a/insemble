@@ -219,3 +219,6 @@ def return_location(lat, lng):
             "income": income,
             "nearby": nearby,
         }
+
+def return_matches(item):
+    return [MapLocation.convert_db_item(x) for x in lm.location_heat_map(item)]

@@ -30,7 +30,7 @@ class RetailerSerializer(serializers.Serializer):
     requirements = serializers.JSONField()
     owner_username = serializers.CharField()
     photo = serializers.URLField()
-    icon = serializers.URLField()     
+    icon = serializers.URLField()
 
 
 # Serializer for venue combined objects
@@ -85,7 +85,15 @@ class PairedLocationSerializer(serializers.Serializer):
     photo = serializers.URLField()
     icon = serializers.URLField()
 
-# Serializer of paired location including the map_rating field    
+# Serializer of paired location including the map_rating field
 class MapSerializer(PairedLocationSerializer):
-    
+
     map_rating = serializers.FloatField()
+
+
+class CategoryMapSerializer(serializers.Serializer):
+
+    income = serializers.FloatField(required=True)
+    # price = serializers.FloatField(required=True)
+    # size_categories = serializers.ListSerializer(default=[], allow_null=True)
+    primary_categories = serializers.ListField(required=True, allow_null=False)

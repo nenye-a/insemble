@@ -1,9 +1,8 @@
 from django.http import Http404
-from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
 
 import urllib
@@ -11,11 +10,11 @@ import logging
 
 from .types.Venue import Venue
 from .types.Retailer import Retailer
-from .types.Location import PairedLocation, MapLocation, return_location
+from .types.Location import PairedLocation, MapLocation, return_location, return_matches
 from .serializers import *
 
 
-## Venue viewsets
+# VENUE VIEWSET METHODS
 class VenueViewSet(viewsets.ViewSet):
 
     permission_classes= [
@@ -71,7 +70,7 @@ class VenueViewSet(viewsets.ViewSet):
         pass
 
 
-## Retailer viewsets
+# RETAILER VIEWSET METHODS
 class RetailerViewSet(viewsets.ViewSet):
 
     permission_classes= [
@@ -132,18 +131,19 @@ class RetailerViewSet(viewsets.ViewSet):
         pass
 
 
-# viewset to access generic paired location viewset
+# GENERIC PAIRED LOCATION VIEWSET
 class PairedLocationViewSet(viewsets.ViewSet):
+
+    """
+    A simple ViewSet for listing or retrieving users.
+    """
 
     permission_classes= [
         permissions.AllowAny
     ]
 
-    """
-    A simple ViewSet for listing or retrieving users.
-    """
+
     def list(self, request):
-        # queryset = PairedLocation.get_matches(address="8857 Santa Monica Blvd, West Hollywood, CA") - testing for matches
         queryset = PairedLocation.get_paired_locations()
         serializer = PairedLocationSerializer(queryset, many=True)
         return Response(serializer.data)
@@ -154,7 +154,8 @@ class PairedLocationViewSet(viewsets.ViewSet):
         serializer = PairedLocationSerializer(p_location)
         return Response(serializer.data)
 
-# viewset to access any space matches that you generate
+
+# VIEW AND PROVIDE VENUE MATCHES FOR A TENANT
 class SpaceMatchesViewSet(viewsets.ViewSet):
 
     permission_classes= [
@@ -184,7 +185,7 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
         serializer = MapSerializer(matches, many=True)
         return Response(serializer.data)
 
-# viewset to access any tenant matches that you have
+# VIEW AND PROVIDE TENANT MATCHES FOR A VENUE
 class TenantMatchesViewSet(viewsets.ViewSet):
 
     permission_classes= [
@@ -227,6 +228,8 @@ class TenantMatchesViewSet(viewsets.ViewSet):
         serializer = PairedLocationSerializer(matches, many=True)
         return Response(serializer.data)
 
+
+# PROVIDE ADHOC INFORMATION ON MARKERS PROVIDED BY MAPPING SOFTWARE
 class LocationInfoViewSet(viewsets.ViewSet):
 
     permission_classes = [
@@ -256,4 +259,51 @@ class LocationInfoViewSet(viewsets.ViewSet):
             return Response(return_location(lat, lng))
         else:
             raise Exception("lat and lng both required in request. Please resubmit with params /lat=##&lng=##")
+
+# GENERATE HEATMAP LOCATIONS FROM INCOME, PRICE, & CATEGORIES
+
+class CategoryMapAPI(generics.GenericAPIView):
+
+    authentication_classes = []
+    permission_classes = [
+        permissions.AllowAny
+    ]
+
+    serializer_class = CategoryMapSerializer
+
+    def post(self, request, *args, **kwargs):
+        """
+        Request to receive mapping of hot locations given income, price,
+        area_type, and applicable categories.
+
+        Request must come in the following form:
+
+        request.data = {
+            "income": 120,000,
+            "primary_categories": ["restaurant", "pizza"],
+        }
+
+        #### NOTE OUTDATED - PLEASE THAT THE ACTUAL RETURN WILL BE THAT OF LOCATION OBJECTS
+        Output will be in the following form = Response({
+            ""
+            "length": sizeOfResults,        # size of results
+            "results": [{                   # list of all heatmap points
+                "lat": latitude_value,      # latitude of point
+                "lng": longitude_value,     # longitude of point
+                "map_rating": heat          # heat will range from 1-20
+            },{
+                "lat": latitude_value,
+                "lng": longitude_value,
+                "map_rating":
+            }]
+        })
+        """
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        map_points = return_matches(serializer.data)
+
+        serializer = MapSerializer(map_points, many=True)
+        return Response(serializer.data)
 

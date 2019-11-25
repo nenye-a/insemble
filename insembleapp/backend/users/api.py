@@ -1,7 +1,5 @@
 
 from django.http import Http404
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 from rest_framework import viewsets, permissions, generics
 from rest_framework.response import Response
@@ -43,7 +41,6 @@ class LoginAPI(generics.GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self, request, *args, **kwargs):
-        print(request.data)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
