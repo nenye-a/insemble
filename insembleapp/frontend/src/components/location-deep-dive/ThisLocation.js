@@ -19,11 +19,12 @@ class RetailerSite extends React.Component {
   constructor(props) {
     super(props);
 
-    this.match = this.props.match
+    this.location = this.props.match
     this.canvasRef = React.createRef();
   }
 
   componentDidMount() {
+    const location = this.props.match
     const chartConfig = {
       type: "doughnut",
       options: {
@@ -36,14 +37,13 @@ class RetailerSite extends React.Component {
             position: "nearest"
           }
         },
-        ...this.props.chartOptions
       },
       data: {
-        labels: Object.keys(this.match.census),
+        labels: Object.keys(location.census),
         datasets: [
           {
             hoverBorderColor: colors.white.toRGBA(1),
-            data: Object.values(this.match.census), 
+            data: Object.values(location.census), 
             backgroundColor: [
               colors.primary.toRGBA(1),
               colors.primary.toRGBA(0.8),
@@ -61,7 +61,9 @@ class RetailerSite extends React.Component {
   }
 
   render() {
-    const location = this.match
+    console.log(this.props.match)
+    const location = this.props.match
+    const canvasRef = this.canvasRef
     const { title } = this.props;
     const labels = Object.keys(location.census)
 
@@ -74,6 +76,12 @@ class RetailerSite extends React.Component {
 
         <CardBody className="d-flex flex-column">
           <Container>
+            <Row >
+              <Col className="d-flex flex-column justify-content-center align-items-center py-2">{location.pop} residents within {location.radius} miles
+              </Col>
+              <Col className="d-flex flex-column justify-content-center align-items-center" style={{fontWeight: "bold"}}>Population
+              </Col>
+            </Row>
             <Row >
               <Col className="d-flex flex-column justify-content-center align-items-center">${location.income} per year
               </Col>
@@ -109,7 +117,7 @@ class RetailerSite extends React.Component {
                 {/* Chart */}
               <canvas
                 width="100"
-                ref={this.canvasRef}
+                ref={canvasRef}
                 className="analytics-users-by-device mt-3 mb-4"
               />
 

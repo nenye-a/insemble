@@ -200,24 +200,38 @@ class MapLocation(PairedLocation):
         return MapLocation(_id, name, lat, lng, address, census, pop, income, None, None, nearby,
                     radius, place_type, price, locations, likes, ratings, photo_count, age, photo, icon, map_rating)
 
-def return_location(lat, lng):
+def return_location(lat, lng, radius):
 
     address, valid = lb.get_address_from_loc(lat, lng)
-    census, pop, income, census_radius, valid2 = lb.get_demographics(lat, lng, 0.5)
-    nearby, valid3 = lb.get_nearby_stores(lat, lng, 0.5)
+    census, pop, income, census_radius, valid2 = lb.get_demographics(lat, lng, radius)
+    nearby, valid3 = lb.get_nearby_stores(lat, lng, radius)
     #### TODO: implement all_valid and return up front
     if valid and valid2 and valid3:
         all_valid = True
     else:
         all_valid = False
 
-    if valid2 and valid3:
+    if valid and valid2 and valid3 and (address != "United States") and (address != "Los Angeles"):
         return {
             "address": address,
+            "lat": lat,
+            "lng": lng,
             "census": census,
             "pop": pop,
             "income": income,
             "nearby": nearby,
+            "radius": census_radius
+        }
+    else:
+        return {
+            "address": "Location at ({}, {})".format(lat, lng),
+            "lat": lat,
+            "lng": lng,
+            "census": census,
+            "pop": pop,
+            "income": income,
+            "nearby": nearby,
+            "radius": census_radius
         }
 
 def return_matches(item):
