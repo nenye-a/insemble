@@ -10,7 +10,8 @@ import {
   CardBody,
   CardFooter,
   Badge,
-  Button
+  Button, 
+  ButtonGroup
 } from "shards-react";
 
 import AtAGlance from "../components/location-deep-dive/AtAGlance";
@@ -18,26 +19,43 @@ import YourSite from "../components/location-deep-dive/YourSite";
 import Buildout from "../components/location-deep-dive/Buildout";
 import About from "../components/location-deep-dive/About";
 import PageTitle from "../components/common/PageTitle";
-import MapContainer from "./MapContainer";
+import MapComponent from "./MapContainerDeepDive"
 import Iframe from 'react-iframe';
 import ThisLocation from "../components/location-deep-dive/ThisLocation";
+import { Redirect } from 'react-router-dom'
+
 
 class LocationDeepDiveDemo extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      pageList: ["whatever"]
+      redirect: false, 
+      location: this.props.location.match
       };
   }
 
+  handleRadiusClick (radius) {
+    
+    fetch('api/location/lat='+this.state.location.lat.toString().split(".").join("")+'&lng='+this.state.location.lng.toString().split(".").join("")+'&radius='+radius)
+        .then(res => res.json())
+        .then(data => {
+          this.setState({redirect: true, location: data})});
+  }
+
+  renderRedirect = () => {
+    if (this.state.redirect) {
+      
+      return <Redirect to = {{pathname: "/location-deep-dive-demo", match: this.state.location}} />
+    }
+  }
+
   render(){
-    console.log("here we go")
-    console.log(this.props.location.match)
     // console.log(this.marker)
     // console.log("printed props")
-    const location = this.props.location.match
-    const address = "3250 West Olympic Boulevard, Los Angeles"
+    const location = this.state.location
+    console.log(location)
+    //const address = "3250 West Olympic Boulevard, Los Angeles"
     // const location = {
     //   name: "PizzaRev",
     //   address:"5608 Van Nuys Boulevard, Van Nuys", 
@@ -63,14 +81,18 @@ class LocationDeepDiveDemo extends React.Component {
     
     return (
       <Container fluid className="main-content-container px-4">
+        {/* {this.renderRedirect()} */}
         {/* TODO: Change los angeles from static input  */}
-        <Iframe url={"https://www.google.com/maps/embed/v1/search?key=DELETED_GOOGLE_API_KEY&q="+address.split(" ").join("+")+"+Los+Angeles"}
+        <Row>
+          <MapComponent {...location}/>
+        </Row>
+        {/* <Iframe url={"https://www.google.com/maps/embed/v1/search?key=DELETED_GOOGLE_API_KEY&q="+location.address.split(" ").join("+")+"+Los+Angeles"}
         width="100%"
         height="300px"
         id="myId"
         className="mx-auto"
         display="initial"
-        position="relative"/>
+        position="relative"/> */}
 
         {/* Page Header */}
         <Row noGutters className="page-header py-4">
@@ -83,12 +105,31 @@ class LocationDeepDiveDemo extends React.Component {
             />
           </div>
           
-          <PageTitle title={address} subtitle="Stats for" className="ml-3 mt-0" />
+          <PageTitle title={location.address} subtitle="Stats for" className="ml-3 mt-0" />
         </Row>
 
         <Row noGutters className="page-header py-2">
           <PageTitle sm="4" title="Site Comparison" className="text-sm-left" />
         </Row>
+        <Col lg="4" md="4" className="align-items-center justify-content-center py-1">
+          <Row>
+            <Col>Radius: 
+            </Col>
+            <Col>
+              <ButtonGroup size="sm" className="my-auto d-inline-flex mb-sm-auto mx-auto">
+                <Button theme="white" onClick={()=>this.handleRadiusClick(1)}>
+                  1
+                </Button>
+                <Button theme="white" onClick={()=>this.handleRadiusClick(3)}>
+                  3
+                </Button>
+                <Button theme="white" onClick={()=>this.handleRadiusClick(5)}>
+                  5
+                </Button>
+              </ButtonGroup>
+            </Col>
+          </Row>
+        </Col>
 
         {/* Site Comparison */}
         <Row>
@@ -99,6 +140,7 @@ class LocationDeepDiveDemo extends React.Component {
 
           {/* Site Comparison */}
           <Col lg="6" md="6" sm="6" className="mb-4">
+
             <ThisLocation match={location}/>
           </Col>
         </Row>
