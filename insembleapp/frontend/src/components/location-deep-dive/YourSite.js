@@ -124,7 +124,6 @@ class YourSite extends React.Component {
 
   render() {
     const location = this.match
-    console.log(location)
     const { title } = this.props;
     const labels = Object.keys(location.census)
 
@@ -137,6 +136,12 @@ class YourSite extends React.Component {
 
         <CardBody className="d-flex flex-column">
           <Container>
+            <Row >
+              <Col className="d-flex flex-column justify-content-center align-items-center" style={{fontWeight: "bold"}}>Population
+              </Col>
+              <Col className="d-flex flex-column justify-content-center align-items-center py-2">{location.pop} residents within {location.radius} miles
+              </Col>
+            </Row>
             <Row >
               <Col className="d-flex flex-column justify-content-center align-items-center" style={{fontWeight: "bold"}}>Median Household Income
               </Col>
