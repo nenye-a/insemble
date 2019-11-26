@@ -12,6 +12,7 @@ from .types.Venue import Venue
 from .types.Retailer import Retailer
 from .types.Location import PairedLocation, MapLocation, return_location, return_matches, return_location_with_address
 from .serializers import *
+import data_insights.category_management as cm
 
 
 # VENUE VIEWSET METHODS
@@ -273,6 +274,15 @@ class CategoryMapAPI(generics.GenericAPIView):
 
     serializer_class = CategoryMapSerializer
 
+    def get(self, request, *args, **kwargs):
+        """
+
+        :return:
+        """
+        number = 50
+        return Response(cm.pull_categories(number))
+
+
     def post(self, request, *args, **kwargs):
         """
         Request to receive mapping of hot locations given income, price,
@@ -308,4 +318,3 @@ class CategoryMapAPI(generics.GenericAPIView):
 
         serializer = MapSerializer(map_points, many=True)
         return Response(serializer.data)
-
