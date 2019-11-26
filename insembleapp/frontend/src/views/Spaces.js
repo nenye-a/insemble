@@ -5,9 +5,27 @@ import MapContainer from "./MapContainer";
 import MapWithAMarkerClusterer from "./MapContainer"
 import MapComponent from "./MapContainer"
 import Iframe from 'react-iframe'
+
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+
 const fetch = require("isomorphic-fetch");
 
 class Spaces extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+  }
+
+  static PropTypes = {
+    hasLocation: PropTypes.bool.isRequired,
+    location: PropTypes.object,
+
+    mapIsLoading: PropTypes.bool.isRequired,
+    mapLoaded: PropTypes.bool.isRequired,
+    heatMap: PropTypes.object
+  }
+
   componentWillMount() {
     this.setState({ markers: [], heats: []})
   }
@@ -20,35 +38,27 @@ class Spaces extends React.PureComponent {
       `/raw/DELETED_LONG_HEX_STRING/data.json`
     ].join("")
 
-    // fetch(url)
-    //   .then(res => res.json())
-    //   .then(data => {
-    //     this.setState({ markers: data.photos });
-    //   });
+    // wait for map to complete loading or fail, load once complete. May want to wait and load async
+    
+    // if(this.props.mapLoaded) {
+    //   this.setState({ heats: this.props.heatMap })
+    // } else {
+    //   console.log("Failed to load heat map!")
+    // }
+    
+    // fetch('/api/lmatches/', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({
+    //      address: this.props.location.match.address,
+    //   }),
+    // }).then(res => res.json())
+    // .then(data => {
+    //   this.setState({ heats: data });
+    //   console.log(this.state.heats)
+    //   console.log("printed heats")
 
-    // 'api/tmatches/address=1101 W 23rd St, Los Angeles, CA 90007'
-    // 'api/location/lat=######&lng=#########'
-
-    fetch('/api/pair')
-    .then(res => res.json())
-    .then(data => {
-      this.setState({ markers: data });
-
-    });
-
-    fetch('/api/lmatches/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-         address: '1101 W 23rd St, Los Angeles, CA 90007',
-      }),
-    }).then(res => res.json())
-    .then(data => {
-      this.setState({ heats: data });
-      console.log(this.state.heats)
-      console.log("printed responses")
-
-    });
+    // });
 
     // const response = await fetch('/api/lmatches/', {
     //   method: 'POST',
@@ -75,4 +85,16 @@ class Spaces extends React.PureComponent {
   }
 }
 
-export default Spaces;
+const mapStateToProps = state => ({
+  // heat map props
+  mapIsLoading: state.space.mapIsLoading,
+  mapLoaded: state.space.mapLoaded,
+  heatMap: state.space.heatmap,
+
+  // location props
+  hasLocation: state.space.hasLocation,
+  location: state.space.location
+})
+
+
+export default connect(mapStateToProps)(Spaces);

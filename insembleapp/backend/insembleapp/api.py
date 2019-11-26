@@ -10,7 +10,7 @@ import logging
 
 from .types.Venue import Venue
 from .types.Retailer import Retailer
-from .types.Location import PairedLocation, MapLocation, return_location, return_matches
+from .types.Location import PairedLocation, MapLocation, return_location, return_matches, return_location_with_address
 from .serializers import *
 import data_insights.category_management as cm
 
@@ -31,7 +31,6 @@ class VenueViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
-        print(pk)
         p_location = Venue.get_venue(pk)
         serializer = VenueSerializer(p_location)
         return Response(serializer.data)
@@ -170,6 +169,10 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
         pass
 
     def create(self, request):
+        print(" ")
+        print(request.data)
+        print(" ")
+        
         try:
             address = request.data["address"]
             place_type = {}
@@ -179,9 +182,6 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
             return Response("Response must include 'address', prefereably of best location.")
 
         matches = MapLocation.get_tenant_matches(address, place_type)
-
-        print("Map Ratings & ratings")
-        [print(x.map_rating, x.ratings) for x in matches]
 
         serializer = MapSerializer(matches, many=True)
         return Response(serializer.data)
@@ -215,7 +215,7 @@ class TenantMatchesViewSet(viewsets.ViewSet):
             arg = arg.split("=")
             d[arg[0]] = arg[1]
 
-        # genreate matches if request was correctly provided. Otherwise, catch Key error and reject reject request.
+        # generate matches if request was correctly provided. Otherwise, catch Key error and reject reject request.
         matches = []
         try:
             if "id" in d:
@@ -237,11 +237,7 @@ class LocationInfoViewSet(viewsets.ViewSet):
         permissions.AllowAny
     ]
 
-    def list(self, request):
-        return Response({"detail": "Duh"})
-
     def retrieve(self, request, pk=None):
-        # return Response({"detail": "Duhfwer"})
         args = pk.split('&')
         d = {}
 
@@ -260,6 +256,10 @@ class LocationInfoViewSet(viewsets.ViewSet):
             lat = float(lat_string[:2]+'.'+lat_string[2:])
             lng = float(lng_string[:4]+'.'+lng_string[4:])
             return Response(return_location(lat, lng, radius))
+        elif "address" in d and "radius" in d:
+            address = d["address"]
+            radius = float(d["radius"])
+            return Response(return_location_with_address(address, radius))
         else:
             raise Exception("lat, lng, and radius required in request. Please resubmit with params /lat=##&lng=##&radius=##")
 

@@ -17,6 +17,8 @@ import PropTypes from 'prop-types';
 import { NavLink } from "react-router-dom";
 import { Redirect } from 'react-router-dom'
 
+import { connect } from "react-redux";
+
 const { MarkerClusterer } = require("react-google-DELETED_BASE64_STRING");
 import HeatMapLayer from 'react-google-DELETED_BASE64_STRING';
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox'
@@ -29,6 +31,12 @@ class MapWithAMarkerClusterer extends React.Component {
     this.state = {redirect: false, isMarkerShown: false, markerPosition: null, markerAddress: null}
     this.handleMarkerClustererClick = this.handleMarkerClustererClick.bind(this);
     this.handleMarkerClick = this.handleMarkerClick.bind(this);
+  }
+
+  static PropTypes = {
+    mapIsLoading: PropTypes.bool.isRequired,
+    mapLoaded: PropTypes.bool.isRequired,
+    heatMap: PropTypes.object
   }
 
   componentWillMount() {
@@ -133,8 +141,13 @@ class MapWithAMarkerClusterer extends React.Component {
   }
 
   render(){
+    console.log("Where is this?", this.props)
     const i_markers = this.props.markers.markers
-    const heats = this.props.markers.heats
+    var heats = []
+    if (this.props.mapLoaded){
+      heats = this.props.heatMap
+    }
+    
     // console.log(positions)
     // const points = [
     //   {lat: 34.0622, lng: -118.2437, weight: 2},
@@ -150,7 +163,7 @@ class MapWithAMarkerClusterer extends React.Component {
     const data = heats.map(({lat, lng, map_rating}) => (
         {location: new google.maps.LatLng(lat, lng),
         weight: map_rating}))
-    
+
     //console.log("loaded 2")
     // console.log(Object.values(markers))
     // console.log(markers)
@@ -255,7 +268,17 @@ class MapWithAMarkerClusterer extends React.Component {
   }
 }
 
-const MapComponent = withScriptjs(withGoogleMap(MapWithAMarkerClusterer))
+const mapStateToProps = state => ({
+  // heat map props
+  mapIsLoading: state.space.mapIsLoading,
+  mapLoaded: state.space.mapLoaded,
+  heatMap: state.space.heatMap,
+})
+
+// const MapComponent = withScriptjs(withGoogleMap(MapWithAMarkerClusterer))
+const TempComponent = withScriptjs(withGoogleMap(MapWithAMarkerClusterer))
+const MapComponent = connect(mapStateToProps)(TempComponent)
+
 
 export default (markers) => (
   <MapComponent

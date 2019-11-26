@@ -176,10 +176,10 @@ def generate_tenant_matches(location_address, my_place_type={}):
     db_space = client.spaceData
 
     # TODO: make this request less expensive than it currently is. See if we can do some parsing on the mongo side
-    db_space_cursor = db_space.dataset2.find({})
+    # db_space_cursor = db_space.dataset2.find({})
 
-    # sample_size = 3000
-    # db_space_cursor = db_space.dataset2.aggregate([{"$sample": {"size": sample_size}}])
+    sample_size = 500
+    db_space_cursor = db_space.dataset2.aggregate([{"$sample": {"size": sample_size}}])
 
     location_retailer_pairs = {}
     distances_items = []
@@ -251,7 +251,7 @@ def generate_tenant_matches(location_address, my_place_type={}):
     decent_rating = 7
     diff_cutoff = 0.24
     distance_table = distance_table[distance_table["weighted_diff"] < diff_cutoff]
-    distance_table = distance_table[distance_table["ratings"] > decent_rating]
+    # distance_table = distance_table[distance_table["ratings"] > decent_rating]
 
     # sort by ratings
     distance_table = distance_table.sort_values("ratings")
