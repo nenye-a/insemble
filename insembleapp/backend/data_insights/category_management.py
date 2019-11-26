@@ -49,6 +49,6 @@ def pull_categories(number_length=None):
 
 
 
-if __name__ == '__main__':
-    # organize_sort_categories()
-    print(pull_categories())
+# if __name__ == '__main__':
+#     # organize_sort_categories()
+#     print(pull_categories())
