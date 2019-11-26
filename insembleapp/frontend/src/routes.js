@@ -26,7 +26,6 @@ import ChangePassword from "./views/ChangePassword";
 import FileManagerList from "./views/FileManagerList";
 import Explore from "./views/Explore";
 import TenantDeepDive from "./views/TenantDeepDive";
-import LocationDeepDive from "./views/LocationDeepDive";
 import LocationDeepDiveDemo from "./views/LocationDeepDiveDemo";
 import Matches from "./views/Matches";
 import TransactionHistory from "./views/TransactionHistory";

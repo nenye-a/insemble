@@ -47,49 +47,29 @@ class LocationDeepDiveDemo extends React.Component {
   handleRadiusClick (radius) {
     
     if(this.props.hasLocation){
+      console.log("Your_Location", this.props.yourLocation)
       const yourSiteURL = 'api/location/address='+this.props.yourLocation.address+'&radius='+radius;
       this.props.getLocation(yourSiteURL);
     }
     fetch('api/location/lat='+this.state.location.lat.toString().split(".").join("")+'&lng='+this.state.location.lng.toString().split(".").join("")+'&radius='+radius)
         .then(res => res.json())
         .then(data => {
+          sessionStorage.setItem("temp_location", JSON.stringify(data))
           this.setState({redirect: true, location: data})});
   }
 
   renderYourSite = () => {
     if (this.props.hasLocation) {
-      
       return <Col lg="6" md="6" sm="6" className="mb-4"><YourSite match={this.props.yourLocation}/></Col>
     }
   }
 
   render(){
-    // console.log(this.marker)
-    // console.log("printed props")
-    const location = this.state.location
-    //const address = "3250 West Olympic Boulevard, Los Angeles"
-    // const location = {
-    //   name: "PizzaRev",
-    //   address:"5608 Van Nuys Boulevard, Van Nuys", 
-    //   census: {
-    //     asian: 7.8,
-    //     black: 6.6,
-    //     hispanic: 17.1, 
-    //     indian: 0.4,
-    //     multi: 4,
-    //     white: 65.7,
-    //   },
-    //   pop: 4015,
-    //   income: 62963,
-    //   place_type: {
-    //     PizzaPlace: 1,
-    //     FastFoodRestaurant: 1,
-    //   },
-    //   price: 2, 
-    //   age: 5.76999892717773,
-    //   icon: "https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",
-    //   photo: "https://lh3.googleusercontent.DELETED_BASE64_STRING_uQpH=s1600-w500-h500",
-    // }
+    var location = this.state.location
+    if(!location) {
+      // check if the temp location in currently stored in local storage
+      location = JSON.parse(sessionStorage.getItem("temp_location"))
+    }
     
     return (
       <Container fluid className="main-content-container px-4">

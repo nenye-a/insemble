@@ -40,8 +40,6 @@ export const loadMap = (hasLocation=false, income=0, categories=[]) => (dispatch
     // map is loading
     dispatch({type: MAP_LOADING})
 
-    console.log("hasLocaiton", hasLocation)
-    console.log("getState", getState().space.hasLocation)
     if(hasLocation || getState().space.hasLocation) {
 
         const locationLoaded = getState().space.locationLoaded;

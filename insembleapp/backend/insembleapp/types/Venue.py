@@ -108,7 +108,6 @@ class Venue(object):
     def get_venue(_id):
         
         db_item = Venue.db_venue.find_one({"_id": ObjectId(_id)})
-        print(db_item)
         return Venue.convert_db_item(db_item)
 
     @staticmethod
