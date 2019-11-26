@@ -14,13 +14,9 @@ import {
   ButtonGroup
 } from "shards-react";
 
-import AtAGlance from "../components/location-deep-dive/AtAGlance";
 import YourSite from "../components/location-deep-dive/YourSite";
-import Buildout from "../components/location-deep-dive/Buildout";
-import About from "../components/location-deep-dive/About";
 import PageTitle from "../components/common/PageTitle";
 import MapComponent from "./MapContainerDeepDive"
-import Iframe from 'react-iframe';
 import ThisLocation from "../components/location-deep-dive/ThisLocation";
 import { Redirect } from 'react-router-dom'
 
