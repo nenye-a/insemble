@@ -34,14 +34,7 @@ class DescribeStore extends React.Component {
     super(props);
 
     this.state = {
-      tags: [
-        "User Experience",
-        "UI Design",
-        "React JS",
-        "HTML & CSS",
-        "JavaScript",
-        "Bootstrap 4"
-      ], 
+      tags: [], 
       catData: []
     };
 
@@ -54,19 +47,36 @@ class DescribeStore extends React.Component {
   }
 
   componentDidMount() {
-    const catData = getCategoryData();
+    
+    var catData = [];
 
-    this.setState({
-      ...this.state,
-      catData
-    });
+    fetch('api/category/')
+    .then(res => {
+      if(res.ok) {
+        console.log("searching for more data")
+        res.json().then(data => {
+          this.setState({
+            ...this.state,
+            catData: data
+          })
+        });
+      } else {
+        console.log("Failed to obtain categories");
+      }
+    })
+    .catch(err => {
+      console.log(err);
+    })
+    
+    console.log("did it load?", catData)
+    console.log("cd", this.state.catData.map(entry => {type=entry}))
 
     // Initialize the fuzzy searcher.
-    this.searcher = new FuzzySearch(
-      catData,
-      ["type"],
-      { caseSensitive: false }
-    );
+    // this.searcher = new FuzzySearch(
+    //   catData.map(entry => {type=entry}),
+    //   ["type"],
+    //   { caseSensitive: false }
+    // );
   }
 
   handleTypeClick(type) {
@@ -94,7 +104,20 @@ class DescribeStore extends React.Component {
   }
 
   render() {
+    
     const catData = this.state.catData
+    const catDataLimited = catData.slice(0,49)
+
+
+    if(!this.searcher) {
+      console.log("wytyt", catData);
+      this.searcher = new FuzzySearch(
+        catData.map(entry => {type=entry}),
+      ["type"],
+      { caseSensitive: false }
+      );
+    }
+
     return (
       
       <Container fluid className="main-content-container px-4">
@@ -129,11 +152,13 @@ class DescribeStore extends React.Component {
                       </Col>
                     </Row>
                     
-                    <Row className="mx-4">
+                    {/* Taken out for now since can't mount */}
+                    {/* <Row className="mx-4">
                       <label>Category</label>
                     </Row>
+                    
                     <Row className="mx-4">
-                      {/* Filters :: Search */}
+                    
                       <Col sm="4" className="d-flex">
                      
                         <InputGroup seamless size="sm">
@@ -147,7 +172,7 @@ class DescribeStore extends React.Component {
                  
                         
                       </Col>
-                    </Row>
+                    </Row> */}
 
                     <Row form className="mx-4">
                       {/* User Tags */}
@@ -158,26 +183,29 @@ class DescribeStore extends React.Component {
                           onChange={this.handleTagsChange}
                         />
                       </Col>
+                      <Col>
+                        <Row className="mx-4">
+                        <label>All Categories (click to load)</label>
+                        </Row>
+                        <Row>
+                          <div className="user-details__tags px-4">
+                          {catData.map((entry, idx) => (
+                            <Badge
+                              pill
+                              theme="light"
+                              className="text-light text-uppercase mb-2 border mr-1"
+                              onClick={()=>this.handleTypeClick(entry)}
+                              key={idx}
+                            >
+                              {entry}
+                            </Badge>
+                          ))}
+                          </div>
+                        </Row>
+                      </Col>
                     </Row>
 
-                    <Row className="mx-4">
-                      <label>All Categories</label>
-                    </Row>
-                    <Row>
-                      <div className="user-details__tags px-4">
-                      {catData.map((entry, idx) => (
-                        <Badge
-                          pill
-                          theme="light"
-                          className="text-light text-uppercase mb-2 border mr-1"
-                          onClick={()=>this.handleTypeClick(entry.type)}
-                          key={idx}
-                        >
-                          {entry.type}
-                        </Badge>
-                      ))}
-                      </div>
-                    </Row>
+                    
 
                   </Form>
                 </CardBody>
