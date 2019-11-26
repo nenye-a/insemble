@@ -46,18 +46,20 @@ class LocationDeepDiveDemo extends React.Component {
 
   handleRadiusClick (radius) {
     
-    const yourSiteURL = 'api/location/address='+this.props.yourLocation.address+'&radius='+radius;
-    this.props.getLocation(yourSiteURL);
+    if(this.props.hasLocation){
+      const yourSiteURL = 'api/location/address='+this.props.yourLocation.address+'&radius='+radius;
+      this.props.getLocation(yourSiteURL);
+    }
     fetch('api/location/lat='+this.state.location.lat.toString().split(".").join("")+'&lng='+this.state.location.lng.toString().split(".").join("")+'&radius='+radius)
         .then(res => res.json())
         .then(data => {
           this.setState({redirect: true, location: data})});
   }
 
-  renderRedirect = () => {
-    if (this.state.redirect) {
+  renderYourSite = () => {
+    if (this.props.hasLocation) {
       
-      return <Redirect to = {{pathname: "/location-deep-dive-demo", match: this.state.location}} />
+      return <Col lg="6" md="6" sm="6" className="mb-4"><YourSite match={this.props.yourLocation}/></Col>
     }
   }
 
@@ -91,7 +93,6 @@ class LocationDeepDiveDemo extends React.Component {
     
     return (
       <Container fluid className="main-content-container px-4">
-        {/* {this.renderRedirect()} */}
         {/* TODO: Change los angeles from static input  */}
         <Row>
           <MapComponent {...location}/>
@@ -144,9 +145,7 @@ class LocationDeepDiveDemo extends React.Component {
         {/* Site Comparison */}
         <Row>
           {/* Site Comparison */}
-          <Col lg="6" md="6" sm="6" className="mb-4">
-            <YourSite match={this.props.yourLocation}/>
-          </Col>
+          {this.renderYourSite()}
 
           {/* Site Comparison */}
           <Col lg="6" md="6" sm="6" className="mb-4">

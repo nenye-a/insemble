@@ -154,26 +154,10 @@ class YourSite extends React.Component {
 
         <CardFooter className="border-top">
           <Row>
-            {/* Time Span */}
-            <Col>
-              <FormSelect
-                size="sm"
-                value="half-mile"
-                style={{ maxWidth: "130px" }}
-                onChange={() => {}}
-              >
-                <option value="half-mile">0.5 Mile</option>
-                <option value="2-miles">2 Miles</option>
-                <option value="5-miles">5 Miles</option>
-                <option value="10-miles">10 Miles</option>
-                <option value="25-miles">25 Miles</option>
-              </FormSelect>
-            </Col>
-
             {/* View Full Report */}
             <Col className="text-right view-report">
               {/* eslint-disable-next-line */}
-              <a href="#">View full report &rarr;</a>
+              <a href="/login">Learn More &rarr;</a>
             </Col>
           </Row>
         </CardFooter>

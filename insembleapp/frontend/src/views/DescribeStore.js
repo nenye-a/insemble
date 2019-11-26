@@ -24,6 +24,7 @@ import {
 } from "shards-react";
 import FuzzySearch from "fuzzy-search";
 import getCategoryData from "../data/store-categories";
+import { Redirect } from "react-router-dom";
 
 import { connect } from "react-redux";
 import { loadMap } from '../redux/actions/space'
@@ -37,7 +38,8 @@ class DescribeStore extends React.Component {
 
     this.state = {
       tags: [], 
-      catData: []
+      catData: [], 
+      redirect: false
     };
 
     this.searcher = null;
@@ -92,6 +94,10 @@ class DescribeStore extends React.Component {
     console.log(this.state.tags)
 
     this.props.loadMap(false, this.incomeInput.current.value, this.state.tags)
+
+    this.setState({
+      redirect: true
+    })
     
   }
 
@@ -106,6 +112,10 @@ class DescribeStore extends React.Component {
   }
 
   render() {
+
+    if (this.state.redirect) {
+      return <Redirect to= {{pathname: "/spaces"}}/>;
+    }
     
     const catData = this.state.catData
     const catDataLimited = catData.slice(0,49)

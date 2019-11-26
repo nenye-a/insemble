@@ -16,6 +16,8 @@ import DescribeStore from "./views/DescribeStore";
 import Login from "./views/Login";
 import Landing from "./views/Landing";
 import Existing from "./views/Existing";
+import Feedback from "./views/Feedback";
+import Explain from "./views/Explain";
 import Verify from "./views/Verify";
 import Find from "./views/Find";
 import Register from "./views/Register";
@@ -111,6 +113,16 @@ export default [
     path: "/existing",
     layout: LoginLayout,
     component: Existing
+  },
+  {
+    path: "/feedback",
+    layout: LoginLayout,
+    component: Feedback
+  },
+  {
+    path: "/explain",
+    layout: LoginLayout,
+    component: Explain
   },
   {
     path: "/verify",

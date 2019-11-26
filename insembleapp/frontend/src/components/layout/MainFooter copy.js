@@ -8,22 +8,14 @@ const MainFooter = ({ contained, menuItems, copyright }) => (
     <Container fluid={contained}>
       <Row>
         <Nav>
-          <NavItem>
-            <NavLink tag={Link} to={"/explain"} className="px-3">
-              {"About"}
-            </NavLink>
-          </NavItem>
-          <NavItem >
-            <NavLink tag={Link} to={"/find"} className="px-3">
-              {"Enter Another Store"}
-            </NavLink>
-          </NavItem>
-          <NavItem >
-            <NavLink tag={Link} to={"/whoduhbohghahhhhhh"} className="px-3">
-              {"Save Current Search"}
-            </NavLink>
-          </NavItem>
-      </Nav>
+          {menuItems.map((item, idx) => (
+            <NavItem key={idx}>
+              <NavLink tag={Link} to={item.to} className="px-3">
+                {item.title}
+              </NavLink>
+            </NavItem>
+          ))}
+        </Nav>
         <span className="copyright ml-auto my-auto mr-2">{copyright}</span>
       </Row>
     </Container>

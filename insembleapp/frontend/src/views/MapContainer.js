@@ -51,7 +51,7 @@ class MapWithAMarkerClusterer extends React.Component {
       markers: [],
       onMapMounted: ref => {
         refs.map = ref;
-        if (!this.state.redirect){
+        if (!this.state.redirect && refs.map){
           this.setState({
             bounds: refs.map.getBounds(),
             center: refs.map.getCenter(),
