@@ -25,6 +25,8 @@ import {
 import FuzzySearch from "fuzzy-search";
 import getCategoryData from "../data/store-categories";
 
+import { connect } from "react-redux";
+import { loadMap } from '../redux/actions/space'
 
 import FormSectionTitle from "../components/edit-user-profile/FormSectionTitle";
 import ProfileBackgroundPhoto from "../components/edit-user-profile/ProfileBackgroundPhoto";
@@ -39,10 +41,10 @@ class DescribeStore extends React.Component {
     };
 
     this.searcher = null;
-
     this.handleTagsChange = this.handleTagsChange.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
     this.handleFilterSearch = this.handleFilterSearch.bind(this);
+    this.incomeInput = React.createRef();
 
   }
 
@@ -68,15 +70,9 @@ class DescribeStore extends React.Component {
       console.log(err);
     })
     
+    
     console.log("did it load?", catData)
     console.log("cd", this.state.catData.map(entry => {type=entry}))
-
-    // Initialize the fuzzy searcher.
-    // this.searcher = new FuzzySearch(
-    //   catData.map(entry => {type=entry}),
-    //   ["type"],
-    //   { caseSensitive: false }
-    // );
   }
 
   handleTypeClick(type) {
@@ -89,8 +85,14 @@ class DescribeStore extends React.Component {
     this.setState({ tags });
   }
 
-  handleFormSubmit(e) {
+  handleFormSubmit = e => {
     e.preventDefault();
+
+    console.log(this.incomeInput.current.value)
+    console.log(this.state.tags)
+
+    this.props.loadMap(false, this.incomeInput.current.value, this.state.tags)
+    
   }
 
   /**
@@ -108,13 +110,10 @@ class DescribeStore extends React.Component {
     const catData = this.state.catData
     const catDataLimited = catData.slice(0,49)
 
-
-    if(!this.searcher) {
-      console.log("wytyt", catData);
+    if(!(catData.length == 0) && !this.searcher) {
       this.searcher = new FuzzySearch(
-        catData.map(entry => {type=entry}),
-      ["type"],
-      { caseSensitive: false }
+        catData,
+        { caseSensitive: false }
       );
     }
 
@@ -144,7 +143,7 @@ class DescribeStore extends React.Component {
                             <FormInput
                               id="firstName"
                               placeholder="100000"
-                              onChange={() => {}}
+                              innerRef={this.incomeInput}
                             />
                           </Col>
 
@@ -153,7 +152,7 @@ class DescribeStore extends React.Component {
                     </Row>
                     
                     {/* Taken out for now since can't mount */}
-                    {/* <Row className="mx-4">
+                    <Row className="mx-4">
                       <label>Category</label>
                     </Row>
                     
@@ -172,7 +171,7 @@ class DescribeStore extends React.Component {
                  
                         
                       </Col>
-                    </Row> */}
+                    </Row>
 
                     <Row form className="mx-4">
                       {/* User Tags */}
@@ -189,7 +188,7 @@ class DescribeStore extends React.Component {
                         </Row>
                         <Row>
                           <div className="user-details__tags px-4">
-                          {catData.map((entry, idx) => (
+                          {catDataLimited.map((entry, idx) => (
                             <Badge
                               pill
                               theme="light"
@@ -214,8 +213,9 @@ class DescribeStore extends React.Component {
                     size="sm"
                     theme="accent"
                     className="ml-auto d-table mr-3"
+                    onClick={this.handleFormSubmit}
                   >
-                    Save Changes
+                    See Locations
                   </Button>
                 </CardFooter>
               </Card>
@@ -227,4 +227,7 @@ class DescribeStore extends React.Component {
   }
 }
 
-export default DescribeStore;
+const mapStateToProps = state => ({
+})
+
+export default connect(mapStateToProps, { loadMap })(DescribeStore);

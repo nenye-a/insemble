@@ -279,8 +279,7 @@ class CategoryMapAPI(generics.GenericAPIView):
 
         :return:
         """
-        number = 50
-        return Response(cm.pull_categories(number))
+        return Response(cm.pull_categories())
 
 
     def post(self, request, *args, **kwargs):
@@ -292,7 +291,7 @@ class CategoryMapAPI(generics.GenericAPIView):
 
         request.data = {
             "income": 120,000,
-            "primary_categories": ["restaurant", "pizza"],
+            "categories": ["restaurant", "pizza"],
         }
 
         #### NOTE OUTDATED - PLEASE THAT THE ACTUAL RETURN WILL BE THAT OF LOCATION OBJECTS

@@ -286,7 +286,7 @@ def location_heat_map(retail_data):
     :param retail_data: dictionary of the following form
     request.data = {
         "income": 120,000,
-        "primary_categories": ["restaurant", "pizza"],
+        "categories": ["restaurant", "pizza"],
     }
 
     :return: object of the following form:
@@ -308,7 +308,7 @@ def location_heat_map(retail_data):
 
     data = {}
     data["income"] = retail_data["income"]
-    for category in retail_data["primary_categories"]:
+    for category in retail_data["categories"]:
         data[category] = 1
 
     # query our database for samples to evaluate

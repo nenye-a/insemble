@@ -96,4 +96,4 @@ class CategoryMapSerializer(serializers.Serializer):
     income = serializers.FloatField(required=True)
     # price = serializers.FloatField(required=True)
     # size_categories = serializers.ListSerializer(default=[], allow_null=True)
-    primary_categories = serializers.ListField(required=True, allow_null=False)
+    categories = serializers.ListField(required=True, allow_null=False)
