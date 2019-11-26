@@ -39,10 +39,12 @@ class MapWithAMarkerClusterer extends React.Component {
       markers: [],
       onMapMounted: ref => {
         refs.map = ref;
-        this.setState({
-          bounds: refs.map.getBounds(),
-          center: refs.map.getCenter(),
-        })
+        if (refs.map){
+          this.setState({
+            bounds: refs.map.getBounds(),
+            center: refs.map.getCenter(),
+          })
+        }
         console.log('state set')
       },
       onBoundsChanged: () => {
@@ -74,7 +76,7 @@ class MapWithAMarkerClusterer extends React.Component {
           center: nextCenter,
           markers: nextMarkers,
         });
-        //refs.map.fitBounds(bounds);
+        refs.map.fitBounds(bounds);
       },
       onMapClick: (e) => {
         console.log(e.latLng.lat().toString().split(".").join(""))
@@ -134,7 +136,7 @@ class MapWithAMarkerClusterer extends React.Component {
     return (
       <GoogleMap
         ref={this.state.onMapMounted}
-        defaultZoom={18}
+        defaultZoom={13}
         defaultCenter={{ lat: lat, lng: lng }}
         defaultOptions={{
           minZoom: 7, 
@@ -231,7 +233,7 @@ export default (markers) => (
 
     googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U&v=3.exp&libraries=geometry,drawing,places,visualization"
     loadingElement={<div style={{ height: `100%` }} />}
-    containerElement={<div style={{ height: "300px", width: "100%" }} />}
+    containerElement={<div style={{ height: "400px", width: "100%" }} />}
     mapElement={<div style={{ height: `100%` }} />}
     markers={markers}
   />
