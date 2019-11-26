@@ -74,7 +74,7 @@ class Find extends React.Component {
                     className="d-table mx-auto"
                     type="submit"
                     tag={Link} 
-                    to="/categories"
+                    to="/describe-store"
                   >
                     Enter applicable venue categories
                   </Button>
