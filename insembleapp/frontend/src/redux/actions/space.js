@@ -1,0 +1,83 @@
+import {
+    MAP_LOADING,
+    MAP_LOADED,
+    LOCATION_ERROR,
+    LOCATION_LOADED,
+    MAP_ERROR
+} from '../actions/types'
+
+
+// LOAD LOCATION
+export const getLocation = (requestUrl) => (dispatch) => {
+
+    // get location information from requestURL containing either lat, lng, radius or address, radius
+    fetch(requestUrl)
+    .then(res => {
+        if(res.ok) {
+            res.json().then(data => {
+                dispatch({
+                    type: LOCATION_LOADED,
+                    payload: data
+                });
+            })
+        } else {
+            console.log(res.status + " " + res.statusText);
+            dispatch({
+                type: LOCATION_ERROR
+            });
+        }
+    }).catch(err => {
+        console.log(err)
+        dispatch({
+            type: LOCATION_ERROR
+        });
+    });
+}
+
+// LOAD HEAT MAP
+export const loadMap = (hasLocation) => (dispatch, getState) => {
+
+    // map is loading
+    dispatch({type: MAP_LOADING})
+
+    if(hasLocation) {
+
+        const locationLoaded = getState().space.locationLoaded;
+        while(!locationLoaded) {
+            locationLoaded = getState().space.locationLoaded;
+            console.log(locationLoaded);
+        }        
+        
+        const address = getState().space.location.address;
+        fetch('/api/lmatches/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                address: address
+            })
+        })
+        .then(res => {
+            if(res.ok) {
+                res.json().then(data => {
+                    dispatch({
+                        type: MAP_LOADED,
+                        payload: data
+                    });
+                })
+            } else {
+                console.log(res.status + " " + res.statusText);
+                dispatch({
+                    type: MAP_ERROR,
+                })
+            }
+        }).catch(err => {
+            console.log(error);
+            dispatch({
+                type: MAP_ERROR,
+            })
+        })
+    } else {
+        // TODO: implement case of loading map without address.
+        console.log("NEED to implement case without address");
+    }
+}

@@ -19,8 +19,43 @@ class RetailerSite extends React.Component {
   constructor(props) {
     super(props);
 
-    this.location = this.props.match
+    // this.state = {
+    //   chartConfig: null
+      // {
+      //   type: "doughnut",
+      //   options: {
+      //     ...{
+      //       legend: false,
+      //       cutoutPercentage: 80,
+      //       tooltips: {
+      //         enabled: false,
+      //         mode: "index",
+      //         position: "nearest"
+      //       }
+      //     },
+      //   },
+      //   data: {
+      //     labels: Object.keys(this.props.match.census),
+      //     datasets: [
+      //       {
+      //         hoverBorderColor: colors.white.toRGBA(1),
+      //         data: Object.values(this.props.match.census), 
+      //         backgroundColor: [
+      //           colors.primary.toRGBA(1),
+      //           colors.primary.toRGBA(0.8),
+      //           colors.primary.toRGBA(0.6),
+      //           colors.primary.toRGBA(0.4),
+      //           colors.primary.toRGBA(0.2),
+      //           colors.primary.toRGBA(0.1)
+      //         ]
+      //       }
+      //     ]
+      //   }
+      // }
+    // }
+    // this.location = this.props.match
     this.canvasRef = React.createRef();
+    this.demoGraph = null;
   }
 
   componentDidMount() {
@@ -55,9 +90,9 @@ class RetailerSite extends React.Component {
           }
         ]
       }
-    };
+    }
 
-    new Chart(this.canvasRef.current, chartConfig);
+    this.demoGraph = new Chart(this.canvasRef.current, chartConfig); 
   }
 
   render() {
@@ -66,6 +101,11 @@ class RetailerSite extends React.Component {
     const canvasRef = this.canvasRef
     const { title } = this.props;
     const labels = Object.keys(location.census)
+
+    if(this.demoGraph) {
+      this.demoGraph.data.datasets[0].data = Object.values(location.census)
+      this.demoGraph.update()
+    }
 
     return (
       <Card small className="ubd-stats h-100">
@@ -148,26 +188,11 @@ class RetailerSite extends React.Component {
 
         <CardFooter className="border-top">
           <Row>
-            {/* Time Span */}
-            <Col>
-              <FormSelect
-                size="sm"
-                value="half-mile"
-                style={{ maxWidth: "130px" }}
-                onChange={() => {}}
-              >
-                <option value="half-mile">0.5 Mile</option>
-                <option value="2-miles">2 Miles</option>
-                <option value="5-miles">5 Miles</option>
-                <option value="10-miles">10 Miles</option>
-                <option value="25-miles">25 Miles</option>
-              </FormSelect>
-            </Col>
 
             {/* View Full Report */}
             <Col className="text-right view-report">
               {/* eslint-disable-next-line */}
-              <a href="#">View full report &rarr;</a>
+              <a href="/login">Learn More &rarr;</a>
             </Col>
           </Row>
         </CardFooter>

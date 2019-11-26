@@ -234,5 +234,23 @@ def return_location(lat, lng, radius):
             "radius": census_radius
         }
 
+def return_location_with_address(address, radius):
+
+    location, is_valid = lb.generate_location_profile(address, radius)
+    if is_valid:
+        return {
+            "address": address,
+            "lat": location.lat,
+            "lng": location.lng,
+            "census": location.census,
+            "pop": location.pop,
+            "income": location.income,
+            "nearby": location.nearby,
+            "radius": location.radius
+        }
+    else:
+        raise Exception("Locaiton not found. Please insert valid address.")
+
+
 def return_matches(item):
     return [MapLocation.convert_db_item(x) for x in lm.location_heat_map(item)]
