@@ -12,7 +12,12 @@ import BlogOverview from "./views/BlogOverview";
 import UserProfile from "./views/UserProfile";
 import UserProfileLite from "./views/UserProfileLite";
 import EditUserProfile from "./views/EditUserProfile";
+import DescribeStore from "./views/DescribeStore";
 import Login from "./views/Login";
+import Landing from "./views/Landing";
+import Existing from "./views/Existing";
+import Verify from "./views/Verify";
+import Find from "./views/Find";
 import Register from "./views/Register";
 import ForgotPassword from "./views/ForgotPassword";
 import ChangePassword from "./views/ChangePassword";
@@ -44,7 +49,8 @@ export default [
     path: "/",
     exact: true,
     layout: LoginLayout,
-    component: () => <Redirect to="/login" />
+    // component: () => <Redirect to="/start" />
+    component: Landing
   },
   {
     path: "/insights",
@@ -87,9 +93,29 @@ export default [
     component: EditUserProfile
   },
   {
+    path: "/describe-store",
+    layout: LoginLayout,
+    component: DescribeStore
+  },
+  {
     path: "/login",
     layout: LoginLayout,
     component: Login
+  },
+  {
+    path: "/find",
+    layout: LoginLayout,
+    component: Find
+  },
+  {
+    path: "/existing",
+    layout: LoginLayout,
+    component: Existing
+  },
+  {
+    path: "/verify",
+    layout: LoginLayout,
+    component: Verify
   },
   {
     path: "/register",
