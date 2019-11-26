@@ -249,7 +249,7 @@ def generate_tenant_matches(location_address, my_place_type={}):
     distance_table["weighted_diff"] = distance_table[["cen_diff", "pop_diff", "income_diff", "cat_diff"]].dot(weight)
 
     decent_rating = 7
-    diff_cutoff = 0.24
+    diff_cutoff = 0.5
     distance_table = distance_table[distance_table["weighted_diff"] < diff_cutoff]
     # distance_table = distance_table[distance_table["ratings"] > decent_rating]
 
@@ -276,7 +276,6 @@ def generate_tenant_matches(location_address, my_place_type={}):
         return_list.append(location_data)
 
     print("Match generation complete. Number of locations is: {}".format(len(return_list)))
-    print(return_list)
     return return_list
 
 def location_heat_map(retail_data):
