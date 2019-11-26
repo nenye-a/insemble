@@ -4,7 +4,6 @@ import classNames from "classnames";
 import { Container, Navbar, NavbarBrand, ButtonGroup, Button } from "shards-react";
 
 import { NavLink } from "react-router-dom";
-import NavbarSearch from "./NavbarSearch";
 import NavbarNav from "./NavbarNav/NavbarNav";
 import NavbarToggle from "./NavbarToggle";
 
@@ -38,18 +37,17 @@ const TenantNavbar = ({ layout, stickyTop }) => {
               </div>
             </NavbarBrand>
           )}
-          <ButtonGroup size="sm" className="my-auto d-inline-flex mb-sm-auto mx-auto">
+          {/* <ButtonGroup size="sm" className="my-auto d-inline-flex mb-sm-auto mx-auto">
             <Button theme="white" tag={NavLink} to="/insights">
               Grid
             </Button>
             <Button theme="white" tag={NavLink} to="/spaces">
               Map
             </Button>
-          </ButtonGroup>
+          </ButtonGroup> */}
           {/* Filler div */}
           <div className="w-100 d-none d-md-flex d-lg-flex"/>
           <NavbarNav />
-          <NavbarToggle />
         </Navbar>
       </Container>
       

@@ -95,7 +95,7 @@ export default [
   },
   {
     path: "/describe-store",
-    layout: LoginLayout,
+    layout: Tenant,
     component: DescribeStore
   },
   {
@@ -105,12 +105,12 @@ export default [
   },
   {
     path: "/find",
-    layout: LoginLayout,
+    layout: Tenant,
     component: Find
   },
   {
     path: "/existing",
-    layout: LoginLayout,
+    layout: Tenant,
     component: Existing
   },
   {

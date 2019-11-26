@@ -11,8 +11,12 @@ import {
   DropdownItem,
   Collapse,
   NavItem,
-  NavLink
+  Button, 
+  Container
 } from "shards-react";
+
+import { NavLink } from "react-router-dom";
+
 
 class UserActions extends React.Component {
   constructor(props) {
@@ -36,16 +40,10 @@ class UserActions extends React.Component {
     });
   }
 
-  render() {
-    const { isAuthenticated, user } = this.props.auth;
-    // const authLinks = ();
-
-    if(this.props.isAuthenticated) {
-      return <Redirect to="/"/>;
-    }
-    
-    return (
-      <NavItem tag={Dropdown} caret toggle={this.toggleUserActions}>
+  renderAuthenticated = () => {
+    if (this.props.auth.isAuthenticated) {
+      
+      return (<NavItem tag={Dropdown} caret toggle={this.toggleUserActions}>
         <DropdownToggle caret tag={NavLink} className="text-nowrap px-3">
           <img
             className="user-avatar rounded-circle mr-2"
@@ -63,8 +61,30 @@ class UserActions extends React.Component {
             <i className="material-icons text-danger">&#xE879;</i> Logout
           </DropdownItem>
         </Collapse>
-      </NavItem>
-    );
+      </NavItem>)
+    }
+    else{
+      return (
+      <Container className="my-auto mx-auto">
+        <Button
+          pill       
+          theme="accent"
+          tag={NavLink} 
+          to="/login"
+        >
+          Login
+        </Button>
+      </Container>)
+
+    }
+  }
+
+  render() {
+    const { isAuthenticated, user } = this.props.auth;
+    // const authLinks = ();
+    
+    return this.renderAuthenticated()
+     
   }
 }
 
