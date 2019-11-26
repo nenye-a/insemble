@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux';
-import auth from "./auth"
+import auth from "./auth";
+import space from "./space";
 
 export default combineReducers({
-    auth
+    auth,
+    space
 });

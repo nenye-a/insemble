@@ -24,6 +24,9 @@ import Iframe from 'react-iframe';
 import ThisLocation from "../components/location-deep-dive/ThisLocation";
 import { Redirect } from 'react-router-dom'
 
+import { connect } from "react-redux";
+import PropTypes from 'prop-types';
+import { getLocation } from '../redux/actions/space'
 
 class LocationDeepDiveDemo extends React.Component {
   constructor(props) {
@@ -31,12 +34,20 @@ class LocationDeepDiveDemo extends React.Component {
 
     this.state = {
       redirect: false, 
-      location: this.props.location.match
+      location: this.props.location.match, 
       };
+  }
+
+  static PropTypes = {
+    hasLocation: PropTypes.bool.isRequired,
+    yourLocation: PropTypes.object,
+    getLocation: PropTypes.func.isRequired
   }
 
   handleRadiusClick (radius) {
     
+    const yourSiteURL = 'api/location/address='+this.props.yourLocation.address+'&radius='+radius;
+    this.props.getLocation(yourSiteURL);
     fetch('api/location/lat='+this.state.location.lat.toString().split(".").join("")+'&lng='+this.state.location.lng.toString().split(".").join("")+'&radius='+radius)
         .then(res => res.json())
         .then(data => {
@@ -54,7 +65,6 @@ class LocationDeepDiveDemo extends React.Component {
     // console.log(this.marker)
     // console.log("printed props")
     const location = this.state.location
-    console.log(location)
     //const address = "3250 West Olympic Boulevard, Los Angeles"
     // const location = {
     //   name: "PizzaRev",
@@ -135,7 +145,7 @@ class LocationDeepDiveDemo extends React.Component {
         <Row>
           {/* Site Comparison */}
           <Col lg="6" md="6" sm="6" className="mb-4">
-            <YourSite match={location}/>
+            <YourSite match={this.props.yourLocation}/>
           </Col>
 
           {/* Site Comparison */}
@@ -150,4 +160,11 @@ class LocationDeepDiveDemo extends React.Component {
   }
 }
 
-export default LocationDeepDiveDemo;
+const mapStateToProps = state => ({
+  hasLocation: state.space.hasLocation,
+  yourLocation: state.space.location,
+})
+
+export default connect(mapStateToProps, {
+  getLocation
+})(LocationDeepDiveDemo);

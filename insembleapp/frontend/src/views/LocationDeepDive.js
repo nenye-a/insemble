@@ -33,7 +33,7 @@ class LocationDeepDive extends React.Component {
 
   render(){
     console.log("here we go")
-    console.log(this.props)
+    // console.log(this.props)
     // console.log(this.marker)
     // console.log("printed props")
     // const location = this.props.location.match

@@ -187,7 +187,7 @@ def generate_location_profile(address, radius):
         data = smart_search(URL, 'crimeometer', 'normal', headers=headers)
 
         pass
-
+    
     lat, lng, valid = get_loc_from_input(address)
 
     if not valid:

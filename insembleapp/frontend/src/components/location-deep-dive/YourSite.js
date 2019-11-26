@@ -19,70 +19,10 @@ class YourSite extends React.Component {
   constructor(props) {
     super(props);
 
-    this.match = {_id: "5dbf15d713ea2c19bb1c5d73",
-      name: "Everytable",
-      lat: 34.0350855,
-      lng: -118.2835359,
-      address: "1101 West 23rd Street, Los Angeles",
-      lat: 34.0350855,
-      lng: -118.2835359,
-      census: {
-      asian: 25.4,
-      black: 6.4,
-      hispanic: 49.3,
-      indian: 0.5,
-      multi: 4.4,
-      white: 17
-      },
-      pop: 8856,
-      income: 25912,
-      nearby: {
-      "Comfort Food Restaurant": 1,
-      "Pizza Place": 1,
-      "Coworking Space": 1,
-      "Bus Line": 1,
-      "Coffee Shop": 2,
-      "Wine Bar": 1,
-      "Salon / Barbershop": 2,
-      "Japanese Restaurant": 1,
-      "Mexican Restaurant": 1,
-      "Building": 1,
-      "Gas Station": 1,
-      "Burger Joint": 1,
-      "Grocery Store": 1,
-      "General Entertainment": 1,
-      "High School": 1,
-      "Theater": 1,
-      "Taco Place": 1,
-      "Cosmetics Shop": 1,
-      "Doctor's Office": 1,
-      "Italian Restaurant": 1,
-      "School": 1,
-      "Creperie": 1,
-      "Church": 1,
-      "Liquor Store": 1,
-      "Historic Site": 1,
-      "Laundry Service": 1,
-      "Miscellaneous Shop": 1,
-      },
-      radius: 0.5,
-      Retailer: {
-        name: "Everytable",
-        place_type: {
-      "Vegetarian / Vegan Restaurant": 1,
-      "Salad Place": 1},
-      price: 1,
-      likes: 15,
-      ratings: 7.5,
-      photo_count: 7,
-      age: 3.36500878648779,
-      icon: "https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png", 
-      photo: "https://lh3.googleusercontent.com/p/AF1QipMRbf2dIA_Qu86-qJ7iEfVPMKXfFM-XQ9dtGUZz=s1600-w500-h500"
-      },
-    }
-    
-
+    console.log(this.props)
+    this.match = this.props.match
     this.canvasRef = React.createRef();
+    this.demoGraph = null;
   }
 
   componentDidMount() {
@@ -119,13 +59,19 @@ class YourSite extends React.Component {
       }
     };
 
-    new Chart(this.canvasRef.current, chartConfig);
+    this.demoGraph = new Chart(this.canvasRef.current, chartConfig); 
   }
 
   render() {
-    const location = this.match
+    const location = this.props.match
     const { title } = this.props;
+
     const labels = Object.keys(location.census)
+
+    if(this.demoGraph) {
+      this.demoGraph.data.datasets[0].data = Object.values(location.census)
+      this.demoGraph.update()
+    }
 
     return (
       <Card small className="ubd-stats h-100">
