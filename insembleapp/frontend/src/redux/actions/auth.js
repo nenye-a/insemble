@@ -51,8 +51,6 @@ isBroker ) => (dispatch) => {
 
     console.log({firstName, lastName, email, password})
 
-    //Request Body (isLandlord, isRetailer, isBroker) omitted for now
-    // const body = JSON.stringify({firstName, lastName, email, password, company });
     const body = JSON.stringify({
         first_name: firstName,
         last_name: lastName,
@@ -60,8 +58,6 @@ isBroker ) => (dispatch) => {
         password,
         company,
     });
-
-    console.log(body)
 
     fetch('/api/auth/register/', {
         method: 'POST',
@@ -172,8 +168,6 @@ export const tokenConfig = getState => {
     if(token) {
         config.headers['Authorization'] = `Token ${token}`;
     }
-
-    console.log(config)
 
     return config
 }

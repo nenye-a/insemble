@@ -3,7 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="79ae0e81-6081-4cec-8378-71d07948e27e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/backend/data_insights/category_management.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/data_insights/category_management.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/redux/actions/auth.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/redux/actions/auth.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/redux/actions/space.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/redux/actions/space.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/views/DescribeStore.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/views/DescribeStore.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/jquery-webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/jquery-webpack-stats.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

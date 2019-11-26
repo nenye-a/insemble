@@ -35,12 +35,14 @@ export const getLocation = (requestUrl) => (dispatch) => {
 }
 
 // LOAD HEAT MAP
-export const loadMap = (hasLocation) => (dispatch, getState) => {
+export const loadMap = (hasLocation=false, income=0, categories=[]) => (dispatch, getState) => {
 
     // map is loading
     dispatch({type: MAP_LOADING})
 
-    if(hasLocation) {
+    console.log("hasLocaiton", hasLocation)
+    console.log("getState", getState().space.hasLocation)
+    if(hasLocation || getState().space.hasLocation) {
 
         const locationLoaded = getState().space.locationLoaded;
         while(!locationLoaded) {
@@ -78,6 +80,47 @@ export const loadMap = (hasLocation) => (dispatch, getState) => {
         })
     } else {
         // TODO: implement case of loading map without address.
-        console.log("NEED to implement case without address");
+        
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+
+        console.log(income)
+        console.log()
+
+        const body = JSON.stringify({
+            income,
+            categories
+        });
+
+        fetch('/api/category/', {
+            method: 'POST',
+            headers: config.headers,
+            body
+        })
+        .then(res => {
+            if(res.ok) {
+                res.json().then(data => {
+                    dispatch({
+                        type: MAP_LOADED,
+                        payload: data
+                    });
+                })
+            } else {
+                console.log(res.status + " " + res.statusText)
+                dispatch({
+                    type: MAP_ERROR
+                });
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            dispatch({
+                type: MAP_ERROR
+            });
+        })
+    
     }
 }
