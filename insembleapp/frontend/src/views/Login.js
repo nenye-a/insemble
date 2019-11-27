@@ -48,7 +48,7 @@ class Login extends React.Component {
   render() {
     
     if(this.props.isAuthenticated) {
-      return <Redirect to="/Matches"/>;
+      return <Redirect to="/Find"/>;
     }
     
     return (
@@ -60,7 +60,8 @@ class Login extends React.Component {
                 {/* Logo */}
                 <img
                   className="auth-form__logo d-table mx-auto mb-3"
-                  src={require("../images/shards-dashboards-logo.svg")}
+                  style={{ maxHeight: "25px" }}
+                  src={require("../images/insemble_i.png")}
                   alt="Retailer Dashboards - Login Template"
                 />
 
@@ -107,32 +108,6 @@ class Login extends React.Component {
                   </Button>
                 </Form>
               </CardBody>
-
-              {/* Social Icons */}
-              <CardFooter>
-                <ul className="auth-form__social-icons d-table mx-auto">
-                  <li>
-                    <a href="#">
-                      <i className="fab fa-facebook-f" />
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i className="fab fa-twitter" />
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i className="fab fa-github" />
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i className="fab fa-google-plus-g" />
-                    </a>
-                  </li>
-                </ul>
-              </CardFooter>
             </Card>
 
             {/* Meta Details */}

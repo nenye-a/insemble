@@ -3,7 +3,7 @@
 import React from "react";
 
 import { withRouter } from "react-router";
-import { Link, NavLink, Redirect } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -22,8 +22,6 @@ import {
   FormCheckbox,
   Button
 } from "shards-react";
-
-import {NavLink} from "react-router-dom";
 
 class Find extends React.Component {
   constructor(props) {
@@ -47,61 +45,57 @@ class Find extends React.Component {
 
   render() {
     
-    if(this.props.isAuthenticated) {
-      return <Redirect to="/Matches"/>;
-    }
+    // if(this.props.isAuthenticated) {
+    //   return <Redirect to="/Matches"/>;
+    // }
     
     return (
       <Container fluid className="main-content-container h-100 px-4">
         <Row noGutters className="h-100">
-          <Col lg="8" md="8" className="auth-form mx-auto my-auto">
+          <Col lg="6" md="8" className="mx-auto my-auto">
             <Card>
               <CardBody>
                 {/* Logo */}
                 <img
                   className="auth-form__logo d-table mx-auto mb-3"
-                  src={require("../images/shards-dashboards-logo.svg")}
+                  style={{ maxHeight: "25px" }}
+                  src={require("../images/insemble_i.png")}
                   alt="Retailer Dashboards - Login Template"
                 />
 
                 {/* Title */}
                 <h5 className="auth-form__title text-center mb-4">
-                  Find best locations
+                  Find the best location for your store
                 </h5>
 
-                {/* Form Fields */}
-                <Form>
-                <Button
-                    pill
-                    theme="accent"
-                    className="d-table mx-auto"
-                    type="submit"
-                    tag={Link} 
-                    to="/describe-store"
-                  >
-                    Enter applicable venue categories
+                <Col>
+                  <Row>
+                    <Col className="d-flex flex-column justify-content-center align-items-center">
+                      <Button
+                        pill
+                        theme="accent"
+                        tag={Link}
+                        to="/describe-store"
+                      >
+                        Enter applicable venue categories
                   </Button>
-                  <Button
-                    pill
-                    theme="accent"
-                    className="d-table mx-auto"
-                    type="submit"
-                    tag={Link} 
-                    to="/existing"
-                  >
-                    Enter existing store address
+                    </Col>
+                    <Col className="d-flex flex-column justify-content-center align-items-center">
+                      <Button
+                        pill
+                        theme="accent"
+                        tag={Link}
+                        to="/existing"
+                      >
+                        Enter existing store address
                   </Button>
-                  <Button
-                    pill
-                    theme="accent"
-                    className="d-table mx-auto"
-                    type="submit"
-                    tag={Link} 
-                    to="/login"
-                  >
-                    Sign In
-                  </Button>
-                </Form>
+                    </Col>
+                  </Row>
+                </Col>
+
+
+               
+                
               </CardBody>
 
             </Card>
