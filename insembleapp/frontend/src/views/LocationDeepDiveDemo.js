@@ -18,6 +18,8 @@ import YourSite from "../components/location-deep-dive/YourSite";
 import PageTitle from "../components/common/PageTitle";
 import MapComponent from "./MapContainerDeepDive"
 import ThisLocation from "../components/location-deep-dive/ThisLocation";
+
+import { withRouter } from "react-router";
 import { Redirect } from 'react-router-dom'
 
 import { connect } from "react-redux";
@@ -140,6 +142,6 @@ const mapStateToProps = state => ({
   yourLocation: state.space.location,
 })
 
-export default connect(mapStateToProps, {
+export default withRouter(connect(mapStateToProps, {
   getLocation
-})(LocationDeepDiveDemo);
+})(LocationDeepDiveDemo));

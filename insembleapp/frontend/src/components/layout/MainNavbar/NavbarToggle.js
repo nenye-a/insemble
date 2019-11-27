@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import PropTypes from 'prop-types';
 import { Button } from "shards-react";
+import { withRouter } from "react-router"
 import { NavLink } from "react-router-dom";
 
 import { Dispatcher, Constants } from "../../../flux";
@@ -57,4 +58,4 @@ const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated
 })
 
-export default connect(mapStateToProps)(NavbarToggle);
+export default withRouter(connect(mapStateToProps)(NavbarToggle));

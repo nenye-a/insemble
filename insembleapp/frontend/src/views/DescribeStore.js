@@ -24,6 +24,8 @@ import {
 } from "shards-react";
 import FuzzySearch from "fuzzy-search";
 import getCategoryData from "../data/store-categories";
+
+import { withRouter } from "react-router";
 import { Redirect } from "react-router-dom";
 
 import { connect } from "react-redux";
@@ -240,4 +242,4 @@ class DescribeStore extends React.Component {
 const mapStateToProps = state => ({
 })
 
-export default connect(mapStateToProps, { loadMap })(DescribeStore);
+export default withRouter(connect(mapStateToProps, { loadMap })(DescribeStore));

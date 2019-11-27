@@ -1,6 +1,7 @@
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
 import React from "react";
+import { withRouter } from "react-router";
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -172,4 +173,4 @@ const mapStateToProps = state => ({
   auth: state.auth
 })
 
-export default withAlert()(Feedback);
+export default withAlert()(withRouter(Feedback));
