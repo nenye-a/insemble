@@ -25,25 +25,65 @@ import {NavLink} from "react-router-dom";
 class Feedback extends React.Component {
   constructor(props) {
     super(props);
-    this.storeNameInput = React.createRef()
-    this.addressInput = React.createRef()
     this.state= {
       redirect: false
-    }
-    
+    } 
   }
 
   static PropTypes = {
     getLocation: PropTypes.func.isRequired,
   }
 
+  uploadFeedback = (content, type) => {
+
+    // Get current user from state
+    const user = this.props.auth.user;
+    
+    // Headers
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    var time_stamp = new Date();
+    
+    var body = {
+      content,
+      type,
+      time_stamp
+    }
+    if(user) {body.user = user}
+    body = JSON.stringify(body)
+
+    fetch('api/feedback/', {
+      method: 'POST',
+      headers: config.headers,
+      body
+    })
+    .then(res => {
+      if(res.ok) {
+        console.log("Successful update")
+        res.json().then(data=> console.log(data))
+      } else {
+        console.log("Failed to submit feedback.\n", res.status + " " + res.statusText)
+        res.json().then(err=> console.log(err))
+      }
+    })
+    .catch(err => console.log(err, "failed to submit feedback"))
+
+  }
+
   onSubmit = e => {
     e.preventDefault();
-    const storename = this.storeNameInput.current.value;
-    const address = this.addressInput.current.value;
 
-    this.props.getLocation('api/location/address='+address+'&radius=1');
-    this.props.loadMap(true);
+    var issueText = document.getElementById('formControlIssues').value
+    var feedbackText = document.getElementById('formControlFeedback').value
+    var featuresText = document.getElementById('formControlFeatures').value
+
+    this.uploadFeedback(issueText, "issue");
+    this.uploadFeedback(feedbackText, "feedback");
+    this.uploadFeedback(featuresText, "features");
 
     this.setState({
       redirect: true
@@ -51,19 +91,10 @@ class Feedback extends React.Component {
     
   }
 
-  // renderRedirect = () => {
-  //   if (this.redirect) {
-      
-  //     return <Redirect to="/verify" storename={storename} address={address}/>;
-  //   }
-  // }
-
   render() {
 
     if (this.state.redirect) {
-      const storename = this.storeNameInput.current.value;
-      const address = this.addressInput.current.value;
-      return <Redirect to= {{pathname: "/verify",  match:{storename: storename, address: address}}}/>;
+      return <Redirect to= {{pathname: "/find"}}/>;
     }
 
     return (
@@ -82,7 +113,7 @@ class Feedback extends React.Component {
           </Button>
         </Row>
         <Row noGutters className="h-100">
-          <Col lg="3" md="5" className="auth-form mx-auto my-auto">
+          <Col lg="7" md="11" className="auth-form mx-auto my-auto">
             <Card>
               <CardBody>
                 {/* Logo */}
@@ -94,45 +125,28 @@ class Feedback extends React.Component {
 
                 {/* Title */}
                 <h5 className="auth-form__title text-center mb-4">
-                  What can we do better?
+                  Feedback and Report Issues
                 </h5>
 
                 {/* Form Fields */}
                 <Form>
                   <FormGroup>
-                    <label htmlFor="exampleInputStoreName1">General Feedback</label>
-                    <FormInput
-                      type="text"
-                      id="exampleInputStoreName1"
-                      placeholder="How's the product?"
-                      autoComplete="off"
-                      innerRef = {this.storeNameInput}
-                    />
-                    <label htmlFor="exampleInputAddress1">Questions</label>
-                    <FormInput
-                      type="text"
-                      id="exampleInputAddress"
-                      placeholder="What questions do you have?"
-                      autoComplete="off"
-                      innerRef = {this.addressInput}
-                    />
-                    <label htmlFor="exampleInputAddress1">Features</label>
-                    <FormInput
-                      type="text"
-                      id="exampleInputAddress"
-                      placeholder="What else would you like to see?"
-                      autoComplete="off"
-                      innerRef = {this.addressInput}
-                    />
+                    <label htmlFor="formControlTextarea1">Report Issues</label>
+                    <textarea placeholder="Describe your issue" className="form-control" id="formControlIssues" rows="3"></textarea>
                   </FormGroup>
-                  
+                  <FormGroup>
+                    <label htmlFor="exampleInputStoreName1">Additional Feedback</label>
+                    <textarea placeholder="Enter any additional feedback or questions" className="form-control" id="formControlFeedback" rows="3"></textarea>
+                  </FormGroup>
+                  <FormGroup>
+                    <label htmlFor="exampleInputStoreName1">Additional Features</label>
+                    <textarea placeholder="Any features you would like to see?" className="form-control" id="formControlFeatures" rows="3"></textarea>
+                  </FormGroup>
                   <Button
                     pill
                     theme="accent"
                     className="d-table mx-auto"
                     type="submit"
-                    // tag={NavLink} - removed
-                    // to="/spaces"
                     onClick = {this.onSubmit}
                   >
                     Submit
@@ -150,6 +164,7 @@ class Feedback extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  auth: state.auth
 })
 
 export default connect(mapStateToProps, {

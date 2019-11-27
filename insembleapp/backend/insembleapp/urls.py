@@ -7,7 +7,6 @@ import django_js_reverse.views
 
 from rest_framework import routers, serializers, viewsets
 from .api import *
-from users.views import DangerousLoginView
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
@@ -30,5 +29,6 @@ urlpatterns = [
     # enable bakend routes
     url(r'^', include(router.urls)),
     url(r'api/category', CategoryMapAPI.as_view(), name='category'),
-    url(r'^', include('users.auth_urls'))
+    url(r'^', include('users.auth_urls')),
+    url(r'^', include('feedback.feedback_urls'))
 ]
