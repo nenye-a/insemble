@@ -4,6 +4,7 @@ import {
     MAP_ERROR,
     LOCATION_ERROR,
     LOCATION_LOADED,
+    LOCATION_LOADING,
 } from '../actions/types'
 
 const initialState = {
@@ -25,15 +26,20 @@ const initialState = {
     locationLoaded: sessionStorage.getItem("locationLoaded"),
     hasLocation: sessionStorage.getItem("hasLocation"),
     location: JSON.parse(sessionStorage.getItem("location")),
+    locationIsLoading: false,
+    locationErr: null
 }
 
 export default function(state = initialState, action) {
     switch (action.type) {
         case MAP_LOADING:
             sessionStorage.removeItem("heatMap")
+            sessionStorage.removeItem("mapLoaded")
             return {
                 ...state,
-                mapIsLoading: true
+                mapIsLoading: true,
+                heatMap: null,
+                mapLoaded: null
             }
         case MAP_LOADED:
             sessionStorage.setItem("mapLoaded", true)
@@ -52,6 +58,16 @@ export default function(state = initialState, action) {
                 mapLoaded: false,
                 mapIsLoading: false,
             }
+        case LOCATION_LOADING:
+            // sessionStorage.removeItem("location")
+            sessionStorage.removeItem("locationLoaded")
+            return {
+                ...state,
+                locationIsLoading: true,
+                locationLoaded: false,
+                // location: null,
+                locationErr: null
+            }
         case LOCATION_LOADED:
             sessionStorage.setItem("location", JSON.stringify(action.payload))
             sessionStorage.setItem("locationLoaded", true)
@@ -61,6 +77,7 @@ export default function(state = initialState, action) {
                 location: action.payload,
                 locationLoaded: true,
                 hasLocation: true,
+                locationErr: null
             }
         case LOCATION_ERROR:
             sessionStorage.removeItem("location")
@@ -70,7 +87,8 @@ export default function(state = initialState, action) {
                 ...state,
                 locationLoaded: false,
                 location: null,
-                hasLocation: false
+                hasLocation: false,
+                locationErr: action.payload
             }
         default:
             return state;

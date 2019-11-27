@@ -2,14 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="79ae0e81-6081-4cec-8378-71d07948e27e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/insembleapp/backend/feedback/feedback_urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/settings/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/settings/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/backend/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/App-OLD.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/components/location-deep-dive/YourSite.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/components/location-deep-dive/YourSite.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/redux/actions/space.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/redux/actions/space.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/redux/actions/types.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/redux/actions/types.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/redux/reducers/space.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/redux/reducers/space.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/views/Existing.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/views/Existing.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/views/Feedback.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/views/Feedback.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/views/LocationDeepDiveDemo.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/views/LocationDeepDiveDemo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/views/MapContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/views/MapContainer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/package.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

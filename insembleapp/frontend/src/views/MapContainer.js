@@ -18,6 +18,7 @@ import { NavLink } from "react-router-dom";
 import { Redirect } from 'react-router-dom'
 
 import { connect } from "react-redux";
+import { withAlert } from "react-alert";
 
 const { MarkerClusterer } = require("react-google-maps/lib/components/addons/MarkerClusterer");
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
@@ -31,6 +32,7 @@ class MapWithAMarkerClusterer extends React.Component {
     this.state = {redirect: false, isMarkerShown: false, markerPosition: null, markerAddress: null}
     this.handleMarkerClustererClick = this.handleMarkerClustererClick.bind(this);
     this.handleMarkerClick = this.handleMarkerClick.bind(this);
+    this.alert = this.props.alert;
   }
 
   static PropTypes = {
@@ -96,7 +98,13 @@ class MapWithAMarkerClusterer extends React.Component {
         .then(res => res.json())
         .then(data => {
           sessionStorage.setItem("temp_location", JSON.stringify(data))
-          this.setState({markerPosition: e.latLng, isMarkerShown:true, marker: data})});
+          this.setState({
+            markerPosition: e.latLng, isMarkerShown:true, marker: data
+          })
+        })
+        .catch(err => {
+          this.alert.show("Marker is too far from known establishment")
+        });
       },
 
 
@@ -278,7 +286,7 @@ const mapStateToProps = state => ({
 
 // const MapComponent = withScriptjs(withGoogleMap(MapWithAMarkerClusterer))
 const TempComponent = withScriptjs(withGoogleMap(MapWithAMarkerClusterer))
-const MapComponent = connect(mapStateToProps)(TempComponent)
+const MapComponent = withAlert()(connect(mapStateToProps)(TempComponent))
 
 
 export default (markers) => (

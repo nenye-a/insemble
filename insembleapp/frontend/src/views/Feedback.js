@@ -6,6 +6,8 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { getLocation, loadMap } from '../redux/actions/space'
 
+import { withAlert } from 'react-alert'
+
 import {
   Container,
   Row,
@@ -77,17 +79,20 @@ class Feedback extends React.Component {
   onSubmit = e => {
     e.preventDefault();
 
+    this.props.alert.show('HEHE')
+
     var issueText = document.getElementById('formControlIssues').value
     var feedbackText = document.getElementById('formControlFeedback').value
     var featuresText = document.getElementById('formControlFeatures').value
 
+
     this.uploadFeedback(issueText, "issue");
     this.uploadFeedback(feedbackText, "feedback");
     this.uploadFeedback(featuresText, "features");
-
-    this.setState({
-      redirect: true
-    })
+    
+    // this.setState({
+    //   redirect: true
+    // })
     
   }
 
@@ -167,7 +172,4 @@ const mapStateToProps = state => ({
   auth: state.auth
 })
 
-export default connect(mapStateToProps, {
-  getLocation,
-  loadMap 
-})(Feedback);
+export default withAlert()(Feedback);

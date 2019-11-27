@@ -13,4 +13,5 @@ export const MAP_LOADING = "MAP_LOADING";
 export const MAP_LOADED = "MAP_LOADED";
 export const MAP_ERROR = "MAP_ERROR";
 export const LOCATION_LOADED = "LOCATION_LOADED";
-export const LOCATION_ERROR = "LOCATION_ERROR"
+export const LOCATION_ERROR = "LOCATION_ERROR";
+export const LOCATION_LOADING = "LOCATION_LOADING"
