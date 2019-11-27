@@ -6,6 +6,7 @@ import MapWithAMarkerClusterer from "./MapContainer"
 import MapComponent from "./MapContainer"
 import Iframe from 'react-iframe'
 
+import { withRouter } from "react-router";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -97,4 +98,4 @@ const mapStateToProps = state => ({
 })
 
 
-export default connect(mapStateToProps)(Spaces);
+export default withRouter(connect(mapStateToProps)(Spaces));

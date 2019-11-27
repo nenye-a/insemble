@@ -1,7 +1,10 @@
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
 import React from "react";
-import { Link, Redirect } from "react-router-dom";
+
+import { withRouter } from "react-router";
+import { Link, NavLink, Redirect } from "react-router-dom";
+
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { login } from '../redux/actions/auth'
@@ -113,4 +116,4 @@ const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated
 })
 
-export default connect(mapStateToProps, { login })(Find);
+export default withRouter(connect(mapStateToProps, { login })(Find));

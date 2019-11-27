@@ -2,6 +2,8 @@
 
 import React from "react";
 import { connect } from "react-redux";
+
+import { withRouter } from "react-router";
 import { Redirect } from "react-router-dom";
 
 import PropTypes from "prop-types";
@@ -227,4 +229,4 @@ const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated
 })
 
-export default connect(mapStateToProps, { register })(Register);
+export default withRouter(connect(mapStateToProps, { register })(Register));

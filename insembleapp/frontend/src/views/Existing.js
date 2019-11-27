@@ -1,7 +1,9 @@
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
 import React from "react";
-import { Link, Redirect } from "react-router-dom";
+import { withRouter } from "react-router";
+import { Link, Redirect} from "react-router-dom";
+
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { getLocation, loadMap } from '../redux/actions/space'
@@ -142,7 +144,7 @@ const mapStateToProps = state => ({
   locationErr: state.space.locationErr
 })
 
-export default withAlert()(connect(mapStateToProps, {
+export default withAlert()(withRouter(connect(mapStateToProps, {
   getLocation,
   loadMap 
-})(Existing));
+})(Existing)));

@@ -1,5 +1,6 @@
 import React from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Link, Redirect, NavLink } from "react-router-dom";
+import { withRouter } from "react-router";
 import { connect } from "react-redux";
 import PropTypes from "prop-types"
 import { logout } from "../../../../redux/actions/auth"
@@ -14,8 +15,6 @@ import {
   Button, 
   Container
 } from "shards-react";
-
-import { NavLink } from "react-router-dom";
 
 
 class UserActions extends React.Component {
@@ -92,4 +91,4 @@ const mapStateToProps = state => ({
   auth: state.auth
 })
 
-export default connect(mapStateToProps, {logout})(UserActions);
+export default withRouter(connect(mapStateToProps, {logout})(UserActions));

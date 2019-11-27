@@ -1,11 +1,11 @@
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
 import React from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Link, Redirect, NavLink } from "react-router-dom";
+import { withRouter } from "react-router";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { getLocation, loadMap } from '../redux/actions/space'
-import { NavLink } from "react-router-dom";
 
 import {
   Container,
@@ -125,7 +125,7 @@ class Explain extends React.Component {
 const mapStateToProps = state => ({
 })
 
-export default connect(mapStateToProps, {
+export default withRouter(connect(mapStateToProps, {
   getLocation,
   loadMap 
-})(Explain);
+})(Explain));

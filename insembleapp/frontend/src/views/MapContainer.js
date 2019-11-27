@@ -14,8 +14,8 @@ import {
   InfoWindow
 } from "react-google-maps";
 import PropTypes from 'prop-types'; 
-import { NavLink } from "react-router-dom";
-import { Redirect } from 'react-router-dom'
+import { Redirect, NavLink } from 'react-router-dom'
+import { withRouter } from "react-router";
 
 import { connect } from "react-redux";
 import { withAlert } from "react-alert";
@@ -286,7 +286,7 @@ const mapStateToProps = state => ({
 
 // const MapComponent = withScriptjs(withGoogleMap(MapWithAMarkerClusterer))
 const TempComponent = withScriptjs(withGoogleMap(MapWithAMarkerClusterer))
-const MapComponent = withAlert()(connect(mapStateToProps)(TempComponent))
+const MapComponent = withAlert()(withRouter(connect(mapStateToProps)(TempComponent)));
 
 
 export default (markers) => (
