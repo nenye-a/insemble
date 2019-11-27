@@ -6,6 +6,8 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { getLocation, loadMap } from '../redux/actions/space'
 
+import { withAlert } from "react-alert"
+
 import {
   Container,
   Row,
@@ -27,40 +29,34 @@ class Existing extends React.Component {
     super(props);
     this.storeNameInput = React.createRef()
     this.addressInput = React.createRef()
-    this.state= {
-      redirect: false
-    }
+    this.alert = this.props.alert
+    this.initialState = true
     
   }
 
   static PropTypes = {
     getLocation: PropTypes.func.isRequired,
+    locationLoaded: PropTypes.bool,
+    locationErr: PropTypes.string
   }
 
   onSubmit = e => {
     e.preventDefault();
-    const storename = this.storeNameInput.current.value;
+    this.initialState = false
     const address = this.addressInput.current.value;
-
     this.props.getLocation('api/location/address='+address+'&radius=1');
-    this.props.loadMap(true);
-
-    this.setState({
-      redirect: true
-    })
-    
   }
 
-  // renderRedirect = () => {
-  //   if (this.redirect) {
-      
-  //     return <Redirect to="/verify" storename={storename} address={address}/>;
-  //   }
-  // }
-
   render() {
-
-    if (this.state.redirect) {
+    
+    if(this.props.locationErr) {
+      this.alert.show(this.props.locationErr)
+    }
+    
+    // render map once confirmed that location has ben loaded
+    if(this.props.locationLoaded && !this.initialState) {
+      
+      this.props.loadMap(true);
       const storename = this.storeNameInput.current.value;
       const address = this.addressInput.current.value;
       return <Redirect to= {{pathname: "/verify",  match:{storename: storename, address: address}}}/>;
@@ -68,7 +64,6 @@ class Existing extends React.Component {
 
     return (
       <Container fluid className="main-content-container h-100 px-4">
-        {/* {this.renderRedirect()} */}
         <Row>
           <Button
             pill
@@ -143,9 +138,11 @@ class Existing extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  locationLoaded: state.space.locationLoaded,
+  locationErr: state.space.locationErr
 })
 
-export default connect(mapStateToProps, {
+export default withAlert()(connect(mapStateToProps, {
   getLocation,
   loadMap 
-})(Existing);
+})(Existing));

@@ -179,7 +179,7 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
             if "place_type" in request.data:
                 place_type = request.data["place_type"]
         except:
-            return Response("Response must include 'address', prefereably of best location.")
+            return Response("Response must include 'address', prefereably of best location.", status=status.HTTP_400_BAD_REQUEST)
 
         matches = MapLocation.get_tenant_matches(address, place_type)
 
@@ -224,7 +224,7 @@ class TenantMatchesViewSet(viewsets.ViewSet):
                 address = urllib.parse.unquote(d["address"])
                 matches = PairedLocation.get_matches(address=address)
         except KeyError:
-            return Response("Request must include an 'id' or an 'address'.")
+            return Response("Request must include an 'id' or an 'address'.", status=status.HTTP_400_BAD_REQUEST)
 
         serializer = PairedLocationSerializer(matches, many=True)
         return Response(serializer.data)
@@ -261,7 +261,7 @@ class LocationInfoViewSet(viewsets.ViewSet):
             radius = float(d["radius"])
             return Response(return_location_with_address(address, radius))
         else:
-            raise Exception("lat, lng, and radius required in request. Please resubmit with params /lat=##&lng=##&radius=##")
+            return Response("Error, location not found. Please check request.", status=status.HTTP_400_BAD_REQUEST)
 
 # GENERATE HEATMAP LOCATIONS FROM INCOME, PRICE, & CATEGORIES
 

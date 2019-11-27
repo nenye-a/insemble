@@ -55,7 +55,7 @@ class LocationDeepDiveDemo extends React.Component {
   }
 
   renderYourSite = () => {
-    if (this.props.hasLocation) {
+    if (this.props.hasLocation && this.props.yourLocation) {
       return <Col lg="6" md="6" sm="6" className="mb-4"><YourSite match={this.props.yourLocation}/></Col>
     }
   }

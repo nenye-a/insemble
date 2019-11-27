@@ -2,14 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="79ae0e81-6081-4cec-8378-71d07948e27e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/insembleapp/backend/feedback/feedback_urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.py" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/backend/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/App-OLD.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING-deep-dive/YourSite.js" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING-deep-dive/YourSite.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.js" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.js" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.js" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.js" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.js" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.js" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$DELETED_BASE64_STRING.js" beforeDir="false" afterPath="$PROJECT_DIR$DELETED_BASE64_STRING.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/package.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
