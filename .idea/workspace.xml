@@ -2,15 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="79ae0e81-6081-4cec-8378-71d07948e27e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/insembleapp/backend/feedback/feedback_urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/backend/data_insights/location_methods.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/data_insights/location_methods.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/redux/actions/space.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/redux/actions/space.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/redux/reducers/space.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/redux/reducers/space.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/routes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/views/LocationDeepDive.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/views/LocationDeepDiveDemo.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/views/LocationDeepDiveDemo.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/views/MapContainerDeepDive.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/views/MapContainerDeepDive.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insembleapp/jquery-webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/jquery-webpack-stats.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/settings/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/settings/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/insembleapp/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/insembleapp/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/backend/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/backend/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/App-OLD.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insembleapp/frontend/src/views/Feedback.js" beforeDir="false" afterPath="$PROJECT_DIR$/insembleapp/frontend/src/views/Feedback.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

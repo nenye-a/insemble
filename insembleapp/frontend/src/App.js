@@ -1,8 +1,16 @@
 import React from "react";
+import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 
 import routes from "./routes";
 import withTracker from "./withTracker";
+
+const trackingID  = 'UA-153536736-1'
+import ReactGA from 'react-ga';
+ReactGA.initialize(trackingID);
+
+import { createBrowserHistory } from 'history';
+const history = createBrowserHistory();
 
 import { Provider } from 'react-redux';
 import store from './redux/store';
@@ -21,7 +29,7 @@ class App extends React.Component {
   render() {
     return (
       <Provider store = {store}>
-        <Router basename={process.env.REACT_APP_BASENAME || ""}>
+        <Router basename={process.env.REACT_APP_BASENAME  || ""} history={history} >
           <Switch>
             <div>
               {routes.map((route, index) => {
@@ -47,5 +55,16 @@ class App extends React.Component {
     );
   }
 }
+
+history.listen(location => {
+  ReactGA.set({ page: location.pathname }); // Update the user's current page
+  ReactGA.pageview(location.pathname); // Record a pageview for the given page
+});
+
+
+// function initializeReactGA() {
+//   ReactGA.initialize('UA-153536736-1');
+//   ReactGA.pageview('/');
+// }
 
 export default App;
