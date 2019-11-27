@@ -21,7 +21,8 @@ const Register = () => (
             {/* Logo */}
             <img
               className="auth-form__logo d-table mx-auto mb-3"
-              src={require("../images/shards-dashboards-logo.svg")}
+              style={{ maxHeight: "25px" }}
+              src={require("../images/insemble_i.png")}
               alt="Retailer Dashboards - Register Template"
             />
 

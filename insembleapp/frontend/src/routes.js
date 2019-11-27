@@ -130,12 +130,12 @@ export default [
   },
   {
     path: "/register",
-    layout: BlankIconSidebarLayout,
+    layout: LoginLayout,
     component: Register
   },
   {
     path: "/forgot-password",
-    layout: BlankIconSidebarLayout,
+    layout: LoginLayout,
     component: ForgotPassword
   },
   {
