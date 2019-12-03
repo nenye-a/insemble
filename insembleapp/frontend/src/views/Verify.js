@@ -31,7 +31,7 @@ class Verify extends React.Component {
     this.state = {
       pageList: ["whatever"],
       redirect: false
-      };
+    };
   }
 
   onSubmit = e => {
@@ -39,20 +39,20 @@ class Verify extends React.Component {
     this.setState({
       redirect: true
     })
-    
+
   }
 
-  render(){
+  render() {
     const location = this.props.location.match
     if (this.state.redirect) {
-      return <Redirect to= {{pathname: "/spaces",  match:{storename: location.storename, address: location.address}}}/>;
+      return <Redirect to={{ pathname: "/spaces", match: { storename: location.storename, address: location.address } }} />;
     }
 
     console.log("here we go")
     console.log(this.props)
     // console.log(this.marker)
     // console.log("printed props")
-    
+
     // const location = {
     //   name: "PizzaRev",
     //   address:"5608 Van Nuys Boulevard, Van Nuys", 
@@ -75,41 +75,43 @@ class Verify extends React.Component {
     //   icon: "https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",
     //   photo: "https://lh3.googleusercontent.com/p/AF1QipOzGbDOUJRU2nPTCRsaNttsGXl1jTeByUO_uQpH=s1600-w500-h500",
     // }
-    
+
     return (
-      <Container fluid className="main-content-container px-4">
+      <Container fluid>
         {/* TODO: Change los angeles from static input  */}
-        <Iframe url={"https://www.google.com/maps/embed/v1/search?key=AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U&q="+location.storename.split(" ").join("+")+"+"+location.address.split(" ").join("+")}
-        width="100%"
-        height="600px"
-        id="myId"
-        className="mx-auto"
-        display="initial"
-        position="relative"/>
+        <Iframe url={"https://www.google.com/maps/embed/v1/search?key=AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U&q=" + location.storename.split(" ").join("+") + "+" + location.address.split(" ").join("+")}
+          width="100%"
+          height="600px"
+          id="myId"
+          className="mx-auto"
+          display="initial" />
+
 
         <Row noGutters className="page-header py-2">
-          <PageTitle sm="4" title="Is this your store?" className="text-sm-left" />
+          <PageTitle sm="4" title="Is this your store?" className="text-sm-center" />
         </Row>
-        <Row>
-          <Button
-            pill
-            theme="accent"
-            className="d-table mx-auto"
-            type="submit"
-            tag={Link} 
-            to="/existing"
-          >
-            No
+        <Row className="align-items-center justify-content-center">
+          <Col md="4">
+              <Button
+                pill
+                theme="white"
+                tag={Link}
+                to="/existing"
+                className="mx-2"
+              >
+                No
+            </Button>
+              <Button
+                pill
+                theme="accent"
+                onClick={this.onSubmit}
+                className="mx-2"
+              >
+                Yes
           </Button>
-          <Button
-            pill
-            theme="accent"
-            className="d-table mx-auto"
-            type="submit"
-            onClick = {this.onSubmit}
-          >
-            Yes
-          </Button>
+          </Col>
+
+
         </Row>
 
       </Container>

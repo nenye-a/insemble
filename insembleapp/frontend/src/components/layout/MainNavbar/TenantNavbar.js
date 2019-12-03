@@ -32,7 +32,7 @@ const TenantNavbar = ({ layout, stickyTop }) => {
                   alt="Owner Dashboard"
                 />
                 <span className="d-none d-md-inline ml-1">
-                  Retailer Dashboard
+                  RetailSpace.ai
                 </span>
               </div>
             </NavbarBrand>

@@ -6,7 +6,7 @@ import {
   Row,
   Col,
   Button,
-  Badge, 
+  Badge,
   Card,
   CardBody,
   CardFooter,
@@ -39,8 +39,8 @@ class DescribeStore extends React.Component {
     super(props);
 
     this.state = {
-      tags: [], 
-      catData: [], 
+      tags: [],
+      catData: [],
       redirect: false
     };
 
@@ -53,36 +53,35 @@ class DescribeStore extends React.Component {
   }
 
   componentDidMount() {
-    
+
     var catData = [];
 
     fetch('api/category/')
-    .then(res => {
-      if(res.ok) {
-        console.log("searching for more data")
-        res.json().then(data => {
-          this.setState({
-            ...this.state,
-            catData: data
-          })
-        });
-      } else {
-        console.log("Failed to obtain categories");
-      }
-    })
-    .catch(err => {
-      console.log(err);
-    })
-    
-    
+      .then(res => {
+        if (res.ok) {
+          console.log("searching for more data")
+          res.json().then(data => {
+            this.setState({
+              ...this.state,
+              catData: data
+            })
+          });
+        } else {
+          console.log("Failed to obtain categories");
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      })
+
+
     console.log("did it load?", catData)
-    console.log("cd", this.state.catData.map(entry => {type=entry}))
+    console.log("cd", this.state.catData.map(entry => { type = entry }))
   }
 
   handleTypeClick(type) {
     console.log("selected", type)
-    this.setState(prevState =>
-      { return {tags : prevState.tags.concat(type)} });
+    this.setState(prevState => { return { tags: prevState.tags.concat(type) } });
   }
 
   handleTagsChange(tags) {
@@ -100,7 +99,7 @@ class DescribeStore extends React.Component {
     this.setState({
       redirect: true
     })
-    
+
   }
 
   /**
@@ -116,13 +115,13 @@ class DescribeStore extends React.Component {
   render() {
 
     if (this.state.redirect) {
-      return <Redirect to= {{pathname: "/spaces"}}/>;
+      return <Redirect to={{ pathname: "/spaces" }} />;
     }
-    
-    const catData = this.state.catData
-    const catDataLimited = catData.slice(0,49)
 
-    if(!(catData.length == 0) && !this.searcher) {
+    const catData = this.state.catData
+    const catDataLimited = catData.slice(0, 49)
+
+    if (!(catData.length == 0) && !this.searcher) {
       this.searcher = new FuzzySearch(
         catData,
         { caseSensitive: false }
@@ -130,63 +129,132 @@ class DescribeStore extends React.Component {
     }
 
     return (
-      
+
       <Container fluid className="main-content-container px-4">
-          <Row>
-            <Col lg="8" className="mx-auto mt-4">
-              <Card small className="edit-user-details mb-4">
-                <ProfileBackgroundPhoto />
+        <Row>
+          <Col lg="8" className="mx-auto mt-4">
+            <Card small className="edit-user-details mb-4">
+              <ProfileBackgroundPhoto />
 
-                <CardBody className="p-0">
+              <CardBody className="p-0">
 
-                  {/* Form Section Title :: General */}
-                  <Form className="py-4" onSubmit={this.handleFormSubmit}>
-                    <FormSectionTitle
-                      title="Describe Store"
-                      description="What are you looking for in a retail store?"
+                {/* Form Section Title :: General */}
+                <Form className="py-4" onSubmit={this.handleFormSubmit}>
+                  <FormSectionTitle
+                    title="Describe Store"
+                    description="What are you looking for in a retail store?"
+                  />
+
+                  <Row className="px-4">
+                    <Col md="4" className="form-group">
+                      <label htmlFor="firstName">Target Income ($)</label>
+                      <FormInput
+                        id="firstName"
+                        placeholder="100000"
+                        innerRef={this.incomeInput}
+                      />
+                    </Col>
+                    <Col md="4">
+                      <Row >
+                        <label>Category Search</label>
+                      </Row>
+
+                      <Row >
+
+                        <Col className="d-flex">
+
+                          <InputGroup seamless size="sm">
+                            <InputGroupAddon type="prepend">
+                              <InputGroupText>
+                                <i className="material-icons">search</i>
+                              </InputGroupText>
+                            </InputGroupAddon>
+                            <FormInput onChange={this.handleFilterSearch} />
+                          </InputGroup>
+
+
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Col className="form-group">
+                      <Row form className="mx-4">
+                        <label htmlFor="userTags">Selected</label>
+                      </Row>
+                      <Row>
+                      <TagsInput
+                          value={this.state.tags}
+                          onChange={this.handleTagsChange}
+                        />
+                      </Row>
+
+                    </Col>
+
+                  </Row>
+{/* 
+                  <Row form className="mx-4">
+                    <Col lg="8">
+                      <Row form>
+                        <Col md="6" className="form-group">
+                          <label htmlFor="firstName">Target Income ($)</label>
+                          <FormInput
+                            id="firstName"
+                            placeholder="100000"
+                            innerRef={this.incomeInput}
+                          />
+                        </Col>
+
+                      </Row>
+                    </Col>
+                  </Row>
+
+                  <Row className="mx-4">
+                    <label>Category Search</label>
+                  </Row>
+
+                  <Row className="mx-4">
+
+                    <Col sm="4" className="d-flex">
+
+                      <InputGroup seamless size="sm">
+                        <InputGroupAddon type="prepend">
+                          <InputGroupText>
+                            <i className="material-icons">search</i>
+                          </InputGroupText>
+                        </InputGroupAddon>
+                        <FormInput onChange={this.handleFilterSearch} />
+                      </InputGroup>
+
+
+                    </Col>
+                  </Row>
+
+                  <Row form className="mx-4">
+                    <label htmlFor="userTags">Selected</label>
+                    <TagsInput
+                      value={this.state.tags}
+                      onChange={this.handleTagsChange}
                     />
+                  </Row> */}
+                  <Row className="mx-4">
+                    <label>All Categories (click to load)</label>
+                  </Row>
+                  <Row>
+                    <div className="user-details__tags mx-4">
+                      {catDataLimited.map((entry, idx) => (
+                        <Badge
+                          pill
+                          theme="light"
+                          className="text-light text-uppercase mb-2 border mr-1"
+                          onClick={() => this.handleTypeClick(entry)}
+                          key={idx}
+                        >
+                          {entry}
+                        </Badge>
+                      ))}
+                    </div>
+                  </Row>
 
-                    <Row form className="mx-4">
-                      <Col lg="8">
-                        <Row form>
-                          {/* First Name */}
-                          <Col md="6" className="form-group">
-                            <label htmlFor="firstName">Target Income ($)</label>
-                            <FormInput
-                              id="firstName"
-                              placeholder="100000"
-                              innerRef={this.incomeInput}
-                            />
-                          </Col>
-
-                        </Row>
-                      </Col>
-                    </Row>
-                    
-                    {/* Taken out for now since can't mount */}
-                    <Row className="mx-4">
-                      <label>Category</label>
-                    </Row>
-                    
-                    <Row className="mx-4">
-                    
-                      <Col sm="4" className="d-flex">
-                     
-                        <InputGroup seamless size="sm">
-                          <InputGroupAddon type="prepend">
-                            <InputGroupText>
-                              <i className="material-icons">search</i>
-                            </InputGroupText>
-                          </InputGroupAddon>
-                          <FormInput onChange={this.handleFilterSearch} />
-                        </InputGroup>
-                 
-                        
-                      </Col>
-                    </Row>
-
-                    <Row form className="mx-4">
-                      {/* User Tags */}
+                  {/* User Tags
                       <Col md="6" className="form-group">
                         <label htmlFor="userTags">Selected</label>
                         <TagsInput
@@ -214,27 +282,27 @@ class DescribeStore extends React.Component {
                           </div>
                         </Row>
                       </Col>
-                    </Row>
+                    </Row> */}
 
-                    
 
-                  </Form>
-                </CardBody>
-                <CardFooter className="border-top">
-                  <Button
-                    size="sm"
-                    theme="accent"
-                    className="ml-auto d-table mr-3"
-                    onClick={this.handleFormSubmit}
-                  >
-                    See Locations
+
+                </Form>
+              </CardBody>
+              <CardFooter className="border-top">
+                <Button
+                  size="sm"
+                  theme="accent"
+                  className="ml-auto d-table mr-3"
+                  onClick={this.handleFormSubmit}
+                >
+                  See Locations
                   </Button>
-                </CardFooter>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-      
+              </CardFooter>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+
     );
   }
 }
