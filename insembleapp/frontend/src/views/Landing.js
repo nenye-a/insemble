@@ -21,7 +21,7 @@ import {
   Button
 } from "shards-react";
 
-import {NavLink} from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 class Landing extends React.Component {
   constructor(props) {
@@ -44,52 +44,55 @@ class Landing extends React.Component {
   }
 
   render() {
-    
-    if(this.props.isAuthenticated) {
-      return <Redirect to="/Matches"/>;
+
+    if (this.props.isAuthenticated) {
+      return <Redirect to="/Find" />;
     }
-    
+
     return (
       <Container fluid className="main-content-container h-100 px-4">
         <Row noGutters className="h-100">
-          <Col lg="8" md="8" className="auth-form mx-auto my-auto">
+          <Col lg="4" md="6" className="mx-auto my-auto">
             <Card>
-              <CardBody>
+              <CardBody className="d-flex flex-column">
                 {/* Logo */}
                 <img
-                  className="auth-form__logo d-table mx-auto mb-3"
-                  src={require("../images/shards-dashboards-logo.svg")}
+                  className="d-table mx-auto mb-3"
+                  style={{ maxHeight: "25px" }}
+                  src={require("../images/insemble_i.png")}
                   alt="Retailer Dashboards - Login Template"
                 />
 
                 {/* Title */}
-                <h5 className="auth-form__title text-center mb-4">
+                <h5 className="d-md-inline text-center mb-4">
                   RetailSpace.ai
                 </h5>
 
-                {/* Form Fields */}
-                <Form>
-                <Button
-                    pill
-                    theme="accent"
-                    className="d-table mx-auto"
-                    type="submit"
-                    tag={Link} 
-                    to="/find"
-                  >
-                    See Insights
+                <Col>
+                  <Row>
+                    <Col className="d-flex flex-column justify-content-center align-items-center">
+                      <Button
+                        pill
+                        theme="accent"
+                        tag={Link}
+                        to="/find"
+                      >
+                        See Insights
                   </Button>
-                  <Button
-                    pill
-                    theme="accent"
-                    className="d-table mx-auto"
-                    type="submit"
-                    tag={Link} 
-                    to="/login"
-                  >
-                    Sign In
+                    </Col>
+                    <Col className="d-flex flex-column justify-content-center align-items-center">
+                      <Button
+                        pill
+                        theme="accent"
+                        tag={Link}
+                        to="/login"
+                      >
+                        Sign In
                   </Button>
-                </Form>
+                    </Col>
+                  </Row>
+                </Col>
+
               </CardBody>
 
             </Card>

@@ -66,18 +66,6 @@ class Existing extends React.Component {
 
     return (
       <Container fluid className="main-content-container h-100 px-4">
-        <Row>
-          <Button
-            pill
-            theme="accent"
-            className="d-table mx-auto"
-            type="submit"
-            tag={Link} 
-            to="/login"
-          >
-            Sign In
-          </Button>
-        </Row>
         <Row noGutters className="h-100">
           <Col lg="3" md="5" className="auth-form mx-auto my-auto">
             <Card>
@@ -85,13 +73,14 @@ class Existing extends React.Component {
                 {/* Logo */}
                 <img
                   className="auth-form__logo d-table mx-auto mb-3"
-                  src={require("../images/shards-dashboards-logo.svg")}
+                  style={{ maxHeight: "25px" }}
+                  src={require("../images/insemble_i.png")}
                   alt="Retailer Dashboards - Login Template"
                 />
 
                 {/* Title */}
                 <h5 className="auth-form__title text-center mb-4">
-                  Enter your retail store
+                  Enter your existing retail store
                 </h5>
 
                 {/* Form Fields */}
@@ -125,7 +114,7 @@ class Existing extends React.Component {
                     // to="/spaces"
                     onClick = {this.onSubmit}
                   >
-                    See Locations
+                    See Next Best Locations
                   </Button>
                 </Form>
               </CardBody>
