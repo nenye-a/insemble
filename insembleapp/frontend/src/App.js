@@ -22,9 +22,6 @@ const trackingID  = 'UA-153536736-1'
 import ReactGA from 'react-ga';
 ReactGA.initialize(trackingID);
 
-import { createBrowserHistory } from 'history';
-const history = createBrowserHistory();
-
 import { Provider } from 'react-redux';
 import store from './redux/store';
 import { loadUser } from './redux/actions/auth'
@@ -34,7 +31,7 @@ import "./assets/main.scss";
 
 const MyTemplate = ({ style, options, message, close }) => (
   <div style={style} class="alert alert-danger alert-dismissible fade show">
-    <strong>Error!</strong> {message}
+    {message}
     <button 
       type="button" 
       className="close" 
@@ -54,7 +51,7 @@ class App extends React.Component {
     return (
       <AlertProvider template={MyTemplate} {...options}>
         <Provider store = {store}>
-          <Router basename={process.env.REACT_APP_BASENAME  || ""} history={history} >
+          <Router basename={process.env.REACT_APP_BASENAME  || ""}>
             <Switch>
               <div>
                 {routes.map((route, index) => {
@@ -81,11 +78,6 @@ class App extends React.Component {
     );
   }
 }
-
-history.listen(location => {
-  ReactGA.set({ page: location.pathname }); // Update the user's current page
-  ReactGA.pageview(location.pathname); // Record a pageview for the given page
-});
 
 
 export default App;

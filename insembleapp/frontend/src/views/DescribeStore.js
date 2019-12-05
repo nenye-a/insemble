@@ -29,17 +29,24 @@ import { withRouter } from "react-router";
 import { Redirect } from "react-router-dom";
 
 import { connect } from "react-redux";
-import { loadMap } from '../redux/actions/space'
+import { loadMap, clearLocation } from '../redux/actions/space';
+import PropTypes from "prop-types";
 
 import FormSectionTitle from "../components/edit-user-profile/FormSectionTitle";
 import ProfileBackgroundPhoto from "../components/edit-user-profile/ProfileBackgroundPhoto";
+
+import { withAlert } from "react-alert";
 
 class DescribeStore extends React.Component {
   constructor(props) {
     super(props);
 
+    // display tags from the session
+    var tags = JSON.parse(sessionStorage.getItem("sessionTags"));
+    if(!tags) tags = [];
+
     this.state = {
-      tags: [],
+      tags,
       catData: [],
       redirect: false
     };
@@ -49,9 +56,13 @@ class DescribeStore extends React.Component {
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
     this.handleFilterSearch = this.handleFilterSearch.bind(this);
     this.incomeInput = React.createRef();
+    this.alert = this.props.alert;
 
   }
 
+  static PropTypes = {
+    hasLocation: PropTypes.bool,
+  }
   componentDidMount() {
 
     var catData = [];
@@ -74,9 +85,6 @@ class DescribeStore extends React.Component {
         console.log(err);
       })
 
-
-    console.log("did it load?", catData)
-    console.log("cd", this.state.catData.map(entry => { type = entry }))
   }
 
   handleTypeClick(type) {
@@ -91,14 +99,26 @@ class DescribeStore extends React.Component {
   handleFormSubmit = e => {
     e.preventDefault();
 
-    console.log(this.incomeInput.current.value)
-    console.log(this.state.tags)
+    const emptyIncome = this.incomeInput.current.value == "";
+    const emptyCategories = this.state.tags.length == 0;
 
-    this.props.loadMap(false, this.incomeInput.current.value, this.state.tags)
+    // provide specific alerts if things are empty - otherwise provide insights
+    if(emptyIncome) this.alert.show('Please provide target income');
+    if(emptyCategories) this.alert.show('Please provide store categories.')
+    if(!emptyIncome && !emptyCategories) {
+      // store tages in session incase we need to re-render upon back button click
+      sessionStorage.setItem("sessionTags", JSON.stringify(this.state.tags));
 
-    this.setState({
-      redirect: true
-    })
+      // clear location if it exists - using short-circuit fashion
+      this.props.hasLocation && this.props.clearLocation();
+
+      // load map and redirect
+      this.props.loadMap(false, this.incomeInput.current.value, this.state.tags);
+
+      this.setState({
+        redirect: true
+      })
+    }
 
   }
 
@@ -115,7 +135,7 @@ class DescribeStore extends React.Component {
   render() {
 
     if (this.state.redirect) {
-      return <Redirect to={{ pathname: "/spaces" }} />;
+      return <Redirect push to={{ pathname: "/spaces" }} />;
     }
 
     const catData = this.state.catData
@@ -308,6 +328,7 @@ class DescribeStore extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  hasLocation: state.space.hasLocation,
 })
 
-export default withRouter(connect(mapStateToProps, { loadMap })(DescribeStore));
+export default withAlert()(withRouter(connect(mapStateToProps, { loadMap, clearLocation })(DescribeStore)));

@@ -44,6 +44,9 @@ class Existing extends React.Component {
 
   onSubmit = e => {
 
+    // clear any exisitng temporary store names in the sate
+    sessionStorage.removeItem("sessionStoreName");
+
     // retrieve location based on address. Refer to Redux folder for method
     e.preventDefault();
     this.initialState = false
