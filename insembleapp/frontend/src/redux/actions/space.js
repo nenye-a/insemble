@@ -18,7 +18,6 @@ export const getLocation = (requestUrl) => (dispatch) => {
     // get location information from requestURL containing either lat, lng, radius or address, radius
     fetch(requestUrl)
     .then(res => {
-        console.log("hiya", res)
         if(res.ok) {
             res.json().then(data => {
                 dispatch({

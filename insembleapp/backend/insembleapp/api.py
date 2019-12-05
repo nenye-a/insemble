@@ -169,9 +169,6 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
         pass
 
     def create(self, request):
-        print(" ")
-        print(request.data)
-        print(" ")
         
         try:
             address = request.data["address"]

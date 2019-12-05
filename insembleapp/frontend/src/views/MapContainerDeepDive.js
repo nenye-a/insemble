@@ -79,18 +79,18 @@ class MapWithAMarkerClusterer extends React.Component {
         refs.map.fitBounds(bounds);
       },
       onMapClick: (e) => {
-        console.log(e.latLng.lat().toString().split(".").join(""))
-        console.log("stringed")
-        console.log('api/location/lat='+e.latLng.lat().toString().split(".").join("")+'&lng='+e.latLng.lng().toString().split(".").join(""))
+        // console.log(e.latLng.lat().toString().split(".").join(""))
+        // console.log("stringed")
+        // console.log('api/location/lat='+e.latLng.lat().toString().split(".").join("")+'&lng='+e.latLng.lng().toString().split(".").join(""))
         fetch('api/location/lat='+e.latLng.lat().toString().split(".").join("")+'&lng='+e.latLng.lng().toString().split(".").join("")+'&radius=1')
         .then(res => res.json())
         .then(data => {
-          console.log(data)
-          console.log("request made")
+          // console.log(data)
+          // console.log("request made")
           this.setState({markerPosition: e.latLng, isMarkerShown:true, marker: data})});
 
         console.log(this.state.marker)
-        console.log("pressed")
+        // console.log("pressed")
       },
 
 
@@ -99,18 +99,18 @@ class MapWithAMarkerClusterer extends React.Component {
 
   handleMarkerClustererClick (markerClusterer) {
     const clickedMarkers = markerClusterer.getMarkers()
-    console.log(`Current clicked markers length: ${clickedMarkers.length}`)
-    console.log(clickedMarkers)
+    // console.log(`Current clicked markers length: ${clickedMarkers.length}`)
+    // console.log(clickedMarkers)
   }
 
   handleMarkerClick (marker) {
-      console.log('Go to the marker post page')
+      // console.log('Go to the marker post page')
       this.setState({redirect: true, marker: marker})
     }
 
   handleSearchClick (marker) {
-    console.log(marker)
-    console.log('Go to the marker post page')
+    // console.log(marker)
+    // console.log('Go to the marker post page')
     // fetch('api/location/lat=34.0522795&lng=-118.3089333')
     // .then(res => res.json())
     // .then(data => {

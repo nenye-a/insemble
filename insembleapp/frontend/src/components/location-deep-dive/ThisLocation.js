@@ -96,7 +96,6 @@ class RetailerSite extends React.Component {
   }
 
   render() {
-    console.log(this.props.match)
     const location = this.props.match
     const canvasRef = this.canvasRef
     const { title } = this.props;

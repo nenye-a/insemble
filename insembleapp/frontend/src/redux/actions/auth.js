@@ -49,8 +49,6 @@ isBroker ) => (dispatch) => {
         }
     }
 
-    console.log({firstName, lastName, email, password})
-
     const body = JSON.stringify({
         first_name: firstName,
         last_name: lastName,
