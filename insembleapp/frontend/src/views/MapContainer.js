@@ -58,7 +58,6 @@ class MapWithAMarkerClusterer extends React.Component {
             bounds: refs.map.getBounds(),
             center: refs.map.getCenter(),
           })
-          console.log('state set')
         }
         
       },
@@ -106,11 +105,8 @@ class MapWithAMarkerClusterer extends React.Component {
           this.alert.show("Marker is too far from known establishment")
         });
       },
-
-
     })
   }
-  
 
   // componentDidMount() {
   //   this.setState({ marker: [] });
@@ -119,8 +115,6 @@ class MapWithAMarkerClusterer extends React.Component {
 
   handleMarkerClustererClick (markerClusterer) {
     const clickedMarkers = markerClusterer.getMarkers()
-    console.log(`Current clicked markers length: ${clickedMarkers.length}`)
-    console.log(clickedMarkers)
   }
 
   handleMarkerClick (marker) {
@@ -129,8 +123,6 @@ class MapWithAMarkerClusterer extends React.Component {
     }
 
   handleSearchClick (marker) {
-    console.log(marker)
-    console.log('Go to the marker post page')
     // fetch('api/location/lat=34.0522795&lng=-118.3089333')
     // .then(res => res.json())
     // .then(data => {
@@ -150,7 +142,6 @@ class MapWithAMarkerClusterer extends React.Component {
   }
 
   render(){
-    console.log("Where is this?", this.props)
     const i_markers = this.props.markers.markers
     var heats = []
     if (this.props.mapLoaded){

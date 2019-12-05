@@ -18,15 +18,6 @@ class Spaces extends React.PureComponent {
 
   }
 
-  static PropTypes = {
-    hasLocation: PropTypes.bool.isRequired,
-    location: PropTypes.object,
-
-    mapIsLoading: PropTypes.bool.isRequired,
-    mapLoaded: PropTypes.bool.isRequired,
-    heatMap: PropTypes.object
-  }
-
   componentWillMount() {
     this.setState({ markers: [], heats: []})
   }
@@ -51,16 +42,4 @@ class Spaces extends React.PureComponent {
   }
 }
 
-const mapStateToProps = state => ({
-  // heat map props
-  mapIsLoading: state.space.mapIsLoading,
-  mapLoaded: state.space.mapLoaded,
-  heatMap: state.space.heatmap,
-
-  // location props
-  hasLocation: state.space.hasLocation,
-  location: state.space.location
-})
-
-
-export default withRouter(connect(mapStateToProps)(Spaces));
+export default withRouter(Spaces);

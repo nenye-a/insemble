@@ -4,7 +4,8 @@ import {
     LOCATION_ERROR,
     LOCATION_LOADED,
     MAP_ERROR,
-    LOCATION_LOADING
+    LOCATION_LOADING,
+    LOCATION_CLEAR
 } from '../actions/types'
 
 
@@ -40,6 +41,14 @@ export const getLocation = (requestUrl) => (dispatch) => {
             payload: "Failed to obtain location, please try again."
         });
     });
+}
+
+
+// CLEAR LOCATION
+export const clearLocation = () => dispatch => {
+
+    // clear the existing loncation - provide no payload
+    dispatch({type: LOCATION_CLEAR, payload: null});
 }
 
 // LOAD HEAT MAP
@@ -86,10 +95,7 @@ export const loadMap = (hasLocation=false, income=0, categories=[]) => (dispatch
                 'Content-Type': 'application/json'
             }
         }
-
-        console.log(income)
-        console.log()
-
+        
         const body = JSON.stringify({
             income,
             categories

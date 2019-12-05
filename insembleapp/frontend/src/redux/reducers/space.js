@@ -5,18 +5,10 @@ import {
     LOCATION_ERROR,
     LOCATION_LOADED,
     LOCATION_LOADING,
+    LOCATION_CLEAR,
 } from '../actions/types'
 
 const initialState = {
-    // // map state
-    // mapLoaded: false,
-    // heatMap: null,
-    // mapIsLoading: false,
-
-    // // location state
-    // locationLoaded: false,
-    // hasLocation: false,
-    // location: null,
 
     mapLoaded: sessionStorage.getItem("mapLoaded"),
     heatMap: JSON.parse(sessionStorage.getItem("heatMap")),
@@ -59,13 +51,11 @@ export default function(state = initialState, action) {
                 mapIsLoading: false,
             }
         case LOCATION_LOADING:
-            // sessionStorage.removeItem("location")
             sessionStorage.removeItem("locationLoaded")
             return {
                 ...state,
                 locationIsLoading: true,
                 locationLoaded: false,
-                // location: null,
                 locationErr: null
             }
         case LOCATION_LOADED:
@@ -80,6 +70,7 @@ export default function(state = initialState, action) {
                 locationErr: null
             }
         case LOCATION_ERROR:
+        case LOCATION_CLEAR:
             sessionStorage.removeItem("location")
             sessionStorage.removeItem("locationLoaded")
             sessionStorage.removeItem("hasLocation")
