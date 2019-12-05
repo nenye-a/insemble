@@ -38,44 +38,9 @@ class Spaces extends React.PureComponent {
       `/farrrr/dfda7dd7fccfec5474d3`,
       `/raw/758852bbc1979f6c4522ab4e92d1c92cba8fb0dc/data.json`
     ].join("")
-
-    // wait for map to complete loading or fail, load once complete. May want to wait and load async
-    
-    // if(this.props.mapLoaded) {
-    //   this.setState({ heats: this.props.heatMap })
-    // } else {
-    //   console.log("Failed to load heat map!")
-    // }
-    
-    // fetch('/api/lmatches/', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //      address: this.props.location.match.address,
-    //   }),
-    // }).then(res => res.json())
-    // .then(data => {
-    //   this.setState({ heats: data });
-    //   console.log(this.state.heats)
-    //   console.log("printed heats")
-
-    // });
-
-    // const response = await fetch('/api/lmatches/', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //      address: 'data',
-    //   }),
-    // })
-    // console.log(await response.json())
-    // console.log("printed responses")
-
   }
 
   render() {
-    // console.log(this.state.markers)
-    // console.log("loaded")
     return (
       <Container fluid className="main-content-container m-0">
         <Row>
