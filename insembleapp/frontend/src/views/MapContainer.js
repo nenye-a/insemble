@@ -14,7 +14,7 @@ import {
   InfoWindow
 } from "react-google-maps";
 import PropTypes from 'prop-types'; 
-import { Redirect, NavLink } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import { withRouter } from "react-router";
 
 import { connect } from "react-redux";
@@ -145,7 +145,7 @@ class MapWithAMarkerClusterer extends React.Component {
   renderRedirect = () => {
     if (this.state.redirect) {
       
-      return <Redirect to = {{pathname: "/location-deep-dive-demo", match: this.state.marker}} />
+      return <Redirect push to = {{pathname: "/location-deep-dive-demo", match: this.state.marker}} />
     }
   }
 

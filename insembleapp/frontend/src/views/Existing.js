@@ -43,6 +43,8 @@ class Existing extends React.Component {
   }
 
   onSubmit = e => {
+
+    // retrieve location based on address. Refer to Redux folder for method
     e.preventDefault();
     this.initialState = false
     const address = this.addressInput.current.value;
@@ -58,10 +60,15 @@ class Existing extends React.Component {
     // render map once confirmed that location has ben loaded
     if(this.props.locationLoaded && !this.initialState) {
       
+      // load map and set to next page
       this.props.loadMap(true);
+
+      // store storename in session to be retrieved at any moment
       const storename = this.storeNameInput.current.value;
-      const address = this.addressInput.current.value;
-      return <Redirect to= {{pathname: "/verify",  match:{storename: storename, address: address}}}/>;
+      sessionStorage.setItem("sessionStoreName", storename);
+
+      // move to exisiting store page
+      return <Redirect push to="/verify"/>;
     }
 
     return (

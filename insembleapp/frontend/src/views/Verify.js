@@ -3,6 +3,9 @@
 import React from "react";
 import { Link, Redirect } from "react-router-dom";
 
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+
 import {
   Container,
   Row,
@@ -34,6 +37,9 @@ class Verify extends React.Component {
     };
   }
 
+  static PropTypes = {
+    address: PropTypes.string.isRequired,
+  }
   onSubmit = e => {
     e.preventDefault();
     this.setState({
@@ -43,43 +49,21 @@ class Verify extends React.Component {
   }
 
   render() {
-    const location = this.props.location.match
+    
+    const storename = sessionStorage.getItem("sessionStoreName");
+    const address = this.props.address;
+    
     if (this.state.redirect) {
-      return <Redirect to={{ pathname: "/spaces", match: { storename: location.storename, address: location.address } }} />;
+      return <Redirect push to={{ pathname: "/spaces", match: { storename, address }}} />;
     }
 
     console.log("here we go")
     console.log(this.props)
-    // console.log(this.marker)
-    // console.log("printed props")
-
-    // const location = {
-    //   name: "PizzaRev",
-    //   address:"5608 Van Nuys Boulevard, Van Nuys", 
-    //   census: {
-    //     asian: 7.8,
-    //     black: 6.6,
-    //     hispanic: 17.1, 
-    //     indian: 0.4,
-    //     multi: 4,
-    //     white: 65.7,
-    //   },
-    //   pop: 4015,
-    //   income: 62963,
-    //   place_type: {
-    //     PizzaPlace: 1,
-    //     FastFoodRestaurant: 1,
-    //   },
-    //   price: 2, 
-    //   age: 5.76999892717773,
-    //   icon: "https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",
-    //   photo: "https://lh3.googleusercontent.DELETED_BASE64_STRING_uQpH=s1600-w500-h500",
-    // }
 
     return (
       <Container fluid>
         {/* TODO: Change los angeles from static input  */}
-        <Iframe url={"https://www.google.com/maps/embed/v1/search?key=DELETED_GOOGLE_API_KEY&q=" + location.storename.split(" ").join("+") + "+" + location.address.split(" ").join("+")}
+        <Iframe url={"https://www.google.com/maps/embed/v1/search?key=DELETED_GOOGLE_API_KEY&q=" + storename.split(" ").join("+") + "+" + address.split(" ").join("+")}
           width="100%"
           height="600px"
           id="myId"
@@ -119,4 +103,8 @@ class Verify extends React.Component {
   }
 }
 
-export default Verify;
+const mapStateToProps = state => ({
+  address: state.space.location.address,
+})
+
+export default connect(mapStateToProps)(Verify);
