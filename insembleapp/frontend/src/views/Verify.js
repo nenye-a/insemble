@@ -57,9 +57,6 @@ class Verify extends React.Component {
       return <Redirect push to={{ pathname: "/spaces", match: { storename, address }}} />;
     }
 
-    console.log("here we go")
-    console.log(this.props)
-
     return (
       <Container fluid>
         {/* TODO: Change los angeles from static input  */}

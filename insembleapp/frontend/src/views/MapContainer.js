@@ -118,7 +118,6 @@ class MapWithAMarkerClusterer extends React.Component {
   }
 
   handleMarkerClick (marker) {
-      console.log('Go to the marker post page')
       this.setState({redirect: true, marker: marker})
     }
 

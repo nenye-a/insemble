@@ -46,11 +46,9 @@ class Register extends React.Component {
 
   onSubmit = e => {
     e.preventDefault();
-    console.log(this.passwordInput.current.value)
     if(this.passwordInput.current.value !== this.password2Input.current.value) {
       console.log("Passwords do not match")
     } else {
-      console.log()
       this.props.register(
         this.firstNameInput.current.value,
         this.lastNameInput.current.value,

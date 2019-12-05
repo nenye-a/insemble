@@ -76,8 +76,6 @@ def build_data_set(focus_area, length):
             retailer_data["results"]
         except Exception:
             print("Error getting nearby restaurant or retailer details from {0} and lng {1}".format(lat, lng))
-            print(restaurant_data)
-            print(retailer_data)
             continue
 
         # build profiles for restaurants and retailers returned in nearby search
@@ -92,7 +90,6 @@ def build_data_set(focus_area, length):
                 address = retailer["vicinity"]
             except Exception:
                 print("Error getting address of nearby retailer at location at lat {0} and lng {1}".format(lat, lng))
-                print(restaurant_data)
                 continue
 
             rtlr_rtlr, retailer_valid = lb.generate_retailer_profile(retailer["name"], focus_area)
@@ -124,7 +121,6 @@ def build_data_set(focus_area, length):
                 address = restaurant["vicinity"]
             except:
                 print("Error getting address of nearby restaurant from location at lat {0} and lng {1}".format(lat, lng))
-                print(restaurant_data)
                 continue
 
             rest_rtlr, retailer_valid = lb.generate_retailer_profile(restaurant["name"], focus_area)

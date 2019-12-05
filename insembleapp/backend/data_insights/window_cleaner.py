@@ -45,7 +45,6 @@ def update_database_photo(dataset):
                 icon = data['candidates'][0]['icon']
             except Exception:
                 print("Error getting icon from name {0}, lat {1} and lng {2}".format(entry['name'], entry['lat'], entry['lng']))
-                print(data)
                 icon = np.nan
 
             ##### FIXME: add alternate smart search for photo requests to pull url (regular tries to get .json objects)
@@ -57,7 +56,6 @@ def update_database_photo(dataset):
             except Exception:
                 print("Error getting photo from name {0}, lat {1} and lng {2}".format(entry['name'], entry['lat'],
                                                                                      entry['lng']))
-                print(data)
                 photo = np.nan
 
             dataset.update_one({'_id': entry['_id']}, {'$set': {"icon": icon}})

@@ -62,7 +62,6 @@ class RetailerSite extends React.Component {
   render() {
     
     const retailer = this.match
-    console.log(retailer)
     const { title } = this.props;
     const labels = Object.keys(retailer.census)
     

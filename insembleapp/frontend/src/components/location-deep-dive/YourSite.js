@@ -19,7 +19,6 @@ class YourSite extends React.Component {
   constructor(props) {
     super(props);
 
-    console.log("YourSite, props", this.props)
     this.match = this.props.match
     this.canvasRef = React.createRef();
     this.demoGraph = null;

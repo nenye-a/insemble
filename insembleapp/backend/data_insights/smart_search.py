@@ -60,10 +60,6 @@ def smart_search(URL, host, search_type, params=None, headers=None):
 
     # search using specified parameters
     try:
-        print(" ")
-        print("This is Search")
-
-        print(search)
         if params != None and headers != None:
             result = requests.get(URL, params=params, headers=headers).json()
         elif params != None and headers == None:

@@ -78,11 +78,7 @@ def get_address_from_loc(lat, lng):
     acceptable_meters = 100
 
     if meter_distance > acceptable_meters:
-        # print("Error: nearby address too far from input lat: {}, lng: {}".format(lat, lng))
-        # print(" ")
-        # print(data)
-        # print(" ")
-        # print("distance:", meter_distance)
+        print("Error: nearby address too far from input lat: {}, lng: {}".format(lat, lng))
         result_valid = False
         return np.nan, result_valid
 
@@ -112,7 +108,6 @@ def get_demographics(lat, lng, radius, count=0):
             return get_demographics(lat, lng, radius, count)
 
         print("Error getting demographics from lat {0} and lng {1}".format(lat, lng))
-        print(data)
         census = np.nan
         pop = np.nan
         income = np.nan
@@ -145,7 +140,6 @@ def get_nearby_stores(lat, lng, radius):
         data['response']['venues'][0]['categories']
     except Exception:
         print("Error getting Foursquare retail categories from {0}, {1} with radius {2}".format(lat, lng, radius))
-        print(data)
         result_valid = False
         return np.nan, result_valid
 

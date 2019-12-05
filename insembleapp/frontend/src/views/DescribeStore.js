@@ -70,7 +70,6 @@ class DescribeStore extends React.Component {
     fetch('api/category/')
       .then(res => {
         if (res.ok) {
-          console.log("searching for more data")
           res.json().then(data => {
             this.setState({
               ...this.state,

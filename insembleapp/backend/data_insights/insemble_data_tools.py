@@ -126,13 +126,14 @@ def balance_ratings_set(data_set_x, data_set_y):
     keptl = df[df["label"] <= 5.5]
     keptr = df[8.5 <= df["label"]]
 
-    len(df)
-    removed = removed[:int(len(removed)/3)]
-    print(len(keptl))
-    keptl = keptl.append(removed, ignore_index=True)
-    print(len(keptl))
-    keptl = keptl.append(keptr)
-    print(len(keptl))
+    # print test information
+    # len(df)
+    # removed = removed[:int(len(removed)/3)]
+    # print(len(keptl))
+    # keptl = keptl.append(removed, ignore_index=True)
+    # print(len(keptl))
+    # keptl = keptl.append(keptr)
+    # print(len(keptl))
 
     df["label"].hist(bins=100)
     keptl["label"].hist(bins=100)
@@ -255,7 +256,7 @@ if __name__ == "__main__":
 
     data, labels = generate_label_series(test, "photo_count")
 
-    print(data.head())
-    print(labels.head())
+    # print(data.head())
+    # print(labels.head())
 
     print("likes" in list(data.columns))
