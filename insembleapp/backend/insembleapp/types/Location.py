@@ -213,7 +213,8 @@ def return_location(lat, lng, radius):
 
     if valid and valid2 and valid3 and (address != "United States") and (address != "Los Angeles"):
         return {
-            "address": address,
+            # "address": address,
+            "address": "Nearby Address: {}".format(address),
             "lat": lat,
             "lng": lng,
             "census": census,
@@ -224,7 +225,8 @@ def return_location(lat, lng, radius):
         }
     else:
         return {
-            "address": "Location at ({}, {})".format(lat, lng),
+            # "address": "Location at ({}, {})".format(lat, lng), # address if not available
+            "address": "",
             "lat": lat,
             "lng": lng,
             "census": census,

@@ -65,6 +65,7 @@ def get_address_from_loc(lat, lng):
 
     try:
         address = data['results'][0]['vicinity']
+        print(address)
     except Exception:
         print("Error getting address from input lat: {}, lng: {}".format(lat, lng))
         print(data)
@@ -74,12 +75,14 @@ def get_address_from_loc(lat, lng):
 
     my_geo, item_geo = (data['results'][0]['geometry']['location']['lat'], data['results'][0]['geometry']['location']['lng']), (lat, lng)
     meter_distance = geopy.distance.distance(my_geo, item_geo).meters
-    if meter_distance > 30:
-        print("Error: nearby address too far from input lat: {}, lng: {}".format(lat, lng))
-        print(" ")
-        print(data)
-        print(" ")
-        print("distance:", meter_distance)
+    acceptable_meters = 100
+
+    if meter_distance > acceptable_meters:
+        # print("Error: nearby address too far from input lat: {}, lng: {}".format(lat, lng))
+        # print(" ")
+        # print(data)
+        # print(" ")
+        # print("distance:", meter_distance)
         result_valid = False
         return np.nan, result_valid
 
@@ -189,7 +192,7 @@ def generate_location_profile(address, radius):
         data = smart_search(URL, 'crimeometer', 'normal', headers=headers)
 
         pass
-    
+
     lat, lng, valid = get_loc_from_input(address)
 
     if not valid:

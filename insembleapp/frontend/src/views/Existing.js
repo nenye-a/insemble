@@ -8,6 +8,8 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { getLocation, loadMap } from '../redux/actions/space'
 
+import LoadingOverlay from 'react-loading-overlay';
+
 import { withAlert } from "react-alert"
 
 import {
@@ -39,6 +41,7 @@ class Existing extends React.Component {
   static PropTypes = {
     getLocation: PropTypes.func.isRequired,
     locationLoaded: PropTypes.bool,
+    locationIsLoading: PropTypes.bool,
     locationErr: PropTypes.string
   }
 
@@ -77,60 +80,64 @@ class Existing extends React.Component {
     return (
       <Container fluid className="main-content-container h-100 px-4">
         <Row noGutters className="h-100">
-          <Col lg="3" md="5" className="auth-form mx-auto my-auto">
-            <Card>
-              <CardBody>
-                {/* Logo */}
-                <img
-                  className="auth-form__logo d-table mx-auto mb-3"
-                  style={{ maxHeight: "25px" }}
-                  src={require("../images/insemble_i.png")}
-                  alt="Retailer Dashboards - Login Template"
-                />
+          <Col lg="3" md="5" className="auth-form mx-auto my-auto">  
+            <LoadingOverlay
+              active={this.props.locationIsLoading}
+              spinner
+              text='Loading...'
+            >
+              <Card>
+                <CardBody>
+                  {/* Logo */}
+                  <img
+                    className="auth-form__logo d-table mx-auto mb-3"
+                    style={{ maxHeight: "25px" }}
+                    src={require("../images/insemble_i.png")}
+                    alt="Retailer Dashboards - Login Template"
+                  />
 
-                {/* Title */}
-                <h5 className="auth-form__title text-center mb-4">
-                  Enter your existing retail store
-                </h5>
+                  {/* Title */}
+                  <h5 className="auth-form__title text-center mb-4">
+                    Enter your existing retail store
+                  </h5>
 
-                {/* Form Fields */}
-                <Form>
-                  <FormGroup>
-                    <label htmlFor="exampleInputStoreName1">Store Name</label>
-                    <FormInput
-                      type="text"
-                      id="exampleInputStoreName1"
-                      placeholder="Enter store name"
-                      autoComplete="off"
-                      innerRef = {this.storeNameInput}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <label htmlFor="exampleInputAddress1">Address of top performing location</label>
-                    <FormInput
-                      type="text"
-                      id="exampleInputAddress"
-                      placeholder="Enter address"
-                      autoComplete="off"
-                      innerRef = {this.addressInput}
-                    />
-                  </FormGroup>
-                  <Button
-                    pill
-                    theme="accent"
-                    className="d-table mx-auto"
-                    type="submit"
-                    // tag={NavLink} - removed
-                    // to="/spaces"
-                    onClick = {this.onSubmit}
-                  >
-                    See Next Best Locations
-                  </Button>
-                </Form>
-              </CardBody>
-
-            </Card>
-
+                  {/* Form Fields */}
+                  <Form>
+                    <FormGroup>
+                      <label htmlFor="exampleInputStoreName1">Store Name</label>
+                      <FormInput
+                        type="text"
+                        id="exampleInputStoreName1"
+                        placeholder="Enter store name"
+                        autoComplete="off"
+                        innerRef = {this.storeNameInput}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <label htmlFor="exampleInputAddress1">Address of top performing location</label>
+                      <FormInput
+                        type="text"
+                        id="exampleInputAddress"
+                        placeholder="Enter address"
+                        autoComplete="off"
+                        innerRef = {this.addressInput}
+                      />
+                    </FormGroup>
+                    <Button
+                      pill
+                      theme="accent"
+                      className="d-table mx-auto"
+                      type="submit"
+                      // tag={NavLink} - removed
+                      // to="/spaces"
+                      onClick = {this.onSubmit}
+                    >
+                      See Next Best Locations
+                    </Button>
+                  </Form>
+                </CardBody>
+              </Card>
+            </LoadingOverlay>
           </Col>
         </Row>
       </Container>
@@ -140,6 +147,7 @@ class Existing extends React.Component {
 
 const mapStateToProps = state => ({
   locationLoaded: state.space.locationLoaded,
+  locationIsLoading: state.space.locationIsLoading,
   locationErr: state.space.locationErr
 })
 
