@@ -5,20 +5,21 @@ import urllib.parse
 from Location import Location
 from Retailer import Retailer
 from smart_search import *
+from decouple import config
 import geopy.distance
 
-from decouple import config
+
 
 #### TODO: keep secret by using environment variables
 #### TODO: consolidate APIs (to use fewer if possible)
 
 #please don't share
-GOOG_KEY = "DELETED_GOOGLE_API_KEY"
-YELP_KEY= "DELETED_BASE64_STRING-poMH0Lvj1ijZcLNF79agt7HrozEGy-RaRp2Dn5ojcCYNCEWqvoC0NsYK2XXYx"
-FRSQ_ID = "DELETED_BASE64_STRING" # Nenye's Foursquare ID
-FRSQ_SECRET = "DELETED_BASE64_STRING" # Nenye's Foursquare Secrete
-CRIME_KEY = "DELETED_BASE64_STRING"
-MONGO_KEY = "4deeabe1-0fa2-4ee7-a4e6-372ba9f46de8"
+GOOG_KEY = config('GOOG_KEY')
+YELP_KEY= config('YELP_KEY')
+FRSQ_ID = config('FRSQ_ID')
+FRSQ_SECRET = config('FRSQ_SECRET')
+CRIME_KEY = config('CRIME_KEY')
+MONGO_KEY = config('MONGO_KEY')
 MILES_TO_M = 1609.34
 
 '''
@@ -75,6 +76,9 @@ def get_address_from_loc(lat, lng):
     meter_distance = geopy.distance.distance(my_geo, item_geo).meters
     if meter_distance > 30:
         print("Error: nearby address too far from input lat: {}, lng: {}".format(lat, lng))
+        print(" ")
+        print(data)
+        print(" ")
         print("distance:", meter_distance)
         result_valid = False
         return np.nan, result_valid
