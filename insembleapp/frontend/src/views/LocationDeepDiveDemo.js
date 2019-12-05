@@ -42,10 +42,16 @@ class LocationDeepDiveDemo extends React.Component {
     getLocation: PropTypes.func.isRequired
   }
 
+  componentDidMount () {
+    if(this.props.hasLocation && this.props.yourLocation.radius != 1){
+      const yourSiteURL = 'api/location/address='+this.props.yourLocation.address+'&radius=1';
+      this.props.getLocation(yourSiteURL);
+    }
+  }
+
   handleRadiusClick (radius) {
     
     if(this.props.hasLocation){
-      console.log("Your_Location", this.props.yourLocation)
       const yourSiteURL = 'api/location/address='+this.props.yourLocation.address+'&radius='+radius;
       this.props.getLocation(yourSiteURL);
     }

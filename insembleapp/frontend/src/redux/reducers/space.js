@@ -65,6 +65,7 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 location: action.payload,
+                locationIsLoading: false,
                 locationLoaded: true,
                 hasLocation: true,
                 locationErr: null
@@ -77,6 +78,7 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 locationLoaded: false,
+                locationIsLoading: false,
                 location: null,
                 hasLocation: false,
                 locationErr: action.payload
