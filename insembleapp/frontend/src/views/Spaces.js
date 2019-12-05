@@ -6,6 +6,8 @@ import MapWithAMarkerClusterer from "./MapContainer"
 import MapComponent from "./MapContainer"
 import Iframe from 'react-iframe'
 
+import LoadingOverlay from 'react-loading-overlay';
+
 import { withRouter } from "react-router";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -16,6 +18,10 @@ class Spaces extends React.PureComponent {
   constructor(props) {
     super(props);
 
+  }
+
+  static PropTypes = {
+    mapIsLoading: PropTypes.bool.isRequired,
   }
 
   componentWillMount() {
@@ -33,13 +39,23 @@ class Spaces extends React.PureComponent {
 
   render() {
     return (
-      <Container fluid className="main-content-container m-0">
-        <Row>
-          <MapComponent {...this.state}/>
-        </Row>
-      </Container>
+      <LoadingOverlay
+            active={this.props.mapIsLoading}
+            spinner
+            text='Evaluating thousands of locations to find your matches. May take a couple minutes...'
+      >
+        <Container fluid className="main-content-container m-0">
+          <Row>
+              <MapComponent {...this.state}/>
+          </Row>
+        </Container>
+      </LoadingOverlay>
     )
   }
 }
 
-export default withRouter(Spaces);
+const mapStateToProps = state => ({
+  mapIsLoading: state.space.mapIsLoading,
+})
+
+export default withRouter(connect(mapStateToProps)(Spaces));

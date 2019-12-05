@@ -249,7 +249,7 @@ def return_location_with_address(address, radius):
             "radius": location.radius
         }
     else:
-        raise Exception("Locaiton not found. Please insert valid address.")
+        raise Exception("Location not found. Please insert valid address.")
 
 
 def return_matches(item):

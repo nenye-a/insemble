@@ -7,6 +7,7 @@ from Retailer import Retailer
 from smart_search import *
 import geopy.distance
 
+from decouple import config
 
 #### TODO: keep secret by using environment variables
 #### TODO: consolidate APIs (to use fewer if possible)
@@ -14,8 +15,6 @@ import geopy.distance
 #please don't share
 GOOG_KEY = "DELETED_GOOGLE_API_KEY"
 YELP_KEY= "DELETED_BASE64_STRING-poMH0Lvj1ijZcLNF79agt7HrozEGy-RaRp2Dn5ojcCYNCEWqvoC0NsYK2XXYx"
-# FRSQ_ID = "DELETED_BASE64_STRING" # Colin's Foursquare ID
-# FRSQ_SECRET = "DELETED_BASE64_STRING" # Colin's Foursquare Secret
 FRSQ_ID = "DELETED_BASE64_STRING" # Nenye's Foursquare ID
 FRSQ_SECRET = "DELETED_BASE64_STRING" # Nenye's Foursquare Secrete
 CRIME_KEY = "DELETED_BASE64_STRING"
@@ -76,7 +75,6 @@ def get_address_from_loc(lat, lng):
     meter_distance = geopy.distance.distance(my_geo, item_geo).meters
     if meter_distance > 30:
         print("Error: nearby address too far from input lat: {}, lng: {}".format(lat, lng))
-        print(data)
         print("distance:", meter_distance)
         result_valid = False
         return np.nan, result_valid
