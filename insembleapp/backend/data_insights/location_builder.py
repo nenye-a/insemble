@@ -7,6 +7,7 @@ from Retailer import Retailer
 from smart_search import *
 import geopy.distance
 
+from decouple import config
 
 #### TODO: keep secret by using environment variables
 #### TODO: consolidate APIs (to use fewer if possible)
@@ -14,8 +15,6 @@ import geopy.distance
 #please don't share
 GOOG_KEY = "AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U"
 YELP_KEY= "5j79CVtQUMZdcsAbR6ygGC8n0ao3nADNVUmvpkhj1kUmYm9smdV76djfbceSoFfbFC-poMH0Lvj1ijZcLNF79agt7HrozEGy-RaRp2Dn5ojcCYNCEWqvoC0NsYK2XXYx"
-# FRSQ_ID = "1H2JSWUCK0MGC4SKOVNGXVF3G5421KFDL30UF1EBMTQSHYQQ" # Colin's Foursquare ID
-# FRSQ_SECRET = "G2FVXGNFR3D04GF0QJBI50XAJGVT3S2V0DYNEQTVPZZLGLQI" # Colin's Foursquare Secret
 FRSQ_ID = "MGR4TUKM5PGIKAUXIZXY3PZP23XKB3BBDBLQJUUHMYTO4S4D" # Nenye's Foursquare ID
 FRSQ_SECRET = "HHH4BGZ1QIBOIT5ZRVAOICC0OVX1J1U23ECFZ24CZBUKX1MV" # Nenye's Foursquare Secrete
 CRIME_KEY = "Sy1yUKcHl58o442f6qT7185UF1WYx7Qh6UdqrEMf"
@@ -76,7 +75,6 @@ def get_address_from_loc(lat, lng):
     meter_distance = geopy.distance.distance(my_geo, item_geo).meters
     if meter_distance > 30:
         print("Error: nearby address too far from input lat: {}, lng: {}".format(lat, lng))
-        print(data)
         print("distance:", meter_distance)
         result_valid = False
         return np.nan, result_valid
