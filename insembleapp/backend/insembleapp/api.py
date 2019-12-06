@@ -14,7 +14,6 @@ from .types.Location import PairedLocation, MapLocation, return_location, return
 from .serializers import *
 import data_insights.category_management as cm
 
-
 # VENUE VIEWSET METHODS
 class VenueViewSet(viewsets.ViewSet):
 
@@ -169,7 +168,7 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
         pass
 
     def create(self, request):
-        
+
         try:
             address = request.data["address"]
             place_type = {}
@@ -178,7 +177,11 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
         except:
             return Response("Response must include 'address', prefereably of best location.", status=status.HTTP_400_BAD_REQUEST)
 
-        matches = MapLocation.get_tenant_matches(address, place_type)
+        # matches = MapLocation.get_tenant_matches(address, place_type)
+
+        # celery implementation
+        result = MapLocation.get_tenant_matches.delay(address, place_type)
+        matches = result.get(timeout=120)
 
         serializer = MapSerializer(matches, many=True)
         return Response(serializer.data)
