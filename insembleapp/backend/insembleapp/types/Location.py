@@ -12,13 +12,6 @@ from mongo_connect import Connect # ignore errors, works with Django run serfver
 import location_methods as lm # ignore errors, works with Django run server
 import location_builder as lb
 
-# code to connect to database if must be handled from here
-# class Connect(object):
-#     @staticmethod
-#     def get_connection():
-#         mongo_uri = "DELETED_MONGODB_URL"
-#         return MongoClient(mongo_uri)
-
 class PairedLocation(object):
 
     client = Connect.get_connection()
