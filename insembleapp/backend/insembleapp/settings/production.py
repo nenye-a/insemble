@@ -1,22 +1,43 @@
 import sentry_sdk
 
+import os
 from decouple import Csv, config
 from dj_database_url import parse as db_url
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from .base import *  # noqa
+import urllib
 
 
 DEBUG = False
 
-SECRET_KEY = config('SECRET_KEY')
+# SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = os.environ['SECRET_KEY']
+
+GOOG_KEY = os.environ['GOOG_KEY']
+YELP_KEY= os.environ['YELP_KEY']
+FRSQ_ID = os.environ['FRSQ_ID']
+FRSQ_SECRET = os.environ['FRSQ_SECRET']
+CRIME_KEY = os.environ['CRIME_KEY']
+MONGO_KEY = os.environ['MONGO_KEY']
+MONGO_DB_PASS = os.environ["MONGO_DB_PASS"]
 
 DATABASES = {
-    'default': config('DATABASE_URL', cast=db_url),
+    # 'default': config('DATABASE_URL', cast=db_url),
+    'default': {
+        'ENGINE': 'djongo',
+        'NAME': 'appbackend',
+        # 'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote(config('MONGO_DB_PASS', cast=str)) + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
+        'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote(MONGO_DB_PASS) + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
+        'USER': 'nenye',
+        # 'PASSWORD': config('MONGO_DB_PASS', cast=str),
+        'PASSWORD': config('MONGO_DB_PASS', cast=str),
+    },
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+# ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS']
 
 STATIC_ROOT = base_dir_join('staticfiles')
 STATIC_URL = '/static/'
@@ -27,8 +48,10 @@ MEDIA_URL = '/media/'
 SERVER_EMAIL = 'info@insemblegroup.com'
 
 EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = config('SENDGRID_USERNAME')
-EMAIL_HOST_PASSWORD = config('SENDGRID_PASSWORD')
+# EMAIL_HOST_USER = config('SENDGRID_USERNAME')
+# EMAIL_HOST_PASSWORD = config('SENDGRID_PASSWORD')
+EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
+EMAIL_HOST_PASSWORD = os.environ['SENDGRID_PASSWORD']
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
@@ -48,8 +71,12 @@ X_FRAME_OPTIONS = 'DENY'
 WEBPACK_LOADER['DEFAULT']['CACHE'] = True
 
 # Celery
-CELERY_BROKER_URL = config('REDIS_URL')
-CELERY_RESULT_BACKEND = config('REDIS_URL')
+# CELERY_BROKER_URL = config('REDIS_URL')
+# CELERY_RESULT_BACKEND = config('REDIS_URL')
+
+CELERY_BROKER_URL = os.environ['REDIS_URL']
+CELERY_RESULT_BACKEND = os.environ['REDIS_URL']
+
 CELERY_SEND_TASK_ERROR_EMAILS = True
 
 # Whitenoise
@@ -122,6 +149,9 @@ LOGGING = {
 JS_REVERSE_EXCLUDE_NAMESPACES = ['admin']
 
 # Sentry
+SENTRY_DSN = os.environ['SENTRY_DSN']
+COMMIT_SHA = os.environ['HEROKU_SLUG_COMMIT']
+
 sentry_sdk.init(
     dsn=SENTRY_DSN,
     integrations=[DjangoIntegration()],

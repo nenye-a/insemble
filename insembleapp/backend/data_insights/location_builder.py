@@ -8,18 +8,27 @@ from smart_search import *
 from decouple import config
 import geopy.distance
 
-
+from django.conf import settings
 
 #### TODO: keep secret by using environment variables
 #### TODO: consolidate APIs (to use fewer if possible)
 
 #please don't share
-GOOG_KEY = config('GOOG_KEY')
-YELP_KEY= config('YELP_KEY')
-FRSQ_ID = config('FRSQ_ID')
-FRSQ_SECRET = config('FRSQ_SECRET')
-CRIME_KEY = config('CRIME_KEY')
-MONGO_KEY = config('MONGO_KEY')
+# GOOG_KEY = config('GOOG_KEY')
+# YELP_KEY= config('YELP_KEY')
+# FRSQ_ID = config('FRSQ_ID')
+# FRSQ_SECRET = config('FRSQ_SECRET')
+# CRIME_KEY = config('CRIME_KEY')
+# MONGO_KEY = config('MONGO_KEY')
+
+
+GOOG_KEY = settings.GOOG_KEY
+YELP_KEY= settings.YELP_KEY
+FRSQ_ID = settings.FRSQ_ID
+FRSQ_SECRET = settings.FRSQ_SECRET
+CRIME_KEY = settings.CRIME_KEY
+MONGO_KEY = settings.MONGO_KEY
+
 MILES_TO_M = 1609.34
 
 '''

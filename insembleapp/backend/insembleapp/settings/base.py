@@ -150,5 +150,5 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
 # Sentry
-SENTRY_DSN = config('SENTRY_DSN', default='')
-COMMIT_SHA = config('HEROKU_SLUG_COMMIT', default='')
+# SENTRY_DSN = config('SENTRY_DSN', default='')
+# COMMIT_SHA = config('HEROKU_SLUG_COMMIT', default='')
