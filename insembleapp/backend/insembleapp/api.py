@@ -14,8 +14,6 @@ from .types.Location import PairedLocation, MapLocation, return_location, return
 from .serializers import *
 import data_insights.category_management as cm
 
-from .celery import app as celery_app
-
 # VENUE VIEWSET METHODS
 class VenueViewSet(viewsets.ViewSet):
 
@@ -170,8 +168,6 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
         pass
 
     def create(self, request):
-        # result = self.create_worker.delay(request)
-        # return result.get(timeout=120)
 
         try:
             address = request.data["address"]
@@ -181,29 +177,14 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
         except:
             return Response("Response must include 'address', prefereably of best location.", status=status.HTTP_400_BAD_REQUEST)
 
-        result = self.create_worker.delay(address, place_type)
-        return Response(result.get(timeout=120))
+        # matches = MapLocation.get_tenant_matches(address, place_type)
 
-        # # matches = MapLocation.get_tenant_matches(address, place_type)
-        #
-        # # celery implementation
-        # result = MapLocation.get_tenant_matches.delay(address, place_type)
-        # matches = result.get(timeout=120)
-        #
-        # serializer = MapSerializer(matches, many=True)
-        # return Response(serializer.data)
+        # celery implementation
+        result = MapLocation.get_tenant_matches.delay(address, place_type)
+        matches = result.get(timeout=120)
 
-    @staticmethod
-    @celery_app.task
-    def create_worker(address, place_type):
-
-        matches = MapLocation.get_tenant_matches(address, place_type)
         serializer = MapSerializer(matches, many=True)
-
-        return serializer.data
-
-
-
+        return Response(serializer.data)
 
 # VIEW AND PROVIDE TENANT MATCHES FOR A VENUE
 class TenantMatchesViewSet(viewsets.ViewSet):
