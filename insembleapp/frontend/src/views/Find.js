@@ -92,12 +92,7 @@ class Find extends React.Component {
                     </Col>
                   </Row>
                 </Col>
-
-
-               
-                
               </CardBody>
-
             </Card>
           </Col>
         </Row>

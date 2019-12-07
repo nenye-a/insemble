@@ -168,7 +168,7 @@ const pingMapApi = (id, dispatch) => {
             })
         }  else if(res.status == 202) {
             res.json().then(data => {
-                setTimeout(pingMapApi(data.id, dispatch), 10000)
+                setTimeout(() => {pingMapApi(data.id, dispatch)}, 3000)
             })
         }
     })
