@@ -63,17 +63,33 @@ export const loadMap = (hasLocation=false, income=0, categories=[]) => (dispatch
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                address: address
+                address
             })
         })
         .then(res => {
-            if(res.ok) {
+            if(res.status == 200) {
                 res.json().then(data => {
                     dispatch({
                         type: MAP_LOADED,
                         payload: data
                     });
                 })
+            }  else if(res.status == 202) {
+                res.json().then(data => {
+                    console.log("Does this do anythin ?")
+                    pingMapApi(data.id, dispatch)
+                    console.log("Nothing???")
+                    // const result = pingMapApi(data.id)
+                    // if(result) {
+                    //     console.log("Do we ever get here????")
+                    //     dispatch({
+                    //         type: MAP_LOADED,
+                    //         payload: result
+                    //     })
+                    // }
+                })
+                console.log("REACHED HERE NOOOOOOOO")
+
             } else {
                 console.log(res.status + " " + res.statusText);
                 dispatch({
@@ -128,4 +144,32 @@ export const loadMap = (hasLocation=false, income=0, categories=[]) => (dispatch
         })
     
     }
+}
+
+const pingMapApi = (id, dispatch) => {
+    
+    console.log("Lot's of things")
+    var val = null
+    
+    fetch('/api/lmatches/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            id
+        })
+    })
+    .then(res => {
+        if(res.status == 200) {
+            res.json().then(data => {
+                dispatch({
+                    type: MAP_LOADED,
+                    payload: data
+                })
+            })
+        }  else if(res.status == 202) {
+            res.json().then(data => {
+                setTimeout(pingMapApi(data.id, dispatch), 10000)
+            })
+        }
+    })
 }

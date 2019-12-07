@@ -170,28 +170,25 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
         pass
 
     def create(self, request):
-        # result = self.create_worker.delay(request)
-        # return result.get(timeout=120)
 
         try:
-            address = request.data["address"]
-            place_type = {}
-            if "place_type" in request.data:
-                place_type = request.data["place_type"]
+            id = request.data["id"]
+            print(id)
+            result = celery_app.AsyncResult(id)
         except:
-            return Response("Response must include 'address', prefereably of best location.", status=status.HTTP_400_BAD_REQUEST)
+            try:
+                address = request.data["address"]
+                place_type = {}
+                if "place_type" in request.data:
+                    place_type = request.data["place_type"]
+            except:
+                return Response("Response must include 'address', prefereably of best location.", status=status.HTTP_400_BAD_REQUEST)
+            result = self.create_worker.delay(address, place_type)
 
-        result = self.create_worker.delay(address, place_type)
-        return Response(result.get(timeout=120))
-
-        # # matches = MapLocation.get_tenant_matches(address, place_type)
-        #
-        # # celery implementation
-        # result = MapLocation.get_tenant_matches.delay(address, place_type)
-        # matches = result.get(timeout=120)
-        #
-        # serializer = MapSerializer(matches, many=True)
-        # return Response(serializer.data)
+        if result.ready():
+            return Response(result.get(timeout=2), status=status.HTTP_200_OK)
+        else:
+            return Response({"id": result.id}, status=status.HTTP_202_ACCEPTED)
 
     @staticmethod
     @celery_app.task
@@ -201,7 +198,6 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
         serializer = MapSerializer(matches, many=True)
 
         return serializer.data
-
 
 
 
