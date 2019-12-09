@@ -1,3 +1,5 @@
+import React from 'react';
+
 var infoIcon = function({message, close}) {
   
   return (

@@ -32,7 +32,7 @@ class Explain extends React.Component {
     
   }
 
-  static PropTypes = {
+  static propTypes = {
     getLocation: PropTypes.func.isRequired,
   }
 

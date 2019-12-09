@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import React from "react";
 import TagsInput from "react-tagsinput";
 import {
@@ -60,7 +61,7 @@ class DescribeStore extends React.Component {
 
   }
 
-  static PropTypes = {
+  static propTypes = {
     hasLocation: PropTypes.bool,
   }
   componentDidMount() {

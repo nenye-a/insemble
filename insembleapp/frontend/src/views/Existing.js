@@ -38,7 +38,7 @@ class Existing extends React.Component {
     
   }
 
-  static PropTypes = {
+  static propTypes = {
     getLocation: PropTypes.func.isRequired,
     locationLoaded: PropTypes.bool,
     locationIsLoading: PropTypes.bool,

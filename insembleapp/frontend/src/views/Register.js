@@ -39,7 +39,7 @@ class Register extends React.Component {
     this.isBroker = React.createRef();
   }
 
-  static PropTypes = {
+  static propTypes = {
     login: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool
   }
