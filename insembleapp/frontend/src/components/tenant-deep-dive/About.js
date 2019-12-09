@@ -1,27 +1,26 @@
-import React from "react";
-import PropTypes from "prop-types";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Row,
-  Col,
-  FormSelect, 
-  Badge
-} from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Card, CardHeader, CardBody, CardFooter, Row, Col, FormSelect, Badge } from 'shards-react';
 
-import colors from "../../utils/colors";
-import Chart from "../../utils/chart";
+import colors from '../../utils/colors';
+import Chart from '../../utils/chart';
 
 class About extends React.Component {
   render() {
-    const retailer = this.props.match
-    let operations; 
-    if (Object.keys(retailer.locations).length >= 60){
-      operations = <div>Operates {Object.keys(retailer.locations).length}+ locations in Los Angeles, California</div>
+    const retailer = this.props.match;
+    let operations;
+    if (Object.keys(retailer.locations).length >= 60) {
+      operations = (
+        <div>
+          Operates {Object.keys(retailer.locations).length}+ locations in Los Angeles, California
+        </div>
+      );
     } else {
-      operations = <div>Operates {Object.keys(retailer.locations).length} locations in Los Angeles, California</div>
+      operations = (
+        <div>
+          Operates {Object.keys(retailer.locations).length} locations in Los Angeles, California
+        </div>
+      );
     }
 
     return (
@@ -35,20 +34,20 @@ class About extends React.Component {
         <CardBody className="pt-3">
           <Col>
             {/* Change static los angeles to vary by location */}
-            
+
             {operations}
-              <div className="user-details__tags p-4">
-                {Object.keys(retailer.place_type).map((category, idx) => (
-                  <Badge
-                    pill
-                    theme="light"
-                    className="text-light text-uppercase mb-2 border mr-1"
-                    key={idx}
-                  >
-                    {category}
-                  </Badge>
-                ))}
-              </div>
+            <div className="user-details__tags p-4">
+              {Object.keys(retailer.place_type).map((category, idx) => (
+                <Badge
+                  pill
+                  theme="light"
+                  className="text-light text-uppercase mb-2 border mr-1"
+                  key={idx}
+                >
+                  {category}
+                </Badge>
+              ))}
+            </div>
           </Col>
         </CardBody>
       </Card>

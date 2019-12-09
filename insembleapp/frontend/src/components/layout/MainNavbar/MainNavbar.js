@@ -1,39 +1,33 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import { Container, Navbar, NavbarBrand } from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { Container, Navbar, NavbarBrand } from 'shards-react';
 
-import NavbarSearch from "./NavbarSearch";
-import NavbarNav from "./NavbarNav/NavbarNav";
-import NavbarToggle from "./NavbarToggle";
+import NavbarSearch from './NavbarSearch';
+import NavbarNav from './NavbarNav/NavbarNav';
+import NavbarToggle from './NavbarToggle';
 
-import { LAYOUT_TYPES } from "../../../utils/constants";
+import { LAYOUT_TYPES } from '../../../utils/constants';
 
 const MainNavbar = ({ layout, stickyTop }) => {
   const isHeaderNav = layout === LAYOUT_TYPES.HEADER_NAVIGATION;
-  const classes = classNames(
-    "main-navbar",
-    "bg-white",
-    stickyTop && "sticky-top"
-  );
+  const classes = classNames('main-navbar', 'bg-white', stickyTop && 'sticky-top');
 
   return (
     <div className={classes}>
       <Container fluid={!isHeaderNav || null} className="p-0">
         <Navbar type="light" className="align-items-stretch flex-md-nowrap p-0">
           {isHeaderNav && (
-            <NavbarBrand href="#" style={{ lineHeight: "25px" }}>
+            <NavbarBrand href="#" style={{ lineHeight: '25px' }}>
               <div className="d-table m-auto">
                 <img
                   id="main-logo"
                   className="d-inline-block align-top mr-1 ml-3"
-                  style={{ maxHeight: "25px" }}
-                  src={require("../../../images/insemble_i.png")}
+                  style={{ maxHeight: '25px' }}
+                  src={require('../../../images/insemble_i.png')}
                   alt="Owner Dashboard"
                 />
-                <span className="d-none d-md-inline ml-1">
-                  Owner Dashboard
-                </span>
+                <span className="d-none d-md-inline ml-1">Owner Dashboard</span>
               </div>
             </NavbarBrand>
           )}
@@ -54,11 +48,11 @@ MainNavbar.propTypes = {
   /**
    * Whether the main navbar is sticky to the top, or not.
    */
-  stickyTop: PropTypes.bool
+  stickyTop: PropTypes.bool,
 };
 
 MainNavbar.defaultProps = {
-  stickyTop: true
+  stickyTop: true,
 };
 
 export default MainNavbar;

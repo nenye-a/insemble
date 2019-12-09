@@ -1,5 +1,5 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Card,
   CardHeader,
@@ -10,8 +10,8 @@ import {
   InputGroup,
   InputGroupAddon,
   FormCheckbox,
-  FormInput
-} from "shards-react";
+  FormInput,
+} from 'shards-react';
 
 const SidebarCategories = ({ title }) => (
   <Card small className="mb-3">
@@ -57,11 +57,11 @@ SidebarCategories.propTypes = {
   /**
    * The component's title.
    */
-  title: PropTypes.string
+  title: PropTypes.string,
 };
 
 SidebarCategories.defaultProps = {
-  title: "Categories"
+  title: 'Categories',
 };
 
 export default SidebarCategories;

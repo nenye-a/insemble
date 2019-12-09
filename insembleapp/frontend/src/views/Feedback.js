@@ -1,13 +1,13 @@
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
-import React from "react";
-import { withRouter } from "react-router";
-import { Link, Redirect } from "react-router-dom";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import { getLocation, loadMap } from '../redux/actions/space'
+import React from 'react';
+import { withRouter } from 'react-router';
+import { Link, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { getLocation, loadMap } from '../redux/actions/space';
 
-import { withAlert } from 'react-alert'
+import { withAlert } from 'react-alert';
 
 import {
   Container,
@@ -20,87 +20,84 @@ import {
   FormGroup,
   FormInput,
   FormCheckbox,
-  Button
-} from "shards-react";
+  Button,
+} from 'shards-react';
 
-import {NavLink} from "react-router-dom";
+import { NavLink } from 'react-router-dom';
 
 class Feedback extends React.Component {
   constructor(props) {
     super(props);
-    this.state= {
-      redirect: false
-    } 
+    this.state = {
+      redirect: false,
+    };
   }
 
   static propTypes = {
     getLocation: PropTypes.func.isRequired,
-  }
+  };
 
   uploadFeedback = (content, type) => {
-
     // Get current user from state
     const user = this.props.auth.user;
-    
+
     // Headers
     const config = {
-        headers: {
-            'Content-Type': 'application/json'
-        }
+      headers: {
+        'Content-Type': 'application/json',
+      },
     };
 
     var time_stamp = new Date();
-    
+
     var body = {
       content,
       type,
-      time_stamp
+      time_stamp,
+    };
+    if (user) {
+      body.user = user;
     }
-    if(user) {body.user = user}
-    body = JSON.stringify(body)
+    body = JSON.stringify(body);
 
     fetch('api/feedback/', {
       method: 'POST',
       headers: config.headers,
-      body
+      body,
     })
-    .then(res => {
-      if(res.ok) {
-        console.log("Successful update")
-        res.json().then(data=> console.log(data))
-      } else {
-        console.log("Failed to submit feedback.\n", res.status + " " + res.statusText)
-        res.json().then(err=> console.log(err))
-      }
-    })
-    .catch(err => console.log(err, "failed to submit feedback"))
+      .then((res) => {
+        if (res.ok) {
+          console.log('Successful update');
+          res.json().then((data) => console.log(data));
+        } else {
+          console.log('Failed to submit feedback.\n', res.status + ' ' + res.statusText);
+          res.json().then((err) => console.log(err));
+        }
+      })
+      .catch((err) => console.log(err, 'failed to submit feedback'));
+  };
 
-  }
-
-  onSubmit = e => {
+  onSubmit = (e) => {
     e.preventDefault();
 
-    this.props.alert.show('HEHE')
+    this.props.alert.show('HEHE');
 
-    var issueText = document.getElementById('formControlIssues').value
-    var feedbackText = document.getElementById('formControlFeedback').value
-    var featuresText = document.getElementById('formControlFeatures').value
+    var issueText = document.getElementById('formControlIssues').value;
+    var feedbackText = document.getElementById('formControlFeedback').value;
+    var featuresText = document.getElementById('formControlFeatures').value;
 
+    this.uploadFeedback(issueText, 'issue');
+    this.uploadFeedback(feedbackText, 'feedback');
+    this.uploadFeedback(featuresText, 'features');
 
-    this.uploadFeedback(issueText, "issue");
-    this.uploadFeedback(feedbackText, "feedback");
-    this.uploadFeedback(featuresText, "features");
-    
     // this.setState({
     //   redirect: true
     // })
-    
-  }
+  };
 
   render() {
-
     if (this.state.redirect) {
-      return <Redirect to= {{pathname: "/find"}}/>;
+      return <Redirect to={{ pathname: '/find' }} />;
     }
 
     return (
@@ -112,7 +109,7 @@ class Feedback extends React.Component {
             theme="accent"
             className="d-table mx-auto"
             type="submit"
-            tag={Link} 
+            tag={Link}
             to="/login"
           >
             Sign In
@@ -125,52 +122,63 @@ class Feedback extends React.Component {
                 {/* Logo */}
                 <img
                   className="auth-form__logo d-table mx-auto mb-3"
-                  src={require("../images/shards-dashboards-logo.svg")}
+                  src={require('../images/shards-dashboards-logo.svg')}
                   alt="Retailer Dashboards - Login Template"
                 />
 
                 {/* Title */}
-                <h5 className="auth-form__title text-center mb-4">
-                  Feedback and Report Issues
-                </h5>
+                <h5 className="auth-form__title text-center mb-4">Feedback and Report Issues</h5>
 
                 {/* Form Fields */}
                 <Form>
                   <FormGroup>
                     <label htmlFor="formControlTextarea1">Report Issues</label>
-                    <textarea placeholder="Describe your issue" className="form-control" id="formControlIssues" rows="3"></textarea>
+                    <textarea
+                      placeholder="Describe your issue"
+                      className="form-control"
+                      id="formControlIssues"
+                      rows="3"
+                    ></textarea>
                   </FormGroup>
                   <FormGroup>
                     <label htmlFor="exampleInputStoreName1">Additional Feedback</label>
-                    <textarea placeholder="Enter any additional feedback or questions" className="form-control" id="formControlFeedback" rows="3"></textarea>
+                    <textarea
+                      placeholder="Enter any additional feedback or questions"
+                      className="form-control"
+                      id="formControlFeedback"
+                      rows="3"
+                    ></textarea>
                   </FormGroup>
                   <FormGroup>
                     <label htmlFor="exampleInputStoreName1">Additional Features</label>
-                    <textarea placeholder="Any features you would like to see?" className="form-control" id="formControlFeatures" rows="3"></textarea>
+                    <textarea
+                      placeholder="Any features you would like to see?"
+                      className="form-control"
+                      id="formControlFeatures"
+                      rows="3"
+                    ></textarea>
                   </FormGroup>
                   <Button
                     pill
                     theme="accent"
                     className="d-table mx-auto"
                     type="submit"
-                    onClick = {this.onSubmit}
+                    onClick={this.onSubmit}
                   >
                     Submit
                   </Button>
                 </Form>
               </CardBody>
-
             </Card>
-
           </Col>
         </Row>
       </Container>
-    )
-  };
+    );
+  }
 }
 
-const mapStateToProps = state => ({
-  auth: state.auth
-})
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+});
 
 export default withAlert()(withRouter(Feedback));

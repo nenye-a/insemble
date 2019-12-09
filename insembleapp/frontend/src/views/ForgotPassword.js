@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   Container,
   Row,
@@ -9,8 +9,8 @@ import {
   Form,
   FormGroup,
   FormInput,
-  Button
-} from "shards-react";
+  Button,
+} from 'shards-react';
 
 const Register = () => (
   <Container fluid className="main-content-container h-100 px-4">
@@ -21,15 +21,13 @@ const Register = () => (
             {/* Logo */}
             <img
               className="auth-form__logo d-table mx-auto mb-3"
-              style={{ maxHeight: "25px" }}
-              src={require("../images/insemble_i.png")}
+              style={{ maxHeight: '25px' }}
+              src={require('../images/insemble_i.png')}
               alt="Retailer Dashboards - Register Template"
             />
 
             {/* Title */}
-            <h5 className="auth-form__title text-center mb-4">
-              Reset Password
-            </h5>
+            <h5 className="auth-form__title text-center mb-4">Reset Password</h5>
 
             {/* Form Fields */}
             <Form>
@@ -45,12 +43,7 @@ const Register = () => (
                   You will receive an email with a unique token.
                 </small>
               </FormGroup>
-              <Button
-                pill
-                theme="accent"
-                className="d-table mx-auto"
-                type="submit"
-              >
+              <Button pill theme="accent" className="d-table mx-auto" type="submit">
                 Reset Password
               </Button>
             </Form>

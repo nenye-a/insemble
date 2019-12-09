@@ -1,6 +1,6 @@
 /* eslint-disable eqeqeq */
-import React from "react";
-import TagsInput from "react-tagsinput";
+import React from 'react';
+import TagsInput from 'react-tagsinput';
 import {
   Alert,
   Container,
@@ -21,35 +21,35 @@ import {
   FormTextarea,
   InputGroup,
   InputGroupAddon,
-  InputGroupText
-} from "shards-react";
-import FuzzySearch from "fuzzy-search";
-import getCategoryData from "../data/store-categories";
+  InputGroupText,
+} from 'shards-react';
+import FuzzySearch from 'fuzzy-search';
+import getCategoryData from '../data/store-categories';
 
-import { withRouter } from "react-router";
-import { Redirect } from "react-router-dom";
+import { withRouter } from 'react-router';
+import { Redirect } from 'react-router-dom';
 
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 import { loadMap, clearLocation } from '../redux/actions/space';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
-import FormSectionTitle from "../components/edit-user-profile/FormSectionTitle";
-import ProfileBackgroundPhoto from "../components/edit-user-profile/ProfileBackgroundPhoto";
+import FormSectionTitle from '../components/edit-user-profile/FormSectionTitle';
+import ProfileBackgroundPhoto from '../components/edit-user-profile/ProfileBackgroundPhoto';
 
-import { withAlert } from "react-alert";
+import { withAlert } from 'react-alert';
 
 class DescribeStore extends React.Component {
   constructor(props) {
     super(props);
 
     // display tags from the session
-    var tags = JSON.parse(sessionStorage.getItem("sessionTags"));
-    if(!tags) tags = [];
+    var tags = JSON.parse(sessionStorage.getItem('sessionTags'));
+    if (!tags) tags = [];
 
     this.state = {
       tags,
       catData: [],
-      redirect: false
+      redirect: false,
     };
 
     this.searcher = null;
@@ -58,56 +58,55 @@ class DescribeStore extends React.Component {
     this.handleFilterSearch = this.handleFilterSearch.bind(this);
     this.incomeInput = React.createRef();
     this.alert = this.props.alert;
-
   }
 
   static propTypes = {
     hasLocation: PropTypes.bool,
-  }
+  };
   componentDidMount() {
-
     var catData = [];
 
     fetch('api/category/')
-      .then(res => {
+      .then((res) => {
         if (res.ok) {
-          res.json().then(data => {
+          res.json().then((data) => {
             this.setState({
               ...this.state,
-              catData: data
-            })
+              catData: data,
+            });
           });
         } else {
-          console.log("Failed to obtain categories");
+          console.log('Failed to obtain categories');
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
-      })
-
+      });
   }
 
   handleTypeClick(type) {
-    console.log("selected", type)
-    this.setState(prevState => { return { tags: prevState.tags.concat(type) } });
+    console.log('selected', type);
+    this.setState((prevState) => {
+      return { tags: prevState.tags.concat(type) };
+    });
   }
 
   handleTagsChange(tags) {
     this.setState({ tags });
   }
 
-  handleFormSubmit = e => {
+  handleFormSubmit = (e) => {
     e.preventDefault();
 
-    const emptyIncome = this.incomeInput.current.value == "";
+    const emptyIncome = this.incomeInput.current.value == '';
     const emptyCategories = this.state.tags.length == 0;
 
     // provide specific alerts if things are empty - otherwise provide insights
-    if(emptyIncome) this.alert.show('Please provide target income');
-    if(emptyCategories) this.alert.show('Please provide store categories.')
-    if(!emptyIncome && !emptyCategories) {
+    if (emptyIncome) this.alert.show('Please provide target income');
+    if (emptyCategories) this.alert.show('Please provide store categories.');
+    if (!emptyIncome && !emptyCategories) {
       // store tages in session incase we need to re-render upon back button click
-      sessionStorage.setItem("sessionTags", JSON.stringify(this.state.tags));
+      sessionStorage.setItem('sessionTags', JSON.stringify(this.state.tags));
 
       // clear location if it exists - using short-circuit fashion
       this.props.hasLocation && this.props.clearLocation();
@@ -116,11 +115,10 @@ class DescribeStore extends React.Component {
       this.props.loadMap(false, this.incomeInput.current.value, this.state.tags);
 
       this.setState({
-        redirect: true
-      })
+        redirect: true,
+      });
     }
-
-  }
+  };
 
   /**
    * Handles the global search.
@@ -128,28 +126,23 @@ class DescribeStore extends React.Component {
   handleFilterSearch(e) {
     this.setState({
       ...this.state,
-      catData: this.searcher.search(e.target.value)
+      catData: this.searcher.search(e.target.value),
     });
   }
 
   render() {
-
     if (this.state.redirect) {
-      return <Redirect push to={{ pathname: "/spaces" }} />;
+      return <Redirect push to={{ pathname: '/spaces' }} />;
     }
 
-    const catData = this.state.catData
-    const catDataLimited = catData.slice(0, 49)
+    const catData = this.state.catData;
+    const catDataLimited = catData.slice(0, 49);
 
     if (!(catData.length == 0) && !this.searcher) {
-      this.searcher = new FuzzySearch(
-        catData,
-        { caseSensitive: false }
-      );
+      this.searcher = new FuzzySearch(catData, { caseSensitive: false });
     }
 
     return (
-
       <Container fluid className="main-content-container px-4">
         <Row>
           <Col lg="8" className="mx-auto mt-4">
@@ -157,7 +150,6 @@ class DescribeStore extends React.Component {
               <ProfileBackgroundPhoto />
 
               <CardBody className="p-0">
-
                 {/* Form Section Title :: General */}
                 <Form className="py-4" onSubmit={this.handleFormSubmit}>
                   <FormSectionTitle
@@ -168,21 +160,15 @@ class DescribeStore extends React.Component {
                   <Row className="px-4">
                     <Col md="4" className="form-group">
                       <label htmlFor="firstName">Target Income ($)</label>
-                      <FormInput
-                        id="firstName"
-                        placeholder="100000"
-                        innerRef={this.incomeInput}
-                      />
+                      <FormInput id="firstName" placeholder="100000" innerRef={this.incomeInput} />
                     </Col>
                     <Col md="4">
-                      <Row >
+                      <Row>
                         <label>Category Search</label>
                       </Row>
 
-                      <Row >
-
+                      <Row>
                         <Col className="d-flex">
-
                           <InputGroup seamless size="sm">
                             <InputGroupAddon type="prepend">
                               <InputGroupText>
@@ -191,8 +177,6 @@ class DescribeStore extends React.Component {
                             </InputGroupAddon>
                             <FormInput onChange={this.handleFilterSearch} />
                           </InputGroup>
-
-
                         </Col>
                       </Row>
                     </Col>
@@ -201,16 +185,11 @@ class DescribeStore extends React.Component {
                         <label htmlFor="userTags">Selected</label>
                       </Row>
                       <Row>
-                      <TagsInput
-                          value={this.state.tags}
-                          onChange={this.handleTagsChange}
-                        />
+                        <TagsInput value={this.state.tags} onChange={this.handleTagsChange} />
                       </Row>
-
                     </Col>
-
                   </Row>
-{/* 
+                  {/* 
                   <Row form className="mx-4">
                     <Col lg="8">
                       <Row form>
@@ -303,9 +282,6 @@ class DescribeStore extends React.Component {
                         </Row>
                       </Col>
                     </Row> */}
-
-
-
                 </Form>
               </CardBody>
               <CardFooter className="border-top">
@@ -316,19 +292,25 @@ class DescribeStore extends React.Component {
                   onClick={this.handleFormSubmit}
                 >
                   See Locations
-                  </Button>
+                </Button>
               </CardFooter>
             </Card>
           </Col>
         </Row>
       </Container>
-
     );
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   hasLocation: state.space.hasLocation,
-})
+});
 
-export default withAlert()(withRouter(connect(mapStateToProps, { loadMap, clearLocation })(DescribeStore)));
+export default withAlert()(
+  withRouter(
+    connect(
+      mapStateToProps,
+      { loadMap, clearLocation }
+    )(DescribeStore)
+  )
+);

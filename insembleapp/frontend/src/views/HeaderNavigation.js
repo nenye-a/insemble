@@ -1,22 +1,21 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Container, Row, Col, Button, ButtonGroup } from "shards-react";
-import { NavLink } from "react-router-dom";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Container, Row, Col, Button, ButtonGroup } from 'shards-react';
+import { NavLink } from 'react-router-dom';
 
-import PageTitle from "../components/common/PageTitle";
-import RangeDatePicker from "../components/common/RangeDatePicker";
-import SmallStats from "../components/common/SmallStats";
-import TopReferrals from "../components/common/TopReferrals";
-import CountryReports from "../components/common/CountryReports";
-import Sessions from "../components/analytics/Sessions";
-import UsersByDevice from "../components/analytics/UsersByDevice";
-import GoalsOverview from "..DELETED_BASE64_STRING";
+import PageTitle from '../components/common/PageTitle';
+import RangeDatePicker from '../components/common/RangeDatePicker';
+import SmallStats from '../components/common/SmallStats';
+import TopReferrals from '../components/common/TopReferrals';
+import CountryReports from '../components/common/CountryReports';
+import Sessions from '../components/analytics/Sessions';
+import UsersByDevice from '../components/analytics/UsersByDevice';
+import GoalsOverview from '..DELETED_BASE64_STRING';
 
-import colors from "../utils/colors";
+import colors from '../utils/colors';
 
 const HeaderNavigation = ({ smallStats }) => (
   <Container className="main-content-container px-4">
-
     {/* Page Header */}
     <Row noGutters className="page-header py-4">
       <PageTitle title="Analytics" subtitle="Overview" className="text-sm-left mb-3" />
@@ -24,8 +23,12 @@ const HeaderNavigation = ({ smallStats }) => (
       {/* Page Header :: Actions */}
       <Col sm="4" className="col d-flex align-items-center">
         <ButtonGroup size="sm" className="d-inline-flex mb-3 mb-sm-0 mx-auto">
-          <Button theme="white" tag={NavLink} to="/analytics">Insights</Button>
-          <Button theme="white" tag={NavLink} to="/ecommerce">Sales</Button>
+          <Button theme="white" tag={NavLink} to="/analytics">
+            Insights
+          </Button>
+          <Button theme="white" tag={NavLink} to="/ecommerce">
+            Sales
+          </Button>
         </ButtonGroup>
       </Col>
 
@@ -39,14 +42,16 @@ const HeaderNavigation = ({ smallStats }) => (
     <Row>
       {smallStats.map((stats, idx) => (
         <Col key={idx} md="6" lg="3" className="mb-4">
-          <SmallStats id={`small-stats-${idx}`}
+          <SmallStats
+            id={`small-stats-${idx}`}
             chartData={stats.datasets}
             label={stats.label}
             chartLabels={stats.chartLabels}
             value={stats.value}
             percentage={stats.percentage}
             increase={stats.increase}
-            decrease={stats.decrease} />
+            decrease={stats.decrease}
+          />
         </Col>
       ))}
     </Row>
@@ -78,77 +83,90 @@ const HeaderNavigation = ({ smallStats }) => (
       </Col>
     </Row>
   </Container>
-)
+);
 
 HeaderNavigation.propTypes = {
   /**
    * The small stats data.
    */
-  smallStats: PropTypes.array
+  smallStats: PropTypes.array,
 };
 
 HeaderNavigation.defaultProps = {
-  smallStats: [{
-    label: 'Users',
-    value: '2,390',
-    percentage: '12.4%',
-    increase: true,
-    decrease: false,
-    chartLabels: [null, null, null, null, null],
-    datasets: [{
-      label: 'Today',
-      fill: 'start',
-      borderWidth: 1.5,
-      backgroundColor: colors.primary.toRGBA(0.1),
-      borderColor: colors.primary.toRGBA(),
-      data: [9, 3, 3, 9, 9],
-    }],
-  }, {
-    label: 'Sessions',
-    value: '8,391',
-    percentage: '7.21%',
-    increase: false,
-    decrease: true,
-    chartLabels: [null, null, null, null, null],
-    datasets: [{
-      label: 'Today',
-      fill: 'start',
-      borderWidth: 1.5,
-      backgroundColor: colors.success.toRGBA(0.1),
-      borderColor: colors.success.toRGBA(),
-      data: [3.9, 4, 4, 9, 4],
-    }],
-  }, {
-    label: 'Pageviews',
-    value: '21,293',
-    percentage: '3.71%',
-    increase: true,
-    decrease: false,
-    chartLabels: [null, null, null, null, null],
-    datasets: [{
-      label: 'Today',
-      fill: 'start',
-      borderWidth: 1.5,
-      backgroundColor: colors.warning.toRGBA(0.1),
-      borderColor: colors.warning.toRGBA(),
-      data: [6, 6, 9, 3, 3],
-    }],
-  }, {
-    label: 'Pages/Session',
-    value: '6.43',
-    percentage: '2.71%',
-    increase: false,
-    decrease: true,
-    chartLabels: [null, null, null, null, null],
-    datasets: [{
-      label: 'Today',
-      fill: 'start',
-      borderWidth: 1.5,
-      backgroundColor: colors.salmon.toRGBA(0.1),
-      borderColor: colors.salmon.toRGBA(),
-      data: [0, 9, 3, 3, 3],
-    }],
-  }]
+  smallStats: [
+    {
+      label: 'Users',
+      value: '2,390',
+      percentage: '12.4%',
+      increase: true,
+      decrease: false,
+      chartLabels: [null, null, null, null, null],
+      datasets: [
+        {
+          label: 'Today',
+          fill: 'start',
+          borderWidth: 1.5,
+          backgroundColor: colors.primary.toRGBA(0.1),
+          borderColor: colors.primary.toRGBA(),
+          data: [9, 3, 3, 9, 9],
+        },
+      ],
+    },
+    {
+      label: 'Sessions',
+      value: '8,391',
+      percentage: '7.21%',
+      increase: false,
+      decrease: true,
+      chartLabels: [null, null, null, null, null],
+      datasets: [
+        {
+          label: 'Today',
+          fill: 'start',
+          borderWidth: 1.5,
+          backgroundColor: colors.success.toRGBA(0.1),
+          borderColor: colors.success.toRGBA(),
+          data: [3.9, 4, 4, 9, 4],
+        },
+      ],
+    },
+    {
+      label: 'Pageviews',
+      value: '21,293',
+      percentage: '3.71%',
+      increase: true,
+      decrease: false,
+      chartLabels: [null, null, null, null, null],
+      datasets: [
+        {
+          label: 'Today',
+          fill: 'start',
+          borderWidth: 1.5,
+          backgroundColor: colors.warning.toRGBA(0.1),
+          borderColor: colors.warning.toRGBA(),
+          data: [6, 6, 9, 3, 3],
+        },
+      ],
+    },
+    {
+      label: 'Pages/Session',
+      value: '6.43',
+      percentage: '2.71%',
+      increase: false,
+      decrease: true,
+      chartLabels: [null, null, null, null, null],
+      datasets: [
+        {
+          label: 'Today',
+          fill: 'start',
+          borderWidth: 1.5,
+          backgroundColor: colors.salmon.toRGBA(0.1),
+          borderColor: colors.salmon.toRGBA(),
+          data: [0, 9, 3, 3, 3],
+        },
+      ],
+    },
+  ],
 };
 
 export default HeaderNavigation;

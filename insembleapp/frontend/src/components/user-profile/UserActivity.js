@@ -1,15 +1,8 @@
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
-import React from "react";
-import PropTypes from "prop-types";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Badge,
-  Button
-} from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Card, CardHeader, CardBody, CardFooter, Badge, Button } from 'shards-react';
 
 const UserActivity = ({ title }) => (
   <Card small className="user-activity mb-4">
@@ -41,10 +34,10 @@ const UserActivity = ({ title }) => (
         <div className="user-activity__item__content">
           <span className="text-light">2 Hours ago</span>
           <p>
-            Marked <a href="#">7 tasks</a> as{" "}
+            Marked <a href="#">7 tasks</a> as{' '}
             <Badge outline pill theme="success">
               Complete
-            </Badge>{" "}
+            </Badge>{' '}
             inside the <a href="#">DesignRevision</a> project.
           </p>
         </div>
@@ -57,8 +50,8 @@ const UserActivity = ({ title }) => (
         <div className="user-activity__item__content">
           <span className="text-light">3 Hours and 10 minutes ago</span>
           <p>
-            Added <a href="#">Jack Nicholson</a> and <a href="#">3 others</a> to
-            the <a href="#">DesignRevision</a> team.
+            Added <a href="#">Jack Nicholson</a> and <a href="#">3 others</a> to the{' '}
+            <a href="#">DesignRevision</a> team.
           </p>
         </div>
         <div className="user-activity__item__action ml-auto">
@@ -85,36 +78,21 @@ const UserActivity = ({ title }) => (
         <div className="user-activity__item__content">
           <span className="text-light">2 Days ago</span>
           <p>
-            Added <a href="#">3 new tasks</a> to the{" "}
-            <a href="#">DesignRevision</a> project:
+            Added <a href="#">3 new tasks</a> to the <a href="#">DesignRevision</a> project:
           </p>
           <ul className="user-activity__item__task-list mt-2">
             <li>
               <div className="custom-control custom-checkbox">
-                <input
-                  type="checkbox"
-                  className="custom-control-input"
-                  id="user-activity-task-1"
-                />
-                <label
-                  className="custom-control-label"
-                  htmlFor="user-activity-task-1"
-                >
+                <input type="checkbox" className="custom-control-input" id="user-activity-task-1" />
+                <label className="custom-control-label" htmlFor="user-activity-task-1">
                   Fix blog pagination issue.
                 </label>
               </div>
             </li>
             <li>
               <div className="custom-control custom-checkbox">
-                <input
-                  type="checkbox"
-                  className="custom-control-input"
-                  id="user-activity-task-2"
-                />
-                <label
-                  className="custom-control-label"
-                  htmlFor="user-activity-task-2"
-                >
+                <input type="checkbox" className="custom-control-input" id="user-activity-task-2" />
+                <label className="custom-control-label" htmlFor="user-activity-task-2">
                   Remove extra padding from blog post container.
                 </label>
               </div>
@@ -130,10 +108,10 @@ const UserActivity = ({ title }) => (
         <div className="user-activity__item__content">
           <span className="text-light">2 Days ago</span>
           <p>
-            Marked <a href="#">3 tasks</a> as{" "}
+            Marked <a href="#">3 tasks</a> as{' '}
             <Badge outline pill theme="danger">
               Invalid
-            </Badge>{" "}
+            </Badge>{' '}
             inside the <a href="#">Retailer Dashboards</a> project.
           </p>
         </div>
@@ -151,11 +129,11 @@ UserActivity.propTypes = {
   /**
    * The component's title.
    */
-  title: PropTypes.string
+  title: PropTypes.string,
 };
 
 UserActivity.defaultProps = {
-  title: "User Activity"
+  title: 'User Activity',
 };
 
 export default UserActivity;

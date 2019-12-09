@@ -1,6 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Card, CardHeader, CardBody, Row, Col, Badge } from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Card, CardHeader, CardBody, Row, Col, Badge } from 'shards-react';
 
 const UserDetails = ({ userData }) => (
   <Card small className="user-details mb-4">
@@ -93,34 +93,27 @@ UserDetails.propTypes = {
   /**
    * The user data.
    */
-  userData: PropTypes.object
+  userData: PropTypes.object,
 };
 
 UserDetails.defaultProps = {
   userData: {
-    coverImg: require("../../images/user-profile/up-user-details-background.jpg"),
-    avatarImg: require("../../images/avatars/0.jpg"),
-    name: "Sierra Brooks",
+    coverImg: require('../../images/user-profile/up-user-details-background.jpg'),
+    avatarImg: require('../../images/avatars/0.jpg'),
+    name: 'Sierra Brooks',
     bio: "I'm a design focused engineer.",
-    email: "DELETED_EMAIL",
-    location: "Remote",
-    phone: "+40 1234 567 890",
-    accNumber: "123456789",
+    email: 'DELETED_EMAIL',
+    location: 'Remote',
+    phone: '+40 1234 567 890',
+    accNumber: '123456789',
     social: {
-      facebook: "#",
-      twitter: "#",
-      github: "#",
-      slack: "#"
+      facebook: '#',
+      twitter: '#',
+      github: '#',
+      slack: '#',
     },
-    tags: [
-      "User Experience",
-      "UI Design",
-      "React JS",
-      "HTML & CSS",
-      "JavaScript",
-      "Bootstrap 4"
-    ]
-  }
+    tags: ['User Experience', 'UI Design', 'React JS', 'HTML & CSS', 'JavaScript', 'Bootstrap 4'],
+  },
 };
 
 export default UserDetails;

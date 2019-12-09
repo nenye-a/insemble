@@ -2,7 +2,7 @@
 /* eslint-disable import/no-named-as-default */
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
-import React from "react";
+import React from 'react';
 import {
   Container,
   Row,
@@ -12,18 +12,16 @@ import {
   CardBody,
   CardFooter,
   Badge,
-  Button
-} from "shards-react";
+  Button,
+} from 'shards-react';
 
-import Details from "../components/explore/Details";
-import Demographics from "../components/explore/Demographics";
-import PageTitle from "../components/common/PageTitle";
-import { NavLink } from "react-router-dom";
+import Details from '../components/explore/Details';
+import Demographics from '../components/explore/Demographics';
+import PageTitle from '../components/common/PageTitle';
+import { NavLink } from 'react-router-dom';
 
 class Explore extends React.Component {
-  
   constructor(props) {
-    
     super(props);
 
     this.state = {
@@ -31,208 +29,198 @@ class Explore extends React.Component {
       LocationsList: [],
       PostsListOne: [
         {
-          backgroundImage: require("../images/content-management/1.jpeg"),
-          category: "Insemble",
-          categoryTheme: "royal-blue",
-          author: "Anna Kunis",
-          authorAvatar: require("../images/avatars/1.jpg"),
-          title: "Ritual Coffee",
-          date: "28 February 2019"
+          backgroundImage: require('../images/content-management/1.jpeg'),
+          category: 'Insemble',
+          categoryTheme: 'royal-blue',
+          author: 'Anna Kunis',
+          authorAvatar: require('../images/avatars/1.jpg'),
+          title: 'Ritual Coffee',
+          date: '28 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/2.jpeg"),
-          category: "Insemble",
-          categoryTheme: "royal-blue",
-          author: "James Jamerson",
-          authorAvatar: require("../images/avatars/2.jpg"),
-          title: "Coffee Cultures",
-          date: "29 February 2019"
+          backgroundImage: require('../images/content-management/2.jpeg'),
+          category: 'Insemble',
+          categoryTheme: 'royal-blue',
+          author: 'James Jamerson',
+          authorAvatar: require('../images/avatars/2.jpg'),
+          title: 'Coffee Cultures',
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/3.jpeg"),
-          category: "Insemble",
-          categoryTheme: "royal-blue",
+          backgroundImage: require('../images/content-management/3.jpeg'),
+          category: 'Insemble',
+          categoryTheme: 'royal-blue',
           author: "Peet's Coffee",
-          authorAvatar: require("../images/avatars/2.jpg"),
+          authorAvatar: require('../images/avatars/2.jpg'),
           title: "Peet's Coffee",
-          date: "29 February 2019"
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/4.jpeg"),
-          category: "Insemble",
-          categoryTheme: "royal-blue",
-          author: "Patties Express",
-          authorAvatar: require("../images/avatars/3.jpg"),
-          title: "Patties Express",
-          date: "29 February 2019"
+          backgroundImage: require('../images/content-management/4.jpeg'),
+          category: 'Insemble',
+          categoryTheme: 'royal-blue',
+          author: 'Patties Express',
+          authorAvatar: require('../images/avatars/3.jpg'),
+          title: 'Patties Express',
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/1.jpeg"),
-          category: "Insemble",
-          categoryTheme: "royal-blue",
-          author: "Anna Kunis",
-          authorAvatar: require("../images/avatars/1.jpg"),
-          title: "Corepower Yoga",
-          date: "28 February 2019"
+          backgroundImage: require('../images/content-management/1.jpeg'),
+          category: 'Insemble',
+          categoryTheme: 'royal-blue',
+          author: 'Anna Kunis',
+          authorAvatar: require('../images/avatars/1.jpg'),
+          title: 'Corepower Yoga',
+          date: '28 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/2.jpeg"),
-          category: "Regional",
-          categoryTheme: "dark",
-          author: "James Jamerson",
-          authorAvatar: require("../images/avatars/2.jpg"),
+          backgroundImage: require('../images/content-management/2.jpeg'),
+          category: 'Regional',
+          categoryTheme: 'dark',
+          author: 'James Jamerson',
+          authorAvatar: require('../images/avatars/2.jpg'),
           title: "Leo's Tacos",
-          date: "29 February 2019"
-        }
-        
+          date: '29 February 2019',
+        },
       ],
 
       // Second list of posts.
       PostsListTwo: [
         {
-          backgroundImage: require("../images/content-management/5.jpeg"),
-          category: "Travel",
-          categoryTheme: "info",
-          author: "Anna Ken",
-          authorAvatar: require("../images/avatars/0.jpg"),
-          title:
-            "Coffee Shops",
+          backgroundImage: require('../images/content-management/5.jpeg'),
+          category: 'Travel',
+          categoryTheme: 'info',
+          author: 'Anna Ken',
+          authorAvatar: require('../images/avatars/0.jpg'),
+          title: 'Coffee Shops',
           body:
-            "Conviction up partiality as delightful is discovered. Yet jennings resolved disposed exertion you off. Left did fond drew fat head poor jet pan flying over...",
-          date: "29 February 2019"
+            'Conviction up partiality as delightful is discovered. Yet jennings resolved disposed exertion you off. Left did fond drew fat head poor jet pan flying over...',
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/6.jpeg"),
-          category: "Business",
-          categoryTheme: "dark",
-          author: "John James",
-          authorAvatar: require("../images/avatars/1.jpg"),
-          title:
-            "Healthy Experiences",
+          backgroundImage: require('../images/content-management/6.jpeg'),
+          category: 'Business',
+          categoryTheme: 'dark',
+          author: 'John James',
+          authorAvatar: require('../images/avatars/1.jpg'),
+          title: 'Healthy Experiences',
           body:
-            "Discovered had get considered projection who favourable. Necessary up knowledge it tolerably. Unwilling departure education to admitted speaking...",
-          date: "29 February 2019"
-        }, 
+            'Discovered had get considered projection who favourable. Necessary up knowledge it tolerably. Unwilling departure education to admitted speaking...',
+          date: '29 February 2019',
+        },
         {
-          backgroundImage: require("../images/content-management/6.jpeg"),
-          category: "Business",
-          categoryTheme: "dark",
-          author: "John James",
-          authorAvatar: require("../images/avatars/1.jpg"),
-          title:
-            "Mediterranean",
+          backgroundImage: require('../images/content-management/6.jpeg'),
+          category: 'Business',
+          categoryTheme: 'dark',
+          author: 'John James',
+          authorAvatar: require('../images/avatars/1.jpg'),
+          title: 'Mediterranean',
           body:
-            "Discovered had get considered projection who favourable. Necessary up knowledge it tolerably. Unwilling departure education to admitted speaking...",
-          date: "29 February 2019"
-        }, 
+            'Discovered had get considered projection who favourable. Necessary up knowledge it tolerably. Unwilling departure education to admitted speaking...',
+          date: '29 February 2019',
+        },
         {
-          backgroundImage: require("../images/content-management/6.jpeg"),
-          category: "Business",
-          categoryTheme: "dark",
-          author: "John James",
-          authorAvatar: require("../images/avatars/1.jpg"),
-          title:
-            "Mexican Restaurant",
+          backgroundImage: require('../images/content-management/6.jpeg'),
+          category: 'Business',
+          categoryTheme: 'dark',
+          author: 'John James',
+          authorAvatar: require('../images/avatars/1.jpg'),
+          title: 'Mexican Restaurant',
           body:
-            "Discovered had get considered projection who favourable. Necessary up knowledge it tolerably. Unwilling departure education to admitted speaking...",
-          date: "29 February 2019"
-        }
+            'Discovered had get considered projection who favourable. Necessary up knowledge it tolerably. Unwilling departure education to admitted speaking...',
+          date: '29 February 2019',
+        },
       ],
 
       // Third list of posts.
       PostsListThree: [
         {
-          author: "John James",
-          authorAvatar: require("../images/avatars/1.jpg"),
-          title: "Had denoting properly jointure which well books beyond",
+          author: 'John James',
+          authorAvatar: require('../images/avatars/1.jpg'),
+          title: 'Had denoting properly jointure which well books beyond',
           body:
-            "In said to of poor full be post face snug. Introduced imprudence see say unpleasing devonshire acceptance son. Exeter longer wisdom work...",
-          date: "29 February 2019"
+            'In said to of poor full be post face snug. Introduced imprudence see say unpleasing devonshire acceptance son. Exeter longer wisdom work...',
+          date: '29 February 2019',
         },
         {
-          author: "John James",
-          authorAvatar: require("../images/avatars/2.jpg"),
-          title: "Husbands ask repeated resolved but laughter debating",
+          author: 'John James',
+          authorAvatar: require('../images/avatars/2.jpg'),
+          title: 'Husbands ask repeated resolved but laughter debating',
           body:
-            "It abode words began enjoy years no do ﻿no. Tried spoil as heart visit blush or. Boy possible blessing sensible set but margaret interest. Off tears...",
-          date: "29 February 2019"
+            'It abode words began enjoy years no do ﻿no. Tried spoil as heart visit blush or. Boy possible blessing sensible set but margaret interest. Off tears...',
+          date: '29 February 2019',
         },
         {
-          author: "John James",
-          authorAvatar: require("../images/avatars/3.jpg"),
-          title:
-            "Instantly gentleman contained belonging exquisite now direction",
+          author: 'John James',
+          authorAvatar: require('../images/avatars/3.jpg'),
+          title: 'Instantly gentleman contained belonging exquisite now direction',
           body:
-            "West room at sent if year. Numerous indulged distance old law you. Total state as merit court green decay he. Steepest merit checking railway...",
-          date: "29 February 2019"
-        }
+            'West room at sent if year. Numerous indulged distance old law you. Total state as merit court green decay he. Steepest merit checking railway...',
+          date: '29 February 2019',
+        },
       ],
 
       // Fourth list of posts.
       PostsListFour: [
         {
-          backgroundImage: require("../images/content-management/7.jpeg"),
-          author: "Alene Trenton",
-          authorUrl: "#",
-          category: "News",
-          categoryUrl: "#",
-          title: "Extremity so attending objection as engrossed",
+          backgroundImage: require('../images/content-management/7.jpeg'),
+          author: 'Alene Trenton',
+          authorUrl: '#',
+          category: 'News',
+          categoryUrl: '#',
+          title: 'Extremity so attending objection as engrossed',
           body:
-            "Pursuit chamber as elderly amongst on. Distant however warrant farther to of. My justice wishing prudent waiting in be...",
-          date: "29 February 2019"
+            'Pursuit chamber as elderly amongst on. Distant however warrant farther to of. My justice wishing prudent waiting in be...',
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/8.jpeg"),
-          author: "Chris Jamie",
-          authorUrl: "#",
-          category: "News",
-          categoryUrl: "#",
-          title: "Bed sincerity yet therefore forfeited his",
+          backgroundImage: require('../images/content-management/8.jpeg'),
+          author: 'Chris Jamie',
+          authorUrl: '#',
+          category: 'News',
+          categoryUrl: '#',
+          title: 'Bed sincerity yet therefore forfeited his',
           body:
-            "Speaking throwing breeding betrayed children my to. Me marianne no he horrible produced ye. Sufficient unpleasing and...",
-          date: "29 February 2019"
+            'Speaking throwing breeding betrayed children my to. Me marianne no he horrible produced ye. Sufficient unpleasing and...',
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/9.jpeg"),
-          author: "Monica Jordan",
-          authorUrl: "#",
-          category: "News",
-          categoryUrl: "#",
-          title: "Object remark lively all did feebly excuse our",
+          backgroundImage: require('../images/content-management/9.jpeg'),
+          author: 'Monica Jordan',
+          authorUrl: '#',
+          category: 'News',
+          categoryUrl: '#',
+          title: 'Object remark lively all did feebly excuse our',
           body:
-            "Morning prudent removal an letters by. On could my in order never it. Or excited certain sixteen it to parties colonel not seeing...",
-          date: "29 February 2019"
+            'Morning prudent removal an letters by. On could my in order never it. Or excited certain sixteen it to parties colonel not seeing...',
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/10.jpeg"),
-          author: "Monica Jordan",
-          authorUrl: "#",
-          category: "News",
-          categoryUrl: "#",
-          title: "His followed carriage proposal entrance",
+          backgroundImage: require('../images/content-management/10.jpeg'),
+          author: 'Monica Jordan',
+          authorUrl: '#',
+          category: 'News',
+          categoryUrl: '#',
+          title: 'His followed carriage proposal entrance',
           body:
-            "For county now sister engage had season better had waited. Occasional mrs interested far expression directly as regard...",
-          date: "29 February 2019"
-        }
-      ]
+            'For county now sister engage had season better had waited. Occasional mrs interested far expression directly as regard...',
+          date: '29 February 2019',
+        },
+      ],
     };
   }
-    
+
   componentDidMount() {
     fetch('/api/pair')
-    .then(res => res.json())
-    .then((data) => {
-      this.setState({ LocationsList: data })
-    })
-    .catch(console.log)
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({ LocationsList: data });
+      })
+      .catch(console.log);
   }
 
   render() {
-    const {
-      LocationsList,
-      PostsListOne,
-      PostsListTwo
-    } = this.state;
+    const { LocationsList, PostsListOne, PostsListTwo } = this.state;
 
     return (
       <Container fluid className="main-content-container px-4">
@@ -250,10 +238,7 @@ class Explore extends React.Component {
                   className="card-post__image"
                   style={{ backgroundImage: `url(${post.backgroundImage})` }}
                 >
-                  <Badge
-                    pill
-                    className={`card-post__category bg-${post.categoryTheme}`}
-                  >
+                  <Badge pill className={`card-post__category bg-${post.categoryTheme}`}>
                     {post.category}
                   </Badge>
                   <div className="card-post__author d-flex">
@@ -288,7 +273,12 @@ class Explore extends React.Component {
         </Row>
 
         <Row noGutters className="page-header py-4">
-          <PageTitle sm="4" title="Your Location" subtitle="Area Statistics" className="text-sm-left" />
+          <PageTitle
+            sm="4"
+            title="Your Location"
+            subtitle="Area Statistics"
+            className="text-sm-left"
+          />
         </Row>
 
         {/* Second Row of Posts */}
@@ -316,10 +306,7 @@ class Explore extends React.Component {
                   className="card-post__image"
                   style={{ backgroundImage: `url('${post.backgroundImage}')` }}
                 >
-                  <Badge
-                    pill
-                    className={`card-post__category bg-${post.categoryTheme}`}
-                  >
+                  <Badge pill className={`card-post__category bg-${post.categoryTheme}`}>
                     {post.category}
                   </Badge>
                   <div className="card-post__author d-flex">
@@ -445,9 +432,7 @@ class Explore extends React.Component {
               </CardBody>
             </Card>
           </Col>
-        
         </Row>
-
       </Container>
     );
   }

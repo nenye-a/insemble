@@ -1,5 +1,5 @@
-import React from "./node_modules/react";
-import { ListGroupItem, Slider } from "./node_modules/shards-react";
+import React from './node_modules/react';
+import { ListGroupItem, Slider } from './node_modules/shards-react';
 
 const Sliders = () => (
   <ListGroupItem className="px-3">
@@ -24,10 +24,10 @@ const Sliders = () => (
         connect
         start={[35, 65]}
         pips={{
-          mode: "positions",
+          mode: 'positions',
           values: [0, 25, 50, 75, 100],
           stepped: true,
-          density: 5
+          density: 5,
         }}
         range={{ min: 0, max: 100 }}
       />
