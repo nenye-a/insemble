@@ -117,9 +117,6 @@
     "redux-mock-store": "~1.5.3",
     "webpack-cli": "~3.3.2"
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
   "browserslist": [
     ">0.2%",
     "not dead",
