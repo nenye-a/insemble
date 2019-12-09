@@ -17,10 +17,6 @@ import colors from "../../utils/colors";
 import Chart from "../../utils/chart";
 
 class Details extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { title } = this.props;
     const { userData} = this.props;

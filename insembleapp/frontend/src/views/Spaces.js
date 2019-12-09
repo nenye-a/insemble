@@ -15,12 +15,7 @@ import PropTypes from "prop-types";
 const fetch = require("isomorphic-fetch");
 
 class Spaces extends React.PureComponent {
-  constructor(props) {
-    super(props);
-
-  }
-
-  static PropTypes = {
+  static propTypes = {
     mapIsLoading: PropTypes.bool.isRequired,
   }
 

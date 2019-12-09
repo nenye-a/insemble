@@ -28,7 +28,7 @@ class UserActions extends React.Component {
     this.toggleUserActions = this.toggleUserActions.bind(this);
   }
 
-  static PropTypes = {
+  static propTypes = {
     auth: PropTypes.object.isRequired,
     logout: PropTypes.func.isRequired
   }

@@ -1,3 +1,5 @@
+/* global google */
+/* eslint-disable import/first */
 import React from "react"; 
 import {
   Row, 
@@ -35,7 +37,7 @@ class MapWithAMarkerClusterer extends React.Component {
     this.alert = this.props.alert;
   }
 
-  static PropTypes = {
+  static propTypes = {
     mapIsLoading: PropTypes.bool.isRequired,
     mapLoaded: PropTypes.bool.isRequired,
     heatMap: PropTypes.object

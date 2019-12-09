@@ -32,7 +32,7 @@ class Login extends React.Component {
     this.passwordInput = React.createRef()
   }
 
-  static PropTypes = {
+  static propTypes = {
     login: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool
   }

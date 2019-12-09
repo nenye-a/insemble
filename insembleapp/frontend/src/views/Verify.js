@@ -37,7 +37,7 @@ class Verify extends React.Component {
     };
   }
 
-  static PropTypes = {
+  static propTypes = {
     address: PropTypes.string.isRequired,
   }
   onSubmit = e => {

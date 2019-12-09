@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import {
     MAP_LOADING,
     MAP_LOADED,
@@ -109,7 +110,7 @@ export const loadMap = (hasLocation=false, income=0, categories=[]) => (dispatch
             })
         }
     }).catch(err => {
-        console.log(error);
+        console.log(err);
         dispatch({
             type: MAP_ERROR,
         })
