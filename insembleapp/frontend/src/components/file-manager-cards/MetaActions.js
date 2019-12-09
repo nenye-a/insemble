@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Row,
   Col,
@@ -8,8 +8,8 @@ import {
   InputGroupText,
   FormInput,
   ButtonGroup,
-  Button
-} from "shards-react";
+  Button,
+} from 'shards-react';
 
 const MetaActions = () => (
   <Row noGutters className="p-2">
@@ -41,11 +41,7 @@ const MetaActions = () => (
             <i className="material-icons">&#xE872;</i>
           </Button>
         </ButtonGroup>
-        <Button
-          size="sm"
-          theme="accent"
-          className="d-inline-block ml-auto ml-lg-0"
-        >
+        <Button size="sm" theme="accent" className="d-inline-block ml-auto ml-lg-0">
           <i className="material-icons">&#xE145;</i> Add New
         </Button>
       </div>

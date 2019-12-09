@@ -1,8 +1,8 @@
-import React from "react";
-import ReactQuill from "react-quill";
-import { Card, CardBody, Form, FormInput } from "shards-react";
+import React from 'react';
+import ReactQuill from 'react-quill';
+import { Card, CardBody, Form, FormInput } from 'shards-react';
 
-import "react-quill/dist/quill.snow.css";
+import 'react-quill/dist/quill.snow.css';
 
 const Editor = () => (
   <Card small className="mb-3">

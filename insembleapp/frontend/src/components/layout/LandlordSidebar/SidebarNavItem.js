@@ -1,14 +1,8 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { NavLink as RouteNavLink } from "react-router-dom";
-import {
-  NavItem,
-  NavLink,
-  DropdownMenu,
-  DropdownItem,
-  Collapse
-} from "shards-react";
-import { Dispatcher, Constants } from "../../../flux";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { NavLink as RouteNavLink } from 'react-router-dom';
+import { NavItem, NavLink, DropdownMenu, DropdownItem, Collapse } from 'shards-react';
+import { Dispatcher, Constants } from '../../../flux';
 
 class SidebarNavItem extends React.Component {
   constructor(props) {
@@ -20,7 +14,7 @@ class SidebarNavItem extends React.Component {
   toggleDropdown(item) {
     Dispatcher.dispatch({
       actionType: Constants.TOGGLE_SIDEBAR_DROPDOWN,
-      payload: item
+      payload: item,
     });
   }
 
@@ -29,11 +23,11 @@ class SidebarNavItem extends React.Component {
     const hasSubItems = item.items && item.items.length;
 
     return (
-      <NavItem style={{ position: "relative" }}>
+      <NavItem style={{ position: 'relative' }}>
         <NavLink
-          className={hasSubItems && "dropdown-toggle"}
-          tag={hasSubItems ? "a" : RouteNavLink}
-          to={hasSubItems ? "#" : item.to}
+          className={hasSubItems && 'dropdown-toggle'}
+          tag={hasSubItems ? 'a' : RouteNavLink}
+          to={hasSubItems ? '#' : item.to}
           onClick={() => this.toggleDropdown(item)}
         >
           {item.htmlBefore && (
@@ -68,7 +62,7 @@ SidebarNavItem.propTypes = {
   /**
    * The item object.
    */
-  item: PropTypes.object
+  item: PropTypes.object,
 };
 
 export default SidebarNavItem;

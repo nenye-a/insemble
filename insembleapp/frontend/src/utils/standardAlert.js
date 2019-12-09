@@ -1,44 +1,45 @@
 import React from 'react';
 
-var infoIcon = function({message, close}) {
-  
+var infoIcon = function({ message, close }) {
   return (
     <div className="alert alert-info alert-dismissible fade show">
       <strong>Info!</strong> {message}.
-      <button type="button" className={close} data-dismiss="alert">&times;</button>
+      <button type="button" className={close} data-dismiss="alert">
+        &times;
+      </button>
     </div>
   );
-}
+};
 
-var errorIcon = function({message, close}) {
-  
+var errorIcon = function({ message, close }) {
   return (
     <div class="alert alert-danger alert-dismissible fade show">
       <strong>Error!</strong> {message}
-      <button type="button" class={close} data-dismiss="alert">&times;</button>
+      <button type="button" class={close} data-dismiss="alert">
+        &times;
+      </button>
     </div>
   );
-}
+};
 
-
-var successIcon = function({message, close}) {
-  
+var successIcon = function({ message, close }) {
   return (
     <div class="alert alert-success alert-dismissible fade show">
       <strong>Error!</strong> {message}
-      <button type="button" class={close} data-dismiss="alert">&times;</button>
+      <button type="button" class={close} data-dismiss="alert">
+        &times;
+      </button>
     </div>
   );
-}
+};
 
-export const standardTemplate = ({style, options, message, close }) => (
+export const standardTemplate = ({ style, options, message, close }) => (
   <div style={style}>
     {options.type === 'info' && infoIcon(message, close)}
     {options.type === 'success' && successIcon(message, close)}
     {options.type === 'error' && errorIcon(message, close)}
   </div>
-)
-
+);
 
 // var AlertTemplate = function AlertTemplate(_ref) {
 //   var message = _ref.message,

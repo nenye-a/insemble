@@ -1,23 +1,16 @@
-import React from "react";
-import BigCalendar from "react-big-calendar";
-import moment from "moment";
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Card,
-  CardBody,
-} from "shards-react";
+import React from 'react';
+import BigCalendar from 'react-big-calendar';
+import moment from 'moment';
+import { Container, Row, Col, Button, Card, CardBody } from 'shards-react';
 
-import PageTitle from "../components/common/PageTitle";
-import getCalendarEventsData from "../data/calendar-events-data";
+import PageTitle from '../components/common/PageTitle';
+import getCalendarEventsData from '../data/calendar-events-data';
 
 class Calendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      events: null
+      events: null,
     };
   }
 
@@ -25,13 +18,13 @@ class Calendar extends React.Component {
     const events = getCalendarEventsData();
     this.setState({
       ...this.state,
-      events
+      events,
     });
   }
 
   render() {
     const { events } = this.state;
-    const allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k]);
+    const allViews = Object.keys(BigCalendar.Views).map((k) => BigCalendar.Views[k]);
     const localizer = BigCalendar.momentLocalizer(moment);
 
     return (
@@ -47,12 +40,13 @@ class Calendar extends React.Component {
         <Card className="p-0">
           <CardBody className="py-4">
             <BigCalendar
-                events={events}
-                views={allViews}
-                step={60}
-                showMultiDayTimes
-                defaultDate={new Date()}
-                localizer={localizer} />
+              events={events}
+              views={allViews}
+              step={60}
+              showMultiDayTimes
+              defaultDate={new Date()}
+              localizer={localizer}
+            />
           </CardBody>
         </Card>
       </Container>

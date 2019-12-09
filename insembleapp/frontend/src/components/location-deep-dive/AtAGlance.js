@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Card,
   CardHeader,
@@ -7,13 +7,13 @@ import {
   Col,
   Container,
   ButtonGroup,
-  Button, 
-  Badge
-} from "shards-react";
+  Button,
+  Badge,
+} from 'shards-react';
 
 class AtAGlance extends React.Component {
   render() {
-    const retailer = this.props.match
+    const retailer = this.props.match;
 
     return (
       <Card small className="h-100">
@@ -30,14 +30,13 @@ class AtAGlance extends React.Component {
                 <h6>Customer Relevance</h6>
                 <div>Daytime population, median household income</div>
               </Col>
-              
+
               <Col sm="6">
                 <h6>Space</h6>
                 <div>Sqf, LOD Details, Asking rent</div>
               </Col>
             </Row>
           </Container>
-          
         </CardBody>
       </Card>
     );

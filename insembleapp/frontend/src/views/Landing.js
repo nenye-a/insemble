@@ -1,11 +1,11 @@
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
-import React from "react";
-import { Link, Redirect } from "react-router-dom";
-import { withRouter } from "react-router";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import { login } from '../redux/actions/auth'
+import React from 'react';
+import { Link, Redirect } from 'react-router-dom';
+import { withRouter } from 'react-router';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { login } from '../redux/actions/auth';
 
 import {
   Container,
@@ -18,33 +18,29 @@ import {
   FormGroup,
   FormInput,
   FormCheckbox,
-  Button
-} from "shards-react";
+  Button,
+} from 'shards-react';
 
-import { NavLink } from "react-router-dom";
+import { NavLink } from 'react-router-dom';
 
 class Landing extends React.Component {
   constructor(props) {
     super(props);
-    this.emailInput = React.createRef()
-    this.passwordInput = React.createRef()
+    this.emailInput = React.createRef();
+    this.passwordInput = React.createRef();
   }
 
   static propTypes = {
     login: PropTypes.func.isRequired,
-    isAuthenticated: PropTypes.bool
-  }
+    isAuthenticated: PropTypes.bool,
+  };
 
-  onSubmit = e => {
+  onSubmit = (e) => {
     e.preventDefault();
-    this.props.login(
-      this.emailInput.current.value,
-      this.passwordInput.current.value
-    )
-  }
+    this.props.login(this.emailInput.current.value, this.passwordInput.current.value);
+  };
 
   render() {
-
     if (this.props.isAuthenticated) {
       return <Redirect to="/Find" />;
     }
@@ -58,53 +54,44 @@ class Landing extends React.Component {
                 {/* Logo */}
                 <img
                   className="d-table mx-auto mb-3"
-                  style={{ maxHeight: "25px" }}
-                  src={require("../images/insemble_i.png")}
+                  style={{ maxHeight: '25px' }}
+                  src={require('../images/insemble_i.png')}
                   alt="Retailer Dashboards - Login Template"
                 />
 
                 {/* Title */}
-                <h5 className="d-md-inline text-center mb-4">
-                  RetailSpace.ai
-                </h5>
+                <h5 className="d-md-inline text-center mb-4">RetailSpace.ai</h5>
 
                 <Col>
                   <Row>
                     <Col className="d-flex flex-column justify-content-center align-items-center">
-                      <Button
-                        pill
-                        theme="accent"
-                        tag={Link}
-                        to="/find"
-                      >
+                      <Button pill theme="accent" tag={Link} to="/find">
                         See Insights
-                  </Button>
+                      </Button>
                     </Col>
                     <Col className="d-flex flex-column justify-content-center align-items-center">
-                      <Button
-                        pill
-                        theme="accent"
-                        tag={Link}
-                        to="/login"
-                      >
+                      <Button pill theme="accent" tag={Link} to="/login">
                         Sign In
-                  </Button>
+                      </Button>
                     </Col>
                   </Row>
                 </Col>
-
               </CardBody>
-
             </Card>
           </Col>
         </Row>
       </Container>
-    )
-  };
+    );
+  }
 }
 
-const mapStateToProps = state => ({
-  isAuthenticated: state.auth.isAuthenticated
-})
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
 
-export default withRouter(connect(mapStateToProps, { login })(Landing));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    { login }
+  )(Landing)
+);

@@ -1,11 +1,5 @@
-import React from "react";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
-  FormInput,
-  Button
-} from "shards-react";
+import React from 'react';
+import { InputGroup, InputGroupAddon, InputGroupText, FormInput, Button } from 'shards-react';
 
 const SeamlessInputGroups = () => (
   <div>
@@ -19,11 +13,7 @@ const SeamlessInputGroups = () => (
     </InputGroup>
 
     <InputGroup seamless className="mb-3">
-      <FormInput
-        type="password"
-        value="mySuperSecretPassword"
-        onChange={() => {}}
-      />
+      <FormInput type="password" value="mySuperSecretPassword" onChange={() => {}} />
       <InputGroupAddon type="append">
         <InputGroupText>
           <i className="material-icons">lock</i>

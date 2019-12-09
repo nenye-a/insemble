@@ -1,15 +1,15 @@
-import React from "react";
-import { Nav } from "shards-react";
+import React from 'react';
+import { Nav } from 'shards-react';
 
-import SidebarNavItem from "./SidebarNavItem";
-import { Store } from "../../../flux";
+import SidebarNavItem from './SidebarNavItem';
+import { Store } from '../../../flux';
 
 class SidebarNavItems extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
-      navItems: Store.getSidebarItems()
+      navItems: Store.getSidebarItems(),
     };
 
     this.onChange = this.onChange.bind(this);
@@ -26,7 +26,7 @@ class SidebarNavItems extends React.Component {
   onChange() {
     this.setState({
       ...this.state,
-      navItems: Store.getSidebarItems()
+      navItems: Store.getSidebarItems(),
     });
   }
 
@@ -37,7 +37,7 @@ class SidebarNavItems extends React.Component {
         {items.map((nav, idx) => (
           <div key={idx}>
             <h6 className="main-sidebar__nav-title">{nav.title}</h6>
-            {typeof nav.items !== "undefined" && nav.items.length && (
+            {typeof nav.items !== 'undefined' && nav.items.length && (
               <Nav className="nav--no-borders flex-column">
                 {nav.items.map((item, idx) => (
                   <SidebarNavItem key={idx} item={item} />
@@ -47,7 +47,7 @@ class SidebarNavItems extends React.Component {
           </div>
         ))}
       </div>
-    )
+    );
   }
 }
 

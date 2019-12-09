@@ -1,5 +1,5 @@
-import React from "react";
-import TagsInput from "react-tagsinput";
+import React from 'react';
+import TagsInput from 'react-tagsinput';
 import {
   Alert,
   Container,
@@ -19,25 +19,18 @@ import {
   FormTextarea,
   InputGroup,
   InputGroupAddon,
-  InputGroupText
-} from "shards-react";
+  InputGroupText,
+} from 'shards-react';
 
-import FormSectionTitle from "../components/edit-user-profile/FormSectionTitle";
-import ProfileBackgroundPhoto from "../components/edit-user-profile/ProfileBackgroundPhoto";
+import FormSectionTitle from '../components/edit-user-profile/FormSectionTitle';
+import ProfileBackgroundPhoto from '../components/edit-user-profile/ProfileBackgroundPhoto';
 
 class EditUserProfile extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      tags: [
-        "User Experience",
-        "UI Design",
-        "React JS",
-        "HTML & CSS",
-        "JavaScript",
-        "Bootstrap 4"
-      ]
+      tags: ['User Experience', 'UI Design', 'React JS', 'HTML & CSS', 'JavaScript', 'Bootstrap 4'],
     };
 
     this.handleTagsChange = this.handleTagsChange.bind(this);
@@ -94,11 +87,7 @@ class EditUserProfile extends React.Component {
                           {/* First Name */}
                           <Col md="6" className="form-group">
                             <label htmlFor="firstName">First Name</label>
-                            <FormInput
-                              id="firstName"
-                              value="Sierra"
-                              onChange={() => {}}
-                            />
+                            <FormInput id="firstName" value="Sierra" onChange={() => {}} />
                           </Col>
 
                           {/* Last Name */}
@@ -121,11 +110,7 @@ class EditUserProfile extends React.Component {
                                   <i className="material-icons">&#xE0C8;</i>
                                 </InputGroupText>
                               </InputGroupAddon>
-                              <FormInput
-                                id="userLocation"
-                                value="Remote"
-                                onChange={() => {}}
-                              />
+                              <FormInput id="userLocation" value="Remote" onChange={() => {}} />
                             </InputGroup>
                           </Col>
 
@@ -155,17 +140,12 @@ class EditUserProfile extends React.Component {
                                   <i className="material-icons">&#xE0BE;</i>
                                 </InputGroupText>
                               </InputGroupAddon>
-                              <FormInput
-                                id="emailAddress"
-                                onChange={() => {}}
-                              />
+                              <FormInput id="emailAddress" onChange={() => {}} />
                             </InputGroup>
                           </Col>
 
                           <Col md="6" className="form-group">
-                            <label htmlFor="displayEmail">
-                              Display Email Publicly
-                            </label>
+                            <label htmlFor="displayEmail">Display Email Publicly</label>
                             <FormSelect>
                               <option>Select an Option</option>
                               <option>Yes, display my email.</option>
@@ -177,32 +157,18 @@ class EditUserProfile extends React.Component {
 
                       {/* User Profile Picture */}
                       <Col lg="4">
-                        <label
-                          htmlFor="userProfilePicture"
-                          className="text-center w-100 mb-4"
-                        >
+                        <label htmlFor="userProfilePicture" className="text-center w-100 mb-4">
                           Profile Picture
                         </label>
                         <div className="edit-user-details__avatar m-auto">
-                          <img
-                            src={require("../images/avatars/0.jpg")}
-                            alt="User Avatar"
-                          />
+                          <img src={require('../images/avatars/0.jpg')} alt="User Avatar" />
                           <label className="edit-user-details__avatar__change">
                             <i className="material-icons mr-1">&#xE439;</i>
-                            <FormInput
-                              id="userProfilePicture"
-                              className="d-none"
-                            />
+                            <FormInput id="userProfilePicture" className="d-none" />
                           </label>
                         </div>
-                        <Button
-                          size="sm"
-                          theme="white"
-                          className="d-table mx-auto mt-4"
-                        >
-                          <i className="material-icons">&#xE2C3;</i> Upload
-                          Image
+                        <Button size="sm" theme="white" className="d-table mx-auto mt-4">
+                          <i className="material-icons">&#xE2C3;</i> Upload Image
                         </Button>
                       </Col>
                     </Row>
@@ -212,7 +178,7 @@ class EditUserProfile extends React.Component {
                       <Col md="6" className="form-group">
                         <label htmlFor="userBio">Bio</label>
                         <FormTextarea
-                          style={{ minHeight: "87px" }}
+                          style={{ minHeight: '87px' }}
                           id="userBio"
                           value="I'm a design focused engineer."
                           onChange={() => {}}
@@ -222,10 +188,7 @@ class EditUserProfile extends React.Component {
                       {/* User Tags */}
                       <Col md="6" className="form-group">
                         <label htmlFor="userTags">Tags</label>
-                        <TagsInput
-                          value={this.state.tags}
-                          onChange={this.handleTagsChange}
-                        />
+                        <TagsInput value={this.state.tags} onChange={this.handleTagsChange} />
                       </Col>
                     </Row>
 
@@ -312,10 +275,7 @@ class EditUserProfile extends React.Component {
                               <i className="fab fa-google-plus-g" />
                             </InputGroupText>
                           </InputGroupAddon>
-                          <FormInput
-                            id="socialGooglePlus"
-                            onChange={() => {}}
-                          />
+                          <FormInput id="socialGooglePlus" onChange={() => {}} />
                         </InputGroup>
                       </Col>
                     </Row>
@@ -337,9 +297,8 @@ class EditUserProfile extends React.Component {
                       >
                         Conversations
                         <small className="text-muted form-text">
-                          Sends notification emails with updates for the
-                          conversations you are participating in or if someone
-                          mentions you.
+                          Sends notification emails with updates for the conversations you are
+                          participating in or if someone mentions you.
                         </small>
                       </Col>
                       <Col className="d-flex">
@@ -355,15 +314,10 @@ class EditUserProfile extends React.Component {
 
                     {/* Notifications :: New Projects */}
                     <Row form className="mx-4">
-                      <Col
-                        tag="label"
-                        htmlFor="newProjectsEmailsToggle"
-                        className="col-form-label"
-                      >
+                      <Col tag="label" htmlFor="newProjectsEmailsToggle" className="col-form-label">
                         New Projects
                         <small className="text-muted form-text">
-                          Sends notification emails when you are invited to a
-                          new project.
+                          Sends notification emails when you are invited to a new project.
                         </small>
                       </Col>
                       <Col className="d-flex">
@@ -385,8 +339,8 @@ class EditUserProfile extends React.Component {
                       >
                         Vulnerability Alerts
                         <small className="text-muted form-text">
-                          Sends notification emails when everything goes down
-                          and there's no hope left whatsoever.
+                          Sends notification emails when everything goes down and there's no hope
+                          left whatsoever.
                         </small>
                       </Col>
                       <Col className="d-flex">
@@ -406,9 +360,7 @@ class EditUserProfile extends React.Component {
                     <Row form className="mx-4">
                       <Col className="mb-3">
                         <h6 className="form-text m-0">Change Password</h6>
-                        <p className="form-text text-muted m-0">
-                          Change your current password.
-                        </p>
+                        <p className="form-text text-muted m-0">Change your current password.</p>
                       </Col>
                     </Row>
 
@@ -435,9 +387,7 @@ class EditUserProfile extends React.Component {
 
                       {/* Change Password :: Repeat New Password */}
                       <Col md="4" className="form-group">
-                        <label htmlFor="repeatNewPassword">
-                          Repeat New Password
-                        </label>
+                        <label htmlFor="repeatNewPassword">Repeat New Password</label>
                         <FormInput
                           id="repeatNewPassword"
                           placeholder="Old Password"
@@ -448,11 +398,7 @@ class EditUserProfile extends React.Component {
                   </Form>
                 </CardBody>
                 <CardFooter className="border-top">
-                  <Button
-                    size="sm"
-                    theme="accent"
-                    className="ml-auto d-table mr-3"
-                  >
+                  <Button size="sm" theme="accent" className="ml-auto d-table mr-3">
                     Save Changes
                   </Button>
                 </CardFooter>

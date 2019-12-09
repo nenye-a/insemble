@@ -1,6 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Row, Col } from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Row, Col } from 'shards-react';
 
 const FormSectionTitle = ({ title, description }) => (
   <Row form className="mx-4">
@@ -19,12 +19,12 @@ FormSectionTitle.propTypes = {
   /**
    * The form section's description.
    */
-  description: PropTypes.string
+  description: PropTypes.string,
 };
 
 FormSectionTitle.defaultProps = {
-  title: "Title",
-  description: "Description"
+  title: 'Title',
+  description: 'Description',
 };
 
 export default FormSectionTitle;
