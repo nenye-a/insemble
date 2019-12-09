@@ -1,13 +1,5 @@
-import React from "react";
-import {
-  Row,
-  Col,
-  Form,
-  FormGroup,
-  FormFeedback,
-  FormInput,
-  FormSelect
-} from "shards-react";
+import React from 'react';
+import { Row, Col, Form, FormGroup, FormFeedback, FormInput, FormSelect } from 'shards-react';
 
 const FormValidation = () => (
   <Col sm="12" md="6">
@@ -15,23 +7,11 @@ const FormValidation = () => (
     <Form>
       <Row form>
         <Col md="6" className="form-group">
-          <FormInput
-            value="Vasile"
-            placeholder="First name"
-            required
-            valid
-            onChange={() => {}}
-          />
+          <FormInput value="Vasile" placeholder="First name" required valid onChange={() => {}} />
           <FormFeedback valid>The first name looks good!</FormFeedback>
         </Col>
         <Col md="6" className="form-group">
-          <FormInput
-            value="Catalin"
-            placeholder="Last name"
-            required
-            valid
-            onChange={() => {}}
-          />
+          <FormInput value="Catalin" placeholder="Last name" required valid onChange={() => {}} />
           <FormFeedback valid>The last name looks good!</FormFeedback>
         </Col>
       </Row>

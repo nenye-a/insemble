@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Row,
   Col,
@@ -8,8 +8,8 @@ import {
   FormGroup,
   InputGroup,
   InputGroupAddon,
-  InputGroupText
-} from "shards-react";
+  InputGroupText,
+} from 'shards-react';
 
 const Forms = () => (
   <Col sm="12" md="6">

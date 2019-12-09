@@ -1,21 +1,20 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Container, Row, Col, Nav, Collapse } from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Container, Row, Col, Nav, Collapse } from 'shards-react';
 
-import { Store } from "../../../flux";
-import MenuItem from "./MenuItem";
+import { Store } from '../../../flux';
+import MenuItem from './MenuItem';
 
 class HeaderNavbar extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      menuVisible: false
+      menuVisible: false,
     };
 
     this.onChange = this.onChange.bind(this);
   }
-
 
   componentWillMount() {
     Store.addChangeListener(this.onChange);
@@ -35,7 +34,10 @@ class HeaderNavbar extends React.Component {
   render() {
     const { items } = this.props;
     return (
-      <Collapse className="header-navbar d-lg-flex p-0 bg-white border-top" open={this.state.menuVisible}>
+      <Collapse
+        className="header-navbar d-lg-flex p-0 bg-white border-top"
+        open={this.state.menuVisible}
+      >
         <Container>
           <Row>
             <Col>
@@ -52,12 +54,11 @@ class HeaderNavbar extends React.Component {
   }
 }
 
-
 HeaderNavbar.propTypes = {
   /**
    * The array of header navbar items.
    */
-  items: PropTypes.array
+  items: PropTypes.array,
 };
 
 export default HeaderNavbar;

@@ -1,17 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  Row,
-  Col,
-  ButtonGroup,
-  Button
-} from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Card, CardHeader, CardBody, Row, Col, ButtonGroup, Button } from 'shards-react';
 
-import RangeDatePicker from "../common/RangeDatePicker";
-import Chart from "../../utils/chart";
+import RangeDatePicker from '../common/RangeDatePicker';
+import Chart from '../../utils/chart';
 
 class SalesReport extends React.Component {
   constructor(props) {
@@ -29,15 +21,15 @@ class SalesReport extends React.Component {
         // animation: false,
         tooltips: {
           enabled: false,
-          mode: "index",
-          position: "nearest"
+          mode: 'index',
+          position: 'nearest',
         },
         scales: {
           xAxes: [
             {
               stacked: true,
-              gridLines: false
-            }
+              gridLines: false,
+            },
           ],
           yAxes: [
             {
@@ -45,19 +37,19 @@ class SalesReport extends React.Component {
               ticks: {
                 userCallback(label) {
                   return label > 999 ? `${(label / 1000).toFixed(0)}k` : label;
-                }
-              }
-            }
-          ]
-        }
+                },
+              },
+            },
+          ],
+        },
       },
-      ...this.props.chartOptions
+      ...this.props.chartOptions,
     };
 
     const SalesReportChart = new Chart(this.canvasRef.current, {
-      type: "bar",
+      type: 'bar',
       data: this.props.chartData,
-      options: chartOptions
+      options: chartOptions,
     });
 
     // Generate the chart labels.
@@ -67,9 +59,7 @@ class SalesReport extends React.Component {
     // They can still be triggered on hover.
     const meta = SalesReportChart.getDatasetMeta(0);
     meta.data[0]._model.radius = 0;
-    meta.data[
-      this.props.chartData.datasets[0].data.length - 1
-    ]._model.radius = 0;
+    meta.data[this.props.chartData.datasets[0].data.length - 1]._model.radius = 0;
 
     // Render the chart.
     SalesReportChart.render();
@@ -108,7 +98,7 @@ class SalesReport extends React.Component {
           <canvas
             height="120"
             ref={this.canvasRef}
-            style={{ maxWidth: "100% !important" }}
+            style={{ maxWidth: '100% !important' }}
             className="sales-overview-sales-report"
           />
         </CardBody>
@@ -129,97 +119,46 @@ SalesReport.propTypes = {
   /**
    * The Chart.js options.
    */
-  chartOptions: PropTypes.object
+  chartOptions: PropTypes.object,
 };
 
 SalesReport.defaultProps = {
-  title: "Sales Report",
+  title: 'Sales Report',
   chartData: {
-    labels: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Nov",
-      "Dec"
-    ],
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Nov', 'Dec'],
     datasets: [
       {
-        label: "Profit",
-        fill: "start",
-        data: [
-          28922,
-          25317,
-          23182,
-          32119,
-          11291,
-          8199,
-          25182,
-          22120,
-          10219,
-          8771,
-          12992,
-          8221
-        ],
-        backgroundColor: "rgba(0, 123, 255, 1)",
-        borderColor: "rgba(0, 123, 255, 1)",
-        pointBackgroundColor: "#FFFFFF",
-        pointHoverBackgroundColor: "rgba(0, 123, 255, 1)",
-        borderWidth: 1.5
+        label: 'Profit',
+        fill: 'start',
+        data: [28922, 25317, 23182, 32119, 11291, 8199, 25182, 22120, 10219, 8771, 12992, 8221],
+        backgroundColor: 'rgba(0, 123, 255, 1)',
+        borderColor: 'rgba(0, 123, 255, 1)',
+        pointBackgroundColor: '#FFFFFF',
+        pointHoverBackgroundColor: 'rgba(0, 123, 255, 1)',
+        borderWidth: 1.5,
       },
       {
-        label: "Shipping",
-        fill: "start",
-        data: [
-          2892,
-          2531,
-          2318,
-          3211,
-          1129,
-          819,
-          2518,
-          2212,
-          1021,
-          8771,
-          1299,
-          820
-        ],
-        backgroundColor: "rgba(72, 160, 255, 1)",
-        borderColor: "rgba(72, 160, 255, 1)",
-        pointBackgroundColor: "#FFFFFF",
-        pointHoverBackgroundColor: "rgba(0, 123, 255, 1)",
-        borderWidth: 1.5
+        label: 'Shipping',
+        fill: 'start',
+        data: [2892, 2531, 2318, 3211, 1129, 819, 2518, 2212, 1021, 8771, 1299, 820],
+        backgroundColor: 'rgba(72, 160, 255, 1)',
+        borderColor: 'rgba(72, 160, 255, 1)',
+        pointBackgroundColor: '#FFFFFF',
+        pointHoverBackgroundColor: 'rgba(0, 123, 255, 1)',
+        borderWidth: 1.5,
       },
       {
-        label: "Tax",
-        fill: "start",
-        data: [
-          1400,
-          1250,
-          1150,
-          1600,
-          500,
-          400,
-          1250,
-          1100,
-          500,
-          4000,
-          600,
-          500
-        ],
-        backgroundColor: "rgba(153, 202, 255, 1)",
-        borderColor: "rgba(153, 202, 255, 1)",
-        pointBackgroundColor: "#FFFFFF",
-        pointHoverBackgroundColor: "rgba(0, 123, 255, 1)",
-        borderWidth: 1.5
-      }
-    ]
-  }
+        label: 'Tax',
+        fill: 'start',
+        data: [1400, 1250, 1150, 1600, 500, 400, 1250, 1100, 500, 4000, 600, 500],
+        backgroundColor: 'rgba(153, 202, 255, 1)',
+        borderColor: 'rgba(153, 202, 255, 1)',
+        pointBackgroundColor: '#FFFFFF',
+        pointHoverBackgroundColor: 'rgba(0, 123, 255, 1)',
+        borderWidth: 1.5,
+      },
+    ],
+  },
 };
 
 export default SalesReport;

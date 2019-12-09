@@ -1,9 +1,5 @@
-import Constants from "./constants";
-import Dispatcher from "./dispatcher";
-import Store from "./store";
+import Constants from './constants';
+import Dispatcher from './dispatcher';
+import Store from './store';
 
-export {
-  Constants,
-  Dispatcher,
-  Store
-};
+export { Constants, Dispatcher, Store };

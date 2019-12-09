@@ -1,5 +1,5 @@
-import React from "react";
-import { Row, Col, Button } from "shards-react";
+import React from 'react';
+import { Row, Col, Button } from 'shards-react';
 
 const SmallButtons = () => (
   <Row className="mb-3 mt-2">

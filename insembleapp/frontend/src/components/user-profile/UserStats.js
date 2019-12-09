@@ -1,6 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Card, CardBody, Row, Col, CardFooter, Progress } from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Card, CardBody, Row, Col, CardFooter, Progress } from 'shards-react';
 
 const UserStats = ({ smallStats }) => (
   <Card small className="user-stats mb-4">
@@ -29,12 +29,7 @@ const UserStats = ({ smallStats }) => (
         <Col sm="12" md="6" className="border-top pb-3 pt-2">
           <div className="progress-wrapper">
             <div className="progress-label">Performance</div>
-            <Progress
-              className="progress-sm"
-              theme="success"
-              value="92"
-              striped
-            >
+            <Progress className="progress-sm" theme="success" value="92" striped>
               <span className="progress-value">92%</span>
             </Progress>
           </div>
@@ -48,28 +43,28 @@ UserStats.propTypes = {
   /**
    * The small stats dataset.
    */
-  smallStats: PropTypes.array
+  smallStats: PropTypes.array,
 };
 
 UserStats.defaultProps = {
   smallStats: [
     {
-      title: "Tasks",
-      value: "1128"
+      title: 'Tasks',
+      value: '1128',
     },
     {
-      title: "Completed",
-      value: "72.4%"
+      title: 'Completed',
+      value: '72.4%',
     },
     {
-      title: "Projects",
-      value: "4"
+      title: 'Projects',
+      value: '4',
     },
     {
-      title: "Teams",
-      value: "3"
-    }
-  ]
+      title: 'Teams',
+      value: '3',
+    },
+  ],
 };
 
 export default UserStats;

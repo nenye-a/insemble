@@ -1,4 +1,5 @@
-export default () => [{
+export default () => [
+  {
     id: 0,
     title: 'All Day Event very long title',
     allDay: true,

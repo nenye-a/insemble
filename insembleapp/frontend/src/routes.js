@@ -1,43 +1,51 @@
-import React from "react";
-import { Redirect } from "react-router-dom";
+import React from 'react';
+import { Redirect } from 'react-router-dom';
 
 // Layout Types
-import { DefaultLayout, HeaderNavigation, IconSidebar, LandlordLayout, TenantSpaces, Tenant, LoginLayout } from "./layouts";
+import {
+  DefaultLayout,
+  HeaderNavigation,
+  IconSidebar,
+  LandlordLayout,
+  TenantSpaces,
+  Tenant,
+  LoginLayout,
+} from './layouts';
 
 // Route Views
-import Analytics from "./views/Analytics";
-import Insights from "./views/Insights";
-import Spaces from "./views/Spaces";
-import BlogOverview from "./views/BlogOverview";
-import UserProfile from "./views/UserProfile";
-import UserProfileLite from "./views/UserProfileLite";
-import EditUserProfile from "./views/EditUserProfile";
-import DescribeStore from "./views/DescribeStore";
-import Login from "./views/Login";
-import Landing from "./views/Landing";
-import Existing from "./views/Existing";
-import Feedback from "./views/Feedback";
-import Explain from "./views/Explain";
-import Verify from "./views/Verify";
-import Find from "./views/Find";
-import Register from "./views/Register";
-import ForgotPassword from "./views/ForgotPassword";
-import ChangePassword from "./views/ChangePassword";
-import FileManagerList from "./views/FileManagerList";
-import Explore from "./views/Explore";
-import TenantDeepDive from "./views/TenantDeepDive";
-import LocationDeepDiveDemo from "./views/LocationDeepDiveDemo";
-import Matches from "./views/Matches";
-import TransactionHistory from "./views/TransactionHistory";
-import Calendar from "./views/Calendar";
-import AddNewPost from "./views/AddNewPost";
-import Errors from "./views/Errors";
-import NoDeals from "./views/NoDeals";
-import ComponentsOverview from "./views/ComponentsOverview";
-import Tables from "./views/Tables";
-import BlogPosts from "./views/BlogPosts";
-import HeaderNav from "./views/HeaderNavigation";
-import IconSidebarView from "./views/IconSidebar";
+import Analytics from './views/Analytics';
+import Insights from './views/Insights';
+import Spaces from './views/Spaces';
+import BlogOverview from './views/BlogOverview';
+import UserProfile from './views/UserProfile';
+import UserProfileLite from './views/UserProfileLite';
+import EditUserProfile from './views/EditUserProfile';
+import DescribeStore from './views/DescribeStore';
+import Login from './views/Login';
+import Landing from './views/Landing';
+import Existing from './views/Existing';
+import Feedback from './views/Feedback';
+import Explain from './views/Explain';
+import Verify from './views/Verify';
+import Find from './views/Find';
+import Register from './views/Register';
+import ForgotPassword from './views/ForgotPassword';
+import ChangePassword from './views/ChangePassword';
+import FileManagerList from './views/FileManagerList';
+import Explore from './views/Explore';
+import TenantDeepDive from './views/TenantDeepDive';
+import LocationDeepDiveDemo from './views/LocationDeepDiveDemo';
+import Matches from './views/Matches';
+import TransactionHistory from './views/TransactionHistory';
+import Calendar from './views/Calendar';
+import AddNewPost from './views/AddNewPost';
+import Errors from './views/Errors';
+import NoDeals from './views/NoDeals';
+import ComponentsOverview from './views/ComponentsOverview';
+import Tables from './views/Tables';
+import BlogPosts from './views/BlogPosts';
+import HeaderNav from './views/HeaderNavigation';
+import IconSidebarView from './views/IconSidebar';
 
 const BlankIconSidebarLayout = ({ children }) => (
   <IconSidebar noNavbar noFooter>
@@ -47,175 +55,175 @@ const BlankIconSidebarLayout = ({ children }) => (
 
 export default [
   {
-    path: "/",
+    path: '/',
     exact: true,
     layout: LoginLayout,
     // component: () => <Redirect to="/start" />
-    component: Landing
+    component: Landing,
   },
   {
-    path: "/insights",
+    path: '/insights',
     layout: DefaultLayout,
-    component: Insights
+    component: Insights,
   },
   {
-    path: "/landlord",
+    path: '/landlord',
     layout: LandlordLayout,
-    component: Insights
+    component: Insights,
   },
   {
-    path: "/analytics",
+    path: '/analytics',
     layout: DefaultLayout,
-    component: Analytics
+    component: Analytics,
   },
   {
-    path: "/spaces",
+    path: '/spaces',
     layout: Tenant,
-    component: Spaces
+    component: Spaces,
   },
   {
-    path: "/blog-overview",
+    path: '/blog-overview',
     layout: DefaultLayout,
-    component: BlogOverview
+    component: BlogOverview,
   },
   {
-    path: "/user-profile",
+    path: '/user-profile',
     layout: DefaultLayout,
-    component: UserProfile
+    component: UserProfile,
   },
   {
-    path: "/user-profile-lite",
+    path: '/user-profile-lite',
     layout: DefaultLayout,
-    component: UserProfileLite
+    component: UserProfileLite,
   },
   {
-    path: "/edit-user-profile",
+    path: '/edit-user-profile',
     layout: DefaultLayout,
-    component: EditUserProfile
+    component: EditUserProfile,
   },
   {
-    path: "/describe-store",
+    path: '/describe-store',
     layout: Tenant,
-    component: DescribeStore
+    component: DescribeStore,
   },
   {
-    path: "/login",
+    path: '/login',
     layout: LoginLayout,
-    component: Login
+    component: Login,
   },
   {
-    path: "/find",
+    path: '/find',
     layout: Tenant,
-    component: Find
+    component: Find,
   },
   {
-    path: "/existing",
+    path: '/existing',
     layout: Tenant,
-    component: Existing
+    component: Existing,
   },
   {
-    path: "/feedback",
+    path: '/feedback',
     layout: LoginLayout,
-    component: Feedback
+    component: Feedback,
   },
   {
-    path: "/explain",
+    path: '/explain',
     layout: LoginLayout,
-    component: Explain
+    component: Explain,
   },
   {
-    path: "/verify",
+    path: '/verify',
     layout: LoginLayout,
-    component: Verify
+    component: Verify,
   },
   {
-    path: "/register",
+    path: '/register',
     layout: LoginLayout,
-    component: Register
+    component: Register,
   },
   {
-    path: "/forgot-password",
+    path: '/forgot-password',
     layout: LoginLayout,
-    component: ForgotPassword
+    component: ForgotPassword,
   },
   {
-    path: "/change-password",
+    path: '/change-password',
     layout: BlankIconSidebarLayout,
-    component: ChangePassword
+    component: ChangePassword,
   },
   {
-    path: "/file-manager-list",
+    path: '/file-manager-list',
     layout: DefaultLayout,
-    component: FileManagerList
+    component: FileManagerList,
   },
   {
-    path: "/explore",
+    path: '/explore',
     layout: LandlordLayout,
-    component: Explore
+    component: Explore,
   },
   {
-    path: "/tenant-deep-dive",
+    path: '/tenant-deep-dive',
     layout: HeaderNavigation,
-    component: TenantDeepDive
+    component: TenantDeepDive,
   },
   {
-    path: "/location-deep-dive-demo",
+    path: '/location-deep-dive-demo',
     layout: Tenant,
-    component: LocationDeepDiveDemo
+    component: LocationDeepDiveDemo,
   },
   {
-    path: "/matches",
+    path: '/matches',
     layout: LandlordLayout,
-    component: Matches
+    component: Matches,
   },
   {
-    path: "/transaction-history",
+    path: '/transaction-history',
     layout: DefaultLayout,
-    component: TransactionHistory
+    component: TransactionHistory,
   },
   {
-    path: "/calendar",
+    path: '/calendar',
     layout: DefaultLayout,
-    component: Calendar
+    component: Calendar,
   },
   {
-    path: "/add-new-post",
+    path: '/add-new-post',
     layout: DefaultLayout,
-    component: AddNewPost
+    component: AddNewPost,
   },
   {
-    path: "/errors",
+    path: '/errors',
     layout: BlankIconSidebarLayout,
-    component: Errors
+    component: Errors,
   },
   {
-    path: "/no-deals",
+    path: '/no-deals',
     layout: LandlordLayout,
-    component: NoDeals
+    component: NoDeals,
   },
   {
-    path: "/components-overview",
+    path: '/components-overview',
     layout: DefaultLayout,
-    component: ComponentsOverview
+    component: ComponentsOverview,
   },
   {
-    path: "/tables",
+    path: '/tables',
     layout: DefaultLayout,
-    component: Tables
+    component: Tables,
   },
   {
-    path: "/blog-posts",
+    path: '/blog-posts',
     layout: DefaultLayout,
-    component: BlogPosts
+    component: BlogPosts,
   },
   {
-    path: "/header-navigation",
+    path: '/header-navigation',
     layout: HeaderNavigation,
-    component: HeaderNav
+    component: HeaderNav,
   },
   {
-    path: "/icon-sidebar-nav",
+    path: '/icon-sidebar-nav',
     layout: IconSidebar,
-    component: IconSidebarView
-  }
+    component: IconSidebarView,
+  },
 ];

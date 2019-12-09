@@ -1,6 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Card, CardHeader, CardBody, Container, Row, Col } from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Card, CardHeader, CardBody, Container, Row, Col } from 'shards-react';
 
 const UserTeams = ({ title, teams }) => (
   <Card small className="user-teams mb-4">
@@ -34,28 +34,28 @@ UserTeams.propTypes = {
   /**
    * The teams dataset.
    */
-  teams: PropTypes.array
+  teams: PropTypes.array,
 };
 
 UserTeams.defaultProps = {
-  title: "Teams",
+  title: 'Teams',
   teams: [
     {
-      image: require("../../images/user-profile/team-thumb-1.png"),
-      name: "Team Edison",
-      members: "21 Members"
+      image: require('../../images/user-profile/team-thumb-1.png'),
+      name: 'Team Edison',
+      members: '21 Members',
     },
     {
-      image: require("../../images/user-profile/team-thumb-2.png"),
-      name: "Team Shelby",
-      members: "21 Members"
+      image: require('../../images/user-profile/team-thumb-2.png'),
+      name: 'Team Shelby',
+      members: '21 Members',
     },
     {
-      image: require("../../images/user-profile/team-thumb-3.png"),
-      name: "Team Dante",
-      members: "21 Members"
-    }
-  ]
+      image: require('../../images/user-profile/team-thumb-3.png'),
+      name: 'Team Dante',
+      members: '21 Members',
+    },
+  ],
 };
 
 export default UserTeams;

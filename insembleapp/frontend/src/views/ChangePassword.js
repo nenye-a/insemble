@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Container,
   Row,
@@ -8,8 +8,8 @@ import {
   Form,
   FormGroup,
   FormInput,
-  Button
-} from "shards-react";
+  Button,
+} from 'shards-react';
 
 const ChangePassword = () => (
   <Container fluid className="main-content-container h-100 px-4">
@@ -20,14 +20,12 @@ const ChangePassword = () => (
             {/* Logo */}
             <img
               className="auth-form__logo d-table mx-auto mb-3"
-              src={require("../images/shards-dashboards-logo.svg")}
+              src={require('../images/shards-dashboards-logo.svg')}
               alt="Retailer Dashboards - Change Password Template"
             />
 
             {/* Title */}
-            <h5 className="auth-form__title text-center mb-4">
-              Change Password
-            </h5>
+            <h5 className="auth-form__title text-center mb-4">Change Password</h5>
 
             {/* Form Fields */}
             <Form>
@@ -49,12 +47,7 @@ const ChangePassword = () => (
                   autoComplete="new-password"
                 />
               </FormGroup>
-              <Button
-                pill
-                theme="accent"
-                className="d-table mx-auto"
-                type="submit"
-              >
+              <Button pill theme="accent" className="d-table mx-auto" type="submit">
                 Change Password
               </Button>
             </Form>
