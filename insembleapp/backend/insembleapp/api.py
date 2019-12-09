@@ -190,6 +190,7 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
         else:
             return Response({"id": result.id}, status=status.HTTP_202_ACCEPTED)
 
+    # worker tas to generate map locations
     @staticmethod
     @celery_app.task
     def create_worker(address, place_type):
@@ -198,8 +199,6 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
         serializer = MapSerializer(matches, many=True)
 
         return serializer.data
-
-
 
 # VIEW AND PROVIDE TENANT MATCHES FOR A VENUE
 class TenantMatchesViewSet(viewsets.ViewSet):
@@ -328,7 +327,18 @@ class CategoryMapAPI(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        map_points = return_matches(serializer.data)
+        # map_points = return_matches(serializer.data)
+        celery_app.register_task(self.post_worker)
+        result = self.post_worker.delay(serializer.data)
 
+        if result.ready():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"id": result.id}, status=status.HTTP_202_ACCEPTED)
+
+    @staticmethod
+    @celery_app.task
+    def post_worker(data):
+        map_points = return_matches(data)
         serializer = MapSerializer(map_points, many=True)
-        return Response(serializer.data)
+        return serializer.data

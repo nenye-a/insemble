@@ -12,8 +12,6 @@ from mongo_connect import Connect # ignore errors, works with Django run serfver
 import location_methods as lm # ignore errors, works with Django run server
 import location_builder as lb
 
-from insembleapp.celery import app as celery_app
-
 class PairedLocation(object):
 
     client = Connect.get_connection()
@@ -148,7 +146,6 @@ class MapLocation(PairedLocation):
         self.map_rating = map_rating
 
     @staticmethod
-    @celery_app.task
     def get_tenant_matches(address, place_type):
         return [MapLocation.convert_db_item(x) for x in lm.generate_tenant_matches(address, place_type)]
 

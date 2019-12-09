@@ -8,7 +8,6 @@ import {
     LOCATION_CLEAR
 } from '../actions/types'
 
-
 // LOAD LOCATION
 export const getLocation = (requestUrl) => (dispatch) => {
 
@@ -56,94 +55,65 @@ export const loadMap = (hasLocation=false, income=0, categories=[]) => (dispatch
     // map is loading
     dispatch({type: MAP_LOADING})
 
-    if(hasLocation || getState().space.hasLocation) {
-        
-        const address = getState().space.location.address;
-        fetch('/api/lmatches/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                address
-            })
-        })
-        .then(res => {
-            if(res.status == 200) {
-                res.json().then(data => {
-                    dispatch({
-                        type: MAP_LOADED,
-                        payload: data
-                    });
-                })
-            }  else if(res.status == 202) {
-                res.json().then(data => {
-                    console.log("Does this do anythin ?")
-                    pingMapApi(data.id, dispatch)
-                    console.log("Nothing???")
-                    // const result = pingMapApi(data.id)
-                    // if(result) {
-                    //     console.log("Do we ever get here????")
-                    //     dispatch({
-                    //         type: MAP_LOADED,
-                    //         payload: result
-                    //     })
-                    // }
-                })
-                console.log("REACHED HERE NOOOOOOOO")
+    // config for post request
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
 
-            } else {
-                console.log(res.status + " " + res.statusText);
+    var body = null;
+    var apiRequest = '';
+    
+    if(hasLocation || getState().space.hasLocation) {
+        const address = getState().space.location.address;
+        apiRequest = '/api/lmatches/';
+        body = JSON.stringify({
+            address
+        })
+    } else {
+        apiRequest = '/api/category/'
+        body = JSON.stringify({
+            income,
+            categories
+        })
+    }
+
+    fetch(apiRequest, {
+        method: 'POST',
+        headers: config.headers,
+        body
+    })
+    .then(res => {
+        // if response status is ready, return the heatmap and update redux state
+        if(res.status == 200) {
+            res.json().then(data => {
                 dispatch({
-                    type: MAP_ERROR,
-                })
-            }
-        }).catch(err => {
-            console.log(error);
+                    type: MAP_LOADED,
+                    payload: data
+                });
+            })
+        }  
+        // if successful but not ready - ping API with returned until it's ready
+        else if(res.status == 202) { 
+            res.json().then(data => {
+                pingMapApi(data.id, dispatch)
+            })
+        } 
+        
+        // otherwise - raise error
+        else {
+            console.log(res.status + " " + res.statusText);
             dispatch({
                 type: MAP_ERROR,
             })
-        })
-    } else {
-        // TODO: implement case of loading map without address.
-        
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            }
         }
-        
-        const body = JSON.stringify({
-            income,
-            categories
-        });
-
-        fetch('/api/category/', {
-            method: 'POST',
-            headers: config.headers,
-            body
+    }).catch(err => {
+        console.log(error);
+        dispatch({
+            type: MAP_ERROR,
         })
-        .then(res => {
-            if(res.ok) {
-                res.json().then(data => {
-                    dispatch({
-                        type: MAP_LOADED,
-                        payload: data
-                    });
-                })
-            } else {
-                console.log(res.status + " " + res.statusText)
-                dispatch({
-                    type: MAP_ERROR
-                });
-            }
-        })
-        .catch(err => {
-            console.log(err)
-            dispatch({
-                type: MAP_ERROR
-            });
-        })
-    
-    }
+    })
 }
 
 const pingMapApi = (id, dispatch) => {
