@@ -7,18 +7,17 @@ import LandlordSidebar from "..DELETED_BASE64_STRING";
 import MainFooter from "../components/layout/MainFooter";
 
 const LoginLayout = ({ children, noNavbar, noFooter }) => (
-  <Container fluid className="icon-sidebar-nav">
+  // <Container fluid>
     <Row>
       <Col
-        className="main-content"
-        
+        className="main-content"     
         sm="12"
         tag="main"
       >
         {children}
       </Col>
     </Row>
-  </Container>
+  // </Container>
 );
 
 LoginLayout.propTypes = {
