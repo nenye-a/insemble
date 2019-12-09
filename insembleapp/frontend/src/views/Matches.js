@@ -1,4 +1,4 @@
-/* eslint jsx-a11y/anchor-is-valid: 0 */
+/* eslint-disable jsx-a11y/anchor-is-valid, jsx-a11y/anchor-has-content */
 
 import React from 'react';
 import {

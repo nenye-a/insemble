@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import {
   ListGroup,
@@ -57,7 +58,7 @@ const CompleteFormExample = () => (
               </Col>
               <Col md="12" className="form-group">
                 <FormCheckbox>
-                  {/* eslint-disable-next-line */}I agree with your <a href="#">Privacy Policy</a>.
+                  I agree with your <a href="#">Privacy Policy</a>.
                 </FormCheckbox>
               </Col>
             </Row>
