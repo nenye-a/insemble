@@ -21,8 +21,6 @@ import {
   Button
 } from "shards-react";
 
-import { NavLink } from "react-router-dom";
-
 class Landing extends React.Component {
   constructor(props) {
     super(props);
@@ -30,7 +28,7 @@ class Landing extends React.Component {
     this.passwordInput = React.createRef()
   }
 
-  static PropTypes = {
+  static propTypes = {
     login: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool
   }
@@ -50,55 +48,30 @@ class Landing extends React.Component {
     }
 
     return (
-      <Container fluid className="main-content-container h-100 px-4">
-        <Row noGutters className="h-100">
-          <Col lg="4" md="6" className="mx-auto my-auto">
-            <Card>
-              <CardBody className="d-flex flex-column">
-                {/* Logo */}
-                <img
-                  className="d-table mx-auto mb-3"
-                  style={{ maxHeight: "25px" }}
-                  src={require("../images/insemble_i.png")}
-                  alt="Retailer Dashboards - Login Template"
-                />
-
-                {/* Title */}
-                <h5 className="d-md-inline text-center mb-4">
-                  RetailSpace.ai
-                </h5>
-
-                <Col>
-                  <Row>
-                    <Col className="d-flex flex-column justify-content-center align-items-center">
-                      <Button
-                        pill
-                        theme="accent"
-                        tag={Link}
-                        to="/find"
-                      >
-                        See Insights
-                  </Button>
-                    </Col>
-                    <Col className="d-flex flex-column justify-content-center align-items-center">
-                      <Button
-                        pill
-                        theme="accent"
-                        tag={Link}
-                        to="/login"
-                      >
-                        Sign In
-                  </Button>
-                    </Col>
-                  </Row>
-                </Col>
-
-              </CardBody>
-
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+      <header className="masthead">
+        <div className="container h-100">
+          <div className="row h-100 align-items-center justify-content-center text-center">
+            <div className="col-lg-10 align-self-end">
+              <h1 className="text-uppercase text-white">Insemble.App</h1>
+              <hr className="divider my-4"/>
+            </div>
+            <div className="col-lg-8 align-self-baseline">
+              <p className="text-white-75 font-weight-light mb-5">Instant Store or Retaurant Location Recommendaitons</p>
+              <Button
+                    pill
+                    theme="accent"
+                    tag={Link}
+                    to="/find"
+                  >
+                    See Insights
+              </Button>
+              {/* <div className="card bg-dark text-white">
+                <img className="card-img" src="..." alt="Card image"/>
+              </div> */}
+            </div>
+          </div>
+        </div>
+      </header>
     )
   };
 }
