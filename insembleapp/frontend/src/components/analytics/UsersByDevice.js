@@ -1,17 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Row,
-  Col,
-  FormSelect
-} from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Card, CardHeader, CardBody, CardFooter, Row, Col, FormSelect } from 'shards-react';
 
-import colors from "../../utils/colors";
-import Chart from "../../utils/chart";
+import colors from '../../utils/colors';
+import Chart from '../../utils/chart';
 
 class UsersByDevice extends React.Component {
   constructor(props) {
@@ -22,20 +14,20 @@ class UsersByDevice extends React.Component {
 
   componentDidMount() {
     const chartConfig = {
-      type: "doughnut",
+      type: 'doughnut',
       options: {
         ...{
           legend: false,
           cutoutPercentage: 80,
           tooltips: {
             enabled: false,
-            mode: "index",
-            position: "nearest"
-          }
+            mode: 'index',
+            position: 'nearest',
+          },
         },
-        ...this.props.chartOptions
+        ...this.props.chartOptions,
       },
-      data: this.props.chartData
+      data: this.props.chartData,
     };
 
     new Chart(this.canvasRef.current, chartConfig);
@@ -84,7 +76,7 @@ class UsersByDevice extends React.Component {
               <FormSelect
                 size="sm"
                 value="last-week"
-                style={{ maxWidth: "130px" }}
+                style={{ maxWidth: '130px' }}
                 onChange={() => {}}
               >
                 <option value="last-week">Last Week</option>
@@ -108,7 +100,7 @@ class UsersByDevice extends React.Component {
   getParsedLabels() {
     const { chartData } = this.props;
 
-    if (!chartData || typeof chartData.labels === "undefined") {
+    if (!chartData || typeof chartData.labels === 'undefined') {
       return [];
     }
 
@@ -119,7 +111,7 @@ class UsersByDevice extends React.Component {
         title: label,
         icon: dataset.icons[idx],
         iconColor: dataset.backgroundColor[idx],
-        value: dataset.data[idx]
+        value: dataset.data[idx],
       };
     });
   }
@@ -141,15 +133,15 @@ UsersByDevice.propTypes = {
   /**
    * The Chart.js config.
    */
-  chartConfig: PropTypes.object
+  chartConfig: PropTypes.object,
 };
 
 UsersByDevice.defaultProps = {
-  title: "Users by Device",
+  title: 'Users by Device',
   chartConfig: Object.create(null),
   chartOptions: Object.create(null),
   chartData: {
-    labels: ["Desktop", "Tablet", "Mobile"],
+    labels: ['Desktop', 'Tablet', 'Mobile'],
     datasets: [
       {
         hoverBorderColor: colors.white.toRGBA(1),
@@ -157,16 +149,16 @@ UsersByDevice.defaultProps = {
         icons: [
           '<i class="material-icons">&#xE30B;</i>',
           '<i class="material-icons">&#xE32F;</i>',
-          '<i class="material-icons">&#xE325;</i>'
+          '<i class="material-icons">&#xE325;</i>',
         ],
         backgroundColor: [
           colors.primary.toRGBA(0.9),
           colors.primary.toRGBA(0.5),
-          colors.primary.toRGBA(0.3)
-        ]
-      }
-    ]
-  }
+          colors.primary.toRGBA(0.3),
+        ],
+      },
+    ],
+  },
 };
 
 export default UsersByDevice;

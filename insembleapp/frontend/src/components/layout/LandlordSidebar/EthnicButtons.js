@@ -1,5 +1,5 @@
-import React from "react";
-import { Row, Col, Button } from "shards-react";
+import React from 'react';
+import { Row, Col, Button } from 'shards-react';
 
 const EthnicButtons = () => (
   <Row className="mt-2 mx-auto">

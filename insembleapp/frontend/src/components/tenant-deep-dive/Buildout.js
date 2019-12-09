@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Card,
   CardHeader,
@@ -7,15 +7,11 @@ import {
   Col,
   Container,
   ButtonGroup,
-  Button, 
-  Badge
-} from "shards-react";
+  Button,
+  Badge,
+} from 'shards-react';
 
 class Buildout extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { title } = this.props;
 
@@ -34,14 +30,13 @@ class Buildout extends React.Component {
                 <h6>Space Requirements</h6>
                 <div>2500 Square feet, 12' ceilings, ADA Compliant Bathrooms...</div>
               </Col>
-              
+
               <Col sm="6">
                 <h6>Equipment</h6>
                 <div>Fume hood, Grease Trap, Industrial Freezer...</div>
               </Col>
             </Row>
           </Container>
-          
         </CardBody>
       </Card>
     );
@@ -49,7 +44,7 @@ class Buildout extends React.Component {
 }
 
 Buildout.defaultProps = {
-  title: "Physical Requirements",
+  title: 'Physical Requirements',
 };
 
 export default Buildout;

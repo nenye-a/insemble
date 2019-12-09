@@ -1,21 +1,18 @@
-const path = require('path');
-
 module.exports = {
-  extends: 'vinta/recommended',
-  rules: {
-    'jest/prefer-inline-snapshots': ['off'],
-  },
+  extends: 'react-app',
+  plugins: ['babel', 'jest', 'eslint-comments', 'react-hooks'],
   env: {
-    es6: true,
     browser: true,
-    jest: true
+    es6: true,
+    jest: true,
+  },
+  rules: {
+    // TODO: Re-enable the following rule after we fix the code.
+    'no-unused-vars': 0,
   },
   settings: {
-    'import/resolver': {
-      webpack: {
-        config: path.join(__dirname, '/webpack.local.config.js'),
-        'config-index': 1
-      }
-    }
-  }
-}
+    react: {
+      version: 'detect',
+    },
+  },
+};

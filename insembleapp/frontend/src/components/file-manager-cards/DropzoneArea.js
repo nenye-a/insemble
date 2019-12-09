@@ -1,7 +1,7 @@
-import React from "react";
-import classNames from "classnames";
-import Dropzone from "react-dropzone";
-import { Row } from "shards-react";
+import React from 'react';
+import classNames from 'classnames';
+import Dropzone from 'react-dropzone';
+import { Row } from 'shards-react';
 
 class DropzoneArea extends React.Component {
   constructor(props) {
@@ -14,7 +14,7 @@ class DropzoneArea extends React.Component {
    * Mock method to handle the file(s) drop action.
    */
   handleDrop(val) {
-    alert(`You've dropped ${val.length} file${val.length > 1 ? "s" : ""}`);
+    alert(`You've dropped ${val.length} file${val.length > 1 ? 's' : ''}`);
   }
 
   render() {
@@ -26,15 +26,15 @@ class DropzoneArea extends React.Component {
               return (
                 <div
                   {...getRootProps()}
-                  className={classNames("dropzone", {
-                    "dropzone--isActive": isDragActive
+                  className={classNames('dropzone', {
+                    'dropzone--isActive': isDragActive,
                   })}
                 >
                   <input {...getInputProps()} />
                   <p className="m-0">
                     {isDragActive
-                      ? "Drop files here..."
-                      : "Try dropping some files here, or click to select files to upload."}
+                      ? 'Drop files here...'
+                      : 'Try dropping some files here, or click to select files to upload.'}
                   </p>
                 </div>
               );

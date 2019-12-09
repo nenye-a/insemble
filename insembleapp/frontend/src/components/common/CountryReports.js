@@ -1,14 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Col,
-  Row,
-  FormSelect
-} from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Card, CardHeader, CardBody, CardFooter, Col, Row, FormSelect } from 'shards-react';
 
 class CountryReports extends React.Component {
   constructor(props) {
@@ -40,7 +32,7 @@ class CountryReports extends React.Component {
             ref={this.mapRef}
             width="100%"
             height="100%"
-            style={{ width: "100%", height: "180px" }}
+            style={{ width: '100%', height: '180px' }}
           />
 
           {/* Countries Table List */}
@@ -49,11 +41,7 @@ class CountryReports extends React.Component {
               {countries.map((country, idx) => (
                 <tr key={idx}>
                   <td>
-                    <img
-                      className="country-flag mr-1"
-                      src={country.flag}
-                      alt={country.title}
-                    />
+                    <img className="country-flag mr-1" src={country.flag} alt={country.title} />
                     {country.title}
                   </td>
                   <td className="text-right">{country.visitorsAmount}</td>
@@ -71,7 +59,7 @@ class CountryReports extends React.Component {
               <FormSelect
                 size="sm"
                 value="last-week"
-                style={{ maxWidth: "130px" }}
+                style={{ maxWidth: '130px' }}
                 onChange={() => {}}
               >
                 <option value="last-week">Last Week</option>
@@ -94,7 +82,7 @@ class CountryReports extends React.Component {
 
   createGoogleMaps() {
     if (window.__SDPGoogleChartLoaded__) {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         resolve();
       });
     }
@@ -102,9 +90,9 @@ class CountryReports extends React.Component {
     window.__SDPGoogleChartLoaded__ = true;
 
     return new Promise((resolve, reject) => {
-      const gmap = document.createElement("script");
-      gmap.src = "https://www.gstatic.com/charts/loader.js";
-      gmap.type = "text/javascript";
+      const gmap = document.createElement('script');
+      gmap.src = 'https://www.gstatic.com/charts/loader.js';
+      gmap.type = 'text/javascript';
       gmap.onload = resolve;
       gmap.onerror = reject;
       document.body.appendChild(gmap);
@@ -114,9 +102,9 @@ class CountryReports extends React.Component {
   initCountriesMap() {
     /* global google */
 
-    google.charts.load("current", {
-      packages: ["geochart"],
-      mapsApiKey: "DELETED_GOOGLE_API_KEY"
+    google.charts.load('current', {
+      packages: ['geochart'],
+      mapsApiKey: 'DELETED_GOOGLE_API_KEY',
     });
 
     google.charts.setOnLoadCallback(() => {
@@ -124,10 +112,10 @@ class CountryReports extends React.Component {
 
       const options = {
         colorAxis: {
-          colors: ["#B9C2D4", "#E4E8EF"]
+          colors: ['#B9C2D4', '#E4E8EF'],
         },
         legend: false,
-        width: "100%"
+        width: '100%',
       };
 
       const chart = new google.visualization.GeoChart(this.mapRef.current);
@@ -137,7 +125,7 @@ class CountryReports extends React.Component {
       }
 
       drawGeochart();
-      window.addEventListener("resize", drawGeochart);
+      window.addEventListener('resize', drawGeochart);
     });
   }
 }
@@ -154,44 +142,44 @@ CountryReports.propTypes = {
   /**
    * The map data.
    */
-  mapsData: PropTypes.array
+  mapsData: PropTypes.array,
 };
 
 CountryReports.defaultProps = {
-  title: "Users by Country",
+  title: 'Users by Country',
   countries: [
     {
-      flag: require("../../images/flags/flag-us.png"),
-      title: "United States",
-      visitorsAmount: "12,291",
-      visitorsPercentage: "23.32%"
+      flag: require('../../images/flags/flag-us.png'),
+      title: 'United States',
+      visitorsAmount: '12,291',
+      visitorsPercentage: '23.32%',
     },
     {
-      flag: require("../../images/flags/flag-uk.png"),
-      title: "United Kingdom",
-      visitorsAmount: "11,192",
-      visitorsPercentage: "18.8%"
+      flag: require('../../images/flags/flag-uk.png'),
+      title: 'United Kingdom',
+      visitorsAmount: '11,192',
+      visitorsPercentage: '18.8%',
     },
     {
-      flag: require("../../images/flags/flag-au.png"),
-      title: "Australia",
-      visitorsAmount: "9,291",
-      visitorsPercentage: "12.3%"
+      flag: require('../../images/flags/flag-au.png'),
+      title: 'Australia',
+      visitorsAmount: '9,291',
+      visitorsPercentage: '12.3%',
     },
     {
-      flag: require("../../images/flags/flag-jp.png"),
-      title: "Japan",
-      visitorsAmount: "2,291",
-      visitorsPercentage: "8.14%"
-    }
+      flag: require('../../images/flags/flag-jp.png'),
+      title: 'Japan',
+      visitorsAmount: '2,291',
+      visitorsPercentage: '8.14%',
+    },
   ],
   mapsData: [
-    ["Country", "Users"],
-    ["United States", 12219],
-    ["United Kingdom", 11192],
-    ["Australia", 9291],
-    ["Japan", 2291]
-  ]
+    ['Country', 'Users'],
+    ['United States', 12219],
+    ['United Kingdom', 11192],
+    ['Australia', 9291],
+    ['Japan', 2291],
+  ],
 };
 
 export default CountryReports;

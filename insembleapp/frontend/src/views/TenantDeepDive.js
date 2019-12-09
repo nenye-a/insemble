@@ -1,6 +1,6 @@
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
-import React from "react";
+import React from 'react';
 import {
   Container,
   Row,
@@ -10,51 +10,61 @@ import {
   CardBody,
   CardFooter,
   Badge,
-  Button
-} from "shards-react";
+  Button,
+} from 'shards-react';
 
-import AtAGlance from "../components/tenant-deep-dive/AtAGlance";
-import YourSite from "../components/tenant-deep-dive/YourSite";
-import Buildout from "../components/tenant-deep-dive/Buildout";
-import About from "../components/tenant-deep-dive/About";
-import PageTitle from "../components/common/PageTitle";
-import MapContainer from "./MapContainer";
+import AtAGlance from '../components/tenant-deep-dive/AtAGlance';
+import YourSite from '../components/tenant-deep-dive/YourSite';
+import Buildout from '../components/tenant-deep-dive/Buildout';
+import About from '../components/tenant-deep-dive/About';
+import PageTitle from '../components/common/PageTitle';
+import MapContainer from './MapContainer';
 import Iframe from 'react-iframe';
-import RetailerSite from "../components/tenant-deep-dive/RetailerSite";
+import RetailerSite from '../components/tenant-deep-dive/RetailerSite';
 
 class TenantDeepDive extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      pageList: ["whatever"]
-      };
+      pageList: ['whatever'],
+    };
   }
 
-  render(){
+  render() {
     //console.log(this.props.location.match)
-    const retailer = this.props.location.match
+    const retailer = this.props.location.match;
     // const {
     //   pageList
     // } = this.state;
-    
+
     return (
       <Container fluid className="main-content-container px-4">
         {/* TODO: Change los angeles from static input  */}
-        <Iframe url={"https://www.google.com/maps/embed/v1/search?key=DELETED_GOOGLE_API_KEY&q="+retailer.name.split(" ").join("+")+"+Los+Angeles"}
-        width="100%"
-        height="300px"
-        id="myId"
-        className="mx-auto"
-        display="initial"
-        position="relative"/>
+        <Iframe
+          url={
+            'https://www.google.com/maps/embed/v1/search?key=DELETED_GOOGLE_API_KEY&q=' +
+            retailer.name.split(' ').join('+') +
+            '+Los+Angeles'
+          }
+          width="100%"
+          height="300px"
+          id="myId"
+          className="mx-auto"
+          display="initial"
+          position="relative"
+        />
 
         {/* Page Header */}
         <Row noGutters className="page-header py-4">
           <div className="user-details__avatar" position="absolute" top="30">
-            <img src={retailer.icon} alt={"Coffe Shop"} />
+            <img src={retailer.icon} alt={'Coffe Shop'} />
           </div>
-          <PageTitle title={retailer.name} subtitle={Object.keys(retailer.place_type)[0]} className="ml-4 mt-3" />
+          <PageTitle
+            title={retailer.name}
+            subtitle={Object.keys(retailer.place_type)[0]}
+            className="ml-4 mt-3"
+          />
         </Row>
 
         {/* Second Row of Posts */}
@@ -66,7 +76,7 @@ class TenantDeepDive extends React.Component {
 
           {/* About */}
           <Col lg="5" md="6" sm="6" className="mb-4">
-            <About match={retailer}/>
+            <About match={retailer} />
           </Col>
         </Row>
 
@@ -83,7 +93,7 @@ class TenantDeepDive extends React.Component {
 
           {/* Site Comparison */}
           <Col lg="6" md="6" sm="6" className="mb-4">
-            <RetailerSite match={retailer}/>
+            <RetailerSite match={retailer} />
           </Col>
         </Row>
 
@@ -198,9 +208,7 @@ class TenantDeepDive extends React.Component {
               </CardBody>
             </Card>
           </Col>
-        
         </Row>
-
       </Container>
     );
   }

@@ -1,17 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Row,
-  Col,
-  FormSelect
-} from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Card, CardHeader, CardBody, CardFooter, Row, Col, FormSelect } from 'shards-react';
 
-import colors from "../../utils/colors";
-import Chart from "../../utils/chart";
+import colors from '../../utils/colors';
+import Chart from '../../utils/chart';
 
 class Demographics extends React.Component {
   constructor(props) {
@@ -22,20 +14,20 @@ class Demographics extends React.Component {
 
   componentDidMount() {
     const chartConfig = {
-      type: "doughnut",
+      type: 'doughnut',
       options: {
         ...{
           legend: false,
           cutoutPercentage: 80,
           tooltips: {
             enabled: false,
-            mode: "index",
-            position: "nearest"
-          }
+            mode: 'index',
+            position: 'nearest',
+          },
         },
-        ...this.props.chartOptions
+        ...this.props.chartOptions,
       },
-      data: this.props.chartData
+      data: this.props.chartData,
     };
 
     new Chart(this.canvasRef.current, chartConfig);
@@ -84,7 +76,7 @@ class Demographics extends React.Component {
               <FormSelect
                 size="sm"
                 value="half-mile"
-                style={{ maxWidth: "130px" }}
+                style={{ maxWidth: '130px' }}
                 onChange={() => {}}
               >
                 <option value="half-mile">0.5 Mile</option>
@@ -109,7 +101,7 @@ class Demographics extends React.Component {
   getParsedLabels() {
     const { chartData } = this.props;
 
-    if (!chartData || typeof chartData.labels === "undefined") {
+    if (!chartData || typeof chartData.labels === 'undefined') {
       return [];
     }
 
@@ -118,7 +110,7 @@ class Demographics extends React.Component {
 
       return {
         title: label,
-        value: dataset.data[idx]
+        value: dataset.data[idx],
       };
     });
   }
@@ -140,15 +132,15 @@ Demographics.propTypes = {
   /**
    * The Chart.js config.
    */
-  chartConfig: PropTypes.object
+  chartConfig: PropTypes.object,
 };
 
 Demographics.defaultProps = {
-  title: "Demographics",
+  title: 'Demographics',
   chartConfig: Object.create(null),
   chartOptions: Object.create(null),
   chartData: {
-    labels: ["Asian", "Black", "Hispanic", "Indian", "Multi", "White"],
+    labels: ['Asian', 'Black', 'Hispanic', 'Indian', 'Multi', 'White'],
     datasets: [
       {
         hoverBorderColor: colors.white.toRGBA(1),
@@ -159,11 +151,11 @@ Demographics.defaultProps = {
           colors.primary.toRGBA(0.6),
           colors.primary.toRGBA(0.4),
           colors.primary.toRGBA(0.2),
-          colors.primary.toRGBA(0.1)
-        ]
-      }
-    ]
-  }
+          colors.primary.toRGBA(0.1),
+        ],
+      },
+    ],
+  },
 };
 
 export default Demographics;

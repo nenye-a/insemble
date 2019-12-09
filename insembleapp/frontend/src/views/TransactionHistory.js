@@ -1,7 +1,7 @@
-import React from "react";
-import ReactTable from "react-table";
-import FuzzySearch from "fuzzy-search";
-import dateFormat from "dateformat";
+import React from 'react';
+import ReactTable from 'react-table';
+import FuzzySearch from 'fuzzy-search';
+import dateFormat from 'dateformat';
 import {
   Container,
   Row,
@@ -15,12 +15,12 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
-  FormInput
-} from "shards-react";
+  FormInput,
+} from 'shards-react';
 
-import PageTitle from "../components/common/PageTitle";
-import RangeDatePicker from "../components/common/RangeDatePicker";
-import getTransactionHistoryData from "../data/transaction-history-data";
+import PageTitle from '../components/common/PageTitle';
+import RangeDatePicker from '../components/common/RangeDatePicker';
+import getTransactionHistoryData from '../data/transaction-history-data';
 
 class TransactionHistory extends React.Component {
   constructor(props) {
@@ -29,7 +29,7 @@ class TransactionHistory extends React.Component {
     this.state = {
       pageSizeOptions: [5, 10, 15, 20, 25, 30],
       pageSize: 10,
-      tableData: []
+      tableData: [],
     };
 
     this.searcher = null;
@@ -48,12 +48,12 @@ class TransactionHistory extends React.Component {
 
     this.setState({
       ...this.state,
-      tableData
+      tableData,
     });
 
     // Initialize the fuzzy searcher.
-    this.searcher = new FuzzySearch(tableData, ["customer", "status"], {
-      caseSensitive: false
+    this.searcher = new FuzzySearch(tableData, ['customer', 'status'], {
+      caseSensitive: false,
     });
   }
 
@@ -62,9 +62,9 @@ class TransactionHistory extends React.Component {
    */
   getStatusClass(status) {
     const statusMap = {
-      Cancelled: "danger",
-      Complete: "success",
-      Pending: "warning"
+      Cancelled: 'danger',
+      Complete: 'success',
+      Pending: 'warning',
     };
 
     return `text-${statusMap[status]}`;
@@ -76,7 +76,7 @@ class TransactionHistory extends React.Component {
   handlePageSizeChange(e) {
     this.setState({
       ...this.state,
-      pageSize: e.target.value
+      pageSize: e.target.value,
     });
   }
 
@@ -86,7 +86,7 @@ class TransactionHistory extends React.Component {
   handleFilterSearch(e) {
     this.setState({
       ...this.state,
-      tableData: this.searcher.search(e.target.value)
+      tableData: this.searcher.search(e.target.value),
     });
   }
 
@@ -122,63 +122,57 @@ class TransactionHistory extends React.Component {
     const { tableData, pageSize, pageSizeOptions } = this.state;
     const tableColumns = [
       {
-        Header: "#",
-        accessor: "id",
+        Header: '#',
+        accessor: 'id',
         maxWidth: 60,
-        className: "text-center"
+        className: 'text-center',
       },
       {
-        Header: "Date",
-        accessor: "date",
-        className: "text-center",
+        Header: 'Date',
+        accessor: 'date',
+        className: 'text-center',
         minWidth: 200,
-        Cell: row =>
-          dateFormat(new Date(row.original.date), "dddd, mmmm dS, yyyy")
+        Cell: (row) => dateFormat(new Date(row.original.date), 'dddd, mmmm dS, yyyy'),
       },
       {
-        Header: "Customer",
-        accessor: "customer",
-        className: "text-center"
+        Header: 'Customer',
+        accessor: 'customer',
+        className: 'text-center',
       },
       {
-        Header: "Products",
-        accessor: "products",
+        Header: 'Products',
+        accessor: 'products',
         maxWidth: 100,
-        className: "text-center"
+        className: 'text-center',
       },
       {
-        Header: "Status",
-        accessor: "status",
+        Header: 'Status',
+        accessor: 'status',
         maxWidth: 100,
-        Cell: row => (
-          <span className={this.getStatusClass(row.original.status)}>
-            {row.original.status}
-          </span>
+        Cell: (row) => (
+          <span className={this.getStatusClass(row.original.status)}>{row.original.status}</span>
         ),
-        className: "text-center"
+        className: 'text-center',
       },
       {
-        Header: "Total",
-        accessor: "total",
+        Header: 'Total',
+        accessor: 'total',
         maxWidth: 100,
-        Cell: row => <span className="text-success">{row.original.total}</span>,
-        className: "text-center"
+        Cell: (row) => <span className="text-success">{row.original.total}</span>,
+        className: 'text-center',
       },
       {
-        Header: "Actions",
-        accessor: "actions",
+        Header: 'Actions',
+        accessor: 'actions',
         maxWidth: 300,
         minWidth: 180,
         sortable: false,
-        Cell: row => (
+        Cell: (row) => (
           <ButtonGroup size="sm" className="d-table mx-auto">
             <Button theme="white" onClick={() => this.handleItemConfirm(row)}>
               <i className="material-icons">&#xE5CA;</i>
             </Button>
-            <Button
-              theme="white"
-              onClick={() => this.handleItemViewDetails(row)}
-            >
+            <Button theme="white" onClick={() => this.handleItemViewDetails(row)}>
               <i className="material-icons">&#xE870;</i>
             </Button>
             <Button theme="white" onClick={() => this.handleItemEdit(row)}>
@@ -188,14 +182,18 @@ class TransactionHistory extends React.Component {
               <i className="material-icons">&#xE872;</i>
             </Button>
           </ButtonGroup>
-        )
-      }
+        ),
+      },
     ];
 
     return (
       <Container fluid className="main-content-container px-4 pb-4">
         <Row noGutters className="page-header py-4">
-          <PageTitle title="Transaction History" subtitle="Dashboards" className="text-sm-left mb-3" />
+          <PageTitle
+            title="Transaction History"
+            subtitle="Dashboards"
+            className="text-sm-left mb-3"
+          />
           <Col sm="4" className="d-flex ml-auto my-auto">
             <RangeDatePicker className="justify-content-end" />
           </Col>

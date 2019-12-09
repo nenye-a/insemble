@@ -1,13 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  Form,
-  FormTextarea,
-  Button
-} from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Card, CardHeader, CardBody, Form, FormTextarea, Button } from 'shards-react';
 
 const UserContact = ({ title }) => (
   <Card small className="mb-4">
@@ -17,12 +10,7 @@ const UserContact = ({ title }) => (
     </CardHeader>
     <CardBody>
       <Form>
-        <FormTextarea
-          cols="30"
-          rows="6"
-          className="mb-3"
-          style={{ minHeight: "150px" }}
-        />
+        <FormTextarea cols="30" rows="6" className="mb-3" style={{ minHeight: '150px' }} />
         <Button type="submit" size="sm" theme="accent">
           Send Message
         </Button>
@@ -35,11 +23,11 @@ UserContact.propTypes = {
   /**
    * The component's title.
    */
-  title: PropTypes.string
+  title: PropTypes.string,
 };
 
 UserContact.defaultProps = {
-  title: "Send Message"
+  title: 'Send Message',
 };
 
 export default UserContact;

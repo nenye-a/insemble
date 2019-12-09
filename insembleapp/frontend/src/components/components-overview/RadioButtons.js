@@ -1,5 +1,5 @@
-import React from "react";
-import { Col, FormRadio } from "shards-react";
+import React from 'react';
+import { Col, FormRadio } from 'shards-react';
 
 const RadioButtons = () => (
   <Col sm="12" md="4" className="mb-3">

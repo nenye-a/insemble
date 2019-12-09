@@ -1,18 +1,18 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Container, Row, Col, Button, ButtonGroup } from "shards-react";
-import { NavLink } from "react-router-dom";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Container, Row, Col, Button, ButtonGroup } from 'shards-react';
+import { NavLink } from 'react-router-dom';
 
-import PageTitle from "../components/common/PageTitle";
-import RangeDatePicker from "../components/common/RangeDatePicker";
-import SmallStats from "../components/common/SmallStats";
-import TopReferrals from "../components/common/TopReferrals";
-import CountryReports from "../components/common/CountryReports";
-import Sessions from "../components/analytics/Sessions";
-import UsersByDevice from "../components/analytics/UsersByDevice";
-import GoalsOverview from "..DELETED_BASE64_STRING";
+import PageTitle from '../components/common/PageTitle';
+import RangeDatePicker from '../components/common/RangeDatePicker';
+import SmallStats from '../components/common/SmallStats';
+import TopReferrals from '../components/common/TopReferrals';
+import CountryReports from '../components/common/CountryReports';
+import Sessions from '../components/analytics/Sessions';
+import UsersByDevice from '../components/analytics/UsersByDevice';
+import GoalsOverview from '..DELETED_BASE64_STRING';
 
-import colors from "../utils/colors";
+import colors from '../utils/colors';
 
 const Analytics = ({ smallStats }) => (
   <Container fluid className="main-content-container px-4">
@@ -89,84 +89,84 @@ Analytics.propTypes = {
   /**
    * The small stats data.
    */
-  smallStats: PropTypes.array
+  smallStats: PropTypes.array,
 };
 
 Analytics.defaultProps = {
   smallStats: [
     {
-      label: "Users",
-      value: "2,390",
-      percentage: "12.4%",
+      label: 'Users',
+      value: '2,390',
+      percentage: '12.4%',
       increase: true,
       chartLabels: [null, null, null, null, null],
       decrease: false,
       datasets: [
         {
-          label: "Today",
-          fill: "start",
+          label: 'Today',
+          fill: 'start',
           borderWidth: 1.5,
           backgroundColor: colors.primary.toRGBA(0.1),
           borderColor: colors.primary.toRGBA(),
-          data: [9, 3, 3, 9, 9]
-        }
-      ]
+          data: [9, 3, 3, 9, 9],
+        },
+      ],
     },
     {
-      label: "Sessions",
-      value: "8,391",
-      percentage: "7.21%",
+      label: 'Sessions',
+      value: '8,391',
+      percentage: '7.21%',
       increase: false,
       chartLabels: [null, null, null, null, null],
       decrease: true,
       datasets: [
         {
-          label: "Today",
-          fill: "start",
+          label: 'Today',
+          fill: 'start',
           borderWidth: 1.5,
           backgroundColor: colors.success.toRGBA(0.1),
           borderColor: colors.success.toRGBA(),
-          data: [3.9, 4, 4, 9, 4]
-        }
-      ]
+          data: [3.9, 4, 4, 9, 4],
+        },
+      ],
     },
     {
-      label: "Pageviews",
-      value: "21,293",
-      percentage: "3.71%",
+      label: 'Pageviews',
+      value: '21,293',
+      percentage: '3.71%',
       increase: true,
       chartLabels: [null, null, null, null, null],
       decrease: false,
       datasets: [
         {
-          label: "Today",
-          fill: "start",
+          label: 'Today',
+          fill: 'start',
           borderWidth: 1.5,
           backgroundColor: colors.warning.toRGBA(0.1),
           borderColor: colors.warning.toRGBA(),
-          data: [6, 6, 9, 3, 3]
-        }
-      ]
+          data: [6, 6, 9, 3, 3],
+        },
+      ],
     },
     {
-      label: "Pages/Session",
-      value: "6.43",
-      percentage: "2.71%",
+      label: 'Pages/Session',
+      value: '6.43',
+      percentage: '2.71%',
       increase: false,
       chartLabels: [null, null, null, null, null],
       decrease: true,
       datasets: [
         {
-          label: "Today",
-          fill: "start",
+          label: 'Today',
+          fill: 'start',
           borderWidth: 1.5,
           backgroundColor: colors.salmon.toRGBA(0.1),
           borderColor: colors.salmon.toRGBA(),
-          data: [0, 9, 3, 3, 3]
-        }
-      ]
-    }
-  ]
+          data: [0, 9, 3, 3, 3],
+        },
+      ],
+    },
+  ],
 };
 
 export default Analytics;

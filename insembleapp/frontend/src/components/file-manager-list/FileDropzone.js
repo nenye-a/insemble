@@ -1,6 +1,6 @@
-import React from "react";
-import classNames from "classnames";
-import Dropzone from "react-dropzone";
+import React from 'react';
+import classNames from 'classnames';
+import Dropzone from 'react-dropzone';
 
 class FileDropzone extends React.Component {
   constructor(props) {
@@ -13,7 +13,7 @@ class FileDropzone extends React.Component {
    * Mock method to handle the file drop.
    */
   handleFileDrop(val) {
-    alert(`You've dropped ${val.length} file${val.length > 1 ? "s" : ""}`);
+    alert(`You've dropped ${val.length} file${val.length > 1 ? 's' : ''}`);
   }
 
   render() {
@@ -24,16 +24,12 @@ class FileDropzone extends React.Component {
             return (
               <div
                 {...getRootProps()}
-                className={classNames("dropzone", {
-                  "dropzone--isActive": isDragActive
+                className={classNames('dropzone', {
+                  'dropzone--isActive': isDragActive,
                 })}
               >
                 <input {...getInputProps()} />
-                <span>
-                  {isDragActive
-                    ? "Drop files here!"
-                    : "Drop files here to upload"}
-                </span>
+                <span>{isDragActive ? 'Drop files here!' : 'Drop files here to upload'}</span>
               </div>
             );
           }}

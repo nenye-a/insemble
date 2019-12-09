@@ -1,13 +1,13 @@
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
-import React from "react";
-import { connect } from "react-redux";
+import React from 'react';
+import { connect } from 'react-redux';
 
-import { withRouter } from "react-router";
-import { Redirect } from "react-router-dom";
+import { withRouter } from 'react-router';
+import { Redirect } from 'react-router-dom';
 
-import PropTypes from "prop-types";
-import { register } from '../redux/actions/auth'
+import PropTypes from 'prop-types';
+import { register } from '../redux/actions/auth';
 
 import {
   Container,
@@ -20,12 +20,11 @@ import {
   FormGroup,
   FormInput,
   FormCheckbox,
-  Button
-} from "shards-react";
-import { Link } from "react-router-dom";
+  Button,
+} from 'shards-react';
+import { Link } from 'react-router-dom';
 
 class Register extends React.Component {
-
   constructor(props) {
     super(props);
     this.firstNameInput = React.createRef();
@@ -39,15 +38,15 @@ class Register extends React.Component {
     this.isBroker = React.createRef();
   }
 
-  static PropTypes = {
+  static propTypes = {
     login: PropTypes.func.isRequired,
-    isAuthenticated: PropTypes.bool
-  }
+    isAuthenticated: PropTypes.bool,
+  };
 
-  onSubmit = e => {
+  onSubmit = (e) => {
     e.preventDefault();
-    if(this.passwordInput.current.value !== this.password2Input.current.value) {
-      console.log("Passwords do not match")
+    if (this.passwordInput.current.value !== this.password2Input.current.value) {
+      console.log('Passwords do not match');
     } else {
       this.props.register(
         this.firstNameInput.current.value,
@@ -58,18 +57,17 @@ class Register extends React.Component {
         this.isLandlord.current.checked,
         this.isRetailer.current.checked,
         this.isBroker.current.checked
-      )
+      );
     }
-  }
+  };
 
   // onChange = e => this.setState({
   //   [e.target.name]: e.target.value
   // });
 
   render() {
-    
-    if(this.props.isAuthenticated) {
-      return <Redirect to="/find"/>;
+    if (this.props.isAuthenticated) {
+      return <Redirect to="/find" />;
     }
 
     return (
@@ -81,15 +79,13 @@ class Register extends React.Component {
                 {/* Logo */}
                 <img
                   className="auth-form__logo d-table mx-auto mb-3"
-                  style={{ maxHeight: "25px" }}
-                  src={require("../images/insemble_i.png")}
+                  style={{ maxHeight: '25px' }}
+                  src={require('../images/insemble_i.png')}
                   alt="Retailer Dashboards - Register Template"
                 />
 
                 {/* Title */}
-                <h5 className="auth-form__title text-center mb-4">
-                  Register
-                </h5>
+                <h5 className="auth-form__title text-center mb-4">Register</h5>
 
                 {/* Form Fields */}
                 <Form>
@@ -100,7 +96,7 @@ class Register extends React.Component {
                       id="exampleInputFirstName1"
                       placeholder="Enter first name"
                       autoComplete="off"
-                      innerRef = {this.firstNameInput}
+                      innerRef={this.firstNameInput}
                     />
                   </FormGroup>
                   <FormGroup>
@@ -155,15 +151,9 @@ class Register extends React.Component {
                   </FormGroup>
                   <FormGroup>
                     <label htmlFor="exampleInputPassword2">Profession</label>
-                    <FormCheckbox
-                      innerRef = {this.isRetailer}
-                    >Retailer</FormCheckbox>
-                    <FormCheckbox
-                      innerRef = {this.isLandlord}
-                    >Landlord</FormCheckbox>
-                    <FormCheckbox
-                      innerRef = {this.isBroker}
-                    >Broker</FormCheckbox>
+                    <FormCheckbox innerRef={this.isRetailer}>Retailer</FormCheckbox>
+                    <FormCheckbox innerRef={this.isLandlord}>Landlord</FormCheckbox>
+                    <FormCheckbox innerRef={this.isBroker}>Broker</FormCheckbox>
                   </FormGroup>
                   <FormGroup>
                     <label htmlFor="exampleInputPassword2">Terms & Conditions</label>
@@ -176,7 +166,7 @@ class Register extends React.Component {
                     theme="accent"
                     className="d-table mx-auto"
                     type="submit"
-                    onClick = {this.onSubmit}
+                    onClick={this.onSubmit}
                   >
                     Create Account
                   </Button>
@@ -224,8 +214,13 @@ class Register extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  isAuthenticated: state.auth.isAuthenticated
-})
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
 
-export default withRouter(connect(mapStateToProps, { register })(Register));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    { register }
+  )(Register)
+);

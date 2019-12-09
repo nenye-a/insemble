@@ -1,19 +1,15 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Container, Row, Col } from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Container, Row, Col } from 'shards-react';
 
-import MainNavbar from "..DELETED_BASE64_STRING";
-import LandlordSidebar from "..DELETED_BASE64_STRING";
-import MainFooter from "../components/layout/MainFooter";
+import MainNavbar from '..DELETED_BASE64_STRING';
+import LandlordSidebar from '..DELETED_BASE64_STRING';
+import MainFooter from '../components/layout/MainFooter';
 
 const LoginLayout = ({ children, noNavbar, noFooter }) => (
   // <Container fluid>
     <Row>
-      <Col
-        className="main-content"     
-        sm="12"
-        tag="main"
-      >
+      <Col className="main-content" sm="12" tag="main">
         {children}
       </Col>
     </Row>
@@ -28,12 +24,12 @@ LoginLayout.propTypes = {
   /**
    * Whether to display the footer, or not.
    */
-  noFooter: PropTypes.bool
+  noFooter: PropTypes.bool,
 };
 
 LoginLayout.defaultProps = {
   noNavbar: false,
-  noFooter: false
+  noFooter: false,
 };
 
 export default LoginLayout;
