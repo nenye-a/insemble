@@ -36,13 +36,14 @@ class LocationDeepDiveDemo extends React.Component {
       };
   }
 
-  static PropTypes = {
+  static propTypes = {
     hasLocation: PropTypes.bool.isRequired,
     yourLocation: PropTypes.object,
     getLocation: PropTypes.func.isRequired
   }
 
   componentDidMount () {
+    // eslint-disable-next-line eqeqeq
     if(this.props.hasLocation && this.props.yourLocation.radius != 1){
       const yourSiteURL = 'api/location/address='+this.props.yourLocation.address+'&radius=1';
       this.props.getLocation(yourSiteURL);

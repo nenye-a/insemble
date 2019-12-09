@@ -1,6 +1,5 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-/* eslint-disable prettier/prettier */
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
 import React from "react";

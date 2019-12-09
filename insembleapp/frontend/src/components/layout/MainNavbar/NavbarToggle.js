@@ -14,7 +14,7 @@ class NavbarToggle extends React.Component {
     this.handleClick = this.handleClick.bind(this);
   }
 
-  static PropTypes = {
+  static propTypes = {
     isAuthenticated: PropTypes.bool.isRequired,
   }
 

@@ -15,11 +15,6 @@ import colors from "../../utils/colors";
 import Chart from "../../utils/chart";
 
 class About extends React.Component {
-  constructor(props) {
-    super(props);
-
-  }
-
   render() {
     const retailer = this.props.match
     let operations; 

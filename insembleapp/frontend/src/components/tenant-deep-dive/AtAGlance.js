@@ -12,10 +12,6 @@ import {
 } from "shards-react";
 
 class AtAGlance extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const retailer = this.props.match
 
