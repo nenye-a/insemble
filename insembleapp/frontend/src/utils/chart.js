@@ -96,7 +96,9 @@ Chart.defaults.global.tooltips.custom = function customTooltip(tooltip) {
 Chart.defaults.global.legendCallback = (chart) => {
   let text = `<ul class="sc-legend-container sc-legend-chart-${chart.id}">`;
   chart.data.datasets.forEach((set) => {
-    text += `<li class="sc-legend"><span class="sc-legend__label" style="background: ${set.borderColor} !important;"></span>${set.label ? set.label : ''}</li>`;
+    text += `<li class="sc-legend"><span class="sc-legend__label" style="background: ${
+      set.borderColor
+    } !important;"></span>${set.label ? set.label : ''}</li>`;
   });
   text += '</ul>';
   return text;

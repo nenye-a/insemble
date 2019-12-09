@@ -1,21 +1,21 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { NavLink as RouteNavLink } from "react-router-dom";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { NavLink as RouteNavLink } from 'react-router-dom';
 import {
   NavItem,
   NavLink,
   Dropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem
-} from "shards-react";
+  DropdownItem,
+} from 'shards-react';
 
 class MenuItem extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      open: false
+      open: false,
     };
 
     this.toggleDropdown = this.toggleDropdown.bind(this);
@@ -23,7 +23,7 @@ class MenuItem extends React.Component {
 
   toggleDropdown() {
     this.setState({
-      open: !this.state.open
+      open: !this.state.open,
     });
   }
 
@@ -57,10 +57,7 @@ class MenuItem extends React.Component {
       <NavItem>
         <NavLink tag={RouteNavLink} to={item.to} className="text-nowrap">
           {item.htmlBefore && (
-            <div
-              className="d-inline-block"
-              dangerouslySetInnerHTML={{ __html: item.htmlBefore }}
-            />
+            <div className="d-inline-block" dangerouslySetInnerHTML={{ __html: item.htmlBefore }} />
           )}
           {item.title}
         </NavLink>
@@ -73,7 +70,7 @@ MenuItem.propTypes = {
   /**
    * The menu item object.
    */
-  item: PropTypes.object
+  item: PropTypes.object,
 };
 
 export default MenuItem;

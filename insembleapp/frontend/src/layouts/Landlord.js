@@ -1,10 +1,10 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Container, Row, Col } from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Container, Row, Col } from 'shards-react';
 
-import MainNavbar from "../components/layout/MainNavbar/MainNavbar";
-import LandlordSidebar from "../components/layout/LandlordSidebar/LandlordSidebar";
-import MainFooter from "../components/layout/MainFooter";
+import MainNavbar from '../components/layout/MainNavbar/MainNavbar';
+import LandlordSidebar from '../components/layout/LandlordSidebar/LandlordSidebar';
+import MainFooter from '../components/layout/MainFooter';
 
 const LandlordLayout = ({ children, noNavbar, noFooter }) => (
   <Container fluid>
@@ -33,12 +33,12 @@ LandlordLayout.propTypes = {
   /**
    * Whether to display the footer, or not.
    */
-  noFooter: PropTypes.bool
+  noFooter: PropTypes.bool,
 };
 
 LandlordLayout.defaultProps = {
   noNavbar: false,
-  noFooter: false
+  noFooter: false,
 };
 
 export default LandlordLayout;

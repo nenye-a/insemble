@@ -1,5 +1,5 @@
-import React from "react";
-import { ButtonGroup, Button } from "shards-react";
+import React from 'react';
+import { ButtonGroup, Button } from 'shards-react';
 
 const ButtonGroups = () => (
   <ButtonGroup className="mb-3">

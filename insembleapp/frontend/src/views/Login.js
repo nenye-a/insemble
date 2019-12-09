@@ -1,13 +1,13 @@
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
-import React from "react";
+import React from 'react';
 
-import { withRouter } from "react-router";
-import { Link, Redirect } from "react-router-dom";
+import { withRouter } from 'react-router';
+import { Link, Redirect } from 'react-router-dom';
 
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import { login } from '../redux/actions/auth'
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { login } from '../redux/actions/auth';
 
 import {
   Container,
@@ -20,37 +20,33 @@ import {
   FormGroup,
   FormInput,
   FormCheckbox,
-  Button
-} from "shards-react";
+  Button,
+} from 'shards-react';
 
-import {NavLink} from "react-router-dom";
+import { NavLink } from 'react-router-dom';
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    this.emailInput = React.createRef()
-    this.passwordInput = React.createRef()
+    this.emailInput = React.createRef();
+    this.passwordInput = React.createRef();
   }
 
   static propTypes = {
     login: PropTypes.func.isRequired,
-    isAuthenticated: PropTypes.bool
-  }
+    isAuthenticated: PropTypes.bool,
+  };
 
-  onSubmit = e => {
+  onSubmit = (e) => {
     e.preventDefault();
-    this.props.login(
-      this.emailInput.current.value,
-      this.passwordInput.current.value
-    )
-  }
+    this.props.login(this.emailInput.current.value, this.passwordInput.current.value);
+  };
 
   render() {
-    
-    if(this.props.isAuthenticated) {
-      return <Redirect to="/Find"/>;
+    if (this.props.isAuthenticated) {
+      return <Redirect to="/Find" />;
     }
-    
+
     return (
       <Container fluid className="main-content-container h-100 px-4">
         <Row noGutters className="h-100">
@@ -60,15 +56,13 @@ class Login extends React.Component {
                 {/* Logo */}
                 <img
                   className="auth-form__logo d-table mx-auto mb-3"
-                  style={{ maxHeight: "25px" }}
-                  src={require("../images/insemble_i.png")}
+                  style={{ maxHeight: '25px' }}
+                  src={require('../images/insemble_i.png')}
                   alt="Retailer Dashboards - Login Template"
                 />
 
                 {/* Title */}
-                <h5 className="auth-form__title text-center mb-4">
-                  Login
-                </h5>
+                <h5 className="auth-form__title text-center mb-4">Login</h5>
 
                 {/* Form Fields */}
                 <Form>
@@ -79,7 +73,7 @@ class Login extends React.Component {
                       id="exampleInputEmail1"
                       placeholder="Enter email"
                       autoComplete="email"
-                      innerRef = {this.emailInput}
+                      innerRef={this.emailInput}
                     />
                   </FormGroup>
                   <FormGroup>
@@ -89,7 +83,7 @@ class Login extends React.Component {
                       id="exampleInputPassword1"
                       placeholder="Password"
                       autoComplete="current-password"
-                      innerRef= {this.passwordInput}
+                      innerRef={this.passwordInput}
                     />
                   </FormGroup>
                   <FormGroup>
@@ -102,7 +96,7 @@ class Login extends React.Component {
                     type="submit"
                     // tag={NavLink} - removed
                     // to="/spaces"
-                    onClick = {this.onSubmit}
+                    onClick={this.onSubmit}
                   >
                     Login
                   </Button>
@@ -120,12 +114,17 @@ class Login extends React.Component {
           </Col>
         </Row>
       </Container>
-    )
-  };
+    );
+  }
 }
 
-const mapStateToProps = state => ({
-  isAuthenticated: state.auth.isAuthenticated
-})
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
 
-export default withRouter(connect(mapStateToProps, { login })(Login));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    { login }
+  )(Login)
+);

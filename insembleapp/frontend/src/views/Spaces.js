@@ -1,26 +1,26 @@
-import React from "react";
-import { Container, Row, Col, ButtonGroup, Button } from "shards-react";
+import React from 'react';
+import { Container, Row, Col, ButtonGroup, Button } from 'shards-react';
 import { Map, HeatMap, GoogleApiWrapper, Marker } from 'google-maps-react';
-import MapContainer from "./MapContainer";
-import MapWithAMarkerClusterer from "./MapContainer"
-import MapComponent from "./MapContainer"
-import Iframe from 'react-iframe'
+import MapContainer from './MapContainer';
+import MapWithAMarkerClusterer from './MapContainer';
+import MapComponent from './MapContainer';
+import Iframe from 'react-iframe';
 
 import LoadingOverlay from 'react-loading-overlay';
 
-import { withRouter } from "react-router";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
+import { withRouter } from 'react-router';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
-const fetch = require("isomorphic-fetch");
+const fetch = require('isomorphic-fetch');
 
 class Spaces extends React.PureComponent {
   static propTypes = {
     mapIsLoading: PropTypes.bool.isRequired,
-  }
+  };
 
   componentWillMount() {
-    this.setState({ markers: [], heats: []})
+    this.setState({ markers: [], heats: [] });
   }
 
   componentDidMount() {
@@ -28,29 +28,29 @@ class Spaces extends React.PureComponent {
       // Length issue
       `https://gist.githubusercontent.com`,
       `/farrrr/dfda7dd7fccfec5474d3`,
-      `/raw/758852bbc1979f6c4522ab4e92d1c92cba8fb0dc/data.json`
-    ].join("")
+      `/raw/758852bbc1979f6c4522ab4e92d1c92cba8fb0dc/data.json`,
+    ].join('');
   }
 
   render() {
     return (
       <LoadingOverlay
-            active={this.props.mapIsLoading}
-            spinner
-            text='Evaluating thousands of locations to find your matches. May take a couple minutes...'
+        active={this.props.mapIsLoading}
+        spinner
+        text="Evaluating thousands of locations to find your matches. May take a couple minutes..."
       >
         <Container fluid className="main-content-container m-0">
           <Row>
-              <MapComponent {...this.state}/>
+            <MapComponent {...this.state} />
           </Row>
         </Container>
       </LoadingOverlay>
-    )
+    );
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   mapIsLoading: state.space.mapIsLoading,
-})
+});
 
 export default withRouter(connect(mapStateToProps)(Spaces));

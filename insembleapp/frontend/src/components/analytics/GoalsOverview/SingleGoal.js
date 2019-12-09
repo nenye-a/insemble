@@ -1,8 +1,8 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { ListGroupItem, Col } from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { ListGroupItem, Col } from 'shards-react';
 
-import Chart from "../../../utils/chart";
+import Chart from '../../../utils/chart';
 
 class SingleGoal extends React.Component {
   constructor(props) {
@@ -13,15 +13,15 @@ class SingleGoal extends React.Component {
 
   componentDidMount() {
     new Chart(this.canvasRef.current, {
-      type: "doughnut",
+      type: 'doughnut',
       data: this.props.goal.data,
       options: {
         legend: false,
         responsive: false,
         cutoutPercentage: 70,
         animation: false,
-        tooltips: false
-      }
+        tooltips: false,
+      },
     });
   }
 
@@ -48,7 +48,7 @@ class SingleGoal extends React.Component {
           <div className="go-stats__chart d-flex ml-auto">
             <canvas
               ref={this.canvasRef}
-              style={{ width: "45px", height: "45px" }}
+              style={{ width: '45px', height: '45px' }}
               className="my-auto"
             />
           </div>
@@ -62,7 +62,7 @@ SingleGoal.propTypes = {
   /**
    * The goal object.
    */
-  goal: PropTypes.object
+  goal: PropTypes.object,
 };
 
 export default SingleGoal;

@@ -1,5 +1,5 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Card,
   CardHeader,
@@ -7,13 +7,13 @@ import {
   CardFooter,
   Row,
   Col,
-  FormSelect, 
-  Container, 
-  Badge
-} from "shards-react";
+  FormSelect,
+  Container,
+  Badge,
+} from 'shards-react';
 
-import colors from "../../utils/colors";
-import Chart from "../../utils/chart";
+import colors from '../../utils/colors';
+import Chart from '../../utils/chart';
 
 class RetailerSite extends React.Component {
   constructor(props) {
@@ -21,37 +21,37 @@ class RetailerSite extends React.Component {
 
     // this.state = {
     //   chartConfig: null
-      // {
-      //   type: "doughnut",
-      //   options: {
-      //     ...{
-      //       legend: false,
-      //       cutoutPercentage: 80,
-      //       tooltips: {
-      //         enabled: false,
-      //         mode: "index",
-      //         position: "nearest"
-      //       }
-      //     },
-      //   },
-      //   data: {
-      //     labels: Object.keys(this.props.match.census),
-      //     datasets: [
-      //       {
-      //         hoverBorderColor: colors.white.toRGBA(1),
-      //         data: Object.values(this.props.match.census), 
-      //         backgroundColor: [
-      //           colors.primary.toRGBA(1),
-      //           colors.primary.toRGBA(0.8),
-      //           colors.primary.toRGBA(0.6),
-      //           colors.primary.toRGBA(0.4),
-      //           colors.primary.toRGBA(0.2),
-      //           colors.primary.toRGBA(0.1)
-      //         ]
-      //       }
-      //     ]
-      //   }
-      // }
+    // {
+    //   type: "doughnut",
+    //   options: {
+    //     ...{
+    //       legend: false,
+    //       cutoutPercentage: 80,
+    //       tooltips: {
+    //         enabled: false,
+    //         mode: "index",
+    //         position: "nearest"
+    //       }
+    //     },
+    //   },
+    //   data: {
+    //     labels: Object.keys(this.props.match.census),
+    //     datasets: [
+    //       {
+    //         hoverBorderColor: colors.white.toRGBA(1),
+    //         data: Object.values(this.props.match.census),
+    //         backgroundColor: [
+    //           colors.primary.toRGBA(1),
+    //           colors.primary.toRGBA(0.8),
+    //           colors.primary.toRGBA(0.6),
+    //           colors.primary.toRGBA(0.4),
+    //           colors.primary.toRGBA(0.2),
+    //           colors.primary.toRGBA(0.1)
+    //         ]
+    //       }
+    //     ]
+    //   }
+    // }
     // }
     // this.location = this.props.match
     this.canvasRef = React.createRef();
@@ -59,18 +59,18 @@ class RetailerSite extends React.Component {
   }
 
   componentDidMount() {
-    const location = this.props.match
+    const location = this.props.match;
     const chartConfig = {
-      type: "doughnut",
+      type: 'doughnut',
       options: {
         ...{
           legend: false,
           cutoutPercentage: 80,
           tooltips: {
             enabled: false,
-            mode: "index",
-            position: "nearest"
-          }
+            mode: 'index',
+            position: 'nearest',
+          },
         },
       },
       data: {
@@ -78,32 +78,32 @@ class RetailerSite extends React.Component {
         datasets: [
           {
             hoverBorderColor: colors.white.toRGBA(1),
-            data: Object.values(location.census), 
+            data: Object.values(location.census),
             backgroundColor: [
               colors.primary.toRGBA(1),
               colors.primary.toRGBA(0.8),
               colors.primary.toRGBA(0.6),
               colors.primary.toRGBA(0.4),
               colors.primary.toRGBA(0.2),
-              colors.primary.toRGBA(0.1)
-            ]
-          }
-        ]
-      }
-    }
+              colors.primary.toRGBA(0.1),
+            ],
+          },
+        ],
+      },
+    };
 
-    this.demoGraph = new Chart(this.canvasRef.current, chartConfig); 
+    this.demoGraph = new Chart(this.canvasRef.current, chartConfig);
   }
 
   render() {
-    const location = this.props.match
-    const canvasRef = this.canvasRef
+    const location = this.props.match;
+    const canvasRef = this.canvasRef;
     const { title } = this.props;
-    const labels = Object.keys(location.census)
+    const labels = Object.keys(location.census);
 
-    if(this.demoGraph) {
-      this.demoGraph.data.datasets[0].data = Object.values(location.census)
-      this.demoGraph.update()
+    if (this.demoGraph) {
+      this.demoGraph.data.datasets[0].data = Object.values(location.census);
+      this.demoGraph.update();
     }
 
     return (
@@ -115,16 +115,26 @@ class RetailerSite extends React.Component {
 
         <CardBody className="d-flex flex-column">
           <Container>
-            <Row >
-              <Col className="d-flex flex-column justify-content-center align-items-center py-2">{location.pop} residents within {location.radius} miles
+            <Row>
+              <Col className="d-flex flex-column justify-content-center align-items-center py-2">
+                {location.pop} residents within {location.radius} miles
               </Col>
-              <Col className="d-flex flex-column justify-content-center align-items-center" style={{fontWeight: "bold"}}>Population
+              <Col
+                className="d-flex flex-column justify-content-center align-items-center"
+                style={{ fontWeight: 'bold' }}
+              >
+                Population
               </Col>
             </Row>
-            <Row >
-              <Col className="d-flex flex-column justify-content-center align-items-center">${location.income} per year
+            <Row>
+              <Col className="d-flex flex-column justify-content-center align-items-center">
+                ${location.income} per year
               </Col>
-              <Col className="d-flex flex-column justify-content-center align-items-center" style={{fontWeight: "bold"}}>Median Household Income
+              <Col
+                className="d-flex flex-column justify-content-center align-items-center"
+                style={{ fontWeight: 'bold' }}
+              >
+                Median Household Income
               </Col>
             </Row>
             {/* <Row>
@@ -148,46 +158,50 @@ class RetailerSite extends React.Component {
                   ))}
                 </div>
               </Col>
-              <Col className="d-flex flex-column justify-content-center align-items-center" style={{fontWeight: "bold"}}>Nearby Stores
+              <Col
+                className="d-flex flex-column justify-content-center align-items-center"
+                style={{ fontWeight: 'bold' }}
+              >
+                Nearby Stores
               </Col>
             </Row>
             <Row>
               <Col className="d-flex flex-column justify-content-center align-items-center">
                 {/* Chart */}
-              <canvas
-                width="100"
-                ref={canvasRef}
-                className="analytics-users-by-device mt-3 mb-4"
-              />
+                <canvas
+                  width="100"
+                  ref={canvasRef}
+                  className="analytics-users-by-device mt-3 mb-4"
+                />
 
-              {/* Legend */}
-              <div className="ubd-stats__legend w-75 m-auto pb-4">
-                {labels.map((label, idx) => (
-                  <div key={idx} className="ubd-stats__item px-1">
-                    {label.icon && (
-                      <div
-                        dangerouslySetInnerHTML={{ __html: label.icon }}
-                        style={{ color: label.iconColor }}
-                      />
-                    )}
-                    <span className="ubd-stats__category">{label}</span>
-                    <span className="ubd-stats__value">{location.census[label]}%</span>
-                  </div>
-                ))}
-              </div>
+                {/* Legend */}
+                <div className="ubd-stats__legend w-75 m-auto pb-4">
+                  {labels.map((label, idx) => (
+                    <div key={idx} className="ubd-stats__item px-1">
+                      {label.icon && (
+                        <div
+                          dangerouslySetInnerHTML={{ __html: label.icon }}
+                          style={{ color: label.iconColor }}
+                        />
+                      )}
+                      <span className="ubd-stats__category">{label}</span>
+                      <span className="ubd-stats__value">{location.census[label]}%</span>
+                    </div>
+                  ))}
+                </div>
               </Col>
-              <Col className="d-flex flex-column justify-content-center align-items-center" style={{fontWeight: "bold"}}>Demographics
+              <Col
+                className="d-flex flex-column justify-content-center align-items-center"
+                style={{ fontWeight: 'bold' }}
+              >
+                Demographics
               </Col>
             </Row>
-            
-
-
           </Container>
         </CardBody>
 
         <CardFooter className="border-top">
           <Row>
-
             {/* View Full Report */}
             <Col className="text-right view-report">
               {/* eslint-disable-next-line */}
@@ -202,7 +216,7 @@ class RetailerSite extends React.Component {
   getParsedLabels() {
     const { chartData } = this.props;
 
-    if (!chartData || typeof chartData.labels === "undefined") {
+    if (!chartData || typeof chartData.labels === 'undefined') {
       return [];
     }
 
@@ -211,7 +225,7 @@ class RetailerSite extends React.Component {
 
       return {
         title: label,
-        value: dataset.data[idx]
+        value: dataset.data[idx],
       };
     });
   }
@@ -233,15 +247,15 @@ RetailerSite.propTypes = {
   /**
    * The Chart.js config.
    */
-  chartConfig: PropTypes.object
+  chartConfig: PropTypes.object,
 };
 
 RetailerSite.defaultProps = {
-  title: "This Location",
+  title: 'This Location',
   chartConfig: Object.create(null),
   chartOptions: Object.create(null),
   chartData: {
-    labels: ["Asian", "Black", "Hispanic", "Indian", "Multi", "White"],
+    labels: ['Asian', 'Black', 'Hispanic', 'Indian', 'Multi', 'White'],
     datasets: [
       {
         hoverBorderColor: colors.white.toRGBA(1),
@@ -252,11 +266,11 @@ RetailerSite.defaultProps = {
           colors.primary.toRGBA(0.6),
           colors.primary.toRGBA(0.4),
           colors.primary.toRGBA(0.2),
-          colors.primary.toRGBA(0.1)
-        ]
-      }
-    ]
-  }
+          colors.primary.toRGBA(0.1),
+        ],
+      },
+    ],
+  },
 };
 
 export default RetailerSite;

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Container,
   Row,
@@ -7,29 +7,29 @@ import {
   CardHeader,
   ListGroup,
   ListGroupItem,
-  Form
-} from "shards-react";
+  Form,
+} from 'shards-react';
 
-import PageTitle from "../components/common/PageTitle";
-import Colors from "../components/components-overview/Colors";
-import Checkboxes from "../components/components-overview/Checkboxes";
-import RadioButtons from "../components/components-overview/RadioButtons";
-import ToggleButtons from "../components/components-overview/ToggleButtons";
-import SmallButtons from "../components/components-overview/SmallButtons";
-import SmallOutlineButtons from "../components/components-overview/SmallOutlineButtons";
-import NormalButtons from "../components/components-overview/NormalButtons";
-import NormalOutlineButtons from "../components/components-overview/NormalOutlineButtons";
-import Forms from "../components/components-overview/Forms";
-import FormValidation from "../components/components-overview/FormValidation";
-import CompleteFormExample from "../components/components-overview/CompleteFormExample";
-import Sliders from "../components/components-overview/Sliders";
-import ProgressBars from "../components/components-overview/ProgressBars";
-import ButtonGroups from "../components/components-overview/ButtonGroups";
-import InputGroups from "../components/components-overview/InputGroups";
-import SeamlessInputGroups from "../components/components-overview/SeamlessInputGroups";
-import CustomFileUpload from "../components/components-overview/CustomFileUpload";
-import DropdownInputGroups from "../components/components-overview/DropdownInputGroups";
-import CustomSelect from "../components/components-overview/CustomSelect";
+import PageTitle from '../components/common/PageTitle';
+import Colors from '../components/components-overview/Colors';
+import Checkboxes from '../components/components-overview/Checkboxes';
+import RadioButtons from '../components/components-overview/RadioButtons';
+import ToggleButtons from '../components/components-overview/ToggleButtons';
+import SmallButtons from '../components/components-overview/SmallButtons';
+import SmallOutlineButtons from '../components/components-overview/SmallOutlineButtons';
+import NormalButtons from '../components/components-overview/NormalButtons';
+import NormalOutlineButtons from '../components/components-overview/NormalOutlineButtons';
+import Forms from '../components/components-overview/Forms';
+import FormValidation from '../components/components-overview/FormValidation';
+import CompleteFormExample from '../components/components-overview/CompleteFormExample';
+import Sliders from '../components/components-overview/Sliders';
+import ProgressBars from '../components/components-overview/ProgressBars';
+import ButtonGroups from '../components/components-overview/ButtonGroups';
+import InputGroups from '../components/components-overview/InputGroups';
+import SeamlessInputGroups from '../components/components-overview/SeamlessInputGroups';
+import CustomFileUpload from '../components/components-overview/CustomFileUpload';
+import DropdownInputGroups from '../components/components-overview/DropdownInputGroups';
+import CustomSelect from '../components/components-overview/CustomSelect';
 
 const ComponentsOverview = () => (
   <Container fluid className="main-content-container px-4">
@@ -59,21 +59,17 @@ const ComponentsOverview = () => (
               <strong className="text-muted d-block my-2">Small Buttons</strong>
               <SmallButtons />
 
-              <strong className="text-muted d-block my-2">
-                Small Outline Button
-              </strong>
+              <strong className="text-muted d-block my-2">Small Outline Button</strong>
               <SmallOutlineButtons />
             </ListGroupItem>
 
             <ListGroupItem className="p-3">
               {/* Normal Buttons */}
-              <strong className="text-muted d-block my-2">
-                Normal Buttons
-              </strong>
+              <strong className="text-muted d-block my-2">Normal Buttons</strong>
               <NormalButtons />
 
               {/* Normal Outline Buttons */}
-              <strong className="text-muted d-block my-2" >Normal Outline Buttons</strong>
+              <strong className="text-muted d-block my-2">Normal Outline Buttons</strong>
               <NormalOutlineButtons />
             </ListGroupItem>
 
@@ -117,19 +113,13 @@ const ComponentsOverview = () => (
           <ListGroup flush>
             <ListGroupItem className="px-3">
               <Form>
-                <strong className="text-muted d-block mb-3">
-                  Button Groups
-                </strong>
+                <strong className="text-muted d-block mb-3">Button Groups</strong>
                 <ButtonGroups />
 
-                <strong className="text-muted d-block mb-2">
-                  Input Groups
-                </strong>
+                <strong className="text-muted d-block mb-2">Input Groups</strong>
                 <InputGroups />
 
-                <strong className="text-muted d-block mb-2">
-                  Seamless Input Groups
-                </strong>
+                <strong className="text-muted d-block mb-2">Seamless Input Groups</strong>
                 <SeamlessInputGroups />
               </Form>
             </ListGroupItem>
@@ -144,14 +134,10 @@ const ComponentsOverview = () => (
 
           <ListGroup flush>
             <ListGroupItem className="px-3">
-              <strong className="text-muted d-block mb-2">
-                Custom File Upload
-              </strong>
+              <strong className="text-muted d-block mb-2">Custom File Upload</strong>
               <CustomFileUpload />
 
-              <strong className="text-muted d-block mb-2">
-                Dropdown Input Groups
-              </strong>
+              <strong className="text-muted d-block mb-2">Dropdown Input Groups</strong>
               <DropdownInputGroups />
 
               <strong className="text-muted d-block mb-2">Custom Select</strong>

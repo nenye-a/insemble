@@ -1,8 +1,8 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Card, CardHeader, CardBody } from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Card, CardHeader, CardBody } from 'shards-react';
 
-import Chart from "../../utils/chart";
+import Chart from '../../utils/chart';
 
 class UserPerformance extends React.Component {
   constructor(props) {
@@ -18,38 +18,38 @@ class UserPerformance extends React.Component {
       legend: false,
       tooltips: {
         enabled: false,
-        mode: "index",
-        position: "nearest"
+        mode: 'index',
+        position: 'nearest',
       },
       elements: {
         line: {
-          tension: 0
-        }
+          tension: 0,
+        },
       },
       scales: {
         xAxes: [
           {
             stacked: true,
-            gridLines: false
-          }
+            gridLines: false,
+          },
         ],
         yAxes: [
           {
             ticks: {
-              beginAtZero: true
-            }
-          }
-        ]
-      }
+              beginAtZero: true,
+            },
+          },
+        ],
+      },
     };
 
     const chartConfig = {
-      type: "bar",
+      type: 'bar',
       data: this.props.chartData,
       options: {
         ...defaultOptions,
-        ...this.props.chartOptions
-      }
+        ...this.props.chartOptions,
+      },
     };
 
     new Chart(this.canvasRef.current, chartConfig);
@@ -88,26 +88,26 @@ UserPerformance.propTypes = {
   /**
    * The Chart.js options.
    */
-  chartOptions: PropTypes.object
+  chartOptions: PropTypes.object,
 };
 
 UserPerformance.defaultProps = {
-  title: "Weekly Performance Report",
+  title: 'Weekly Performance Report',
   chartData: {
-    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     datasets: [
       {
-        label: "Hours",
-        fill: "start",
+        label: 'Hours',
+        fill: 'start',
         data: [5, 6.4, 7.2, 6, 9, 4.7, 7],
-        backgroundColor: "rgba(0, 123, 255, 1)",
-        borderColor: "rgba(0, 123, 255, 1)",
-        pointBackgroundColor: "#FFFFFF",
-        pointHoverBackgroundColor: "rgba(0, 123, 255, 1)",
-        borderWidth: 0
-      }
-    ]
-  }
+        backgroundColor: 'rgba(0, 123, 255, 1)',
+        borderColor: 'rgba(0, 123, 255, 1)',
+        pointBackgroundColor: '#FFFFFF',
+        pointHoverBackgroundColor: 'rgba(0, 123, 255, 1)',
+        borderWidth: 0,
+      },
+    ],
+  },
 };
 
 export default UserPerformance;

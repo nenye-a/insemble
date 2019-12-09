@@ -1,14 +1,14 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import { Row, Col, Card, CardBody, CardFooter } from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { Row, Col, Card, CardBody, CardFooter } from 'shards-react';
 
 class ComponentName extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      ...props
+      ...props,
     };
 
     this.handleDocumentClick = this.handleDocumentClick.bind(this);
@@ -22,8 +22,8 @@ class ComponentName extends React.Component {
     this.setState({
       ...(newState.documents[newState.documents.indexOf(file)] = {
         ...file,
-        selected: !file.selected
-      })
+        selected: !file.selected,
+      }),
     });
   }
 
@@ -33,18 +33,14 @@ class ComponentName extends React.Component {
       <Row>
         {documents.map((file, idx) => {
           const classes = classNames(
-            "mb-3",
-            "file-manager__item",
-            file.selected && "file-manager__item--selected"
+            'mb-3',
+            'file-manager__item',
+            file.selected && 'file-manager__item--selected'
           );
 
           return (
             <Col lg="3" sm="6" key={idx}>
-              <Card
-                small
-                className={classes}
-                onClick={() => this.handleDocumentClick(file)}
-              >
+              <Card small className={classes} onClick={() => this.handleDocumentClick(file)}>
                 <CardBody className="file-manager__item-preview px-0 pb-0 pt-4">
                   <img src={file.image} alt={file.title} />
                 </CardBody>
@@ -53,9 +49,7 @@ class ComponentName extends React.Component {
                     <i className="material-icons">&#xE24D;</i>
                   </span>
                   <h6 className="file-manager__item-title">{file.title}</h6>
-                  <span className="file-manager__item-size ml-auto">
-                    {file.size}
-                  </span>
+                  <span className="file-manager__item-size ml-auto">{file.size}</span>
                 </CardFooter>
               </Card>
             </Col>
@@ -70,40 +64,40 @@ ComponentName.propTypes = {
   /**
    * The documents array.
    */
-  documents: PropTypes.array
+  documents: PropTypes.array,
 };
 
 ComponentName.defaultProps = {
   documents: [
     {
       id: 1,
-      title: "Lorem Ipsum Document",
-      size: "12kb",
-      image: require("../../images/file-manager/document-preview-1.jpg"),
-      selected: false
+      title: 'Lorem Ipsum Document',
+      size: '12kb',
+      image: require('../../images/file-manager/document-preview-1.jpg'),
+      selected: false,
     },
     {
       id: 2,
-      title: "Lorem Ipsum Document",
-      size: "12kb",
-      image: require("../../images/file-manager/document-preview-1.jpg"),
-      selected: false
+      title: 'Lorem Ipsum Document',
+      size: '12kb',
+      image: require('../../images/file-manager/document-preview-1.jpg'),
+      selected: false,
     },
     {
       id: 3,
-      title: "Lorem Ipsum Document",
-      size: "12kb",
-      image: require("../../images/file-manager/document-preview-1.jpg"),
-      selected: false
+      title: 'Lorem Ipsum Document',
+      size: '12kb',
+      image: require('../../images/file-manager/document-preview-1.jpg'),
+      selected: false,
     },
     {
       id: 4,
-      title: "Lorem Ipsum Document",
-      size: "12kb",
-      image: require("../../images/file-manager/document-preview-1.jpg"),
-      selected: false
-    }
-  ]
+      title: 'Lorem Ipsum Document',
+      size: '12kb',
+      image: require('../../images/file-manager/document-preview-1.jpg'),
+      selected: false,
+    },
+  ],
 };
 
 export default ComponentName;

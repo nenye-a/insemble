@@ -1,5 +1,5 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Badge,
   Card,
@@ -11,8 +11,8 @@ import {
   Col,
   FormSelect,
   ButtonGroup,
-  Button
-} from "shards-react";
+  Button,
+} from 'shards-react';
 
 const LatestOrders = ({ title, latestOrdersData }) => (
   <Card small className="lo-stats h-100">
@@ -38,11 +38,7 @@ const LatestOrders = ({ title, latestOrdersData }) => (
             {latestOrdersData.map((item, idx) => (
               <tr key={idx}>
                 <td className="lo-stats__image">
-                  <img
-                    alt={item.title}
-                    className="border rounded"
-                    src={item.image}
-                  />
+                  <img alt={item.title} className="border rounded" src={item.image} />
                 </td>
                 <td className="lo-stats__order-details">
                   <span>{item.id}</span>
@@ -56,9 +52,7 @@ const LatestOrders = ({ title, latestOrdersData }) => (
                   </div>
                 </td>
                 <td className="lo-stats__items text-center">{item.items}</td>
-                <td className="lo-stats__total text-center text-success">
-                  {item.total}
-                </td>
+                <td className="lo-stats__total text-center text-success">{item.total}</td>
                 <td className="lo-stats__actions">
                   <ButtonGroup className="d-table ml-auto">
                     <Button size="sm" theme="white">
@@ -80,12 +74,7 @@ const LatestOrders = ({ title, latestOrdersData }) => (
       <Row>
         {/* Time Span */}
         <Col>
-          <FormSelect
-            size="sm"
-            value="last-week"
-            style={{ maxWidth: "130px" }}
-            onChange={() => {}}
-          >
+          <FormSelect size="sm" value="last-week" style={{ maxWidth: '130px' }} onChange={() => {}}>
             <option value="last-week">Last Week</option>
             <option value="today">Today</option>
             <option value="last-month">Last Month</option>
@@ -108,9 +97,9 @@ const LatestOrders = ({ title, latestOrdersData }) => (
  */
 function getBadgeType(itemStatus) {
   const statusMap = {
-    Complete: "success",
-    Pending: "warning",
-    Canceled: "danger"
+    Complete: 'success',
+    Pending: 'warning',
+    Canceled: 'danger',
   };
 
   return statusMap[itemStatus];
@@ -125,45 +114,45 @@ LatestOrders.propTypes = {
   /**
    * The latest orders data.
    */
-  latestOrdersData: PropTypes.array
+  latestOrdersData: PropTypes.array,
 };
 
 LatestOrders.defaultProps = {
-  title: "Latest Orders",
+  title: 'Latest Orders',
   latestOrdersData: [
     {
-      id: "#19280",
-      date: "21 February 2018 20:32",
-      image: require("../../images/sales-overview/product-sweaters.jpg"),
-      status: "Complete",
-      items: "7",
-      total: "$199"
+      id: '#19280',
+      date: '21 February 2018 20:32',
+      image: require('../../images/sales-overview/product-sweaters.jpg'),
+      status: 'Complete',
+      items: '7',
+      total: '$199',
     },
     {
-      id: "#19279",
-      date: "21 February 2018 20:32",
-      image: require("../../images/sales-overview/product-order-1.jpg"),
-      status: "Pending",
-      items: "7",
-      total: "$612"
+      id: '#19279',
+      date: '21 February 2018 20:32',
+      image: require('../../images/sales-overview/product-order-1.jpg'),
+      status: 'Pending',
+      items: '7',
+      total: '$612',
     },
     {
-      id: "#19278",
-      date: "21 February 2018 20:32",
-      image: require("../../images/sales-overview/product-order-2.jpg"),
-      status: "Canceled",
-      items: "18",
-      total: "$1211"
+      id: '#19278',
+      date: '21 February 2018 20:32',
+      image: require('../../images/sales-overview/product-order-2.jpg'),
+      status: 'Canceled',
+      items: '18',
+      total: '$1211',
     },
     {
-      id: "#19277",
-      date: "21 February 2018 20:32",
-      image: require("../../images/sales-overview/product-order-3.jpg"),
-      status: "Pending",
-      items: "7",
-      total: "$612"
-    }
-  ]
+      id: '#19277',
+      date: '21 February 2018 20:32',
+      image: require('../../images/sales-overview/product-order-3.jpg'),
+      status: 'Pending',
+      items: '7',
+      total: '$612',
+    },
+  ],
 };
 
 export default LatestOrders;

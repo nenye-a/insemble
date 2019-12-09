@@ -1,19 +1,11 @@
-import React from "react";
-import PropTypes from "prop-types";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  Row,
-  Col,
-  ButtonGroup,
-  Button
-} from "shards-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Card, CardHeader, CardBody, Row, Col, ButtonGroup, Button } from 'shards-react';
 
-import RangeDatePicker from "../common/RangeDatePicker";
+import RangeDatePicker from '../common/RangeDatePicker';
 
-import colors from "../../utils/colors";
-import Chart from "../../utils/chart";
+import colors from '../../utils/colors';
+import Chart from '../../utils/chart';
 
 class Sessions extends React.Component {
   constructor(props) {
@@ -31,8 +23,8 @@ class Sessions extends React.Component {
         elements: {
           line: {
             // A higher value makes the line look skewed at this ratio.
-            tension: 0.38
-          }
+            tension: 0.38,
+          },
         },
         scales: {
           xAxes: [
@@ -40,32 +32,32 @@ class Sessions extends React.Component {
               gridLines: false,
               ticks: {
                 callback(tick, index) {
-                  return index % 2 === 0 ? "" : tick;
-                }
-              }
-            }
+                  return index % 2 === 0 ? '' : tick;
+                },
+              },
+            },
           ],
           yAxes: [
             {
               ticks: {
-                suggestedMax: 45
-              }
-            }
-          ]
+                suggestedMax: 45,
+              },
+            },
+          ],
         },
         tooltips: {
           enabled: false,
-          mode: "index",
-          position: "nearest"
-        }
+          mode: 'index',
+          position: 'nearest',
+        },
       },
-      ...this.props.chartOptions
+      ...this.props.chartOptions,
     };
 
     const AnalyticsOverviewChart = new Chart(this.canvasRef.current, {
-      type: "line",
+      type: 'line',
       data: this.props.chartData,
-      options: chartOptions
+      options: chartOptions,
     });
 
     // Generate the analytics overview chart labels.
@@ -75,9 +67,7 @@ class Sessions extends React.Component {
     // They can still be triggered on hover.
     const meta = AnalyticsOverviewChart.getDatasetMeta(0);
     meta.data[0]._model.radius = 0;
-    meta.data[
-      this.props.chartData.datasets[0].data.length - 1
-    ]._model.radius = 0;
+    meta.data[this.props.chartData.datasets[0].data.length - 1]._model.radius = 0;
 
     // Render the chart.
     AnalyticsOverviewChart.render();
@@ -118,7 +108,7 @@ class Sessions extends React.Component {
           <canvas
             height="120"
             ref={this.canvasRef}
-            style={{ maxWidth: "100% !important" }}
+            style={{ maxWidth: '100% !important' }}
             className="analytics-overview-sessions"
           />
         </CardBody>
@@ -139,38 +129,38 @@ Sessions.propTypes = {
   /**
    * The Chart.js config options.
    */
-  chartOptions: PropTypes.object
+  chartOptions: PropTypes.object,
 };
 
 Sessions.defaultProps = {
-  title: "Sessions",
+  title: 'Sessions',
   chartData: {
     labels: [
-      "09:00 PM",
-      "10:00 PM",
-      "11:00 PM",
-      "12:00 PM",
-      "13:00 PM",
-      "14:00 PM",
-      "15:00 PM",
-      "16:00 PM",
-      "17:00 PM"
+      '09:00 PM',
+      '10:00 PM',
+      '11:00 PM',
+      '12:00 PM',
+      '13:00 PM',
+      '14:00 PM',
+      '15:00 PM',
+      '16:00 PM',
+      '17:00 PM',
     ],
     datasets: [
       {
-        label: "Today",
-        fill: "start",
+        label: 'Today',
+        fill: 'start',
         data: [5, 5, 10, 30, 10, 42, 5, 15, 5],
         backgroundColor: colors.primary.toRGBA(0.1),
         borderColor: colors.primary.toRGBA(1),
         pointBackgroundColor: colors.white.toHex(),
         pointHoverBackgroundColor: colors.primary.toRGBA(1),
-        borderWidth: 1.5
+        borderWidth: 1.5,
       },
       {
-        label: "Yesterday",
-        fill: "start",
-        data: ["", 23, 5, 10, 5, 5, 30, 2, 10],
+        label: 'Yesterday',
+        fill: 'start',
+        data: ['', 23, 5, 10, 5, 5, 30, 2, 10],
         backgroundColor: colors.salmon.toRGBA(0.1),
         borderColor: colors.salmon.toRGBA(1),
         pointBackgroundColor: colors.white.toHex(),
@@ -178,10 +168,10 @@ Sessions.defaultProps = {
         borderDash: [5, 5],
         borderWidth: 1.5,
         pointRadius: 0,
-        pointBorderColor: colors.salmon.toRGBA(1)
-      }
-    ]
-  }
+        pointBorderColor: colors.salmon.toRGBA(1),
+      },
+    ],
+  },
 };
 
 export default Sessions;

@@ -1,6 +1,6 @@
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
-import React from "react";
+import React from 'react';
 import {
   Container,
   Row,
@@ -10,11 +10,11 @@ import {
   CardBody,
   CardFooter,
   Badge,
-  Button
-} from "shards-react";
+  Button,
+} from 'shards-react';
 
-import PageTitle from "../components/common/PageTitle";
-import { NavLink } from "react-router-dom";
+import PageTitle from '../components/common/PageTitle';
+import { NavLink } from 'react-router-dom';
 
 class Explore extends React.Component {
   constructor(props) {
@@ -25,186 +25,182 @@ class Explore extends React.Component {
       // First list of posts.
       PostsListOne: [
         {
-          backgroundImage: require("../images/content-management/1.jpeg"),
-          category: "Insemble",
-          categoryTheme: "royal-blue",
-          author: "Anna Kunis",
-          authorAvatar: require("../images/avatars/1.jpg"),
-          title: "Ritual Coffee",
-          date: "28 February 2019"
+          backgroundImage: require('../images/content-management/1.jpeg'),
+          category: 'Insemble',
+          categoryTheme: 'royal-blue',
+          author: 'Anna Kunis',
+          authorAvatar: require('../images/avatars/1.jpg'),
+          title: 'Ritual Coffee',
+          date: '28 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/2.jpeg"),
-          category: "Insemble",
-          categoryTheme: "royal-blue",
-          author: "James Jamerson",
-          authorAvatar: require("../images/avatars/2.jpg"),
-          title: "Coffee Cultures",
-          date: "29 February 2019"
+          backgroundImage: require('../images/content-management/2.jpeg'),
+          category: 'Insemble',
+          categoryTheme: 'royal-blue',
+          author: 'James Jamerson',
+          authorAvatar: require('../images/avatars/2.jpg'),
+          title: 'Coffee Cultures',
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/3.jpeg"),
-          category: "Insemble",
-          categoryTheme: "royal-blue",
+          backgroundImage: require('../images/content-management/3.jpeg'),
+          category: 'Insemble',
+          categoryTheme: 'royal-blue',
           author: "Peet's Coffee",
-          authorAvatar: require("../images/avatars/2.jpg"),
+          authorAvatar: require('../images/avatars/2.jpg'),
           title: "Peet's Coffee",
-          date: "29 February 2019"
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/4.jpeg"),
-          category: "Insemble",
-          categoryTheme: "royal-blue",
-          author: "Patties Express",
-          authorAvatar: require("../images/avatars/3.jpg"),
-          title: "Patties Express",
-          date: "29 February 2019"
+          backgroundImage: require('../images/content-management/4.jpeg'),
+          category: 'Insemble',
+          categoryTheme: 'royal-blue',
+          author: 'Patties Express',
+          authorAvatar: require('../images/avatars/3.jpg'),
+          title: 'Patties Express',
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/1.jpeg"),
-          category: "Insemble",
-          categoryTheme: "royal-blue",
-          author: "Anna Kunis",
-          authorAvatar: require("../images/avatars/1.jpg"),
-          title: "Corepower Yoga",
-          date: "28 February 2019"
+          backgroundImage: require('../images/content-management/1.jpeg'),
+          category: 'Insemble',
+          categoryTheme: 'royal-blue',
+          author: 'Anna Kunis',
+          authorAvatar: require('../images/avatars/1.jpg'),
+          title: 'Corepower Yoga',
+          date: '28 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/2.jpeg"),
-          category: "Regional",
-          categoryTheme: "dark",
-          author: "James Jamerson",
-          authorAvatar: require("../images/avatars/2.jpg"),
+          backgroundImage: require('../images/content-management/2.jpeg'),
+          category: 'Regional',
+          categoryTheme: 'dark',
+          author: 'James Jamerson',
+          authorAvatar: require('../images/avatars/2.jpg'),
           title: "Leo's Tacos",
-          date: "29 February 2019"
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/1.jpeg"),
-          category: "Regional",
-          categoryTheme: "dark",
-          author: "Anna Kunis",
-          authorAvatar: require("../images/avatars/1.jpg"),
-          title: "Ritual Coffee",
-          date: "28 February 2019"
+          backgroundImage: require('../images/content-management/1.jpeg'),
+          category: 'Regional',
+          categoryTheme: 'dark',
+          author: 'Anna Kunis',
+          authorAvatar: require('../images/avatars/1.jpg'),
+          title: 'Ritual Coffee',
+          date: '28 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/2.jpeg"),
-          category: "Regional",
-          categoryTheme: "dark",
-          author: "James Jamerson",
-          authorAvatar: require("../images/avatars/2.jpg"),
-          title: "Coffee Cultures",
-          date: "29 February 2019"
+          backgroundImage: require('../images/content-management/2.jpeg'),
+          category: 'Regional',
+          categoryTheme: 'dark',
+          author: 'James Jamerson',
+          authorAvatar: require('../images/avatars/2.jpg'),
+          title: 'Coffee Cultures',
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/3.jpeg"),
-          category: "Regional",
-          categoryTheme: "dark",
+          backgroundImage: require('../images/content-management/3.jpeg'),
+          category: 'Regional',
+          categoryTheme: 'dark',
           author: "Peet's Coffee",
-          authorAvatar: require("../images/avatars/2.jpg"),
+          authorAvatar: require('../images/avatars/2.jpg'),
           title: "Peet's Coffee",
-          date: "29 February 2019"
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/4.jpeg"),
-          category: "Regional",
-          categoryTheme: "dark",
-          author: "Patties Express",
-          authorAvatar: require("../images/avatars/3.jpg"),
-          title: "Patties Express",
-          date: "29 February 2019"
+          backgroundImage: require('../images/content-management/4.jpeg'),
+          category: 'Regional',
+          categoryTheme: 'dark',
+          author: 'Patties Express',
+          authorAvatar: require('../images/avatars/3.jpg'),
+          title: 'Patties Express',
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/1.jpeg"),
-          category: "Regional",
-          categoryTheme: "dark",
-          author: "Anna Kunis",
-          authorAvatar: require("../images/avatars/1.jpg"),
-          title: "Corepower Yoga",
-          date: "28 February 2019"
+          backgroundImage: require('../images/content-management/1.jpeg'),
+          category: 'Regional',
+          categoryTheme: 'dark',
+          author: 'Anna Kunis',
+          authorAvatar: require('../images/avatars/1.jpg'),
+          title: 'Corepower Yoga',
+          date: '28 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/2.jpeg"),
-          category: "Regional",
-          categoryTheme: "dark",
-          author: "James Jamerson",
-          authorAvatar: require("../images/avatars/2.jpg"),
+          backgroundImage: require('../images/content-management/2.jpeg'),
+          category: 'Regional',
+          categoryTheme: 'dark',
+          author: 'James Jamerson',
+          authorAvatar: require('../images/avatars/2.jpg'),
           title: "Leo's Tacos",
-          date: "29 February 2019"
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/1.jpeg"),
-          category: "Regional",
-          categoryTheme: "dark",
-          author: "Anna Kunis",
-          authorAvatar: require("../images/avatars/1.jpg"),
-          title: "Ritual Coffee",
-          date: "28 February 2019"
+          backgroundImage: require('../images/content-management/1.jpeg'),
+          category: 'Regional',
+          categoryTheme: 'dark',
+          author: 'Anna Kunis',
+          authorAvatar: require('../images/avatars/1.jpg'),
+          title: 'Ritual Coffee',
+          date: '28 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/2.jpeg"),
-          category: "Regional",
-          categoryTheme: "dark",
-          author: "James Jamerson",
-          authorAvatar: require("../images/avatars/2.jpg"),
-          title: "Coffee Cultures",
-          date: "29 February 2019"
+          backgroundImage: require('../images/content-management/2.jpeg'),
+          category: 'Regional',
+          categoryTheme: 'dark',
+          author: 'James Jamerson',
+          authorAvatar: require('../images/avatars/2.jpg'),
+          title: 'Coffee Cultures',
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/3.jpeg"),
-          category: "Regional",
-          categoryTheme: "dark",
+          backgroundImage: require('../images/content-management/3.jpeg'),
+          category: 'Regional',
+          categoryTheme: 'dark',
           author: "Peet's Coffee",
-          authorAvatar: require("../images/avatars/2.jpg"),
+          authorAvatar: require('../images/avatars/2.jpg'),
           title: "Peet's Coffee",
-          date: "29 February 2019"
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/4.jpeg"),
-          category: "Regional",
-          categoryTheme: "dark",
-          author: "Patties Express",
-          authorAvatar: require("../images/avatars/3.jpg"),
-          title: "Patties Express",
-          date: "29 February 2019"
+          backgroundImage: require('../images/content-management/4.jpeg'),
+          category: 'Regional',
+          categoryTheme: 'dark',
+          author: 'Patties Express',
+          authorAvatar: require('../images/avatars/3.jpg'),
+          title: 'Patties Express',
+          date: '29 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/1.jpeg"),
-          category: "Regional",
-          categoryTheme: "dark",
-          author: "Anna Kunis",
-          authorAvatar: require("../images/avatars/1.jpg"),
-          title: "Corepower Yoga",
-          date: "28 February 2019"
+          backgroundImage: require('../images/content-management/1.jpeg'),
+          category: 'Regional',
+          categoryTheme: 'dark',
+          author: 'Anna Kunis',
+          authorAvatar: require('../images/avatars/1.jpg'),
+          title: 'Corepower Yoga',
+          date: '28 February 2019',
         },
         {
-          backgroundImage: require("../images/content-management/2.jpeg"),
-          category: "Regional",
-          categoryTheme: "dark",
-          author: "James Jamerson",
-          authorAvatar: require("../images/avatars/2.jpg"),
+          backgroundImage: require('../images/content-management/2.jpeg'),
+          category: 'Regional',
+          categoryTheme: 'dark',
+          author: 'James Jamerson',
+          authorAvatar: require('../images/avatars/2.jpg'),
           title: "Leo's Tacos",
-          date: "29 February 2019"
-        }
-        
-      ]
+          date: '29 February 2019',
+        },
+      ],
     };
   }
 
   componentDidMount() {
     fetch('/api/pair')
-    .then(res => res.json())
-    .then((data) => {
-      this.setState({ LocationsList: data })
-    })
-    .catch(console.log)
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({ LocationsList: data });
+      })
+      .catch(console.log);
   }
 
   render() {
-    const {
-      PostsListOne,
-      LocationsList
-    } = this.state;
+    const { PostsListOne, LocationsList } = this.state;
 
     return (
       <Container fluid className="main-content-container px-4">
@@ -216,25 +212,28 @@ class Explore extends React.Component {
         <Row>
           {LocationsList.map((retailer, idx) => (
             <Col lg="3" md="6" sm="12" className="mb-4" key={idx}>
-              <Card tag={NavLink} to = {{pathname: "/tenant-deep-dive", match: retailer}} 
-              small className="card-post card-post--1">
+              <Card
+                tag={NavLink}
+                to={{ pathname: '/tenant-deep-dive', match: retailer }}
+                small
+                className="card-post card-post--1"
+              >
                 <div
                   className="card-post__image"
                   style={{ backgroundImage: `url(${retailer.photo})` }} //replace this
                 >
                   <Badge
                     pill
-                    className={`card-post__category bg-${"royal-blue"}`} // warn
+                    className={`card-post__category bg-${'royal-blue'}`} // warn
                   >
-                    {"Insemble"}
+                    {'Insemble'}
                   </Badge>
                   <div className="card-post__author d-flex">
                     <a
                       href="#"
                       className="card-post__author-avatar card-post__author-avatar--small"
                       style={{ backgroundImage: `url('${retailer.icon}')` }}
-                    >
-                    </a>
+                    ></a>
                   </div>
                 </div>
                 <CardBody>
@@ -243,10 +242,9 @@ class Explore extends React.Component {
                       {retailer.name}
                     </a>
                   </h5>
-                  
+
                   <p className="card-text d-inline-block mb-3">{retailer.census.asian}</p>
                   <span className="text-muted">{retailer.income}</span>
-                  
                 </CardBody>
                 <CardFooter className="border-top d-flex">
                   <div className="my-auto ml-auto">
@@ -259,7 +257,6 @@ class Explore extends React.Component {
             </Col>
           ))}
         </Row>
-
       </Container>
     );
   }

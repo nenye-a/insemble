@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   ListGroup,
   ListGroupItem,
@@ -9,8 +9,8 @@ import {
   FormGroup,
   FormCheckbox,
   FormSelect,
-  Button
-} from "shards-react";
+  Button,
+} from 'shards-react';
 
 const CompleteFormExample = () => (
   <ListGroup flush>
@@ -21,19 +21,11 @@ const CompleteFormExample = () => (
             <Row form>
               <Col md="6" className="form-group">
                 <label htmlFor="feEmailAddress">Email</label>
-                <FormInput
-                  id="feEmailAddress"
-                  type="email"
-                  placeholder="Email"
-                />
+                <FormInput id="feEmailAddress" type="email" placeholder="Email" />
               </Col>
               <Col md="6">
                 <label htmlFor="fePassword">Password</label>
-                <FormInput
-                  id="fePassword"
-                  type="password"
-                  placeholder="Password"
-                />
+                <FormInput id="fePassword" type="password" placeholder="Password" />
               </Col>
             </Row>
 
@@ -44,10 +36,7 @@ const CompleteFormExample = () => (
 
             <FormGroup>
               <label htmlFor="feInputAddress2">Address 2</label>
-              <FormInput
-                id="feInputAddress2"
-                placeholder="Apartment, Studio or Floor"
-              />
+              <FormInput id="feInputAddress2" placeholder="Apartment, Studio or Floor" />
             </FormGroup>
 
             <Row form>
@@ -68,8 +57,7 @@ const CompleteFormExample = () => (
               </Col>
               <Col md="12" className="form-group">
                 <FormCheckbox>
-                  {/* eslint-disable-next-line */}I agree with your{" "}
-                  <a href="#">Privacy Policy</a>.
+                  {/* eslint-disable-next-line */}I agree with your <a href="#">Privacy Policy</a>.
                 </FormCheckbox>
               </Col>
             </Row>

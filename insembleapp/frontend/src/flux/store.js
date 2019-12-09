@@ -1,12 +1,12 @@
-import { EventEmitter } from "events";
+import { EventEmitter } from 'events';
 
-import Dispatcher from "./dispatcher";
-import Constants from "./constants";
-import getSidebarNavItems from "../data/sidebar-nav-items";
+import Dispatcher from './dispatcher';
+import Constants from './constants';
+import getSidebarNavItems from '../data/sidebar-nav-items';
 
 let _store = {
   menuVisible: false,
-  navItems: getSidebarNavItems()
+  navItems: getSidebarNavItems(),
 };
 
 class Store extends EventEmitter {
@@ -51,11 +51,11 @@ class Store extends EventEmitter {
       }
     });
 
-    newStore.navItems[navGroupIdx].items[navItemIdx].open = !newStore.navItems[
-      navGroupIdx
-    ].items[navItemIdx].open;
+    newStore.navItems[navGroupIdx].items[navItemIdx].open = !newStore.navItems[navGroupIdx].items[
+      navItemIdx
+    ].open;
 
-    newStore.navItems = newStore.navItems.map(i => {
+    newStore.navItems = newStore.navItems.map((i) => {
       i.items = i.items.map((_i, idx) => {
         if (idx !== navItemIdx) {
           _i.open = false;
