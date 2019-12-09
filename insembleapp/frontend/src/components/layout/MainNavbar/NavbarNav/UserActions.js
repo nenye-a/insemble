@@ -65,14 +65,14 @@ class UserActions extends React.Component {
     else{
       return (
       <Container className="my-auto mx-auto">
-        <Button
+        {/* <Button
           pill       
           theme="accent"
           tag={NavLink} 
           to="/login"
         >
           Login
-        </Button>
+        </Button> */}
       </Container>)
 
     }
