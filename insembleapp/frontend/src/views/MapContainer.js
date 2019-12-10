@@ -228,30 +228,6 @@ class MapWithAMarkerClusterer extends React.Component {
             </InfoWindow>
           </Marker>
         )}
-        {/* Just markers */}
-        {/* {Object.values(i_markers).map(marker => (
-            <Marker 
-              onClick={()=>this.handleMarkerClick(marker)}
-              key={marker._id}
-              // icon= {require("../images/logos/marker.png")}
-              position={{ lat: marker.lat, lng: marker.lng }}
-            />
-          ))} */}
-        {/* <MarkerClusterer
-          onClick={this.handleMarkerClustererClick}
-          averageCenter
-          enableRetinaIcons
-          gridSize={60}
-        >
-          {Object.values(i_markers).map(marker => (
-            <Marker 
-              onClick={()=>this.handleMarkerClick(marker)}
-              key={marker._id}
-              icon= {require("../images/logos/marker.png")}
-              position={{ lat: marker.lat, lng: marker.lng }}
-            />
-          ))}
-        </MarkerClusterer> */}
         <HeatMapLayer data={data} options={{ radius: 20 }} opacity={1} />
         <SearchBox
           ref={this.state.onSearchBoxMounted}
