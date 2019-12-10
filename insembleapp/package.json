@@ -6,7 +6,7 @@
   "main": "index.js",
   "prettier": "eslint-config-vinta/prettier",
   "scripts": {
-    "test": "npm run lint && npm run jest",
+    "test": "npm run lint && npm run format:check && npm run jest",
     "jest": "jest",
     "test:watch": "npm test -- --watch",
     "start": "babel-node server.js",
