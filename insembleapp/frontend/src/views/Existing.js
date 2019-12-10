@@ -57,7 +57,6 @@ class Existing extends React.Component {
     const address = this.addressInput.current.value;
     sessionStorage.setItem('sessionAddress', address);
     this.props.getLocation('api/location/address=' + address + '&radius=1');
-
   };
 
   render() {
