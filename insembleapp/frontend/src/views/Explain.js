@@ -84,31 +84,48 @@ class Explain extends React.Component {
                 <h5 className="auth-form__title text-center mb-4">Help</h5>
 
                 <div class="list-group">
-                  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                  <a
+                    href="#"
+                    class="list-group-item list-group-item-action flex-column align-items-start"
+                  >
                     <div class="d-flex w-100 justify-content-between">
                       <h5 class="mb-1">How to use</h5>
                     </div>
-                    <p class="mb-1">Insemble provides location recommendations based on your search parameters. Click on 
-                        the map to find more informaiton about location. Use the search bar to: pan to specific neighborhoods, 
-                        see presence of specific retailers or retailer types in an area. </p>
+                    <p class="mb-1">
+                      Insemble provides location recommendations based on your search parameters.
+                      Click on the map to find more informaiton about location. Use the search bar
+                      to: pan to specific neighborhoods, see presence of specific retailers or
+                      retailer types in an area.{' '}
+                    </p>
                     <small>(Example searches include: "Brentwood" or "Taco shop").</small>
                   </a>
-                  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                  <a
+                    href="#"
+                    class="list-group-item list-group-item-action flex-column align-items-start"
+                  >
                     <div class="d-flex w-100 justify-content-between">
                       <h5 class="mb-1">How is the map generated?</h5>
                     </div>
-                    <p class="mb-1">Insemble generates location recommendations using key factors about
-                        retail stores comparable to your searched location or categories. We use advanced analytics to minimize
-                        canibalization and optimize for cotenancy potential. If you have concerns, feedback, or want to chat with us,
-                        please fill out you "Feedback" secion linked below.</p>
+                    <p class="mb-1">
+                      Insemble generates location recommendations using key factors about retail
+                      stores comparable to your searched location or categories. We use advanced
+                      analytics to minimize canibalization and optimize for cotenancy potential. If
+                      you have concerns, feedback, or want to chat with us, please fill out you
+                      "Feedback" secion linked below.
+                    </p>
                     <small class="text-muted">Please contact us if you have any quesitons.</small>
                   </a>
-                  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                  <a
+                    href="#"
+                    class="list-group-item list-group-item-action flex-column align-items-start"
+                  >
                     <div class="d-flex w-100 justify-content-between">
                       <h5 class="mb-1">Saving Results (Coming Soon)</h5>
                     </div>
-                    <p class="mb-1">Unfortunately, you cannot save map results at the moment, but will be able to in the very
-                        near future.</p>
+                    <p class="mb-1">
+                      Unfortunately, you cannot save map results at the moment, but will be able to
+                      in the very near future.
+                    </p>
                   </a>
                 </div>
 

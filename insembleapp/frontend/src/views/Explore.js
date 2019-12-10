@@ -26,7 +26,6 @@ class Explore extends React.Component {
 
     this.state = {
       // First list of posts.
-      LocationsList: [],
       PostsListOne: [
         {
           backgroundImage: require('../images/retailers/1.jpg'),
@@ -90,8 +89,7 @@ class Explore extends React.Component {
           backgroundImage: require('../images/types/1.jpg'),
           category: 'Travel',
           categoryTheme: 'info',
-          author: 'Anna Ken',
-          authorAvatar: require('../images/avatars/0.jpg'),
+
           title: 'Coffee Shops',
           body:
             'Over the past few years, the independent, hole-in-the-wall coffee shop scene has exploded, meaning you have more options than ever in your search...',
@@ -101,8 +99,7 @@ class Explore extends React.Component {
           backgroundImage: require('../images/types/2.jpg'),
           category: 'Business',
           categoryTheme: 'dark',
-          author: 'John James',
-          authorAvatar: require('../images/avatars/1.jpg'),
+
           title: 'Healthy Experiences',
           body:
             'Consumers are placing more value on health and wellness than on material objects these days, and the definition of health and wellness has evolved...',
@@ -112,8 +109,7 @@ class Explore extends React.Component {
           backgroundImage: require('../images/types/3.jpg'),
           category: 'Business',
           categoryTheme: 'dark',
-          author: 'John James',
-          authorAvatar: require('../images/avatars/1.jpg'),
+
           title: 'Mediterranean',
           body:
             "There's no shortage of mediterranean desire in San Francisco, but with a convenient dining model that's supported by creative and flavorful...",
@@ -123,87 +119,10 @@ class Explore extends React.Component {
           backgroundImage: require('../images/types/4.jpeg'),
           category: 'Business',
           categoryTheme: 'dark',
-          author: 'John James',
-          authorAvatar: require('../images/avatars/1.jpg'),
+
           title: 'Mexican Restaurant',
           body:
             'Mexican-style food has entered the mainstream American diet, largely due to a growing Hispanic immigrant population that has increased demand...',
-          date: '29 February 2019',
-        },
-      ],
-
-      // Third list of posts.
-      PostsListThree: [
-        {
-          author: 'John James',
-          authorAvatar: require('../images/avatars/1.jpg'),
-          title: 'Had denoting properly jointure which well books beyond',
-          body:
-            'In said to of poor full be post face snug. Introduced imprudence see say unpleasing devonshire acceptance son. Exeter longer wisdom work...',
-          date: '29 February 2019',
-        },
-        {
-          author: 'John James',
-          authorAvatar: require('../images/avatars/2.jpg'),
-          title: 'Husbands ask repeated resolved but laughter debating',
-          body:
-            'It abode words began enjoy years no do ﻿no. Tried spoil as heart visit blush or. Boy possible blessing sensible set but margaret interest. Off tears...',
-          date: '29 February 2019',
-        },
-        {
-          author: 'John James',
-          authorAvatar: require('../images/avatars/3.jpg'),
-          title: 'Instantly gentleman contained belonging exquisite now direction',
-          body:
-            'West room at sent if year. Numerous indulged distance old law you. Total state as merit court green decay he. Steepest merit checking railway...',
-          date: '29 February 2019',
-        },
-      ],
-
-      // Fourth list of posts.
-      PostsListFour: [
-        {
-          backgroundImage: require('../images/content-management/7.jpeg'),
-          author: 'Alene Trenton',
-          authorUrl: '#',
-          category: 'News',
-          categoryUrl: '#',
-          title: 'Extremity so attending objection as engrossed',
-          body:
-            'Pursuit chamber as elderly amongst on. Distant however warrant farther to of. My justice wishing prudent waiting in be...',
-          date: '29 February 2019',
-        },
-        {
-          backgroundImage: require('../images/content-management/8.jpeg'),
-          author: 'Chris Jamie',
-          authorUrl: '#',
-          category: 'News',
-          categoryUrl: '#',
-          title: 'Bed sincerity yet therefore forfeited his',
-          body:
-            'Speaking throwing breeding betrayed children my to. Me marianne no he horrible produced ye. Sufficient unpleasing and...',
-          date: '29 February 2019',
-        },
-        {
-          backgroundImage: require('../images/content-management/9.jpeg'),
-          author: 'Monica Jordan',
-          authorUrl: '#',
-          category: 'News',
-          categoryUrl: '#',
-          title: 'Object remark lively all did feebly excuse our',
-          body:
-            'Morning prudent removal an letters by. On could my in order never it. Or excited certain sixteen it to parties colonel not seeing...',
-          date: '29 February 2019',
-        },
-        {
-          backgroundImage: require('../images/content-management/10.jpeg'),
-          author: 'Monica Jordan',
-          authorUrl: '#',
-          category: 'News',
-          categoryUrl: '#',
-          title: 'His followed carriage proposal entrance',
-          body:
-            'For county now sister engage had season better had waited. Occasional mrs interested far expression directly as regard...',
           date: '29 February 2019',
         },
       ],
@@ -220,7 +139,7 @@ class Explore extends React.Component {
   }
 
   render() {
-    const { LocationsList, PostsListOne, PostsListTwo } = this.state;
+    const { PostsListOne, PostsListTwo } = this.state;
 
     return (
       <Container fluid className="main-content-container px-4">

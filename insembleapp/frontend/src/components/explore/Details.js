@@ -118,8 +118,6 @@ Details.defaultProps = {
     ],
   },
   userData: {
-    coverImg: require('../../images/user-profile/up-user-details-background.jpg'),
-    avatarImg: require('../../images/avatars/0.jpg'),
     name: 'Sierra Brooks',
     bio: "I'm a design focused engineer.",
     email: 'DELETED_EMAIL',
