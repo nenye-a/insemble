@@ -10,8 +10,42 @@ import NavbarToggle from './NavbarToggle';
 import { LAYOUT_TYPES } from '../../../utils/constants';
 
 const TenantNavbar = ({ layout, stickyTop }) => {
+
   const isHeaderNav = layout === LAYOUT_TYPES.HEADER_NAVIGATION;
   const classes = classNames('main-navbar', 'bg-white', stickyTop && 'sticky-top');
+
+  const sessionText = () => {
+    if (sessionStorage.getItem('sessionIncome')) {
+
+      const income = parseInt(sessionStorage.getItem('sessionIncome'), 10)
+      const categories = JSON.parse(sessionStorage.getItem('sessionTags'))
+
+      return (
+        <div className="d-table m-auto">
+          <div>
+            <span className="d-none d-md-inline ml-1">Last Searched Income={income} </span>
+          </div>
+          <div>
+            <span className="d-none d-md-inline ml-1">Last Searched Categories={categories}</span>
+          </div>
+        </div>
+      )
+    } else if (sessionStorage.getItem('sessionStoreName')) {
+      const storeName = sessionStorage.getItem('sessionStoreName');
+      const address = sessionStorage.getItem('sessionAddress')
+
+      return (
+        <div className="d-table m-auto">
+          <div>
+            <span className="d-none d-md-inline ml-1">Last Searched Name={storeName} </span>
+          </div>
+          <div>
+            <span className="d-none d-md-inline ml-1">Last Searched Address={address}</span>
+          </div>
+        </div>
+      )
+    }
+  }
 
   return (
     <div className={classes}>
@@ -27,7 +61,7 @@ const TenantNavbar = ({ layout, stickyTop }) => {
                   src={require('../../../images/insemble_i.png')}
                   alt="Owner Dashboard"
                 />
-                <span className="d-none d-md-inline ml-1">Insemble.ai</span>
+                <span className="d-none d-md-inline ml-1">Insemble.app</span>
               </div>
             </NavbarBrand>
           )}
@@ -41,6 +75,10 @@ const TenantNavbar = ({ layout, stickyTop }) => {
           </ButtonGroup> */}
           {/* Filler div */}
           <div className="w-100 d-none d-md-flex d-lg-flex" />
+          {/* <div>
+            <span className="d-none d-md-inline ml-1">Current Search: </span>
+          </div> */}
+          {sessionText()}
           <NavbarNav />
         </Navbar>
       </Container>

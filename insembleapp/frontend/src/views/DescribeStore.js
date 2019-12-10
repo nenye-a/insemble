@@ -64,7 +64,12 @@ class DescribeStore extends React.Component {
     hasLocation: PropTypes.bool,
   };
   componentDidMount() {
-    var catData = [];
+    // var catData = [];
+
+    // if income in the session re-render
+    if (sessionStorage.getItem('sessionIncome')) {
+      this.incomeInput.current.value = parseInt(sessionStorage.getItem('sessionIncome'), 10)
+    }
 
     fetch('api/category/')
       .then((res) => {
@@ -98,6 +103,10 @@ class DescribeStore extends React.Component {
   handleFormSubmit = (e) => {
     e.preventDefault();
 
+    // clear session address or store name if available
+    sessionStorage.removeItem('sessionAddress');
+    sessionStorage.removeItem('sessionStoreName');
+
     const emptyIncome = this.incomeInput.current.value == '';
     const emptyCategories = this.state.tags.length == 0;
 
@@ -105,8 +114,9 @@ class DescribeStore extends React.Component {
     if (emptyIncome) this.alert.show('Please provide target income');
     if (emptyCategories) this.alert.show('Please provide store categories.');
     if (!emptyIncome && !emptyCategories) {
-      // store tages in session incase we need to re-render upon back button click
+      // store tags and income in session incase we need to re-render upon back button click
       sessionStorage.setItem('sessionTags', JSON.stringify(this.state.tags));
+      sessionStorage.setItem('sessionIncome', this.incomeInput.current.value);
 
       // clear location if it exists - using short-circuit fashion
       this.props.hasLocation && this.props.clearLocation();
