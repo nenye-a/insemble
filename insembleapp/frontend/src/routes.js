@@ -7,20 +7,13 @@ import {
   HeaderNavigation,
   IconSidebar,
   LandlordLayout,
-  TenantSpaces,
   Tenant,
   LoginLayout,
   BlankLayout,
 } from './layouts';
 
 // Route Views
-import Analytics from './views/Analytics';
-import Insights from './views/Insights';
 import Spaces from './views/Spaces';
-import BlogOverview from './views/BlogOverview';
-import UserProfile from './views/UserProfile';
-import UserProfileLite from './views/UserProfileLite';
-import EditUserProfile from './views/EditUserProfile';
 import DescribeStore from './views/DescribeStore';
 import Login from './views/Login';
 import Landing from './views/Landing';
@@ -32,21 +25,12 @@ import Find from './views/Find';
 import Register from './views/Register';
 import ForgotPassword from './views/ForgotPassword';
 import ChangePassword from './views/ChangePassword';
-import FileManagerList from './views/FileManagerList';
 import Explore from './views/Explore';
 import TenantDeepDive from './views/TenantDeepDive';
 import LocationDeepDive from './views/LocationDeepDive';
 import Matches from './views/Matches';
-import TransactionHistory from './views/TransactionHistory';
-import Calendar from './views/Calendar';
-import AddNewPost from './views/AddNewPost';
 import Errors from './views/Errors';
 import NoDeals from './views/NoDeals';
-import ComponentsOverview from './views/ComponentsOverview';
-import Tables from './views/Tables';
-import BlogPosts from './views/BlogPosts';
-import HeaderNav from './views/HeaderNavigation';
-import IconSidebarView from './views/IconSidebar';
 
 const BlankIconSidebarLayout = ({ children }) => (
   <IconSidebar noNavbar noFooter>
@@ -63,44 +47,9 @@ export default [
     component: Landing,
   },
   {
-    path: '/insights',
-    layout: DefaultLayout,
-    component: Insights,
-  },
-  {
-    path: '/landlord',
-    layout: LandlordLayout,
-    component: Insights,
-  },
-  {
-    path: '/analytics',
-    layout: DefaultLayout,
-    component: Analytics,
-  },
-  {
     path: '/spaces',
     layout: Tenant,
     component: Spaces,
-  },
-  {
-    path: '/blog-overview',
-    layout: DefaultLayout,
-    component: BlogOverview,
-  },
-  {
-    path: '/user-profile',
-    layout: DefaultLayout,
-    component: UserProfile,
-  },
-  {
-    path: '/user-profile-lite',
-    layout: DefaultLayout,
-    component: UserProfileLite,
-  },
-  {
-    path: '/edit-user-profile',
-    layout: DefaultLayout,
-    component: EditUserProfile,
   },
   {
     path: '/describe-store',
@@ -153,19 +102,9 @@ export default [
     component: ChangePassword,
   },
   {
-    path: '/file-manager-list',
-    layout: DefaultLayout,
-    component: FileManagerList,
-  },
-  {
     path: '/explore',
     layout: LandlordLayout,
     component: Explore,
-  },
-  {
-    path: '/tenant-deep-dive',
-    layout: HeaderNavigation,
-    component: TenantDeepDive,
   },
   {
     path: '/location-deep-dive',
@@ -178,21 +117,6 @@ export default [
     component: Matches,
   },
   {
-    path: '/transaction-history',
-    layout: DefaultLayout,
-    component: TransactionHistory,
-  },
-  {
-    path: '/calendar',
-    layout: DefaultLayout,
-    component: Calendar,
-  },
-  {
-    path: '/add-new-post',
-    layout: DefaultLayout,
-    component: AddNewPost,
-  },
-  {
     path: '/errors',
     layout: BlankIconSidebarLayout,
     component: Errors,
@@ -203,28 +127,8 @@ export default [
     component: NoDeals,
   },
   {
-    path: '/components-overview',
-    layout: DefaultLayout,
-    component: ComponentsOverview,
-  },
-  {
-    path: '/tables',
-    layout: DefaultLayout,
-    component: Tables,
-  },
-  {
-    path: '/blog-posts',
-    layout: DefaultLayout,
-    component: BlogPosts,
-  },
-  {
-    path: '/header-navigation',
+    path: '/tenant-deep-dive',
     layout: HeaderNavigation,
-    component: HeaderNav,
-  },
-  {
-    path: '/icon-sidebar-nav',
-    layout: IconSidebar,
-    component: IconSidebarView,
+    component: TenantDeepDive,
   },
 ];
