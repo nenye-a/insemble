@@ -2,31 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import {
-  Container,
-  Row,
-  Col,
-  ButtonGroup,
-  Button,
-  Slider,
-  Collapse,
-  DropdownMenu,
-  DropdownItem,
-  DropdownToggle,
-  Dropdown,
-  NavItem,
+  Col
 } from 'shards-react';
-import { NavLink } from 'react-router-dom';
-import EthnicButtons from './EthnicButtons';
-import UserActions from './UserActions';
 
-import RegionSearch from './RegionSearch';
 import SidebarMainNavbar from './SidebarMainNavbar';
 import SidebarSearch from './SidebarSearch';
 import SidebarNavItems from './SidebarNavItems';
-import SidebarNavItem from './SidebarNavItem';
 
 import { Store } from '../../../flux';
-import DropdownInputGroups from '../../components-overview/DropdownInputGroups';
 
 class LandlordSidebar extends React.Component {
   constructor(props) {

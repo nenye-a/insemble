@@ -2,7 +2,6 @@
 import React from 'react';
 import TagsInput from 'react-tagsinput';
 import {
-  Alert,
   Container,
   Row,
   Col,
@@ -11,20 +10,13 @@ import {
   Card,
   CardBody,
   CardFooter,
-  Nav,
-  NavItem,
-  NavLink,
   Form,
   FormInput,
-  FormSelect,
-  FormCheckbox,
-  FormTextarea,
   InputGroup,
   InputGroupAddon,
   InputGroupText,
 } from 'shards-react';
 import FuzzySearch from 'fuzzy-search';
-import getCategoryData from '../data/store-categories';
 
 import { withRouter } from 'react-router';
 import { Redirect } from 'react-router-dom';
