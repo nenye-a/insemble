@@ -6,13 +6,13 @@ const UserDetails = ({ userData }) => (
   <Card small className="user-details mb-4">
     <CardHeader className="p-0">
       <div className="user-details__bg">
-        <img src={userData.coverImg} alt={userData.name} />
+        {/* <img src={userData.coverImg} alt={userData.name} /> */}
       </div>
     </CardHeader>
     <CardBody className="p-0">
       {/* User Avatar */}
       <div className="user-details__avatar mx-auto">
-        <img src={userData.avatarImg} alt={userData.name} />
+        {/* <img src={userData.avatarImg} alt={userData.name} /> */}
       </div>
       {/* User Name */}
       <h4 className="text-center m-0 mt-2">{userData.name}</h4>
@@ -98,8 +98,8 @@ UserDetails.propTypes = {
 
 UserDetails.defaultProps = {
   userData: {
-    coverImg: require('../../images/user-profile/up-user-details-background.jpg'),
-    avatarImg: require('../../images/avatars/0.jpg'),
+    // coverImg: require('../../images/user-profile/up-user-details-background.jpg'),
+    // avatarImg: require('../../images/avatars/0.jpg'),
     name: 'Sierra Brooks',
     bio: "I'm a design focused engineer.",
     email: 'sierra@example.com',

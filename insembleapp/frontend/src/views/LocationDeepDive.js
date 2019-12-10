@@ -102,11 +102,10 @@ class LocationDeepDive extends React.Component {
         </Row>
         <Row>
           <Col className="flex-column align-items-center pt-2">
-          <Button theme="accent" tag={NavLink} to="/spaces">
-            Back
-          </Button>
+            <Button theme="accent" tag={NavLink} to="/spaces">
+              Back
+            </Button>
           </Col>
-          
         </Row>
 
         {/* Page Header */}
@@ -128,7 +127,6 @@ class LocationDeepDive extends React.Component {
         </Row>
         <Col className="d-flex flex-column justify-content-center align-items-center py-2">
           <Row>
-            
             <div className="my-auto d-inline-flex mb-sm-auto mx-1">Radius:</div>
             <div>
               <ButtonGroup size="sm" className="my-auto d-inline-flex mb-sm-auto mx-1">

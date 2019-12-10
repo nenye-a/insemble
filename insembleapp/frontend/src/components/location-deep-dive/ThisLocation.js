@@ -175,7 +175,7 @@ class RetailerSite extends React.Component {
                 />
 
                 {/* Legend */}
-                
+
                 <div className="ubd-stats__legend w-70 m-auto pb-4">
                   {labels.map((label, idx) => (
                     <div key={idx} className="ubd-stats__item px-1">

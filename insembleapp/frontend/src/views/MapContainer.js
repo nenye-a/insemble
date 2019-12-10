@@ -145,9 +145,7 @@ class MapWithAMarkerClusterer extends React.Component {
 
   renderRedirect = () => {
     if (this.state.redirect) {
-      return (
-        <Redirect push to={{ pathname: '/location-deep-dive', match: this.state.marker }} />
-      );
+      return <Redirect push to={{ pathname: '/location-deep-dive', match: this.state.marker }} />;
     }
   };
 

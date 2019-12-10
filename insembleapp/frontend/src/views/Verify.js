@@ -73,22 +73,21 @@ class Verify extends React.Component {
         />
 
         <Col className="flex-column justify-content-center align-items-center pt-2">
-        <Row noGutters className="page-header py-2">
-          <PageTitle md="4" title="Is this your store?" className="text-sm-center" />
-        </Row>
-        
-        <Row>
-          <Col className="justify-content-center">
-            <Button pill theme="white" tag={Link} to="/existing" className="mx-2">
-              No
-            </Button>
-            <Button pill theme="accent" onClick={this.onSubmit} className="mx-2">
-              Yes
-            </Button>
-          </Col>
-        </Row>
+          <Row noGutters className="page-header py-2">
+            <PageTitle md="4" title="Is this your store?" className="text-sm-center" />
+          </Row>
+
+          <Row>
+            <Col className="justify-content-center">
+              <Button pill theme="white" tag={Link} to="/existing" className="mx-2">
+                No
+              </Button>
+              <Button pill theme="accent" onClick={this.onSubmit} className="mx-2">
+                Yes
+              </Button>
+            </Col>
+          </Row>
         </Col>
-        
       </Container>
     );
   }

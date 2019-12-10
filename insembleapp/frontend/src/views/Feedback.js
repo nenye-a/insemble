@@ -89,8 +89,8 @@ class Feedback extends React.Component {
     this.uploadFeedback(featuresText, 'features');
 
     this.setState({
-      redirect: true
-    })
+      redirect: true,
+    });
   };
 
   render() {
@@ -101,7 +101,7 @@ class Feedback extends React.Component {
     return (
       <Container fluid className="main-content-container h-100 px-4">
         {/* {this.renderRedirect()} */}
-        
+
         <Row noGutters className="h-100">
           <Col lg="7" md="11" className="auth-form mx-auto my-auto">
             <Card>

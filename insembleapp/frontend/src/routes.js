@@ -10,7 +10,7 @@ import {
   TenantSpaces,
   Tenant,
   LoginLayout,
-  BlankLayout
+  BlankLayout,
 } from './layouts';
 
 // Route Views

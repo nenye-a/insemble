@@ -18,21 +18,19 @@ const TenantNavbar = ({ layout, stickyTop }) => {
 
       return (
         <div className="d-table my-auto">
-          <Col className="d-none d-md-inline ml-1">Recent Search Income: ${income}
-          </Col>
+          <Col className="d-none d-md-inline ml-1">Recent Search Income: ${income}</Col>
           <Col className="d-none d-md-inline ml-1">Recent Search Categories: </Col>
           <Col className="d-none d-md-inline ml-1">
-         
-                  {categories.map((category, idx) => (
-                    <Badge
-                      pill
-                      theme="light"
-                      className="text-light text-uppercase mb-2 border mr-1"
-                      key={idx}
-                    >
-                      {category}
-                    </Badge>
-                  ))}
+            {categories.map((category, idx) => (
+              <Badge
+                pill
+                theme="light"
+                className="text-light text-uppercase mb-2 border mr-1"
+                key={idx}
+              >
+                {category}
+              </Badge>
+            ))}
           </Col>
         </div>
       );
@@ -42,11 +40,8 @@ const TenantNavbar = ({ layout, stickyTop }) => {
 
       return (
         <div className="d-table my-auto">
-          <Col className="d-none d-md-inline ml-1">Recent Search: {storeName} 
-          </Col>
-          <Col className="d-none d-md-inline ml-1">Input Address: {address}
-          </Col>
-          
+          <Col className="d-none d-md-inline ml-1">Recent Search: {storeName}</Col>
+          <Col className="d-none d-md-inline ml-1">Input Address: {address}</Col>
         </div>
       );
     }
