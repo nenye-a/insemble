@@ -41,8 +41,8 @@ class UserActions extends React.Component {
   renderAuthenticated = () => {
     if (this.props.auth.isAuthenticated) {
       return (
-      <Container className="my-auto mx-auto">
-        {/* <Button
+        <Container className="my-auto mx-auto">
+          {/* <Button
           pill       
           theme="accent"
           tag={NavLink} 
@@ -50,12 +50,10 @@ class UserActions extends React.Component {
         >
           Login
         </Button> */}
-      </Container>)
-    } 
-    else {
-      return (
-        <Container className="my-auto mx-auto"></Container>
-      )
+        </Container>
+      );
+    } else {
+      return <Container className="my-auto mx-auto"></Container>;
     }
   };
 

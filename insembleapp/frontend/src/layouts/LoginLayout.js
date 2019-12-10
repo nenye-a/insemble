@@ -8,11 +8,11 @@ import MainFooter from '../components/layout/MainFooter';
 
 const LoginLayout = ({ children, noNavbar, noFooter }) => (
   // <Container fluid>
-    <Row>
-      <Col className="main-content" sm="12" tag="main">
-        {children}
-      </Col>
-    </Row>
+  <Row>
+    <Col className="main-content" sm="12" tag="main">
+      {children}
+    </Col>
+  </Row>
   // </Container>
 );
 
