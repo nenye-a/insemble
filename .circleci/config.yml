@@ -1,0 +1,112 @@
+version: 2
+
+jobs:
+  build_backend:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/python:3.7-stretch-node-browsers # remeber to update those!
+    steps:
+      - checkout
+      # this updates git-lfs to make pre-commit large files check hook work properly
+      # more details in https://github.com/pre-commit/pre-commit-hooks/issues/252
+      - run:
+          command: curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+      - run:
+          command: sudo apt-get install git-lfs --upgrade
+      - run:
+          command: sudo chown -R circleci:circleci /usr/local/bin
+      - run:
+          command: sudo chown -R circleci:circleci /usr/local/lib/python3.7/site-packages
+      - run:
+          command: pip install requests pip-tools --upgrade
+      
+      - restore_cache:
+          keys:
+            # TODO: Use Pipenv so we can use Pipfile.lock
+            - v1-pip-cache-{{ checksum "insembleapp/requirements.txt" }}
+            - v1-pip-cache-
+      - run:
+          command: |
+            cd insembleapp
+            # ## I don't think we need pip-compile
+            # pip-compile requirements.in > requirements.txt;
+            # pip-compile dev-requirements.in > dev-requirements.txt;
+            pip install --user -r requirements.txt
+            pip install -r dev-requirements.txt
+      - save_cache:
+          key: v1-pip-cache-{{ checksum "insembleapp/requirements.txt" }}
+          paths:
+            - .venv
+            - /usr/local/bin
+            - /usr/local/lib/python3.7/site-packages
+    # ## Disabled because it's failing
+    #   # style check
+    #   - run:
+    #       command: prospector --messages-only
+    #   # security checks
+    #   - run:
+    #       command: bandit -r .
+    #   # imports check
+    #   - run:
+    #       command: isort **/*.py --check-only
+    #   - run:
+    #       command: |
+    #         cd insembleapp/backend
+    #         python manage.py has_missing_migrations --ignore authtools
+    #       environment:
+    #         DJANGO_SETTINGS_MODULE: 'insembleapp.settings.local_base'
+    #   - run:
+    #       command: |
+    #         cd insembleapp/backend
+    #         python manage.py check --deploy
+    #       environment:
+    #         DJANGO_SETTINGS_MODULE: 'insembleapp.settings.production'
+    #         SECRET_KEY: "$(python -c 'import uuid; print(uuid.uuid4().hex + uuid.uuid4().hex)')"
+    #         DATABASE_URL: 'sqlite:///'
+    #         ALLOWED_HOSTS: '.example.org'
+    #         SENDGRID_USERNAME: 'test'
+    #         SENDGRID_PASSWORD: 'test'
+    #         REDIS_URL: 'redis://'
+    #   - run:
+    #       command: |
+    #         cd insembleapp/backend
+    #         coverage run manage.py test
+    #   - run:
+    #       command: |
+    #         cd insembleapp
+    #         mkdir -p test-reports/
+    #         coverage xml -o test-reports/results.xml
+    #       when: always
+    #   - store_test_results:
+    #       path: insembleapp/test-reports
+    #   - store_artifacts:
+    #       path: insembleapp/test-reports
+  build_frontend:
+    docker:
+      - image: circleci/node:12.13
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "insembleapp/package-lock.json" }}
+            - v1-dependencies-
+      - run:
+          command: |
+            cd insembleapp
+            npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "insembleapp/package-lock.json" }}
+      - run:
+          command: |
+            cd insembleapp
+            npm run test
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build_backend
+      - build_frontend

@@ -68,7 +68,7 @@ class DescribeStore extends React.Component {
 
     // if income in the session re-render
     if (sessionStorage.getItem('sessionIncome')) {
-      this.incomeInput.current.value = parseInt(sessionStorage.getItem('sessionIncome'), 10)
+      this.incomeInput.current.value = parseInt(sessionStorage.getItem('sessionIncome'), 10);
     }
 
     fetch('api/category/')
