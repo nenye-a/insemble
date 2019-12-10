@@ -36,7 +36,6 @@ DATABASES = {
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
-# ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS']
 
 STATIC_ROOT = base_dir_join('staticfiles')
@@ -48,8 +47,6 @@ MEDIA_URL = '/media/'
 SERVER_EMAIL = 'info@insemblegroup.com'
 
 EMAIL_HOST = 'smtp.sendgrid.net'
-# EMAIL_HOST_USER = config('SENDGRID_USERNAME')
-# EMAIL_HOST_PASSWORD = config('SENDGRID_PASSWORD')
 EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
 EMAIL_HOST_PASSWORD = os.environ['SENDGRID_PASSWORD']
 EMAIL_PORT = 587
