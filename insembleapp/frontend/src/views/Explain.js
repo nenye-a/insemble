@@ -73,30 +73,46 @@ class Explain extends React.Component {
               <CardBody>
                 {/* Logo */}
                 <img
-                  className="auth-form__logo d-table mx-auto mb-3"
-                  src={require('../images/shards-dashboards-logo.svg')}
-                  alt="Retailer Dashboards - Login Template"
+                  id="main-logo"
+                  className="auth-form__logo d-table mx-auto mb-10"
+                  style={{ maxHeight: '20px' }}
+                  src={require('../images/insemble_i.png')}
+                  alt="Insemble Logo"
                 />
 
                 {/* Title */}
-                <h5 className="auth-form__title text-center mb-4">What am I looking at?</h5>
+                <h5 className="auth-form__title text-center mb-4">Help</h5>
 
-                <Col className="d-flex flex-column justify-content-center">
-                  <Row className="py-1" style={{ fontWeight: 'bold' }}>
-                    Map
-                  </Row>
-                  <Row className="py-1">this is some text about the heat map</Row>
-                  <Row className="py-1" style={{ fontWeight: 'bold' }}>
-                    Data
-                  </Row>
-                  <Row className="py-1">this is some text about how it's generated</Row>
-                  <Row className="py-1" style={{ fontWeight: 'bold' }}>
-                    Saving Results
-                  </Row>
-                  <Row className="py-1">this is some text about how to interact</Row>
-                </Col>
+                <div class="list-group">
+                  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1">How to use</h5>
+                    </div>
+                    <p class="mb-1">Insemble provides location recommendations based on your search parameters. Click on 
+                        the map to find more informaiton about location. Use the search bar to: pan to specific neighborhoods, 
+                        see presence of specific retailers or retailer types in an area. </p>
+                    <small>(Example searches include: "Brentwood" or "Taco shop").</small>
+                  </a>
+                  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1">How is the map generated?</h5>
+                    </div>
+                    <p class="mb-1">Insemble generates location recommendations using key factors about
+                        retail stores comparable to your searched location or categories. We use advanced analytics to minimize
+                        canibalization and optimize for cotenancy potential. If you have concerns, feedback, or want to chat with us,
+                        please fill out you "Feedback" secion linked below.</p>
+                    <small class="text-muted">Please contact us if you have any quesitons.</small>
+                  </a>
+                  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1">Saving Results (Coming Soon)</h5>
+                    </div>
+                    <p class="mb-1">Unfortunately, you cannot save map results at the moment, but will be able to in the very
+                        near future.</p>
+                  </a>
+                </div>
 
-                <Col className="align-items-center justify-content-center">
+                <Col className="align-items-center justify-content-center mt-3">
                   <Button theme="accent" tag={NavLink} to="/spaces">
                     Return to Map
                   </Button>

@@ -5,6 +5,7 @@ import Tenant from './Tenant';
 import IconSidebar from './IconSidebar';
 import LandlordLayout from './Landlord';
 import LoginLayout from './LoginLayout';
+import BlankLayout from './BlankLayout'; 
 
 export {
   DefaultLayout,
@@ -14,4 +15,5 @@ export {
   TenantSpaces,
   Tenant,
   LoginLayout,
+  BlankLayout
 };

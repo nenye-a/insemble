@@ -10,17 +10,22 @@ const MainFooter = ({ contained, menuItems, copyright }) => (
         <Nav>
           <NavItem>
             <NavLink tag={Link} to={'/explain'} className="px-3">
-              {'About'}
+              {'Help'}
             </NavLink>
           </NavItem>
           <NavItem>
-            <NavLink tag={Link} to={'/find'} className="px-3">
-              {'Enter Another Store'}
+            <NavLink tag={Link} to={'/feedback'} className="px-3">
+              {'Feedback'}
             </NavLink>
           </NavItem>
           <NavItem>
-            <NavLink tag={Link} to={'/whoduhbohghahhhhhh'} className="px-3">
-              {'Save Current Search'}
+            <NavLink tag={Link} to={'/describe-store'} className="px-3">
+              {'Find Matches by Category'}
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink tag={Link} to={'/existing'} className="px-3">
+              {'Find Matches for Existing Store'}
             </NavLink>
           </NavItem>
         </Nav>

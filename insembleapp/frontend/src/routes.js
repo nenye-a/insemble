@@ -10,6 +10,7 @@ import {
   TenantSpaces,
   Tenant,
   LoginLayout,
+  BlankLayout
 } from './layouts';
 
 // Route Views
@@ -34,7 +35,7 @@ import ChangePassword from './views/ChangePassword';
 import FileManagerList from './views/FileManagerList';
 import Explore from './views/Explore';
 import TenantDeepDive from './views/TenantDeepDive';
-import LocationDeepDiveDemo from './views/LocationDeepDiveDemo';
+import LocationDeepDive from './views/LocationDeepDive';
 import Matches from './views/Matches';
 import TransactionHistory from './views/TransactionHistory';
 import Calendar from './views/Calendar';
@@ -103,7 +104,7 @@ export default [
   },
   {
     path: '/describe-store',
-    layout: Tenant,
+    layout: BlankLayout,
     component: DescribeStore,
   },
   {
@@ -167,9 +168,9 @@ export default [
     component: TenantDeepDive,
   },
   {
-    path: '/location-deep-dive-demo',
+    path: '/location-deep-dive',
     layout: Tenant,
-    component: LocationDeepDiveDemo,
+    component: LocationDeepDive,
   },
   {
     path: '/matches',
