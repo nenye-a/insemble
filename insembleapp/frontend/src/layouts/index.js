@@ -1,4 +1,3 @@
-import DefaultLayout from './Default';
 import TenantSpaces from './TenantSpaces';
 import HeaderNavigation from './HeaderNavigation';
 import Tenant from './Tenant';
@@ -8,7 +7,6 @@ import LoginLayout from './LoginLayout';
 import BlankLayout from './BlankLayout';
 
 export {
-  DefaultLayout,
   HeaderNavigation,
   IconSidebar,
   LandlordLayout,
