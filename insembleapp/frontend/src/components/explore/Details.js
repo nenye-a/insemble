@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Card, CardHeader, CardBody, Row, Col, ButtonGroup, Button, Badge } from 'shards-react';
 
-import RangeDatePicker from '../common/RangeDatePicker';
-
 import colors from '../../utils/colors';
 import Chart from '../../utils/chart';
 
