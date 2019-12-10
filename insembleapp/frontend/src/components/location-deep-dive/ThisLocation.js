@@ -175,7 +175,8 @@ class RetailerSite extends React.Component {
                 />
 
                 {/* Legend */}
-                <div className="ubd-stats__legend w-75 m-auto pb-4">
+                
+                <div className="ubd-stats__legend w-70 m-auto pb-4">
                   {labels.map((label, idx) => (
                     <div key={idx} className="ubd-stats__item px-1">
                       {label.icon && (
@@ -200,15 +201,13 @@ class RetailerSite extends React.Component {
           </Container>
         </CardBody>
 
-        <CardFooter className="border-top">
+        {/* <CardFooter className="border-top">
           <Row>
-            {/* View Full Report */}
             <Col className="text-right view-report">
-              {/* eslint-disable-next-line */}
               <a href="/login">Learn More &rarr;</a>
             </Col>
           </Row>
-        </CardFooter>
+        </CardFooter> */}
       </Card>
     );
   }

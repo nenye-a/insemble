@@ -37,6 +37,17 @@ class Existing extends React.Component {
     this.initialState = true;
   }
 
+  componentDidMount () {
+    
+    // Show previous search from the session
+    if(sessionStorage.getItem('sessionStoreName')) {
+      this.storeNameInput.current.value = sessionStorage.getItem('sessionStoreName');
+    }
+    if(sessionStorage.getItem('sessionAddress')) {
+      this.addressInput.current.value = sessionStorage.getItem('sessionAddress');
+    }
+  }
+
   static propTypes = {
     getLocation: PropTypes.func.isRequired,
     locationLoaded: PropTypes.bool,

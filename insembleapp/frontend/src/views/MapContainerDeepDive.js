@@ -252,7 +252,7 @@ export default (markers) => (
 
     googleMapURL="https://maps.googleapis.com/maps/api/js?key=DELETED_GOOGLE_API_KEY&v=3.exp&libraries=geometry,drawing,places,visualization"
     loadingElement={<div style={{ height: `100%` }} />}
-    containerElement={<div style={{ height: '400px', width: '100%' }} />}
+    containerElement={<div style={{ height: '45vh', width: '100%' }} />}
     mapElement={<div style={{ height: `100%` }} />}
     markers={markers}
   />

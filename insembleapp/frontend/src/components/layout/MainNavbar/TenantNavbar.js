@@ -1,11 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Container, Navbar, NavbarBrand, ButtonGroup, Button } from 'shards-react';
+import { Container, Navbar, NavbarBrand, ButtonGroup, Button, Col, Badge } from 'shards-react';
 
-import { NavLink } from 'react-router-dom';
 import NavbarNav from './NavbarNav/NavbarNav';
-import NavbarToggle from './NavbarToggle';
 
 import { LAYOUT_TYPES } from '../../../utils/constants';
 
@@ -21,13 +19,23 @@ const TenantNavbar = ({ layout, stickyTop }) => {
       const categories = JSON.parse(sessionStorage.getItem('sessionTags'))
 
       return (
-        <div className="d-table m-auto">
-          <div>
-            <span className="d-none d-md-inline ml-1">Last Searched Income={income} </span>
-          </div>
-          <div>
-            <span className="d-none d-md-inline ml-1">Last Searched Categories={categories}</span>
-          </div>
+        <div className="d-table my-auto">
+          <Col className="d-none d-md-inline ml-1">Recent Search Income: ${income}
+          </Col>
+          <Col className="d-none d-md-inline ml-1">Recent Search Categories: </Col>
+          <Col className="d-none d-md-inline ml-1">
+         
+                  {categories.map((category, idx) => (
+                    <Badge
+                      pill
+                      theme="light"
+                      className="text-light text-uppercase mb-2 border mr-1"
+                      key={idx}
+                    >
+                      {category}
+                    </Badge>
+                  ))}
+          </Col>
         </div>
       )
     } else if (sessionStorage.getItem('sessionStoreName')) {
@@ -35,13 +43,12 @@ const TenantNavbar = ({ layout, stickyTop }) => {
       const address = sessionStorage.getItem('sessionAddress')
 
       return (
-        <div className="d-table m-auto">
-          <div>
-            <span className="d-none d-md-inline ml-1">Last Searched Name={storeName} </span>
-          </div>
-          <div>
-            <span className="d-none d-md-inline ml-1">Last Searched Address={address}</span>
-          </div>
+        <div className="d-table my-auto">
+          <Col className="d-none d-md-inline ml-1">Recent Search: {storeName} 
+          </Col>
+          <Col className="d-none d-md-inline ml-1">Input Address: {address}
+          </Col>
+          
         </div>
       )
     }
@@ -52,16 +59,16 @@ const TenantNavbar = ({ layout, stickyTop }) => {
       <Container fluid className="p-0">
         <Navbar type="light" className="align-items-stretch flex-md-nowrap p-0">
           {isHeaderNav && (
-            <NavbarBrand href="/spaces" style={{ lineHeight: '25px' }}>
+            <NavbarBrand href="/" style={{ lineHeight: '20px' }}>
               <div className="d-table m-auto">
                 <img
                   id="main-logo"
                   className="d-inline-block align-top mr-1 ml-3"
-                  style={{ maxHeight: '25px' }}
+                  style={{ maxHeight: '20px' }}
                   src={require('../../../images/insemble_i.png')}
-                  alt="Owner Dashboard"
+                  alt="Insemble"
                 />
-                <span className="d-none d-md-inline ml-1">Insemble.app</span>
+                <span className="d-none d-md-inline ml-1">Insemble</span>
               </div>
             </NavbarBrand>
           )}
@@ -74,7 +81,7 @@ const TenantNavbar = ({ layout, stickyTop }) => {
             </Button>
           </ButtonGroup> */}
           {/* Filler div */}
-          <div className="w-100 d-none d-md-flex d-lg-flex" />
+          {/* <div className="w-100 d-none d-md-flex d-lg-flex" /> */}
           {/* <div>
             <span className="d-none d-md-inline ml-1">Current Search: </span>
           </div> */}

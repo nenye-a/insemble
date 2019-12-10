@@ -119,7 +119,6 @@ export const loadMap = (hasLocation = false, income = 0, categories = []) => (
 };
 
 const pingMapApi = (id, dispatch) => {
-  console.log("Lot's of things");
   var val = null;
 
   fetch('/api/lmatches/', {

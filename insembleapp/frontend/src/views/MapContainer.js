@@ -146,7 +146,7 @@ class MapWithAMarkerClusterer extends React.Component {
   renderRedirect = () => {
     if (this.state.redirect) {
       return (
-        <Redirect push to={{ pathname: '/location-deep-dive-demo', match: this.state.marker }} />
+        <Redirect push to={{ pathname: '/location-deep-dive', match: this.state.marker }} />
       );
     }
   };
@@ -308,7 +308,7 @@ export default (markers) => (
 
     googleMapURL="https://maps.googleapis.com/maps/api/js?key=DELETED_GOOGLE_API_KEY&v=3.exp&libraries=geometry,drawing,places,visualization"
     loadingElement={<div style={{ height: `100%` }} />}
-    containerElement={<div style={{ height: '700px', width: '100%' }} />}
+    containerElement={<div style={{ height: '85vh', width: '100%' }} />}
     mapElement={<div style={{ height: `100%` }} />}
     markers={markers}
   />

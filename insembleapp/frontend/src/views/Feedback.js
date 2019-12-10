@@ -80,8 +80,6 @@ class Feedback extends React.Component {
   onSubmit = (e) => {
     e.preventDefault();
 
-    this.props.alert.show('HEHE');
-
     var issueText = document.getElementById('formControlIssues').value;
     var feedbackText = document.getElementById('formControlFeedback').value;
     var featuresText = document.getElementById('formControlFeatures').value;
@@ -90,31 +88,20 @@ class Feedback extends React.Component {
     this.uploadFeedback(feedbackText, 'feedback');
     this.uploadFeedback(featuresText, 'features');
 
-    // this.setState({
-    //   redirect: true
-    // })
+    this.setState({
+      redirect: true
+    })
   };
 
   render() {
     if (this.state.redirect) {
-      return <Redirect to={{ pathname: '/find' }} />;
+      return <Redirect push to={{ pathname: '/spaces' }} />;
     }
 
     return (
       <Container fluid className="main-content-container h-100 px-4">
         {/* {this.renderRedirect()} */}
-        <Row>
-          <Button
-            pill
-            theme="accent"
-            className="d-table mx-auto"
-            type="submit"
-            tag={Link}
-            to="/login"
-          >
-            Sign In
-          </Button>
-        </Row>
+        
         <Row noGutters className="h-100">
           <Col lg="7" md="11" className="auth-form mx-auto my-auto">
             <Card>
@@ -122,8 +109,9 @@ class Feedback extends React.Component {
                 {/* Logo */}
                 <img
                   className="auth-form__logo d-table mx-auto mb-3"
-                  src={require('../images/shards-dashboards-logo.svg')}
-                  alt="Retailer Dashboards - Login Template"
+                  style={{ maxHeight: '20px' }}
+                  src={require('../images/insemble_i.png')}
+                  alt="Insemble Logo"
                 />
 
                 {/* Title */}
