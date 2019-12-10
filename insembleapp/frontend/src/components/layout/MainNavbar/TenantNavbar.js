@@ -10,15 +10,13 @@ import NavbarToggle from './NavbarToggle';
 import { LAYOUT_TYPES } from '../../../utils/constants';
 
 const TenantNavbar = ({ layout, stickyTop }) => {
-
   const isHeaderNav = layout === LAYOUT_TYPES.HEADER_NAVIGATION;
   const classes = classNames('main-navbar', 'bg-white', stickyTop && 'sticky-top');
 
   const sessionText = () => {
     if (sessionStorage.getItem('sessionIncome')) {
-
-      const income = parseInt(sessionStorage.getItem('sessionIncome'), 10)
-      const categories = JSON.parse(sessionStorage.getItem('sessionTags'))
+      const income = parseInt(sessionStorage.getItem('sessionIncome'), 10);
+      const categories = JSON.parse(sessionStorage.getItem('sessionTags'));
 
       return (
         <div className="d-table m-auto">
@@ -29,10 +27,10 @@ const TenantNavbar = ({ layout, stickyTop }) => {
             <span className="d-none d-md-inline ml-1">Last Searched Categories={categories}</span>
           </div>
         </div>
-      )
+      );
     } else if (sessionStorage.getItem('sessionStoreName')) {
       const storeName = sessionStorage.getItem('sessionStoreName');
-      const address = sessionStorage.getItem('sessionAddress')
+      const address = sessionStorage.getItem('sessionAddress');
 
       return (
         <div className="d-table m-auto">
@@ -43,9 +41,9 @@ const TenantNavbar = ({ layout, stickyTop }) => {
             <span className="d-none d-md-inline ml-1">Last Searched Address={address}</span>
           </div>
         </div>
-      )
+      );
     }
-  }
+  };
 
   return (
     <div className={classes}>
