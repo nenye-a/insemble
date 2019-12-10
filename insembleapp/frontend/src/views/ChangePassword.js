@@ -20,7 +20,7 @@ const ChangePassword = () => (
             {/* Logo */}
             <img
               className="auth-form__logo d-table mx-auto mb-3"
-              src={require('../images/shards-dashboards-logo.svg')}
+              src="https://insemble-photos.s3.us-east-2.amazonaws.com/insemble_i.png"
               alt="Retailer Dashboards - Change Password Template"
             />
 

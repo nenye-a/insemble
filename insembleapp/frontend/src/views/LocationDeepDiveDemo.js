@@ -114,7 +114,7 @@
 //             <img
 //               className="d-inline-block mx-auto"
 //               style={{ maxHeight: '50px' }}
-//               src={require('../images/insemble_i.png')}
+//               src="https://insemble-photos.s3.us-east-2.amazonaws.com/insemble_i.png"
 //               alt="Owner Dashboard"
 //             />
 //           </div>

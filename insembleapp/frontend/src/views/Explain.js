@@ -76,7 +76,7 @@ class Explain extends React.Component {
                   id="main-logo"
                   className="auth-form__logo d-table mx-auto mb-10"
                   style={{ maxHeight: '20px' }}
-                  src={require('../images/insemble_i.png')}
+                  src="https://insemble-photos.s3.us-east-2.amazonaws.com/insemble_i.png"
                   alt="Insemble Logo"
                 />
 
