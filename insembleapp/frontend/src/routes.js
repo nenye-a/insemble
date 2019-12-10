@@ -3,7 +3,6 @@ import { Redirect } from 'react-router-dom';
 
 // Layout Types
 import {
-  DefaultLayout,
   HeaderNavigation,
   IconSidebar,
   LandlordLayout,
