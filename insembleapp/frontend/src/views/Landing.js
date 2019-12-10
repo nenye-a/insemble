@@ -49,17 +49,14 @@ class Landing extends React.Component {
           <div className="row h-100 align-items-center justify-content-center text-center">
             <div className="col-lg-10 align-self-end">
               <h1 className="text-uppercase text-white">Insemble.App</h1>
-              <hr className="divider my-4"/>
+              <hr className="divider my-4" />
             </div>
             <div className="col-lg-8 align-self-baseline">
-              <p className="text-white-75 font-weight-light mb-5">Instant Store or Retaurant Location Recommendaitons</p>
-              <Button
-                    pill
-                    theme="accent"
-                    tag={Link}
-                    to="/find"
-                  >
-                    See Insights
+              <p className="text-white-75 font-weight-light mb-5">
+                Instant Store or Retaurant Location Recommendaitons
+              </p>
+              <Button pill theme="accent" tag={Link} to="/find">
+                See Insights
               </Button>
               {/* <div className="card bg-dark text-white">
                 <img className="card-img" src="..." alt="Card image"/>
@@ -68,8 +65,8 @@ class Landing extends React.Component {
           </div>
         </div>
       </header>
-    )
-  };
+    );
+  }
 }
 
 const mapStateToProps = (state) => ({
