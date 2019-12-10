@@ -45,14 +45,19 @@ class Existing extends React.Component {
   };
 
   onSubmit = (e) => {
-    // clear any exisitng temporary store names in the sate
+    // clear any exisitng temporary store names, tags, or income notices in the session
     sessionStorage.removeItem('sessionStoreName');
+    sessionStorage.removeItem('sessionAddress');
+    sessionStorage.removeItem('sessionIncome');
+    sessionStorage.removeItem('sessionTags');
 
     // retrieve location based on address. Refer to Redux folder for method
     e.preventDefault();
     this.initialState = false;
     const address = this.addressInput.current.value;
+    sessionStorage.setItem('sessionAddress', address);
     this.props.getLocation('api/location/address=' + address + '&radius=1');
+
   };
 
   render() {
