@@ -5,7 +5,7 @@ import { withRouter } from 'react-router';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { getLocation, loadMap } from '../redux/actions/space';
+import { getLocation } from '../redux/actions/space';
 
 import { withAlert } from 'react-alert';
 
@@ -31,10 +31,12 @@ class Feedback extends React.Component {
     this.state = {
       redirect: false,
     };
+    this.alert = this.props.alert;
   }
 
   static propTypes = {
     getLocation: PropTypes.func.isRequired,
+    auth: PropTypes.object.isRequired
   };
 
   uploadFeedback = (content, type) => {
@@ -47,6 +49,8 @@ class Feedback extends React.Component {
         'Content-Type': 'application/json',
       },
     };
+
+    console.log("submit regeistered");
 
     var time_stamp = new Date();
 
@@ -84,13 +88,18 @@ class Feedback extends React.Component {
     var feedbackText = document.getElementById('formControlFeedback').value;
     var featuresText = document.getElementById('formControlFeatures').value;
 
-    this.uploadFeedback(issueText, 'issue');
-    this.uploadFeedback(feedbackText, 'feedback');
-    this.uploadFeedback(featuresText, 'features');
+    if (issueText === "" && feedbackText === "" && featuresText === "") {
+      this.alert.show('Please provide feedback before submitting!')
+    } else {
+      this.uploadFeedback(issueText, 'issue');
+      this.uploadFeedback(feedbackText, 'feedback');
+      this.uploadFeedback(featuresText, 'features');
 
-    this.setState({
-      redirect: true,
-    });
+      this.setState({
+        redirect: true,
+      });
+    }
+
   };
 
   render() {
@@ -169,4 +178,4 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default withAlert()(withRouter(Feedback));
+export default withAlert()(withRouter(connect(mapStateToProps, { getLocation })(Feedback)));
