@@ -62,12 +62,12 @@ export default [
   },
   {
     path: '/find',
-    layout: Tenant,
+    layout: BlankLayout,
     component: Find,
   },
   {
     path: '/existing',
-    layout: Tenant,
+    layout: BlankLayout,
     component: Existing,
   },
   {
