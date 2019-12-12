@@ -27,7 +27,6 @@ YELP_KEY= settings.YELP_KEY
 FRSQ_ID = settings.FRSQ_ID
 FRSQ_SECRET = settings.FRSQ_SECRET
 CRIME_KEY = settings.CRIME_KEY
-MONGO_KEY = settings.MONGO_KEY
 
 MILES_TO_M = 1609.34
 
