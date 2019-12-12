@@ -14,31 +14,17 @@ YELP_KEY= config('YELP_KEY')
 FRSQ_ID = config('FRSQ_ID')
 FRSQ_SECRET = config('FRSQ_SECRET')
 CRIME_KEY = config('CRIME_KEY')
-MONGO_KEY = config('MONGO_KEY')
-MONGO_DB_PASS = config("MONGO_DB_PASS")
+MONGO_USER = config('MONGO_USER', cast=str)
+MONGO_DB_PASS = config("MONGO_DB_PASS", cast=str)
 
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'appbackend',
-        'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote(config('MONGO_DB_PASS', cast=str)) + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
-        'USER': 'nenye',
-        'PASSWORD': config('MONGO_DB_PASS', cast=str),
-    },
-    'spaceData': {
-        'ENGINE': 'djongo',
-        'NAME': 'spaceData',
-        'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote(config('MONGO_DB_PASS', cast=str)) + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
-        'USER': 'nenye',
-        'PASSWORD': config('MONGO_DB_PASS', cast=str),
-    },
-    'learn': {
-        'ENGINE': 'djongo',
-        'NAME': 'learn',
-        'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote(config('MONGO_DB_PASS', cast=str)) + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
-        'USER': 'nenye',
-        'PASSWORD': config('MONGO_DB_PASS', cast=str),
-    },
+        'HOST': "mongodb+srv://" + urllib.parse.quote(MONGO_USER) + ":" + urllib.parse.quote(MONGO_DB_PASS) + "@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE",
+        'USER': MONGO_USER,
+        'PASSWORD': MONGO_DB_PASS,
+    }
 }
 
 STATIC_ROOT = base_dir_join('staticfiles')

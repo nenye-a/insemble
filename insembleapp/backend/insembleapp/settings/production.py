@@ -19,20 +19,17 @@ YELP_KEY= os.environ['YELP_KEY']
 FRSQ_ID = os.environ['FRSQ_ID']
 FRSQ_SECRET = os.environ['FRSQ_SECRET']
 CRIME_KEY = os.environ['CRIME_KEY']
-MONGO_KEY = os.environ['MONGO_KEY']
+MONGO_USER = os.environ['MONGO_USER']
 MONGO_DB_PASS = os.environ["MONGO_DB_PASS"]
 
 DATABASES = {
-    # 'default': config('DATABASE_URL', cast=db_url),
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'appbackend',
-        # 'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote(config('MONGO_DB_PASS', cast=str)) + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
-        'HOST': 'mongodb+srv://nenye:' + urllib.parse.quote(MONGO_DB_PASS) + '@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE',
-        'USER': 'nenye',
-        # 'PASSWORD': config('MONGO_DB_PASS', cast=str),
-        'PASSWORD': config('MONGO_DB_PASS', cast=str),
-    },
+        'HOST': "mongodb+srv://" + urllib.parse.quote(MONGO_USER) + ":" + urllib.parse.quote(MONGO_DB_PASS) + "@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE",
+        'USER': MONGO_USER,
+        'PASSWORD': MONGO_DB_PASS,
+    }
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
