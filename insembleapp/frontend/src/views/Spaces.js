@@ -1,5 +1,6 @@
 import React from 'react';
-import { Container, Row } from 'shards-react';
+import { Container, Row, Col, ButtonGroup, Button } from 'shards-react';
+
 import MapComponent from './MapContainer';
 
 import LoadingOverlay from 'react-loading-overlay';
