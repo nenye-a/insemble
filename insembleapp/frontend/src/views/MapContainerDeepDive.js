@@ -154,7 +154,7 @@ class MapWithAMarkerClusterer extends React.Component {
         defaultCenter={{ lat: lat, lng: lng }}
         defaultOptions={{
           minZoom: 7,
-          mapTypeControl: false
+          mapTypeControl: false,
         }}
         onClick={this.state.onMapClick}
         onBoundsChanged={this.state.onBoundsChanged}
