@@ -31,10 +31,7 @@ def loc_to_vector(loc):
     loc_dict.update(loc.census)
     loc_dict.update({"pop": loc.pop})
     loc_dict.update({"income": loc.income})
-
-    for nearby in loc.nearby:
-        new_name = "nearby_" + nearby
-        loc_dict.update({new_name: loc.nearby[nearby]})
+    loc_dict.update(loc.nearby)
 
     return loc_dict
 
@@ -175,14 +172,12 @@ def generate_tenant_matches(location_address, my_place_type={}):
     client = Connect.get_connection()
     db_space = client.spaceData
 
-    # TODO: make this request less expensive than it currently is. See if we can do some parsing on the mongo side
-    # db_space_cursor = db_space.dataset2.find({})
-
-    sample_size = 5000
-    db_space_cursor = db_space.dataset2.aggregate([{"$sample": {"size": sample_size}}])
+    db_space_cursor = db_space.dataset2.find({})
+    # sample_size = 5000
+    # db_space_cursor = db_space.dataset2.aggregate([{"$sample": {"size": sample_size}}])
 
     location_retailer_pairs = {}
-    distances_items = []
+    item_rows = []
     in_area_retailers = set()
 
     count = 0
@@ -201,14 +196,14 @@ def generate_tenant_matches(location_address, my_place_type={}):
             continue
 
         count += 1
-        print("{} locations and counting".format(count)) if count % 1000 == 0 else 1
-        distances_dict = {}
-        item_dict = {}
-        id = item["_id"]
+        print("{} locations and counting".format(count)) if count % 5000 == 0 else 1
+
+        item_id = item["_id"]
+        item_dict = {"id": item_id}
         location = item["Location"]
 
         # store in dictionary for easy retrieval later
-        location_retailer_pairs[id] = item
+        location_retailer_pairs[item_id] = item
 
         # compare against our current location
         item_dict.update(location["census"])
@@ -216,28 +211,34 @@ def generate_tenant_matches(location_address, my_place_type={}):
         item_dict["income"] = location["income"]
         item_dict.update(location["nearby"])
 
-        # for nearby in location["nearby"]:
-        #     new_name = "nearby_" + nearby
-        #     item_dict[new_name] = location["nearby"][nearby]
-
-        # store the distance diff and relate to the id
-        distances = location_difference(my_location_vector, item_dict)
-        distances_dict["id"] = id
-
         # convert all nans into nulls
 
         rate = item["ratings"]
         if np.isnan(rate):
             rate = None
-        distances_dict["ratings"] = rate
 
-        distances_dict.update(distances)
-        distances_items.append(distances_dict)
+        item_dict["ratings"] = rate
+        item_rows.append(item_dict)
 
-    distance_table = pd.DataFrame(distances_items)
-    distance_stats = distance_table.describe()
+    # calculate distance of each item from our vector using pandas objects
+    items_df = pd.DataFrame(item_rows)
+    my_series = pd.Series(my_location_vector)
+
+    # fill all nas with 1 as this is max distance for all categories
+    distance_table = np.abs(items_df.drop(['id', 'ratings'], axis=1).subtract(my_series).fillna(1))
+
+    distance_table['cen_diff'] = distance_table[['asian', 'black', 'hispanic', 'indian', 'white', 'multi']].sum(axis=1)
+    distance_table['cat_diff'] = distance_table.drop(
+        ['asian', 'black', 'hispanic', 'indian', 'white', 'multi', 'pop', 'income'],
+        axis=1).sum(axis=1)
+
+    # re-assign ids & ratings for accurate tracking & sorting
+    distance_table = distance_table[['cen_diff', 'cat_diff', 'pop', 'income']]
+    distance_table['id'] = items_df['id']
+    distance_table['ratings'] = items_df['ratings']
 
     # normalize all the distances
+    distance_stats = distance_table.describe()
     for diff in distance_table.columns:
         if diff == "id" or diff == "ratings":
             continue
@@ -245,13 +246,13 @@ def generate_tenant_matches(location_address, my_place_type={}):
                                (distance_stats[diff]["max"] - distance_stats[diff]["min"])
 
     # calculate and trim by weighted difference. Less than 30% diff okay (roughly 1% of all the locations per histogram)
-    weight = pd.DataFrame(pd.Series([0.2, 0.23, 0.33, 0.24], index=["cen_diff", "pop_diff", "income_diff", "cat_diff"]))
-    distance_table["weighted_diff"] = distance_table[["cen_diff", "pop_diff", "income_diff", "cat_diff"]].dot(weight)
+    weight = pd.DataFrame([0.2, 0.23, 0.33, 0.24], index=["cen_diff", "pop", "income", "cat_diff"])
+    distance_table["weighted_diff"] = distance_table[["cen_diff", "pop", "income", "cat_diff"]].dot(weight)
 
-    decent_rating = 7
-    diff_cutoff = 0.25
+    decent_rating = 7.8
+    diff_cutoff = 0.12
     distance_table = distance_table[distance_table["weighted_diff"] < diff_cutoff]
-    # distance_table = distance_table[distance_table["ratings"] > decent_rating]
+    distance_table = distance_table[distance_table["ratings"] > decent_rating]
 
     # sort by ratings
     distance_table = distance_table.sort_values("ratings")
@@ -275,7 +276,11 @@ def generate_tenant_matches(location_address, my_place_type={}):
 
         return_list.append(location_data)
 
-    print("Match generation complete. Number of locations is: {}".format(len(return_list)))
+    print("Complete.\nMap Size: {}\nDiff Cutoff: {}\nRating Cutoff: {}. ".format(
+        len(return_list),
+        diff_cutoff,
+        decent_rating
+    ))
     return return_list
 
 def location_heat_map(retail_data):

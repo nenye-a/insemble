@@ -183,6 +183,8 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
                     place_type = request.data["place_type"]
             except:
                 return Response("Response must include 'address', prefereably of best location.", status=status.HTTP_400_BAD_REQUEST)
+
+            celery_app.register_task(self.create_worker)
             result = self.create_worker.delay(address, place_type)
 
         if result.ready():
