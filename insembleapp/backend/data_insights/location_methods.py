@@ -331,30 +331,23 @@ def location_heat_map(retail_data):
         item_dict = {}
         id = item["_id"]
 
-        item_dict["income"] = location["income"]
+        item_dict["id"] = id
         item_dict.update(retailer["place_type"])
+        item_dict["place_type"] = retailer["place_type"]
+        item_dict["address"] = location["address"]
+        item_dict["income"] = location["income"]
+        item_dict["ratings"] = item["ratings"]
 
-        difframe = pd.DataFrame([data, item_dict])
-        difframe = difframe.fillna(0)
-        diff = np.abs(difframe.iloc[1].subtract(difframe.iloc[0]))
-
-        income_diff = diff["income"]
-        type_diff = diff.drop(["income"]).sum()
-
-        distance_list.append({
-            "id": id,
-            "place_type": retailer["place_type"],
-            "address": location["address"],
-            "ratings": item["ratings"],
-            "income_diff": income_diff,
-            "type_diff": type_diff,
-
-        })
+        distance_list.append(item_dict)
 
     distance_df = pd.DataFrame(distance_list)
-    distance_stats = distance_df.describe()
+    data_series = pd.Series(data)
+
+    diff_df = distance_df.drop(['id', 'ratings', 'address', 'place_type'], axis=1).subtract(data_series).fillna(1)
+    distance_df['type_diff'] = diff_df.drop(['income'], axis=1).sum(axis=1)
 
     # normalize all the distances
+    distance_stats = distance_df.describe()
     for diff in distance_df.columns:
         if diff == "id" or diff == "place_type" or diff == "address" or diff == "ratings":
             continue
@@ -362,8 +355,8 @@ def location_heat_map(retail_data):
                             (distance_stats[diff]["max"] - distance_stats[diff]["min"])
 
     # select best rated item within distance
-    weight = pd.DataFrame(pd.Series([0.6, 0.4], index=["income_diff", "type_diff"]))
-    distance_df["weighted_diff"] = distance_df[["income_diff", "type_diff"]].dot(weight)
+    weight = pd.DataFrame([0.6, 0.4], index=["income", "type_diff"])
+    distance_df["weighted_diff"] = distance_df[["income", "type_diff"]].dot(weight)
     distance_df = distance_df[distance_df["weighted_diff"] < 0.2]
 
     # generate tenant matches based in info
