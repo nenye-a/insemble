@@ -1,3 +1,13 @@
+# Basic settings to not track
+*.pyc
+/db.sqlite3
+.DS_Store
+.env
+/__pycache__/
+/.vscode/
+.python-version
+
+
 # Don't track IDE config folders 
 .idea
 .vscode
