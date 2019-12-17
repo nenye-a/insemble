@@ -82,7 +82,7 @@ To set-up and platform on your system
 - Open a command line window and go to the project's directory.
 - `pip install -r requirements.txt && pip install -r dev-requirements.txt`
 - `npm install`
-- Ensure that you have redis installed. Detaield Installation instructions can be found at [Redis.io](https://redis.io/topics/quickstart), but the folllowing should do the trick
+- Ensure that you have redis installed. Detailed Installation instructions can be found at [Redis.io](https://redis.io/topics/quickstart), but the folllowing should do the trick
 
 ```
 wget http://download.redis.io/redis-stable.tar.gz
