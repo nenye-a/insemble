@@ -7,18 +7,15 @@ import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from 'reac
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import { withRouter } from 'react-router';
-
 import { connect } from 'react-redux';
 import { withAlert } from 'react-alert';
 
-// const { MarkerClusterer } = require('react-google-maps/lib/components/addons/MarkerClusterer');
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
+import _ from 'lodash';
 
 import heatMapImg from '../assets/images/heat-map-tour.png';
 import markerImg from '../assets/images/marker-tour.png';
-
-const _ = require('lodash');
 
 class MapWithAMarkerClusterer extends React.Component {
   static propTypes = {
@@ -42,6 +39,12 @@ class MapWithAMarkerClusterer extends React.Component {
   };
 
   _refs = {};
+
+  componentDidMount() {
+    this.setState({
+      showGuide: true,
+    });
+  }
 
   onMapMounted = (ref) => {
     let refs = this._refs;
@@ -161,7 +164,7 @@ class MapWithAMarkerClusterer extends React.Component {
       heats = this.props.heatMap;
     }
 
-    let { showGuide, steps } = this.state;
+    let { showGuide } = this.state;
     const data = heats.map(({ lat, lng, map_rating }) => ({
       location: new google.maps.LatLng(lat, lng),
       weight: map_rating,
@@ -198,63 +201,35 @@ class MapWithAMarkerClusterer extends React.Component {
     ];
 
     return (
-      <GoogleMap
-        ref={this.onMapMounted}
-        defaultZoom={10}
-        defaultCenter={{ lat: 34.0522, lng: -118.2437 }}
-        defaultOptions={{
-          maxZoom: 15,
-          minZoom: 7,
-          mapTypeControl: false,
-        }}
-        onClick={this.onMapClick}
-        onBoundsChanged={this.onBoundsChanged}
-      >
-        {this.renderRedirect()}
-        {this.state.isMarkerShown && (
-          <Marker
-            position={this.state.markerPosition}
-            onClick={() => this.handleMarkerClick(this.state.marker)}
-            icon={{ url: 'http://maps.google.com/mapfiles/kml/paddle/purple-circle.png' }}
-          >
-            <InfoWindow>
-              {/* TODO: Make smaller and solve for middle-of-nowhere case. also make it come back when pressed again */}
-              <Container>
-                <Row>
-                  <h6>{this.state.marker.address}</h6>
-                </Row>
-                <Row className="py-1">
-                  <Col
-                    className="d-flex flex-column justify-content-center align-items-center"
-                    style={{ fontWeight: 'bold' }}
-                  >
-                    Median Income
-                  </Col>
-                  <Col className="d-flex flex-column justify-content-center align-items-center">
-                    ${this.state.marker.income}
-                  </Col>
-                </Row>
-                <Row className="py-1">
-                  <Col
-                    className="d-flex flex-column justify-content-center align-items-center"
-                    style={{ fontWeight: 'bold' }}
-                  >
-                    Half-mile popuplation
-                  </Col>
-                  <Col className="d-flex flex-column justify-content-center align-items-center">
-                    {this.state.marker.pop}
-                  </Col>
-                </Row>
-              </Container>
-            </InfoWindow>
-          </Marker>
-        )}
-        <HeatMapLayer data={data} options={{ radius: 20 }} opacity={1} />
-        <SearchBox
-          ref={this.onSearchBoxMounted}
-          bounds={this.state.bounds}
-          controlPosition={google.maps.ControlPosition.TOP}
-          onPlacesChanged={this.onPlacesChanged}
+      <div>
+        <Joyride
+          steps={steps}
+          scrollToFirstStep={true}
+          continuous={true}
+          run={showGuide}
+          scrollToFirstStep={true}
+          showSkipButton={true}
+          styles={{
+            options: {
+              zIndex: 10000,
+              primaryColor: '#634FA2', // TODO: get from color constants
+            },
+          }}
+          callback={this._handleTour}
+          locale={{ last: 'Done' }}
+          spotlightClicks={false}
+        />
+        <GoogleMap
+          ref={this.onMapMounted}
+          defaultZoom={10}
+          defaultCenter={{ lat: 34.0522, lng: -118.2437 }}
+          defaultOptions={{
+            maxZoom: 15,
+            minZoom: 7,
+            mapTypeControl: false,
+          }}
+          onClick={this.onMapClick}
+          onBoundsChanged={this.onBoundsChanged}
         >
           {this.renderRedirect()}
           {this.state.isMarkerShown && (
@@ -295,14 +270,13 @@ class MapWithAMarkerClusterer extends React.Component {
               </InfoWindow>
             </Marker>
           )}
+          <HeatMapLayer data={data} options={{ radius: 20 }} opacity={1} />
+          {this.renderRedirect()}
           {showGuide && (
             <>
               <div className="marker-example heat-map-example empty-container"></div>
             </>
           )}
-
-          <HeatMapLayer data={data} options={{ radius: 20 }} opacity={1} />
-
           <SearchBox
             ref={this.state.onSearchBoxMounted}
             bounds={this.state.bounds}
