@@ -44,26 +44,15 @@ class Landing extends React.Component {
     }
 
     return (
-      <header className="masthead">
-        <div className="container h-100">
-          <div className="row h-100 align-items-center justify-content-center text-center">
-            <div className="col-lg-10 align-self-end">
-              <h1 className="text-uppercase text-white">Insemble</h1>
-              <hr className="divider my-4" />
-            </div>
-            <div className="col-lg-8 align-self-baseline">
-              <p className="text-white-75 font-weight-light mb-4">
-                Instant Store and Restaurant Location Recommendations
-              </p>
-              <Button pill theme="accent" tag={Link} to="/find">
-                See Insights
-              </Button>
-              {/* <div className="card bg-dark text-white">
-                <img className="card-img" src="..." alt="Card image"/>
-              </div> */}
-            </div>
-          </div>
-        </div>
+      <header className="masthead d-flex flex-column justify-content-center align-items-center">
+        <h1 className="text-uppercase text-white">Insemble</h1>
+        <hr className="divider" />
+        <p className="text-white-75 font-weight-light mb-4">
+          Instant Store and Restaurant Location Recommendations
+        </p>
+        <Button pill theme="accent" tag={Link} to="/find">
+          See Insights
+        </Button>
       </header>
     );
   }
