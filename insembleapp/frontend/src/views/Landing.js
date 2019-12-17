@@ -53,7 +53,7 @@ class Landing extends React.Component {
             </div>
             <div className="col-lg-8 align-self-baseline">
               <p className="text-white-75 font-weight-light mb-4">
-                Instant Store and Retaurant Location Recommendations
+                Instant Store and Restaurant Location Recommendations
               </p>
               <Button pill theme="accent" tag={Link} to="/find">
                 See Insights
