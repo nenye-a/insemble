@@ -1,3 +1,7 @@
+# Don't track IDE config folders 
+.idea
+.vscode
+
 # Don't track content of these folders
 insemble-venv/
 /insemble-venv
