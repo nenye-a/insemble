@@ -249,8 +249,8 @@ def generate_tenant_matches(location_address, my_place_type={}):
     weight = pd.DataFrame([0.2, 0.23, 0.33, 0.24], index=["cen_diff", "pop", "income", "cat_diff"])
     distance_table["weighted_diff"] = distance_table[["cen_diff", "pop", "income", "cat_diff"]].dot(weight)
 
-    decent_rating = 7.8
-    diff_cutoff = 0.12
+    decent_rating = 7.6
+    diff_cutoff = 0.15
     distance_table = distance_table[distance_table["weighted_diff"] < diff_cutoff]
     distance_table = distance_table[distance_table["ratings"] > decent_rating]
 
