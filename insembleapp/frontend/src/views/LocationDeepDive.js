@@ -58,17 +58,17 @@ class LocationDeepDive extends React.Component {
     }
     fetch(
       'api/location/lat=' +
-      this.state.location.lat
-        .toString()
-        .split('.')
-        .join('') +
-      '&lng=' +
-      this.state.location.lng
-        .toString()
-        .split('.')
-        .join('') +
-      '&radius=' +
-      radius
+        this.state.location.lat
+          .toString()
+          .split('.')
+          .join('') +
+        '&lng=' +
+        this.state.location.lng
+          .toString()
+          .split('.')
+          .join('') +
+        '&radius=' +
+        radius
     )
       .then((res) => res.json())
       .then((data) => {
