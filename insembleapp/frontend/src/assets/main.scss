@@ -1,8 +1,14 @@
 // Main Stylesheet
 
+// Overrides, probably move this to its own file as it grows
+// Also, a bunch of style stuffs, notably the charts, are defined in src/utils .js files
+$primary-purple: #634FA2 !default;
+$primary: $primary-purple !default;
+
 // Main SDP Styles
 @import "../styles/shards-dashboards";
-@import "../styles/landing-template/css/creative.css";
+@import "../styles/landing-template/scss/creative";
+// @import "../styles/landing-template/css/creative.css";
 
 // Variables
 @import "./variables";
