@@ -36,6 +36,7 @@ class MapWithAMarkerClusterer extends React.Component {
       lng: -118.2436849,
     },
     markers: [],
+    showGuide: false,
   };
 
   _refs = {};
