@@ -65,11 +65,12 @@ const newColors = {
   salmon: new Color('#FF4169'),
   royalBlue: new Color('#674EEC'),
   java: new Color('#1ADBA2'),
+  primaryPurple: new Color('#634FA2'),
 };
 
 const themeColors = {
-  accent: colors['blue'],
-  primary: colors['blue'],
+  accent: newColors['primaryPurple'],
+  primary: newColors['primaryPurple'],
   secondary: colors['blueishGrey'],
   success: colors['green'],
   info: colors['cyan'],
