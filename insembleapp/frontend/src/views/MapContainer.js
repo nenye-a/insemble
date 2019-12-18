@@ -37,10 +37,10 @@ class MapWithAMarkerClusterer extends React.Component {
     markers: [],
   };
 
-  refs = {};
+  _refs = {};
 
   onMapMounted = (ref) => {
-    let refs = this.refs;
+    let refs = this._refs;
     refs.map = ref;
     if (!this.state.redirect && refs.map) {
       this.setState({
@@ -51,7 +51,7 @@ class MapWithAMarkerClusterer extends React.Component {
   };
 
   onBoundsChanged = () => {
-    let refs = this.refs;
+    let refs = this._refs;
     this.setState({
       bounds: refs.map.getBounds(),
       center: refs.map.getCenter(),
@@ -59,11 +59,11 @@ class MapWithAMarkerClusterer extends React.Component {
   };
 
   onSearchBoxMounted = (ref) => {
-    this.refs.searchBox = ref;
+    this._refs.searchBox = ref;
   };
 
   onPlacesChanged = () => {
-    let refs = this.refs;
+    let refs = this._refs;
     const places = refs.searchBox.getPlaces();
     const bounds = new google.maps.LatLngBounds();
 
