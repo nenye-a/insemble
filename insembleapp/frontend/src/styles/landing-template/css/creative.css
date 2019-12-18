@@ -7630,9 +7630,9 @@ html {
 }
 
 hr.divider {
-  max-width: 3.25rem;
-  border-width: 0.2rem;
-  border-color: #f4623a;
+  width: 50px;
+  height: 2px;
+  background-color: #f4623a;
 }
 
 hr.light {
@@ -7724,13 +7724,12 @@ hr.light {
 }
 
 header.masthead {
-  padding-top: 10rem;
-  padding-bottom: calc(10rem - 72px);
   background: linear-gradient(to bottom, rgba(92, 77, 66, 0.8) 0%, rgba(92, 77, 66, 0.8) 100%), url("https://insemble-photos.s3.us-east-2.amazonaws.com/bg-masthead.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-size: cover;
+  min-height: 100vh;
 }
 
 header.masthead h1 {
@@ -7741,8 +7740,6 @@ header.masthead h1 {
   header.masthead {
     height: 100vh;
     min-height: 40rem;
-    padding-top: 72px;
-    padding-bottom: 0;
   }
   header.masthead p {
     font-size: 1.15rem;
