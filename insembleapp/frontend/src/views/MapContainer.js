@@ -174,9 +174,9 @@ class MapWithAMarkerClusterer extends React.Component {
       {
         target: '.heat-map-example',
         content: (
-          <div className="p-2">
+          <div className="pt-2">
             <img className="mb-2 full-width-image" src={heatMapImg} />
-            <p>
+            <p className="text-center m-0">
               Insemble generates a heatmap of recommended locations based on your searched profile.
             </p>
           </div>
@@ -191,9 +191,11 @@ class MapWithAMarkerClusterer extends React.Component {
       {
         target: '.marker-example',
         content: (
-          <div className="p-2">
+          <div className="pt-2">
             <img className="mb-2 full-width-image" src={markerImg} />
-            <p>Click in and see important information about interesting locations.</p>
+            <p className="text-center m-0">
+              Click in and see important information about interesting locations.
+            </p>
           </div>
         ),
         placement: 'center',
@@ -213,6 +215,9 @@ class MapWithAMarkerClusterer extends React.Component {
             options: {
               zIndex: 10000,
               primaryColor: '#634FA2', // TODO: get from color constants
+            },
+            tooltipContent: {
+              paddingBottom: 0,
             },
           }}
           callback={this._handleTour}
