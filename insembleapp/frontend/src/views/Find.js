@@ -71,13 +71,25 @@ class Find extends React.Component {
                 </p>
                 <Col>
                   <Row>
-                    <Col className="d-flex flex-column justify-content-center align-items-center">
-                      <Button pill theme="accent" tag={Link} to="/describe-store">
+                    <Col sm="6" xs="12" className="d-flex align-items-stretch mb-1">
+                      <Button
+                        pill
+                        theme="accent"
+                        tag={Link}
+                        to="/describe-store"
+                        className="d-flex align-items-center justify-content-center btn-block"
+                      >
                         Enter applicable venue categories
                       </Button>
                     </Col>
-                    <Col className="d-flex flex-column justify-content-center align-items-center">
-                      <Button pill theme="accent" tag={Link} to="/existing">
+                    <Col sm="6" xs="12" className="d-flex align-items-stretch mb-1">
+                      <Button
+                        pill
+                        theme="accent"
+                        tag={Link}
+                        to="/existing"
+                        className="d-flex align-items-center justify-content-center btn-block"
+                      >
                         Enter existing store address
                       </Button>
                     </Col>
