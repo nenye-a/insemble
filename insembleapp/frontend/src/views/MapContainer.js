@@ -2,7 +2,7 @@
 /* eslint-disable import/first */
 import React from 'react';
 import { Row, Text, Container, Col } from 'shards-react';
-const { compose, withProps, withHandlers } = require('recompose');
+// const { compose, withProps, withHandlers } = require('recompose');
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from 'react-google-maps';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
@@ -11,126 +11,118 @@ import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { withAlert } from 'react-alert';
 
-const { MarkerClusterer } = require('react-google-maps/lib/components/addons/MarkerClusterer');
+// const { MarkerClusterer } = require('react-google-maps/lib/components/addons/MarkerClusterer');
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
 const _ = require('lodash');
 
 class MapWithAMarkerClusterer extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      redirect: false,
-      isMarkerShown: false,
-      markerPosition: null,
-      markerAddress: null,
-    };
-    this.handleMarkerClustererClick = this.handleMarkerClustererClick.bind(this);
-    this.handleMarkerClick = this.handleMarkerClick.bind(this);
-    this.alert = this.props.alert;
-  }
-
   static propTypes = {
     mapIsLoading: PropTypes.bool.isRequired,
     mapLoaded: PropTypes.bool.isRequired,
     heatMap: PropTypes.object,
   };
 
-  componentWillMount() {
-    const refs = {};
+  state = {
+    redirect: false,
+    isMarkerShown: false,
+    markerPosition: null,
+    markerAddress: null,
+    //bounds: new google.maps.LatLngBounds(new google.maps.LatLng(33.7036519, -118.6681759), new google.maps.LatLng(34.3373061, -118.1552891)),
+    bounds: null,
+    center: {
+      lat: 34.0522342,
+      lng: -118.2436849,
+    },
+    markers: [],
+  };
+
+  _refs = {};
+
+  onMapMounted = (ref) => {
+    let refs = this._refs;
+    refs.map = ref;
+    if (!this.state.redirect && refs.map) {
+      this.setState({
+        bounds: refs.map.getBounds(),
+        center: refs.map.getCenter(),
+      });
+    }
+  };
+
+  onBoundsChanged = () => {
+    let refs = this._refs;
+    this.setState({
+      bounds: refs.map.getBounds(),
+      center: refs.map.getCenter(),
+    });
+  };
+
+  onSearchBoxMounted = (ref) => {
+    this._refs.searchBox = ref;
+  };
+
+  onPlacesChanged = () => {
+    let refs = this._refs;
+    const places = refs.searchBox.getPlaces();
+    const bounds = new google.maps.LatLngBounds();
+
+    places.forEach((place) => {
+      if (place.geometry.viewport) {
+        bounds.union(place.geometry.viewport);
+      } else {
+        bounds.extend(place.geometry.location);
+      }
+    });
+    const nextMarkers = places.map((place) => ({
+      position: place.geometry.location,
+    }));
+    const nextCenter = _.get(nextMarkers, '0.position', this.state.center);
 
     this.setState({
-      //bounds: new google.maps.LatLngBounds(new google.maps.LatLng(33.7036519, -118.6681759), new google.maps.LatLng(34.3373061, -118.1552891)),
-      bounds: null,
-      center: {
-        lat: 34.0522342,
-        lng: -118.2436849,
-      },
-      markers: [],
-      onMapMounted: (ref) => {
-        refs.map = ref;
-        if (!this.state.redirect && refs.map) {
-          this.setState({
-            bounds: refs.map.getBounds(),
-            center: refs.map.getCenter(),
-          });
-        }
-      },
-      onBoundsChanged: () => {
-        this.setState({
-          bounds: refs.map.getBounds(),
-          center: refs.map.getCenter(),
-        });
-      },
-      onSearchBoxMounted: (ref) => {
-        refs.searchBox = ref;
-      },
-      onPlacesChanged: () => {
-        const places = refs.searchBox.getPlaces();
-        const bounds = new google.maps.LatLngBounds();
-
-        places.forEach((place) => {
-          if (place.geometry.viewport) {
-            bounds.union(place.geometry.viewport);
-          } else {
-            bounds.extend(place.geometry.location);
-          }
-        });
-        const nextMarkers = places.map((place) => ({
-          position: place.geometry.location,
-        }));
-        const nextCenter = _.get(nextMarkers, '0.position', this.state.center);
-
-        this.setState({
-          center: nextCenter,
-          markers: nextMarkers,
-        });
-        refs.map.fitBounds(bounds);
-      },
-      onMapClick: (e) => {
-        fetch(
-          'api/location/lat=' +
-            e.latLng
-              .lat()
-              .toString()
-              .split('.')
-              .join('') +
-            '&lng=' +
-            e.latLng
-              .lng()
-              .toString()
-              .split('.')
-              .join('') +
-            '&radius=1'
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            sessionStorage.setItem('temp_location', JSON.stringify(data));
-            this.setState({
-              markerPosition: e.latLng,
-              isMarkerShown: true,
-              marker: data,
-            });
-          })
-          .catch((err) => {
-            this.alert.show('Marker is too far from known establishment');
-          });
-      },
+      center: nextCenter,
+      markers: nextMarkers,
     });
-  }
+    refs.map.fitBounds(bounds);
+  };
 
-  // componentDidMount() {
-  //   this.setState({ marker: [] });
-  // }
+  onMapClick = (e) => {
+    fetch(
+      'api/location/lat=' +
+        e.latLng
+          .lat()
+          .toString()
+          .split('.')
+          .join('') +
+        '&lng=' +
+        e.latLng
+          .lng()
+          .toString()
+          .split('.')
+          .join('') +
+        '&radius=1'
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        sessionStorage.setItem('temp_location', JSON.stringify(data));
+        this.setState({
+          markerPosition: e.latLng,
+          isMarkerShown: true,
+          marker: data,
+        });
+      })
+      .catch((err) => {
+        this.props.alert.show('Marker is too far from known establishment');
+      });
+  };
 
-  handleMarkerClustererClick(markerClusterer) {
-    const clickedMarkers = markerClusterer.getMarkers();
-  }
+  // handleMarkerClustererClick = (markerClusterer) => {
+  //   const clickedMarkers = markerClusterer.getMarkers();
+  // };
 
-  handleMarkerClick(marker) {
+  handleMarkerClick = (marker) => {
     this.setState({ redirect: true, marker: marker });
-  }
+  };
 
   handleSearchClick(marker) {
     // fetch('api/location/lat=34.0522795&lng=-118.3089333')
@@ -150,7 +142,6 @@ class MapWithAMarkerClusterer extends React.Component {
   };
 
   render() {
-    const i_markers = this.props.markers.markers;
     var heats = [];
     if (this.props.mapLoaded) {
       heats = this.props.heatMap;
@@ -179,16 +170,16 @@ class MapWithAMarkerClusterer extends React.Component {
 
     return (
       <GoogleMap
-        ref={this.state.onMapMounted}
+        ref={this.onMapMounted}
         defaultZoom={10}
         defaultCenter={{ lat: 34.0522, lng: -118.2437 }}
         defaultOptions={{
           maxZoom: 15,
           minZoom: 7,
-          mapTypeControl: false
+          mapTypeControl: false,
         }}
-        onClick={this.state.onMapClick}
-        onBoundsChanged={this.state.onBoundsChanged}
+        onClick={this.onMapClick}
+        onBoundsChanged={this.onBoundsChanged}
       >
         {this.renderRedirect()}
         {this.state.isMarkerShown && (
@@ -231,10 +222,10 @@ class MapWithAMarkerClusterer extends React.Component {
         )}
         <HeatMapLayer data={data} options={{ radius: 20 }} opacity={1} />
         <SearchBox
-          ref={this.state.onSearchBoxMounted}
+          ref={this.onSearchBoxMounted}
           bounds={this.state.bounds}
           controlPosition={google.maps.ControlPosition.TOP}
-          onPlacesChanged={this.state.onPlacesChanged}
+          onPlacesChanged={this.onPlacesChanged}
         >
           <input
             type="text"
