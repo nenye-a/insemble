@@ -149,7 +149,7 @@ class MapWithAMarkerClusterer extends React.Component {
     }
   };
 
-  _handleTour = (data) => {
+  handleTour = (data) => {
     let { status, type } = data;
 
     let finishedStatuses = [STATUS.FINISHED, STATUS.SKIPPED];
@@ -186,7 +186,7 @@ class MapWithAMarkerClusterer extends React.Component {
       },
       {
         target: '.search-box',
-        content: 'Search locations or store types of interested',
+        content: <p className="text-center m-0">Search locations or store types of interested</p>,
         placement: 'top',
       },
       {
@@ -221,7 +221,7 @@ class MapWithAMarkerClusterer extends React.Component {
               paddingBottom: 0,
             },
           }}
-          callback={this._handleTour}
+          callback={this.handleTour}
           locale={{ last: 'Done' }}
           spotlightClicks={false}
         />
@@ -330,7 +330,6 @@ const MapComponent = withAlert()(withRouter(connect(mapStateToProps)(TempCompone
 export default (markers) => (
   <MapComponent
     // googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U&v=3.exp&libraries=places,visualization"
-    id="map-1"
     googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U&v=3.exp&libraries=geometry,drawing,places,visualization"
     loadingElement={<div style={{ height: `100%` }} />}
     containerElement={<div style={{ height: '85vh', width: '100%' }} />}
