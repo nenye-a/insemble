@@ -270,13 +270,8 @@ class MapWithAMarkerClusterer extends React.Component {
               </InfoWindow>
             </Marker>
           )}
+          {showGuide && <div className="marker-example heat-map-example empty-container" />}
           <HeatMapLayer data={data} options={{ radius: 20 }} opacity={1} />
-          {this.renderRedirect()}
-          {showGuide && (
-            <>
-              <div className="marker-example heat-map-example empty-container"></div>
-            </>
-          )}
           <SearchBox
             ref={this.state.onSearchBoxMounted}
             bounds={this.state.bounds}
