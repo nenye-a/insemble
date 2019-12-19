@@ -2,19 +2,20 @@
 /* eslint-disable import/first */
 import React from 'react';
 import { Row, Text, Container, Col } from 'shards-react';
-// const { compose, withProps, withHandlers } = require('recompose');
+import Joyride, { STATUS } from 'react-joyride';
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from 'react-google-maps';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import { withRouter } from 'react-router';
-
 import { connect } from 'react-redux';
 import { withAlert } from 'react-alert';
 
-// const { MarkerClusterer } = require('react-google-DELETED_BASE64_STRING');
 import HeatMapLayer from 'react-google-DELETED_BASE64_STRING';
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
-const _ = require('lodash');
+import _ from 'lodash';
+
+import heatMapImg from '../assets/images/heat-map-tour.png';
+import markerImg from '../assets/images/marker-tour.png';
 
 class MapWithAMarkerClusterer extends React.Component {
   static propTypes = {
@@ -35,9 +36,16 @@ class MapWithAMarkerClusterer extends React.Component {
       lng: -118.2436849,
     },
     markers: [],
+    showGuide: false,
   };
 
   _refs = {};
+
+  componentDidMount() {
+    this.setState({
+      showGuide: true,
+    });
+  }
 
   onMapMounted = (ref) => {
     let refs = this._refs;
@@ -141,118 +149,174 @@ class MapWithAMarkerClusterer extends React.Component {
     }
   };
 
+  handleTour = (data) => {
+    let { status, type } = data;
+
+    let finishedStatuses = [STATUS.FINISHED, STATUS.SKIPPED];
+
+    if (finishedStatuses.includes(status)) {
+      this.setState({ showGuide: false });
+    }
+  };
+
   render() {
     var heats = [];
     if (this.props.mapLoaded) {
       heats = this.props.heatMap;
     }
 
-    // console.log(positions)
-    // const points = [
-    //   {lat: 34.0622, lng: -118.2437, weight: 2},
-    //   {lat: 34.0522, lng: -118.2437, weight: 3},
-    //   {lat: 34.0422, lng: -118.2437, weight: 1},
-    //   {lat: 34.0222, lng: -118.2437, weight: 2},
-    //   {lat: 34.0122, lng: -118.2437, weight: 3},
-    //   {lat: 34.0722, lng: -118.2437, weight: 1},
-    //   ]
-    // const data = points.map(({lat, lng, weight}) => (
-    //   {location: new google.maps.LatLng(lat, lng),
-    //   weight: weight}))
+    let { showGuide } = this.state;
     const data = heats.map(({ lat, lng, map_rating }) => ({
       location: new google.maps.LatLng(lat, lng),
       weight: map_rating,
     }));
 
-    //console.log("loaded 2")
-    // console.log(Object.values(markers))
-    // console.log(markers)
+    let steps = [
+      {
+        target: '.heat-map-example',
+        content: (
+          <div className="pt-2">
+            <img className="mb-2 full-width-image" src={heatMapImg} />
+            <p className="text-center m-0">
+              Insemble generates a heatmap of recommended locations based on your search.
+            </p>
+          </div>
+        ),
+        placement: 'center',
+      },
+      {
+        target: '.search-box',
+        content: (
+          <p className="text-center m-0">
+            Search existing locations, brands, or brand types of interest.
+          </p>
+        ),
+        placement: 'top',
+      },
+      {
+        target: '.marker-example',
+        content: (
+          <div className="pt-2">
+            <img className="mb-2 full-width-image" src={markerImg} />
+            <p className="text-center m-0">
+              Click to see important information about interesting locations. Click again to dive
+              deeper.
+            </p>
+          </div>
+        ),
+        placement: 'center',
+      },
+    ];
 
     return (
-      <GoogleMap
-        ref={this.onMapMounted}
-        defaultZoom={10}
-        defaultCenter={{ lat: 34.0522, lng: -118.2437 }}
-        defaultOptions={{
-          maxZoom: 15,
-          minZoom: 7,
-          mapTypeControl: false,
-        }}
-        onClick={this.onMapClick}
-        onBoundsChanged={this.onBoundsChanged}
-      >
-        {this.renderRedirect()}
-        {this.state.isMarkerShown && (
-          <Marker
-            position={this.state.markerPosition}
-            onClick={() => this.handleMarkerClick(this.state.marker)}
-            icon={{ url: 'http://maps.google.com/mapfiles/kml/paddle/purple-circle.png' }}
-          >
-            <InfoWindow>
-              {/* TODO: Make smaller and solve for middle-of-nowhere case. also make it come back when pressed again */}
-              <Container>
-                <Row>
-                  <h6>{this.state.marker.address}</h6>
-                </Row>
-                <Row className="py-1">
-                  <Col
-                    className="d-flex flex-column justify-content-center align-items-center"
-                    style={{ fontWeight: 'bold' }}
-                  >
-                    Median Income
-                  </Col>
-                  <Col className="d-flex flex-column justify-content-center align-items-center">
-                    ${this.state.marker.income}
-                  </Col>
-                </Row>
-                <Row className="py-1">
-                  <Col
-                    className="d-flex flex-column justify-content-center align-items-center"
-                    style={{ fontWeight: 'bold' }}
-                  >
-                    Half-mile popuplation
-                  </Col>
-                  <Col className="d-flex flex-column justify-content-center align-items-center">
-                    {this.state.marker.pop}
-                  </Col>
-                </Row>
-              </Container>
-            </InfoWindow>
-          </Marker>
-        )}
-        <HeatMapLayer data={data} options={{ radius: 20 }} opacity={1} />
-        <SearchBox
-          ref={this.onSearchBoxMounted}
-          bounds={this.state.bounds}
-          controlPosition={google.maps.ControlPosition.TOP}
-          onPlacesChanged={this.onPlacesChanged}
+      <div>
+        <Joyride
+          steps={steps}
+          scrollToFirstStep={true}
+          continuous={true}
+          run={showGuide}
+          scrollToFirstStep={true}
+          showSkipButton={true}
+          styles={{
+            options: {
+              zIndex: 10000,
+              primaryColor: '#634FA2', // TODO: get from color constants
+            },
+            tooltipContent: {
+              paddingBottom: 0,
+            },
+          }}
+          callback={this.handleTour}
+          locale={{ last: 'Done' }}
+          spotlightClicks={false}
+        />
+        <GoogleMap
+          ref={this.onMapMounted}
+          defaultZoom={10}
+          defaultCenter={{ lat: 34.0522, lng: -118.2437 }}
+          defaultOptions={{
+            maxZoom: 15,
+            minZoom: 7,
+            mapTypeControl: false,
+          }}
+          onClick={this.onMapClick}
+          onBoundsChanged={this.onBoundsChanged}
         >
-          <input
-            type="text"
-            placeholder="Search an address or retailer"
-            style={{
-              boxSizing: `border-box`,
-              border: `1px solid transparent`,
-              width: `300px`,
-              height: `32px`,
-              marginTop: `17px`,
-              padding: `0 12px`,
-              borderRadius: `3px`,
-              boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
-              fontSize: `14px`,
-              outline: `none`,
-              textOverflow: `ellipses`,
-            }}
-          />
-        </SearchBox>
-        {this.state.markers.map((marker, index) => (
-          <Marker
-            onClick={() => this.handleSearchClick(marker)}
-            key={index}
-            position={marker.position}
-          />
-        ))}
-      </GoogleMap>
+          {this.renderRedirect()}
+          {this.state.isMarkerShown && (
+            <Marker
+              position={this.state.markerPosition}
+              onClick={() => this.handleMarkerClick(this.state.marker)}
+              icon={{ url: 'http://maps.google.com/mapfiles/kml/paddle/purple-circle.png' }}
+            >
+              <InfoWindow>
+                {/* TODO: Make smaller and solve for middle-of-nowhere case. also make it come back when pressed again */}
+                <Container>
+                  <Row>
+                    <h6>{this.state.marker.address}</h6>
+                  </Row>
+                  <Row className="py-1">
+                    <Col
+                      className="d-flex flex-column justify-content-center align-items-center"
+                      style={{ fontWeight: 'bold' }}
+                    >
+                      Median Income
+                    </Col>
+                    <Col className="d-flex flex-column justify-content-center align-items-center">
+                      ${this.state.marker.income}
+                    </Col>
+                  </Row>
+                  <Row className="py-1">
+                    <Col
+                      className="d-flex flex-column justify-content-center align-items-center"
+                      style={{ fontWeight: 'bold' }}
+                    >
+                      Half-mile popuplation
+                    </Col>
+                    <Col className="d-flex flex-column justify-content-center align-items-center">
+                      {this.state.marker.pop}
+                    </Col>
+                  </Row>
+                </Container>
+              </InfoWindow>
+            </Marker>
+          )}
+          {showGuide && <div className="marker-example heat-map-example empty-container" />}
+          <HeatMapLayer data={data} options={{ radius: 20 }} opacity={1} />
+          <SearchBox
+            ref={this.state.onSearchBoxMounted}
+            bounds={this.state.bounds}
+            controlPosition={google.maps.ControlPosition.TOP}
+            onPlacesChanged={this.state.onPlacesChanged}
+          >
+            <input
+              className="search-box"
+              type="text"
+              placeholder="Search an address or retailer"
+              style={{
+                boxSizing: `border-box`,
+                border: `1px solid transparent`,
+                width: `300px`,
+                height: `32px`,
+                marginTop: `17px`,
+                padding: `0 12px`,
+                borderRadius: `3px`,
+                boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
+                fontSize: `14px`,
+                outline: `none`,
+                textOverflow: `ellipses`,
+              }}
+            />
+          </SearchBox>
+          {this.state.markers.map((marker, index) => (
+            <Marker
+              onClick={() => this.handleSearchClick(marker)}
+              key={index}
+              position={marker.position}
+            />
+          ))}
+        </GoogleMap>
+      </div>
     );
   }
 }
@@ -271,7 +335,6 @@ const MapComponent = withAlert()(withRouter(connect(mapStateToProps)(TempCompone
 export default (markers) => (
   <MapComponent
     // googleMapURL="https://maps.googleapis.com/maps/api/js?key=DELETED_GOOGLE_API_KEY&v=3.exp&libraries=places,visualization"
-
     googleMapURL="https://maps.googleapis.com/maps/api/js?key=DELETED_GOOGLE_API_KEY&v=3.exp&libraries=geometry,drawing,places,visualization"
     loadingElement={<div style={{ height: `100%` }} />}
     containerElement={<div style={{ height: '85vh', width: '100%' }} />}
