@@ -2,20 +2,22 @@
 
 // Overrides, probably move this to its own file as it grows
 // Also, a bunch of style stuffs, notably the charts, are defined in src/utils .js files
-$primary-purple: #634FA2 !default;
+$primary-purple: #634fa2 !default;
 $primary: $primary-purple !default;
 
 // Main SDP Styles
-@import "../styles/shards-dashboards";
-@import "../styles/landing-template/scss/creative";
+@import '../styles/shards-dashboards';
+@import '../styles/landing-template/scss/creative';
 
 // Variables
-@import "./variables";
+@import './variables';
 
 // Plugin Styles
-@import "./dropzone";
-@import "./quill";
-@import "./range-date-picker";
-@import "./file-manager-list";
-@import "./react-tagsinput";
-@import "./react-big-calendar";
+@import './dropzone';
+@import './quill';
+@import './range-date-picker';
+@import './file-manager-list';
+@import './react-tagsinput';
+@import './react-big-calendar';
+
+@import '../styles/maps.scss';

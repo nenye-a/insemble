@@ -60,10 +60,15 @@ class Find extends React.Component {
                 />
 
                 {/* Title */}
-                <h5 className="auth-form__title text-center mb-4">
+                <h5 className="auth-form__title text-center">
                   Find the best location for your store
                 </h5>
-
+                <p className="mb-4 text-center">
+                  <small>
+                    See location recommendations based on an existing location in LA, or your target
+                    income and store categories.
+                  </small>
+                </p>
                 <Col>
                   <Row>
                     <Col className="d-flex flex-column justify-content-center align-items-center">

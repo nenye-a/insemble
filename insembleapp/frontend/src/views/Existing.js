@@ -103,9 +103,12 @@ class Existing extends React.Component {
                   />
 
                   {/* Title */}
-                  <h5 className="auth-form__title text-center mb-4">
-                    Enter your existing retail store
-                  </h5>
+                  <h5 className="auth-form__title text-center">Enter your existing retail store</h5>
+                  <p className="mb-4 text-center">
+                    <small>
+                      Receive location recommendations based on the qualities of your existing space
+                    </small>
+                  </p>
 
                   {/* Form Fields */}
                   <Form>
