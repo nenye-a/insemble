@@ -65,11 +65,12 @@ class Verify extends React.Component {
           height={window.innerHeight}
           id="myId"
           display="initial"
+          className="p-0 m-0"
         />
         <div className="card-container">
           <Card className="p-3 outline-card">
             <CardHeader className="p-0">
-              <h3 className="text-sm-center">Is this your store?</h3>
+              <h4 className="text-sm-center">Is this your store?</h4>
             </CardHeader>
             <CardBody className="p-0 justify-content-end align-items-end">
               <Button pill theme="white" tag={Link} to="/existing">
