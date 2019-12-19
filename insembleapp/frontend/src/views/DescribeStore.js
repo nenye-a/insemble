@@ -22,21 +22,24 @@ import { withRouter } from 'react-router';
 import { Redirect } from 'react-router-dom';
 
 import { connect } from 'react-redux';
-import { loadMap, clearLocation } from '../redux/actions/space';
+import { withAlert } from 'react-alert';
 import PropTypes from 'prop-types';
+
+import { loadMap, clearLocation } from '../redux/actions/space';
 
 import FormSectionTitle from '../components/edit-user-profile/FormSectionTitle';
 import ProfileBackgroundPhoto from '../components/edit-user-profile/ProfileBackgroundPhoto';
 
-import { withAlert } from 'react-alert';
 
 class DescribeStore extends React.Component {
   constructor(props) {
     super(props);
 
     // display tags from the session
-    var tags = JSON.parse(sessionStorage.getItem('sessionTags'));
-    if (!tags) tags = [];
+    let tags = JSON.parse(sessionStorage.getItem('sessionTags'));
+    if (!tags) {
+      tags = [];
+    }
 
     this.state = {
       tags,
@@ -55,12 +58,12 @@ class DescribeStore extends React.Component {
   static propTypes = {
     hasLocation: PropTypes.bool,
   };
-  componentDidMount() {
-    // var catData = [];
 
+  componentDidMount() {
     // if income in the session re-render
-    if (sessionStorage.getItem('sessionIncome')) {
-      this.incomeInput.current.value = parseInt(sessionStorage.getItem('sessionIncome'), 10);
+    let income = sessionStorage.getItem('sessionIncome');
+    if (income) {
+      this.incomeInput.current.value = parseInt(income, 10);
     }
 
     fetch('api/category/')
@@ -82,7 +85,6 @@ class DescribeStore extends React.Component {
   }
 
   handleTypeClick(type) {
-    console.log('selected', type);
     this.setState((prevState) => {
       return { tags: prevState.tags.concat(type) };
     });
@@ -99,12 +101,13 @@ class DescribeStore extends React.Component {
     sessionStorage.removeItem('sessionAddress');
     sessionStorage.removeItem('sessionStoreName');
 
-    const emptyIncome = this.incomeInput.current.value == '';
-    const emptyCategories = this.state.tags.length == 0;
+    const emptyIncome = this.incomeInput.current.value === '';
+    const emptyCategories = this.state.tags.length === 0;
 
     // provide specific alerts if things are empty - otherwise provide insights
     if (emptyIncome) this.alert.show('Please provide target income');
     if (emptyCategories) this.alert.show('Please provide store categories.');
+
     if (!emptyIncome && !emptyCategories) {
       // store tags and income in session incase we need to re-render upon back button click
       sessionStorage.setItem('sessionTags', JSON.stringify(this.state.tags));
@@ -140,7 +143,7 @@ class DescribeStore extends React.Component {
     const catData = this.state.catData;
     const catDataLimited = catData.slice(0, 49);
 
-    if (!(catData.length == 0) && !this.searcher) {
+    if (!(catData.length === 0) && !this.searcher) {
       this.searcher = new FuzzySearch(catData, { caseSensitive: false });
     }
 
@@ -159,64 +162,15 @@ class DescribeStore extends React.Component {
                     description="What are you looking for in a retail store?"
                   />
 
-                  <Row className="px-4">
-                    <Col md="4" className="form-group">
+                  {/*<header className="masthead d-flex flex-column justify-content-center align-items-center">*/}
+                  <Row form className="mx-4 pb-3 d-flex justify-content-between">
+                    <Col className="d-flex flex-column flex-sm-grow-1">
                       <label htmlFor="firstName">Target Income ($)</label>
                       <FormInput id="firstName" placeholder="100000" innerRef={this.incomeInput} />
                     </Col>
-                    <Col md="4">
-                      <Row>
-                        <label>Category Search</label>
-                      </Row>
-
-                      <Row>
-                        <Col className="d-flex">
-                          <InputGroup seamless size="sm">
-                            <InputGroupAddon type="prepend">
-                              <InputGroupText>
-                                <i className="material-icons">search</i>
-                              </InputGroupText>
-                            </InputGroupAddon>
-                            <FormInput onChange={this.handleFilterSearch} />
-                          </InputGroup>
-                        </Col>
-                      </Row>
-                    </Col>
-                    <Col className="form-group">
-                      <Row form className="mx-4">
-                        <label htmlFor="userTags">Selected</label>
-                      </Row>
-                      <Row>
-                        <TagsInput value={this.state.tags} onChange={this.handleTagsChange} />
-                      </Row>
-                    </Col>
-                  </Row>
-                  {/* 
-                  <Row form className="mx-4">
-                    <Col lg="8">
-                      <Row form>
-                        <Col md="6" className="form-group">
-                          <label htmlFor="firstName">Target Income ($)</label>
-                          <FormInput
-                            id="firstName"
-                            placeholder="100000"
-                            innerRef={this.incomeInput}
-                          />
-                        </Col>
-
-                      </Row>
-                    </Col>
-                  </Row>
-
-                  <Row className="mx-4">
-                    <label>Category Search</label>
-                  </Row>
-
-                  <Row className="mx-4">
-
-                    <Col sm="4" className="d-flex">
-
-                      <InputGroup seamless size="sm">
+                    <Col className="d-flex flex-column flex-sm-grow-1">
+                      <label>Category Search</label>
+                      <InputGroup seamless size="m">
                         <InputGroupAddon type="prepend">
                           <InputGroupText>
                             <i className="material-icons">search</i>
@@ -224,35 +178,29 @@ class DescribeStore extends React.Component {
                         </InputGroupAddon>
                         <FormInput onChange={this.handleFilterSearch} />
                       </InputGroup>
-
-
                     </Col>
+                    {/*<div>*/}
+                    {/*  <label htmlFor="userTags">Selected</label>*/}
+                    {/*  <TagsInput value={this.state.tags} onChange={this.handleTagsChange} />*/}
+                    {/*</div>*/}
                   </Row>
-
-                  <Row form className="mx-4">
-                    <label htmlFor="userTags">Selected</label>
-                    <TagsInput
-                      value={this.state.tags}
-                      onChange={this.handleTagsChange}
-                    />
-                  </Row> */}
-                  <Row className="mx-4">
-                    <label>All Categories (click to load)</label>
-                  </Row>
-                  <Row>
-                    <div className="user-details__tags mx-4">
-                      {catDataLimited.map((entry, idx) => (
-                        <Badge
-                          pill
-                          theme="light"
-                          className="text-light text-uppercase mb-2 border mr-1"
-                          onClick={() => this.handleTypeClick(entry)}
-                          key={idx}
-                        >
-                          {entry}
-                        </Badge>
-                      ))}
-                    </div>
+                  <Row form className="mx-4 d-flex">
+                    <Col>
+                      <label>All Categories (click to load)</label>
+                      <div className="user-details__tags d-flex describe-store__categories">
+                        {catDataLimited.map((entry, idx) => (
+                          <Badge
+                            pill
+                            theme="light"
+                            className="text-light text-uppercase mb-2 border mr-1"
+                            onClick={() => this.handleTypeClick(entry)}
+                            key={idx}
+                          >
+                            {entry}
+                          </Badge>
+                        ))}
+                      </div>
+                    </Col>
                   </Row>
 
                   {/* User Tags

@@ -5,6 +5,22 @@
 $primary-purple: #634fa2 !default;
 $primary: $primary-purple !default;
 
+// TODO: naming can be more generic since we'd be needing the pills wrap up elsewhere too
+.describe-store__categories {
+  flex-flow: row wrap;
+  justify-content: space-between;
+}
+
+.describe-store__categories::after {
+  content: "";
+  flex: auto;
+}
+
+// TODO: for debug. remove later
+.bg-pink {
+  background-color: pink;
+}
+
 // Main SDP Styles
 @import '../styles/shards-dashboards';
 @import '../styles/landing-template/scss/creative';
