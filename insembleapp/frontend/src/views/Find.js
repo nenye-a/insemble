@@ -69,20 +69,30 @@ class Find extends React.Component {
                     income and store categories.
                   </small>
                 </p>
-                <Col>
-                  <Row>
-                    <Col className="d-flex flex-column justify-content-center align-items-center">
-                      <Button pill theme="accent" tag={Link} to="/describe-store">
-                        Enter applicable venue categories
-                      </Button>
-                    </Col>
-                    <Col className="d-flex flex-column justify-content-center align-items-center">
-                      <Button pill theme="accent" tag={Link} to="/existing">
-                        Enter existing store address
-                      </Button>
-                    </Col>
-                  </Row>
-                </Col>
+                <Row>
+                  <Col sm="6" xs="12" className="d-flex align-items-stretch mb-1">
+                    <Button
+                      pill
+                      theme="accent"
+                      tag={Link}
+                      to="/describe-store"
+                      className="d-flex align-items-center justify-content-center btn-block"
+                    >
+                      Enter applicable venue categories
+                    </Button>
+                  </Col>
+                  <Col sm="6" xs="12" className="d-flex align-items-stretch mb-1">
+                    <Button
+                      pill
+                      theme="accent"
+                      tag={Link}
+                      to="/existing"
+                      className="d-flex align-items-center justify-content-center btn-block"
+                    >
+                      Enter existing store address
+                    </Button>
+                  </Col>
+                </Row>
               </CardBody>
             </Card>
           </Col>
