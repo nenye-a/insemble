@@ -84,10 +84,55 @@ class DescribeStore extends React.Component {
       });
   }
 
-  handleTypeClick(type) {
-    this.setState((prevState) => {
-      return { tags: prevState.tags.concat(type) };
-    });
+  setTagSelected(tag, selected) {
+    let {tags} = this.state;
+
+    // If it's to be selected, add tag to tags
+    if (selected) {
+      tags = [...tags, tag];
+    } else {
+      // Else, unselect by removing tag from tags
+      tags = tags.filter((item) => {
+        return item !== tag
+      })
+    }
+
+    this.setState({
+      tags,
+    })
+  }
+
+  renderCategories(data) {
+    let {tags} = this.state;
+    // TODO: fix cursor for these bad boys; it's showing the text(??) one instead of the button one
+    return (data.map((entry, idx) => {
+      let isSelected = tags.includes(entry);
+
+      let theme = 'light'
+      let classes = ['border', 'text-uppercase', 'mb-2', 'mr-1', 'flex-fill']; //'px-3'
+
+      if (isSelected) {
+        theme = 'primary';
+        classes.push('category-badge__selected');
+
+        classes.push('text-white');
+        classes.push('border');
+      } else {
+        classes.push('category-badge');
+        classes.push('text-light');
+      }
+
+      return (
+        <Badge
+          pill
+          theme={theme}
+          className={classes.join(' ')}
+          onClick={() => this.setTagSelected(entry, !isSelected)}
+          key={idx}
+        >
+          {entry}
+        </Badge>
+      )}))
   }
 
   handleTagsChange(tags) {
@@ -140,8 +185,8 @@ class DescribeStore extends React.Component {
       return <Redirect push to={{ pathname: '/spaces' }} />;
     }
 
-    const catData = this.state.catData;
-    const catDataLimited = catData.slice(0, 49);
+    let {catData} = this.state;
+    let catDataLimited = catData.slice(0, 49); // TODO: this is why we need the weird click to load thing. Figure out how to fix it somehow
 
     if (!(catData.length === 0) && !this.searcher) {
       this.searcher = new FuzzySearch(catData, { caseSensitive: false });
@@ -188,17 +233,7 @@ class DescribeStore extends React.Component {
                     <Col>
                       <label>All Categories (click to load)</label>
                       <div className="user-details__tags d-flex describe-store__categories">
-                        {catDataLimited.map((entry, idx) => (
-                          <Badge
-                            pill
-                            theme="light"
-                            className="text-light text-uppercase mb-2 border mr-1"
-                            onClick={() => this.handleTypeClick(entry)}
-                            key={idx}
-                          >
-                            {entry}
-                          </Badge>
-                        ))}
+                        {this.renderCategories(catDataLimited)}
                       </div>
                     </Col>
                   </Row>

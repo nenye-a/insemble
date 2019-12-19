@@ -13,7 +13,18 @@ $primary: $primary-purple !default;
 
 .describe-store__categories::after {
   content: "";
-  flex: auto;
+  flex: 10 1 auto;
+}
+
+.category-badge {
+}
+
+.category-badge:hover {
+  border: 1px solid $primary !important;
+  color: $primary !important;
+}
+
+.category-badge__selected {
 }
 
 // TODO: for debug. remove later
