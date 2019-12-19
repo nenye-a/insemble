@@ -104,19 +104,18 @@ class DescribeStore extends React.Component {
 
   renderCategories(data) {
     let {tags} = this.state;
-    // TODO: fix cursor for these bad boys; it's showing the text(??) one instead of the button one
+
     return (data.map((entry, idx) => {
       let isSelected = tags.includes(entry);
 
       let theme = 'light'
-      let classes = ['border', 'text-uppercase', 'mb-2', 'mr-1', 'flex-fill']; //'px-3'
+      let classes = ['no-select', 'border', 'text-uppercase', 'mb-2', 'mr-1', 'flex-fill']; //'px-3'
 
       if (isSelected) {
         theme = 'primary';
         classes.push('category-badge__selected');
 
         classes.push('text-white');
-        classes.push('border');
       } else {
         classes.push('category-badge');
         classes.push('text-light');

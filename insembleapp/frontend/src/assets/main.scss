@@ -5,6 +5,13 @@
 $primary-purple: #634fa2 !default;
 $primary: $primary-purple !default;
 
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 // TODO: naming can be more generic since we'd be needing the pills wrap up elsewhere too
 .describe-store__categories {
   flex-flow: row wrap;
@@ -22,9 +29,15 @@ $primary: $primary-purple !default;
 .category-badge:hover {
   border: 1px solid $primary !important;
   color: $primary !important;
+  box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 
 .category-badge__selected {
+  border: 1px solid $primary !important;
+}
+
+.category-badge__selected:hover {
+  box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.125);
 }
 
 // TODO: for debug. remove later
