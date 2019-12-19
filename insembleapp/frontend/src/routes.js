@@ -9,6 +9,7 @@ import {
   Tenant,
   LoginLayout,
   BlankLayout,
+  BasicLayout,
 } from './layouts';
 
 // Route Views
@@ -82,7 +83,7 @@ export default [
   },
   {
     path: '/verify',
-    layout: LoginLayout,
+    layout: BasicLayout,
     component: Verify,
   },
   {
