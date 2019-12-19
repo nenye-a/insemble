@@ -123,7 +123,6 @@ class DescribeStore extends React.Component {
 
       return (
         <Badge
-          pill
           theme={theme}
           className={classes.join(' ')}
           onClick={() => this.setTagSelected(entry, !isSelected)}
