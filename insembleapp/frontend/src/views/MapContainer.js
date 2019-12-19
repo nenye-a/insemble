@@ -178,7 +178,7 @@ class MapWithAMarkerClusterer extends React.Component {
           <div className="pt-2">
             <img className="mb-2 full-width-image" src={heatMapImg} />
             <p className="text-center m-0">
-              Insemble generates a heatmap of recommended locations based on your searched profile.
+              Insemble generates a heatmap of recommended locations based on your search.
             </p>
           </div>
         ),
@@ -186,7 +186,11 @@ class MapWithAMarkerClusterer extends React.Component {
       },
       {
         target: '.search-box',
-        content: <p className="text-center m-0">Search locations or store types of interested</p>,
+        content: (
+          <p className="text-center m-0">
+            Search existing locations, brands, or brand types of interest.
+          </p>
+        ),
         placement: 'top',
       },
       {
@@ -195,7 +199,8 @@ class MapWithAMarkerClusterer extends React.Component {
           <div className="pt-2">
             <img className="mb-2 full-width-image" src={markerImg} />
             <p className="text-center m-0">
-              Click in and see important information about interesting locations.
+              Click to see important information about interesting locations. Click again to dive
+              deeper.
             </p>
           </div>
         ),
