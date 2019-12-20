@@ -114,7 +114,7 @@ class LocationDeepDive extends React.Component {
             <img
               className="d-inline-block mx-auto"
               style={{ maxHeight: '50px' }}
-              src="https://insemble-photos.s3.us-east-2.amazonaws.com/insemble_i.png"
+              src="https://d3v63q50apccnu.cloudfront.net/insemble_i.png"
               alt="Insemble"
             />
           </div>
