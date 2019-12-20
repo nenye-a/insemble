@@ -31,6 +31,7 @@ import LocationDeepDive from './views/LocationDeepDive';
 import Matches from './views/Matches';
 import Errors from './views/Errors';
 import NoDeals from './views/NoDeals';
+import UserProfile from './views/UserProfile';
 
 const BlankIconSidebarLayout = ({ children }) => (
   <IconSidebar noNavbar noFooter>
@@ -130,5 +131,10 @@ export default [
     path: '/tenant-deep-dive',
     layout: HeaderNavigation,
     component: TenantDeepDive,
+  },
+  {
+    path: '/user',
+    layout: BlankLayout,
+    component: UserProfile,
   },
 ];
