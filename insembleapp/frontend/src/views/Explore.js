@@ -28,8 +28,7 @@ class Explore extends React.Component {
       // First list of posts.
       PostsListOne: [
         {
-          backgroundImage:
-            'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/1.jpg',
+          backgroundImage: 'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/1.jpg',
           category: 'Insemble',
           categoryTheme: 'royal-blue',
           author: 'Anna Kunis',
@@ -38,19 +37,16 @@ class Explore extends React.Component {
           date: '28 February 2019',
         },
         {
-          backgroundImage:
-            'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/2.jpg',
+          backgroundImage: 'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/2.jpg',
           category: 'Insemble',
           categoryTheme: 'royal-blue',
           author: 'James Jamerson',
-          authorAvatar:
-            'https://d3v63q50apccnu.cloudfront.net/coffeecultures-logo.jpg',
+          authorAvatar: 'https://d3v63q50apccnu.cloudfront.net/coffeecultures-logo.jpg',
           title: 'Coffee Cultures',
           date: '29 February 2019',
         },
         {
-          backgroundImage:
-            'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/3.jpg',
+          backgroundImage: 'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/3.jpg',
           category: 'Insemble',
           categoryTheme: 'royal-blue',
           author: "Peet's Coffee",
@@ -59,8 +55,7 @@ class Explore extends React.Component {
           date: '29 February 2019',
         },
         {
-          backgroundImage:
-            'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/4.jpg',
+          backgroundImage: 'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/4.jpg',
           category: 'Insemble',
           categoryTheme: 'royal-blue',
           author: 'Patties Express',
@@ -69,8 +64,7 @@ class Explore extends React.Component {
           date: '29 February 2019',
         },
         {
-          backgroundImage:
-            'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/5.jpg',
+          backgroundImage: 'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/5.jpg',
           category: 'Insemble',
           categoryTheme: 'royal-blue',
           author: 'Anna Kunis',
@@ -79,8 +73,7 @@ class Explore extends React.Component {
           date: '28 February 2019',
         },
         {
-          backgroundImage:
-            'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/6.jpg',
+          backgroundImage: 'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/6.jpg',
           category: 'Regional',
           categoryTheme: 'dark',
           author: 'James Jamerson',
