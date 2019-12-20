@@ -14,9 +14,6 @@ import HeatMapLayer from 'react-google-maps/lib/components/visualization/Heatmap
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
 import _ from 'lodash';
 
-import heatMapImg from '../assets/images/heat-map-tour.png';
-import markerImg from '../assets/images/marker-tour.png';
-
 class MapWithAMarkerClusterer extends React.Component {
   static propTypes = {
     mapIsLoading: PropTypes.bool.isRequired,
@@ -176,7 +173,7 @@ class MapWithAMarkerClusterer extends React.Component {
         target: '.heat-map-example',
         content: (
           <div className="pt-2">
-            <img className="mb-2 full-width-image" src={heatMapImg} alt="" />
+            <img className="mb-2 full-width-image" src="https://insemble-photos.s3.us-east-2.amazonaws.com/instructional+photos/heat-map-tour.png" alt="" />
             <p className="text-center m-0">
               Insemble generates a heatmap of recommended locations based on your search.
             </p>
@@ -197,7 +194,7 @@ class MapWithAMarkerClusterer extends React.Component {
         target: '.marker-example',
         content: (
           <div className="pt-2">
-            <img className="mb-2 full-width-image" src={markerImg} alt="" />
+            <img className="mb-2 full-width-image" src="https://insemble-photos.s3.us-east-2.amazonaws.com/instructional+photos/marker-tour.png" alt="" />
             <p className="text-center m-0">
               Click to see important information about interesting locations. Click again to dive
               deeper.
