@@ -175,7 +175,7 @@ class MapWithAMarkerClusterer extends React.Component {
           <div className="pt-2">
             <img
               className="mb-2 full-width-image"
-              src="https://insemble-photos.s3.us-east-2.amazonaws.com/instructional+photos/heat-map-tour.png"
+              src="https://d3v63q50apccnu.cloudfront.net/instructional+photos/heat-map-tour.png"
               alt=""
             />
             <p className="text-center m-0">
@@ -200,7 +200,7 @@ class MapWithAMarkerClusterer extends React.Component {
           <div className="pt-2">
             <img
               className="mb-2 full-width-image"
-              src="https://insemble-photos.s3.us-east-2.amazonaws.com/instructional+photos/marker-tour.png"
+              src="https://d3v63q50apccnu.cloudfront.net/instructional+photos/marker-tour.png"
               alt=""
             />
             <p className="text-center m-0">
