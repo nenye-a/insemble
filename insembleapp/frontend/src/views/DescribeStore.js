@@ -30,7 +30,6 @@ import { loadMap, clearLocation } from '../redux/actions/space';
 import FormSectionTitle from '../components/edit-user-profile/FormSectionTitle';
 import ProfileBackgroundPhoto from '../components/edit-user-profile/ProfileBackgroundPhoto';
 
-
 class DescribeStore extends React.Component {
   constructor(props) {
     super(props);
@@ -85,7 +84,7 @@ class DescribeStore extends React.Component {
   }
 
   setTagSelected(tag, selected) {
-    let {tags} = this.state;
+    let { tags } = this.state;
 
     // If it's to be selected, add tag to tags
     if (selected) {
@@ -93,22 +92,22 @@ class DescribeStore extends React.Component {
     } else {
       // Else, unselect by removing tag from tags
       tags = tags.filter((item) => {
-        return item !== tag
-      })
+        return item !== tag;
+      });
     }
 
     this.setState({
       tags,
-    })
+    });
   }
 
   renderCategories(data) {
-    let {tags} = this.state;
+    let { tags } = this.state;
 
-    return (data.map((entry, idx) => {
+    return data.map((entry, idx) => {
       let isSelected = tags.includes(entry);
 
-      let theme = 'light'
+      let theme = 'light';
       let classes = ['no-select', 'border', 'text-uppercase', 'mb-2', 'mr-1', 'flex-fill']; //'px-3'
 
       if (isSelected) {
@@ -130,7 +129,8 @@ class DescribeStore extends React.Component {
         >
           {entry}
         </Badge>
-      )}))
+      );
+    });
   }
 
   handleTagsChange(tags) {
@@ -183,7 +183,7 @@ class DescribeStore extends React.Component {
       return <Redirect push to={{ pathname: '/spaces' }} />;
     }
 
-    let {catData} = this.state;
+    let { catData } = this.state;
     let catDataLimited = catData.slice(0, 49); // TODO: this is why we need the weird click to load thing. Figure out how to fix it somehow
 
     if (!(catData.length === 0) && !this.searcher) {
