@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Row, Col } from 'shards-react';
-import UserDetails from '../components/user-profile/UserDetail';
+import UserDetails from '../components/user-profile/UserDetails';
 import UserAccountDetails from '../components/user-profile/UserAccountDetails';
 import SearchHistory from '../components/user-profile/SearchHistory';
 
