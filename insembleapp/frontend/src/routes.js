@@ -1,5 +1,4 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
 
 // Layout Types
 import {
@@ -133,7 +132,7 @@ export default [
     component: TenantDeepDive,
   },
   {
-    path: '/user',
+    path: '/users/me',
     layout: BlankLayout,
     component: UserProfile,
   },
