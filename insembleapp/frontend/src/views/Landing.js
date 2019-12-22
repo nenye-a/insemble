@@ -1,70 +1,26 @@
-/* eslint jsx-a11y/anchor-is-valid: 0 */
-
 import React from 'react';
-import { Link, Redirect } from 'react-router-dom';
-import { withRouter } from 'react-router';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { login } from '../redux/actions/auth';
+import { Redirect } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  CardFooter,
-  Form,
-  FormGroup,
-  FormInput,
-  FormCheckbox,
-  Button,
-} from 'shards-react';
+import Title from './LandingPage/Title';
+import Masthead from './LandingPage/Masthead';
+import TextInput from './LandingPage/TextInput';
 
-class Landing extends React.Component {
-  constructor(props) {
-    super(props);
-    this.emailInput = React.createRef();
-    this.passwordInput = React.createRef();
+function Landing() {
+  let isAuthenticated = useSelector((state) => state.isAuthenticated);
+  if (isAuthenticated) {
+    return <Redirect to="/Find" />;
   }
-
-  static propTypes = {
-    login: PropTypes.func.isRequired,
-    isAuthenticated: PropTypes.bool,
-  };
-
-  onSubmit = (e) => {
-    e.preventDefault();
-    this.props.login(this.emailInput.current.value, this.passwordInput.current.value);
-  };
-
-  render() {
-    if (this.props.isAuthenticated) {
-      return <Redirect to="/Find" />;
-    }
-
-    return (
-      <header className="masthead d-flex flex-column justify-content-center align-items-center">
-        <h1 className="text-uppercase text-white">Insemble</h1>
-        <hr className="divider" />
-        <p className="text-white-75 font-weight-light mb-4">
-          Instant Store and Restaurant Location Recommendations
-        </p>
-        <Button pill theme="accent" tag={Link} to="/find">
-          See Insights
-        </Button>
-      </header>
-    );
-  }
+  return (
+    <Masthead>
+      <Title style={{ maxWidth: 580 }}>Find the next best location for your business</Title>
+      <TextInput
+        placeholder="Enter the address of your top performing restaurant or store"
+        buttonText="Find locations"
+        onSubmit={() => {}}
+      />
+    </Masthead>
+  );
 }
 
-const mapStateToProps = (state) => ({
-  isAuthenticated: state.auth.isAuthenticated,
-});
-
-export default withRouter(
-  connect(
-    mapStateToProps,
-    { login }
-  )(Landing)
-);
+export default Landing;
