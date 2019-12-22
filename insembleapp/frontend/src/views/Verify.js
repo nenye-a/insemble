@@ -26,6 +26,7 @@ import PageTitle from '../components/common/PageTitle';
 import MapContainer from './MapContainer';
 import Iframe from 'react-iframe';
 import ThisLocation from '../components/location-deep-dive/ThisLocation';
+import { MAP_IFRAME_URL } from '../utils/urls';
 
 class Verify extends React.Component {
   constructor(props) {
@@ -56,39 +57,32 @@ class Verify extends React.Component {
     }
 
     return (
-      <Container fluid>
+      <>
         {/* TODO: Change los angeles from static input  */}
         <Iframe
-          url={
-            'https://www.google.com/maps/embed/v1/search?key=AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U&q=' +
-            storename.split(' ').join('+') +
-            '+' +
-            address.split(' ').join('+')
-          }
+          url={MAP_IFRAME_URL + storename.split(' ').join('+') + '+' + address.split(' ').join('+')}
           width="100%"
-          height="600px"
+          height={window.innerHeight}
           id="myId"
-          className="mx-auto"
           display="initial"
+          className="p-0 m-0"
         />
-
-        <Col className="flex-column justify-content-center align-items-center pt-2">
-          <Row noGutters className="page-header py-2">
-            <PageTitle md="4" title="Is this your store?" className="text-sm-center" />
-          </Row>
-
-          <Row>
-            <Col className="justify-content-center">
-              <Button pill theme="white" tag={Link} to="/existing" className="mx-2">
+        <div className="card-container">
+          <Card className="p-3 outline-card">
+            <CardHeader className="p-0">
+              <h4 className="text-sm-center">Is this your store?</h4>
+            </CardHeader>
+            <CardBody className="p-0 justify-content-end align-items-end">
+              <Button pill theme="white" tag={Link} to="/existing">
                 No
               </Button>
-              <Button pill theme="accent" onClick={this.onSubmit} className="mx-2">
+              <Button pill theme="accent" onClick={this.onSubmit} className="ml-2">
                 Yes
               </Button>
-            </Col>
-          </Row>
-        </Col>
-      </Container>
+            </CardBody>
+          </Card>
+        </div>
+      </>
     );
   }
 }
