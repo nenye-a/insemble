@@ -28,63 +28,56 @@ class Explore extends React.Component {
       // First list of posts.
       PostsListOne: [
         {
-          backgroundImage:
-            'https://insemble-photos.s3.us-east-2.amazonaws.com/Retailer+Examples/1.jpg',
+          backgroundImage: 'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/1.jpg',
           category: 'Insemble',
           categoryTheme: 'royal-blue',
           author: 'Anna Kunis',
-          authorAvatar: 'https://insemble-photos.s3.us-east-2.amazonaws.com/ritual-logo.jpg',
+          authorAvatar: 'https://d3v63q50apccnu.cloudfront.net/ritual-logo.jpg',
           title: 'Ritual Coffee',
           date: '28 February 2019',
         },
         {
-          backgroundImage:
-            'https://insemble-photos.s3.us-east-2.amazonaws.com/Retailer+Examples/2.jpg',
+          backgroundImage: 'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/2.jpg',
           category: 'Insemble',
           categoryTheme: 'royal-blue',
           author: 'James Jamerson',
-          authorAvatar:
-            'https://insemble-photos.s3.us-east-2.amazonaws.com/coffeecultures-logo.jpg',
+          authorAvatar: 'https://d3v63q50apccnu.cloudfront.net/coffeecultures-logo.jpg',
           title: 'Coffee Cultures',
           date: '29 February 2019',
         },
         {
-          backgroundImage:
-            'https://insemble-photos.s3.us-east-2.amazonaws.com/Retailer+Examples/3.jpg',
+          backgroundImage: 'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/3.jpg',
           category: 'Insemble',
           categoryTheme: 'royal-blue',
           author: "Peet's Coffee",
-          authorAvatar: 'https://insemble-photos.s3.us-east-2.amazonaws.com/peets-logo',
+          authorAvatar: 'https://d3v63q50apccnu.cloudfront.net/peets-logo',
           title: "Peet's Coffee",
           date: '29 February 2019',
         },
         {
-          backgroundImage:
-            'https://insemble-photos.s3.us-east-2.amazonaws.com/Retailer+Examples/4.jpg',
+          backgroundImage: 'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/4.jpg',
           category: 'Insemble',
           categoryTheme: 'royal-blue',
           author: 'Patties Express',
-          authorAvatar: 'https://insemble-photos.s3.us-east-2.amazonaws.com/patties-logo.png',
+          authorAvatar: 'https://d3v63q50apccnu.cloudfront.net/patties-logo.png',
           title: 'Patties Express',
           date: '29 February 2019',
         },
         {
-          backgroundImage:
-            'https://insemble-photos.s3.us-east-2.amazonaws.com/Retailer+Examples/5.jpg',
+          backgroundImage: 'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/5.jpg',
           category: 'Insemble',
           categoryTheme: 'royal-blue',
           author: 'Anna Kunis',
-          authorAvatar: 'https://insemble-photos.s3.us-east-2.amazonaws.com/corepower-logo.jpg',
+          authorAvatar: 'https://d3v63q50apccnu.cloudfront.net/corepower-logo.jpg',
           title: 'Corepower Yoga',
           date: '28 February 2019',
         },
         {
-          backgroundImage:
-            'https://insemble-photos.s3.us-east-2.amazonaws.com/Retailer+Examples/6.jpg',
+          backgroundImage: 'https://d3v63q50apccnu.cloudfront.net/Retailer+Examples/6.jpg',
           category: 'Regional',
           categoryTheme: 'dark',
           author: 'James Jamerson',
-          authorAvatar: 'https://insemble-photos.s3.us-east-2.amazonaws.com/leos-logo.jpg',
+          authorAvatar: 'https://d3v63q50apccnu.cloudfront.net/leos-logo.jpg',
           title: "Leo's Tacos",
           date: '29 February 2019',
         },
@@ -93,7 +86,7 @@ class Explore extends React.Component {
       // Second list of posts.
       PostsListTwo: [
         {
-          backgroundImage: 'https://insemble-photos.s3.us-east-2.amazonaws.com/Categories/1.jpg',
+          backgroundImage: 'https://d3v63q50apccnu.cloudfront.net/Categories/1.jpg',
           category: 'Travel',
           categoryTheme: 'info',
 
@@ -103,7 +96,7 @@ class Explore extends React.Component {
           date: '29 February 2019',
         },
         {
-          backgroundImage: 'https://insemble-photos.s3.us-east-2.amazonaws.com/Categories/2.jpg',
+          backgroundImage: 'https://d3v63q50apccnu.cloudfront.net/Categories/2.jpg',
           category: 'Business',
           categoryTheme: 'dark',
 
@@ -113,7 +106,7 @@ class Explore extends React.Component {
           date: '29 February 2019',
         },
         {
-          backgroundImage: 'https://insemble-photos.s3.us-east-2.amazonaws.com/Categories/3.jpg',
+          backgroundImage: 'https://d3v63q50apccnu.cloudfront.net/Categories/3.jpg',
           category: 'Business',
           categoryTheme: 'dark',
 
@@ -123,7 +116,7 @@ class Explore extends React.Component {
           date: '29 February 2019',
         },
         {
-          backgroundImage: 'https://insemble-photos.s3.us-east-2.amazonaws.com/Categories/4.jpeg',
+          backgroundImage: 'https://d3v63q50apccnu.cloudfront.net/Categories/4.jpeg',
           category: 'Business',
           categoryTheme: 'dark',
 

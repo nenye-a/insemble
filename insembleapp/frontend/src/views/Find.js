@@ -55,29 +55,44 @@ class Find extends React.Component {
                 <img
                   className="auth-form__logo d-table mx-auto mb-3"
                   style={{ maxHeight: '25px' }}
-                  src="https://insemble-photos.s3.us-east-2.amazonaws.com/insemble_i.png"
+                  src="https://d3v63q50apccnu.cloudfront.net/insemble_i.png"
                   alt="Retailer Dashboards - Login Template"
                 />
 
                 {/* Title */}
-                <h5 className="auth-form__title text-center mb-4">
+                <h5 className="auth-form__title text-center">
                   Find the best location for your store
                 </h5>
-
-                <Col>
-                  <Row>
-                    <Col className="d-flex flex-column justify-content-center align-items-center">
-                      <Button pill theme="accent" tag={Link} to="/describe-store">
-                        Enter applicable venue categories
-                      </Button>
-                    </Col>
-                    <Col className="d-flex flex-column justify-content-center align-items-center">
-                      <Button pill theme="accent" tag={Link} to="/existing">
-                        Enter existing store address
-                      </Button>
-                    </Col>
-                  </Row>
-                </Col>
+                <p className="mb-4 text-center">
+                  <small>
+                    See location recommendations based on an existing location in LA, or your target
+                    income and store categories.
+                  </small>
+                </p>
+                <Row>
+                  <Col sm="6" xs="12" className="d-flex align-items-stretch mb-1">
+                    <Button
+                      pill
+                      theme="accent"
+                      tag={Link}
+                      to="/describe-store"
+                      className="d-flex align-items-center justify-content-center btn-block"
+                    >
+                      Enter applicable venue categories
+                    </Button>
+                  </Col>
+                  <Col sm="6" xs="12" className="d-flex align-items-stretch mb-1">
+                    <Button
+                      pill
+                      theme="accent"
+                      tag={Link}
+                      to="/existing"
+                      className="d-flex align-items-center justify-content-center btn-block"
+                    >
+                      Enter existing store address
+                    </Button>
+                  </Col>
+                </Row>
               </CardBody>
             </Card>
           </Col>

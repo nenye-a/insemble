@@ -7,6 +7,7 @@
 /mediafiles/*
 /__pycache__/
 /.vscode/
+.python-version
 
 # coverage result
 .coverage

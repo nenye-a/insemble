@@ -80,7 +80,7 @@ class Register extends React.Component {
                 <img
                   className="auth-form__logo d-table mx-auto mb-3"
                   style={{ maxHeight: '25px' }}
-                  src="https://insemble-photos.s3.us-east-2.amazonaws.com/insemble_i.png"
+                  src="https://d3v63q50apccnu.cloudfront.net/insemble_i.png"
                   alt="Retailer Dashboards - Register Template"
                 />
 

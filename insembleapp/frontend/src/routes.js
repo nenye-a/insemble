@@ -1,5 +1,4 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
 
 // Layout Types
 import {
@@ -9,6 +8,7 @@ import {
   Tenant,
   LoginLayout,
   BlankLayout,
+  BasicLayout,
 } from './layouts';
 
 // Route Views
@@ -30,6 +30,7 @@ import LocationDeepDive from './views/LocationDeepDive';
 import Matches from './views/Matches';
 import Errors from './views/Errors';
 import NoDeals from './views/NoDeals';
+import UserProfile from './views/UserProfile';
 
 const BlankIconSidebarLayout = ({ children }) => (
   <IconSidebar noNavbar noFooter>
@@ -82,7 +83,7 @@ export default [
   },
   {
     path: '/verify',
-    layout: LoginLayout,
+    layout: BasicLayout,
     component: Verify,
   },
   {
@@ -129,5 +130,10 @@ export default [
     path: '/tenant-deep-dive',
     layout: HeaderNavigation,
     component: TenantDeepDive,
+  },
+  {
+    path: '/users/me',
+    layout: BlankLayout,
+    component: UserProfile,
   },
 ];
