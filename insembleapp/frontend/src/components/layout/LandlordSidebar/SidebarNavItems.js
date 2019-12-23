@@ -1,54 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Nav } from 'shards-react';
 
 import SidebarNavItem from './SidebarNavItem';
 import { Store } from '../../../flux';
 
-class SidebarNavItems extends React.Component {
-  constructor(props) {
-    super(props);
+function SidebarNavItems() {
+  let [navItems, setNavItems] = useState([]);
 
-    this.state = {
-      navItems: Store.getSidebarItems(),
+  useEffect(() => {
+    let onChange = () => {
+      setNavItems(Store.getSidebarItems());
     };
+    Store.addChangeListener(onChange);
+    return () => {
+      Store.removeChangeListener(onChange);
+    };
+  }, []);
 
-    this.onChange = this.onChange.bind(this);
-  }
-
-  componentWillMount() {
-    Store.addChangeListener(this.onChange);
-  }
-
-  componentWillUnmount() {
-    Store.removeChangeListener(this.onChange);
-  }
-
-  onChange() {
-    this.setState({
-      ...this.state,
-      navItems: Store.getSidebarItems(),
-    });
-  }
-
-  render() {
-    const { navItems: items } = this.state;
-    return (
-      <div className="nav-wrapper">
-        {items.map((nav, idx) => (
-          <div key={idx}>
-            <h6 className="main-sidebar__nav-title">{nav.title}</h6>
-            {typeof nav.items !== 'undefined' && nav.items.length && (
-              <Nav className="nav--no-borders flex-column">
-                {nav.items.map((item, idx) => (
-                  <SidebarNavItem key={idx} item={item} />
-                ))}
-              </Nav>
-            )}
-          </div>
-        ))}
-      </div>
-    );
-  }
+  return (
+    <div className="nav-wrapper">
+      {navItems.map((nav, idx) => (
+        <div key={idx}>
+          <h6 className="main-sidebar__nav-title">{nav.title}</h6>
+          {typeof nav.items !== 'undefined' && nav.items.length && (
+            <Nav className="nav--no-borders flex-column">
+              {nav.items.map((item, idx) => (
+                <SidebarNavItem key={idx} item={item} />
+              ))}
+            </Nav>
+          )}
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default SidebarNavItems;

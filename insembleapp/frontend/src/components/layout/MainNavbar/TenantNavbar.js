@@ -58,7 +58,7 @@ const TenantNavbar = ({ layout, stickyTop }) => {
                   id="main-logo"
                   className="d-inline-block align-top mr-1 ml-3"
                   style={{ maxHeight: '20px' }}
-                  src="https://insemble-photos.s3.us-east-2.amazonaws.com/insemble_i.png"
+                  src="https://d3v63q50apccnu.cloudfront.net/insemble_i.png"
                   alt="Insemble"
                 />
                 <span className="d-none d-md-inline ml-1">Insemble</span>

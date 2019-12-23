@@ -36,7 +36,7 @@ class Feedback extends React.Component {
 
   static propTypes = {
     getLocation: PropTypes.func.isRequired,
-    auth: PropTypes.object.isRequired
+    auth: PropTypes.object.isRequired,
   };
 
   uploadFeedback = (content, type) => {
@@ -50,7 +50,7 @@ class Feedback extends React.Component {
       },
     };
 
-    console.log("submit regeistered");
+    console.log('submit regeistered');
 
     var time_stamp = new Date();
 
@@ -88,8 +88,8 @@ class Feedback extends React.Component {
     var feedbackText = document.getElementById('formControlFeedback').value;
     var featuresText = document.getElementById('formControlFeatures').value;
 
-    if (issueText === "" && feedbackText === "" && featuresText === "") {
-      this.alert.show('Please provide feedback before submitting!')
+    if (issueText === '' && feedbackText === '' && featuresText === '') {
+      this.alert.show('Please provide feedback before submitting!');
     } else {
       this.uploadFeedback(issueText, 'issue');
       this.uploadFeedback(feedbackText, 'feedback');
@@ -99,7 +99,6 @@ class Feedback extends React.Component {
         redirect: true,
       });
     }
-
   };
 
   render() {
@@ -119,7 +118,7 @@ class Feedback extends React.Component {
                 <img
                   className="auth-form__logo d-table mx-auto mb-3"
                   style={{ maxHeight: '20px' }}
-                  src="https://insemble-photos.s3.us-east-2.amazonaws.com/insemble_i.png"
+                  src="https://d3v63q50apccnu.cloudfront.net/insemble_i.png"
                   alt="Insemble Logo"
                 />
 
@@ -178,4 +177,11 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default withAlert()(withRouter(connect(mapStateToProps, { getLocation })(Feedback)));
+export default withAlert()(
+  withRouter(
+    connect(
+      mapStateToProps,
+      { getLocation }
+    )(Feedback)
+  )
+);

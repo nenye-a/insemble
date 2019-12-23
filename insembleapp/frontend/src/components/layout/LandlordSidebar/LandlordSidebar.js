@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Col } from 'shards-react';
@@ -9,45 +9,28 @@ import SidebarNavItems from './SidebarNavItems';
 
 import { Store } from '../../../flux';
 
-class LandlordSidebar extends React.Component {
-  constructor(props) {
-    super(props);
+function LandlordSidebar(props) {
+  let [menuVisible, setMenuVisible] = useState(false);
 
-    this.state = {
-      menuVisible: false,
-      sidebarNavItems: Store.getSidebarItems(),
+  useEffect(() => {
+    let onChange = () => {
+      setMenuVisible(Store.getMenuState());
     };
+    Store.addChangeListener(onChange);
+    return () => {
+      Store.removeChangeListener(onChange);
+    };
+  }, []);
 
-    this.onChange = this.onChange.bind(this);
-  }
+  const classes = classNames('main-sidebar', 'px-0', 'col-12', menuVisible && 'open');
 
-  componentWillMount() {
-    Store.addChangeListener(this.onChange);
-  }
-
-  componentWillUnmount() {
-    Store.removeChangeListener(this.onChange);
-  }
-
-  onChange() {
-    this.setState({
-      ...this.state,
-      menuVisible: Store.getMenuState(),
-      sidebarNavItems: Store.getSidebarItems(),
-    });
-  }
-
-  render() {
-    const classes = classNames('main-sidebar', 'px-0', 'col-12', this.state.menuVisible && 'open');
-
-    return (
-      <Col tag="aside" className={classes} lg={{ size: 2 }} md={{ size: 3 }}>
-        <SidebarMainNavbar hideLogoText={this.props.hideLogoText} />
-        <SidebarSearch />
-        <SidebarNavItems />
-      </Col>
-    );
-  }
+  return (
+    <Col tag="aside" className={classes} lg={{ size: 2 }} md={{ size: 3 }}>
+      <SidebarMainNavbar hideLogoText={props.hideLogoText} />
+      <SidebarSearch />
+      <SidebarNavItems />
+    </Col>
+  );
 }
 
 LandlordSidebar.propTypes = {
