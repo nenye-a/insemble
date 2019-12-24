@@ -1,17 +1,29 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import styled from 'styled-components';
 
-function Button(props) {
+type ButtonProps = ComponentProps<'button'>;
+type InputProps = ComponentProps<'input'>;
+type TextInputProps = Omit<InputProps, 'onSubmit'> & {
+  onSubmit: () => void;
+};
+
+function Button(props: ButtonProps) {
   return <button {...props} type="button" />;
 }
 
-function TextInput(props) {
-  let onKeyPress = (event) => {
-    if (event.which === 13 && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
-      props.onSubmit(event);
-    }
-  };
-  return <input {...props} type="text" onKeyPress={onKeyPress} />;
+function TextInput(props: TextInputProps) {
+  let { onSubmit, ...otherProps } = props;
+  return (
+    <input
+      {...otherProps}
+      type="text"
+      onKeyPress={(event) => {
+        if (event.which === 13 && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
+          onSubmit();
+        }
+      }}
+    />
+  );
 }
 
 const InputContainer = styled.div`
@@ -45,8 +57,12 @@ const StyledButton = styled(Button)`
   right: 8px;
 `;
 
-export default (props) => {
-  let { buttonText, onSubmit, ...otherProps } = props;
+type Props = TextInputProps & {
+  buttonText: string;
+};
+
+export default (props: Props) => {
+  let { buttonText, onSubmit, ref, ...otherProps } = props;
   return (
     <InputContainer>
       <StyledTextInput {...otherProps} onSubmit={onSubmit} />
