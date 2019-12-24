@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 
 const BackgroundContainer = styled.div`
@@ -20,7 +20,11 @@ const Content = styled.div`
   margin: 0 auto;
 `;
 
-export default (props) => {
+type Props = {
+  children: ReactNode;
+};
+
+export default (props: Props) => {
   return (
     <BackgroundContainer>
       <ContentContainer>
