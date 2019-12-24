@@ -5,9 +5,10 @@ import { useSelector } from 'react-redux';
 import Title from './LandingPage/Title';
 import Masthead from './LandingPage/Masthead';
 import TextInput from './LandingPage/TextInput';
+import { RootState } from '../types/RootState';
 
 function Landing() {
-  let isAuthenticated = useSelector((state) => state.isAuthenticated);
+  let isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   if (isAuthenticated) {
     return <Redirect to="/Find" />;
   }
