@@ -1,30 +1,31 @@
-import React, { ComponentProps } from 'react';
+import React, { ComponentProps, forwardRef, Ref } from 'react';
 import styled from 'styled-components';
 
 type ButtonProps = ComponentProps<'button'>;
 type InputProps = ComponentProps<'input'>;
 type TextInputProps = Omit<InputProps, 'onSubmit'> & {
-  onSubmit: () => void;
+  onSubmit?: () => void;
 };
 
 function Button(props: ButtonProps) {
   return <button {...props} type="button" />;
 }
 
-function TextInput(props: TextInputProps) {
+const TextInput = forwardRef((props: TextInputProps, forwardedRef: Ref<HTMLInputElement>) => {
   let { onSubmit, ...otherProps } = props;
   return (
     <input
       {...otherProps}
       type="text"
+      ref={forwardedRef}
       onKeyPress={(event) => {
         if (event.which === 13 && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
-          onSubmit();
+          onSubmit && onSubmit();
         }
       }}
     />
   );
-}
+});
 
 const InputContainer = styled.div`
   position: relative;
@@ -58,15 +59,15 @@ const StyledButton = styled(Button)`
 `;
 
 type Props = TextInputProps & {
-  buttonText: string;
+  buttonText?: string;
 };
 
-export default (props: Props) => {
+export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) => {
   let { buttonText, onSubmit, ref, ...otherProps } = props;
   return (
     <InputContainer>
-      <StyledTextInput {...otherProps} onSubmit={onSubmit} />
-      <StyledButton onClick={onSubmit}>{buttonText}</StyledButton>
+      <StyledTextInput {...otherProps} ref={forwardedRef} onSubmit={onSubmit} />
+      {buttonText && <StyledButton onClick={onSubmit}>{buttonText}</StyledButton>}
     </InputContainer>
   );
-};
+});
