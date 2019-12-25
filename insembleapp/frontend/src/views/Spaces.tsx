@@ -1,14 +1,14 @@
 import React from 'react';
 import { Container, Row } from 'shards-react';
-import MapComponent from './MapContainer';
-
 import LoadingOverlay from 'react-loading-overlay';
 
-import useSelector from '../redux/useSelector';
+import MapContainer from './MapContainer';
+import { useSelector } from '../redux/helpers';
+
+type LatLngLiteral = google.maps.LatLngLiteral;
 
 function Spaces() {
-  // let { markers, heats } = this.state;
-  let markers: Array<any> = [];
+  let markers: Array<LatLngLiteral> = [];
   let heats: Array<any> = [];
   let mapIsLoading = useSelector((state) => state.space.mapIsLoading);
   return (
@@ -19,7 +19,7 @@ function Spaces() {
     >
       <Container fluid className="main-content-container m-0">
         <Row>
-          <MapComponent markers={markers} heats={heats} />
+          <MapContainer markers={markers} heats={heats} />
         </Row>
       </Container>
     </LoadingOverlay>
