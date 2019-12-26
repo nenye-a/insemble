@@ -2,17 +2,17 @@ const JSON_PREFIX = '$#';
 const SEPARATOR = ':';
 
 type State = {
-  place: undefined | google.maps.places.PlaceResult;
-  sessionStoreName: undefined | string;
-  sessionIncome: undefined | number;
-  sessionTags: undefined | Array<string>;
-  sessionAddress: undefined | string;
-  mapLoaded: undefined | boolean;
-  locationLoaded: undefined | boolean;
-  hasLocation: undefined | boolean;
-  location: undefined | { [key: string]: unknown };
-  heatMap: undefined | { [key: string]: unknown };
-  temp_location: undefined | { [key: string]: unknown };
+  place: google.maps.places.PlaceResult;
+  sessionStoreName: string;
+  sessionIncome: number;
+  sessionTags: Array<string>;
+  sessionAddress: string;
+  mapLoaded: boolean;
+  locationLoaded: boolean;
+  hasLocation: boolean;
+  location: unknown;
+  heatMap: unknown;
+  temp_location: unknown;
 };
 
 /**
@@ -21,7 +21,7 @@ type State = {
  * get('user', userID);
  * This way we can still be type-safe since the first param must be a key of State.
  */
-function get<K extends keyof State>(key: K, id?: string): State[K] {
+function get<K extends keyof State>(key: K, id?: string): State[K] | undefined {
   let storageKey = id ? key + SEPARATOR + id : key;
   let value = sessionStorage.getItem(storageKey);
   if (typeof value === 'string' && value.startsWith(JSON_PREFIX)) {
@@ -60,4 +60,9 @@ function set<K extends keyof State>(keyInput: K | [K, string], value: State[K]):
   sessionStorage.setItem(storageKey, stringValue);
 }
 
-export const session = { get, set };
+function remove<K extends keyof State>(key: K, id?: string): void {
+  let storageKey = id ? key + SEPARATOR + id : key;
+  sessionStorage.removeItem(storageKey);
+}
+
+export const session = { get, set, remove };
