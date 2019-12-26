@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { MAPS_IFRAME_URL_SEARCH, MAPS_IFRAME_URL_PLACE } from '../constants/googleMaps';
 import { session } from '../utils/storage';
 import urlEncode from '../utils/urlEncode';
-import useSelector from '../redux/useSelector';
+import { useSelector } from '../redux/helpers';
 
 const Container = styled.div`
   flex-grow: 1;
