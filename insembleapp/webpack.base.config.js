@@ -48,6 +48,11 @@ module.exports = [
     module: {
       rules: [
         {
+          test: /\.tsx?$/,
+          use: 'ts-loader',
+          exclude: /node_modules/,
+        },
+        {
           test: /\.css$/,
           loaders: ['style-loader', 'css-loader', 'postcss-loader'],
         },
@@ -70,7 +75,7 @@ module.exports = [
     ],
     resolve: {
       modules: ['node_modules', 'bower_components', path.resolve(__dirname, 'frontend/js/')],
-      extensions: ['.js', '.jsx'],
+      extensions: ['.ts', '.tsx', '.js', '.jsx'],
     },
   },
 ];
