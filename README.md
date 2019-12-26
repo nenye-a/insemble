@@ -97,6 +97,7 @@ To run platform locally
 
 - Contact administrator for .env keys (file should replace .env.example present in backend)
 - Ensure that .env file has all necessary keys. API keys for Google, Foursquare, Redis, Sentry, etc. are required to run platform
+- Ensure that redis server is up with `redis-server` call
 - In backend folder `python manage.py runserver` to start backend server
 - In seperate commmand line `python manage.py celery` to start backend worker tasks
 - In seperate command line run `npm start` or `yarn start` to run the npm
