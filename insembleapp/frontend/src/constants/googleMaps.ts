@@ -1,4 +1,4 @@
-const MAPS_API_KEY = 'DELETED_GOOGLE_API_KEY';
+const MAPS_API_KEY = process.env.GOOG_KEY || 'DELETED_GOOGLE_API_KEY';
 
 export const MAPS_URI = `https://maps.googleapis.com/maps/api/js?key=${MAPS_API_KEY}&v=3.exp&libraries=geometry,drawing,places,visualization`;
 
