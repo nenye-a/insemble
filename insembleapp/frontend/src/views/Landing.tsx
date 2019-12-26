@@ -7,9 +7,7 @@ import LocationsInput from './LandingPage/LocationsInput';
 import TextInput from './LandingPage/TextInput';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import { session } from '../utils/storage';
-import useSelector from '../redux/useSelector';
-import useDispatch from '../redux/useDispatch';
-import useStore from '../redux/useStore';
+import { useSelector, useDispatch, useStore } from '../redux/helpers';
 import { getLocation, loadMap } from '../redux/actions/space';
 
 function Landing() {
