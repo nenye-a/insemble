@@ -1,7 +1,6 @@
 module.exports = {
   transform: {
-    '^.+\\.jsx$': 'babel-jest',
-    '^.+\\.js$': 'babel-jest',
+    '^.+\\.(ts|tsx|js|jsx)$': 'babel-jest',
   },
   moduleNameMapper: {
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/frontend/src/__mocks__/fileMock.js',
@@ -19,7 +18,7 @@ module.exports = {
   setupFiles: ['./jest-setup.js'],
   collectCoverageFrom: [
     // 'frontend/js/**/*.{js,jsx}', // may not be useful anymore
-    'frontend/src/**/*.{js,jsx}',
+    'frontend/src/**/*.{ts,tsx,js,jsx}',
   ],
   coveragePathIgnorePatterns: [
     //  Section here may note be needed anymore
