@@ -1,15 +1,25 @@
-import React from 'react';
-import { Container, Row, Col } from 'shards-react';
+import React, { ReactNode } from 'react';
+import styled from 'styled-components';
 
 import TenantNavbar from '../components/layout/MainNavbar/TenantNavbar';
 import MainFooter from '../components/layout/MainFooter';
 
 import { LAYOUT_TYPES } from '../utils/constants';
 
+type Props = {
+  children: ReactNode;
+};
+
+const Container = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+`;
+
 // Layout with header and footer
-export default function BasicLayout(props) {
+export default function BasicLayout(props: Props) {
   return (
-    <Container fluid className="p-0 main-content">
+    <Container>
       <TenantNavbar layout={LAYOUT_TYPES.HEADER_NAVIGATION} />
       {props.children}
       <MainFooter />

@@ -83,6 +83,12 @@ export default [
   },
   {
     path: '/verify',
+    exact: true,
+    layout: BasicLayout,
+    component: Verify,
+  },
+  {
+    path: '/verify/:placeID',
     layout: BasicLayout,
     component: Verify,
   },
