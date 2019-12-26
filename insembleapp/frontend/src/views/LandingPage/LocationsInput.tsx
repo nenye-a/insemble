@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import TextInput from './TextInput';
 
 type PlaceResult = google.maps.places.PlaceResult;
@@ -11,8 +11,8 @@ type Props = {
 
 function LocationsInput(props: Props) {
   let { placeholder, buttonText, onSubmit } = props;
-  let inputRef = createRef<HTMLInputElement>();
-  let selectedPlace = useRef<PlaceResult>();
+  let inputRef = useRef<HTMLInputElement | null>(null);
+  let selectedPlace = useRef<PlaceResult | null>(null);
   let submitHandler = useCallback(() => {
     if (selectedPlace.current) {
       onSubmit(selectedPlace.current);
