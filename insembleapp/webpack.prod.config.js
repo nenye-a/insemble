@@ -1,6 +1,7 @@
 var autoprefixer = require('autoprefixer');
 var baseConfig = require('./webpack.base.config');
 var webpack = require('webpack');
+var Dotenv = require('dotenv-webpack');
 var MiniCssExtractPlugin = require('mini-css-extract-plugin');
 var BundleTracker = require('webpack-bundle-tracker');
 var path = require('path');
@@ -39,6 +40,7 @@ baseConfig[1].module.rules.push(
 baseConfig[1].optimization = { minimize: true };
 
 baseConfig[1].plugins = [
+  new Dotenv(),
   new webpack.DefinePlugin({
     // removes React warnings
     'process.env': {
