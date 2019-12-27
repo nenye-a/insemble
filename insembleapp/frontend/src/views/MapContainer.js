@@ -14,6 +14,8 @@ import HeatMapLayer from 'react-google-maps/lib/components/visualization/Heatmap
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
 import _ from 'lodash';
 
+import { MAPS_URI } from '../constants/googleMaps';
+
 class MapWithAMarkerClusterer extends React.Component {
   static propTypes = {
     mapIsLoading: PropTypes.bool.isRequired,
@@ -338,8 +340,7 @@ const MapComponent = withAlert()(withRouter(connect(mapStateToProps)(TempCompone
 
 export default (markers) => (
   <MapComponent
-    // googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U&v=3.exp&libraries=places,visualization"
-    googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U&v=3.exp&libraries=geometry,drawing,places,visualization"
+    googleMapURL={MAPS_URI}
     loadingElement={<div style={{ height: `100%` }} />}
     containerElement={<div style={{ height: '85vh', width: '100%' }} />}
     mapElement={<div style={{ height: `100%` }} />}
