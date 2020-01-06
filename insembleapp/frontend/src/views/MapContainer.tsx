@@ -10,6 +10,7 @@ import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
 
 import { useSelector } from '../redux/helpers';
 import useGoogleMaps from '../utils/useGoogleMaps';
+import urlSafeLatLng from '../utils/urlSafeLatLng';
 
 type LatLngBounds = google.maps.LatLngBounds;
 type LatLng = google.maps.LatLng;
@@ -79,14 +80,8 @@ function MapContainer(props: Props) {
   };
 
   let onMapClick = (latLng: LatLng) => {
-    let { lat, lng } = latLng.toJSON();
-    fetch(
-      'api/location/lat=' +
-        lat.toFixed(7).replace('.', '') +
-        '&lng=' +
-        lng.toFixed(7).replace('.', '') +
-        '&radius=1'
-    )
+    let { lat, lng } = urlSafeLatLng(latLng.toJSON());
+    fetch(`api/location/lat=${lat}&lng=${lng}&radius=1`)
       .then((res) => res.json())
       .then((data) => {
         sessionStorage.setItem('temp_location', JSON.stringify(data));
