@@ -3,10 +3,13 @@ type User = {
   [key: string]: unknown;
 };
 
-type Heatmap = {
-  // TODO: What is the exact shape of this object returned from server?
-  [key: string]: unknown;
+type HeatmapPoint = {
+  lat: number;
+  lng: number;
+  map_rating: number;
 };
+
+type HeatmapData = Array<HeatmapPoint>;
 
 type Location = {
   // TODO: What is the exact shape of this object returned from server?
@@ -22,7 +25,7 @@ export type RootState = {
   };
   space: {
     mapLoaded: null | boolean;
-    heatMap: null | Heatmap;
+    heatMap: null | HeatmapData;
     mapIsLoading: boolean;
 
     // location state
