@@ -9,6 +9,7 @@ import useGoogleMaps from '../utils/useGoogleMaps';
 import { session } from '../utils/storage';
 import { useSelector, useDispatch, useStore } from '../redux/helpers';
 import { getLocation, loadMap } from '../redux/actions/space';
+import urlSafeLatLng from '../utils/urlSafeLatLng';
 
 function Landing() {
   let { isLoading } = useGoogleMaps();
@@ -49,11 +50,12 @@ function Landing() {
             session.remove('sessionIncome');
             session.remove('sessionTags');
             let location = place.geometry ? place.geometry.location.toJSON() : null;
-            let lat = location ? location.lat.toFixed(7).replace('.', '') : '';
-            let lng = location ? location.lng.toFixed(7).replace('.', '') : '';
-            // TODO: Using dispatch like this is kinda messy.
-            getLocation(`/api/location/lat=${lat}&lng=${lng}&radius=1/`)(dispatch);
-            setSubmittingPlace(placeID);
+            if (location) {
+              let { lat, lng } = urlSafeLatLng(location);
+              // TODO: Using dispatch like this is kinda messy.
+              getLocation(`/api/location/lat=${lat}&lng=${lng}&radius=1/`)(dispatch);
+              setSubmittingPlace(placeID);
+            }
           }}
         />
       )}
