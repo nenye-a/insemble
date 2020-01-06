@@ -248,17 +248,17 @@ function MapContainer(props: Props) {
             type="text"
             placeholder="Search an address or retailer"
             style={{
-              boxSizing: `border-box`,
-              border: `1px solid transparent`,
-              width: `300px`,
-              height: `32px`,
-              marginTop: `17px`,
-              padding: `0 12px`,
-              borderRadius: `3px`,
-              boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
-              fontSize: `14px`,
-              outline: `none`,
-              textOverflow: `ellipses`,
+              boxSizing: 'border-box',
+              border: '1px solid transparent',
+              width: '300px',
+              height: '32px',
+              marginTop: '17px',
+              padding: '0 12px',
+              borderRadius: '3px',
+              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+              fontSize: '14px',
+              outline: 'none',
+              textOverflow: 'ellipses',
             }}
           />
         </SearchBox>
@@ -281,7 +281,7 @@ export default (props: Props) => {
   return isLoading ? null : (
     <MapWithMap
       containerElement={<div style={{ height: '85vh', width: '100%' }} />}
-      mapElement={<div style={{ height: `100%` }} />}
+      mapElement={<div style={{ height: '100%' }} />}
       {...props}
     />
   );
