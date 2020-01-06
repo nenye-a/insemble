@@ -19,6 +19,18 @@ type MarkerData = {
   address: string;
   income: string;
   pop: string;
+  lat: number;
+  lng: number;
+  census: {
+    asian: number;
+    black: number;
+    hispanic: number;
+    indian: number;
+    multi: number;
+    white: number;
+  };
+  nearby: { [key: string]: number };
+  radius: number;
 };
 type Props = {
   markers: Array<LatLngLiteral>;
@@ -202,7 +214,11 @@ function MapContainer(props: Props) {
             icon={{ url: 'http://maps.google.com/mapfiles/kml/paddle/purple-circle.png' }}
           >
             {marker && (
-              <InfoWindow>
+              <InfoWindow
+                onCloseClick={() => {
+                  setMarker(null);
+                }}
+              >
                 {/* TODO: Make smaller and solve for middle-of-nowhere case. also make it come back when pressed again */}
                 <Container>
                   <Row>
