@@ -28,7 +28,7 @@ import { loadMap, clearLocation } from '../redux/actions/space';
 
 import FormSectionTitle from '../components/edit-user-profile/FormSectionTitle';
 import ProfileBackgroundPhoto from '../components/edit-user-profile/ProfileBackgroundPhoto';
-import CategoryTags from '../components/CategoryTags';
+import CategoryTags from '../views/LandingPage/CategoryTags';
 
 class DescribeStore extends React.Component {
   constructor(props) {

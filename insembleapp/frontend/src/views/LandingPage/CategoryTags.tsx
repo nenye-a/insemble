@@ -1,6 +1,6 @@
 import React, { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
-import { PRIMARY, LIGHTEST_GREY, GREY, LIGHT_GREY } from '../constants/colors';
+import { PRIMARY, LIGHTEST_GREY, GREY, LIGHT_GREY } from '../../constants/colors';
 
 type Props = {
   allCategories: Array<String>;
