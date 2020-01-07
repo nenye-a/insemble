@@ -1,17 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid, jsx-a11y/anchor-has-content */
 
 import React from 'react';
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Badge,
-  Button,
-} from 'shards-react';
+import { Container, Row, Col, Card, CardBody, CardFooter, Badge, Button } from 'shards-react';
 
 import PageTitle from '../components/common/PageTitle';
 import { NavLink } from 'react-router-dom';

@@ -1,27 +1,13 @@
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
 import React from 'react';
-
 import { withRouter } from 'react-router';
-import { Link, Redirect } from 'react-router-dom';
-
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { login } from '../redux/actions/auth';
+import { Container, Row, Col, Card, CardBody, Button } from 'shards-react';
 
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  CardFooter,
-  Form,
-  FormGroup,
-  FormInput,
-  FormCheckbox,
-  Button,
-} from 'shards-react';
+import { login } from '../redux/actions/auth';
 
 class Find extends React.Component {
   constructor(props) {

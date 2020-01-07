@@ -2,7 +2,6 @@ import React from 'react';
 import { Container, Row, Col } from 'shards-react';
 
 import TenantNavbar from '..DELETED_BASE64_STRING';
-import MainFooter from '../components/layout/MainFooter';
 
 import { LAYOUT_TYPES } from '../utils/constants';
 

@@ -119,8 +119,6 @@ export const loadMap = (hasLocation = false, income = 0, categories = []) => (
 };
 
 const pingMapApi = (id, dispatch) => {
-  var val = null;
-
   fetch('/api/lmatches/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

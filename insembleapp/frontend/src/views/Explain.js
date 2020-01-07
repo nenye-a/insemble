@@ -1,25 +1,13 @@
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
 import React from 'react';
-import { Link, Redirect, NavLink } from 'react-router-dom';
+import { Redirect, NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getLocation, loadMap } from '../redux/actions/space';
 
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  CardFooter,
-  Form,
-  FormGroup,
-  FormInput,
-  FormCheckbox,
-  Button,
-} from 'shards-react';
+import { Container, Row, Col, Card, CardBody, Button } from 'shards-react';
 
 class Explain extends React.Component {
   constructor(props) {
@@ -37,7 +25,6 @@ class Explain extends React.Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    const storename = this.storeNameInput.current.value;
     const address = this.addressInput.current.value;
 
     this.props.getLocation('api/location/address=' + address + '&radius=1');
