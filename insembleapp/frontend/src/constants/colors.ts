@@ -1,4 +1,6 @@
 const INSEMBLE_PURPLE = '#674EA7';
+const LIGHTEST_GREY = '#FBFBFB';
+const LIGHT_GREY = '#E1E5EB';
 const DETAIL_GREY = '#727272';
 
 export const WHITE = '#FFFFFF';
