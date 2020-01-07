@@ -28,7 +28,7 @@ import { loadMap, clearLocation } from '../redux/actions/space';
 
 import FormSectionTitle from '../components/edit-user-profile/FormSectionTitle';
 import ProfileBackgroundPhoto from '../components/edit-user-profile/ProfileBackgroundPhoto';
-import CategoryTags from "../components/CategoryTags";
+import CategoryTags from '../components/CategoryTags';
 
 class DescribeStore extends React.Component {
   constructor(props) {
@@ -230,9 +230,14 @@ class DescribeStore extends React.Component {
                   <Row form className="mx-4 d-flex">
                     <Col>
                       <label>All Categories (click to load)</label>
-                      <div className="user-details__tags d-flex describe-store__categories">
+                      <div>
                         {/*{this.renderCategories(catDataLimited)}*/}
-                        <CategoryTags allCategories={catDataLimited} selectedCategories={this.state.tags}/>
+                        <CategoryTags
+                          allCategories={catDataLimited}
+                          selectedCategories={this.state.tags}
+                          onSelect={(tag) => this.setTagSelected(tag, true)}
+                          onUnselect={(tag) => this.setTagSelected(tag, false)}
+                        />
                       </div>
                     </Col>
                   </Row>
