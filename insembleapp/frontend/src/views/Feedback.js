@@ -2,28 +2,13 @@
 
 import React from 'react';
 import { withRouter } from 'react-router';
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { getLocation } from '../redux/actions/space';
-
 import { withAlert } from 'react-alert';
+import { Container, Row, Col, Card, CardBody, Form, FormGroup, Button } from 'shards-react';
 
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  CardFooter,
-  Form,
-  FormGroup,
-  FormInput,
-  FormCheckbox,
-  Button,
-} from 'shards-react';
-
-import { NavLink } from 'react-router-dom';
+import { getLocation } from '../redux/actions/space';
 
 class Feedback extends React.Component {
   constructor(props) {

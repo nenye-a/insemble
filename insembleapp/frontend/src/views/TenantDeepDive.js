@@ -1,17 +1,7 @@
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
 import React from 'react';
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Badge,
-  Button,
-} from 'shards-react';
+import { Container, Row, Col, Card, CardHeader, CardBody } from 'shards-react';
 
 import AtAGlance from '../components/tenant-deep-dive/AtAGlance';
 import YourSite from '../components/tenant-deep-dive/YourSite';

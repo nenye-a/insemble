@@ -2,11 +2,9 @@ import React from 'react';
 import { Container, Row, Col } from 'shards-react';
 
 import TenantNavbar from '../components/layout/MainNavbar/TenantNavbar';
-import HeaderNavbar from '../components/layout/HeaderNavbar/HeaderNavbar';
 import MainFooter from '../components/layout/MainFooter';
 
 import { LAYOUT_TYPES } from '../utils/constants';
-import getHeaderNavbarItems from '../data/header-nav-items';
 
 export default ({ children }) => (
   <Container fluid>

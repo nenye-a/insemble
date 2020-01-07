@@ -1,20 +1,10 @@
 import React from 'react';
-import { Link, Redirect, NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { logout } from '../../../../redux/actions/auth';
+import { Container } from 'shards-react';
 
-import {
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Collapse,
-  NavItem,
-  Button,
-  Container,
-} from 'shards-react';
+import { logout } from '../../../../redux/actions/auth';
 
 class UserActions extends React.Component {
   constructor(props) {
@@ -43,9 +33,9 @@ class UserActions extends React.Component {
       return (
         <Container className="my-auto mx-auto">
           {/* <Button
-          pill       
+          pill
           theme="accent"
-          tag={NavLink} 
+          tag={NavLink}
           to="/login"
         >
           Login
@@ -58,9 +48,6 @@ class UserActions extends React.Component {
   };
 
   render() {
-    const { isAuthenticated, user } = this.props.auth;
-    // const authLinks = ();
-
     return this.renderAuthenticated();
   }
 }

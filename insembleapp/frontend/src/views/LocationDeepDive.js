@@ -1,30 +1,17 @@
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 
 import React from 'react';
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Badge,
-  Button,
-  ButtonGroup,
-} from 'shards-react';
+import { Container, Row, Col, Button, ButtonGroup } from 'shards-react';
+import { withRouter } from 'react-router';
+import { NavLink } from 'react-router-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
+import { getLocation } from '../redux/actions/space';
 import YourSite from '../components/location-deep-dive/YourSite';
 import PageTitle from '../components/common/PageTitle';
 import MapComponent from './MapContainerDeepDive';
 import ThisLocation from '../components/location-deep-dive/ThisLocation';
-
-import { withRouter } from 'react-router';
-import { Redirect, NavLink } from 'react-router-dom';
-
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { getLocation } from '../redux/actions/space';
 
 class LocationDeepDive extends React.Component {
   constructor(props) {

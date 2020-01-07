@@ -8,7 +8,7 @@ module.exports = {
   },
   rules: {
     // TODO: Re-enable the following rule after we fix the code.
-    'no-unused-vars': 0,
+    'no-unused-vars': 1,
   },
   settings: {
     react: {

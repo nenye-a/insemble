@@ -2,20 +2,15 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-
 import { withRouter } from 'react-router';
 import { Redirect } from 'react-router-dom';
-
 import PropTypes from 'prop-types';
-import { register } from '../redux/actions/auth';
-
 import {
   Container,
   Row,
   Col,
   Card,
   CardBody,
-  CardFooter,
   Form,
   FormGroup,
   FormInput,
@@ -23,6 +18,8 @@ import {
   Button,
 } from 'shards-react';
 import { Link } from 'react-router-dom';
+
+import { register } from '../redux/actions/auth';
 
 class Register extends React.Component {
   constructor(props) {
