@@ -1,5 +1,5 @@
 import React from 'react';
-import { CardHeader, FormInput } from 'shards-react';
+import { CardHeader } from 'shards-react';
 
 const ProfileBackgroundPhoto = () => (
   <CardHeader className="p-0">

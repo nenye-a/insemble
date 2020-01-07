@@ -5,7 +5,6 @@ import { Container, Navbar, NavbarBrand } from 'shards-react';
 
 import NavbarSearch from './NavbarSearch';
 import NavbarNav from './NavbarNav/NavbarNav';
-import NavbarToggle from './NavbarToggle';
 
 import { LAYOUT_TYPES } from '../../../utils/constants';
 

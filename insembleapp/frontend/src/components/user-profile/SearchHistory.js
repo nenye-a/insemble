@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardHeader, CardBody, Col, Row, Badge } from 'shards-react';
+import { Card, CardBody, Col, Row, Badge } from 'shards-react';
 import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
 
 // TODO: Uncomment this when it's migrated to ts

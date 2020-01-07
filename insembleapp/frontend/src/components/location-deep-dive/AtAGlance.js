@@ -1,20 +1,8 @@
 import React from 'react';
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  Row,
-  Col,
-  Container,
-  ButtonGroup,
-  Button,
-  Badge,
-} from 'shards-react';
+import { Card, CardHeader, CardBody, Row, Col, Container } from 'shards-react';
 
 class AtAGlance extends React.Component {
   render() {
-    const retailer = this.props.match;
-
     return (
       <Card small className="h-100">
         {/* Card Header */}
