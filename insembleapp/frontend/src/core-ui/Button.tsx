@@ -1,9 +1,13 @@
+import React, { ComponentProps } from 'react';
 import styled from 'styled-components';
+import { THEME_COLOR } from '../constants/colors';
 
-const Button = styled('button')`
+type ButtonProps = ComponentProps<'button'>;
+
+const Button = styled(DefaultButton)`
   color: #fff;
-  border-color: #634fa2;
-  background-color: #634fa2;
+  border: none;
+  background-color: ${THEME_COLOR};
   box-shadow: none;
   border-radius: 4px;
   height: 36px;
@@ -15,5 +19,9 @@ const Button = styled('button')`
     opacity: 0.9;
   }
 `;
+
+function DefaultButton(props: ButtonProps) {
+  return <button type="button" {...props} />;
+}
 
 export default Button;
