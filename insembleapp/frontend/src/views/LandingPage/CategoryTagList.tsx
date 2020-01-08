@@ -16,16 +16,11 @@ function Button(props: ComponentProps<'button'>) {
 const TagContainer = styled.div`
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
-
-  &::after {
-    content: '';
-    flex: 10 1 auto;
-  }
+  justify-content: left;
 `;
 
 const PillButton = styled(Button)`
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   margin-right: 0.25rem;
   margin-bottom: 0.5rem;
   padding: 0.375rem 0.5rem;
