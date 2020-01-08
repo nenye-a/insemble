@@ -3,10 +3,10 @@ import styled, { css } from 'styled-components';
 import { PRIMARY, LIGHTEST_GREY, GREY, LIGHT_GREY } from '../../constants/colors';
 
 type Props = {
-  allCategories: Array<String>;
-  selectedCategories: Array<String>;
-  onUnselect: (tag: String) => void;
-  onSelect: (tag: String) => void;
+  allCategories: Array<string>;
+  selectedCategories: Array<string>;
+  onUnselect: (tag: string) => void;
+  onSelect: (tag: string) => void;
 };
 
 function Button(props: ComponentProps<'button'>) {
