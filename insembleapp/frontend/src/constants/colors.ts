@@ -1,0 +1,6 @@
+const INSEMBLE_PURPLE = '#674EA7';
+const DETAIL_GREY = '#727272';
+
+export const WHITE = '#FFFFFF';
+export const THEME_COLOR = INSEMBLE_PURPLE;
+export const HEADER_BORDER_COLOR = DETAIL_GREY;
