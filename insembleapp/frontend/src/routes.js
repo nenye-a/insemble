@@ -1,15 +1,5 @@
-import React from 'react';
-
 // Layout Types
-import {
-  HeaderNavigation,
-  IconSidebar,
-  LandlordLayout,
-  Tenant,
-  LoginLayout,
-  BlankLayout,
-  BasicLayout,
-} from './layouts';
+import { LoginLayout, BasicLayout } from './layouts';
 
 // Route Views
 import Spaces from './views/Spaces';
@@ -32,12 +22,6 @@ import Errors from './views/Errors';
 import NoDeals from './views/NoDeals';
 import UserProfile from './views/UserProfile';
 
-const BlankIconSidebarLayout = ({ children }) => (
-  <IconSidebar noNavbar noFooter>
-    {children}
-  </IconSidebar>
-);
-
 export default [
   {
     path: '/',
@@ -55,7 +39,6 @@ export default [
     path: '/describe-store',
     layout: BasicLayout,
     component: DescribeStore,
-    props: { a: 'haha' },
   },
   {
     path: '/login',
