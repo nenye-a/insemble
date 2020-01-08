@@ -1,10 +1,7 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 
-import TenantNavbar from '../components/layout/MainNavbar/TenantNavbar';
-import MainFooter from '../components/layout/MainFooter';
-
-import { LAYOUT_TYPES } from '../utils/constants';
+import HeaderNavigationBar from '../components/layout/HeaderNavigationBar';
 
 type Props = {
   children: ReactNode;
@@ -18,11 +15,12 @@ const Container = styled.div`
 
 // Layout with header and footer
 export default function BasicLayout(props: Props) {
+  console.log(props);
+
   return (
     <Container>
-      <TenantNavbar layout={LAYOUT_TYPES.HEADER_NAVIGATION} />
+      <HeaderNavigationBar />
       {props.children}
-      <MainFooter />
     </Container>
   );
 }
