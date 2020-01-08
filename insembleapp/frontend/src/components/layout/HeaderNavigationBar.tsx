@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import InsembleLogo from '../common/InsembleLogo';
 import { WHITE, HEADER_BORDER_COLOR } from '../../constants/colors';
-import TouchableOpacity from '../../core-ui/TouchableOpacity';
+import { TouchableOpacity, Button } from '../../core-ui';
 
 export default function HeaderNavigationBar() {
   return (
@@ -10,20 +10,21 @@ export default function HeaderNavigationBar() {
       <TouchableOpacity href="/">
         <InsembleLogo />
       </TouchableOpacity>
-
-      {/* TODO: add button sign up */}
+      <Button>Sign Up</Button>
     </Container>
   );
 }
 
 const Container = styled('div')`
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
   height: 65px;
   background-color: ${WHITE};
   border-bottom-color: ${HEADER_BORDER_COLOR};
   border-bottom-width: 1;
-  padding: 20px 36px;
+  padding: 0px 36px;
   position: sticky;
   top: 0px;
   z-index: 99;

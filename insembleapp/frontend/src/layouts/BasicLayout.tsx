@@ -15,8 +15,6 @@ const Container = styled.div`
 
 // Layout with header and footer
 export default function BasicLayout(props: Props) {
-  console.log(props);
-
   return (
     <Container>
       <HeaderNavigationBar />

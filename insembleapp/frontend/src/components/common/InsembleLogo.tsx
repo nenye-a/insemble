@@ -7,5 +7,6 @@ export default function InsembleLogo() {
 }
 
 const Image = styled('img')`
+  height: 36px;
   max-height: 100%;
 `;
