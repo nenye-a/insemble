@@ -28,7 +28,7 @@ import { loadMap, clearLocation } from '../redux/actions/space';
 
 import FormSectionTitle from '../components/edit-user-profile/FormSectionTitle';
 import ProfileBackgroundPhoto from '../components/edit-user-profile/ProfileBackgroundPhoto';
-import CategoryTags from './LandingPage/CategoryTagList';
+import CategoryTagList from './LandingPage/CategoryTagList';
 
 class DescribeStore extends React.Component {
   constructor(props) {
@@ -232,7 +232,7 @@ class DescribeStore extends React.Component {
                       <label>All Categories (click to load)</label>
                       <div>
                         {/*{this.renderCategories(catDataLimited)}*/}
-                        <CategoryTags
+                        <CategoryTagList
                           allCategories={catDataLimited}
                           selectedCategories={this.state.tags}
                           onSelect={(tag) => this.setTagSelected(tag, true)}

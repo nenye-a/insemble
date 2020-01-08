@@ -20,7 +20,6 @@ const TagContainer = styled.div`
 
   &::after {
     content: '';
-    -webkit-box-flex: 10;
     flex: 10 1 auto;
   }
 `;
@@ -67,7 +66,7 @@ const SelectedPill = styled(PillButton)`
 
 export default (props: Props) => {
   let { allCategories, selectedCategories, onSelect, onUnselect } = props;
-  let availableCategories = allCategories.filter((el) => selectedCategories.includes(el));
+  let availableCategories = allCategories.filter((el) => !selectedCategories.includes(el));
 
   return (
     <>
