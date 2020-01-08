@@ -25,7 +25,7 @@ const TagContainer = styled.div`
   }
 `;
 
-const Pill = styled(Button)`
+const PillButton = styled(Button)`
   flex: 1 1 auto;
   margin-right: 0.25rem;
   margin-bottom: 0.5rem;
@@ -53,7 +53,7 @@ const Pill = styled(Button)`
   }
 `;
 
-const SelectedPill = styled(Pill)`
+const SelectedPill = styled(PillButton)`
   background: ${PRIMARY};
   color: ${LIGHTEST_GREY};
 
@@ -67,7 +67,7 @@ const SelectedPill = styled(Pill)`
 
 export default (props: Props) => {
   let { allCategories, selectedCategories, onSelect, onUnselect } = props;
-  let availableCategories = allCategories.filter((el) => selectedCategories.indexOf(el) < 0);
+  let availableCategories = allCategories.filter((el) => selectedCategories.includes(el));
 
   return (
     <>
@@ -83,9 +83,9 @@ export default (props: Props) => {
       <TagContainer>
         {availableCategories.map((tag, idx) => {
           return (
-            <Pill key={idx} onClick={() => onSelect(tag)}>
+            <PillButton key={idx} onClick={() => onSelect(tag)}>
               {tag}
-            </Pill>
+            </PillButton>
           );
         })}
       </TagContainer>
