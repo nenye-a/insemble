@@ -1,8 +1,13 @@
 import React, { ComponentProps } from 'react';
 import styled from 'styled-components';
 import { THEME_COLOR } from '../constants/colors';
+import { FONT_FAMILY_NORMAL, FONT_SIZE_NORMAL } from '../constants/theme';
 
 type ButtonProps = ComponentProps<'button'>;
+
+function DefaultButton(props: ButtonProps) {
+  return <button type="button" {...props} />;
+}
 
 const Button = styled(DefaultButton)`
   color: #fff;
@@ -11,17 +16,13 @@ const Button = styled(DefaultButton)`
   box-shadow: none;
   border-radius: 4px;
   height: 36px;
-  /* TODO: font-family */
-  font-size: 14px;
+  font-family: ${FONT_FAMILY_NORMAL};
+  font-size: ${FONT_SIZE_NORMAL};
   padding-left: 12px;
   padding-right: 12px;
   &:hover {
     opacity: 0.9;
   }
 `;
-
-function DefaultButton(props: ButtonProps) {
-  return <button type="button" {...props} />;
-}
 
 export default Button;
