@@ -1,13 +1,20 @@
 import React, { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
 
-type Props = ComponentProps<'div'> & {
+type Props = Omit<ComponentProps<'span'>, 'ref'> & {
   flex?: boolean;
+  href?: string;
+  target?: string;
 };
 
 function View(props: Props) {
-  let { flex, ...otherProps } = props;
-  return <div {...otherProps} />;
+  let { flex, href, target, ...otherProps } = props;
+  return href == null ? (
+    <div {...otherProps} />
+  ) : (
+    // eslint-disable-next-line jsx-a11y/anchor-has-content
+    <a href={href} target={target} {...otherProps} />
+  );
 }
 
 let baseStyles = css`

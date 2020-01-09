@@ -1,32 +1,36 @@
-import React, { ComponentProps, useCallback } from 'react';
+import React, { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
+import View from './View';
 
 type PressHandler = () => void;
 
-type Props = Omit<ComponentProps<'span'>, 'onClick' | 'ref'> & {
-  href?: string;
+type Props = Omit<ComponentProps<typeof View>, 'onClick'> & {
   onPress?: PressHandler;
 };
 
 function Touchable(props: Props) {
-  let { href, onPress, ...otherProps } = props;
-  let onClick = useCallback(
-    (event) => {
-      if (onPress) {
-        event.preventDefault();
-        onPress();
-      }
-    },
-    [onPress]
-  );
-  return href == null ? (
-    <div {...otherProps} onClick={onClick} tabIndex={0} />
-  ) : (
-    // eslint-disable-next-line jsx-a11y/anchor-has-content
-    <a {...otherProps} onClick={onClick} />
+  let { onPress, href, ...otherProps } = props;
+  let isLink = href != null;
+  let isLocalLink = isLink && isLocalURL(href);
+  return (
+    <View
+      href={href}
+      target={isLink && !isLocalLink ? '_blank' : undefined}
+      {...otherProps}
+      onClick={(event) => {
+        if (isLocalLink && !(event.metaKey || event.ctrlKey)) {
+          event.preventDefault();
+        }
+        if (onPress) {
+          onPress();
+        }
+      }}
+      tabIndex={0}
+    />
   );
 }
 
+// TODO: Should we move these to View?
 let linkStyles = css`
   background-color: rgba(0, 0, 0, 0);
   color: inherit;
@@ -37,30 +41,19 @@ let linkStyles = css`
 `;
 
 export default styled(Touchable)`
-  align-items: stretch;
-  box-sizing: border-box;
-  display: flex;
-  flex-basis: auto;
-  flex-direction: column;
-  flex-shrink: 0;
-  margin: 0;
-  min-height: 0;
-  min-width: 0;
-  padding: 0;
-  position: relative;
-  z-index: 0;
-  border: 0 solid black;
-  border-image: initial;
   touch-action: manipulation;
   cursor: pointer;
   user-select: none;
   transition-property: opacity;
   transition-duration: 0.15s;
   ${(props) => (props.href == null ? undefined : linkStyles)}
-  &:hover {
-    opacity: 0.9;
-  }
   &:active {
-    opacity: 0.9;
+    opacity: 0.5;
   }
 `;
+
+function isLocalURL(link: string) {
+  let firstChar = link.charAt(0);
+  // TODO: Better implementation of this?
+  return firstChar === '.' || firstChar === '/';
+}
