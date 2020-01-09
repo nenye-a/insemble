@@ -1,6 +1,6 @@
 import React, { ComponentProps } from 'react';
-import styled, { css } from 'styled-components';
-import { PRIMARY, LIGHTEST_GREY, GREY, LIGHT_GREY } from '../../constants/colors';
+import styled from 'styled-components';
+import {TEXT_COLOR, THEME_COLOR, WHITE} from '../../constants/colors';
 
 type Props = {
   allCategories: Array<string>;
@@ -21,41 +21,39 @@ const TagContainer = styled.div`
 
 const PillButton = styled(Button)`
   flex: 0 1 auto;
-  margin-right: 0.25rem;
-  margin-bottom: 0.5rem;
-  padding: 0.375rem 0.5rem;
-  font-size: 75%;
+  margin: 0.35rem 0.25rem;
+  padding: 0.5rem 0.5rem;
   line-height: 1;
 
   text-align: center;
-  text-transform: uppercase;
 
+  /* So the size doesn't slightly change when purple border shows up when highlighted */
   border: 1px solid;
-  border-radius: 0.375rem;
-  border-color: ${LIGHT_GREY};
+  border-color: ${WHITE};
 
-  background: ${LIGHTEST_GREY};
-  color: ${GREY};
+  border-radius: 0.375rem;
+  box-shadow: 0 0 0.35rem rgba(0, 0, 0, 0.15);
+
+  background: ${WHITE};
+  color: ${TEXT_COLOR};
 
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
     border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
   &:hover {
-    color: ${PRIMARY};
-    border-color: ${PRIMARY};
-    box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.075);
+    color: ${THEME_COLOR};
+    border-color: ${THEME_COLOR};
   }
 `;
 
 const SelectedPill = styled(PillButton)`
-  background: ${PRIMARY};
-  color: ${LIGHTEST_GREY};
+  background: ${THEME_COLOR};
+  color: ${WHITE};
 
-  border-color: ${PRIMARY};
+  border-color: ${THEME_COLOR};
 
   &:hover {
-    color: ${LIGHTEST_GREY};
-    box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.125);
+    color: ${WHITE};
   }
 `;
 
