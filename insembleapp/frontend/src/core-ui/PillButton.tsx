@@ -30,6 +30,7 @@ const PillButton = styled(DefaultButton)`
   &:hover {
     color: ${THEME_COLOR};
     border-color: ${THEME_COLOR};
+    box-shadow: 0 0.25rem 0.35rem rgba(0, 0, 0, 0.15);
   }
 
   ${(props: PillButtonProps) =>
@@ -37,11 +38,11 @@ const PillButton = styled(DefaultButton)`
     css`
       background: ${THEME_COLOR};
       color: ${WHITE};
-
       border-color: ${THEME_COLOR};
 
       &:hover {
         color: ${WHITE};
+        box-shadow: 0 0.25rem 0.45rem rgba(0, 0, 0, 0.35);
       }
     `}
 `;
