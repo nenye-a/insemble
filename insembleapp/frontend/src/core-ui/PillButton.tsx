@@ -1,10 +1,10 @@
 import React, { ComponentProps } from 'react';
-import styled, {css} from 'styled-components';
-import {TEXT_COLOR, THEME_COLOR, WHITE} from '../constants/colors';
+import styled, { css } from 'styled-components';
+import { TEXT_COLOR, THEME_COLOR, WHITE } from '../constants/colors';
 
 type PillButtonProps = {
-    primary?: boolean;
-}
+  primary?: boolean;
+};
 
 const PillButton = styled(DefaultButton)`
   flex: 0 1 auto;
@@ -32,19 +32,22 @@ const PillButton = styled(DefaultButton)`
     border-color: ${THEME_COLOR};
   }
 
-  ${(props: PillButtonProps) => props.primary && css`
-  background: ${THEME_COLOR};
-  color: ${WHITE};
+  ${(props: PillButtonProps) =>
+    props.primary &&
+    css`
+      background: ${THEME_COLOR};
+      color: ${WHITE};
 
-  border-color: ${THEME_COLOR};
+      border-color: ${THEME_COLOR};
 
-  &:hover {
-    color: ${WHITE};
-  }`}
+      &:hover {
+        color: ${WHITE};
+      }
+    `}
 `;
 
 function DefaultButton(props: ComponentProps<'button'>) {
-    return <button {...props} type="button" />;
+  return <button {...props} type="button" />;
 }
 
 export default PillButton;

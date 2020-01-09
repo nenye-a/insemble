@@ -1,7 +1,7 @@
 import React, { ComponentProps } from 'react';
 import styled from 'styled-components';
 
-import {PillButton} from "../../core-ui";
+import { PillButton } from '../../core-ui';
 
 type Props = {
   allCategories: Array<string>;
