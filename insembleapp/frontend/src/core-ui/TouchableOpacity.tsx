@@ -3,16 +3,13 @@ import styled, { css } from 'styled-components';
 
 type PressHandler = () => void;
 
-type LinkProps = Omit<ComponentProps<'a'>, 'href'> & {
-  href: string;
+type Props = Omit<ComponentProps<'span'>, 'onClick' | 'ref'> & {
+  href?: string;
+  onPress?: PressHandler;
 };
 
-type DivProps = ComponentProps<'div'>;
-
-type TouchableProps = (LinkProps | DivProps) & { onPress: PressHandler };
-
-function Touchable(props: TouchableProps) {
-  let { onPress, ...otherProps } = props;
+function Touchable(props: Props) {
+  let { href, onPress, ...otherProps } = props;
   let onClick = useCallback(
     (event) => {
       if (onPress) {
@@ -22,11 +19,11 @@ function Touchable(props: TouchableProps) {
     },
     [onPress]
   );
-  return 'href' in otherProps ? (
+  return href == null ? (
+    <div {...otherProps} onClick={onClick} tabIndex={0} />
+  ) : (
     // eslint-disable-next-line jsx-a11y/anchor-has-content
     <a {...otherProps} onClick={onClick} />
-  ) : (
-    <div {...otherProps} onClick={onClick} tabIndex={0} />
   );
 }
 
@@ -58,8 +55,12 @@ export default styled(Touchable)`
   cursor: pointer;
   user-select: none;
   transition-property: opacity;
-  ${(props) => ('href' in props ? linkStyles : '')}
+  transition-duration: 0.15s;
+  ${(props) => (props.href == null ? undefined : linkStyles)}
   &:hover {
+    opacity: 0.9;
+  }
+  &:active {
     opacity: 0.9;
   }
 `;
