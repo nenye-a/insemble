@@ -6,6 +6,10 @@ type PillButtonProps = {
   primary?: boolean;
 };
 
+function DefaultButton(props: ComponentProps<'button'>) {
+  return <button {...props} type="button" />;
+}
+
 const PillButton = styled(DefaultButton)`
   flex: 0 1 auto;
   margin: 0.35rem 0.25rem;
@@ -46,9 +50,5 @@ const PillButton = styled(DefaultButton)`
       }
     `}
 `;
-
-function DefaultButton(props: ComponentProps<'button'>) {
-  return <button {...props} type="button" />;
-}
 
 export default PillButton;
