@@ -1,9 +1,12 @@
 const INSEMBLE_PURPLE = '#674EA7';
-const LIGHTEST_GREY = '#FBFBFB';
-const LIGHT_GREY = '#E1E5EB';
+// const LIGHTEST_GREY = '#FBFBFB';
+// const LIGHT_GREY = '#E1E5EB';
 const DETAIL_GREY = '#727272';
+const DARK_DETAIL = '#4B4B4B';
 
 export const WHITE = '#FFFFFF';
+
 export const THEME_COLOR = INSEMBLE_PURPLE;
-export const TEXT_COLOR = DETAIL_GREY;
+export const TEXT_COLOR = DARK_DETAIL;
+export const SECONDARY_COLOR = '#8E7BC4';
 export const HEADER_BORDER_COLOR = DETAIL_GREY;
