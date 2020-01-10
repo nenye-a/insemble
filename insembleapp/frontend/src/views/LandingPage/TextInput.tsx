@@ -1,6 +1,6 @@
 import React, { ComponentProps, forwardRef, Ref } from 'react';
 import styled from 'styled-components';
-import { FONT_FAMILY_NORMAL, FONT_SIZE_LARGE_INPUT } from '../../constants/theme';
+import { FONT_FAMILY_NORMAL, FONT_SIZE_MEDIUM } from '../../constants/theme';
 
 type ButtonProps = ComponentProps<'button'>;
 type InputProps = ComponentProps<'input'>;
@@ -31,7 +31,7 @@ const TextInput = forwardRef((props: TextInputProps, forwardedRef: Ref<HTMLInput
 const InputContainer = styled.div`
   position: relative;
   font-family: ${FONT_FAMILY_NORMAL};
-  font-size: ${FONT_SIZE_LARGE_INPUT};
+  font-size: ${FONT_SIZE_MEDIUM};
 `;
 
 const StyledTextInput = styled(TextInput)`
