@@ -21,6 +21,7 @@ import Matches from './views/Matches';
 import Errors from './views/Errors';
 import NoDeals from './views/NoDeals';
 import UserProfile from './views/UserProfile';
+import MainMap from './views/MainMap';
 
 export default [
   {
@@ -126,4 +127,5 @@ export default [
     layout: BasicLayout,
     component: UserProfile,
   },
+  { path: '/map', layout: BasicLayout, component: MainMap },
 ];
