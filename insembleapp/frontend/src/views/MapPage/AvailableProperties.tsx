@@ -1,4 +1,4 @@
-import React, { useState, ComponentProps } from 'react';
+import React, { ComponentProps } from 'react';
 import styled from 'styled-components';
 import { Text, View } from '../../core-ui';
 import { FONT_SIZE_SMALL, FONT_SIZE_MEDIUM } from '../../constants/theme';
@@ -10,22 +10,26 @@ import {
 } from '../../fixtures/dummyData';
 import { THEME_COLOR } from '../../constants/colors';
 
-type ContainerProps = ComponentProps<typeof View> & {
-  showRightBar?: boolean;
+type Props = {
+  visible: boolean;
+  onHideClick: () => void;
 };
 
-export default function AvailableProperties() {
-  let [isOpen, setOpen] = useState(true);
-  let toggleSideBar = () => setOpen(!isOpen);
+type ContainerProps = ComponentProps<typeof View> & {
+  visible?: boolean;
+};
+
+export default function AvailableProperties(props: Props) {
+  let { visible, onHideClick } = props;
 
   return (
-    <Container flex showRightBar={isOpen}>
+    <Container flex visible={visible}>
       <UpperTextContainer>
         <View flex>
           <Text fontSize={FONT_SIZE_MEDIUM}>Properties for rent</Text>
         </View>
         {/* TODO: change to touchable component */}
-        <ItalicText onClick={toggleSideBar}>Hide</ItalicText>
+        <ItalicText onClick={onHideClick}>Hide</ItalicText>
       </UpperTextContainer>
       <RowedFlex>
         <ItalicText
@@ -52,8 +56,8 @@ export default function AvailableProperties() {
 
 const Container = styled(View)<ContainerProps>`
   width: 350px;
-  position: absolute;
-  right: ${(props) => (props.showRightBar ? '0px' : '-350px')};
+  position: fixed;
+  right: ${(props) => (props.visible ? '0px' : '-350px')};
   background-color: white;
   padding: 8px;
   transition: all 500ms linear;
