@@ -23,7 +23,7 @@ export default function MainMap() {
 }
 
 const ShowPropertyButton = styled(Button)`
-  position: absolute;
+  position: fixed;
   bottom: 30px;
   left: 50%;
   right: 50%;

@@ -56,7 +56,7 @@ export default function AvailableProperties(props: Props) {
 
 const Container = styled(View)<ContainerProps>`
   width: 350px;
-  position: fixed;
+  position: absolute;
   right: ${(props) => (props.visible ? '0px' : '-350px')};
   background-color: white;
   padding: 8px;
@@ -75,4 +75,5 @@ const RowedFlex = styled(View)`
 
 const ItalicText = styled(Text)`
   font-style: italic;
+  color: ${THEME_COLOR};
 `;
