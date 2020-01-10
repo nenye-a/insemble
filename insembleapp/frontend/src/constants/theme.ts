@@ -7,4 +7,5 @@ export const FONT_SIZE_NORMAL = '14px';
 export const FONT_SIZE_MEDIUM = '16px';
 export const FONT_SIZE_LARGE = '18px';
 
+export const FONT_WEIGHT_MEDIUM = 'medium';
 export const DEFAULT_BORDER_RADIUS = '4px';
