@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import { transitions, positions, Provider as AlertProvider } from 'react-alert';
 
-// optional cofiguration
+// optional configuration
 const options = {
   // you can also just use 'bottom center'
   position: positions.TOP_CENTER,
@@ -28,7 +28,7 @@ import { loadUser } from './redux/actions/auth';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './assets/main.scss';
 
-const MyTemplate = ({ style, options, message, close }) => (
+const MyTemplate = ({ style, message, close }) => (
   <div style={style} class="alert alert-danger alert-dismissible fade show">
     {message}
     <button type="button" className="close" onClick={close} data-dismiss="alert">
