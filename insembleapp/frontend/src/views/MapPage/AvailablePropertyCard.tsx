@@ -17,7 +17,6 @@ type Props = {
 export default function AvailablePropertyCard(props: Props) {
   let { photo, address, price, area, propertyType, onPress } = props;
   return (
-    // TODO: wrap with TouchableOpacity
     <Container>
       <TouchableOpacity onPress={onPress}>
         <Photo src={photo} alt="property-photo" />

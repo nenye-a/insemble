@@ -3,11 +3,6 @@ import styled from 'styled-components';
 import { View, Button } from '../core-ui';
 import AvailableProperties from './MapPage/AvailableProperties';
 
-const Container = styled(View)`
-  flex-direction: row;
-  overflow-x: hidden;
-`;
-
 export default function MainMap() {
   let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
   return (
@@ -23,6 +18,11 @@ export default function MainMap() {
     </Container>
   );
 }
+
+const Container = styled(View)`
+  flex-direction: row;
+  overflow-x: hidden;
+`;
 
 const ShowPropertyButton = styled(Button)`
   position: fixed;
