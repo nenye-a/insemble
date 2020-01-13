@@ -18,7 +18,7 @@ class Buildout extends React.Component {
             <Row>
               <Col sm="6">
                 <h6>Space Requirements</h6>
-                <div>2500 Square feet, 12' ceilings, ADA Compliant Bathrooms...</div>
+                <div>{`2500 Square feet, 12' ceilings, ADA Compliant Bathrooms...`}</div>
               </Col>
 
               <Col sm="6">

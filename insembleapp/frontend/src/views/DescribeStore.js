@@ -1,3 +1,4 @@
+/* eslint-disable no-console, curly */
 import React from 'react';
 import {
   Container,

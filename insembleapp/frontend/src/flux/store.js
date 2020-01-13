@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { EventEmitter } from 'events';
 
 import Dispatcher from './dispatcher';

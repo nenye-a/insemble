@@ -1,5 +1,4 @@
-/* eslint jsx-a11y/anchor-is-valid: 0 */
-
+/* eslint-disable no-console */
 import React from 'react';
 import {
   Container,
@@ -222,7 +221,7 @@ class Explore extends React.Component {
                 <div
                   className="card-post__image"
                   style={{ backgroundImage: `url('${post.backgroundImage}')` }}
-                ></div>
+                />
                 <CardBody>
                   <h5 className="card-title">
                     <a className="text-fiord-blue" href="#">

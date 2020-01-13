@@ -1,3 +1,4 @@
+/* eslint-disable no-console, dot-notation */
 import {
   USER_LOADED,
   USER_LOADING,
