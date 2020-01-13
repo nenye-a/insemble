@@ -1,4 +1,4 @@
-import React, { ComponentProps } from 'react';
+import React, { ComponentProps, MouseEvent } from 'react';
 import styled, { css } from 'styled-components';
 import View from './View';
 
@@ -18,7 +18,7 @@ function Touchable(props: Props) {
       href={href}
       target={isLink && !isLocalLink ? '_blank' : undefined}
       {...otherProps}
-      onClick={(event: any) => {
+      onClick={(event: MouseEvent<any>) => {
         if (isLocalLink && !(event.metaKey || event.ctrlKey)) {
           event.preventDefault();
         }
