@@ -1,21 +1,9 @@
-import React, { ComponentProps } from 'react';
+import { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
 
-type Props = Omit<ComponentProps<'span'>, 'ref'> & {
+type Props = ComponentProps<'div'> & {
   flex?: boolean;
-  href?: string;
-  target?: string;
 };
-
-function View(props: Props) {
-  let { flex, href, target, ...otherProps } = props;
-  return href == null ? (
-    <div {...otherProps} />
-  ) : (
-    // eslint-disable-next-line jsx-a11y/anchor-has-content
-    <a href={href} target={target} {...otherProps} />
-  );
-}
 
 let baseStyles = css`
   flex-basis: auto;
@@ -28,7 +16,7 @@ let flexStyles = css`
   flex-shrink: 1;
 `;
 
-export default styled(View)`
+export default styled.div<Props>`
   align-items: stretch;
   box-sizing: border-box;
   display: flex;

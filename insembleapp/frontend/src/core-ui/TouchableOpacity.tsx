@@ -14,10 +14,11 @@ function Touchable(props: Props) {
   let isLocalLink = isLink && isLocalURL(href);
   return (
     <View
+      as={isLink ? 'a' : undefined}
       href={href}
       target={isLink && !isLocalLink ? '_blank' : undefined}
       {...otherProps}
-      onClick={(event) => {
+      onClick={(event: any) => {
         if (isLocalLink && !(event.metaKey || event.ctrlKey)) {
           event.preventDefault();
         }
@@ -30,7 +31,6 @@ function Touchable(props: Props) {
   );
 }
 
-// TODO: Should we move these to View?
 let linkStyles = css`
   background-color: rgba(0, 0, 0, 0);
   color: inherit;
@@ -54,6 +54,6 @@ export default styled(Touchable)`
 
 function isLocalURL(link: string) {
   let firstChar = link.charAt(0);
-  // TODO: Better implementation of this?
+  // TODO: More comprehensive implementation of this?
   return firstChar === '.' || firstChar === '/';
 }
