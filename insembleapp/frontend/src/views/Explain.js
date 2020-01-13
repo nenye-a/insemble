@@ -1,5 +1,4 @@
-/* eslint jsx-a11y/anchor-is-valid: 0 */
-
+/* eslint-disable react/no-unescaped-entities */
 import React from 'react';
 import { Redirect, NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
@@ -70,15 +69,15 @@ class Explain extends React.Component {
                 {/* Title */}
                 <h5 className="auth-form__title text-center mb-4">Help</h5>
 
-                <div class="list-group">
+                <div className="list-group">
                   <a
                     href="#"
-                    class="list-group-item list-group-item-action flex-column align-items-start"
+                    className="list-group-item list-group-item-action flex-column align-items-start"
                   >
-                    <div class="d-flex w-100 justify-content-between">
-                      <h5 class="mb-1">How to use</h5>
+                    <div className="d-flex w-100 justify-content-between">
+                      <h5 className="mb-1">How to use</h5>
                     </div>
-                    <p class="mb-1">
+                    <p className="mb-1">
                       Insemble provides location recommendations based on your search parameters.
                       Click on the map to find more information about location. Use the search bar
                       to: pan to specific neighborhoods, see presence of specific retailers or
@@ -88,28 +87,30 @@ class Explain extends React.Component {
                   </a>
                   <a
                     href="#"
-                    class="list-group-item list-group-item-action flex-column align-items-start"
+                    className="list-group-item list-group-item-action flex-column align-items-start"
                   >
-                    <div class="d-flex w-100 justify-content-between">
-                      <h5 class="mb-1">How is the map generated?</h5>
+                    <div className="d-flex w-100 justify-content-between">
+                      <h5 className="mb-1">How is the map generated?</h5>
                     </div>
-                    <p class="mb-1">
+                    <p className="mb-1">
                       Insemble generates location recommendations using key factors about retail
                       stores comparable to your searched location or categories. We use advanced
                       analytics to minimize canibalization and optimize for cotenancy potential. If
                       you have concerns, feedback, or want to chat with us, please fill out you
                       "Feedback" section linked below.
                     </p>
-                    <small class="text-muted">Please contact us if you have any questions.</small>
+                    <small className="text-muted">
+                      Please contact us if you have any questions.
+                    </small>
                   </a>
                   <a
                     href="#"
-                    class="list-group-item list-group-item-action flex-column align-items-start"
+                    className="list-group-item list-group-item-action flex-column align-items-start"
                   >
-                    <div class="d-flex w-100 justify-content-between">
-                      <h5 class="mb-1">Saving Results (Coming Soon)</h5>
+                    <div className="d-flex w-100 justify-content-between">
+                      <h5 className="mb-1">Saving Results (Coming Soon)</h5>
                     </div>
-                    <p class="mb-1">
+                    <p className="mb-1">
                       Unfortunately, you cannot save map results at the moment, but will be able to
                       in the very near future.
                     </p>

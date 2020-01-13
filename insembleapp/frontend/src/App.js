@@ -1,4 +1,3 @@
-/* eslint-disable import/first */
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
@@ -29,7 +28,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './assets/main.scss';
 
 const MyTemplate = ({ style, message, close }) => (
-  <div style={style} class="alert alert-danger alert-dismissible fade show">
+  <div style={style} className="alert alert-danger alert-dismissible fade show">
     {message}
     <button type="button" className="close" onClick={close} data-dismiss="alert">
       &times;
