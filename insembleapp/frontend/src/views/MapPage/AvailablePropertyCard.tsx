@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { View, Text, Card } from '../../core-ui';
+import { View, Text, Card, TouchableOpacity } from '../../core-ui';
 import { THEME_COLOR } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_SIZE_XSMALL, FONT_WEIGHT_MEDIUM } from '../../constants/theme';
 import insembleIcon from '../../assets/images/insemble-i-logo.svg';
@@ -11,36 +11,38 @@ type Props = {
   price: number;
   area: number;
   propertyType: string;
-  onClick: () => void;
+  onPress: () => void;
 };
 
 export default function AvailablePropertyCard(props: Props) {
-  let { photo, address, price, area, propertyType, onClick } = props;
+  let { photo, address, price, area, propertyType, onPress } = props;
   return (
     // TODO: wrap with TouchableOpacity
-    <Container onClick={onClick}>
-      <Photo src={photo} alt="property-photo" />
-      <DescriptionContainer flex>
-        <UpperDescriptionContainer flex>
-          <Text color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
-            {address}
-          </Text>
-          <Icon src={insembleIcon} alt="insemble-icon" />
-        </UpperDescriptionContainer>
-        <LowerDescriptionContainer flex>
-          <RowedFlex flex>
-            <Text fontWeight={FONT_WEIGHT_MEDIUM}>${price}</Text>
-            <Text fontSize={FONT_SIZE_XSMALL}>/sqft yearly</Text>
-          </RowedFlex>
-          <RowedFlex flex>
-            <Text fontWeight={FONT_WEIGHT_MEDIUM}>{area}</Text>
-            <Text fontSize={FONT_SIZE_XSMALL}>sqft</Text>
-          </RowedFlex>
-          <RowedFlex flex>
-            <Text fontWeight={FONT_WEIGHT_MEDIUM}>{propertyType}</Text>
-          </RowedFlex>
-        </LowerDescriptionContainer>
-      </DescriptionContainer>
+    <Container>
+      <TouchableOpacity onPress={onPress}>
+        <Photo src={photo} alt="property-photo" />
+        <DescriptionContainer flex>
+          <UpperDescriptionContainer flex>
+            <Text color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
+              {address}
+            </Text>
+            <Icon src={insembleIcon} alt="insemble-icon" />
+          </UpperDescriptionContainer>
+          <LowerDescriptionContainer flex>
+            <RowedFlex flex>
+              <Text fontWeight={FONT_WEIGHT_MEDIUM}>${price}</Text>
+              <Text fontSize={FONT_SIZE_XSMALL}>/sqft yearly</Text>
+            </RowedFlex>
+            <RowedFlex flex>
+              <Text fontWeight={FONT_WEIGHT_MEDIUM}>{area}</Text>
+              <Text fontSize={FONT_SIZE_XSMALL}>sqft</Text>
+            </RowedFlex>
+            <RowedFlex flex>
+              <Text fontWeight={FONT_WEIGHT_MEDIUM}>{propertyType}</Text>
+            </RowedFlex>
+          </LowerDescriptionContainer>
+        </DescriptionContainer>
+      </TouchableOpacity>
     </Container>
   );
 }

@@ -1,7 +1,7 @@
 import React, { ComponentProps } from 'react';
 import styled from 'styled-components';
-import { Text, View } from '../../core-ui';
-import { FONT_SIZE_SMALL, FONT_SIZE_MEDIUM } from '../../constants/theme';
+import { Text, View, Button } from '../../core-ui';
+import { FONT_SIZE_SMALL, FONT_SIZE_MEDIUM, NAVBAR_HEIGHT } from '../../constants/theme';
 import AvailablePropertyCard from './AvailablePropertyCard';
 import {
   AVAILABLE_PROPERTIES,
@@ -28,8 +28,12 @@ export default function AvailableProperties(props: Props) {
         <View flex>
           <Text fontSize={FONT_SIZE_MEDIUM}>Properties for rent</Text>
         </View>
-        {/* TODO: change to touchable component */}
-        <ItalicText onClick={onHideClick}>Hide</ItalicText>
+        <Button
+          text="Hide"
+          onPress={onHideClick}
+          textProps={{ style: { color: THEME_COLOR, fontStyle: 'italic' } }}
+          style={{ padding: 0, backgroundColor: 'transparent', height: 0 }}
+        />
       </UpperTextContainer>
       <RowedFlex>
         <ItalicText
@@ -47,7 +51,7 @@ export default function AvailableProperties(props: Props) {
           price={price}
           area={area}
           propertyType={propertyType}
-          onClick={() => {}}
+          onPress={() => {}}
         />
       ))}
     </Container>
@@ -61,6 +65,7 @@ const Container = styled(View)<ContainerProps>`
   background-color: white;
   padding: 8px;
   transition: all 500ms linear;
+  height: calc(90vh-${NAVBAR_HEIGHT});
 `;
 
 const UpperTextContainer = styled(View)`
