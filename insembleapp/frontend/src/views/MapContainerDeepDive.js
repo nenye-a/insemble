@@ -112,7 +112,7 @@ class MapWithAMarkerClusterer extends React.Component {
     this.setState({ redirect: true, marker: marker });
   };
 
-  handleSearchClick(marker) {
+  handleSearchClick(_marker) {
     // console.log(marker)
     // console.log('Go to the marker post page')
     // fetch('api/location/lat=34.0522795&lng=-118.3089333')
