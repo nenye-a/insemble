@@ -1,4 +1,5 @@
 /* global google */
+/* eslint-disable no-console, @typescript-eslint/no-var-requires */
 import React from 'react';
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, Circle } from 'react-google-maps';
 import { Redirect } from 'react-router-dom';
@@ -152,7 +153,7 @@ class MapWithAMarkerClusterer extends React.Component {
         <Marker
           position={{ lat: lat, lng: lng }}
           icon={{ url: 'http://maps.google.com/mapfiles/kml/paddle/purple-circle.png' }}
-        ></Marker>
+        />
         {/* Should map this to condense */}
         <Circle
           defaultCenter={{
