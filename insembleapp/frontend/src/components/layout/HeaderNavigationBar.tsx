@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import InsembleLogo from '../common/InsembleLogo';
-import { WHITE, HEADER_BORDER_COLOR } from '../../constants/colors';
 import { TouchableOpacity, Button } from '../../core-ui';
+import { WHITE, HEADER_BORDER_COLOR } from '../../constants/colors';
+import { NAVBAR_HEIGHT } from '../../constants/theme';
 
 export default function HeaderNavigationBar() {
   return (
@@ -20,7 +21,7 @@ const Container = styled('div')`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 65px;
+  height: ${NAVBAR_HEIGHT};
   background-color: ${WHITE};
   border-bottom-color: ${HEADER_BORDER_COLOR};
   border-bottom-width: 1;
