@@ -4,6 +4,7 @@ import { FONT_SIZE_NORMAL, FONT_FAMILY_NORMAL } from '../constants/theme';
 import { TEXT_COLOR } from '../constants/colors';
 
 type TextProps = ComponentProps<'div'> & {
+  color?: string;
   fontSize?: string;
   fontFamily?: string;
   fontWeight?: string | number;

@@ -1,14 +1,9 @@
-import React, { ComponentProps } from 'react';
+import { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
 
 type Props = ComponentProps<'div'> & {
   flex?: boolean;
 };
-
-function View(props: Props) {
-  let { flex, ...otherProps } = props;
-  return <div {...otherProps} />;
-}
 
 let baseStyles = css`
   flex-basis: auto;
@@ -21,7 +16,7 @@ let flexStyles = css`
   flex-shrink: 1;
 `;
 
-export default styled(View)`
+export default styled.div<Props>`
   align-items: stretch;
   box-sizing: border-box;
   display: flex;
