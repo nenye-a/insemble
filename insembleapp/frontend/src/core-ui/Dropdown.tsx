@@ -11,6 +11,7 @@ import Card from './Card';
 import Text from './Text';
 import View from './View';
 import TouchableOpacity from './TouchableOpacity';
+import ClickAway from './ClickAway';
 
 import arrowIcon from '../assets/images/arrow-down.svg';
 import checkIcon from '../assets/images/check.svg';
@@ -32,24 +33,26 @@ export default function Dropdown(props: Props) {
         <ArrowIcon src={arrowIcon} alt="arrow-icon" isOpen={dropdownOpen} />
       </Container>
       {dropdownOpen && (
-        <OptionContainer>
-          {values.map((item) => {
-            let isSelected = item === selectedValue;
-            return (
-              <Options
-                onPress={() => {
-                  onItemSelected(item);
-                  toggleDropdown(!dropdownOpen);
-                }}
-              >
-                <IconContainer>
-                  {isSelected && <img src={checkIcon} alt="check-icon" />}
-                </IconContainer>
-                <ListText selected={isSelected}>{item}</ListText>
-              </Options>
-            );
-          })}
-        </OptionContainer>
+        <ClickAway onClickAway={() => toggleDropdown(false)}>
+          <OptionContainer>
+            {values.map((item) => {
+              let isSelected = item === selectedValue;
+              return (
+                <Options
+                  onPress={() => {
+                    onItemSelected(item);
+                    toggleDropdown(!dropdownOpen);
+                  }}
+                >
+                  <IconContainer>
+                    {isSelected && <img src={checkIcon} alt="check-icon" />}
+                  </IconContainer>
+                  <ListText selected={isSelected}>{item}</ListText>
+                </Options>
+              );
+            })}
+          </OptionContainer>
+        </ClickAway>
       )}
     </>
   );
