@@ -18,10 +18,8 @@ const withTracker = (WrappedComponent, options = {}) => {
 
   const BASENAME = process.env.REACT_APP_BASENAME || '';
 
-  // eslint-disable-next-line
   const HOC = class extends Component {
     componentDidMount() {
-      // eslint-disable-next-line
       const page = this.props.location.pathname + this.props.location.search;
       trackPage(`${BASENAME}${page}`);
     }
