@@ -5,11 +5,12 @@ import { FONT_FAMILY_NORMAL, FONT_SIZE_NORMAL } from '../constants/theme';
 
 type ButtonProps = ComponentProps<'button'>;
 
-function DefaultButton(props: ButtonProps) {
+function Button(props: ButtonProps) {
   return <button type="button" {...props} />;
 }
 
-const Button = styled(DefaultButton)`
+// TODO: Should we style this with a pressed state similar to TouchableOpacity?
+export default styled(Button)`
   color: #fff;
   border: none;
   background-color: ${THEME_COLOR};
@@ -24,5 +25,3 @@ const Button = styled(DefaultButton)`
     opacity: 0.9;
   }
 `;
-
-export default Button;
