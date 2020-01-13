@@ -1,4 +1,5 @@
 /* eslint jsx-a11y/anchor-is-valid: 0 */
+/* eslint-disable @typescript-eslint/camelcase */
 
 import React from 'react';
 import { withRouter } from 'react-router';
@@ -35,7 +36,7 @@ class Feedback extends React.Component {
       },
     };
 
-    console.log('submit regeistered');
+    console.log('submit registered');
 
     var time_stamp = new Date();
 
