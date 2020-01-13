@@ -296,7 +296,7 @@ export default (props: Props) => {
   let { isLoading } = useGoogleMaps();
   return isLoading ? null : (
     <MapWithMap
-      containerElement={<div style={{ height: '85vh', width: '100%' }} />}
+      containerElement={<div style={{ height: 'calc(100vh - 65px)', width: '100%' }} />}
       mapElement={<div style={{ height: '100%' }} />}
       {...props}
     />
