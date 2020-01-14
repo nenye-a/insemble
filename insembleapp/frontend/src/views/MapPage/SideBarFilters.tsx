@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { View } from '../../core-ui';
+import { View, Button } from '../../core-ui';
 import FilterCard from './FilterCard';
 import SvgIncome from '../../components/icons/income';
 import SvgAge from '../../components/icons/age';
@@ -15,6 +15,7 @@ import SvgCrime from '../../components/icons/crime';
 import SvgRent from '../../components/icons/rent';
 import SvgSqft from '../../components/icons/sqft';
 import SvgPropertyType from '../../components/icons/property-type';
+import { NAVBAR_HEIGHT } from '../../constants/theme';
 
 export default function SideBarFilters() {
   return (
@@ -22,7 +23,7 @@ export default function SideBarFilters() {
       <FilterCard
         title="Demographics"
         options={DEMOGRAPHIC_OPTIONS}
-        contentStyle={{ maxHeight: '40vh', overflowY: 'scroll' }}
+        contentStyle={{ maxHeight: '50vh', overflowY: 'scroll' }}
         onOptionPress={() => {
           // open option pop up
         }}
@@ -31,20 +32,24 @@ export default function SideBarFilters() {
         title="Property"
         options={PROPERTIES_OPTIONS}
         contentStyle={{ maxHeight: '20vh', overflowY: 'scroll' }}
-        style={{ marginTop: 20 }}
+        style={{ marginTop: 20, marginBottom: 20 }}
         onOptionPress={() => {
           // open option pop up
         }}
       />
+      <Button text="New Search" />
     </Container>
   );
 }
 
 const Container = styled(View)`
   position: absolute;
-  left: 20px;
+  left: 32px;
   width: 160px;
-  top: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  justify-content: space-between;
+  height: calc(100% - ${NAVBAR_HEIGHT});
 `;
 
 const DEMOGRAPHIC_OPTIONS = [

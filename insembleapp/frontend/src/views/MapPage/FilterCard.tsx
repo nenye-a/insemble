@@ -1,14 +1,15 @@
-import React, { ComponentProps, CSSProperties } from 'react';
+import React, { ComponentProps, CSSProperties, ComponentType } from 'react';
 import styled, { css } from 'styled-components';
 import { Card, Text, View, TouchableOpacity } from '../../core-ui';
 import { FONT_SIZE_XSMALL } from '../../constants/theme';
 import { SECONDARY_COLOR, WHITE, THEME_COLOR } from '../../constants/colors';
+import { IconProps } from '../../types/types';
 
 type Option = {
   name: string;
-  icon: any;
+  icon: ComponentType<IconProps>;
   selectedValues?: string | Array<string>;
-  onPress?: () => void;
+  // need to add more properties to save the filter pop up data from backend
 };
 
 type Props = ComponentProps<typeof View> & {
@@ -68,11 +69,11 @@ const OptionItem = styled(TouchableOpacity)<OptionItemProps>`
   &:hover ${Text} {
     color: ${WHITE};
   }
-  &:hover path {
-    fill: ${WHITE};
-  }
-  &:hover rect {
-    fill: ${WHITE};
+  &:hover {
+    path,
+    rect {
+      fill: ${WHITE};
+    }
   }
   ${(props) =>
     props.selected &&
@@ -81,9 +82,7 @@ const OptionItem = styled(TouchableOpacity)<OptionItemProps>`
       ${Text} {
         color: ${WHITE};
       }
-      path {
-        fill: ${WHITE};
-      }
+      path,
       rect {
         fill: ${WHITE};
       }
