@@ -14,11 +14,12 @@ type Option = {
 type Props = ComponentProps<typeof View> & {
   title: string;
   options: Array<Option>;
+  onOptionPress?: (value: Option) => void;
   contentStyle?: CSSProperties;
 };
 
 export default function FilterCard(props: Props) {
-  let { title, options, contentStyle, ...otherProps } = props;
+  let { title, options, contentStyle, onOptionPress, ...otherProps } = props;
   return (
     <Card
       title={title}
@@ -30,7 +31,10 @@ export default function FilterCard(props: Props) {
     >
       <View style={contentStyle}>
         {options.map((item) => (
-          <OptionItem selected={item.selectedValues && item.selectedValues !== ''}>
+          <OptionItem
+            selected={item.selectedValues && item.selectedValues !== ''}
+            onPress={() => onOptionPress && onOptionPress(item)}
+          >
             <item.icon />
             <View style={{ marginLeft: 5 }}>
               <Text>{item.name}</Text>
@@ -45,7 +49,7 @@ export default function FilterCard(props: Props) {
   );
 }
 
-type OptionItemProps = {
+type OptionItemProps = ComponentProps<typeof TouchableOpacity> & {
   selected: boolean;
 };
 
@@ -55,6 +59,9 @@ const OptionItem = styled(TouchableOpacity)<OptionItemProps>`
   height: 36px;
   padding: 12px;
   margin-top: 2px;
+  &:last-child {
+    margin-bottom: 2px;
+  }
   &:hover {
     background-color: ${SECONDARY_COLOR};
   }
@@ -62,6 +69,9 @@ const OptionItem = styled(TouchableOpacity)<OptionItemProps>`
     color: ${WHITE};
   }
   &:hover path {
+    fill: ${WHITE};
+  }
+  &:hover rect {
     fill: ${WHITE};
   }
   ${(props) =>
@@ -72,6 +82,9 @@ const OptionItem = styled(TouchableOpacity)<OptionItemProps>`
         color: ${WHITE};
       }
       path {
+        fill: ${WHITE};
+      }
+      rect {
         fill: ${WHITE};
       }
     `}
