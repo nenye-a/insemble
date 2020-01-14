@@ -17,9 +17,9 @@ type Props = ViewProps & {
 };
 
 export default function Card(props: Props) {
-  let { mode, title, children, titleContainerProps, titleProps } = props;
+  let { mode, title, children, titleContainerProps, titleProps, ...otherProps } = props;
   return (
-    <StyledCard>
+    <StyledCard {...otherProps}>
       {mode === 'with-title' && (
         <TitleContainer {...titleContainerProps}>
           <Title {...titleProps}>{title}</Title>
