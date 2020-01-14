@@ -16,14 +16,15 @@ import ClickAway from './ClickAway';
 import arrowIcon from '../assets/images/arrow-down.svg';
 import checkIcon from '../assets/images/check.svg';
 
-type Props = {
-  values: Array<string>;
-  selectedValue?: string;
-  onItemSelected: (value: string) => void;
+type Props<T> = {
+  values: Array<T>;
+  selectedValue?: T;
+  onItemSelected: (value: T) => void;
+  extractOption?: (item: T) => string;
 };
 
-export default function Dropdown(props: Props) {
-  let { values, selectedValue, onItemSelected } = props;
+export default function Dropdown<T>(props: Props<T>) {
+  let { values, selectedValue, onItemSelected, extractOption } = props;
   let [dropdownOpen, toggleDropdown] = useState(false);
 
   return (
@@ -36,9 +37,11 @@ export default function Dropdown(props: Props) {
         <ClickAway onClickAway={() => toggleDropdown(false)}>
           <OptionContainer>
             {values.map((item) => {
-              let isSelected = item === selectedValue;
+              let extractedOption = !!extractOption ? extractOption(item) : String(item);
+              //TODO: add isSelectedComparator
+              let isSelected = extractedOption === ((String(selectedValue) as unknown) as string);
               return (
-                <Options
+                <Option
                   onPress={() => {
                     onItemSelected(item);
                     toggleDropdown(!dropdownOpen);
@@ -47,8 +50,8 @@ export default function Dropdown(props: Props) {
                   <IconContainer>
                     {isSelected && <img src={checkIcon} alt="check-icon" />}
                   </IconContainer>
-                  <ListText selected={isSelected}>{item}</ListText>
-                </Options>
+                  <ListText selected={isSelected}>{extractedOption}</ListText>
+                </Option>
               );
             })}
           </OptionContainer>
@@ -91,7 +94,7 @@ const OptionContainer = styled(Card)`
   position: absolute;
 `;
 
-const Options = styled(TouchableOpacity)`
+const Option = styled(TouchableOpacity)`
   padding: 0px 12px;
   height: 45px;
   align-items: center;
