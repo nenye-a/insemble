@@ -19,7 +19,7 @@ function Spaces() {
     >
       <Container fluid className="main-content-container m-0">
         <Row>
-          <MapContainer markers={markers} heats={heats} />
+          <MapContainer />
         </Row>
       </Container>
     </LoadingOverlay>
