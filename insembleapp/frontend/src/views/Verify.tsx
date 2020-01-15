@@ -25,8 +25,7 @@ function Verify() {
   } else {
     name = session.get('sessionStoreName') || '';
     address = useSelector(
-      (state: any): string =>
-        (state.space?.location?.address || '')
+      (state: any): string => (state.space.location && state.space.location.address) || ''
     );
   }
 
