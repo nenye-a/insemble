@@ -1,4 +1,4 @@
-import React, { ComponentProps } from 'react';
+import React, { ComponentProps, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 import { THEME_COLOR, WHITE } from '../constants/colors';
 import { BUTTON_BORDER_COLOR, TEXT_COLOR } from '../constants/colors';
@@ -11,12 +11,14 @@ type Props = ComponentProps<typeof TouchableOpacity> & {
   text: string;
   textProps: TextProps;
   mode?: 'primary' | 'secondary';
+  icon?: ReactNode;
 };
 
 function Button(props: Props) {
-  let { text, textProps, ...otherProps } = props;
+  let { text, textProps, icon, ...otherProps } = props;
   return (
     <TouchableOpacity forwardedAs="button" type="button" {...otherProps}>
+      {icon}
       <Text as="span" color="white" {...textProps}>
         {text}
       </Text>
@@ -30,6 +32,8 @@ export default styled(Button)<Props>`
   height: 36px;
   justify-content: center;
   padding: 0 12px;
+  flex-direction: row;
+  align-items: center;
   ${(props) =>
     props.mode === 'secondary' &&
     css`
