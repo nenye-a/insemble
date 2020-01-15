@@ -1,6 +1,8 @@
 import React, { ComponentProps, forwardRef, Ref } from 'react';
 import styled from 'styled-components';
 import { FONT_FAMILY_NORMAL, FONT_SIZE_MEDIUM } from '../../constants/theme';
+import SvgSearch from '../../components/icons/search';
+import { TouchableOpacity } from '../../core-ui';
 
 type ButtonProps = ComponentProps<'button'>;
 type InputProps = ComponentProps<'input'>;
@@ -29,6 +31,7 @@ const TextInput = forwardRef((props: TextInputProps, forwardedRef: Ref<HTMLInput
 });
 
 const InputContainer = styled.div`
+  flex-direction: row;
   position: relative;
   font-family: ${FONT_FAMILY_NORMAL};
   font-size: ${FONT_SIZE_MEDIUM};
@@ -61,14 +64,20 @@ const StyledButton = styled(Button)`
 
 type Props = TextInputProps & {
   buttonText?: string;
+  icon?: boolean;
 };
 
 export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) => {
-  let { buttonText, onSubmit, ref, ...otherProps } = props;
+  let { buttonText, onSubmit, ref, icon, ...otherProps } = props;
   return (
     <InputContainer>
       <StyledTextInput {...otherProps} ref={forwardedRef} onSubmit={onSubmit} />
       {buttonText && <StyledButton onClick={onSubmit}>{buttonText}</StyledButton>}
+      {icon && (
+        <TouchableOpacity onPress={onSubmit} style={{ position: 'absolute', right: 5, top: 7 }}>
+          <SvgSearch />
+        </TouchableOpacity>
+      )}
     </InputContainer>
   );
 });

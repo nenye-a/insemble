@@ -1,6 +1,6 @@
 const INSEMBLE_PURPLE = '#674EA7';
-// const LIGHTEST_GREY = '#FBFBFB';
-const LIGHT_GREY = '##C5C5C5';
+const LIGHTEST_GREY = '#FBFBFB';
+const LIGHT_GREY = '#C5C5C5';
 const DETAIL_GREY = '#727272';
 const DARK_DETAIL = '#4B4B4B';
 
@@ -11,3 +11,5 @@ export const TEXT_COLOR = DARK_DETAIL;
 export const SECONDARY_COLOR = '#8E7BC4';
 export const HEADER_BORDER_COLOR = DETAIL_GREY;
 export const UNSELECTED_TEXT_COLOR = LIGHT_GREY;
+export const BOTTOM_CARD_COLOR = LIGHTEST_GREY;
+export const TEXT_INPUT_BORDER_COLOR = '#B2B2B2';
