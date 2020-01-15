@@ -24,7 +24,7 @@ export default function FilterCard(props: Props) {
   return (
     <Card
       title={title}
-      mode="with-title"
+      headerMode="purple"
       titleContainerProps={{
         style: { alignItems: 'center', justifyContent: 'center', height: '28px' },
       }}
