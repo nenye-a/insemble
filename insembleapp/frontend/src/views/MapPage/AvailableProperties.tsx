@@ -65,7 +65,8 @@ const Container = styled(View)<ContainerProps>`
   background-color: white;
   padding: 8px;
   transition: all 500ms linear;
-  height: calc(90vh-${NAVBAR_HEIGHT});
+  overflow-y: scroll;
+  height: 100%;
 `;
 
 const UpperTextContainer = styled(View)`

@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { View, Button } from '../core-ui';
 import AvailableProperties from './MapPage/AvailableProperties';
+import SideBarFilters from './MapPage/SideBarFilters';
 
 export default function MainMap() {
   let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
   return (
     <Container flex>
+      <SideBarFilters />
       <ShowPropertyButton
         onPress={() => togglePropertyRecommendation(true)}
         text="Show Property List"
