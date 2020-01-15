@@ -9,6 +9,6 @@ export const WHITE = '#FFFFFF';
 export const THEME_COLOR = INSEMBLE_PURPLE;
 export const TEXT_COLOR = DARK_DETAIL;
 export const SECONDARY_COLOR = '#8E7BC4';
-export const HEADER_BORDER_COLOR = DETAIL_GREY;
+export const HEADER_BORDER_COLOR = 'rgba(103,76,167,0.17)';
 export const UNSELECTED_TEXT_COLOR = LIGHT_GREY;
 export const BUTTON_BORDER_COLOR = DETAIL_GREY;
