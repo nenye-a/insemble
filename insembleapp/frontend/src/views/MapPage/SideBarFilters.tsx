@@ -23,7 +23,8 @@ export default function SideBarFilters() {
       <FilterCard
         title="Demographics"
         options={DEMOGRAPHIC_OPTIONS}
-        contentStyle={{ maxHeight: '50vh', overflowY: 'scroll' }}
+        style={{ maxHeight: '70%' }}
+        contentStyle={{ overflowY: 'scroll', flex: 1 }}
         onOptionPress={() => {
           // open option pop up
         }}
@@ -31,8 +32,8 @@ export default function SideBarFilters() {
       <FilterCard
         title="Property"
         options={PROPERTIES_OPTIONS}
-        contentStyle={{ maxHeight: '20vh', overflowY: 'scroll' }}
-        style={{ marginTop: 20, marginBottom: 20 }}
+        style={{ maxHeight: '30%', marginTop: 10, marginBottom: 10 }}
+        contentStyle={{ overflowY: 'scroll', flex: 1 }}
         onOptionPress={() => {
           // open option pop up
         }}
@@ -50,6 +51,7 @@ const Container = styled(View)`
   margin-bottom: 10px;
   justify-content: space-between;
   height: calc(100% - ${NAVBAR_HEIGHT});
+  z-index: 5;
 `;
 
 const DEMOGRAPHIC_OPTIONS = [

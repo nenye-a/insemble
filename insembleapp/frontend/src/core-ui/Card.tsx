@@ -34,6 +34,7 @@ const StyledCard = styled(View)`
   border-radius: ${DEFAULT_BORDER_RADIUS};
   box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  background-color: ${WHITE};
 `;
 
 const TitleContainer = styled(View)`
