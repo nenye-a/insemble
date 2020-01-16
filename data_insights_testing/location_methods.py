@@ -283,6 +283,117 @@ def generate_tenant_matches(location_address, my_place_type={}):
     ))
     return return_list
 
+# used by location_heat_map_2 (new alg)
+def generate_tenant_matches_2(location_address_list):
+    """
+    Given a location, this will generate all the matching retailers within our database that are a match for the profile.
+    All items will be ranked by performance (which is considered ranking), accompanied by an algorithmic guess of
+    whether or not that retailer will actually be a good match.
+
+    :param location_object: Location object that will be used to generate matches
+    :param number_of_matches: number of mataches requested
+    :return:
+    """
+
+    my_location_list = get_location_details(location_address_list)[0]
+    my_location_vector = loc_to_vector(my_location_list)
+
+    client = Connect.get_connection()
+    db_space = client.spaceData
+
+    db_space_cursor = db_space.dataset2.find({})
+    # sample_size = 5000
+    # db_space_cursor = db_space.dataset2.aggregate([{"$sample": {"size": sample_size}}])
+
+    location_retailer_pairs = {}
+    item_rows = []
+    in_area_retailers = set()
+
+    count = 0
+    for item in db_space_cursor:
+        # calculate if item is beyond a certain distance
+        my_geo, item_geo = (my_location.lat, my_location.lng), (item["lat"], item["lng"])
+        mile_distance = geopy.distance.distance(my_geo, item_geo).miles
+
+        count += 1
+        print("{} locations and counting".format(count)) if count % 5000 == 0 else 1
+
+        item_id = item["_id"]
+        item_dict = {"id": item_id}
+        location = item["Location"]
+
+        # store in dictionary for easy retrieval later
+        location_retailer_pairs[item_id] = item
+
+        # compare against our current location
+        item_dict.update(location["census"])
+        item_dict["pop"] = location["pop"]
+        item_dict["income"] = location["income"]
+        item_dict.update(location["nearby"])
+
+        # convert all nans into nulls
+        rate = item["ratings"]
+        if np.isnan(rate):
+            rate = None
+
+        item_dict["ratings"] = rate
+        item_rows.append(item_dict)
+
+    # calculate distance of each item from our vector using pandas objects
+    items_df = pd.DataFrame(item_rows)
+    my_series = pd.Series(my_location_vector)
+
+    # fill all nas with 1 as this is max distance for all categories
+    distance_table = np.abs(items_df.drop(['id', 'ratings'], axis=1).subtract(my_series).fillna(1))
+
+    distance_table['cen_diff'] = distance_table[['asian', 'black', 'hispanic', 'indian', 'white', 'multi']].sum(axis=1)
+    distance_table['cat_diff'] = distance_table.drop(
+        ['asian', 'black', 'hispanic', 'indian', 'white', 'multi', 'pop', 'income'],
+        axis=1).sum(axis=1)
+
+    # re-assign ids & ratings for accurate tracking & sorting
+    distance_table = distance_table[['cen_diff', 'cat_diff', 'pop', 'income']]
+    distance_table['id'] = items_df['id']
+    distance_table['ratings'] = items_df['ratings']
+
+    # normalize all the distances
+    distance_stats = distance_table.describe()
+    for diff in distance_table.columns:
+        if diff == "id" or diff == "ratings":
+            continue
+        distance_table[diff] = (distance_table[diff] - distance_stats[diff]["min"]) / \
+                               (distance_stats[diff]["max"] - distance_stats[diff]["min"])
+
+    # calculate and trim by weighted difference. Less than 30% diff okay (roughly 1% of all the locations per histogram)
+    weight = pd.DataFrame([0.2, 0.23, 0.33, 0.24], index=["cen_diff", "pop", "income", "cat_diff"])
+    distance_table["weighted_diff"] = distance_table[["cen_diff", "pop", "income", "cat_diff"]].dot(weight)
+
+    decent_rating = 7.8
+    diff_cutoff = 0.12
+    distance_table = distance_table[distance_table["weighted_diff"] < diff_cutoff]
+    distance_table = distance_table[distance_table["ratings"] > decent_rating]
+
+    # sort by ratings
+    distance_table = distance_table.sort_values("ratings")
+
+    # calculate and return the objects that are the closest organized by ratings
+    return_list = []
+    for index in range(len(distance_table)):
+        index_id = distance_table["id"].iloc[index]
+        location_data = location_retailer_pairs[index_id]
+        if np.isnan(location_data["map_rating"]):
+            location_data["map_rating"] = None
+
+        return_list.append(location_data)
+
+    print("Complete.\nMap Size: {}\nDiff Cutoff: {}\nRating Cutoff: {}. ".format(
+        len(return_list),
+        diff_cutoff,
+        decent_rating
+    ))
+    return return_list
+
+
 def location_heat_map(retail_data):
     """
     receives retailer object, and returns list of places that correspond to locations of interest
@@ -361,8 +472,69 @@ def location_heat_map(retail_data):
 
     # generate tenant matches based in info
     comparable_item = distance_df.loc[distance_df["ratings"].idxmax()]
+    print(comparable_item)
     return generate_tenant_matches(comparable_item.loc["address"], comparable_item.loc["place_type"])
 
 
-# if __name__ == '__main__':
+# location_heat_map function for new algorithm, which only considers first category of store (DL) 
+def location_heat_map_2(retail_data):
+    """
+    receives retailer object, and returns list of places that correspond to locations of interest
+
+    :param retail_data: dictionary of the following form
+    request.data = {
+        "income": 120,000,
+        "categories": ["restaurant", "pizza"],
+    }
+
+    :return: object of the following form:
+    result = {
+        "length": sizeOfResults,        # size of results
+        "results": [{                   # list of all heatmap points
+            "lat": latitude_value,      # latitude of point
+            "lng": longitude_value,     # longitude of point
+            "map_rating": heat          # heat will range from 1-20
+        },{
+            "lat": latitude_value,
+            "lng": longitude_value,
+            "map_rating":
+        }]
+    }
+    """
+    # get whole data base 
+    client = Connect.get_connection()
+    db_space = client.spaceData
+
+    db_space_cursor = db_space.dataset2.find({})
+
+    # samples_size = 200  # 200 points only for testing purposes
+    # db_space_cursor = db_space.dataset2.aggregate([{"$sample": {"size": samples_size}}])
+
+    # find first category of store  
+    first_category = retail_data["categories"][0]
+
+    # loop thru all existing stores to determine stores that fall into 1st category 
+    similar_stores = []
+    for item in db_space_cursor:
+        if first_category in item["Retailer"]["place_type"]:
+            item_dict = {}
+            item_dict["address"] = item["Location"]["address"]
+            item_dict["place_type"] = item["Retailer"]["place_type"]
+            item_dict["ratings"] = item["ratings"]
+            similar_stores.append(item_dict)
+
+    df = pd.DataFrame(similar_stores)
+
+    # find top 10%
+    df = df.dropna()
+    n = int(df.shape[0] * 0.3)
+    df = df.nlargest(n, "ratings")
+    return generate_tenant_matches_2(df[["address"]])
+
+
+if __name__ == '__main__':
 #     generate_location_profile("Los Angeles")
+    location_heat_map_2({
+        "income": 100000,
+        "categories": ["Restaurant", "Pizza"],
+    })
