@@ -2,5 +2,5 @@ import { CSSProperties } from 'react';
 
 export type IconProps = {
   fill?: string;
-  style?: any;
+  style?: CSSProperties;
 };

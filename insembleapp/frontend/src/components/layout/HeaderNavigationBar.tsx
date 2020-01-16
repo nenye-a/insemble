@@ -24,7 +24,7 @@ const Container = styled('div')`
   height: ${NAVBAR_HEIGHT};
   background-color: ${WHITE};
   box-shadow: 0px 1px 1px 0px ${HEADER_BORDER_COLOR};
-  padding: 0px 36px;
+  padding: 0px 32px;
   position: sticky;
   top: 0px;
   z-index: 99;
