@@ -9,7 +9,7 @@ type TextProps = ComponentProps<typeof Text>;
 
 type Props = ComponentProps<typeof TouchableOpacity> & {
   text: string;
-  textProps: TextProps;
+  textProps?: TextProps;
   mode?: 'primary' | 'secondary';
   icon?: ReactNode;
 };
