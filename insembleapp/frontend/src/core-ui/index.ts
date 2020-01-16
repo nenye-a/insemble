@@ -3,7 +3,6 @@ export { default as Badge } from './Badge';
 export { default as Card } from './Card';
 export { default as ClickAway } from './ClickAway';
 export { default as Dropdown } from './Dropdown';
-export { default as MultiSelectBox } from './MultiSelectBox';
 export { default as PillButton } from './PillButton';
 export { default as Text } from './Text';
 export { default as TextInputWithLabel } from './TextInputWithLabel';
