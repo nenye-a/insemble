@@ -16,14 +16,14 @@ type Props = ComponentProps<typeof View> & {
 
 export default function MultiSelectBox(props: Props) {
   let { selectedOptions, options, onSelect, onUnselect, placeholder, ...otherProps } = props;
-  let [pickerOpen, togglePicker] = useState(true);
+  let [pickerOpen, togglePicker] = useState(false);
 
   let selectedValuesString = selectedOptions.join(', ');
 
   let selectedOptionSize = selectedOptions.length;
   return (
     <View {...otherProps}>
-      <Container onPress={() => togglePicker(true)}>
+      <Container onPress={() => togglePicker(!pickerOpen)}>
         {selectedOptionSize > 0 ? (
           <SelectedValuesText>{selectedValuesString}</SelectedValuesText>
         ) : (

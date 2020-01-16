@@ -61,13 +61,17 @@ export default function Filter(props: Props) {
   let [searchText, setSearchText] = useState('');
 
   useEffect(() => {
-    let availableOptions = allOptions.filter((option: string) => !selectedOptions.includes(option));
-    let newFilteredOptions =
-      (searchText !== ''
-        ? availableOptions.filter((option: string) => option.toLowerCase().includes(searchText))
-        : availableOptions) || [];
-    setFilteredOptions(newFilteredOptions);
-  }, [allOptions, selectedOptions, searchText]);
+    if (search) {
+      let availableOptions = allOptions.filter(
+        (option: string) => !selectedOptions.includes(option)
+      );
+      let newFilteredOptions =
+        (searchText !== ''
+          ? availableOptions.filter((option: string) => option.toLowerCase().includes(searchText))
+          : availableOptions) || [];
+      setFilteredOptions(newFilteredOptions);
+    }
+  }, [allOptions, selectedOptions, searchText, search]);
 
   return visible ? (
     <Card {...otherProps}>
@@ -281,5 +285,5 @@ const ClearButton = styled(Button)`
   background-color: transparent;
   ${Text} {
     color: ${THEME_COLOR};
-  };
+  }
 `;
