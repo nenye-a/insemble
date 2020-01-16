@@ -1,6 +1,7 @@
 import React, { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
 import { TEXT_COLOR, THEME_COLOR, WHITE } from '../constants/colors';
+import { FONT_FAMILY_NORMAL } from '../constants/theme';
 
 type PillButtonProps = {
   primary?: boolean;
@@ -27,6 +28,7 @@ const PillButton = styled(DefaultButton)`
 
   background: ${WHITE};
   color: ${TEXT_COLOR};
+  font-family: ${FONT_FAMILY_NORMAL};
 
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
     border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
