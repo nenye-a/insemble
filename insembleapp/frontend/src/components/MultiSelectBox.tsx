@@ -15,7 +15,15 @@ type Props = ComponentProps<typeof View> & {
 };
 
 export default function MultiSelectBox(props: Props) {
-  let { selectedOptions, options, onSelect, onUnselect, placeholder, ...otherProps } = props;
+  let {
+    selectedOptions,
+    options,
+    onSelect,
+    onUnselect,
+    placeholder,
+    onClear,
+    ...otherProps
+  } = props;
   let [pickerOpen, togglePicker] = useState(false);
 
   let selectedValuesString = selectedOptions.join(', ');
@@ -41,7 +49,7 @@ export default function MultiSelectBox(props: Props) {
             onUnSelect={onUnselect}
             onSelect={onSelect}
             onDone={() => togglePicker(false)}
-            onClear={() => {}}
+            onClear={onClear}
           />
         </ClickAway>
       )}
