@@ -6,6 +6,7 @@ import { useAlert } from 'react-alert';
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
 
+import { View } from '../core-ui';
 import { useSelector } from '../redux/helpers';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import urlSafeLatLng from '../utils/urlSafeLatLng';
@@ -44,7 +45,7 @@ const defaultCenter = {
 };
 const defaultZoom = 10;
 
-function MapContainer(props: Props) {
+function MapContainer() {
   let alert = useAlert();
   let history = useHistory();
   let heatMap = useSelector((state) => state.space.heatMap) || [];
@@ -291,13 +292,13 @@ function MapContainer(props: Props) {
 
 const MapWithMap = withGoogleMap(MapContainer);
 
-export default (props: Props) => {
+export default () => {
   let { isLoading } = useGoogleMaps();
   return isLoading ? null : (
     <MapWithMap
-      containerElement={<div style={{ height: 'calc(100vh - 65px)', width: '100%' }} />}
-      mapElement={<div style={{ height: '100%' }} />}
-      {...props}
+      containerElement={<View flex />}
+      mapElement={<View flex />}
+      // {...props}
     />
   );
 };

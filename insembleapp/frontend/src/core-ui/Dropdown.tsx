@@ -28,7 +28,7 @@ export default function Dropdown<T>(props: Props<T>) {
   let [dropdownOpen, toggleDropdown] = useState(false);
 
   return (
-    <>
+    <View>
       <Container onPress={() => toggleDropdown(!dropdownOpen)}>
         <Text color={THEME_COLOR}>{selectedValue}</Text>
         <ArrowIcon src={arrowIcon} alt="arrow-icon" isOpen={dropdownOpen} />
@@ -57,7 +57,7 @@ export default function Dropdown<T>(props: Props<T>) {
           </OptionContainer>
         </ClickAway>
       )}
-    </>
+    </View>
   );
 }
 
