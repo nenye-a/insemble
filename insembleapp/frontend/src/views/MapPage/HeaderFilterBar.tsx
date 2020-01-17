@@ -1,14 +1,72 @@
-import React, { useState, ComponentProps } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
-import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
 import { View, Dropdown, Button, Text } from '../../core-ui';
-import TextInput from '../LandingPage/TextInput';
-import Legend from './Legend';
+import { session } from '../../utils/storage';
 import { WHITE, HEADER_BORDER_COLOR } from '../../constants/colors';
+import urlSafeLatLng from '../../utils/urlSafeLatLng';
+import { useDispatch, useSelector, useStore } from '../../redux/helpers';
+import { getLocation, loadMap } from '../../redux/actions/space';
+import Legend from '../MapPage/Legend';
+import TextInput from '../LandingPage/TextInput';
+
+type PlaceResult = google.maps.places.PlaceResult;
 
 export default function HeaderFilterBar() {
   let [selectedDropdownValue, setSelectedDropdownValue] = useState<string>('Recommended');
+  let { getState } = useStore();
+  let history = useHistory();
+  let dispatch = useDispatch();
+  let locationLoaded = useSelector((state) => state.space.locationLoaded);
+  let [submittingPlace, setSubmittingPlace] = useState<string | null>(null);
+  let inputRef = useRef<HTMLInputElement | null>(null);
+  let selectedPlace = useRef<PlaceResult | null>(null);
+
+  useEffect(() => {
+    if (locationLoaded === true) {
+      let placeID = submittingPlace;
+      // TODO: Using dispatch/getState like this is kinda messy.
+      loadMap(true)(dispatch, getState);
+      history.push(`/verify/${placeID}`);
+    }
+  }, [locationLoaded]);
+
+  let onSubmit = (place: PlaceResult) => {
+    let placeID = place.place_id || '';
+    let address = place.formatted_address || '';
+    session.set(['place', placeID], place);
+    session.set('sessionStoreName', place.name);
+    session.set('sessionAddress', address);
+    session.remove('sessionIncome');
+    session.remove('sessionTags');
+    let location = place.geometry ? place.geometry.location.toJSON() : null;
+    if (location) {
+      let { lat, lng } = urlSafeLatLng(location);
+      // TODO: Using dispatch like this is kinda messy.
+      getLocation(`/api/location/lat=${lat}&lng=${lng}&radius=1/`)(dispatch);
+      setSubmittingPlace(placeID);
+    }
+  };
+
+  let submitHandler = useCallback(() => {
+    if (selectedPlace.current) {
+      onSubmit(selectedPlace.current);
+    }
+  }, [onSubmit]);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      let autocomplete = new window.google.maps.places.Autocomplete(inputRef.current);
+      let listener = autocomplete.addListener('place_changed', () => {
+        let place = autocomplete.getPlace();
+        selectedPlace.current = place;
+      });
+      return () => {
+        listener.remove();
+      };
+    }
+  }, []);
 
   return (
     <Container>
@@ -21,7 +79,12 @@ export default function HeaderFilterBar() {
         />
         <SaveButton text="Save Search" />
       </RowedView>
-      <Text>Textinput search</Text>
+      <LocationsInputContainer
+        icon
+        ref={inputRef}
+        placeholder={'Search an address or retailer'}
+        onSubmit={submitHandler}
+      />
       <Legend />
     </Container>
   );
@@ -46,4 +109,11 @@ const Container = styled(RowedView)`
 
 const SaveButton = styled(Button)`
   margin-left: 8px;
+`;
+
+const LocationsInputContainer = styled(TextInput)`
+  width: 343px;
+  height: 36px;
+  border: solid;
+  border-width: 1px;
 `;

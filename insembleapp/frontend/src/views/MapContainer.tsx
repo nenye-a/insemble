@@ -253,31 +253,7 @@ function MapContainer() {
         )}
         {showGuide && <div className="marker-example heat-map-example empty-container" />}
         <HeatMapLayer data={data} options={{ data, radius: 20, opacity: 1 }} />
-        <SearchBox
-          ref={searchBoxRef}
-          bounds={bounds || undefined}
-          controlPosition={window.google ? google.maps.ControlPosition.TOP_CENTER : undefined}
-          onPlacesChanged={onPlacesChanged}
-        >
-          <input
-            className="search-box"
-            type="text"
-            placeholder="Search an address or retailer"
-            style={{
-              boxSizing: 'border-box',
-              border: '1px solid transparent',
-              width: '300px',
-              height: '32px',
-              marginTop: '17px',
-              padding: '0 12px',
-              borderRadius: '3px',
-              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-              fontSize: '14px',
-              outline: 'none',
-              textOverflow: 'ellipses',
-            }}
-          />
-        </SearchBox>
+
         {markers.map((markerPosition, index) => (
           <Marker
             onClick={() => handleSearchClick(markerPosition)}
