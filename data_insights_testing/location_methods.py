@@ -295,8 +295,15 @@ def generate_tenant_matches_2(location_address_list):
     :return:
     """
 
-    my_location_list = get_location_details(location_address_list)[0]
-    my_location_vector = loc_to_vector(my_location_list)
+    vecs = []
+    for location_address in location_address_list:
+        location_address = location_address[0]
+        my_location = get_location_details(location_address)[0]
+        my_location_vector_temp = loc_to_vector(my_location)
+        vecs.append(my_location_vector_temp)
+
+    df = pd.DataFrame(vecs)
+    my_location_vector = dict(df.mean()) # compute avg vector over all vectors 
 
     client = Connect.get_connection()
     db_space = client.spaceData
@@ -381,8 +388,6 @@ def generate_tenant_matches_2(location_address_list):
     for index in range(len(distance_table)):
         index_id = distance_table["id"].iloc[index]
         location_data = location_retailer_pairs[index_id]
-        if np.isnan(location_data["map_rating"]):
-            location_data["map_rating"] = None
 
         return_list.append(location_data)
 
@@ -529,7 +534,10 @@ def location_heat_map_2(retail_data):
     df = df.dropna()
     n = int(df.shape[0] * 0.3)
     df = df.nlargest(n, "ratings")
-    return generate_tenant_matches_2(df[["address"]])
+    df = df[["address"]]
+    
+    address_list = df.to_numpy()
+    return generate_tenant_matches_2(address_list)
 
 
 if __name__ == '__main__':
