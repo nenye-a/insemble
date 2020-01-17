@@ -88,23 +88,18 @@ export default function Filter(props: Props) {
           {selection &&
             allOptions &&
             allOptions.map((filter, index) => {
+              let isSelected = selectedOptions.includes(filter);
               return (
                 <SmallPillButton
                   key={'available' + index}
-                  onClick={() => onSelect && onSelect(filter)}
-                >
-                  {filter}
-                </SmallPillButton>
-              );
-            })}
-          {selection &&
-            selectedOptions &&
-            selectedOptions.map((filter, index) => {
-              return (
-                <SmallPillButton
-                  key={'selected' + index}
-                  primary
-                  onClick={() => onUnSelect && onUnSelect(filter)}
+                  primary={isSelected}
+                  onClick={() => {
+                    if (isSelected) {
+                      onUnSelect && onUnSelect(filter);
+                    } else {
+                      onSelect && onSelect(filter);
+                    }
+                  }}
                 >
                   {filter}
                 </SmallPillButton>
