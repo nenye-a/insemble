@@ -1,10 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Row, Container, Col } from 'shards-react';
 import Joyride, { STATUS, Step } from 'react-joyride';
-import { GoogleMap, Marker, InfoWindow, withGoogleMap } from 'react-google-maps';
+import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 import { useHistory } from 'react-router-dom';
 import { useAlert } from 'react-alert';
-
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
 
@@ -12,6 +10,9 @@ import { View } from '../core-ui';
 import { useSelector } from '../redux/helpers';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import urlSafeLatLng from '../utils/urlSafeLatLng';
+import LocationDetail from '../components/location-detail/LocationDetail';
+import InfoBox from 'react-google-maps/lib/components/addons/InfoBox';
+import MapPin from '../components/icons/map-pin.svg';
 
 type LatLngBounds = google.maps.LatLngBounds;
 type LatLng = google.maps.LatLng;
@@ -54,6 +55,7 @@ function MapContainer() {
   let [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
   let [bounds, setBounds] = useState<LatLngBounds | null>(null);
   let [showGuide, setShowGuide] = useState(true);
+  let [infoBoxHeight, setInfoBoxHeight] = useState<number>(0);
 
   let mapRef = useRef<GoogleMap | null>(null);
   let searchBoxRef = useRef<SearchBox | null>(null);
@@ -125,7 +127,6 @@ function MapContainer() {
     location: new google.maps.LatLng(lat, lng),
     weight: mapRating,
   }));
-
   let steps: Array<Step> = [
     {
       target: '.heat-map-example',
@@ -209,46 +210,44 @@ function MapContainer() {
         onBoundsChanged={onBoundsChanged}
       >
         {markerPosition && (
-          <Marker
-            position={markerPosition}
-            onClick={() => onMarkerClick()}
-            icon={{ url: 'http://maps.google.com/mapfiles/kml/paddle/purple-circle.png' }}
-          >
+          <Marker position={markerPosition} onClick={() => onMarkerClick()} icon={MapPin}>
             {marker && (
-              <InfoWindow
+              <InfoBox
+                defaultPosition={markerPosition}
+                defaultVisible={true}
+                options={{
+                  disableAutoPan: false,
+                  pixelOffset: new google.maps.Size(-150, -45 + -infoBoxHeight),
+                  infoBoxClearance: new google.maps.Size(1, 1),
+                  isHidden: false,
+                  pane: 'floatPane',
+                  enableEventPropagation: true,
+                  closeBoxMargin: '10px 0 2px 2px',
+                }}
+                onDomReady={() => {
+                  let infoBox = document.getElementsByClassName('infoBox')[0];
+                  if (infoBox) {
+                    let infoBoxHeight = infoBox.getClientRects()[0].height;
+                    setInfoBoxHeight(infoBoxHeight);
+                  }
+                }}
                 onCloseClick={() => {
                   setMarker(null);
                 }}
               >
-                {/* TODO: Make smaller and solve for middle-of-nowhere case. also make it come back when pressed again */}
-                <Container>
-                  <Row>
-                    <h6>{marker.address}</h6>
-                  </Row>
-                  <Row className="py-1">
-                    <Col
-                      className="d-flex flex-column justify-content-center align-items-center"
-                      style={{ fontWeight: 'bold' }}
-                    >
-                      Median Income
-                    </Col>
-                    <Col className="d-flex flex-column justify-content-center align-items-center">
-                      ${marker.income}
-                    </Col>
-                  </Row>
-                  <Row className="py-1">
-                    <Col
-                      className="d-flex flex-column justify-content-center align-items-center"
-                      style={{ fontWeight: 'bold' }}
-                    >
-                      Half-mile population
-                    </Col>
-                    <Col className="d-flex flex-column justify-content-center align-items-center">
-                      {marker.pop}
-                    </Col>
-                  </Row>
-                </Container>
-              </InfoWindow>
+                {/* TODO Change Dummy Data */}
+                <LocationDetail
+                  visible
+                  title={marker.address}
+                  subTitle={'Detail Address'}
+                  income={marker.income}
+                  population={marker.pop}
+                  age={50}
+                  ethnicity={['White', 'Hispanic']}
+                  gender={'52% Female'}
+                  onSeeMore={onMarkerClick}
+                />
+              </InfoBox>
             )}
           </Marker>
         )}
