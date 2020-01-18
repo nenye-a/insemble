@@ -4,9 +4,7 @@
 <html class="no-js" lang="en">
   <head>
     <meta charset="utf-8">
-    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="theme-color" content="#000000">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
     <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -19,8 +17,6 @@
       gtag('config', 'UA-153536736-1');
     </script>
 
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
-
     <!-- Webpack rendered CSS -->
     {% render_bundle 'main' 'css' %}
 
@@ -32,12 +28,8 @@
     <!-- Body Content -->
     {% block body %}{% endblock %}
 
-    <!-- {% render_bundle 'main' 'js' 'JQUERY' %} -->
-
-    {% render_bundle 'main' 'js'%}
-
     <!-- django-js-reverse -->
-    <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
+    <script src="{% url 'js_reverse' %}"></script>
 
     <!-- Webpack rendered Javascript -->
     {% render_bundle 'main' 'js' %}

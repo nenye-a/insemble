@@ -96,18 +96,18 @@ class MapWithAMarkerClusterer extends React.Component {
   onMapClick = (e) => {
     fetch(
       'api/location/lat=' +
-        e.latLng
-          .lat()
-          .toString()
-          .split('.')
-          .join('') +
-        '&lng=' +
-        e.latLng
-          .lng()
-          .toString()
-          .split('.')
-          .join('') +
-        '&radius=1'
+      e.latLng
+        .lat()
+        .toString()
+        .split('.')
+        .join('') +
+      '&lng=' +
+      e.latLng
+        .lng()
+        .toString()
+        .split('.')
+        .join('') +
+      '&radius=1'
     )
       .then((res) => res.json())
       .then((data) => {
