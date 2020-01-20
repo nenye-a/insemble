@@ -1,0 +1,9 @@
+node_modules/**/*
+npm-debug.*
+lib/
+
+# macOS
+.DS_Store
+
+# Jest
+coverage/
