@@ -13,7 +13,6 @@ function DefaultButton(props: ComponentProps<'button'>) {
 
 const PillButton = styled(DefaultButton)`
   flex: 0 1 auto;
-  margin: 0.35rem 0.25rem;
   padding: 0.5rem 0.5rem;
   line-height: 1;
 
