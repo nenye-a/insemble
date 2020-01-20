@@ -4,6 +4,7 @@ import { THEME_COLOR, WHITE } from '../constants/colors';
 import { BUTTON_BORDER_COLOR, TEXT_COLOR } from '../constants/colors';
 import TouchableOpacity from './TouchableOpacity';
 import Text from './Text';
+import Badge from './Badge';
 
 type TextProps = ComponentProps<typeof Text>;
 
@@ -12,16 +13,18 @@ type Props = ComponentProps<typeof TouchableOpacity> & {
   textProps?: TextProps;
   mode?: 'primary' | 'secondary';
   icon?: ReactNode;
+  badgeText?: string;
 };
 
 function Button(props: Props) {
-  let { text, textProps, icon, ...otherProps } = props;
+  let { text, textProps, icon, badgeText, ...otherProps } = props;
   return (
     <TouchableOpacity forwardedAs="button" type="button" {...otherProps}>
       {icon}
       <Text as="span" color="white" {...textProps}>
         {text}
       </Text>
+      {badgeText && <ButtonBadge text={badgeText} />}
     </TouchableOpacity>
   );
 }
@@ -49,4 +52,10 @@ export default styled(Button)<Props>`
   &:active {
     opacity: 0.5;
   }
+`;
+
+const ButtonBadge = styled(Badge)`
+  position: absolute;
+  top: -6px;
+  right: -4px;
 `;
