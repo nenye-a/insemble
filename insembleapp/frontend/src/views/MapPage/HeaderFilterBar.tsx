@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
-import { View, Dropdown, Button, Text } from '../../core-ui';
+import { View, Dropdown, Button } from '../../core-ui';
+import { MultiSelectBox } from '../../components';
+
 import { session } from '../../utils/storage';
 import { WHITE, HEADER_BORDER_COLOR } from '../../constants/colors';
 import urlSafeLatLng from '../../utils/urlSafeLatLng';
@@ -15,6 +17,8 @@ type PlaceResult = google.maps.places.PlaceResult;
 
 export default function HeaderFilterBar() {
   let [selectedDropdownValue, setSelectedDropdownValue] = useState<string>('Recommended');
+  let [selectedOptions, setSelectedOptions] = useState<Array<string>>([]);
+  let [categoryData, setCategoryData] = useState<Array<string>>([]);
   let { getState } = useStore();
   let history = useHistory();
   let dispatch = useDispatch();
@@ -31,6 +35,33 @@ export default function HeaderFilterBar() {
       history.push(`/verify/${placeID}`);
     }
   }, [locationLoaded, dispatch, getState, history, submittingPlace]);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      let autocomplete = new window.google.maps.places.Autocomplete(inputRef.current);
+      let listener = autocomplete.addListener('place_changed', () => {
+        let place = autocomplete.getPlace();
+        selectedPlace.current = place;
+      });
+      return () => {
+        listener.remove();
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    fetch('api/category/')
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((data) => {
+            setCategoryData(data);
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err, '<<<');
+      });
+  }, []);
 
   let onSubmit = (place: PlaceResult) => {
     let placeID = place.place_id || '';
@@ -55,23 +86,26 @@ export default function HeaderFilterBar() {
     }
   };
 
-  useEffect(() => {
-    if (inputRef.current) {
-      let autocomplete = new window.google.maps.places.Autocomplete(inputRef.current);
-      let listener = autocomplete.addListener('place_changed', () => {
-        let place = autocomplete.getPlace();
-        selectedPlace.current = place;
-      });
-      return () => {
-        listener.remove();
-      };
+  let setTagSelected = (tag: string, selected: boolean) => {
+    let newSelectedOptions = selectedOptions;
+    if (selected) {
+      newSelectedOptions = selectedOptions.filter((item) => item !== tag);
+    } else {
+      newSelectedOptions = [...selectedOptions, tag];
     }
-  }, []);
+    setSelectedOptions(newSelectedOptions);
+  };
 
   return (
     <Container>
       <RowedView>
-        <Text>Category Selection</Text>
+        <CategorySelector
+          selectedOptions={selectedOptions}
+          options={categoryData}
+          onSelect={(item: string) => setTagSelected(item, false)}
+          onUnSelect={(item: string) => setTagSelected(item, true)}
+          placeholder="Select Category"
+        />
         <Dropdown
           selectedValue={selectedDropdownValue}
           values={PROPERTY_TYPES}
@@ -116,4 +150,8 @@ const LocationInputContainer = styled(TextInput)`
   height: 36px;
   border: solid;
   border-width: 1px;
+`;
+
+const CategorySelector = styled(MultiSelectBox)`
+  margin-right: 8px;
 `;
