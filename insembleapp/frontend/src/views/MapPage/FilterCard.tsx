@@ -10,10 +10,11 @@ type Props = ComponentProps<typeof View> & {
   options: Array<FilterObj>;
   onOptionPress?: (value: FilterObj) => void;
   contentStyle?: CSSProperties;
+  openFilterName: string | null;
 };
 
 export default function FilterCard(props: Props) {
-  let { title, options, contentStyle, onOptionPress, ...otherProps } = props;
+  let { title, options, contentStyle, onOptionPress, openFilterName, ...otherProps } = props;
   return (
     <Card
       title={title}
@@ -29,8 +30,11 @@ export default function FilterCard(props: Props) {
             key={item.name + index}
             selected={item.selectedValues && item.selectedValues.length > 0}
             onPress={() => onOptionPress && onOptionPress(item)}
+            isOpen={openFilterName === item.name}
           >
-            <item.icon />
+            <View style={{ width: 24, height: 24 }}>
+              <item.icon />
+            </View>
             <View style={{ marginLeft: 5 }}>
               <Text>{item.name}</Text>
               {item.selectedValues && (
@@ -46,6 +50,7 @@ export default function FilterCard(props: Props) {
 
 type OptionItemProps = ComponentProps<typeof TouchableOpacity> & {
   selected: boolean;
+  isOpen: boolean;
 };
 
 const OptionItem = styled(TouchableOpacity)<OptionItemProps>`
@@ -54,6 +59,7 @@ const OptionItem = styled(TouchableOpacity)<OptionItemProps>`
   height: 36px;
   padding: 12px;
   margin-top: 2px;
+  overflow: hidden;
   &:last-child {
     margin-bottom: 2px;
   }
@@ -61,21 +67,18 @@ const OptionItem = styled(TouchableOpacity)<OptionItemProps>`
   &:focus {
     background-color: ${SECONDARY_COLOR};
   }
-  &:hover,
-  &:focus {
-    ${Text} {
-      color: ${WHITE};
-    }
+  &:hover ${Text} {
+    color: ${WHITE};
   }
-  &:hover,
-  &:focus {
+
+  &:hover {
     path,
     rect {
       fill: ${WHITE};
     }
   }
   ${(props) =>
-    props.selected &&
+    (props.selected || props.isOpen) &&
     css`
       background-color: ${THEME_COLOR};
       ${Text} {

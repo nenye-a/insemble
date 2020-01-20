@@ -204,6 +204,7 @@ export default function SideBarFilters() {
               name: item.name,
             });
           }}
+          openFilterName={openFilterName}
         />
         <FilterCard
           title="Property"
@@ -216,6 +217,7 @@ export default function SideBarFilters() {
               name: item.name,
             });
           }}
+          openFilterName={openFilterName}
         />
         <Button text="New Search" />
       </Container>
