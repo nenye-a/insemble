@@ -31,8 +31,9 @@ export default function FilterCard(props: Props) {
       {...otherProps}
     >
       <View style={contentStyle}>
-        {options.map((item) => (
+        {options.map((item, i) => (
           <OptionItem
+            key={i}
             selected={item.selectedValues && item.selectedValues !== ''}
             onPress={() => onOptionPress && onOptionPress(item)}
           >

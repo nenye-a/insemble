@@ -36,12 +36,13 @@ export default function Dropdown<T>(props: Props<T>) {
       {dropdownOpen && (
         <ClickAway onClickAway={() => toggleDropdown(false)}>
           <OptionContainer>
-            {values.map((item) => {
+            {values.map((item, i) => {
               let extractedOption = !!extractOption ? extractOption(item) : String(item);
               //TODO: add isSelectedComparator
               let isSelected = extractedOption === ((String(selectedValue) as unknown) as string);
               return (
                 <Option
+                  key={i}
                   onPress={() => {
                     onItemSelected(item);
                     toggleDropdown(!dropdownOpen);

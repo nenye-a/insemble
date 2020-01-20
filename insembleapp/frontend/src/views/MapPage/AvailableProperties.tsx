@@ -1,7 +1,7 @@
 import React, { ComponentProps } from 'react';
 import styled from 'styled-components';
 import { Text, View, Button } from '../../core-ui';
-import { FONT_SIZE_SMALL, FONT_SIZE_MEDIUM, NAVBAR_HEIGHT } from '../../constants/theme';
+import { FONT_SIZE_SMALL, FONT_SIZE_MEDIUM } from '../../constants/theme';
 import AvailablePropertyCard from './AvailablePropertyCard';
 import {
   AVAILABLE_PROPERTIES,

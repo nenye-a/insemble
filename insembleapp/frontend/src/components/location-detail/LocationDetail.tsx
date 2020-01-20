@@ -3,7 +3,6 @@ import { Card, View, Text, TouchableOpacity } from '../../core-ui';
 import styled from 'styled-components';
 import { THEME_COLOR } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_WEIGHT_MEDIUM } from '../../constants/theme';
-import SvgClose from '../icons/close';
 
 type Props = {
   visible: boolean;
@@ -36,13 +35,13 @@ export default function LocationDetail(props: Props) {
     >
       <ContentContainer>
         <LeftColumn>
-          {leftText.map((line) => (
-            <SmallText>{line}</SmallText>
+          {leftText.map((line, i) => (
+            <SmallText key={i}>{line}</SmallText>
           ))}
         </LeftColumn>
         <RightColumn>
-          {rightText.map((line) => (
-            <RightColumnText>{line}</RightColumnText>
+          {rightText.map((line, i) => (
+            <RightColumnText key={i}>{line}</RightColumnText>
           ))}
           <TouchableOpacity onPress={onSeeMore}>
             <SeeMore>Click again to see more</SeeMore>

@@ -28,7 +28,7 @@ function Landing() {
       loadMap(true)(dispatch, getState);
       history.push(`/verify/${placeID}`);
     }
-  }, [locationLoaded]);
+  }, [locationLoaded, dispatch, getState, history, submittingPlace]);
   if (isAuthenticated) {
     return <Redirect to="/find" />;
   }
