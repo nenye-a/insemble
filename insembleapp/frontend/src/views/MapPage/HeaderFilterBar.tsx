@@ -50,17 +50,14 @@ export default function HeaderFilterBar() {
   }, []);
 
   useEffect(() => {
-    fetch('api/category/')
-      .then((res) => {
-        if (res.ok) {
-          res.json().then((data) => {
-            setCategoryData(data);
-          });
-        }
-      })
-      .catch((err) => {
-        console.log(err, '<<<');
-      });
+    // TODO: use fetching library & handle error
+    fetch('api/category/').then((res) => {
+      if (res.ok) {
+        res.json().then((data) => {
+          setCategoryData(data);
+        });
+      }
+    });
   }, []);
 
   let onSubmit = (place: PlaceResult) => {
