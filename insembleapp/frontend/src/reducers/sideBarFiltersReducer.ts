@@ -1,12 +1,19 @@
 import { ComponentType } from 'react';
 import { IconProps } from '../types/types';
 
-export type FilterObj = {
-  name: string;
-  icon: ComponentType<IconProps>;
-  selectedValues: Array<string>;
-  allOptions?: Array<string>;
-};
+export type FilterObj =
+  | {
+      name: string;
+      icon: ComponentType<IconProps>;
+      selectedValues: Array<string>;
+      allOptions?: Array<string>;
+    }
+  | {
+      name: string;
+      icon: ComponentType<IconProps>;
+      selectedValues: Array<number>;
+      allOptions?: Array<string>;
+    };
 
 type State = {
   demographics: Array<FilterObj>;
@@ -57,7 +64,7 @@ type Action =
       value: string;
     };
 
-export default function sideBarFiltersReducer(state: State, action: any): State {
+export default function sideBarFiltersReducer(state: State, action: Action): State {
   let { demographics, properties } = state;
   switch (action.type) {
     case 'ON_PILL_SELECT': {
@@ -79,7 +86,11 @@ export default function sideBarFiltersReducer(state: State, action: any): State 
           }
           return item;
         });
-        return { ...state, demographics: newDemographics, properties: newProperties };
+        return {
+          ...state,
+          demographics: newDemographics as Array<FilterObj>,
+          properties: newProperties as Array<FilterObj>,
+        };
       }
       return state;
     }
@@ -91,14 +102,20 @@ export default function sideBarFiltersReducer(state: State, action: any): State 
         let { selectedValues } = foundFilterObject;
         let newDemographics = [...demographics].map((item) => {
           if (item.name === action.name) {
-            let newSelectedValue = selectedValues.filter((el) => !el.includes(action.selectedItem));
+            let castedSelectedValues = selectedValues as Array<string>;
+            let newSelectedValue = castedSelectedValues.filter(
+              (el: string) => !el.includes(action.selectedItem)
+            );
             return { ...item, selectedValues: newSelectedValue };
           }
           return item;
         });
         let newProperties = [...properties].map((item) => {
           if (item.name === action.name) {
-            let newSelectedValue = selectedValues.filter((el) => !el.includes(action.selectedItem));
+            let castedSelectedValues = selectedValues as Array<string>;
+            let newSelectedValue = castedSelectedValues.filter(
+              (el: string) => !el.includes(action.selectedItem)
+            );
             return { ...item, selectedValues: newSelectedValue };
           }
           return item;
@@ -112,17 +129,15 @@ export default function sideBarFiltersReducer(state: State, action: any): State 
         (filter) => filter.name === action.name
       );
       if (foundFilterObject) {
-        let { selectedValues } = foundFilterObject;
-        if (Array.isArray(selectedValues)) {
-          let newDemographics = demographics.map((item) => {
-            if (item.name === action.name) {
-              return { ...item, selectedValues: action.selectedValues };
-            }
-            return item;
-          });
-          return { ...state, demographics: newDemographics };
-        }
+        let newDemographics = demographics.map((item) => {
+          if (item.name === action.name) {
+            return { ...item, selectedValues: (action.selectedValues as unknown) as Array<string> };
+          }
+          return item;
+        });
+        return { ...state, demographics: newDemographics };
       }
+      return state;
     }
     case 'ON_CLEAR_PRESS': {
       let foundFilterObject = [...demographics, ...properties].find(
@@ -163,7 +178,7 @@ export default function sideBarFiltersReducer(state: State, action: any): State 
         }
         return item;
       });
-      return { ...state, properties: newProperties };
+      return { ...state, properties: newProperties as Array<FilterObj> };
     }
     case 'ON_HIGH_RANGE_CHANGE': {
       let newProperties = [...properties].map((item) => {
@@ -173,7 +188,7 @@ export default function sideBarFiltersReducer(state: State, action: any): State 
         }
         return item;
       });
-      return { ...state, properties: newProperties };
+      return { ...state, properties: newProperties as Array<FilterObj> };
     }
     default:
       return state;

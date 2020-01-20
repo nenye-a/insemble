@@ -1,21 +1,14 @@
-import React, { ComponentProps, CSSProperties, ComponentType } from 'react';
+import React, { ComponentProps, CSSProperties } from 'react';
 import styled, { css } from 'styled-components';
 import { Card, Text, View, TouchableOpacity } from '../../core-ui';
 import { FONT_SIZE_XSMALL } from '../../constants/theme';
 import { SECONDARY_COLOR, WHITE, THEME_COLOR } from '../../constants/colors';
-import { IconProps } from '../../types/types';
-
-type Option = {
-  name: string;
-  icon: ComponentType<IconProps>;
-  selectedValues?: string | Array<string>;
-  // need to add more properties to save the filter pop up data from backend
-};
+import { FilterObj } from '../../reducers/sideBarFiltersReducer';
 
 type Props = ComponentProps<typeof View> & {
   title: string;
-  options: Array<Option>;
-  onOptionPress?: (value: Option) => void;
+  options: Array<FilterObj>;
+  onOptionPress?: (value: FilterObj) => void;
   contentStyle?: CSSProperties;
 };
 
@@ -31,17 +24,17 @@ export default function FilterCard(props: Props) {
       {...otherProps}
     >
       <View style={contentStyle}>
-        {options.map((item, i) => (
+        {options.map((item, index) => (
           <OptionItem
-            key={i}
-            selected={item.selectedValues && item.selectedValues !== ''}
+            key={item.name + index}
+            selected={item.selectedValues && item.selectedValues.length > 0}
             onPress={() => onOptionPress && onOptionPress(item)}
           >
             <item.icon />
             <View style={{ marginLeft: 5 }}>
               <Text>{item.name}</Text>
               {item.selectedValues && (
-                <Text fontSize={FONT_SIZE_XSMALL}>{item.selectedValues}</Text>
+                <Text fontSize={FONT_SIZE_XSMALL}>{item.selectedValues.join(', ')}</Text>
               )}
             </View>
           </OptionItem>
@@ -64,13 +57,18 @@ const OptionItem = styled(TouchableOpacity)<OptionItemProps>`
   &:last-child {
     margin-bottom: 2px;
   }
-  &:hover {
+  &:hover,
+  &:focus {
     background-color: ${SECONDARY_COLOR};
   }
-  &:hover ${Text} {
-    color: ${WHITE};
+  &:hover,
+  &:focus {
+    ${Text} {
+      color: ${WHITE};
+    }
   }
-  &:hover {
+  &:hover,
+  &:focus {
     path,
     rect {
       fill: ${WHITE};
