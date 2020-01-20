@@ -1,4 +1,4 @@
-import React, { ComponentProps, useState, useEffect } from 'react';
+import React, { ComponentProps, useState, useEffect, FormEvent, ChangeEvent } from 'react';
 import styled from 'styled-components';
 import 'rc-slider/assets/index.css';
 
@@ -23,7 +23,7 @@ type Props = ComponentProps<typeof View> & {
   income?: boolean;
   minimum?: number;
   maximum?: number;
-  value?: Array<number>;
+  values?: Array<number>;
   allOptions?: Array<string>;
   selectedOptions?: Array<string>;
   onSelect?: (filter: string) => void;
@@ -32,6 +32,8 @@ type Props = ComponentProps<typeof View> & {
   onDone?: () => void;
   onSliderChange?: (value: Array<number>) => void;
   onSubmit?: () => void;
+  onLowRangeInputChange?: (lowValue: string) => void;
+  onHighRangeInputChange?: (highValue: string) => void;
 };
 
 export default function Filter(props: Props) {
@@ -47,16 +49,17 @@ export default function Filter(props: Props) {
     selectedOptions = [],
     onSelect,
     onUnSelect,
-    value,
+    values,
     minimum,
     maximum,
     onClear,
     onDone,
     onSliderChange,
     onSubmit,
+    onLowRangeInputChange,
+    onHighRangeInputChange,
     ...otherProps
   } = props;
-
   let [filteredOptions, setFilteredOptions] = useState(allOptions);
   let [searchText, setSearchText] = useState('');
 
@@ -92,7 +95,7 @@ export default function Filter(props: Props) {
               return (
                 <SmallPillButton
                   key={'available' + index}
-                  primary={isSelected}
+                  primary={!!isSelected}
                   onClick={() => {
                     if (isSelected) {
                       onUnSelect && onUnSelect(filter);
@@ -109,7 +112,7 @@ export default function Filter(props: Props) {
         {rangeSlide && (
           <Slider>
             <Range
-              defaultValue={value}
+              defaultValue={[0, maximum || 0]}
               max={maximum}
               min={minimum}
               allowCross={false}
@@ -138,16 +141,18 @@ export default function Filter(props: Props) {
             {income ? (
               <SliderText>
                 <UnSelectedText>${minimum}K</UnSelectedText>
-                <SmallText>
-                  ${value && value[0]}K - ${value && value[1]}K
-                </SmallText>
+                {values && values.length > 1 && (
+                  <SmallText>
+                    {values[0]}K - {values[1]}K
+                  </SmallText>
+                )}
                 <UnSelectedText>${maximum}K</UnSelectedText>
               </SliderText>
             ) : (
               <SliderText>
                 <UnSelectedText>{minimum}</UnSelectedText>
                 <SmallText>
-                  {value && value[0]} - {value && value[1]}
+                  {values && values[0]} - {values && values[1]}
                 </SmallText>
                 <UnSelectedText>{maximum}</UnSelectedText>
               </SliderText>
@@ -156,9 +161,19 @@ export default function Filter(props: Props) {
         )}
         {rangeInput && (
           <RangeInput>
-            <TextInputWithBorder placeholder={'Low'} />
-            <Text style={{ alignSelf: 'center' }}> - </Text>
-            <TextInputWithBorder placeholder={'High'} />
+            <TextInputWithBorder
+              placeholder="Low"
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                onLowRangeInputChange && onLowRangeInputChange(e.target.value);
+              }}
+            />
+            <Dash>-</Dash>
+            <TextInputWithBorder
+              placeholder="High"
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                onHighRangeInputChange && onHighRangeInputChange(e.target.value);
+              }}
+            />
           </RangeInput>
         )}
         {search && (
@@ -228,8 +243,10 @@ const SliderText = styled(View)`
 `;
 const RangeInput = styled(View)`
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   width: '100%';
+  align-items: center;
+  margin-top: 4px;
 `;
 const TitleWrapper = styled(View)`
   flex-direction: row;
@@ -281,4 +298,8 @@ const ClearButton = styled(Button)`
   ${Text} {
     color: ${THEME_COLOR};
   }
+`;
+
+const Dash = styled(Text)`
+  margin: 0px 26px;
 `;
