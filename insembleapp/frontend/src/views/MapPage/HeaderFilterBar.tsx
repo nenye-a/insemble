@@ -9,7 +9,7 @@ import urlSafeLatLng from '../../utils/urlSafeLatLng';
 import { useDispatch, useSelector, useStore } from '../../redux/helpers';
 import { getLocation, loadMap } from '../../redux/actions/space';
 import Legend from '../MapPage/Legend';
-import TextInput from '../LandingPage/TextInput';
+import TextInput from '../../core-ui/ContainedTextInput';
 
 type PlaceResult = google.maps.places.PlaceResult;
 
@@ -79,7 +79,7 @@ export default function HeaderFilterBar() {
         />
         <SaveButton text="Save Search" />
       </RowedView>
-      <LocationsInputContainer
+      <LocationInputContainer
         icon
         ref={inputRef}
         placeholder={'Search an address or retailer'}
@@ -111,7 +111,7 @@ const SaveButton = styled(Button)`
   margin-left: 8px;
 `;
 
-const LocationsInputContainer = styled(TextInput)`
+const LocationInputContainer = styled(TextInput)`
   width: 343px;
   height: 36px;
   border: solid;

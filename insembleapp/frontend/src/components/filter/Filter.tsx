@@ -11,7 +11,7 @@ import {
 import { FONT_SIZE_SMALL, FONT_SIZE_NORMAL } from '../../constants/theme';
 import 'rc-slider/assets/index.css';
 import { Range } from 'rc-slider';
-import TextInput from '../../views/LandingPage/TextInput';
+import TextInput from '../../core-ui/ContainedTextInput';
 
 type Props = {
   visible?: boolean;
