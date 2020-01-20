@@ -20,7 +20,7 @@ export default function MainMap() {
           mode="secondary"
           onPress={() => togglePropertyRecommendation(true)}
           text="Show Property List"
-          icon={<SvgPropertyLocation style={{ marginRight: 5 }} />}
+          icon={<SvgPropertyLocation />}
         />
         <SideBarFilters />
         <MapContainer />

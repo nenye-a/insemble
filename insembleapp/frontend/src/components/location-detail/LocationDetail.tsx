@@ -19,19 +19,14 @@ type Props = {
 
 export default function LocationDetail(props: Props) {
   let { population, income, age, gender, ethnicity, title, onSeeMore, visible, subTitle } = props;
-  let LeftText = `
-  3 Miles Populations:
-  Median Income:
-  Average Age:
-  Gender:
-  Top Ethnicity:`;
-  let RightText = `
-  ${population}
-  ${income}
-  ${age} years
-  ${gender}
-  ${ethnicity}
-  `;
+  let leftText = [
+    '3 Mile Population:',
+    'Median Income:',
+    'Average Age:',
+    'Gender:',
+    'Top Ethnicity:',
+  ];
+  let rightText = [population, income, age + 'years', gender, ethnicity.join(', ')];
   return visible ? (
     <Container
       mode={'with-title'}
@@ -41,12 +36,16 @@ export default function LocationDetail(props: Props) {
     >
       <ContentContainer>
         <LeftColumn>
-          <SmallText>{LeftText}</SmallText>
+          {leftText.map((line) => (
+            <SmallText>{line}</SmallText>
+          ))}
         </LeftColumn>
         <RightColumn>
-          <RightColumnText>{RightText}</RightColumnText>
+          {rightText.map((line) => (
+            <RightColumnText>{line}</RightColumnText>
+          ))}
           <TouchableOpacity onPress={onSeeMore}>
-            <SeeMore>click again to see more</SeeMore>
+            <SeeMore>Click again to see more</SeeMore>
           </TouchableOpacity>
         </RightColumn>
       </ContentContainer>
@@ -66,26 +65,24 @@ const ContentContainer = styled(View)`
 const LeftColumn = styled(View)`
   flex: 1;
   align-items: flex-start;
-  margin: -10px 0 0 0;
 `;
 const RightColumn = styled(View)`
   flex: 1;
   align-items: flex-end;
   text-align: right;
-  margin: -10px 0 0 0;
 `;
 const RightColumnText = styled(Text)`
   color: ${THEME_COLOR};
   font-size: ${FONT_SIZE_SMALL};
-  line-height: 25px;
+  margin: 10px 0 0 0;
 `;
 const SmallText = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
-  line-height: 25px;
+  margin: 10px 0 0 0;
 `;
 const SeeMore = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
   font-style: italic;
   color: ${THEME_COLOR};
-  margin: -15px 0 5px 0;
+  margin: 10px 0 5px 0;
 `;

@@ -217,7 +217,7 @@ function MapContainer() {
                 defaultVisible={true}
                 options={{
                   disableAutoPan: false,
-                  pixelOffset: new google.maps.Size(-150, -45 + -infoBoxHeight),
+                  pixelOffset: new google.maps.Size(-150, -45 - infoBoxHeight),
                   infoBoxClearance: new google.maps.Size(1, 1),
                   isHidden: false,
                   pane: 'floatPane',
@@ -225,7 +225,7 @@ function MapContainer() {
                   closeBoxMargin: '10px 0 2px 2px',
                 }}
                 onDomReady={() => {
-                  let infoBox = document.getElementsByClassName('infoBox')[0];
+                  let infoBox = document.querySelector('.infoBox');
                   if (infoBox) {
                     let infoBoxHeight = infoBox.getClientRects()[0].height;
                     setInfoBoxHeight(infoBoxHeight);
@@ -239,7 +239,7 @@ function MapContainer() {
                 <LocationDetail
                   visible
                   title={marker.address}
-                  subTitle={'Detail Address'}
+                  subTitle={'Address Details'}
                   income={marker.income}
                   population={marker.pop}
                   age={50}

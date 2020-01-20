@@ -3,6 +3,7 @@ const LIGHTEST_GREY = '#FBFBFB';
 const LIGHT_GREY = '#C5C5C5';
 const DETAIL_GREY = '#727272';
 const DARK_DETAIL = '#4B4B4B';
+const RED = '#FF0000';
 
 export const WHITE = '#FFFFFF';
 
@@ -14,3 +15,4 @@ export const UNSELECTED_TEXT_COLOR = LIGHT_GREY;
 export const BOTTOM_CARD_COLOR = LIGHTEST_GREY;
 export const TEXT_INPUT_BORDER_COLOR = '#B2B2B2';
 export const BUTTON_BORDER_COLOR = DETAIL_GREY;
+export const BADGE_COLOR = RED;
