@@ -102,6 +102,7 @@ export default function HeaderFilterBar() {
           onSelect={(item: string) => setTagSelected(item, false)}
           onUnSelect={(item: string) => setTagSelected(item, true)}
           placeholder="Select Category"
+          onClear={() => setSelectedOptions([])}
         />
         <Dropdown
           selectedValue={selectedDropdownValue}
