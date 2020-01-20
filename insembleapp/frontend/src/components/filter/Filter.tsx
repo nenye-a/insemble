@@ -1,6 +1,5 @@
 import React, { ComponentProps, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Range } from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
 import { View, Text, PillButton, Card, Button } from '../../core-ui';
@@ -11,7 +10,9 @@ import {
   TEXT_INPUT_BORDER_COLOR,
 } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_SIZE_NORMAL } from '../../constants/theme';
-import TextInput from '../../views/LandingPage/TextInput';
+import 'rc-slider/assets/index.css';
+import { Range } from 'rc-slider';
+import TextInput from '../../core-ui/ContainedTextInput';
 
 type Props = ComponentProps<typeof View> & {
   visible?: boolean;
