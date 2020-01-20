@@ -1,6 +1,5 @@
 import React, { ComponentProps, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Range } from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
 import { View, Text, PillButton, Card, Button } from '../../core-ui';
