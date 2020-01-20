@@ -2,34 +2,13 @@ import React from 'react';
 import { IconProps } from '../../types/types';
 
 const SvgCheck = (props: IconProps) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-    <g id="Group_135" data-name="Group 135" transform="translate(-477 -364)">
-      <g
-        id="noun_Check_Mark_2080029"
-        data-name="noun_Check Mark_2080029"
-        transform="translate(357.948 432.155)"
-      >
-        <g id="Group_66" data-name="Group 66" transform="translate(122.052 -64.155)">
-          <path
-            id="Path_62"
-            data-name="Path 62"
-            d="M5.862,10.57,17.144-.007c.517-.47,1.316.282.846.8L6.473,14.848a.577.577,0,0,1-.893,0L.268,7.938a.587.587,0,0,1,.8-.846Z"
-            transform="translate(-0.133 0.155)"
-            fill="#ffffff"
-            fill-rule="evenodd"
-          />
-        </g>
-      </g>
-      <rect
-        id="Rectangle_208"
-        data-name="Rectangle 208"
-        width="24"
-        height="24"
-        transform="translate(477 364)"
-        fill="none"
-        opacity="0"
-      />
-    </g>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" {...props}>
+    <path
+      d="M5.862,10.57,17.144-.007c.517-.47,1.316.282.846.8L6.473,14.848a.577.577,0,0,1-.893,0L.268,7.938a.587.587,0,0,1,.8-.846Z"
+      transform="translate(2.867 4.155)"
+      fill="#ffffff"
+      fillRule="evenodd"
+    />
   </svg>
 );
 
