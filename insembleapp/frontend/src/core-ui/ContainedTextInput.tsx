@@ -1,8 +1,8 @@
 import React, { ComponentProps, forwardRef, Ref } from 'react';
 import styled from 'styled-components';
-import { FONT_FAMILY_NORMAL, FONT_SIZE_MEDIUM } from '../../constants/theme';
-import SvgSearch from '../../components/icons/search';
-import { TouchableOpacity } from '../../core-ui';
+import { FONT_FAMILY_NORMAL, FONT_SIZE_MEDIUM } from '../constants/theme';
+import SvgSearch from '../components/icons/search';
+import { TouchableOpacity } from '.';
 
 type ButtonProps = ComponentProps<'button'>;
 type InputProps = ComponentProps<'input'>;

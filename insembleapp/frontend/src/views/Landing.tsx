@@ -4,7 +4,7 @@ import { Redirect, useHistory } from 'react-router-dom';
 import Title from './LandingPage/Title';
 import Masthead from './LandingPage/Masthead';
 import LocationsInput from './LandingPage/LocationsInput';
-import TextInput from './LandingPage/TextInput';
+import TextInput from '../core-ui/ContainedTextInput';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import { session } from '../utils/storage';
 import { useSelector, useDispatch, useStore } from '../redux/helpers';
