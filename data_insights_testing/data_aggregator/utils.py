@@ -7,7 +7,6 @@ efficient & powerful
 
 '''
 
-
 # provided two lat & lng tuples, function returns distance in miles:
 # geo = (lat, lng)
 def distance(geo1, geo2):
