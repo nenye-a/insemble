@@ -18,7 +18,7 @@ function Touchable(props: Props) {
       href={href}
       target={isLink && !isLocalLink ? '_blank' : undefined}
       {...otherProps}
-      onClick={(event: MouseEvent<any>) => {
+      onClick={(event: MouseEvent) => {
         if (isLocalLink && !(event.metaKey || event.ctrlKey)) {
           event.preventDefault();
         }

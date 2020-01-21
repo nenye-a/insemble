@@ -2,9 +2,8 @@ import React, { ReactNode, ComponentProps } from 'react';
 import styled from 'styled-components';
 import View from './View';
 import Text from './Text';
-import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
+import { DEFAULT_BORDER_RADIUS, FONT_SIZE_SMALL } from '../constants/theme';
 import { THEME_COLOR, WHITE } from '../constants/colors';
-import { FONT_SIZE_SMALL } from '../constants/theme';
 
 type TextProps = ComponentProps<typeof Text>;
 type ViewProps = ComponentProps<typeof View>;

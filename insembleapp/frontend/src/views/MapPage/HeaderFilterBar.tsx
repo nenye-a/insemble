@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
@@ -30,7 +30,7 @@ export default function HeaderFilterBar() {
       loadMap(true)(dispatch, getState);
       history.push(`/verify/${placeID}`);
     }
-  }, [locationLoaded]);
+  }, [locationLoaded, dispatch, getState, history, submittingPlace]);
 
   let onSubmit = (place: PlaceResult) => {
     let placeID = place.place_id || '';
@@ -49,11 +49,11 @@ export default function HeaderFilterBar() {
     }
   };
 
-  let submitHandler = useCallback(() => {
+  let submitHandler = () => {
     if (selectedPlace.current) {
       onSubmit(selectedPlace.current);
     }
-  }, [onSubmit]);
+  };
 
   useEffect(() => {
     if (inputRef.current) {

@@ -1,7 +1,6 @@
 import React, { ComponentProps, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
-import { THEME_COLOR, WHITE } from '../constants/colors';
-import { BUTTON_BORDER_COLOR, TEXT_COLOR } from '../constants/colors';
+import { THEME_COLOR, WHITE, BUTTON_BORDER_COLOR, TEXT_COLOR } from '../constants/colors';
 import TouchableOpacity from './TouchableOpacity';
 import Text from './Text';
 import Badge from './Badge';
