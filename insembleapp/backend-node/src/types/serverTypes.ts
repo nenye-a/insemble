@@ -1,5 +1,5 @@
-import {Request} from 'express';
-import {Prisma} from "../generated/prisma-client";
+import { Request } from 'express';
+import { Prisma } from '../generated/prisma-client';
 
 export type Root = object | undefined;
 export type Context = {

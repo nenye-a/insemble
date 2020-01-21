@@ -1,7 +1,7 @@
-import {feedbacks} from './feedback/feedbackQuery'
+import { feedbacks } from './feedback/feedbackQuery';
 
 export default {
     Query: {
-        feedbacks
-    }
-}
+        feedbacks,
+    },
+};

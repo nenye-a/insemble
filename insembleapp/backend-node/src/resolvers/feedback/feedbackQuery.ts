@@ -1,9 +1,9 @@
-import {Root, Context} from 'serverTypes';
-import {FeedbackWhereInput} from '../../generated/prisma-client';
+import { Root, Context } from 'serverTypes';
+import { FeedbackWhereInput } from '../../generated/prisma-client';
 
 function feedbacks(
     _: Root,
-    { where}: {where: FeedbackWhereInput;},
+    { where }: { where: FeedbackWhereInput },
     { prisma }: Context,
 ) {
     return prisma.feedbacks({
@@ -16,4 +16,4 @@ function feedbacks(
 //     return prisma.feedback({id});
 // }
 
-export {feedbacks}
+export { feedbacks };

@@ -1,6 +1,6 @@
-import { GraphQLServer } from 'graphql-yoga'
-import resolvers from './resolvers'
-import {prisma} from './generated/prisma-client/'
+import { GraphQLServer } from 'graphql-yoga';
+import resolvers from './resolvers';
+import { prisma } from './generated/prisma-client/';
 
 const server = new GraphQLServer({
     typeDefs: './src/schema.graphql',
@@ -8,7 +8,7 @@ const server = new GraphQLServer({
     context: {
         prisma,
     },
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any);
 
 // eslint-disable-next-line no-console
