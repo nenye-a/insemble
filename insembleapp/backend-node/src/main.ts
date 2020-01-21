@@ -8,6 +8,8 @@ const server = new GraphQLServer({
     context: {
         prisma,
     },
-} as any)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+} as any);
 
-server.start(() => console.log('Server is running on http://localhost:4000'))
+// eslint-disable-next-line no-console
+server.start(() => console.log('Server is running on http://localhost:4000'));
