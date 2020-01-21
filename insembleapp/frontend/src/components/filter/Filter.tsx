@@ -1,4 +1,4 @@
-import React, { ComponentProps, useState, useEffect, FormEvent, ChangeEvent } from 'react';
+import React, { ComponentProps, useState, useEffect, ChangeEvent } from 'react';
 import styled from 'styled-components';
 import 'rc-slider/assets/index.css';
 

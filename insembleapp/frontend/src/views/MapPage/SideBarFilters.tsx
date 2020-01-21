@@ -86,6 +86,7 @@ export default function SideBarFilters() {
       demographics: demographicsWithOptions,
       properties: propertiesWithOptions,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   let getFilterProps = (name: string | null) => {
