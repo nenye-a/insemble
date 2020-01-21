@@ -12,21 +12,24 @@ import { THEME_COLOR } from '../constants/colors';
 function Verify() {
   let { placeID } = useParams();
   let history = useHistory();
+  let fallbackAddress = useSelector((state) =>
+    state.space.location && typeof state.space.location.address === 'string'
+      ? state.space.location.address
+      : ''
+  );
 
   let place;
   if (placeID != null) {
     place = session.get('place', placeID);
   }
-  let name: string = '';
-  let address: string = '';
+  let name = '';
+  let address = '';
   if (place != null) {
     name = place.name;
-    address = place.formatted_address as string;
+    address = place.formatted_address || '';
   } else {
     name = session.get('sessionStoreName') || '';
-    address = useSelector(
-      (state: any): string => (state.space.location && state.space.location.address) || ''
-    );
+    address = fallbackAddress;
   }
 
   let mapURL = place
@@ -55,7 +58,7 @@ function Verify() {
             }}
             style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}
           />
-          <View style={{ width: 5 }}></View>
+          <View style={{ width: 5 }} />
           <Button
             mode="secondary"
             text="No"

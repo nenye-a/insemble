@@ -11,7 +11,7 @@
     "test:watch": "npm test -- --watch",
     "start": "babel-node server.js",
     "build": "NODE_ENV=production webpack -p --progress --colors --config webpack.prod.config.js --bail",
-    "lint": "eslint --max-warnings 0 frontend",
+    "lint": "eslint --max-warnings 0 \"frontend/src/**/*.{js,jsx,ts,tsx}\"",
     "typecheck": "tsc --noEmit -p .",
     "format": "prettier --write \"frontend/src/**/*.{js,jsx,ts,tsx}\"",
     "format:check": "prettier --check \"frontend/src/**/*.{js,jsx,ts,tsx}\"",

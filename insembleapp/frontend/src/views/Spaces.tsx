@@ -5,11 +5,11 @@ import LoadingOverlay from 'react-loading-overlay';
 import MapContainer from './MapContainer';
 import { useSelector } from '../redux/helpers';
 
-type LatLngLiteral = google.maps.LatLngLiteral;
+// type LatLngLiteral = google.maps.LatLngLiteral;
 
 function Spaces() {
-  let markers: Array<LatLngLiteral> = [];
-  let heats: Array<any> = [];
+  // let markers: Array<LatLngLiteral> = [];
+  // let heats: Array<any> = [];
   let mapIsLoading = useSelector((state) => state.space.mapIsLoading);
   return (
     <LoadingOverlay
