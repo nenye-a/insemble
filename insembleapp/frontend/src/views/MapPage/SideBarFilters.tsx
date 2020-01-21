@@ -31,15 +31,15 @@ export default function SideBarFilters() {
 
   useEffect(() => {
     // TODO: fetch backend to get option values
-    let demographicsWithOptions = [...demographics].map((item) => {
+    let demographicsWithOptions = demographics.map((item) => {
       let allOptions;
       switch (item.name) {
         case DEMOGRAPHICS_CATEGORIES.gender: {
-          allOptions = ['Female', 'Male', 'Others'];
+          allOptions = ['Female', 'Male', 'Other'];
           break;
         }
         case DEMOGRAPHICS_CATEGORIES.psychographic: {
-          allOptions = ['Sporty', 'Love Nature', 'Others'];
+          allOptions = ['Sporty', 'Love Nature', 'Other'];
           break;
         }
         case DEMOGRAPHICS_CATEGORIES.ethnicity: {
@@ -72,7 +72,7 @@ export default function SideBarFilters() {
       }
       return { ...item, allOptions };
     });
-    let propertiesWithOptions = [...properties].map((item) => {
+    let propertiesWithOptions = properties.map((item) => {
       let allOptions;
       switch (item.name) {
         case PROPERTIES_CATEGORIES.propertyType: {
@@ -82,7 +82,7 @@ export default function SideBarFilters() {
       return { ...item, allOptions };
     });
     dispatch({
-      type: 'ON_OPTIONS_FETCH_SUCCESS',
+      type: 'OPTIONS_FETCH_SUCCESS',
       demographics: demographicsWithOptions,
       properties: propertiesWithOptions,
     });
@@ -102,7 +102,7 @@ export default function SideBarFilters() {
           values: selectedValues.length > 1 ? selectedValues : [0, 800],
           onSliderChange: (values: Array<number>) => {
             dispatch({
-              type: 'ON_SLIDE_CHANGE',
+              type: 'SLIDE_CHANGE',
               name: DEMOGRAPHICS_CATEGORIES.income,
               selectedValues: values,
             });
@@ -116,7 +116,7 @@ export default function SideBarFilters() {
           values: selectedValues.length > 1 ? selectedValues : [1, 100],
           onSliderChange: (values: Array<number>) => {
             dispatch({
-              type: 'ON_SLIDE_CHANGE',
+              type: 'SLIDE_CHANGE',
               name: DEMOGRAPHICS_CATEGORIES.age,
               selectedValues: values,
             });
@@ -135,11 +135,11 @@ export default function SideBarFilters() {
           selectedOptions: selectedValues,
           allOptions: found.allOptions || [],
           onSelect: (item: string) => {
-            dispatch({ type: 'ON_PILL_SELECT', name: openFilterName, selectedItem: item });
+            dispatch({ type: 'PILL_SELECT', name: openFilterName, selectedItem: item });
           },
           onUnSelect: (item: string) => {
             dispatch({
-              type: 'ON_PILL_UNSELECT',
+              type: 'PILL_UNSELECT',
               name: openFilterName,
               selectedItem: item,
             });
@@ -154,11 +154,11 @@ export default function SideBarFilters() {
           selectedOptions: selectedValues,
           allOptions: found.allOptions || [],
           onSelect: (item: string) => {
-            dispatch({ type: 'ON_PILL_SELECT', name: openFilterName, selectedItem: item });
+            dispatch({ type: 'PILL_SELECT', name: openFilterName, selectedItem: item });
           },
           onUnSelect: (item: string) => {
             dispatch({
-              type: 'ON_PILL_UNSELECT',
+              type: 'PILL_UNSELECT',
               name: openFilterName,
               selectedItem: item,
             });
@@ -172,14 +172,14 @@ export default function SideBarFilters() {
           rangeInput: true,
           onLowRangeInputChange: (value: string) => {
             dispatch({
-              type: 'ON_LOW_RANGE_CHANGE',
+              type: 'LOW_RANGE_CHANGE',
               name: openFilterName,
               value,
             });
           },
           onHighRangeInputChange: (value: string) => {
             dispatch({
-              type: 'ON_HIGH_RANGE_CHANGE',
+              type: 'HIGH_RANGE_CHANGE',
               name: openFilterName,
               value,
             });
@@ -200,7 +200,7 @@ export default function SideBarFilters() {
           contentStyle={{ overflowY: 'scroll', flex: 1 }}
           onOptionPress={(item) => {
             dispatch({
-              type: 'ON_OPTION_PRESS',
+              type: 'OPTION_PRESS',
               name: item.name,
             });
           }}
@@ -213,7 +213,7 @@ export default function SideBarFilters() {
           contentStyle={{ overflowY: 'scroll', flex: 1 }}
           onOptionPress={(item) => {
             dispatch({
-              type: 'ON_OPTION_PRESS',
+              type: 'OPTION_PRESS',
               name: item.name,
             });
           }}
@@ -226,12 +226,12 @@ export default function SideBarFilters() {
         title={openFilterName}
         onDone={() => {
           dispatch({
-            type: 'ON_DONE_PRESS',
+            type: 'DONE_PRESS',
           });
         }}
         onClear={() => {
           dispatch({
-            type: 'ON_CLEAR_PRESS',
+            type: 'CLEAR_PRESS',
             name: openFilterName,
           });
         }}

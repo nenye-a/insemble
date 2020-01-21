@@ -23,43 +23,43 @@ type State = {
 
 type Action =
   | {
-      type: 'ON_PILL_SELECT';
+      type: 'PILL_SELECT';
       name: string | null;
       selectedItem: string;
     }
   | {
-      type: 'ON_PILL_UNSELECT';
+      type: 'PILL_UNSELECT';
       name: string | null;
       selectedItem: string;
     }
   | {
-      type: 'ON_SLIDE_CHANGE';
+      type: 'SLIDE_CHANGE';
       name: string | null;
       selectedValues: Array<number>;
     }
   | {
-      type: 'ON_CLEAR_PRESS';
+      type: 'CLEAR_PRESS';
       name: string | null;
     }
   | {
-      type: 'ON_OPTION_PRESS';
+      type: 'OPTION_PRESS';
       name: string | null;
     }
   | {
-      type: 'ON_DONE_PRESS';
+      type: 'DONE_PRESS';
     }
   | {
-      type: 'ON_OPTIONS_FETCH_SUCCESS';
+      type: 'OPTIONS_FETCH_SUCCESS';
       demographics: Array<FilterObj>;
       properties: Array<FilterObj>;
     }
   | {
-      type: 'ON_LOW_RANGE_CHANGE';
+      type: 'LOW_RANGE_CHANGE';
       name: string | null;
       value: string;
     }
   | {
-      type: 'ON_HIGH_RANGE_CHANGE';
+      type: 'HIGH_RANGE_CHANGE';
       name: string | null;
       value: string;
     };
@@ -67,7 +67,7 @@ type Action =
 export default function sideBarFiltersReducer(state: State, action: Action): State {
   let { demographics, properties } = state;
   switch (action.type) {
-    case 'ON_PILL_SELECT': {
+    case 'PILL_SELECT': {
       let foundFilterObject = [...demographics, ...properties].find(
         (filter) => filter.name === action.name
       );
@@ -94,7 +94,7 @@ export default function sideBarFiltersReducer(state: State, action: Action): Sta
       }
       return state;
     }
-    case 'ON_PILL_UNSELECT': {
+    case 'PILL_UNSELECT': {
       let foundFilterObject = [...demographics, ...properties].find(
         (filter) => filter.name === action.name
       );
@@ -124,7 +124,7 @@ export default function sideBarFiltersReducer(state: State, action: Action): Sta
       }
       return state;
     }
-    case 'ON_SLIDE_CHANGE': {
+    case 'SLIDE_CHANGE': {
       let foundFilterObject = [...demographics, ...properties].find(
         (filter) => filter.name === action.name
       );
@@ -139,7 +139,7 @@ export default function sideBarFiltersReducer(state: State, action: Action): Sta
       }
       return state;
     }
-    case 'ON_CLEAR_PRESS': {
+    case 'CLEAR_PRESS': {
       let foundFilterObject = [...demographics, ...properties].find(
         (filter) => filter.name === action.name
       );
@@ -161,16 +161,16 @@ export default function sideBarFiltersReducer(state: State, action: Action): Sta
 
       return state;
     }
-    case 'ON_OPTION_PRESS': {
+    case 'OPTION_PRESS': {
       return { ...state, openFilterName: action.name };
     }
-    case 'ON_DONE_PRESS': {
+    case 'DONE_PRESS': {
       return { ...state, openFilterName: null };
     }
-    case 'ON_OPTIONS_FETCH_SUCCESS': {
+    case 'OPTIONS_FETCH_SUCCESS': {
       return { ...state, demographics: action.demographics, properties: action.properties };
     }
-    case 'ON_LOW_RANGE_CHANGE': {
+    case 'LOW_RANGE_CHANGE': {
       let newProperties = [...properties].map((item) => {
         if (item.name === action.name) {
           let selectedValues = [action.value, item.selectedValues[1]];
@@ -180,7 +180,7 @@ export default function sideBarFiltersReducer(state: State, action: Action): Sta
       });
       return { ...state, properties: newProperties as Array<FilterObj> };
     }
-    case 'ON_HIGH_RANGE_CHANGE': {
+    case 'HIGH_RANGE_CHANGE': {
       let newProperties = [...properties].map((item) => {
         if (item.name === action.name) {
           let selectedValues = [item.selectedValues[0], action.value];
