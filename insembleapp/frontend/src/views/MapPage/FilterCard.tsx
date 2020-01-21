@@ -1,26 +1,20 @@
-import React, { ComponentProps, CSSProperties, ComponentType } from 'react';
+import React, { ComponentProps, CSSProperties } from 'react';
 import styled, { css } from 'styled-components';
 import { Card, Text, View, TouchableOpacity } from '../../core-ui';
 import { FONT_SIZE_XSMALL } from '../../constants/theme';
 import { SECONDARY_COLOR, WHITE, THEME_COLOR } from '../../constants/colors';
-import { IconProps } from '../../types/types';
-
-type Option = {
-  name: string;
-  icon: ComponentType<IconProps>;
-  selectedValues?: string | Array<string>;
-  // need to add more properties to save the filter pop up data from backend
-};
+import { FilterObj } from '../../reducers/sideBarFiltersReducer';
 
 type Props = ComponentProps<typeof View> & {
   title: string;
-  options: Array<Option>;
-  onOptionPress?: (value: Option) => void;
+  options: Array<FilterObj>;
+  onOptionPress?: (value: FilterObj) => void;
   contentStyle?: CSSProperties;
+  openFilterName: string | null;
 };
 
 export default function FilterCard(props: Props) {
-  let { title, options, contentStyle, onOptionPress, ...otherProps } = props;
+  let { title, options, contentStyle, onOptionPress, openFilterName, ...otherProps } = props;
   return (
     <Card
       title={title}
@@ -31,17 +25,20 @@ export default function FilterCard(props: Props) {
       {...otherProps}
     >
       <View style={contentStyle}>
-        {options.map((item, i) => (
+        {options.map((item, index) => (
           <OptionItem
-            key={i}
-            selected={item.selectedValues && item.selectedValues !== ''}
+            key={item.name + index}
+            selected={item.selectedValues && item.selectedValues.length > 0}
             onPress={() => onOptionPress && onOptionPress(item)}
+            isOpen={openFilterName === item.name}
           >
-            <item.icon />
+            <View style={{ width: 24, height: 24 }}>
+              <item.icon />
+            </View>
             <View style={{ marginLeft: 5 }}>
               <Text>{item.name}</Text>
               {item.selectedValues && (
-                <Text fontSize={FONT_SIZE_XSMALL}>{item.selectedValues}</Text>
+                <Text fontSize={FONT_SIZE_XSMALL}>{item.selectedValues.join(', ')}</Text>
               )}
             </View>
           </OptionItem>
@@ -53,6 +50,7 @@ export default function FilterCard(props: Props) {
 
 type OptionItemProps = ComponentProps<typeof TouchableOpacity> & {
   selected: boolean;
+  isOpen: boolean;
 };
 
 const OptionItem = styled(TouchableOpacity)<OptionItemProps>`
@@ -61,15 +59,18 @@ const OptionItem = styled(TouchableOpacity)<OptionItemProps>`
   height: 36px;
   padding: 12px;
   margin-top: 2px;
+  overflow: hidden;
   &:last-child {
     margin-bottom: 2px;
   }
-  &:hover {
+  &:hover,
+  &:focus {
     background-color: ${SECONDARY_COLOR};
   }
   &:hover ${Text} {
     color: ${WHITE};
   }
+
   &:hover {
     path,
     rect {
@@ -77,7 +78,7 @@ const OptionItem = styled(TouchableOpacity)<OptionItemProps>`
     }
   }
   ${(props) =>
-    props.selected &&
+    (props.selected || props.isOpen) &&
     css`
       background-color: ${THEME_COLOR};
       ${Text} {
