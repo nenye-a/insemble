@@ -1,4 +1,8 @@
-type User {
-  id: ID! @id
-  name: String!
+type Feedback @db(name: "feedback_feedback") {
+   _id: ID! @id
+   id: Int!
+   user: String!
+   content: String
+   type: String!
+   timeStamp: DateTime! @db(name: "time_stamp")
 }
