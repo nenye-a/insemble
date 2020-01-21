@@ -28,7 +28,7 @@ export default function LocationDetail(props: Props) {
   let rightText = [population, income, age + 'years', gender, ethnicity.join(', ')];
   return visible ? (
     <Container
-      mode={'with-title'}
+      titleBackground="purple"
       title={title}
       subTitle={subTitle}
       titleProps={{ fontWeight: FONT_WEIGHT_MEDIUM }}
