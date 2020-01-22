@@ -1,7 +1,6 @@
 from decouple import config
 import utils
 import requests
-import json
 
 '''
 
@@ -39,7 +38,7 @@ def find(address, name="", bias='ipbias'):
     response = requests.request(
         "GET", url, headers=headers, data=payload, params=params)
 
-    response = json.loads(response.text)
+    response = response.json()
     place = response['candidates'][0]  # first candidate is the actual place
 
     return place
@@ -76,7 +75,7 @@ def nearby(lat, lng, category, radius=1, pagetoken=None):
 
     response = requests.request(
         "GET", url, headers=headers, data=payload, params=params)
-    result = json.loads(response.text)
+    result = response.json()
 
     # evaluate if call failed due to unstaged google next page. If so, try again
     # otherwise, return None. Proceed to check if there's a new page. Paths should
@@ -114,7 +113,7 @@ def details(place_id, fields=None):
 
     response = requests.request(
         "GET", url, headers=headers, data=payload, params=params)
-    response = json.loads(response.text)
+    response = response.json()
     details = response['result']
 
     # TODO: perhaps want to smart search
@@ -152,7 +151,7 @@ def search(lat, lng, query, radius=1, pagetoken=None):
 
     response = requests.request(
         "GET", url, headers=headers, data=payload, params=params)
-    result = json.loads(response.text)
+    result = response.json()
 
     next_page = None
     if result['status'] == 'INVALID_REQUEST':

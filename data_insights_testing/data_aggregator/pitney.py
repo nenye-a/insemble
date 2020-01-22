@@ -1,6 +1,5 @@
 from decouple import config
 import requests
-import json
 import time
 
 '''
@@ -66,15 +65,17 @@ def poi_within_area(country, state, city, zip_code=None, sic_codes=None,
 
     response = requests.request(
         "GET", url, headers=headers, data=payload, params=params)
-    result = json.loads(response.text)
+    result = response.json()
 
     if 'poi' not in result:
         return "None"
 
+    # Determine what the true max results are based on settings & availability
     total_num_of_pois = int(result['totalMatchingCandidates'])
     max_results = min(
         total_num_of_pois, max_results) if max_results != 'all' else total_num_of_pois
 
+    # If we have more results to get, recursively get the next page
     if page * max_pois_per_page < max_results:
         page += 1
         time.sleep(0.25)  # time just to not DDOS API
