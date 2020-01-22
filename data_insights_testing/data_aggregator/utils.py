@@ -1,27 +1,39 @@
+import sys
+import os
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)  # include data_insights_testing in path
 import geopy.distance
 import math
 import anmspatial
-
+from mongo_connect import Connect
 
 '''
 
-Utility methods that are used to make the overall dataset building more
+Utility methods & fields that are used to make the overall dataset building more
 efficient & powerful
 
 '''
 
 MILES_TO_METERS_FACTOR = 1609.34
 EARTHS_RADIUS_MILES = 3958.8
+DB_SPACE = Connect.get_connection().spaceData
+
+
+#from a list of sics in text form, get sics
+def get_sics_from_txt(file_name):
+    f = open(file_name, 'r')
+    sics = f.readlines()
+    sics = [sic[:4] for sic in sics]
+    return sics
 
 
 # flattens a list of lists
 def flatten(l):
     return [item for sublist in l for item in sublist]
 
+
 # provided two lat & lng tuples, function returns distance in miles:
 # geo = (lat, lng)
-
-
 def distance(geo1, geo2):
     # calculate if item is beyond a certain distance
     mile_distance = geopy.distance.distance(geo1, geo2).miles
@@ -99,6 +111,7 @@ def intersecting_block_groups(lat, lng, radius, state=None):
     return flatten(unflat_block_groups)
 
 
+
 if __name__ == "__main__":
 
     def test_location_at_distance():
@@ -116,4 +129,12 @@ if __name__ == "__main__":
         lng = -118.276942
         print(intersecting_block_groups(lat, lng, .1, 'CA'))
 
-    test_intersecting_block_groups()
+    def test_get_sics():
+        filename = 'pitney_sics.txt'
+        get_sics_from_txt(filename)
+
+    sics = get_sics_from_txt('pitney_sics.txt')
+    DB_SPACE.sics.insert({
+        'sics': sics
+    })
+    
