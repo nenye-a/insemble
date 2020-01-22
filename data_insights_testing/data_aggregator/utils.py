@@ -2,7 +2,7 @@ import geopy.distance
 
 '''
 
-Utility methods that can be used to make the overall dataset building more
+Utility methods that are used to make the overall dataset building more
 efficient & powerful
 
 '''

@@ -6,7 +6,7 @@ import time
 
 '''
 
-All google related methods to build locations
+All google related methods to confirm a location, and build dataset of all information needed.
 
 '''
 
