@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { View, Text } from '../../core-ui';
+import { View, Text, Modal } from '../../core-ui';
 import PhotoGallery from './PhotoGallery';
 import SummaryCard from './SummaryCard';
 import DescriptionCard from './DescriptionCard';
@@ -19,31 +19,23 @@ export default function LocationDeepDiveModal(props: Props) {
   if (visible) {
     return (
       <Modal>
-        <ModalDialog>
-          <TourContainer>
-            <Text>3D Tour</Text>
-          </TourContainer>
-          <PropertyDeepDiveHeader isLiked={isLiked} onLikePress={toggleIsLiked} />
-          <RowedView flex>
-            <PhotoGallery images={PHOTOS} />
-            <CardsContainer flex>
-              <SummaryCard {...PROPERTY_SUMMARY} />
-              <Spacing />
-              <DescriptionCard content={PROPERTY_DESCRIPTION} />
-            </CardsContainer>
-          </RowedView>
-        </ModalDialog>
+        <TourContainer>
+          <Text>3D Tour</Text>
+        </TourContainer>
+        <PropertyDeepDiveHeader isLiked={isLiked} onLikePress={toggleIsLiked} />
+        <RowedView flex>
+          <PhotoGallery images={PHOTOS} />
+          <CardsContainer flex>
+            <SummaryCard {...PROPERTY_SUMMARY} />
+            <Spacing />
+            <DescriptionCard content={PROPERTY_DESCRIPTION} />
+          </CardsContainer>
+        </RowedView>
       </Modal>
     );
   }
   return null;
 }
-
-const ModalDialog = styled(View)`
-  background: ${WHITE};
-  width: 960px;
-  height: 100%;
-`;
 
 const CardsContainer = styled(View)`
   padding: 16px;
@@ -51,22 +43,14 @@ const CardsContainer = styled(View)`
 const Spacing = styled(View)`
   height: 12px;
 `;
-const Modal = styled(View)`
-  background: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 99;
-  align-items: center;
-`;
 
 const TourContainer = styled(View)`
   height: 320px;
   justify-content: center;
   align-items: center;
+  background-color: grey;
 `;
+
 const RowedView = styled(View)`
   flex-direction: row;
   align-items: flex-start;
