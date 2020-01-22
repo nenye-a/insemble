@@ -79,16 +79,19 @@ def nearby(lat, lng, category, radius=1, pagetoken=None):
         "GET", url, headers=headers, data=payload, params=params)
     result = json.loads(response.text)
 
-    # if new page request fails, try again until it completes
-    if pagetoken and result['status'] == 'INVALID_REQUEST':
-        time.sleep(1)
+    # evaluate if call failed due to unstaged google next page. If so, try again
+    # otherwise, return None. Proceed to check if there's a new page. Paths should
+    # never be possible to occur at the same time but elif for extra safety
+    next_page = None
+    if result['status'] == 'INVALID_REQUEST':
+        if not pagetoken:
+            return None
         next_page = nearby(lat, lng, category, pagetoken=pagetoken)
-        result["results"].extend(next_page)
-
-    # call to get he next page
-    if "next_page_token" in result:
+    elif "next_page_token" in result:
         next_page_token = result["next_page_token"]
         next_page = nearby(lat, lng, category, pagetoken=next_page_token)
+
+    if next_page:
         result['results'].extend(next_page)
 
     return result['results']
@@ -152,16 +155,16 @@ def search(lat, lng, query, radius=1, pagetoken=None):
         "GET", url, headers=headers, data=payload, params=params)
     result = json.loads(response.text)
 
-    # if new page request fails, try again until it completes
-    if pagetoken and result['status'] == 'INVALID_REQUEST':
-        time.sleep(1)
+    next_page = None
+    if result['status'] == 'INVALID_REQUEST':
+        if not pagetoken:
+            return None
         next_page = search(lat, lng, query, pagetoken=pagetoken)
-        result["results"].extend(next_page)
-
-    # call to get he next page
-    if "next_page_token" in result:
+    elif "next_page_token" in result:
         next_page_token = result["next_page_token"]
         next_page = search(lat, lng, query, pagetoken=next_page_token)
+
+    if next_page:
         result['results'].extend(next_page)
 
     return result['results']
