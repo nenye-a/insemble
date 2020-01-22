@@ -7,7 +7,7 @@ import SummaryCard from './SummaryCard';
 import DescriptionCard from './DescriptionCard';
 import { PHOTOS, PROPERTY_DESCRIPTION, PROPERTY_SUMMARY } from '../../fixtures/dummyData';
 import PropertyDeepDiveHeader from './PropertyDeepDiveHeader';
-import { BACKGROUND_COLOR } from '../../constants/colors';
+import { BACKGROUND_COLOR, WHITE } from '../../constants/colors';
 
 type Props = {
   visible: boolean;
@@ -40,7 +40,7 @@ export default function LocationDeepDiveModal(props: Props) {
 }
 
 const ModalDialog = styled(View)`
-  background: #fefefe;
+  background: ${WHITE};
   width: 960px;
   height: 100%;
 `;
