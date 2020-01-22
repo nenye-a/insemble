@@ -1,4 +1,5 @@
-import React, { ReactNode, ComponentProps } from 'react';
+import React, { ReactNode, ComponentProps, CSSProperties } from 'react';
+import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import View from './View';
 import TouchableOpacity from './TouchableOpacity';
@@ -6,25 +7,31 @@ import { WHITE } from '../constants/colors';
 import SvgClose from '../components/icons/close';
 
 type Props = ComponentProps<typeof View> & {
+  visible: boolean;
   children: ReactNode;
-  onClosePress?: () => void;
+  onClose?: () => void;
+  overlayStyle?: CSSProperties;
 };
-export default function Modal(props: Props) {
-  let { children, onClosePress, ...otherProps } = props;
-  return (
-    <Container>
-      <ModalDialog {...otherProps}>
-        <CloseIcon onPress={onClosePress}>
-          <SvgClose />
-        </CloseIcon>
-        {children}
-      </ModalDialog>
-    </Container>
-  );
+
+export default function Modal({ onClose, children, visible, overlayStyle, ...otherProps }: Props) {
+  if (visible) {
+    return ReactDOM.createPortal(
+      <Overlay style={overlayStyle}>
+        <ModalDialog aria-modal role="dialog" {...otherProps}>
+          <CloseIcon onPress={onClose}>
+            <SvgClose />
+          </CloseIcon>
+          {children}
+        </ModalDialog>
+      </Overlay>,
+      document.body
+    );
+  }
+  return null;
 }
 
-const Container = styled(View)`
-  background: rgba(0, 0, 0, 0.5);
+const Overlay = styled(View)`
+  background-color: rgba(0, 0, 0, 0.5);
   position: fixed;
   top: 0;
   left: 0;
@@ -32,10 +39,11 @@ const Container = styled(View)`
   bottom: 0;
   z-index: 99;
   align-items: center;
+  justify-content: center;
 `;
 
 const ModalDialog = styled(View)`
-  background: ${WHITE};
+  background-color: ${WHITE};
   width: 960px;
   height: 100%;
 `;
