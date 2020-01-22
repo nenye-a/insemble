@@ -3,16 +3,16 @@ import styled from 'styled-components';
 import View from './View';
 import Text from './Text';
 import { DEFAULT_BORDER_RADIUS, FONT_SIZE_SMALL } from '../constants/theme';
-import { THEME_COLOR, WHITE, CARD_GREY_HEADER } from '../constants/colors';
+import { THEME_COLOR, WHITE, CARD_GREY_HEADER, TEXT_COLOR } from '../constants/colors';
 
 type TextProps = ComponentProps<typeof Text>;
 type ViewProps = ComponentProps<typeof View>;
 
 type Props = ViewProps & {
-  titleBackground?: 'default' | 'purple' | 'grey';
+  titleBackground?: 'purple' | 'white' | 'grey';
   title?: string;
   subTitle?: string;
-  children: ReactNode;
+  children?: ReactNode;
   titleContainerProps?: ViewProps;
   titleProps?: TextProps;
 };
@@ -33,7 +33,7 @@ export default function Card(props: Props) {
       {title && (
         <TitleContainer titleBackground={titleBackground} {...titleContainerProps}>
           <View flex>
-            <Title {...titleProps}>{title}</Title>
+            <Text {...titleProps}>{title}</Text>
             <SubTitle>{subTitle}</SubTitle>
           </View>
         </TitleContainer>
@@ -64,11 +64,9 @@ const TitleContainer = styled(View)<TitleContainerProps>`
       ? CARD_GREY_HEADER
       : WHITE};
   padding: 12px;
-`;
-const Title = styled(Text)`
-  color: ${WHITE};
+  ${Text} {
+    color: ${({ titleBackground }) => (titleBackground === 'purple' ? WHITE : TEXT_COLOR)}
 `;
 const SubTitle = styled(Text)`
-  color: ${WHITE};
   font-size: ${FONT_SIZE_SMALL};
 `;
