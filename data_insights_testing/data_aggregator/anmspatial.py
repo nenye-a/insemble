@@ -42,7 +42,14 @@ def point_to_block_group(lat, lng, state=None, prune_leading_zero=True):
     ).json()
 
     # first record is the actual result
-    record = response['CensusRecords'][0]
+    try:
+        record = response['CensusRecords'][0]
+    except Exception:
+        print(Exception)
+        return None
+
+    # formula for census block group as detailed here:
+    # https://www.census.gov/programs-surveys/geography/guidance/geo-identifiers.html
     block_group = record['CensusStateFips'] + record['CensusCountyFips'] + \
         record['CensusTract'] + record['CensusBlockGroup']
 
