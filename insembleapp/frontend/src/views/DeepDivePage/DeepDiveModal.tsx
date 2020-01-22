@@ -7,18 +7,19 @@ import SummaryCard from './SummaryCard';
 import DescriptionCard from './DescriptionCard';
 import { PHOTOS, PROPERTY_DESCRIPTION, PROPERTY_SUMMARY } from '../../fixtures/dummyData';
 import PropertyDeepDiveHeader from './PropertyDeepDiveHeader';
-import { BACKGROUND_COLOR, WHITE } from '../../constants/colors';
+import { BACKGROUND_COLOR } from '../../constants/colors';
 
 type Props = {
   visible: boolean;
+  onClosePress: () => void;
 };
 
 export default function LocationDeepDiveModal(props: Props) {
-  let { visible } = props;
+  let { visible, onClosePress } = props;
   let [isLiked, toggleIsLiked] = useState(false); // get value from backend
   if (visible) {
     return (
-      <Modal>
+      <Modal onClosePress={onClosePress}>
         <TourContainer>
           <Text>3D Tour</Text>
         </TourContainer>

@@ -6,18 +6,20 @@ import AvailableProperties from './MapPage/AvailableProperties';
 import SideBarFilters from './MapPage/SideBarFilters';
 import HeaderFilterBar from './MapPage/HeaderFilterBar';
 import MapContainer from './MapContainer';
-import LocationDeepDiveModal from './DeepDivePage/DeepDiveModal';
+import DeepDiveModal from './DeepDivePage/DeepDiveModal';
 import { WHITE, THEME_COLOR, HEADER_BORDER_COLOR } from '../constants/colors';
 import { FONT_WEIGHT_MEDIUM } from '../constants/theme';
 import SvgPropertyLocation from '../components/icons/property-location';
 
 export default function MainMap() {
-  let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(true);
+  let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
   let [deepDiveModalVisible, toggleDeepDiveModal] = useState(false);
   return (
     <>
-      <LocationDeepDiveModal visible={deepDiveModalVisible} />
-
+      <DeepDiveModal
+        visible={deepDiveModalVisible}
+        onClosePress={() => toggleDeepDiveModal(!deepDiveModalVisible)}
+      />
       <View flex>
         <HeaderFilterBar />
         <Container flex>
