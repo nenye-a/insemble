@@ -85,11 +85,8 @@ def intersecting_block_groups(lat, lng, radius, state=None):
                     for point_lat, point_lng in search_points]
 
     if len(set(block_groups)) == 1:
-        print(block_groups)
         # all block groups are the same, circle is fully within a block group
         return list(set(block_groups))
-
-    print(block_groups)
 
     sub_circle_distance = float(radius)*2/3
     sub_circle_radius = float(radius)/3
@@ -99,7 +96,6 @@ def intersecting_block_groups(lat, lng, radius, state=None):
     unflat_block_groups = [intersecting_block_groups(
         point_lat, point_lng, sub_circle_radius, state) for point_lat, point_lng in sub_circle_points]
 
-    print("HAHAHHAHAHAHHAHAHHAHAHAH - {}".format(unflat_block_groups))
     return flatten(unflat_block_groups)
 
 
