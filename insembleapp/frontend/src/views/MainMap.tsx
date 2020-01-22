@@ -6,30 +6,38 @@ import AvailableProperties from './MapPage/AvailableProperties';
 import SideBarFilters from './MapPage/SideBarFilters';
 import HeaderFilterBar from './MapPage/HeaderFilterBar';
 import MapContainer from './MapContainer';
+import LocationDeepDiveModal from './DeepDivePage/DeepDiveModal';
 import { WHITE, THEME_COLOR, HEADER_BORDER_COLOR } from '../constants/colors';
 import { FONT_WEIGHT_MEDIUM } from '../constants/theme';
 import SvgPropertyLocation from '../components/icons/property-location';
 
 export default function MainMap() {
-  let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
+  let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(true);
+  let [deepDiveModalVisible, toggleDeepDiveModal] = useState(false);
   return (
-    <View flex>
-      <HeaderFilterBar />
-      <Container flex>
-        <ShowPropertyButton
-          mode="secondary"
-          onPress={() => togglePropertyRecommendation(true)}
-          text="Show Property List"
-          icon={<SvgPropertyLocation />}
-        />
-        <SideBarFilters />
-        <MapContainer />
-        <AvailableProperties
-          visible={propertyRecommendationVisible}
-          onHideClick={() => togglePropertyRecommendation(false)}
-        />
-      </Container>
-    </View>
+    <>
+      <LocationDeepDiveModal visible={deepDiveModalVisible} />
+
+      <View flex>
+        <HeaderFilterBar />
+        <Container flex>
+          <ShowPropertyButton
+            mode="secondary"
+            onPress={() => togglePropertyRecommendation(true)}
+            text="Show Property List"
+            icon={<SvgPropertyLocation />}
+          />
+          <SideBarFilters />
+          <MapContainer onMarkerClick={() => toggleDeepDiveModal(!deepDiveModalVisible)} />
+          <AvailableProperties
+            visible={propertyRecommendationVisible}
+            onHideClick={() => {
+              togglePropertyRecommendation(false);
+            }}
+          />
+        </Container>
+      </View>
+    </>
   );
 }
 

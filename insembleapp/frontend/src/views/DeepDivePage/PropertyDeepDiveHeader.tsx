@@ -17,8 +17,8 @@ export default function PropertyDeepDiveHeader({ isLiked, onLikePress }: Props) 
         <Text fontSize={FONT_SIZE_LARGE}>4027 Sepulveda Boulevard, Los Angeles, CA</Text>
         <Text>Mclaughlin, Culver City</Text>
       </View>
-      <TouchableOpacity onPress={() => onLikePress(!isLiked)}>
-        <SvgHeart fill={isLiked ? THEME_COLOR : 'transparent'} style={{ marginRight: 14 }} />
+      <TouchableOpacity onPress={() => onLikePress(!isLiked)} style={{ marginRight: 14 }}>
+        <SvgHeart fill={isLiked ? THEME_COLOR : 'transparent'} />
       </TouchableOpacity>
       <Button text="Connect" />
     </Container>

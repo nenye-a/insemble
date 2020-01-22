@@ -13,7 +13,7 @@ type Props = {
   age: number;
   gender: string;
   ethnicity: Array<string>;
-  onSeeMore: () => void;
+  onSeeMore?: () => void;
 };
 
 export default function LocationDetail(props: Props) {
