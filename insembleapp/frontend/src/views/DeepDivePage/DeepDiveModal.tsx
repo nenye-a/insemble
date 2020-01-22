@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { View, Text, Card } from '../../core-ui';
+import { View, Text } from '../../core-ui';
 import PhotoGallery from './PhotoGallery';
 import SummaryCard from './SummaryCard';
 import DescriptionCard from './DescriptionCard';
@@ -72,28 +72,4 @@ const RowedView = styled(View)`
   align-items: flex-start;
   overflow-y: scroll;
   background-color: ${BACKGROUND_COLOR};
-`;
-const Container = styled(View)`
-  position: fixed;
-  top: 0;
-  left: 10vw;
-  width: 80vw;
-  height: 1000px;
-  border: 1px solid #eee;
-  border-radius: 4px;
-  padding: 10px;
-  text-align: center;
-  z-index: 9999;
-  background-color: tomato;
-  color: #fff;
-  overflow-y: scroll;
-  &:before {
-    background: rgba(0, 0, 0, 0.6);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 10;
-  }
 `;
