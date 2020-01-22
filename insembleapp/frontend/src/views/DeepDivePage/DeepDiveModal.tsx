@@ -11,31 +11,28 @@ import { BACKGROUND_COLOR } from '../../constants/colors';
 
 type Props = {
   visible: boolean;
-  onClosePress: () => void;
+  onClose: () => void;
 };
 
 export default function LocationDeepDiveModal(props: Props) {
-  let { visible, onClosePress } = props;
+  let { visible, onClose } = props;
   let [isLiked, toggleIsLiked] = useState(false); // get value from backend
-  if (visible) {
-    return (
-      <Modal onClosePress={onClosePress}>
-        <TourContainer>
-          <Text>3D Tour</Text>
-        </TourContainer>
-        <PropertyDeepDiveHeader isLiked={isLiked} onLikePress={toggleIsLiked} />
-        <RowedView flex>
-          <PhotoGallery images={PHOTOS} />
-          <CardsContainer flex>
-            <SummaryCard {...PROPERTY_SUMMARY} />
-            <Spacing />
-            <DescriptionCard content={PROPERTY_DESCRIPTION} />
-          </CardsContainer>
-        </RowedView>
-      </Modal>
-    );
-  }
-  return null;
+  return (
+    <Modal onClose={onClose} visible={visible}>
+      <TourContainer>
+        <Text>3D Tour</Text>
+      </TourContainer>
+      <PropertyDeepDiveHeader isLiked={isLiked} onLikePress={toggleIsLiked} />
+      <RowedView flex>
+        <PhotoGallery images={PHOTOS} />
+        <CardsContainer flex>
+          <SummaryCard {...PROPERTY_SUMMARY} />
+          <Spacing />
+          <DescriptionCard content={PROPERTY_DESCRIPTION} />
+        </CardsContainer>
+      </RowedView>
+    </Modal>
+  );
 }
 
 const CardsContainer = styled(View)`

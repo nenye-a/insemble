@@ -13,12 +13,12 @@ import SvgPropertyLocation from '../components/icons/property-location';
 
 export default function MainMap() {
   let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
-  let [deepDiveModalVisible, toggleDeepDiveModal] = useState(false);
+  let [deepDiveModalVisible, toggleDeepDiveModal] = useState(true);
   return (
     <>
       <DeepDiveModal
         visible={deepDiveModalVisible}
-        onClosePress={() => toggleDeepDiveModal(!deepDiveModalVisible)}
+        onClose={() => toggleDeepDiveModal(!deepDiveModalVisible)}
       />
       <View flex>
         <HeaderFilterBar />
@@ -34,7 +34,7 @@ export default function MainMap() {
           <AvailableProperties
             visible={propertyRecommendationVisible}
             onHideClick={() => {
-              togglePropertyRecommendation(false);
+              toggleDeepDiveModal(!deepDiveModalVisible);
             }}
           />
         </Container>
