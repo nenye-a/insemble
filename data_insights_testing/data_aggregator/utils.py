@@ -24,3 +24,9 @@ def meters_to_miles(meters):
 
 def miles_to_meters(miles):
     return miles*MILES_TO_METERS_FACTOR
+
+
+# Provided a latitude, longitude, and radius, this function will return
+# all block groups that intersect the
+def intersecting_block_groups(lat, lng, radius, state=None):
+    return

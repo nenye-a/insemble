@@ -2,7 +2,6 @@ from decouple import config
 import utils
 import requests
 import json
-import time
 
 '''
 

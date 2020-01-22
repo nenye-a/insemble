@@ -9,10 +9,13 @@ Pitney Bose algorithms to get an index of all available locations within a regio
 
 '''
 
-# Please note that poi == "Point Of Interest"
+PITNEY_KEY = config('PITNEY_KEY')
+
+# Please note that poi == "Point Of Interest". To see the documentation for the pitney bowes
+# api, please refer here:
+# https://locate.pitneybowes.com/docs/location-intelligence/v1/en/index.html#About%20Document/about_this_document.html
 
 PITNEY_BY_AREA_SEARCH_ENDPOINT = 'https://api.pitneybowes.com/location-intelligence/geoenrich/v1/poi/byarea'
-PITNEY_KEY = config('PITNEY_KEY')
 
 
 # Generates all the points of interest within an area that can be evaluated.
