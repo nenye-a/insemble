@@ -1,12 +1,10 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "license": "MIT",
   "scripts": {
     "start": "node ./lib/main.js",
     "start:dev": "ts-node ./src/main.ts",
     "start:watch": "ts-node-dev --no-notify --respawn --transpile-only ./src/main.ts",
-    "seed": "ts-node ./src/seed.ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
     "lint": "eslint --max-warnings 0 \"src/**/*.ts\"",
