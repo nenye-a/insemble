@@ -1,6 +1,5 @@
 type Feedback @db(name: "feedback_feedback") {
-   _id: ID! @id
-   id: Int!
+   id: ID! @id
    user: String!
    content: String
    type: String!
