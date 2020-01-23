@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useQuery } from 'react-fetching-library';
 import { useHistory } from 'react-router-dom';
@@ -13,7 +13,6 @@ type Props = {
 };
 
 function CategoriesInput(props: Props) {
-  let inputRef = useRef<HTMLInputElement | null>(null);
   let history = useHistory();
   let { loading, payload } = useQuery({
     method: 'GET',
@@ -35,7 +34,6 @@ function CategoriesInput(props: Props) {
         </TouchableOpacity>
         <TargetIncomeContainer flex>
           <ContainedTextInput
-            ref={inputRef}
             placeholder="Enter target househould income categories"
             buttonText="Find Locations"
             value={income}
