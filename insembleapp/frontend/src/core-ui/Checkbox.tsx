@@ -9,7 +9,7 @@ type ViewProps = ComponentProps<typeof View>;
 type CheckboxProps = ViewProps & {
   type?: 'primary' | 'secondary';
   isChecked: boolean;
-  onChange: () => void;
+  onPress: () => void;
 };
 
 type ContainerProps = ViewProps & {
@@ -21,6 +21,7 @@ type CheckProps = ComponentProps<typeof SvgCheck> & {
   color: string;
 };
 
+const SIZE = '24px';
 const BORDER_RADIUS = '5px';
 
 const fillContainer = css`
@@ -39,8 +40,8 @@ const focusedStyles = css`
 `;
 
 const Container = styled(View)<ContainerProps>`
-  width: 24px;
-  height: 24px;
+  width: ${SIZE};
+  height: ${SIZE};
   border-radius: ${BORDER_RADIUS};
   ${(props) => (props.isFocused ? focusedStyles : undefined)}
 `;
@@ -73,7 +74,7 @@ const NativeCheckbox = styled.input.attrs(() => ({ type: 'checkbox' }))`
 `;
 
 export default function Checkbox(props: CheckboxProps) {
-  let { isChecked, onChange, type = 'primary', ...otherProps } = props;
+  let { isChecked, onPress, type = 'primary', ...otherProps } = props;
   let [isFocused, setFocus] = useState(false);
   let color = type === 'primary' ? THEME_COLOR : SECONDARY_CHECKBOX;
   return (
@@ -82,7 +83,7 @@ export default function Checkbox(props: CheckboxProps) {
       <Check color={color} isVisible={isChecked} />
       <NativeCheckbox
         checked={isChecked}
-        onClick={() => onChange()}
+        onClick={() => onPress()}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
       />
