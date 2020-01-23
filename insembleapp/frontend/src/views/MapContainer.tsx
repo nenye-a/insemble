@@ -37,8 +37,9 @@ type MarkerData = {
   radius: number;
 };
 type Props = {
-  markers: Array<LatLngLiteral>;
-  heats: Array<any>;
+  markers?: Array<LatLngLiteral>;
+  heats?: Array<any>;
+  onMarkerClick?: () => void;
 };
 
 const defaultCenter = {
@@ -47,7 +48,7 @@ const defaultCenter = {
 };
 const defaultZoom = 10;
 
-function MapContainer() {
+function MapContainer({ onMarkerClick }: Props) {
   let alert = useAlert();
   let history = useHistory();
   let heatMap = useSelector((state) => state.space.heatMap) || [];
@@ -108,10 +109,6 @@ function MapContainer() {
       .catch(() => {
         alert.show('Marker is too far from known establishment');
       });
-  };
-
-  let onMarkerClick = () => {
-    history.push('/location-deep-dive');
   };
 
   let handleSearchClick = (marker: LatLngLiteral) => {
@@ -212,7 +209,7 @@ function MapContainer() {
         onBoundsChanged={onBoundsChanged}
       >
         {markerPosition && (
-          <Marker position={markerPosition} onClick={() => onMarkerClick()} icon={MapPin}>
+          <Marker position={markerPosition} onClick={onMarkerClick} icon={MapPin}>
             {marker && (
               <InfoBox
                 defaultPosition={markerPosition}
@@ -270,13 +267,9 @@ function MapContainer() {
 
 const MapWithMap = withGoogleMap(MapContainer);
 
-export default () => {
+export default (props: Props) => {
   let { isLoading } = useGoogleMaps();
   return isLoading ? null : (
-    <MapWithMap
-      containerElement={<View flex />}
-      mapElement={<View flex />}
-      // {...props}
-    />
+    <MapWithMap containerElement={<View flex />} mapElement={<View flex />} {...props} />
   );
 };

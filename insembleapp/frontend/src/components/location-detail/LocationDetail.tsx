@@ -13,7 +13,7 @@ type Props = {
   age: number;
   gender: string;
   ethnicity: Array<string>;
-  onSeeMore: () => void;
+  onSeeMore?: () => void;
 };
 
 export default function LocationDetail(props: Props) {
@@ -28,7 +28,7 @@ export default function LocationDetail(props: Props) {
   let rightText = [population, income, age + 'years', gender, ethnicity.join(', ')];
   return visible ? (
     <Container
-      mode={'with-title'}
+      titleBackground="purple"
       title={title}
       subTitle={subTitle}
       titleProps={{ fontWeight: FONT_WEIGHT_MEDIUM }}

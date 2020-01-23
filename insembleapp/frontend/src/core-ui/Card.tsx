@@ -3,28 +3,37 @@ import styled from 'styled-components';
 import View from './View';
 import Text from './Text';
 import { DEFAULT_BORDER_RADIUS, FONT_SIZE_SMALL } from '../constants/theme';
-import { THEME_COLOR, WHITE } from '../constants/colors';
+import { THEME_COLOR, WHITE, CARD_GREY_HEADER, TEXT_COLOR } from '../constants/colors';
 
 type TextProps = ComponentProps<typeof Text>;
 type ViewProps = ComponentProps<typeof View>;
 
 type Props = ViewProps & {
-  mode?: 'default' | 'with-title';
+  titleBackground?: 'purple' | 'white' | 'grey';
   title?: string;
   subTitle?: string;
-  children: ReactNode;
+  children?: ReactNode;
   titleContainerProps?: ViewProps;
   titleProps?: TextProps;
 };
 
 export default function Card(props: Props) {
-  let { mode, title, subTitle, children, titleContainerProps, titleProps, ...otherProps } = props;
+  let {
+    title,
+    subTitle,
+    THEME_COLOR,
+    children,
+    titleContainerProps,
+    titleProps,
+    titleBackground,
+    ...otherProps
+  } = props;
   return (
     <StyledCard {...otherProps}>
-      {mode === 'with-title' && (
-        <TitleContainer {...titleContainerProps}>
+      {title && (
+        <TitleContainer titleBackground={titleBackground} {...titleContainerProps}>
           <View flex>
-            <Title {...titleProps}>{title}</Title>
+            <Text {...titleProps}>{title}</Text>
             <SubTitle>{subTitle}</SubTitle>
           </View>
         </TitleContainer>
@@ -34,6 +43,10 @@ export default function Card(props: Props) {
   );
 }
 
+type TitleContainerProps = ViewProps & {
+  titleBackground: string;
+};
+
 const StyledCard = styled(View)`
   border-radius: ${DEFAULT_BORDER_RADIUS};
   box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.1);
@@ -42,15 +55,18 @@ const StyledCard = styled(View)`
   background-color: ${WHITE};
 `;
 
-const TitleContainer = styled(View)`
+const TitleContainer = styled(View)<TitleContainerProps>`
   flex-direction: row;
-  background-color: ${THEME_COLOR};
+  background-color: ${({ titleBackground }) =>
+    titleBackground === 'purple'
+      ? THEME_COLOR
+      : titleBackground === 'grey'
+      ? CARD_GREY_HEADER
+      : WHITE};
   padding: 12px;
-`;
-const Title = styled(Text)`
-  color: ${WHITE};
+  ${Text} {
+    color: ${({ titleBackground }) => (titleBackground === 'purple' ? WHITE : TEXT_COLOR)}
 `;
 const SubTitle = styled(Text)`
-  color: ${WHITE};
   font-size: ${FONT_SIZE_SMALL};
 `;
