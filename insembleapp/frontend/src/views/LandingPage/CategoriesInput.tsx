@@ -4,7 +4,7 @@ import { useQuery } from 'react-fetching-library';
 import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { View, TouchableOpacity, ContainedTextInput } from '../../core-ui';
+import { View, TouchableOpacity, ContainedTextInput, ClickAway } from '../../core-ui';
 import { Filter } from '../../components';
 import { loadMap } from '../../redux/actions/space';
 
@@ -28,6 +28,7 @@ function CategoriesInput(props: Props) {
       <Container flex>
         <TouchableOpacity onPress={() => toggleCategoryList(!categoryListOpen)}>
           <ContainedTextInput
+            disabled
             placeholder={loading ? 'Loading' : 'Enter store categories'}
             value={selectedCategories.join(', ')}
           />
@@ -50,22 +51,24 @@ function CategoriesInput(props: Props) {
         </TargetIncomeContainer>
       </Container>
       {categoryListOpen && payload && (
-        <FilterContainer
-          visible
-          search
-          selectedOptions={selectedCategories}
-          allOptions={payload}
-          onUnSelect={(tag: string) => {
-            let newTagList = selectedCategories.filter((item) => item !== tag);
-            setSelectedCategories(newTagList);
-          }}
-          onSelect={(tag: string) => {
-            let newTagList = [...selectedCategories, tag];
-            setSelectedCategories(newTagList);
-          }}
-          onDone={() => toggleCategoryList(false)}
-          onClear={() => setSelectedCategories([])}
-        />
+        <ClickAway onClickAway={() => toggleCategoryList(false)}>
+          <FilterContainer
+            visible
+            search
+            selectedOptions={selectedCategories}
+            allOptions={payload}
+            onUnSelect={(tag: string) => {
+              let newTagList = selectedCategories.filter((item) => item !== tag);
+              setSelectedCategories(newTagList);
+            }}
+            onSelect={(tag: string) => {
+              let newTagList = [...selectedCategories, tag];
+              setSelectedCategories(newTagList);
+            }}
+            onDone={() => toggleCategoryList(false)}
+            onClear={() => setSelectedCategories([])}
+          />
+        </ClickAway>
       )}
     </>
   );
