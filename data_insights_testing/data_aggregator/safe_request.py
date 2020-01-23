@@ -1,4 +1,3 @@
-from utils import DB_REQUESTS
 import utils
 import requests
 
@@ -32,13 +31,13 @@ def request(api_name, req_type, url, headers={}, data={}, params={}, api_field=N
     """
 
     # connect to api specific database
-    api_db = DB_REQUESTS[api_name]
+    api_db = utils.DB_REQUESTS[api_name]
     utils.unique_db_index(api_db, 'req_type', 'url',
                           'masked_params', 'masked_headers')
 
     # mask api_field for all calls
-    masked_headers = headers
-    masked_params = params
+    masked_headers = headers.copy()
+    masked_params = params.copy()
 
     if api_field in headers:
         masked_headers[api_field] = API_KEY_MASK
@@ -53,7 +52,7 @@ def request(api_name, req_type, url, headers={}, data={}, params={}, api_field=N
     }
 
     # search in internal databases
-    search = DB_REQUESTS[api_name].find_one(api_request)
+    search = utils.DB_REQUESTS[api_name].find_one(api_request)
 
     # If search exists, return it's results
     if search != None:
@@ -64,7 +63,7 @@ def request(api_name, req_type, url, headers={}, data={}, params={}, api_field=N
         req_type, url, headers=headers, data=data, params=params).json()
     api_request['response'] = response
 
-    _id = DB_REQUESTS[api_name].insert(api_request)
+    _id = utils.DB_REQUESTS[api_name].insert(api_request)
 
     return (response, _id)
 

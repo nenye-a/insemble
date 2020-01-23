@@ -1,5 +1,6 @@
 from decouple import config
-import requests
+import utils
+import safe_request
 import time
 
 '''
@@ -8,6 +9,7 @@ Pitney Bose algorithms to get an index of all available locations within a regio
 
 '''
 
+API_NAME = 'Pitney_Bose'
 PITNEY_KEY = config('PITNEY_KEY')
 
 # Please note that poi == "Point Of Interest". To see the documentation for the pitney bowes
@@ -63,13 +65,13 @@ def poi_within_area(country, state, city, zip_code=None, sic_codes=None,
     if sic_codes:
         params['sicCode'] = sic_codes
 
-    response = requests.request(
-        "GET", url, headers=headers, data=payload, params=params)
-    result = response.json()
+    result, _id = safe_request.request(
+        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='Authorization')
 
     # print(result)  # debug statuement
 
     if 'poi' not in result:
+        utils.DB_REQUESTS[API_NAME].delete_one({'_id': _id})
         if 'errors' in result:
             if result['errors'][0]['errorCode'] == 'PB-14020-GEOENRICH-0024':
                 print('No more results for this query')

@@ -1,7 +1,6 @@
 from decouple import config
 import utils
 import safe_request
-import requests
 
 '''
 
@@ -42,7 +41,7 @@ def find(address, name="", bias='ipbias'):
     # response = response.json()
 
     response, _id = safe_request.request(
-        API_NAME, "GET", url, headers=headers, data=payload, params=params)
+        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
 
     place = response['candidates'][0]  # first candidate is the actual place
 
@@ -78,15 +77,15 @@ def nearby(lat, lng, category, radius=1, pagetoken=None):
             'rankby': 'prominence'
         })
 
-    response = requests.request(
-        "GET", url, headers=headers, data=payload, params=params)
-    result = response.json()
+    result, _id = safe_request.request(
+        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
 
     # evaluate if call failed due to unstaged google next page. If so, try again
     # otherwise, return None. Proceed to check if there's a new page. Paths should
     # never be possible to occur at the same time but elif for extra safety
     next_page = None
     if result['status'] == 'INVALID_REQUEST':
+        utils.DB_REQUESTS[API_NAME].delete_one({'_id': _id})
         if not pagetoken:
             return None
         next_page = nearby(lat, lng, category, pagetoken=pagetoken)
@@ -116,12 +115,10 @@ def details(place_id, fields=None):
     if fields:
         params['fields'] = fields
 
-    response = requests.request(
-        "GET", url, headers=headers, data=payload, params=params)
-    response = response.json()
+    response, _id = safe_request.request(
+        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
     details = response['result']
 
-    # TODO: perhaps want to smart search
     return details
 
 
@@ -154,12 +151,12 @@ def search(lat, lng, query, radius=1, pagetoken=None):
             'rankby': 'prominence'
         })
 
-    response = requests.request(
-        "GET", url, headers=headers, data=payload, params=params)
-    result = response.json()
+    result, _id = safe_request.request(
+        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
 
     next_page = None
     if result['status'] == 'INVALID_REQUEST':
+        utils.DB_REQUESTS[API_NAME].delete_one({'_id': _id})
         if not pagetoken:
             return None
         next_page = search(lat, lng, query, pagetoken=pagetoken)
@@ -193,4 +190,4 @@ if __name__ == "__main__":
         print(item)
         print(len(item))
 
-    test_find()
+    test_search()
