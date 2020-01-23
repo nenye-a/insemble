@@ -1,11 +1,11 @@
+from mongo_connect import Connect
+import anmspatial
+import math
+import geopy.distance
 import sys
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)  # include data_insights_testing in path
-import geopy.distance
-import math
-import anmspatial
-from mongo_connect import Connect
 
 '''
 
@@ -17,7 +17,7 @@ efficient & powerful
 MILES_TO_METERS_FACTOR = 1609.34
 EARTHS_RADIUS_MILES = 3958.8
 DB_SPACE = Connect.get_connection().spaceData
-DB_REQUESTS = Connect.get_connection().requets
+DB_REQUESTS = Connect.get_connection().requests
 DB_AGGREGATE = DB_SPACE.aggregate_records
 DB_SICS = DB_SPACE.sics
 DB_RAW_SPACE = DB_SPACE.raw_spaces
@@ -29,7 +29,7 @@ def unique_db_index(collection, *indices):
     for index in indices:
         index_request.append((index, 1))
     collection.create_index(index_request, unique=True)
-    
+
 
 # from a list of sics in text form, get sics
 def get_sics_from_txt(file_name):
@@ -155,4 +155,3 @@ if __name__ == "__main__":
     #     'name': 'sic_code_list',
     #     'sics': sics
     # })
-

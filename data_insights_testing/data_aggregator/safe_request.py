@@ -1,4 +1,5 @@
-from utils import DB_SPACE, DB_REQUESTS
+from utils import DB_REQUESTS
+import utils
 import requests
 
 
@@ -14,8 +15,7 @@ API_KEY_MASK = 'API_KEY_MASK'
 # executable request method
 
 
-def safe_request(api_name, req_type, url, headers={}, data={}, params={}, api_field=None:
-
+def request(api_name, req_type, url, headers={}, data={}, params={}, api_field=None):
     """
 
     Method recieves typical request fields & checks that database to ensure
@@ -32,7 +32,7 @@ def safe_request(api_name, req_type, url, headers={}, data={}, params={}, api_fi
     """
 
     # connect to api specific database
-    api_db = DB_REQUETS[api_name]
+    api_db = DB_REQUESTS[api_name]
     utils.unique_db_index(api_db, 'req_type', 'url',
                           'masked_params', 'masked_headers')
 
@@ -59,18 +59,15 @@ def safe_request(api_name, req_type, url, headers={}, data={}, params={}, api_fi
     if search != None:
         return (search['response'], search['_id'])
 
-    response = requests.request(req_type, url, headers=headers, data=data, params=params).json()
+    # otherwise, call the api directly & store result
+    response = requests.request(
+        req_type, url, headers=headers, data=data, params=params).json()
     api_request['response'] = response
 
-    _id = DB_REQUESTS[api_name].insert({
-        'req_type': req_type,
-        'url': url,
-        'masked_params': masked_params,
-        'masked_headers': masked_headers,
-        'response': response.json()
-    })
+    _id = DB_REQUESTS[api_name].insert(api_request)
 
     return (response, _id)
 
 
 if __name__ == "__main__":
+    pass

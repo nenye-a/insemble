@@ -1,5 +1,6 @@
 from decouple import config
 import utils
+import safe_request
 import requests
 
 '''
@@ -8,6 +9,7 @@ All google related methods to confirm a location, and build dataset of all infor
 
 '''
 
+API_NAME = 'Google'
 GOOG_KEY = config("GOOG_KEY")
 
 # Google endpoints. Refer to https://developers.google.com/places/web-service/intro for details.
@@ -35,10 +37,13 @@ def find(address, name="", bias='ipbias'):
         'fields': 'place_id,formatted_address,name,geometry'
     }
 
-    response = requests.request(
-        "GET", url, headers=headers, data=payload, params=params)
+    # response = requests.request(
+    #     "GET", url, headers=headers, data=payload, params=params)
+    # response = response.json()
 
-    response = response.json()
+    response, _id = safe_request.request(
+        API_NAME, "GET", url, headers=headers, data=payload, params=params)
+
     place = response['candidates'][0]  # first candidate is the actual place
 
     return place
@@ -187,3 +192,5 @@ if __name__ == "__main__":
         item = search(34.0482327, -118.239857, 'Apartments')
         print(item)
         print(len(item))
+
+    test_find()
