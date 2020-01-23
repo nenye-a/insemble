@@ -14,7 +14,7 @@ import { useSelector } from '../redux/helpers';
 
 export default function MainMap() {
   let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
-  let [deepDiveModalVisible, toggleDeepDiveModal] = useState(true);
+  let [deepDiveModalVisible, toggleDeepDiveModal] = useState(false);
 
   let mapIsLoading = useSelector((state) => state.space.mapIsLoading);
   return (
@@ -39,7 +39,7 @@ export default function MainMap() {
           icon={<SvgPropertyLocation />}
         />
         <SideBarFilters />
-        <MapContainer />
+        <MapContainer onMarkerClick={() => toggleDeepDiveModal(true)} />
         <AvailableProperties
           visible={propertyRecommendationVisible}
           onHideClick={() => togglePropertyRecommendation(false)}

@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default function PropertyDeepDiveHeader({ isLiked, onLikePress }: Props) {
-  let [contactModalVisible, toggleContactModalVisibility] = useState(true);
+  let [contactModalVisible, toggleContactModalVisibility] = useState(false);
   return (
     <Container>
       <View flex>
