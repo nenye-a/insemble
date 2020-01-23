@@ -17,14 +17,32 @@ efficient & powerful
 MILES_TO_METERS_FACTOR = 1609.34
 EARTHS_RADIUS_MILES = 3958.8
 DB_SPACE = Connect.get_connection().spaceData
+DB_REQUESTS = Connect.get_connection().requets
+DB_AGGREGATE = DB_SPACE.aggregate_records
+DB_SICS = DB_SPACE.sics
+DB_RAW_SPACE = DB_SPACE.raw_spaces
 
 
-#from a list of sics in text form, get sics
+# simple unique index of a pymongo database collection
+def unique_db_index(collection, *indices):
+    index_request = []
+    for index in indices:
+        index_request.append((index, 1))
+    collection.create_index(index_request, unique=True)
+    
+
+# from a list of sics in text form, get sics
 def get_sics_from_txt(file_name):
     f = open(file_name, 'r')
     sics = f.readlines()
     sics = [sic[:4] for sic in sics]
     return sics
+
+
+# return the difference between two lists
+def list_diff(list1, list2):
+    diff = list1.difference(list2)
+    return ','.join(list(diff))
 
 
 # flattens a list of lists
@@ -111,7 +129,6 @@ def intersecting_block_groups(lat, lng, radius, state=None):
     return flatten(unflat_block_groups)
 
 
-
 if __name__ == "__main__":
 
     def test_location_at_distance():
@@ -133,8 +150,9 @@ if __name__ == "__main__":
         filename = 'pitney_sics.txt'
         get_sics_from_txt(filename)
 
-    sics = get_sics_from_txt('pitney_sics.txt')
-    DB_SPACE.sics.insert({
-        'sics': sics
-    })
-    
+    # sics = get_sics_from_txt('pitney_sics.txt')
+    # DB_SICS.insert({
+    #     'name': 'sic_code_list',
+    #     'sics': sics
+    # })
+

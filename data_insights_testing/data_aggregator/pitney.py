@@ -67,8 +67,19 @@ def poi_within_area(country, state, city, zip_code=None, sic_codes=None,
         "GET", url, headers=headers, data=payload, params=params)
     result = response.json()
 
+    # print(result)  # debug statuement
+
     if 'poi' not in result:
-        return "None"
+        if 'errors' in result:
+            if result['errors'][0]['errorCode'] == 'PB-14020-GEOENRICH-0024':
+                print('No more results for this query')
+                return [], page
+            if result['errors'][0]['errorCode'] == 'PB-14020-GEOENRICH-0031':
+                print('Ended before reaching all results')
+                return [], page
+            print('Other Error')
+            return None
+        return None
 
     # Determine what the true max results are based on settings & availability
     total_num_of_pois = int(result['totalMatchingCandidates'])
@@ -81,17 +92,21 @@ def poi_within_area(country, state, city, zip_code=None, sic_codes=None,
         time.sleep(0.25)  # time just to not DDOS API
         next_page = poi_within_area(country, state, city, zip_code=zip_code,
                                     sic_codes=sic_codes, max_results=max_results, page=page)
-        if next_page:
-            result['poi'].extend(next_page)
+        if next_page[0]:
+            result['poi'].extend(next_page[0])
+            page = next_page[1] + 1
+    else:
+        page += 1
 
-    return result['poi']
+    return result['poi'], page
 
 
 if __name__ == "__main__":
 
     def test_poi_within_area():
         result = poi_within_area(
-            'USA', 'CA', 'Los Angeles', sic_codes='5651,5661,5712,5734', max_results=100)
-        print(len(result))
+            'USA', 'CA', 'Los Angeles', sic_codes='5651,5661,5712,5734', max_results=600)
+        print(len(result[0]))
+        print(result[1])
 
     test_poi_within_area()
