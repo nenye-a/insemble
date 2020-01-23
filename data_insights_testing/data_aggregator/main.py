@@ -147,6 +147,10 @@ def place_aggregate(city, state, zip_code=None, iter_step=500):
         print("*** PLACE_AGGREGATOR: {} more places added", len(data))
 
 
+def place_validator():
+    return
+
+
 if __name__ == "__main__":
 
     def test_place_aggregator():
