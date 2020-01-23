@@ -1,5 +1,5 @@
-import React, { ComponentProps } from 'react';
-import styled, { css } from 'styled-components';
+import React from 'react';
+import styled from 'styled-components';
 import View from './View';
 import { THEME_COLOR, SECONDARY_COLOR } from '../constants/colors';
 import { FONT_FAMILY_NORMAL, FONT_SIZE_NORMAL } from '../constants/theme';
@@ -16,7 +16,7 @@ export default function RadioButton(props: Props) {
     <RadioContainer>
       {option}
       <Radio value={option} name={name} onChange={isActive} />
-      <CheckMark></CheckMark>
+      <CheckMark />
     </RadioContainer>
   );
 }
