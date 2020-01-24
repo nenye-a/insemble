@@ -105,9 +105,9 @@ export default function HeaderFilterBar() {
           onClear={() => setSelectedOptions([])}
         />
         <Dropdown
-          selectedValue={selectedDropdownValue}
-          values={PROPERTY_TYPES}
-          onItemSelected={(newValue: string) => setSelectedDropdownValue(newValue)}
+          options={PROPERTY_TYPES}
+          selectedOption={selectedDropdownValue}
+          onSelect={(newValue: string) => setSelectedDropdownValue(newValue)}
         />
         <SaveButton text="Save Search" />
       </RowedView>
