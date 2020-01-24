@@ -1,6 +1,7 @@
 import { Context, Root } from 'serverTypes';
 import { LEGACY_API_URI } from '../../constants/host';
 import axios from 'axios';
+import camelizeJSON from '../../helpers/camelizeJSON';
 
 enum MatchStatus {
     Loading = 'Loading',
@@ -12,23 +13,22 @@ const enum MatchType {
     Tmatches,
 }
 
-type Match = {
-    status: MatchStatus,
-    id: string,
-    data?: object, // TODO: construct type for `data`
-}
-
 async function processMatch(id: string, matchType: MatchType) {
     let matchRoute = matchType === MatchType.Lmatches ? 'lmatches' : 'tmatches';
     let response = (await axios.post(`${LEGACY_API_URI}/api/${matchRoute}/`, { id: id }));
 
     if (response.status === 200) {
-        console.log(response.data);
+        let camelizedData = camelizeJSON(response.data);
+
+        // This step is necessary to convert Id -> id.
+        // Any'ed because the schema's pretty huge and intricately making types just for this one occasion seems overkill
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let fixedData = camelizedData.map((d: any) => ({ id: d.Id, ...d }));
 
         return {
             status: MatchStatus.Ready,
             id,
-            data: response.data,
+            data: fixedData,
         }
     } else if (response.status === 202) {
         return {

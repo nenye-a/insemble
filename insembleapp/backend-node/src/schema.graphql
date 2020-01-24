@@ -14,7 +14,7 @@ type Match {
 }
 
 type MatchData {
-    _id: String!
+    id: String!
     name: String
     lat: Float
     lng: Float
@@ -37,12 +37,12 @@ type MatchData {
 }
 
 type Census {
-    asian: Int
-    black: Int
-    hispanic: Int
-    indian: Int
-    multi: Int
-    white: Int
+    asian: Float
+    black: Float
+    hispanic: Float
+    indian: Float
+    multi: Float
+    white: Float
 }
 
 type PlaceTuple {
