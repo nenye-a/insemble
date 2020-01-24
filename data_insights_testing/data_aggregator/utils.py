@@ -89,15 +89,18 @@ def intersecting_block_groups(lat, lng, radius, state=None):
     # Current algorithm splits circle into 7 circles (6 circuling around a
     # central circle of smaller radius). Algorithm, then recurses on each until
     # blockgroup is found
-    bearings = [0, 60, 120, 180, 240, 300, 360]
+    bearings = [0, 60, 120, 180, 240, 300]
     search_points = [location_at_distance(
         lat, lng, radius, bearing) for bearing in bearings] + [(lat, lng)]
+
+    print(search_points)
 
     block_groups = [get_block_group(point_lat, point_lng)
                     for point_lat, point_lng in search_points]
 
     if len(set(block_groups)) == 1:
         # all block groups are the same, circle is fully within a block group
+        print("base case ret", list(set(block_groups)))
         return list(set(block_groups))
 
     sub_circle_distance = float(radius)*2/3
@@ -108,8 +111,10 @@ def intersecting_block_groups(lat, lng, radius, state=None):
     unflat_block_groups = [intersecting_block_groups(
         point_lat, point_lng, sub_circle_radius, state) for point_lat, point_lng in sub_circle_points]
 
-    return flatten(unflat_block_groups)
-
+    ret = flatten(unflat_block_groups)
+    ret = list(set(ret))
+    print("ret", ret)
+    return ret
 
 
 if __name__ == "__main__":
@@ -127,14 +132,12 @@ if __name__ == "__main__":
     def test_intersecting_block_groups():
         lat = 34.056186
         lng = -118.276942
-        print(intersecting_block_groups(lat, lng, .1, 'CA'))
+        print(intersecting_block_groups(lat, lng, .02275, 'CA'))
 
     def test_get_sics():
         filename = 'pitney_sics.txt'
         get_sics_from_txt(filename)
 
-    sics = get_sics_from_txt('pitney_sics.txt')
-    DB_SPACE.sics.insert({
-        'sics': sics
-    })
-    
+   
+#    test_intersecting_block_groups()
+    print(intersecting_block_groups(18.0809736,-67.0851964,0.000001))
