@@ -7,6 +7,7 @@ export { default as ContainedTextInput } from './ContainedTextInput';
 export { default as Dropdown } from './Dropdown';
 export { default as Modal } from './Modal';
 export { default as PillButton } from './PillButton';
+export { default as ProgressBar } from './ProgressBar';
 export { default as Text } from './Text';
 export { default as TextInputWithLabel } from './TextInputWithLabel';
 export { default as TouchableOpacity } from './TouchableOpacity';
