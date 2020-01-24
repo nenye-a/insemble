@@ -1,5 +1,6 @@
 from main import place_aggregator, place_validator, detail_builder, proximity_builder
 import threading
+from utils import DB_ZIP_CODES, DB_AGGREGATE, DB_SICS
 
 '''
 
@@ -28,7 +29,7 @@ is split into sections, which all run in parallel.
 
 
 # Main execution method for database aggregation
-def run(city, state, zip_code=None):
+def run_all(city, state, zip_code=None):
     '''
 
     Main executable for aggregator.
@@ -38,8 +39,8 @@ def run(city, state, zip_code=None):
 
     '''
 
-    aggregator_thread = threading.Thread(
-        target=place_aggregator, args=(city, state, zip_code))
+    # aggregator_thread = threading.Thread(
+    #     target=place_aggregator, args=(city, state, zip_code))
     validator_thread = threading.Thread(target=place_validator)
     detail_thread = threading.Thread(target=detail_builder)
     proximity_thread = threading.Thread(target=proximity_builder)
@@ -51,4 +52,21 @@ def run(city, state, zip_code=None):
 
 
 if __name__ == "__main__":
-    run('Los Angeles', 'CA')
+
+    zip_codes = DB_ZIP_CODES.find_one(
+        {'name': 'Los_Angeles_County_Zip_Codes'})['zip_codes']
+    sics = DB_SICS.find_one({'name': 'sic_code_list'})['sics']
+
+    for zip_code in zip_codes:
+
+        record = DB_AGGREGATE.find_one({
+            'zip_code': zip_code
+        })
+
+        if record:
+            if record['processed_sics'] == sics:
+                continue
+        else:
+            place_aggregator('Los Angeles', 'CA', zip_code)
+
+    # run('Los Angeles', 'CA')

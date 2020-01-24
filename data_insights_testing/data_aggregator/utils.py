@@ -2,10 +2,10 @@ import sys
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)  # include data_insights_testing in path
-from mongo_connect import Connect
-import anmspatial
-import math
 import geopy.distance
+import math
+import anmspatial
+from mongo_connect import Connect
 
 
 '''
@@ -21,6 +21,7 @@ DB_SPACE = Connect.get_connection().spaceData
 DB_REQUESTS = Connect.get_connection().requests
 DB_AGGREGATE = DB_SPACE.aggregate_records
 DB_SICS = DB_SPACE.sics
+DB_ZIP_CODES = DB_SPACE.zip_codes
 DB_RAW_SPACE = DB_SPACE.raw_spaces
 DB_PROCESSED_SPACE = DB_SPACE.spaces
 
@@ -39,6 +40,13 @@ def get_sics_from_txt(file_name):
     sics = f.readlines()
     sics = [sic[:4] for sic in sics]
     return sics
+
+
+def get_zips_from_txt(file_name):
+    f = open(file_name, 'r')
+    zip_codes = f.readlines()
+    zip_codes = [zip_code[:-1] for zip_code in zip_codes]
+    return zip_codes
 
 
 # return the difference between two lists
@@ -96,6 +104,7 @@ def location_at_distance(current_lat, current_lng, distance, degrees):
 # estimate block group interseciton recursively through reduced radius circles.
 # Currently method of choice opts to risk gaps in data due to block group
 # size. Radius is provided in miles
+# FIXME: This algorithm never congerges, and alternative method has been created
 def intersecting_block_groups(lat, lng, radius, state=None):
 
     # Create function depending on state or not.
@@ -136,6 +145,7 @@ def intersecting_block_groups(lat, lng, radius, state=None):
     print("ret", ret)
     return ret
 
+
 if __name__ == "__main__":
 
     def test_location_at_distance():
@@ -157,11 +167,17 @@ if __name__ == "__main__":
         filename = 'pitney_sics.txt'
         get_sics_from_txt(filename)
 
-   
-#    test_intersecting_block_groups()
-    print(intersecting_block_groups(18.0809736,-67.0851964,0.000001))
+    # # test_intersecting_block_groups()
+    # print(intersecting_block_groups(18.0809736, -67.0851964, 0.000001))
+
     # sics = get_sics_from_txt('pitney_sics.txt')
     # DB_SICS.insert({
     #     'name': 'sic_code_list',
     #     'sics': sics
+    # })
+
+    # zips = get_zips_from_txt('La_County_Zips.txt')
+    # DB_ZIP_CODES.insert({
+    #     'name': 'Los_Angeles_County_Zip_Codes',
+    #     'zip_codes': zips
     # })

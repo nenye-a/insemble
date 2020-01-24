@@ -3,7 +3,6 @@ import utils
 import goog
 import pitney
 import foursquare
-import pymongo
 import time
 
 
@@ -19,7 +18,7 @@ FAIL_FLAG = 'FAIL'
 
 unique_db_index(DB_RAW_SPACE, 'name', 'location')
 unique_db_index(DB_PROCESSED_SPACE, 'place_id')
-unique_db_index(DB_AGGREGATE, 'city', 'state')
+unique_db_index(DB_AGGREGATE, 'city', 'state', 'zip_code')
 
 
 # Aggregate all the potential addresses from Pitney_Bose API
@@ -31,7 +30,8 @@ def place_aggregator(city, state, zip_code=None, iter_step=500):
     # pull the current status for the scrape on this city
     run_record = DB_AGGREGATE.find_one({
         'city': city,
-        'state': state
+        'state': state,
+        'zip_code': zip_code
     })
 
     # if no existing scrape, create one with base settings
@@ -39,6 +39,7 @@ def place_aggregator(city, state, zip_code=None, iter_step=500):
         run_record = {
             'city': city,
             'state': state,
+            'zip_code': zip_code,
             'step': iter_step,
             'processed_sics': [],
             'in_process_sic_codes': None,
@@ -62,9 +63,11 @@ def place_aggregator(city, state, zip_code=None, iter_step=500):
         # batch active sics 10 at a time (pitney bose limitaiton)
         active_sic_codes = ','.join(
             list(remaining_sics)[:max_sics])
-        DB_AGGREGATE.update({'city': city, 'state': state}, {'$set': {
-            'in_process_sic_codes': active_sic_codes
-        }})
+
+        run_record['in_process_sic_codes'] = active_sic_codes
+
+        DB_AGGREGATE.update_one(
+            {'city': city, 'state': state, 'zip_code': zip_code}, {'$set': run_record})
 
     # move at the 500 searches at a time
     step = run_record['step']
@@ -85,7 +88,7 @@ def place_aggregator(city, state, zip_code=None, iter_step=500):
 
         # if next_page is equal to this page, then we've fully tapped out the pitney source. (likely
         # not true and needs to be checked)
-        if page != 1 and next_page == page:
+        if len(data) == 0:
             # update sics if all spaces for the existing sics have been tapped
             processed_sics = set(
                 run_record['processed_sics'] + active_sic_codes.split(','))
@@ -101,17 +104,20 @@ def place_aggregator(city, state, zip_code=None, iter_step=500):
 
             # update record with new processed sics, active sic codes, and page
             page = 1
-            DB_AGGREGATE.update({'city': city, 'state': state}, {
+            run_record.update({
                 'in_process_sic_codes': active_sic_codes,
                 'processed_sics': list(processed_sics),
                 'current_page': page
             })
+            DB_AGGREGATE.update_one(
+                {'city': city, 'state': state, 'zip_code': zip_code}, {'$set': run_record})
         else:
             pass
 
             # otherwise just move to next page
-            DB_AGGREGATE.update({'city': city, 'state': state}, {'$set': {
-                                'current_page': next_page}})
+            run_record['current_page'] = next_page
+            DB_AGGREGATE.update_one(
+                {'city': city, 'state': state, 'zip_code': zip_code}, {'$set': run_record})
 
             page = next_page
 
@@ -174,15 +180,17 @@ def place_validator():
 
             # Once batching sized reached, update all the documents
             if len(_ids) >= update_batch_size:
+                DB_RAW_SPACE.update_many({'_id': {'$in': _ids}}, {
+                    '$set': {'status': PROCESSED_FLAG}
+                })
+
                 try:
                     DB_PROCESSED_SPACE.insert_many(
                         processed_spaces, ordered=False)
                 except Exception:
                     print(
                         "(VV) ***** Failed to insert int processed all likely due to duplicates *****")
-                DB_RAW_SPACE.update_many({'_id': {'$in': _ids}}, {
-                    '$set': {'status': PROCESSED_FLAG}
-                })
+
                 insert_count += len(processed_spaces)
                 print(
                     "(VV) ****** VALIDATOR: {} more places added".format(len(processed_spaces)))
