@@ -1,5 +1,5 @@
 import React, { ComponentProps, forwardRef, Ref } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import Text from './Text';
 import {
@@ -8,7 +8,12 @@ import {
   FONT_SIZE_NORMAL,
   DEFAULT_BORDER_RADIUS,
 } from '../constants/theme';
-import { TEXT_INPUT_BORDER_COLOR, TEXT_COLOR, THEME_COLOR } from '../constants/colors';
+import {
+  TEXT_INPUT_BORDER_COLOR,
+  TEXT_COLOR,
+  THEME_COLOR,
+  DISABLED_TEXT_INPUT_BACKGROUND,
+} from '../constants/colors';
 
 type InputProps = ComponentProps<'input'>;
 type TextInputProps = Omit<InputProps, 'onSubmit'> & {
@@ -16,13 +21,11 @@ type TextInputProps = Omit<InputProps, 'onSubmit'> & {
 };
 
 type Props = TextInputProps & {
-  buttonText?: string;
-  icon?: boolean;
   label?: string;
 };
 
 export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) => {
-  let { id, label, onSubmit, ref, icon, ...otherProps } = props;
+  let { id, label, onSubmit, ref, disabled, ...otherProps } = props;
   return (
     <>
       {label && (
@@ -39,6 +42,7 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) =>
             onSubmit && onSubmit();
           }
         }}
+        disabled={disabled}
         {...otherProps}
       />
     </>
@@ -60,4 +64,9 @@ const InputBox = styled.input`
   box-sizing: border-box;
   font-family: ${FONT_FAMILY_NORMAL};
   font-size: ${FONT_SIZE_NORMAL};
+  ${(props) =>
+    props.disabled &&
+    css`
+      background-color: ${DISABLED_TEXT_INPUT_BACKGROUND};
+    `}
 `;
