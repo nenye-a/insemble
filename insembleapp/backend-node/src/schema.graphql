@@ -2,6 +2,11 @@
 
 # import Feedback from "./generated/prisma.graphql"
 
+input CategoryWhereInput {
+    category: String
+    category_contains: String
+}
+
 # =========
 # RESOLVERS
 # =========
@@ -10,8 +15,10 @@ type Query {
     """
     feedback
     """
+    categories(where: CategoryWhereInput): [String!]! # TODO:
+
+    feedback: Feedback!
     feedbacks(
       where: FeedbackWhereInput
-
     ): [Feedback!]!
 }
