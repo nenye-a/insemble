@@ -2,10 +2,11 @@ import sys
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)  # include data_insights_testing in path
-import geopy.distance
-import math
-import anmspatial
 from mongo_connect import Connect
+import anmspatial
+import math
+import geopy.distance
+
 
 '''
 
@@ -17,14 +18,32 @@ efficient & powerful
 MILES_TO_METERS_FACTOR = 1609.34
 EARTHS_RADIUS_MILES = 3958.8
 DB_SPACE = Connect.get_connection().spaceData
+DB_REQUESTS = Connect.get_connection().requests
+DB_AGGREGATE = DB_SPACE.aggregate_records
+DB_SICS = DB_SPACE.sics
+DB_RAW_SPACE = DB_SPACE.raw_spaces
 
 
-#from a list of sics in text form, get sics
+# simple unique index of a pymongo database collection
+def unique_db_index(collection, *indices):
+    index_request = []
+    for index in indices:
+        index_request.append((index, 1))
+    collection.create_index(index_request, unique=True)
+
+
+# from a list of sics in text form, get sics
 def get_sics_from_txt(file_name):
     f = open(file_name, 'r')
     sics = f.readlines()
     sics = [sic[:4] for sic in sics]
     return sics
+
+
+# return the difference between two lists
+def list_diff(list1, list2):
+    diff = list1.difference(list2)
+    return ','.join(list(diff))
 
 
 # flattens a list of lists
@@ -116,7 +135,6 @@ def intersecting_block_groups(lat, lng, radius, state=None):
     print("ret", ret)
     return ret
 
-
 if __name__ == "__main__":
 
     def test_location_at_distance():
@@ -141,3 +159,8 @@ if __name__ == "__main__":
    
 #    test_intersecting_block_groups()
     print(intersecting_block_groups(18.0809736,-67.0851964,0.000001))
+    # sics = get_sics_from_txt('pitney_sics.txt')
+    # DB_SICS.insert({
+    #     'name': 'sic_code_list',
+    #     'sics': sics
+    # })

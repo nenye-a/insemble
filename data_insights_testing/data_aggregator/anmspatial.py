@@ -1,5 +1,6 @@
 from decouple import config
-import requests
+import utils
+import safe_request
 
 
 '''
@@ -7,7 +8,7 @@ import requests
 File for gecoding library provided by texas a&m
 
 '''
-
+API_NAME = 'Texas_ANM'
 ANM_KEY = config('ANM_KEY')
 
 # To see the documentation for the anm point in polygon api, please refer to the following:
@@ -37,14 +38,14 @@ def point_to_block_group(lat, lng, state=None, prune_leading_zero=True):
     if state:
         params['s'] = state
 
-    response = requests.request(
-        "GET", url, headers=headers, data=payload, params=params
-    ).json()
+    response, _id = safe_request.request(
+        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='apiKey')
 
     # first record is the actual result
     try:
         record = response['CensusRecords'][0]
     except Exception:
+        utils.DB_REQUESTS[API_NAME].delete_one({'_id': _id})
         print(Exception)
         return None
 
