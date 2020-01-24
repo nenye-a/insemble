@@ -20,8 +20,7 @@ async function categories(
     {where, skip, first, last} : CategoryArgs,
     _context: Context,
 ) {
-    let url = `${LEGACY_API_URI}/api/category`;
-    let categories: Array<string> = (await axios.get(url)).data;
+    let categories: Array<string> = (await axios.get(`${LEGACY_API_URI}/api/category`)).data;
 
     if (first && last) {
         return { errors: ["Error"]}; // TODO: how to properly error?
