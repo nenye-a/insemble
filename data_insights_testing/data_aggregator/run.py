@@ -51,7 +51,7 @@ def run_all(city, state, zip_code=None):
     # aggregator_thread.start()
 
 
-if __name__ == "__main__":
+def aggregate_by_zip():
 
     zip_codes = DB_ZIP_CODES.find_one(
         {'name': 'Los_Angeles_County_Zip_Codes'})['zip_codes']
@@ -69,4 +69,7 @@ if __name__ == "__main__":
         else:
             place_aggregator('Los Angeles', 'CA', zip_code)
 
+
+if __name__ == "__main__":
+    pass
     # run('Los Angeles', 'CA')
