@@ -9,7 +9,7 @@ type Props = ComponentProps<typeof View> & {
   selectedOptions: Array<string>;
   options: Array<string>;
   onSelect: (item: string) => void;
-  onUnselect: (item: string) => void;
+  onUnSelect: (item: string) => void;
   placeholder: string;
   onClear: () => void;
 };
@@ -19,7 +19,7 @@ export default function MultiSelectBox(props: Props) {
     selectedOptions,
     options,
     onSelect,
-    onUnselect,
+    onUnSelect,
     placeholder,
     onClear,
     ...otherProps
@@ -46,7 +46,7 @@ export default function MultiSelectBox(props: Props) {
             search
             selectedOptions={selectedOptions}
             allOptions={options}
-            onUnSelect={onUnselect}
+            onUnSelect={onUnSelect}
             onSelect={onSelect}
             onDone={() => togglePicker(false)}
             onClear={onClear}
