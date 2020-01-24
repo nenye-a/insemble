@@ -46,7 +46,7 @@ type Census {
 }
 
 type PlaceTuple {
-    businessName: String!
+    placeName: String!
     count: Int!
 }
 
