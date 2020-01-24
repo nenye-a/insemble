@@ -15,7 +15,12 @@ type Query {
     """
     feedback
     """
-    categories(where: CategoryWhereInput): [String!]! # TODO:
+    categories(
+        where: CategoryWhereInput,
+        skip: Int,
+        first: Int,
+        last: Int
+    ): [String!]!
 
     feedback: Feedback!
     feedbacks(
