@@ -17,41 +17,50 @@ import arrowIcon from '../assets/images/arrow-down.svg';
 import checkIcon from '../assets/images/check.svg';
 
 type Props<T> = {
-  values: Array<T>;
-  selectedValue?: T;
-  onItemSelected: (value: T) => void;
-  extractOption?: (item: T) => string;
+  options: Array<T>;
+  selectedOption?: T;
+  onSelect: (value: T) => void;
+  titleExtractor?: (item: T) => string;
+  keyExtractor?: (item: T, index: number) => string;
 };
 
+const defaultTitleExtractor = (item: unknown) => String(item);
+const defaultKeyExtractor = (item: unknown, index: number) => String(index);
+
 export default function Dropdown<T>(props: Props<T>) {
-  let { values, selectedValue, onItemSelected, extractOption } = props;
+  let {
+    options,
+    selectedOption,
+    onSelect,
+    titleExtractor = defaultTitleExtractor,
+    keyExtractor = defaultKeyExtractor,
+  } = props;
   let [dropdownOpen, toggleDropdown] = useState(false);
 
   return (
     <View>
       <Container onPress={() => toggleDropdown(!dropdownOpen)}>
-        <Text color={THEME_COLOR}>{selectedValue}</Text>
+        <Text color={THEME_COLOR}>{selectedOption}</Text>
         <ArrowIcon src={arrowIcon} alt="arrow-icon" isOpen={dropdownOpen} />
       </Container>
       {dropdownOpen && (
         <ClickAway onClickAway={() => toggleDropdown(false)}>
           <OptionContainer>
-            {values.map((item, i) => {
-              let extractedOption = !!extractOption ? extractOption(item) : String(item);
-              //TODO: add isSelectedComparator
-              let isSelected = extractedOption === ((String(selectedValue) as unknown) as string);
+            {options.map((item, i) => {
+              // TODO: Allow selectedOption to be a function.
+              let isSelected = item === selectedOption;
               return (
                 <Option
-                  key={i}
+                  key={keyExtractor(item, i)}
                   onPress={() => {
-                    onItemSelected(item);
+                    onSelect(item);
                     toggleDropdown(!dropdownOpen);
                   }}
                 >
                   <IconContainer>
                     {isSelected && <img src={checkIcon} alt="check-icon" />}
                   </IconContainer>
-                  <ListText selected={isSelected}>{extractedOption}</ListText>
+                  <ListText selected={isSelected}>{titleExtractor(item)}</ListText>
                 </Option>
               );
             })}
