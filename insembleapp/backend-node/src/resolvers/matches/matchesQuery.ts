@@ -3,8 +3,8 @@ import { LEGACY_API_URI } from '../../constants/host';
 import axios from 'axios';
 
 enum MatchStatus {
-    Loading,
-    Ready,
+    Loading = 'Loading',
+    Ready = 'Ready',
 }
 
 const enum MatchType {
@@ -20,9 +20,11 @@ type Match = {
 
 async function processMatch(id: string, matchType: MatchType) {
     let matchRoute = matchType === MatchType.Lmatches ? 'lmatches' : 'tmatches';
-    let response = (await axios.get(`${LEGACY_API_URI}/api/${matchRoute}/${id}`));
+    let response = (await axios.post(`${LEGACY_API_URI}/api/${matchRoute}/`, { id: id }));
 
     if (response.status === 200) {
+        console.log(response.data);
+
         return {
             status: MatchStatus.Ready,
             id,

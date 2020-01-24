@@ -10,14 +10,14 @@ enum MatchStatus {
 type Match {
     status: MatchStatus!
     id: String!
-    data: MatchData
+    data: [MatchData!]!
 }
 
 type MatchData {
     _id: String!
     name: String
-    lat: Int
-    lng: Int
+    lat: Float
+    lng: Float
     census: Census
     address: String
     pop: Int
@@ -25,15 +25,15 @@ type MatchData {
     nearby: [PlaceTuple]
     radius: String
     price: Int
-    locations: [[Int]]
+    locations: [[Float]]
     placeType: [PlaceTuple]
     likes: Int
     ratings: String
     photoCount: Int
-    age: Int
+    age: Float
     photo: String
     icon: String
-    mapRating: Int
+    mapRating: Float
 }
 
 type Census {
