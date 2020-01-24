@@ -22,6 +22,7 @@ DB_REQUESTS = Connect.get_connection().requests
 DB_AGGREGATE = DB_SPACE.aggregate_records
 DB_SICS = DB_SPACE.sics
 DB_RAW_SPACE = DB_SPACE.raw_spaces
+DB_PROCESSED_SPACE = DB_SPACE.spaces
 
 
 # simple unique index of a pymongo database collection

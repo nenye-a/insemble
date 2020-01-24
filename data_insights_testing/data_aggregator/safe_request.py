@@ -26,7 +26,8 @@ def request(api_name, req_type, url, headers={}, data={}, params={}, api_field=N
     headers: headers of file
     data: payload
     params: parameters that will be programatically appended to request
-    api_field: field within headers or params that contains the api key and should be masked
+    api_field: field within headers or params that contains the api key and should be masked. If
+               there are multiple, they should be seperated by comma
 
     """
 
@@ -38,11 +39,13 @@ def request(api_name, req_type, url, headers={}, data={}, params={}, api_field=N
     # mask api_field for all calls
     masked_headers = headers.copy()
     masked_params = params.copy()
-
-    if api_field in headers:
-        masked_headers[api_field] = API_KEY_MASK
-    if api_field in params:
-        masked_params[api_field] = API_KEY_MASK
+    if api_field:
+        api_fields = api_field.split(',')
+        for field in api_fields:
+            if field in headers:
+                masked_headers[field] = API_KEY_MASK
+            if field in params:
+                masked_params[field] = API_KEY_MASK
 
     api_request = {
         'req_type': req_type,

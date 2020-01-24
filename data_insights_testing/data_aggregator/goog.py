@@ -33,17 +33,19 @@ def find(address, name="", bias='ipbias'):
         'inputtype': 'textquery',  # text input
         'language': 'en',  # return in english
         'locationbias': bias,
-        'fields': 'place_id,formatted_address,name,geometry'
+        'fields': 'place_id,formatted_address,name,geometry,types,permanently_closed'
     }
-
-    # response = requests.request(
-    #     "GET", url, headers=headers, data=payload, params=params)
-    # response = response.json()
 
     response, _id = safe_request.request(
         API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
 
+    if response['status'] == 'ZERO_RESULTS':
+        return None
+
     place = response['candidates'][0]  # first candidate is the actual place
+
+    if 'permanently_closed' in place or 'establishment' not in place['types']:
+        return None
 
     return place
 
@@ -190,4 +192,4 @@ if __name__ == "__main__":
         print(item)
         print(len(item))
 
-    test_search()
+    test_find()
