@@ -156,7 +156,7 @@ def place_validator():
         # set up updates for batching
         _ids = []
         processed_spaces = []
-        update_batch_size = 30
+        update_batch_size = 5
 
         for raw_space in raw_spaces:
 
@@ -250,7 +250,7 @@ def detail_builder():
                 print(
                     "(DD) ****** DETAILER: {} more places detailed".format(update_count/update_size))
                 print(
-                    "(DD) ****** Total documents validated in this run: {}".format(update_count))
+                    "(DD) ****** Total documents detailed in this run: {}".format(update_count))
 
         # wait atleast a second before re calling database
         time.sleep(5)

@@ -72,4 +72,11 @@ def aggregate_by_zip():
 
 if __name__ == "__main__":
     pass
-    # run('Los Angeles', 'CA')
+    
+
+    validator_thread = threading.Thread(target=place_validator)
+    detail_thread= threading.Thread(target=detail_builder)
+
+    validator_thread.start()
+    detail_thread.start()
+    
