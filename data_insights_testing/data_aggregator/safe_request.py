@@ -59,6 +59,7 @@ def request(api_name, req_type, url, headers={}, data={}, params={}, api_field=N
 
     # If search exists, return it's results
     if search is not None:
+        print('Saving Money on {} calls'.format(api_name))
         return (search['response'], search['_id'])
 
     # otherwise, call the api directly & store result
