@@ -1,6 +1,6 @@
-from main import place_aggregator, place_validator, detail_builder, proximity_builder
+from main import place_aggregator, place_validator, detail_builder, proximity_builder, TYPE_T, TYPE_S
 import threading
-from utils import DB_ZIP_CODES, DB_AGGREGATE, DB_SICS
+from utils import DB_ZIP_CODES, DB_AGGREGATE, DB_SICS, DB_TYPES
 
 '''
 
@@ -39,8 +39,6 @@ def run_all(city, state, zip_code=None):
 
     '''
 
-    # aggregator_thread = threading.Thread(
-    #     target=place_aggregator, args=(city, state, zip_code))
     validator_thread = threading.Thread(target=place_validator)
     detail_thread = threading.Thread(target=detail_builder)
     proximity_thread = threading.Thread(target=proximity_builder)
@@ -48,35 +46,40 @@ def run_all(city, state, zip_code=None):
     validator_thread.start()
     detail_thread.start()
     proximity_thread.start()
-    # aggregator_thread.start()
 
 
-def aggregate_by_zip():
+def aggregate_by_zip(aggregate_type=TYPE_T):
 
     zip_codes = DB_ZIP_CODES.find_one(
         {'name': 'Los_Angeles_County_Zip_Codes'})['zip_codes']
-    sics = DB_SICS.find_one({'name': 'sic_code_list'})['sics']
+
+    active = None
+    if aggregate_type == TYPE_T:
+        active = DB_TYPES.find_one({'name': 'place_types'})['types']
+    elif aggregate_type == TYPE_S:
+        active = DB_SICS.find_one({'name': 'sic_code_list'})['sics']
 
     for zip_code in zip_codes:
 
         record = DB_AGGREGATE.find_one({
-            'zip_code': zip_code
+            'zip_code': zip_code,
+            'aggregate_type': aggregate_type
         })
 
         if record:
-            if record['processed_sics'] == sics:
+            if record['processed'] == active:
                 continue
-        else:
-            place_aggregator('Los Angeles', 'CA', zip_code)
+
+        place_aggregator('Los Angeles', 'CA', zip_code,
+                         aggregate_type=aggregate_type)
 
 
 if __name__ == "__main__":
-    pass
-    
 
-    validator_thread = threading.Thread(target=place_validator)
-    detail_thread= threading.Thread(target=detail_builder)
+    aggregate_by_zip()
 
-    validator_thread.start()
-    detail_thread.start()
-    
+    # validator_thread = threading.Thread(target=place_validator)
+    # detail_thread = threading.Thread(target=detail_builder)
+
+    # validator_thread.start()
+    # detail_thread.start()

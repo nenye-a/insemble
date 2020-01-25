@@ -2,11 +2,11 @@ import sys
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)  # include data_insights_testing in path
-import geopy.distance
-import math
-import pandas as pd
-import anmspatial
 from mongo_connect import Connect
+import anmspatial
+import pandas as pd
+import math
+import geopy.distance
 
 
 '''
@@ -16,12 +16,16 @@ efficient & powerful
 
 '''
 
+# regular statics
 MILES_TO_METERS_FACTOR = 1609.34
 EARTHS_RADIUS_MILES = 3958.8
+
+# Database connections
 DB_SPACE = Connect.get_connection().spaceData
 DB_REQUESTS = Connect.get_connection().requests
 DB_AGGREGATE = DB_SPACE.aggregate_records
 DB_SICS = DB_SPACE.sics
+DB_TYPES = DB_SPACE.types
 DB_ZIP_CODES = DB_SPACE.zip_codes
 DB_RAW_SPACE = DB_SPACE.raw_spaces
 DB_PROCESSED_SPACE = DB_SPACE.spaces
@@ -35,22 +39,17 @@ def unique_db_index(collection, *indices):
     collection.create_index(index_request, unique=True)
 
 
-# from a list of sics in text form, get sics
-def get_sics_from_txt(file_name):
+# from a list of items in text form
+def get_column_from_txt(file_name):
     f = open(file_name, 'r')
-    sics = f.readlines()
-    sics = [sic[:4] for sic in sics]
-    return sics
-
-
-def get_zips_from_txt(file_name):
-    f = open(file_name, 'r')
-    zip_codes = f.readlines()
-    zip_codes = [zip_code[:-1] for zip_code in zip_codes]
-    return zip_codes
-
+    # items should be organized in a list with each seperated by \n
+    items = f.readlines()
+    items = [item[:-1] for item in items]
+    return items
 
 # return the difference between two lists
+
+
 def list_diff(list1, list2):
     diff = list1.difference(list2)
     return ','.join(list(diff))
@@ -76,6 +75,7 @@ def meters_to_miles(meters):
 def miles_to_meters(miles):
     return miles*MILES_TO_METERS_FACTOR
 
+
 def test_raw_spaces(file_name):
     spaces = DB_RAW_SPACE.find({})
     items = []
@@ -85,9 +85,10 @@ def test_raw_spaces(file_name):
             space['location']['lat'],
             space['location']['lng']
         ))
-    
+
     items_df = pd.DataFrame(items)
     items_df.to_csv(file_name)
+
 
 def test_spaces(file_name):
     spaces = DB_PROCESSED_SPACE.find({})
@@ -100,8 +101,6 @@ def test_spaces(file_name):
         ))
     items_df = pd.DataFrame(items)
     items_df.to_csv(file_name)
-
-
 
 
 # Provided your current latitude, current longitude, a desired distance
@@ -193,7 +192,14 @@ if __name__ == "__main__":
 
     def test_get_sics():
         filename = 'pitney_sics.txt'
-        get_sics_from_txt(filename)
+        sics = get_column_from_txt(filename)
+        print(sics)
+    
+    def test_get_types():
+        filename = 'types.txt'
+        types = get_column_from_txt(filename)
+        print(types)
+
 
     # # test_intersecting_block_groups()
     # print(intersecting_block_groups(18.0809736, -67.0851964, 0.000001))
@@ -209,3 +215,9 @@ if __name__ == "__main__":
     #     'name': 'Los_Angeles_County_Zip_Codes',
     #     'zip_codes': zips
     # })
+
+    types = get_column_from_txt('types.txt')
+    DB_TYPES.insert({
+        'name': 'place_types',
+        'types': types
+    })

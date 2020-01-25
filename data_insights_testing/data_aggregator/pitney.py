@@ -21,7 +21,7 @@ PITNEY_BY_AREA_SEARCH_ENDPOINT = 'https://api.pitneybowes.com/location-intellige
 
 # Generates all the points of interest within an area that can be evaluated.
 def poi_within_area(country, state, city, zip_code=None, sic_codes=None,
-                    max_results=None, page=1):
+                    type_=None, max_results=None, page=1):
     """
 
     Retrieves all the locations within an area as indicated above.
@@ -35,6 +35,12 @@ def poi_within_area(country, state, city, zip_code=None, sic_codes=None,
 
           format: comma seperated fix, ex: '5651,5661,5712,5734'
 
+    type_: The types refer to the the type of the store that this request is making. Generally
+           the only types that we will refer to are 'store' & 'restaurant'. Types should be
+           provided in the same way as sic codes. 
+
+           format: 'store,restaurant'
+
     max_results: The maximum amount of results that are desired by
           the caller. This can be any number. Without any number specified,
           the code will only return 100 results. If the user specifies the
@@ -43,6 +49,7 @@ def poi_within_area(country, state, city, zip_code=None, sic_codes=None,
           230 records will result in 300 being returned.
 
     page: The Pitney_bowes page to start the algorithm on. Pages have at maximum 100 records 
+
     """
 
     url = PITNEY_BY_AREA_SEARCH_ENDPOINT
@@ -64,6 +71,8 @@ def poi_within_area(country, state, city, zip_code=None, sic_codes=None,
         params['postcode1'] = zip_code
     if sic_codes:
         params['sicCode'] = sic_codes
+    if type_:
+        params['type'] = type_
 
     result, _id = safe_request.request(
         API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='Authorization')
@@ -93,7 +102,7 @@ def poi_within_area(country, state, city, zip_code=None, sic_codes=None,
         page += 1
         time.sleep(0.25)  # time just to not DDOS API
         next_page = poi_within_area(country, state, city, zip_code=zip_code,
-                                    sic_codes=sic_codes, max_results=max_results, page=page)
+                                    sic_codes=sic_codes, type_=None, max_results=max_results, page=page)
         if next_page[0]:
             result['poi'].extend(next_page[0])
             page = next_page[1] + 1

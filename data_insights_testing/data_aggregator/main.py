@@ -1,4 +1,4 @@
-from utils import DB_AGGREGATE, DB_SICS, DB_RAW_SPACE, DB_PROCESSED_SPACE, unique_db_index
+from utils import DB_AGGREGATE, DB_SICS, DB_TYPES, DB_RAW_SPACE, DB_PROCESSED_SPACE, unique_db_index
 import utils
 import goog
 import pitney
@@ -15,23 +15,31 @@ Underlying functions for the executable file in run.
 PROCESSED_FLAG = 'PROCESSED'
 UN_PROCESSED_FLAG = 'UN_PROCESSED'
 FAIL_FLAG = 'FAIL'
+TYPE_S = 'sics'
+TYPE_T = 'type'
 
 unique_db_index(DB_RAW_SPACE, 'name', 'location')
 unique_db_index(DB_PROCESSED_SPACE, 'place_id')
-unique_db_index(DB_AGGREGATE, 'city', 'state', 'zip_code')
+unique_db_index(DB_AGGREGATE, 'city', 'state', 'zip_code', 'aggregate_type')
 
 
 # Aggregate all the potential addresses from Pitney_Bose API
-def place_aggregator(city, state, zip_code=None, iter_step=500):
+def place_aggregator(city, state, zip_code=None, iter_step=500,
+                     aggregate_type=TYPE_S):
 
     insert_count = 0
-    max_sics = 3
+
+    if aggregate_type == TYPE_S:
+        max_type = 3  # 3 sics at a time
+    elif aggregate_type == TYPE_T:
+        max_type = 1  # one type at a time
 
     # pull the current status for the scrape on this city
     run_record = DB_AGGREGATE.find_one({
         'city': city,
         'state': state,
-        'zip_code': zip_code
+        'zip_code': zip_code,
+        'aggregate_type': aggregate_type
     })
 
     # if no existing scrape, create one with base settings
@@ -40,34 +48,41 @@ def place_aggregator(city, state, zip_code=None, iter_step=500):
             'city': city,
             'state': state,
             'zip_code': zip_code,
+            'aggregate_type': aggregate_type,
             'step': iter_step,
-            'processed_sics': [],
-            'in_process_sic_codes': None,
+            'processed': [],
+            'in_process': None,
             'current_page': 1
         }
         print("Aggregation restart using following settings:\n\n{}".format(run_record))
         print(DB_AGGREGATE.insert(run_record))
 
-    # Determine the sics that need to be processed (refer to pitney Bose API for details)
-    all_sic_codes = DB_SICS.find_one({'name': 'sic_code_list'})['sics']
-    active_sic_codes = run_record['in_process_sic_codes']
-    if not active_sic_codes:
-        all_sics = set(all_sic_codes)
-        processed_sics = set(run_record['processed_sics'])
-        remaining_sics = all_sics.difference(processed_sics)
+    # Determine how to filter categories for the pitney bose requests (Refer to the api or pitney.py for more details)
+    if aggregate_type == TYPE_S:
+        all_codes = DB_SICS.find_one({'name': 'sic_code_list'})['sics']
+    elif aggregate_type == TYPE_T:
+        all_codes = DB_TYPES.find_one({'name': 'place_types'})['types']
 
-        if len(remaining_sics) == 0:
-            print("Area has already been fully tapped for all present sics")
+    active_codes = run_record['in_process']
+
+    if not active_codes:
+        all_available = set(all_codes)
+        processed = set(run_record['processed'])
+        remaining = all_available.difference(processed)
+
+        if len(remaining) == 0:
+            print("Area has already been fully tapped for all present {}".format(
+                aggregate_type))
             return True
 
         # batch active sics 10 at a time (pitney bose limitaiton)
-        active_sic_codes = ','.join(
-            list(remaining_sics)[:max_sics])
+        active_codes = ','.join(
+            list(remaining)[:max_type])
 
-        run_record['in_process_sic_codes'] = active_sic_codes
+        run_record['in_process'] = active_codes
 
         DB_AGGREGATE.update_one(
-            {'city': city, 'state': state, 'zip_code': zip_code}, {'$set': run_record})
+            {'city': city, 'state': state, 'zip_code': zip_code, 'aggregate_type': aggregate_type}, {'$set': run_record})
 
     # move at the 500 searches at a time
     step = run_record['step']
@@ -76,8 +91,12 @@ def place_aggregator(city, state, zip_code=None, iter_step=500):
     aggregating = True
     while aggregating:
         # iterate through pitney database using stock iteretion step.
-        result = pitney.poi_within_area(
-            'USA', state, city, zip_code, active_sic_codes, step, page)
+        if aggregate_type == TYPE_S:
+            result = pitney.poi_within_area(
+                'USA', state, city, zip_code, sic_codes=active_codes, max_results=step, page=page)
+        elif aggregate_type == TYPE_T:
+            result = pitney.poi_within_area(
+                'USA', state, city, zip_code, type_=active_codes, max_results=step, page=page)
 
         # if call fails, then return False
         if not result:
@@ -90,34 +109,32 @@ def place_aggregator(city, state, zip_code=None, iter_step=500):
         # not true and needs to be checked)
         if len(data) == 0:
             # update sics if all spaces for the existing sics have been tapped
-            processed_sics = set(
-                run_record['processed_sics'] + active_sic_codes.split(','))
-            all_sics = set(all_sic_codes)
-            remaining_sics = all_sics.difference(processed_sics)
+            processed = set(
+                run_record['processed'] + active_codes.split(','))
+            all_available = set(all_codes)
+            remaining = all_available.difference(processed)
 
-            if len(remaining_sics) == 0:
+            if len(remaining) == 0:
                 print("(AA) Area now fully tapped for all existing sics")
                 aggregating = False
                 return aggregating
 
-            active_sic_codes = ','.join(list(remaining_sics)[:max_sics])
+            active_codes = ','.join(list(remaining)[:max_type])
 
             # update record with new processed sics, active sic codes, and page
             page = 1
             run_record.update({
-                'in_process_sic_codes': active_sic_codes,
-                'processed_sics': list(processed_sics),
+                'in_process': active_codes,
+                'processed': list(processed),
                 'current_page': page
             })
             DB_AGGREGATE.update_one(
-                {'city': city, 'state': state, 'zip_code': zip_code}, {'$set': run_record})
+                {'city': city, 'state': state, 'zip_code': zip_code, 'aggregate_type': aggregate_type}, {'$set': run_record})
         else:
-            pass
-
             # otherwise just move to next page
             run_record['current_page'] = next_page
             DB_AGGREGATE.update_one(
-                {'city': city, 'state': state, 'zip_code': zip_code}, {'$set': run_record})
+                {'city': city, 'state': state, 'zip_code': zip_code, 'aggregate_type': aggregate_type}, {'$set': run_record})
 
             page = next_page
 
@@ -132,6 +149,7 @@ def place_aggregator(city, state, zip_code=None, iter_step=500):
                     'relevance': item['relevanceScore'],
                     'pitney_address': item['contactDetails']['address'],
                     'sales_USD': item.get('salesVolume', [{}])[0].get('value', None),
+                    'aggregate_type': aggregate_type,
                     'status': UN_PROCESSED_FLAG
                 } for item in data
             ], ordered=False)
@@ -142,8 +160,9 @@ def place_aggregator(city, state, zip_code=None, iter_step=500):
         print("(AA) ****** AGGREGATOR: {} more places added".format(len(data)))
         print("(AA) ****** Total documents inserted in this run: {}".format(insert_count))
 
-
 # Validate & Process raw_spaces into better spaces within the database
+
+
 def place_validator():
 
     insert_count = 0
