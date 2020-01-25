@@ -4,7 +4,7 @@ import goog
 import pitney
 import foursquare
 import time
-
+import spatial
 
 '''
 
@@ -370,6 +370,43 @@ def proximity_builder(radius=1):
                 "(PP) ****** Total documents queried for proximity in this run: {}".format(update_count))
 
 
+# psychographics builder
+def psycho_builder(radius=1):
+    update_count = 0
+    update_size = 15  # how many records to update prior to pinging console
+    updating = True
+
+    cats, spatial_df = spatial.create_spatial_cats_and_df()
+    block_df = spatial.create_block_grp_df()
+
+    while updating:
+
+        spaces = DB_PROCESSED_SPACE.find({'psycho_finished': {'$exists': False}})
+
+        for space in spaces:
+            place_id = space['place_id']
+
+            # update with spatial data
+            lat = space['geometry']['location']['lat']
+            lng = space['geometry']['location']['lng']
+            psycho_dict = spatial.get_psychographics(lat, lng, radius, spatial_df, block_df, cats)
+
+            # space has been detailed and will be updated
+            DB_PROCESSED_SPACE.update_one(
+                {'place_id': place_id}, {'$set': {'psycho': psycho_dict, 'psycho_finished': True}})
+
+            update_count += 1
+            if update_count % update_size == 0:
+                print(
+                    "(DD) ****** PSYCHO DETAILS: {} more places psycho detailed".format(update_count/update_size))
+                print(
+                    "(DD) ****** Total documents psycho detailed in this run: {}".format(update_count))
+
+        # wait atleast a second before re calling database
+        time.sleep(5)
+
+
+
 if __name__ == "__main__":
 
     def test_place_aggregator():
@@ -379,3 +416,11 @@ if __name__ == "__main__":
     # place_validator()
     # detail_builder()
     # proximity_builder()
+
+    #psycho_builder()
+
+    spaces = DB_PROCESSED_SPACE.find()
+    for count, space in enumerate(spaces):
+        print(count, space)
+        if count == 1:
+            break
