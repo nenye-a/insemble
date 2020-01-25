@@ -371,25 +371,20 @@ def psycho_builder(radius=1):
             lat = space['geometry']['location']['lat']
             lng = space['geometry']['location']['lng']
             psycho_dict = spatial.get_psychographics(lat, lng, radius, spatial_df, block_df, cats)
-            space["psycho"] = psycho_dict             
 
             # space has been detailed and will be updated
-            #space['psycho_finished'] = True
             DB_PROCESSED_SPACE.update_one(
-                {'place_id': place_id}, {'$set': space})
+                {'place_id': place_id}, {'$set': {'psycho': psycho_dict, 'psycho_finished': True}})
 
             update_count += 1
             if update_count % update_size == 0:
                 print(
-                    "(DD) ****** DETAILER: {} more places detailed".format(update_count/update_size))
+                    "(DD) ****** PSYCHO DETAILS: {} more places psycho detailed".format(update_count/update_size))
                 print(
-                    "(DD) ****** Total documents validated in this run: {}".format(update_count))
+                    "(DD) ****** Total documents psycho detailed in this run: {}".format(update_count))
 
         # wait atleast a second before re calling database
         time.sleep(5)
-
-
-# gather all places that are near this location
 
 
 
