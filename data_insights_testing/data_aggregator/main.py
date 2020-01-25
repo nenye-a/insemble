@@ -161,17 +161,21 @@ def place_aggregator(city, state, zip_code=None, iter_step=500,
         print("(AA) ****** AGGREGATOR: {} more places added".format(len(data)))
         print("(AA) ****** Total documents inserted in this run: {}".format(insert_count))
 
+
 # Validate & Process raw_spaces into better spaces within the database
-
-
-def place_validator():
+# VAlidates all non_processed items that match the conditions specified
+def place_validator(condition=None):
 
     insert_count = 0
     validating = True
 
+    database_query = {'status': UN_PROCESSED_FLAG}
+    if condition:
+        database_query.update(condition)
+
     while validating:
         # Get all spaces that have not been processed
-        raw_spaces = DB_RAW_SPACE.find({'status': UN_PROCESSED_FLAG})
+        raw_spaces = DB_RAW_SPACE.find(database_query)
 
         # set up updates for batching
         _ids = []
