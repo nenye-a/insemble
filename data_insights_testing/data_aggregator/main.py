@@ -30,7 +30,7 @@ def place_aggregator(city, state, zip_code=None, iter_step=500,
     insert_count = 0
 
     if aggregate_type == TYPE_S:
-        max_type = 3  # 3 sics at a time
+        max_type = 3  # 3 aggregate type at a time
     elif aggregate_type == TYPE_T:
         max_type = 1  # one type at a time
 
@@ -54,8 +54,10 @@ def place_aggregator(city, state, zip_code=None, iter_step=500,
             'in_process': None,
             'current_page': 1
         }
-        print("Aggregation restart using following settings:\n\n{}".format(run_record))
+        print("Aggregation restart using following settings:\n\n{}\n".format(run_record))
         print(DB_AGGREGATE.insert(run_record))
+    else:
+        print("Aggregation starting with the following settings:\n\n{}\n".format(run_record))
 
     # Determine how to filter categories for the pitney bose requests (Refer to the api or pitney.py for more details)
     if aggregate_type == TYPE_S:
@@ -75,7 +77,7 @@ def place_aggregator(city, state, zip_code=None, iter_step=500,
                 aggregate_type))
             return True
 
-        # batch active sics 10 at a time (pitney bose limitaiton)
+        # batch active aggregate type 10 at a time (pitney bose limitaiton)
         active_codes = ','.join(
             list(remaining)[:max_type])
 
@@ -108,21 +110,15 @@ def place_aggregator(city, state, zip_code=None, iter_step=500,
         # if next_page is equal to this page, then we've fully tapped out the pitney source. (likely
         # not true and needs to be checked)
         if len(data) == 0:
-            # update sics if all spaces for the existing sics have been tapped
+            # update codes if all spaces for the existing aggregate_type have been tapped
             processed = set(
                 run_record['processed'] + active_codes.split(','))
             all_available = set(all_codes)
             remaining = all_available.difference(processed)
 
-            if len(remaining) == 0:
-                print("(AA) Area now fully tapped for all existing {}".format(
-                    aggregate_type))
-                aggregating = False
-                return aggregating
-
             active_codes = ','.join(list(remaining)[:max_type])
 
-            # update record with new processed sics, active sic codes, and page
+            # update record with new processed aggregate type, active sic codes, and page
             page = 1
             run_record.update({
                 'in_process': active_codes,
@@ -131,6 +127,13 @@ def place_aggregator(city, state, zip_code=None, iter_step=500,
             })
             DB_AGGREGATE.update_one(
                 {'city': city, 'state': state, 'zip_code': zip_code, 'aggregate_type': aggregate_type}, {'$set': run_record})
+
+            if len(remaining) == 0:
+                print("(AA) Area now fully tapped for all existing {}".format(
+                    aggregate_type))
+                aggregating = False
+                return aggregating
+
         else:
             # otherwise just move to next page
             run_record['current_page'] = next_page
@@ -194,6 +197,10 @@ def place_validator(condition=None):
 
             # if the space does not exist, then move along.
             if not processed_space:
+                print("(VV) **** Space does not exist, moving on.")
+                DB_RAW_SPACE.update({'_id': _id}, {'$set': {
+                    'status': FAIL_FLAG
+                }})
                 continue
 
             # Otherwise, add the space to the update queue.
@@ -213,7 +220,7 @@ def place_validator(condition=None):
                         processed_spaces, ordered=False)
                 except Exception:
                     print(
-                        "(VV) ***** Failed to insert int processed all likely due to duplicates *****")
+                        "(VV) ***** Failed to insert into processed all likely due to duplicates *****")
 
                 insert_count += len(processed_spaces)
                 print(

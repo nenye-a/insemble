@@ -72,6 +72,8 @@ def aggregate_by_zip(aggregate_type=TYPE_T):
 
         place_aggregator('Los Angeles', 'CA', zip_code,
                          aggregate_type=aggregate_type)
+    
+    print('All DONE')
 
 
 if __name__ == "__main__":

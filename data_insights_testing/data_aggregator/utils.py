@@ -2,11 +2,12 @@ import sys
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)  # include data_insights_testing in path
-from mongo_connect import Connect
-import anmspatial
-import pandas as pd
-import math
 import geopy.distance
+import math
+import pandas as pd
+import anmspatial
+from mongo_connect import Connect
+
 
 
 '''
@@ -76,8 +77,8 @@ def miles_to_meters(miles):
     return miles*MILES_TO_METERS_FACTOR
 
 
-def test_raw_spaces(file_name):
-    spaces = DB_RAW_SPACE.find({})
+def test_raw_spaces(file_name, query={}):
+    spaces = DB_RAW_SPACE.find(query)
     items = []
     for space in spaces:
         items.append((
@@ -90,8 +91,8 @@ def test_raw_spaces(file_name):
     items_df.to_csv(file_name)
 
 
-def test_spaces(file_name):
-    spaces = DB_PROCESSED_SPACE.find({})
+def test_spaces(file_name, query={}):
+    spaces = DB_PROCESSED_SPACE.find(query)
     items = []
     for space in spaces:
         items.append((
@@ -194,12 +195,11 @@ if __name__ == "__main__":
         filename = 'pitney_sics.txt'
         sics = get_column_from_txt(filename)
         print(sics)
-    
+
     def test_get_types():
         filename = 'types.txt'
         types = get_column_from_txt(filename)
         print(types)
-
 
     # # test_intersecting_block_groups()
     # print(intersecting_block_groups(18.0809736, -67.0851964, 0.000001))
