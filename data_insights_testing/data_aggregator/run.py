@@ -71,5 +71,9 @@ def aggregate_by_zip():
 
 
 if __name__ == "__main__":
-    pass
     # run('Los Angeles', 'CA')
+
+    place_validator()
+
+
+
