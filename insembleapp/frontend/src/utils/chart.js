@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import Chart from 'chart.js';
 import colors from './colors';
 

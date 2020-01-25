@@ -1,29 +1,14 @@
-/* eslint jsx-a11y/anchor-is-valid: 0 */
+/* eslint-disable @typescript-eslint/camelcase, no-console */
 
 import React from 'react';
 import { withRouter } from 'react-router';
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { getLocation } from '../redux/actions/space';
-
 import { withAlert } from 'react-alert';
+import { Container, Row, Col, Card, CardBody, Form, FormGroup, Button } from 'shards-react';
 
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  CardFooter,
-  Form,
-  FormGroup,
-  FormInput,
-  FormCheckbox,
-  Button,
-} from 'shards-react';
-
-import { NavLink } from 'react-router-dom';
+import { getLocation } from '../redux/actions/space';
 
 class Feedback extends React.Component {
   constructor(props) {
@@ -50,11 +35,11 @@ class Feedback extends React.Component {
       },
     };
 
-    console.log('submit regeistered');
+    console.log('submit registered');
 
-    var time_stamp = new Date();
+    let time_stamp = new Date();
 
-    var body = {
+    let body = {
       content,
       type,
       time_stamp,
@@ -84,9 +69,9 @@ class Feedback extends React.Component {
   onSubmit = (e) => {
     e.preventDefault();
 
-    var issueText = document.getElementById('formControlIssues').value;
-    var feedbackText = document.getElementById('formControlFeedback').value;
-    var featuresText = document.getElementById('formControlFeatures').value;
+    let issueText = document.getElementById('formControlIssues').value;
+    let feedbackText = document.getElementById('formControlFeedback').value;
+    let featuresText = document.getElementById('formControlFeatures').value;
 
     if (issueText === '' && feedbackText === '' && featuresText === '') {
       this.alert.show('Please provide feedback before submitting!');
@@ -134,7 +119,7 @@ class Feedback extends React.Component {
                       className="form-control"
                       id="formControlIssues"
                       rows="3"
-                    ></textarea>
+                    />
                   </FormGroup>
                   <FormGroup>
                     <label htmlFor="exampleInputStoreName1">Additional Feedback</label>
@@ -143,7 +128,7 @@ class Feedback extends React.Component {
                       className="form-control"
                       id="formControlFeedback"
                       rows="3"
-                    ></textarea>
+                    />
                   </FormGroup>
                   <FormGroup>
                     <label htmlFor="exampleInputStoreName1">Additional Features</label>
@@ -152,7 +137,7 @@ class Feedback extends React.Component {
                       className="form-control"
                       id="formControlFeatures"
                       rows="3"
-                    ></textarea>
+                    />
                   </FormGroup>
                   <Button
                     pill

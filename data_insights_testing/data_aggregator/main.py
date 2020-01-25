@@ -250,7 +250,7 @@ def detail_builder():
                 print(
                     "(DD) ****** DETAILER: {} more places detailed".format(update_count/update_size))
                 print(
-                    "(DD) ****** Total documents validated in this run: {}".format(update_count))
+                    "(DD) ****** Total documents detailed in this run: {}".format(update_count))
 
         # wait atleast a second before re calling database
         time.sleep(5)

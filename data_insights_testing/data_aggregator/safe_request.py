@@ -58,7 +58,7 @@ def request(api_name, req_type, url, headers={}, data={}, params={}, api_field=N
     search = utils.DB_REQUESTS[api_name].find_one(api_request)
 
     # If search exists, return it's results
-    if search != None:
+    if search is not None:
         return (search['response'], search['_id'])
 
     # otherwise, call the api directly & store result
@@ -66,7 +66,13 @@ def request(api_name, req_type, url, headers={}, data={}, params={}, api_field=N
         req_type, url, headers=headers, data=data, params=params).json()
     api_request['response'] = response
 
-    _id = utils.DB_REQUESTS[api_name].insert(api_request)
+    # try to input into the database. If someone input concorrently, still return the actual _id
+    try:
+        _id = utils.DB_REQUESTS[api_name].insert(api_request)
+    except:
+        search = utils.DB_REQUESTS[api_name].find_one(api_request)
+        if search is not None:
+            return search['response'], search['_id']
 
     return (response, _id)
 

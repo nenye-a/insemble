@@ -1,28 +1,22 @@
-/* eslint jsx-a11y/anchor-is-valid: 0 */
-
 import React from 'react';
 import { connect } from 'react-redux';
-
 import { withRouter } from 'react-router';
-import { Redirect } from 'react-router-dom';
-
+import { Redirect, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { register } from '../redux/actions/auth';
-
 import {
   Container,
   Row,
   Col,
   Card,
   CardBody,
-  CardFooter,
   Form,
   FormGroup,
   FormInput,
   FormCheckbox,
   Button,
 } from 'shards-react';
-import { Link } from 'react-router-dom';
+
+import { register } from '../redux/actions/auth';
 
 class Register extends React.Component {
   constructor(props) {
@@ -46,6 +40,7 @@ class Register extends React.Component {
   onSubmit = (e) => {
     e.preventDefault();
     if (this.passwordInput.current.value !== this.password2Input.current.value) {
+      // eslint-disable-next-line no-console
       console.log('Passwords do not match');
     } else {
       this.props.register(

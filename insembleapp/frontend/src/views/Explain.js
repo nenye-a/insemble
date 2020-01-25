@@ -1,25 +1,12 @@
-/* eslint jsx-a11y/anchor-is-valid: 0 */
-
+/* eslint-disable react/no-unescaped-entities */
 import React from 'react';
-import { Link, Redirect, NavLink } from 'react-router-dom';
+import { Redirect, NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getLocation, loadMap } from '../redux/actions/space';
 
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  CardFooter,
-  Form,
-  FormGroup,
-  FormInput,
-  FormCheckbox,
-  Button,
-} from 'shards-react';
+import { Container, Row, Col, Card, CardBody, Button } from 'shards-react';
 
 class Explain extends React.Component {
   constructor(props) {
@@ -37,7 +24,6 @@ class Explain extends React.Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    const storename = this.storeNameInput.current.value;
     const address = this.addressInput.current.value;
 
     this.props.getLocation('api/location/address=' + address + '&radius=1');
@@ -83,17 +69,17 @@ class Explain extends React.Component {
                 {/* Title */}
                 <h5 className="auth-form__title text-center mb-4">Help</h5>
 
-                <div class="list-group">
+                <div className="list-group">
                   <a
                     href="#"
-                    class="list-group-item list-group-item-action flex-column align-items-start"
+                    className="list-group-item list-group-item-action flex-column align-items-start"
                   >
-                    <div class="d-flex w-100 justify-content-between">
-                      <h5 class="mb-1">How to use</h5>
+                    <div className="d-flex w-100 justify-content-between">
+                      <h5 className="mb-1">How to use</h5>
                     </div>
-                    <p class="mb-1">
+                    <p className="mb-1">
                       Insemble provides location recommendations based on your search parameters.
-                      Click on the map to find more informaiton about location. Use the search bar
+                      Click on the map to find more information about location. Use the search bar
                       to: pan to specific neighborhoods, see presence of specific retailers or
                       retailer types in an area.{' '}
                     </p>
@@ -101,28 +87,30 @@ class Explain extends React.Component {
                   </a>
                   <a
                     href="#"
-                    class="list-group-item list-group-item-action flex-column align-items-start"
+                    className="list-group-item list-group-item-action flex-column align-items-start"
                   >
-                    <div class="d-flex w-100 justify-content-between">
-                      <h5 class="mb-1">How is the map generated?</h5>
+                    <div className="d-flex w-100 justify-content-between">
+                      <h5 className="mb-1">How is the map generated?</h5>
                     </div>
-                    <p class="mb-1">
+                    <p className="mb-1">
                       Insemble generates location recommendations using key factors about retail
                       stores comparable to your searched location or categories. We use advanced
                       analytics to minimize canibalization and optimize for cotenancy potential. If
                       you have concerns, feedback, or want to chat with us, please fill out you
-                      "Feedback" secion linked below.
+                      "Feedback" section linked below.
                     </p>
-                    <small class="text-muted">Please contact us if you have any quesitons.</small>
+                    <small className="text-muted">
+                      Please contact us if you have any questions.
+                    </small>
                   </a>
                   <a
                     href="#"
-                    class="list-group-item list-group-item-action flex-column align-items-start"
+                    className="list-group-item list-group-item-action flex-column align-items-start"
                   >
-                    <div class="d-flex w-100 justify-content-between">
-                      <h5 class="mb-1">Saving Results (Coming Soon)</h5>
+                    <div className="d-flex w-100 justify-content-between">
+                      <h5 className="mb-1">Saving Results (Coming Soon)</h5>
                     </div>
-                    <p class="mb-1">
+                    <p className="mb-1">
                       Unfortunately, you cannot save map results at the moment, but will be able to
                       in the very near future.
                     </p>
@@ -143,7 +131,7 @@ class Explain extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (_state) => ({});
 
 export default withRouter(
   connect(

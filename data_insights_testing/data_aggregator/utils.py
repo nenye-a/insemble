@@ -4,6 +4,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)  # include data_insights_testing in path
 import geopy.distance
 import math
+import pandas as pd
 import anmspatial
 from mongo_connect import Connect
 
@@ -74,6 +75,33 @@ def meters_to_miles(meters):
 
 def miles_to_meters(miles):
     return miles*MILES_TO_METERS_FACTOR
+
+def test_raw_spaces(file_name):
+    spaces = DB_RAW_SPACE.find({})
+    items = []
+    for space in spaces:
+        items.append((
+            space['name'],
+            space['location']['lat'],
+            space['location']['lng']
+        ))
+    
+    items_df = pd.DataFrame(items)
+    items_df.to_csv(file_name)
+
+def test_spaces(file_name):
+    spaces = DB_PROCESSED_SPACE.find({})
+    items = []
+    for space in spaces:
+        items.append((
+            space['name'],
+            space['geometry']['location']['lat'],
+            space['geometry']['location']['lng']
+        ))
+    items_df = pd.DataFrame(items)
+    items_df.to_csv(file_name)
+
+
 
 
 # Provided your current latitude, current longitude, a desired distance
