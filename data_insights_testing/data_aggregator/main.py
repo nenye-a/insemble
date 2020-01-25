@@ -115,7 +115,8 @@ def place_aggregator(city, state, zip_code=None, iter_step=500,
             remaining = all_available.difference(processed)
 
             if len(remaining) == 0:
-                print("(AA) Area now fully tapped for all existing sics")
+                print("(AA) Area now fully tapped for all existing {}".format(
+                    aggregate_type))
                 aggregating = False
                 return aggregating
 
@@ -381,7 +382,8 @@ def psycho_builder(radius=1):
 
     while updating:
 
-        spaces = DB_PROCESSED_SPACE.find({'psycho_finished': {'$exists': False}})
+        spaces = DB_PROCESSED_SPACE.find(
+            {'psycho_finished': {'$exists': False}})
 
         for space in spaces:
             place_id = space['place_id']
@@ -389,7 +391,8 @@ def psycho_builder(radius=1):
             # update with spatial data
             lat = space['geometry']['location']['lat']
             lng = space['geometry']['location']['lng']
-            psycho_dict = spatial.get_psychographics(lat, lng, radius, spatial_df, block_df, cats)
+            psycho_dict = spatial.get_psychographics(
+                lat, lng, radius, spatial_df, block_df, cats)
 
             # space has been detailed and will be updated
             DB_PROCESSED_SPACE.update_one(
@@ -406,7 +409,6 @@ def psycho_builder(radius=1):
         time.sleep(5)
 
 
-
 if __name__ == "__main__":
 
     def test_place_aggregator():
@@ -417,7 +419,7 @@ if __name__ == "__main__":
     # detail_builder()
     # proximity_builder()
 
-    #psycho_builder()
+    # psycho_builder()
 
     spaces = DB_PROCESSED_SPACE.find()
     for count, space in enumerate(spaces):
