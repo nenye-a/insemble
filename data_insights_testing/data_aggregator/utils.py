@@ -2,11 +2,11 @@ import sys
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)  # include data_insights_testing in path
-import geopy.distance
-import math
-import pandas as pd
-import anmspatial
 from mongo_connect import Connect
+import anmspatial
+import pandas as pd
+import math
+import geopy.distance
 
 
 
@@ -25,11 +25,13 @@ EARTHS_RADIUS_MILES = 3958.8
 DB_SPACE = Connect.get_connection().spaceData
 DB_REQUESTS = Connect.get_connection().requests
 DB_AGGREGATE = DB_SPACE.aggregate_records
+DB_COLLECT = DB_SPACE.collect_records
 DB_SICS = DB_SPACE.sics
 DB_TYPES = DB_SPACE.types
 DB_ZIP_CODES = DB_SPACE.zip_codes
 DB_RAW_SPACE = DB_SPACE.raw_spaces
 DB_PROCESSED_SPACE = DB_SPACE.spaces
+DB_OLD_SPACES = DB_SPACE.dataset2
 
 
 # simple unique index of a pymongo database collection
@@ -64,9 +66,25 @@ def flatten(l):
 # provided two lat & lng tuples, function returns distance in miles:
 # geo = (lat, lng)
 def distance(geo1, geo2):
-    # calculate if item is beyond a certain distance
     mile_distance = geopy.distance.distance(geo1, geo2).miles
     return mile_distance
+
+
+# provided two lat & lng tuples, funciton returns the bearing
+# between them
+def bearing(geo1, geo2):
+    # turn tuples that are made of degrees to tuples of radians
+    def to_radians(item): return (math.radians(item[0]), math.radians(item[1]))
+
+    lat1, lng1 = to_radians(geo1)
+    lat2, lng2 = to_radians(geo2)
+
+    y = math.sin(lng2 - lng1) * math.cos(lat2)
+    x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * \
+        math.cos(lat2)*math.cos(lng2 - lng1)
+    bearing = math.atan2(y, x)
+
+    return math.degrees(bearing)
 
 
 def meters_to_miles(meters):
@@ -91,15 +109,56 @@ def test_raw_spaces(file_name, query={}):
     items_df.to_csv(file_name)
 
 
-def test_spaces(file_name, query={}):
+def test_spaces(file_name, query={}, new=True):
     spaces = DB_PROCESSED_SPACE.find(query)
+    len_spaces = spaces.count()
     items = []
+    count = 1
     for space in spaces:
         items.append((
             space['name'],
             space['geometry']['location']['lat'],
             space['geometry']['location']['lng']
         ))
+        if count % 2000 == 0:
+            items_df = pd.DataFrame(items)
+            items_df.to_csv(file_name.split(',')[0] + str(count) + '.csv')
+            items = []
+
+        count += 1
+        if count == len_spaces:
+            items_df = pd.DataFrame(items)
+            items_df.to_csv(file_name.split(',')[0] + str(count) + '.csv')
+            items = []
+
+
+def test_old_spaces(file_name, query={}):
+    spaces = DB_OLD_SPACES.find(query)
+    len_spaces = spaces.count()
+    items = []
+    count = 1
+    for space in spaces:
+        items.append((
+            space['name'],
+            space['lat'],
+            space['lng']
+        ))
+        if count % 2000 == 0:
+            items_df = pd.DataFrame(items)
+            items_df.to_csv(file_name.split(',')[0] + str(count) + '.csv')
+            items = []
+        count += 1
+        if count == len_spaces:
+            items_df = pd.DataFrame(items)
+            items_df.to_csv(file_name.split(',')[0] + str(count) + '.csv')
+            items = []
+
+
+def observe_collector(file_name, run_name):
+    run_record = DB_COLLECT.find_one({'run_name': run_name})
+    items = []
+    for call in run_record['calls']:
+        items.insert(0, (call['lat'], call['lng']))
     items_df = pd.DataFrame(items)
     items_df.to_csv(file_name)
 
@@ -180,11 +239,14 @@ if __name__ == "__main__":
         target_distance = 1.5
         lat = 34.056186
         lng = -118.276942
-        next_location = location_at_distance(lat, lng, target_distance, 11)
+        next_location = location_at_distance(lat, lng, target_distance, 90)
         actual_distance = distance((lat, lng), next_location)
+        actual_bearing = bearing((lat, lng), next_location)
 
-        print(actual_distance)
         print(next_location)
+
+        print("Actual distance: {}".format(actual_distance))
+        print("Actual bearing: {}".format(actual_bearing))
 
     def test_intersecting_block_groups():
         lat = 34.056186
@@ -201,6 +263,8 @@ if __name__ == "__main__":
         types = get_column_from_txt(filename)
         print(types)
 
+    # test_location_at_distance()
+
     # # test_intersecting_block_groups()
     # print(intersecting_block_groups(18.0809736, -67.0851964, 0.000001))
 
@@ -216,8 +280,8 @@ if __name__ == "__main__":
     #     'zip_codes': zips
     # })
 
-    types = get_column_from_txt('types.txt')
-    DB_TYPES.insert({
-        'name': 'place_types',
-        'types': types
-    })
+    # types = get_column_from_txt('types.txt')
+    # DB_TYPES.insert({
+    #     'name': 'place_types',
+    #     'types': types
+    # })

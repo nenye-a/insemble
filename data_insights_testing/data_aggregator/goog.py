@@ -52,7 +52,7 @@ def find(address, name="", bias='ipbias'):
 
 # Given google place ID, can generate the other nearby locations.
 # By default, algorithm returns all results in 1 miles up to 60.
-def nearby(lat, lng, category, radius=1, pagetoken=None):
+def nearby(lat, lng, category, radius=1, rankby='prominence', pagetoken=None):
 
     url = GOOG_NEARBY_ENDPOINT
 
@@ -73,11 +73,12 @@ def nearby(lat, lng, category, radius=1, pagetoken=None):
         radius = str(utils.miles_to_meters(radius))
         params.update({
             'location': location,
-            'radius': radius,
             'type': category,
             'language': 'en',
-            'rankby': 'prominence'
+            'rankby': rankby
         })
+        if rankby == 'prominence':
+            params['radius'] = radius
 
     result, _id = safe_request.request(
         API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
@@ -86,6 +87,8 @@ def nearby(lat, lng, category, radius=1, pagetoken=None):
     # otherwise, return None. Proceed to check if there's a new page. Paths should
     # never be possible to occur at the same time but elif for extra safety
     next_page = None
+    if not result:
+        return None
     if result['status'] == 'INVALID_REQUEST':
         utils.DB_REQUESTS[API_NAME].delete_one({'_id': _id})
         if not pagetoken:

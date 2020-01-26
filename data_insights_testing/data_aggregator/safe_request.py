@@ -1,5 +1,6 @@
 import utils
 import requests
+import time
 
 
 '''
@@ -71,9 +72,12 @@ def request(api_name, req_type, url, headers={}, data={}, params={}, api_field=N
     try:
         _id = utils.DB_REQUESTS[api_name].insert(api_request)
     except:
+        time.sleep(1.5)
         search = utils.DB_REQUESTS[api_name].find_one(api_request)
         if search is not None:
             return search['response'], search['_id']
+        else:
+            return None, None
 
     return (response, _id)
 
