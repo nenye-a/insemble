@@ -36,7 +36,7 @@ def find(name, lat, lng, address):
         API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='client_id,client_secret')
 
     if 'errorType' in response['meta']:
-        print(response['errorDetail'])
+        print("Foursquare Error")
         return None
 
     if len(response['response']['venues']) == 0:

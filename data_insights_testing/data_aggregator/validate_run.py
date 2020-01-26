@@ -3,14 +3,16 @@ import threading
 
 if __name__ == "__main__":
 
-    validator = threading.Thread(target=place_validator, args=({
-        'aggregate_type': 'type'
-    },))
+    detail_builder()
 
-    builder = threading.Thread(target=detail_builder)
+    # validator = threading.Thread(target=place_validator, args=({
+    #     'aggregate_type': 'type'
+    # },))
 
-    validator.start()
-    builder.start()
+    # builder = threading.Thread(target=detail_builder)
+
+    # # validator.start()
+    # builder.start()
 
     # place_validator({
     #     'aggregate_type': 'type'
