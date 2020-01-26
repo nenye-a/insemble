@@ -87,6 +87,8 @@ def nearby(lat, lng, category, radius=1, rankby='prominence', pagetoken=None):
     # otherwise, return None. Proceed to check if there's a new page. Paths should
     # never be possible to occur at the same time but elif for extra safety
     next_page = None
+    if not result:
+        return None
     if result['status'] == 'INVALID_REQUEST':
         utils.DB_REQUESTS[API_NAME].delete_one({'_id': _id})
         if not pagetoken:

@@ -31,6 +31,7 @@ DB_TYPES = DB_SPACE.types
 DB_ZIP_CODES = DB_SPACE.zip_codes
 DB_RAW_SPACE = DB_SPACE.raw_spaces
 DB_PROCESSED_SPACE = DB_SPACE.spaces
+DB_OLD_SPACES = DB_SPACE.dataset2
 
 
 # simple unique index of a pymongo database collection
@@ -108,17 +109,49 @@ def test_raw_spaces(file_name, query={}):
     items_df.to_csv(file_name)
 
 
-def test_spaces(file_name, query={}):
+def test_spaces(file_name, query={}, new=True):
     spaces = DB_PROCESSED_SPACE.find(query)
+    len_spaces = spaces.count()
     items = []
+    count = 1
     for space in spaces:
         items.append((
             space['name'],
             space['geometry']['location']['lat'],
             space['geometry']['location']['lng']
         ))
-    items_df = pd.DataFrame(items)
-    items_df.to_csv(file_name)
+        if count % 2000 == 0:
+            items_df = pd.DataFrame(items)
+            items_df.to_csv(file_name.split(',')[0] + str(count) + '.csv')
+            items = []
+
+        count += 1
+        if count == len_spaces:
+            items_df = pd.DataFrame(items)
+            items_df.to_csv(file_name.split(',')[0] + str(count) + '.csv')
+            items = []
+
+
+def test_old_spaces(file_name, query={}):
+    spaces = DB_OLD_SPACES.find(query)
+    len_spaces = spaces.count()
+    items = []
+    count = 1
+    for space in spaces:
+        items.append((
+            space['name'],
+            space['lat'],
+            space['lng']
+        ))
+        if count % 2000 == 0:
+            items_df = pd.DataFrame(items)
+            items_df.to_csv(file_name.split(',')[0] + str(count) + '.csv')
+            items = []
+        count += 1
+        if count == len_spaces:
+            items_df = pd.DataFrame(items)
+            items_df.to_csv(file_name.split(',')[0] + str(count) + '.csv')
+            items = []
 
 
 def observe_collector(file_name, run_name):
