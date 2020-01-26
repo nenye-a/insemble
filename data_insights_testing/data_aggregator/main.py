@@ -350,7 +350,7 @@ def place_collector_google_brute(start_lat, start_lng, type_, run_name, bounds, 
 
     smallest_distance_observed = 1.5
     first_horizontal_call = None
-    
+
     # start where we left off if this record existed
     if len(run_record['calls']) > 0:
         start_lat = run_record['calls'][0]['next_lat']
@@ -411,7 +411,7 @@ def place_collector_google_brute(start_lat, start_lng, type_, run_name, bounds, 
             print(err)
             print("(CC_GOOGLE) **** Attempted to insert {} into DB.".format(len(places)))
             print("(CC_GOOGLE) **** Failed to input all, likely due to duplicates")
-        
+
         # calculate the distance of coverage for this search
         furthest_distance = utils.distance(
             (start_lat, start_lng),
@@ -471,7 +471,8 @@ def place_collector_google_brute(start_lat, start_lng, type_, run_name, bounds, 
         DB_COLLECT.update_one({'run_name': run_name}, {'$set': run_record})
 
         start_lat, start_lng = next_lat, next_lng
-        print("\n(CC_GOOGLE) ****** Status update | name: {}".format(run_record['run_name']))
+        print(
+            "\n(CC_GOOGLE) ****** Status update | name: {}".format(run_record['run_name']))
         print("\n(CC_GOOGLE) ****** Moving to the next point after the following settings:\n{}\n ".format(call_update))
 
 
@@ -564,7 +565,13 @@ def detail_builder():
             # icon, international_phone_number, name, opening_hours, photos, place_id, price,
             # rating, reviews, types, url, vicinity, website
             google_details = goog.details(place_id)
-            space.update(google_details)
+
+            if google_details:
+                space.update(google_details)
+            else:
+                DB_PROCESSED_SPACE.update_one({'place_id': place_id}, {
+                                              '$set': {'no_details': True}})
+                continue
 
             name = space['name']
             lat = space['geometry']['location']['lat']
