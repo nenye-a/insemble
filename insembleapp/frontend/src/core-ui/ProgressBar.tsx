@@ -13,7 +13,7 @@ type BarProps = {
 
 export default function ProgressBar(props: Props) {
   let { progress } = props;
-  let progressPercentage = progress * 100 + '%';
+  let progressPercentage = Math.round(progress * 100).toString() + '%';
   return (
     <Container>
       <Bar width={progressPercentage} />

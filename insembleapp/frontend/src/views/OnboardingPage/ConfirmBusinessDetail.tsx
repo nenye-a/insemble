@@ -43,7 +43,7 @@ export default function ConfirmBusinessDetail() {
     <>
       <Iframe src={mapURL} />
       <FormContainer>
-        <TextInput label="Business Name" value={name} disabled />
+        <TextInput label="Business Name" defaultValue={name} disabled />
         <RowedView>
           <Label text="Categories" />
           <EditButton
@@ -53,7 +53,14 @@ export default function ConfirmBusinessDetail() {
         </RowedView>
         <ClickAway onClickAway={() => toggleCategorySelection(false)}>
           {/* TODO: fetch categories */}
-          <FilterContainer search visible={categorySelectionVisible} />
+          <FilterContainer
+            search
+            visible={categorySelectionVisible}
+            selectedOptions={[]}
+            allOptions={[]}
+            onSelect={() => {}}
+            onUnSelect={() => {}}
+          />
         </ClickAway>
         <Label text="What is your relationship to this business?" />
         <RadioGroup

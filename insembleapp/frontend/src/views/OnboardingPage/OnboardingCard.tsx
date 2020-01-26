@@ -30,9 +30,9 @@ export default function OnboardingCard(props: Props) {
         <Footer flex>
           {buttons.map(({ onPress, text }, index) => {
             return index === 0 ? (
-              <TransparentButton text={text} onPress={onPress} />
+              <TransparentButton key={index} text={text} onPress={onPress} />
             ) : (
-              <Button text={text} onPress={onPress} />
+              <Button key={index} text={text} onPress={onPress} />
             );
           })}
         </Footer>

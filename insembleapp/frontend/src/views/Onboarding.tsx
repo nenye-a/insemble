@@ -13,6 +13,7 @@ export default function Onboarding() {
   const SEGMENTS = [
     {
       title: 'Let’s confirm your business details.',
+      content: <ConfirmBusinessDetail />,
       buttons: [
         {
           text: 'Not My Address',
@@ -72,8 +73,7 @@ export default function Onboarding() {
         progress={activeSegmentIndex + 1 / SEGMENTS.length}
         buttons={SEGMENTS[activeSegmentIndex].buttons}
       >
-        {/* TODO: add other pages */}
-        {activeSegmentIndex === 0 && <ConfirmBusinessDetail />}
+        {SEGMENTS[activeSegmentIndex].content}
       </OnboardingCard>
     </Container>
   );
