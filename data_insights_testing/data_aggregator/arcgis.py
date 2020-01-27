@@ -7,6 +7,7 @@ File for ArcGIS & ESRI data processing
 import requests
 import json
 
+#TODO: get permanent token. This may fail eventually
 url = "https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/GeoEnrichment/enrich"
 TOKEN = "DHe78UB13fnagGcX6WdOpaLRutsTxDLd5LjfH8WiEbeGYCjucb3nb0z_FWxDmwdDXMnnjjjeg7HR9liWZrevg_E50MI67Nc5nH2-c-J9vHNRAXmRUzYZu0rAqk65GDaoarf9eNSGHGP6gA_u_pSFfHaQkkatGV9FM8OCRKMXQsxtwA9hD4uLXNZYp2HhM9xSdBeih-Ao-5S186O_LgkwQPJ4J3I1YwWIYJsNlZp4otw."
 

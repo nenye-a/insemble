@@ -5,6 +5,7 @@ import pitney
 import foursquare
 import random
 import spatial
+import arcgis
 
 '''
 
@@ -742,6 +743,47 @@ def psycho_builder(radius=1):
                 print(
                     "(PS) ****** Total documents psycho detailed in this run: {}".format(update_count))
 
+# arcgis builder
+def arcgis_builder(radius=1):
+    update_count = 0
+    update_size = 15  # how many records to update prior to pinging console
+    updating = True
+
+    while updating:
+
+        spaces = DB_PROCESSED_SPACE.find(
+            {'arcgis_finished': {'$exists': False}})
+
+        for space in spaces:
+            place_id = space['place_id']
+
+            # update with spatial data
+            lat = space['geometry']['location']['lat']
+            lng = space['geometry']['location']['lng']
+            arcgis_details = arcgis.details(lat,lng,radius)
+
+            #TODO: do we need to have incomes at every radius? as with Daytime pop & household growth
+
+            # space has been detailed and will be updated
+            DB_PROCESSED_SPACE.update_one(
+                {'place_id': place_id}, {'$set': {
+                    'DaytimePop': arcgis_details['DaytimePop'],
+                    'DaytimeWorkingPop': arcgis_details['DaytimeWorkingPop'],
+                    'DaytimeResidentPop': arcgis_details['DaytimeResidentPop'],
+                    'TotalHouseholds': arcgis_details['TotalHouseholds'],
+                    'HouseholdGrowth2017-2022': arcgis_details['HouseholdGrowth2017-2022'],
+                    'MedHouseholdIncome': arcgis_details['MedHouseholdIncome'],
+                    'arcgis_finished': True }
+                })
+            print(
+                "(PS) ****** ARCGIS DETAILS: {} updated with Daytime Pops and Household Info".format(space['name']))
+            update_count += 1
+            if update_count % update_size == 0:
+                print(
+                    "(PS) ****** ARCGIS DETAILS: {} more places updated with Daytime Pops and Household Info".format(update_size))
+                print(
+                    "(PS) ****** Total documents psycho detailed in this run: {}".format(update_count))
+
 
 if __name__ == "__main__":
 
@@ -754,6 +796,7 @@ if __name__ == "__main__":
     # proximity_builder()
 
     # psycho_builder()
+    # arcgis_builder()
 
     spaces = DB_PROCESSED_SPACE.find()
     for count, space in enumerate(spaces):
