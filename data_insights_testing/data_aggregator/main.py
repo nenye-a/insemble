@@ -315,7 +315,11 @@ def place_collector_google(start_lat, start_lng, type_, run_name, bounds, run_re
 
 ###############################################
 
-
+# This place collector will preform a google_nearby in brute force on a city to obtain all locations, within a bounded box.
+# The collector, will find the distance and will continue to find distance on items until it spans the region.
+# This function operates similarly to the previous Google collector, but will instead "walk" over a city in order to obtain all the
+# details deemed necessary, instead of searching in a BFS fashion. Bounds are provided similar to how they are above,
+# in the form of {'nw':(lat1,lng1), 'se'(lat2,lng2)}. Bounds only function for North America
 def place_collector_google_brute(start_lat, start_lng, type_, run_name, bounds, run_record=None, direction='down'):
 
     horizontal_bearing = 90 if direction == 'down' else 270
@@ -595,10 +599,12 @@ def detail_builder():
             DB_PROCESSED_SPACE.update_one(
                 {'place_id': place_id}, {'$set': space})
 
+            print(
+                "(DD) ****** DETAILER: {} updated with Details".format(space['name']))
             update_count += 1
             if update_count % update_size == 0:
                 print(
-                    "(DD) ****** DETAILER: {} more places detailed".format(update_count/update_size))
+                    "(DD) ****** DETAILER: {} more places detailed".format(update_size))
                 print(
                     "(DD) ****** Total documents detailed in this run: {}".format(update_count))
 
@@ -623,7 +629,7 @@ def proximity_builder(radius=1):
     ]
 
     # Types that cannot be queried as a type from google, but can be searched
-    search_queries = []
+    search_queries = ['apartments']
 
     all_queries = type_queries + search_queries
 
@@ -721,19 +727,27 @@ def psycho_builder(radius=1):
             # update with spatial data
             lat = space['geometry']['location']['lat']
             lng = space['geometry']['location']['lng']
-            psycho_dict = spatial.get_psychographics(
-                lat, lng, radius, spatial_df, block_df, cats)
+            psycho_dict1 = spatial.get_psychographics(
+                lat, lng, 1, spatial_df, block_df, cats)
+            psycho_dict3 = spatial.get_psychographics(
+                lat, lng, 3, spatial_df, block_df, cats)
 
             # space has been detailed and will be updated
             DB_PROCESSED_SPACE.update_one(
-                {'place_id': place_id}, {'$set': {'psycho': psycho_dict, 'psycho_finished': True}})
-
+                {'place_id': place_id}, {'$set': {
+                    'psycho1': psycho_dict1,
+                    'psycho3': psycho_dict3,
+                    'psycho_finished': True
+                }
+                })
+            print(
+                "(PS) ****** PSYCHO DETAILS: {} updated with Psychographics".format(space['name']))
             update_count += 1
             if update_count % update_size == 0:
                 print(
-                    "(DD) ****** PSYCHO DETAILS: {} more places psycho detailed".format(update_count/update_size))
+                    "(PS) ****** PSYCHO DETAILS: {} more places updated with psychographics".format(update_size))
                 print(
-                    "(DD) ****** Total documents psycho detailed in this run: {}".format(update_count))
+                    "(PS) ****** Total documents psycho detailed in this run: {}".format(update_count))
 
         # wait atleast a second before re calling database
         time.sleep(5)
