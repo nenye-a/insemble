@@ -20,8 +20,8 @@ def get_demographics(lat, lng, radius, demo_df, block_grp_df, cats):
     try:
         demo_trimmed = demo_df[block_grps]
     except:
-        print("No demo data on block group.")
-
+        return None
+    
     # add weights for mean + median calc
     # pop stats
     pops = demo_trimmed[0:2].sum(axis=0)
