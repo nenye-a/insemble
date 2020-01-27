@@ -666,7 +666,10 @@ def proximity_builder(radius=1):
                     'types': place['types']
                 } for place in nearby_places]
 
-                space.get('nearby_complete', []).append(nearby_tag)
+                if 'nearby_complete' in space:
+                    space['nearby_complete'].append(nearby_tag)
+                else:
+                    space['nearby_complete'] = [nearby_tag]
                 DB_PROCESSED_SPACE.update_one(
                     {'place_id': place_id}, {'$set': space})
                 print("(PP) {} complated for {}".format(
@@ -695,7 +698,10 @@ def proximity_builder(radius=1):
                     'types': place['types'],
                 } for place in nearby_places]
 
-                space.get('nearby_complete', []).append(nearby_tag)
+                if 'nearby_complete' in space:
+                    space['nearby_complete'].append(nearby_tag)
+                else:
+                    space['nearby_complete'] = [nearby_tag]
                 DB_PROCESSED_SPACE.update_one(
                     {'place_id': place_id}, {'$set': space})
                 print("(PP) {} complated for {}".format(
