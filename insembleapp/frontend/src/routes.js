@@ -76,7 +76,7 @@ export default [
   {
     path: '/verify/:placeID',
     layout: BasicLayout,
-    component: Verify, // will change this to Onboarding after all scenes are ready
+    component: Onboarding,
   },
   {
     path: '/register',

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 import { View } from '../core-ui';
 import OnboardingCard from './OnboardingPage/OnboardingCard';
@@ -10,6 +11,7 @@ import TenantPhysicalCriteria from './OnboardingPage/TenantPhysicalCriteria';
 
 export default function Onboarding() {
   let [activeSegmentIndex, setActiveSegmentIndex] = useState(0);
+  let history = useHistory();
   let onNextPress = () => setActiveSegmentIndex(activeSegmentIndex + 1);
   let onBackPress = () => setActiveSegmentIndex(activeSegmentIndex - 1);
 
@@ -20,7 +22,9 @@ export default function Onboarding() {
       buttons: [
         {
           text: 'Not My Address',
-          onPress: () => {},
+          onPress: () => {
+            history.push('/');
+          },
         },
         {
           text: 'Done',
