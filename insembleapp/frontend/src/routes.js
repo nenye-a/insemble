@@ -22,6 +22,7 @@ import Errors from './views/Errors';
 import NoDeals from './views/NoDeals';
 import UserProfile from './views/UserProfile';
 import MainMap from './views/MainMap';
+import Onboarding from './views/Onboarding';
 
 export default [
   {
@@ -70,12 +71,12 @@ export default [
     path: '/verify',
     exact: true,
     layout: BasicLayout,
-    component: Verify,
+    component: Onboarding,
   },
   {
     path: '/verify/:placeID',
     layout: BasicLayout,
-    component: Verify,
+    component: Verify, // will change this to Onboarding after all scenes are ready
   },
   {
     path: '/register',
