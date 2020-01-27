@@ -1,6 +1,7 @@
-import React, { ComponentProps, useMemo } from 'react';
+import React, { ComponentProps } from 'react';
 import View from './View';
 import RadioButton from './RadioButton';
+import useID from '../utils/useID';
 
 type ViewProps = ComponentProps<typeof View>;
 
@@ -17,9 +18,6 @@ type RadioGroupProps<T> = ViewProps & {
 const defaultTitleExtractor = (item: unknown) => String(item);
 const defaultKeyExtractor = (item: unknown, index: number) => String(index);
 
-const idPrefix = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(36);
-let idCounter = 0;
-
 export default function RadioGroup<T>(props: RadioGroupProps<T>) {
   let {
     name: providedName,
@@ -31,7 +29,8 @@ export default function RadioGroup<T>(props: RadioGroupProps<T>) {
     radioItemProps,
     ...otherProps
   } = props;
-  let fallbackName = useMemo(() => getID(), []);
+  let fallbackName = useID();
+
   let name = providedName || fallbackName;
   return (
     <View {...otherProps}>
@@ -51,10 +50,4 @@ export default function RadioGroup<T>(props: RadioGroupProps<T>) {
       })}
     </View>
   );
-}
-
-function getID() {
-  let id = idPrefix + idCounter.toString(36);
-  idCounter += 1;
-  return id;
 }
