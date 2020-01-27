@@ -122,7 +122,7 @@ def details(place_id, fields=None):
 
     response, _id = safe_request.request(
         API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
-    details = response['result']
+    details = response['result'] if response else None
 
     return details
 
