@@ -760,19 +760,26 @@ def arcgis_builder(radius=1):
             # update with spatial data
             lat = space['geometry']['location']['lat']
             lng = space['geometry']['location']['lng']
-            arcgis_details = arcgis.details(lat,lng,radius)
+            arcgis_details1 = arcgis.details(lat, lng, 1)
+            arcgis_details3 = arcgis.details(lat, lng, 3)
 
             #TODO: do we need to have incomes at every radius? as with Daytime pop & household growth
 
             # space has been detailed and will be updated
             DB_PROCESSED_SPACE.update_one(
                 {'place_id': place_id}, {'$set': {
-                    'DaytimePop': arcgis_details['DaytimePop'],
-                    'DaytimeWorkingPop': arcgis_details['DaytimeWorkingPop'],
-                    'DaytimeResidentPop': arcgis_details['DaytimeResidentPop'],
-                    'TotalHouseholds': arcgis_details['TotalHouseholds'],
-                    'HouseholdGrowth2017-2022': arcgis_details['HouseholdGrowth2017-2022'],
-                    'MedHouseholdIncome': arcgis_details['MedHouseholdIncome'],
+                    'DaytimePop1': arcgis_details1['DaytimePop'],
+                    'DaytimeWorkingPop1': arcgis_details1['DaytimeWorkingPop'],
+                    'DaytimeResidentPop1': arcgis_details1['DaytimeResidentPop'],
+                    'TotalHouseholds1': arcgis_details1['TotalHouseholds'],
+                    'HouseholdGrowth2017-2022-1': arcgis_details1['HouseholdGrowth2017-2022'],
+                    'MedHouseholdIncome1': arcgis_details1['MedHouseholdIncome'],
+                    'DaytimePop3': arcgis_details3['DaytimePop'],
+                    'DaytimeWorkingPop3': arcgis_details3['DaytimeWorkingPop'],
+                    'DaytimeResidentPop3': arcgis_details3['DaytimeResidentPop'],
+                    'TotalHouseholds3': arcgis_details3['TotalHouseholds'],
+                    'HouseholdGrowth2017-2022-3': arcgis_details3['HouseholdGrowth2017-2022'],
+                    'MedHouseholdIncome3': arcgis_details3['MedHouseholdIncome'],
                     'arcgis_finished': True }
                 })
             print(
