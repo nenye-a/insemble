@@ -6,6 +6,7 @@ import foursquare
 import random
 import spatial
 import arcgis
+import environics
 
 '''
 
@@ -805,6 +806,51 @@ def arcgis_builder(radius=1):
                     "(ARC) ****** Total documents given ARCGIS details in this run: {}".format(update_count))
 
 
+# demographics builder
+def demo_builder(radius=1):
+    update_count = 0
+    update_size = 15  # how many records to update prior to pinging console
+    updating = True
+
+    cats, demo_df = environics.create_demo_cats_and_df()
+    block_df = spatial.create_block_grp_df()
+
+    while updating:
+
+        spaces = DB_PROCESSED_SPACE.find(
+            {'demo_finished': {'$exists': False}})
+
+        for space in spaces:
+            place_id = space['place_id']
+
+            # update with spatial data
+            lat = space['geometry']['location']['lat']
+            lng = space['geometry']['location']['lng']
+            demo_dict1 = environics.get_demographics(
+                lat, lng, 1, demo_df, block_df, cats)
+            demo_dict3 = environics.get_demographics(
+                lat, lng, 3, demo_df, block_df, cats)
+
+            # space has been detailed and will be updated
+            DB_PROCESSED_SPACE.update_one(
+                {'place_id': place_id}, {'$set': {
+                    'demo1': demo_dict1,
+                    'demo3': demo_dict3,
+                    'demo_finished': True
+                }
+                })
+
+            print(
+                "(PS) ****** DEMO DETAILS: {} updated with Demographics".format(space['name']))
+            update_count += 1
+            if update_count % update_size == 0:
+                print(
+                    "(PS) ****** DEMO DETAILS: {} more places updated with demographics".format(update_size))
+                print(
+                    "(PS) ****** Total documents demo detailed in this run: {}".format(update_count))
+
+
+
 if __name__ == "__main__":
 
     def test_place_aggregator():
@@ -817,6 +863,8 @@ if __name__ == "__main__":
 
     # psycho_builder()
     # arcgis_builder()
+
+    demo_builder()
 
     spaces = DB_PROCESSED_SPACE.find()
     for count, space in enumerate(spaces):
