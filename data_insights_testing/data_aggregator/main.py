@@ -629,7 +629,7 @@ def proximity_builder(radius=1):
     ]
 
     # Types that cannot be queried as a type from google, but can be searched
-    search_queries = []
+    search_queries = ['apartments']
 
     all_queries = type_queries + search_queries
 
