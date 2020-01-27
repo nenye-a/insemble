@@ -35,8 +35,8 @@ def find(name, lat, lng, address):
     response, _id = safe_request.request(
         API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='client_id,client_secret')
 
-    if 'errorType' in response['meta']:
-        print(response['errorDetail'])
+    if response is None or 'errorType' in response['meta']:
+        print("Foursquare Error")
         return None
 
     if len(response['response']['venues']) == 0:
