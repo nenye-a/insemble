@@ -3,7 +3,6 @@ import utils
 import goog
 import pitney
 import foursquare
-import time
 import random
 import spatial
 
@@ -546,9 +545,6 @@ def place_validator(condition=None):
                 _ids = []
                 processed_spaces = []
 
-        # wait atleast a second before re calling database
-        time.sleep(5)
-
 
 # gather all the details about this space
 def detail_builder():
@@ -607,9 +603,6 @@ def detail_builder():
                     "(DD) ****** DETAILER: {} more places detailed".format(update_size))
                 print(
                     "(DD) ****** Total documents detailed in this run: {}".format(update_count))
-
-        # wait atleast a second before re calling database
-        time.sleep(5)
 
 
 # gather all places that are near this location
@@ -748,9 +741,6 @@ def psycho_builder(radius=1):
                     "(PS) ****** PSYCHO DETAILS: {} more places updated with psychographics".format(update_size))
                 print(
                     "(PS) ****** Total documents psycho detailed in this run: {}".format(update_count))
-
-        # wait atleast a second before re calling database
-        time.sleep(5)
 
 
 if __name__ == "__main__":
