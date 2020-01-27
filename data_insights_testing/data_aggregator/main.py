@@ -3,9 +3,9 @@ import utils
 import goog
 import pitney
 import foursquare
-import time
 import random
 import spatial
+import arcgis
 
 '''
 
@@ -315,7 +315,11 @@ def place_collector_google(start_lat, start_lng, type_, run_name, bounds, run_re
 
 ###############################################
 
-
+# This place collector will preform a google_nearby in brute force on a city to obtain all locations, within a bounded box.
+# The collector, will find the distance and will continue to find distance on items until it spans the region.
+# This function operates similarly to the previous Google collector, but will instead "walk" over a city in order to obtain all the
+# details deemed necessary, instead of searching in a BFS fashion. Bounds are provided similar to how they are above,
+# in the form of {'nw':(lat1,lng1), 'se'(lat2,lng2)}. Bounds only function for North America
 def place_collector_google_brute(start_lat, start_lng, type_, run_name, bounds, run_record=None, direction='down'):
 
     horizontal_bearing = 90 if direction == 'down' else 270
@@ -542,9 +546,6 @@ def place_validator(condition=None):
                 _ids = []
                 processed_spaces = []
 
-        # wait atleast a second before re calling database
-        time.sleep(5)
-
 
 # gather all the details about this space
 def detail_builder():
@@ -595,15 +596,14 @@ def detail_builder():
             DB_PROCESSED_SPACE.update_one(
                 {'place_id': place_id}, {'$set': space})
 
+            print(
+                "(DD) ****** DETAILER: {} updated with Details".format(space['name']))
             update_count += 1
             if update_count % update_size == 0:
                 print(
-                    "(DD) ****** DETAILER: {} more places detailed".format(update_count/update_size))
+                    "(DD) ****** DETAILER: {} more places detailed".format(update_size))
                 print(
                     "(DD) ****** Total documents detailed in this run: {}".format(update_count))
-
-        # wait atleast a second before re calling database
-        time.sleep(5)
 
 
 # gather all places that are near this location
@@ -623,7 +623,7 @@ def proximity_builder(radius=1):
     ]
 
     # Types that cannot be queried as a type from google, but can be searched
-    search_queries = []
+    search_queries = ['apartments']
 
     all_queries = type_queries + search_queries
 
@@ -660,7 +660,10 @@ def proximity_builder(radius=1):
                     'types': place['types']
                 } for place in nearby_places]
 
-                space.get('nearby_complete', []).append(nearby_tag)
+                if 'nearby_complete' in space:
+                    space['nearby_complete'].append(nearby_tag)
+                else:
+                    space['nearby_complete'] = [nearby_tag]
                 DB_PROCESSED_SPACE.update_one(
                     {'place_id': place_id}, {'$set': space})
                 print("(PP) {} complated for {}".format(
@@ -689,7 +692,10 @@ def proximity_builder(radius=1):
                     'types': place['types'],
                 } for place in nearby_places]
 
-                space.get('nearby_complete', []).append(nearby_tag)
+                if 'nearby_complete' in space:
+                    space['nearby_complete'].append(nearby_tag)
+                else:
+                    space['nearby_complete'] = [nearby_tag]
                 DB_PROCESSED_SPACE.update_one(
                     {'place_id': place_id}, {'$set': space})
                 print("(PP) {} complated for {}".format(
@@ -721,22 +727,82 @@ def psycho_builder(radius=1):
             # update with spatial data
             lat = space['geometry']['location']['lat']
             lng = space['geometry']['location']['lng']
-            psycho_dict = spatial.get_psychographics(
-                lat, lng, radius, spatial_df, block_df, cats)
+            psycho_dict1 = spatial.get_psychographics(
+                lat, lng, 1, spatial_df, block_df, cats)
+            psycho_dict3 = spatial.get_psychographics(
+                lat, lng, 3, spatial_df, block_df, cats)
 
             # space has been detailed and will be updated
             DB_PROCESSED_SPACE.update_one(
-                {'place_id': place_id}, {'$set': {'psycho': psycho_dict, 'psycho_finished': True}})
-
+                {'place_id': place_id}, {'$set': {
+                    'psycho1': psycho_dict1,
+                    'psycho3': psycho_dict3,
+                    'psycho_finished': True
+                }
+                })
+            print(
+                "(PS) ****** PSYCHO DETAILS: {} updated with Psychographics".format(space['name']))
             update_count += 1
             if update_count % update_size == 0:
                 print(
-                    "(DD) ****** PSYCHO DETAILS: {} more places psycho detailed".format(update_count/update_size))
+                    "(PS) ****** PSYCHO DETAILS: {} more places updated with psychographics".format(update_size))
                 print(
-                    "(DD) ****** Total documents psycho detailed in this run: {}".format(update_count))
+                    "(PS) ****** Total documents psycho detailed in this run: {}".format(update_count))
 
-        # wait atleast a second before re calling database
-        time.sleep(5)
+# arcgis builder
+
+
+def arcgis_builder(radius=1):
+    update_count = 0
+    update_size = 15  # how many records to update prior to pinging console
+    updating = True
+
+    while updating:
+
+        spaces = DB_PROCESSED_SPACE.find(
+            {'arcgis_finished': {'$exists': False}})
+
+        for space in spaces:
+            place_id = space['place_id']
+
+            # update with spatial data
+            lat = space['geometry']['location']['lat']
+            lng = space['geometry']['location']['lng']
+            arcgis_details1 = arcgis.details(lat, lng, 1)
+            arcgis_details3 = arcgis.details(lat, lng, 3)
+
+            arcgis_details1 = {
+                'DaytimePop1': arcgis_details1['DaytimePop'],
+                'DaytimeWorkingPop1': arcgis_details1['DaytimeWorkingPop'],
+                'DaytimeResidentPop1': arcgis_details1['DaytimeResidentPop'],
+                'TotalHouseholds1': arcgis_details1['TotalHouseholds'],
+                'HouseholdGrowth2017-2022-1': arcgis_details1['HouseholdGrowth2017-2022'],
+                'MedHouseholdIncome1': arcgis_details1['MedHouseholdIncome']
+            } if arcgis_details1 else None
+            arcgis_details3 = {
+                'DaytimePop3': arcgis_details3['DaytimePop'],
+                'DaytimeWorkingPop3': arcgis_details3['DaytimeWorkingPop'],
+                'DaytimeResidentPop3': arcgis_details3['DaytimeResidentPop'],
+                'TotalHouseholds3': arcgis_details3['TotalHouseholds'],
+                'HouseholdGrowth2017-2022-3': arcgis_details3['HouseholdGrowth2017-2022'],
+                'MedHouseholdIncome3': arcgis_details3['MedHouseholdIncome']
+            }if arcgis_details3 else None
+
+            # space has been detailed and will be updated
+            DB_PROCESSED_SPACE.update_one(
+                {'place_id': place_id}, {'$set': {
+                    'arcgis_details1': arcgis_details1,
+                    'arcgis_details3': arcgis_details3,
+                    'arcgis_finished': True}
+                })
+            print(
+                "(ARC) ****** ARCGIS DETAILS: {} updated with Daytime Pops and Household Info".format(space['name']))
+            update_count += 1
+            if update_count % update_size == 0:
+                print(
+                    "(ARC) ****** ARCGIS DETAILS: {} more places updated with Daytime Pops and Household Info".format(update_size))
+                print(
+                    "(ARC) ****** Total documents given ARCGIS details in this run: {}".format(update_count))
 
 
 if __name__ == "__main__":
@@ -750,6 +816,7 @@ if __name__ == "__main__":
     # proximity_builder()
 
     # psycho_builder()
+    # arcgis_builder()
 
     spaces = DB_PROCESSED_SPACE.find()
     for count, space in enumerate(spaces):

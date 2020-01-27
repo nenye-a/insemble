@@ -17,6 +17,7 @@ PITNEY_KEY = config('PITNEY_KEY')
 # https://locate.pitneybowes.com/docs/location-intelligence/v1/en/index.html#About%20Document/about_this_document.html
 
 PITNEY_BY_AREA_SEARCH_ENDPOINT = 'https://api.pitneybowes.com/location-intelligence/geoenrich/v1/poi/byarea'
+PITNEY_BY_ADDRESS_SEARCH_ENDPOINT = 'https://api.pitneybowes.com/location-intelligence/geoenrich/v1/poi/byaddress'
 
 
 # Generates all the points of interest within an area that can be evaluated.
@@ -110,6 +111,34 @@ def poi_within_area(country, state, city, zip_code=None, sic_codes=None,
         page += 1
 
     return result['poi'], page
+
+
+def get_sales(address, name, country='USA'):
+
+    url = PITNEY_BY_ADDRESS_SEARCH_ENDPOINT
+
+    payload = {}
+    headers = {
+        'Authorization': PITNEY_KEY
+    }
+    params = {
+        'country': country,
+        'address': address,
+        'name': name,
+        'maxCandidates': 1
+    }
+
+    result, _id = safe_request.request(
+        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='Authorization')
+
+    if 'poi' not in result:
+        utils.DB_REQUESTS[API_NAME].delete_one({'_id': _id})
+        if 'errors' in result:
+            print("No match found, error noticed.")
+        print("No match found")
+        return None
+
+    return result['poi'][0].get('salesVolume', [{}])[0].get('value', None)
 
 
 if __name__ == "__main__":
