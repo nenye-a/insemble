@@ -20,11 +20,11 @@ async function categories(
     {where, skip, first, last} : CategoryArgs,
     _context: Context,
 ) {
-    let categories: Array<string> = (await axios.get(`${LEGACY_API_URI}/api/category`)).data;
-
     if (first && last) {
-        return { errors: ["Error"]}; // TODO: how to properly error?
+        throw new Error("Including a value for both first and last is not supported.");
     }
+
+    let categories: Array<string> = (await axios.get(`${LEGACY_API_URI}/api/category`)).data;
 
     // Process where input
     if (where) {
