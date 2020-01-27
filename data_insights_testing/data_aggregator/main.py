@@ -750,6 +750,8 @@ def psycho_builder(radius=1):
                     "(PS) ****** Total documents psycho detailed in this run: {}".format(update_count))
 
 # arcgis builder
+
+
 def arcgis_builder(radius=1):
     update_count = 0
     update_size = 15  # how many records to update prior to pinging console
@@ -769,33 +771,38 @@ def arcgis_builder(radius=1):
             arcgis_details1 = arcgis.details(lat, lng, 1)
             arcgis_details3 = arcgis.details(lat, lng, 3)
 
-            #TODO: do we need to have incomes at every radius? as with Daytime pop & household growth
+            arcgis_details1 = {
+                'DaytimePop1': arcgis_details1['DaytimePop'],
+                'DaytimeWorkingPop1': arcgis_details1['DaytimeWorkingPop'],
+                'DaytimeResidentPop1': arcgis_details1['DaytimeResidentPop'],
+                'TotalHouseholds1': arcgis_details1['TotalHouseholds'],
+                'HouseholdGrowth2017-2022-1': arcgis_details1['HouseholdGrowth2017-2022'],
+                'MedHouseholdIncome1': arcgis_details1['MedHouseholdIncome']
+            } if arcgis_details1 else None
+            arcgis_details3 = {
+                'DaytimePop3': arcgis_details3['DaytimePop'],
+                'DaytimeWorkingPop3': arcgis_details3['DaytimeWorkingPop'],
+                'DaytimeResidentPop3': arcgis_details3['DaytimeResidentPop'],
+                'TotalHouseholds3': arcgis_details3['TotalHouseholds'],
+                'HouseholdGrowth2017-2022-3': arcgis_details3['HouseholdGrowth2017-2022'],
+                'MedHouseholdIncome3': arcgis_details3['MedHouseholdIncome']
+            }if arcgis_details3 else None
 
             # space has been detailed and will be updated
             DB_PROCESSED_SPACE.update_one(
                 {'place_id': place_id}, {'$set': {
-                    'DaytimePop1': arcgis_details1['DaytimePop'],
-                    'DaytimeWorkingPop1': arcgis_details1['DaytimeWorkingPop'],
-                    'DaytimeResidentPop1': arcgis_details1['DaytimeResidentPop'],
-                    'TotalHouseholds1': arcgis_details1['TotalHouseholds'],
-                    'HouseholdGrowth2017-2022-1': arcgis_details1['HouseholdGrowth2017-2022'],
-                    'MedHouseholdIncome1': arcgis_details1['MedHouseholdIncome'],
-                    'DaytimePop3': arcgis_details3['DaytimePop'],
-                    'DaytimeWorkingPop3': arcgis_details3['DaytimeWorkingPop'],
-                    'DaytimeResidentPop3': arcgis_details3['DaytimeResidentPop'],
-                    'TotalHouseholds3': arcgis_details3['TotalHouseholds'],
-                    'HouseholdGrowth2017-2022-3': arcgis_details3['HouseholdGrowth2017-2022'],
-                    'MedHouseholdIncome3': arcgis_details3['MedHouseholdIncome'],
-                    'arcgis_finished': True }
+                    'arcgis_details1': arcgis_details1,
+                    'arcgis_details3': arcgis_details3,
+                    'arcgis_finished': True}
                 })
             print(
-                "(PS) ****** ARCGIS DETAILS: {} updated with Daytime Pops and Household Info".format(space['name']))
+                "(ARC) ****** ARCGIS DETAILS: {} updated with Daytime Pops and Household Info".format(space['name']))
             update_count += 1
             if update_count % update_size == 0:
                 print(
-                    "(PS) ****** ARCGIS DETAILS: {} more places updated with Daytime Pops and Household Info".format(update_size))
+                    "(ARC) ****** ARCGIS DETAILS: {} more places updated with Daytime Pops and Household Info".format(update_size))
                 print(
-                    "(PS) ****** Total documents psycho detailed in this run: {}".format(update_count))
+                    "(ARC) ****** Total documents given ARCGIS details in this run: {}".format(update_count))
 
 
 if __name__ == "__main__":
