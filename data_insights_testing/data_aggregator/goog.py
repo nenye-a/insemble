@@ -164,6 +164,8 @@ def search(lat, lng, query, radius=1, pagetoken=None):
         API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
 
     next_page = None
+    if result is None:
+        return None
     if result['status'] == 'INVALID_REQUEST':
         utils.DB_REQUESTS[API_NAME].delete_one({'_id': _id})
         if not pagetoken:
