@@ -10,7 +10,7 @@ type TextProps = ComponentProps<typeof Text>;
 type Props = ComponentProps<typeof TouchableOpacity> & {
   text: string;
   textProps?: TextProps;
-  mode?: 'primary' | 'secondary';
+  mode?: 'primary' | 'secondary' | 'transparent';
   icon?: ReactNode;
   badgeText?: string;
 };
@@ -43,6 +43,14 @@ export default styled(Button)<Props>`
       border: 0.5px solid ${BUTTON_BORDER_COLOR};
       ${Text} {
         color: ${TEXT_COLOR};
+      }
+    `}
+  ${(props) =>
+    props.mode === 'transparent' &&
+    css`
+      background-color: transparent;
+      ${Text} {
+        color: ${THEME_COLOR};
       }
     `}
   &:hover {

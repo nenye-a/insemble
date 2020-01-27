@@ -1,6 +1,7 @@
 import React from 'react';
 import { Range } from 'rc-slider';
 import styled from 'styled-components';
+import 'rc-slider/assets/index.css';
 
 import { View, Text } from '../../core-ui';
 import { THEME_COLOR, UNSELECTED_TEXT_COLOR } from '../../constants/colors';
@@ -11,18 +12,22 @@ type Props = {
   values?: Array<number>;
   maximum?: number;
   minimum?: number;
-  postFix?: string;
+  prefix?: string;
+  postfix?: string;
+  disabled?: boolean;
 };
 
 export default function SliderFilter(props: Props) {
-  let { values, maximum, minimum, onSliderChange, postFix = '' } = props;
-  let minRange = values && values.length > 0 ? values[0].toString() + postFix : '';
-  let maxRange = values && values.length > 1 ? values[1].toString() + postFix : '';
+  let { values, maximum, minimum, onSliderChange, prefix='',postfix = '', disabled } = props;
+  let minRange = prefix + minimum?.toString() + postfix;
+  let maxRange = prefix + maximum?.toString() + postfix;
+  let minSelectedRange = values && values.length > 0 ? prefix + values[0].toString() + postfix : '';
+  let maxSelectedRange = values && values.length > 1 ? prefix + values[1].toString() + postfix : '';
+  let selectedRange = `${minSelectedRange} - ${maxSelectedRange}`;
 
-  let selectedRange = `${minRange} - ${maxRange}`;
   let handleStyle = {
-    backgroundColor: THEME_COLOR,
-    borderColor: THEME_COLOR,
+    backgroundColor:disabled? 'grey': THEME_COLOR,
+    borderColor: disabled? 'grey': THEME_COLOR,
     boxShadow: '0px 0px 1px rgba(0,0,0,0.16)',
     height: 24,
     width: 24,
@@ -31,6 +36,7 @@ export default function SliderFilter(props: Props) {
   return (
     <Slider>
       <Range
+        disabled={disabled}
         defaultValue={values}
         max={maximum}
         min={minimum}

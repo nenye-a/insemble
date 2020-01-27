@@ -31,6 +31,9 @@ type Props = ComponentProps<typeof View> & {
   onHighRangeInputChange?: (highValue: string) => void;
   lowValue?: string;
   highValue?: string;
+  noPreferenceButton?: boolean;
+  hasPreference?: boolean;
+  onNoPreferencePress?: () => void;
 };
 
 export default function Filter(props: Props) {
@@ -57,6 +60,9 @@ export default function Filter(props: Props) {
     onHighRangeInputChange,
     lowValue,
     highValue,
+    noPreferenceButton,
+    hasPreference,
+    onNoPreferencePress,
     ...otherProps
   } = props;
   let [filteredOptions, setFilteredOptions] = useState(allOptions);
@@ -113,7 +119,8 @@ export default function Filter(props: Props) {
           values={values}
           maximum={maximum}
           minimum={minimum}
-          postFix={income ? 'K' : ''}
+          postfix={income ? 'K' : ''}
+          prefix={income ? '$' : ''}
         />
       )}
       {rangeInput && (
@@ -172,7 +179,15 @@ export default function Filter(props: Props) {
         {selectedOptions.length > 0 && (
           <ClearButton mode="secondary" onPress={onClear} text="Clear All" />
         )}
-        <Button onPress={onDone} text="Done" />
+        {noPreferenceButton && onNoPreferencePress && (
+          <Button
+            mode={hasPreference ? 'transparent' : 'primary'}
+            text="No Preference"
+            onPress={onNoPreferencePress}
+            style={hasPreference ? { fontStyle: 'italic' } : undefined}
+          />
+        )}
+        {onDone && <Button onPress={onDone} text="Done" />}
       </BottomWrapper>
     </Card>
   ) : null;

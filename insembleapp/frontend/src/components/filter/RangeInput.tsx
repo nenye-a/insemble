@@ -3,16 +3,16 @@ import styled from 'styled-components';
 
 import { View, TextInput, Text } from '../../core-ui';
 
-type Props = {
+type Props = ViewProps & {
   lowValue?: string;
   highValue?: string;
   onLowRangeInputChange?: (value: string) => void;
   onHighRangeInputChange?: (value: string) => void;
 };
 export default function RangeInput(props: Props) {
-  let { lowValue, highValue, onLowRangeInputChange, onHighRangeInputChange } = props;
+  let { lowValue, highValue, onLowRangeInputChange, onHighRangeInputChange, ...otherProps } = props;
   return (
-    <Container>
+    <Container {...otherProps}>
       <TextInput
         placeholder="Low"
         onChange={(e: ChangeEvent<HTMLInputElement>) => {

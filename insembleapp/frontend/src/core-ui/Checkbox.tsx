@@ -1,8 +1,10 @@
-import React, { ComponentProps, useState } from 'react';
+import React, { ComponentProps, useState, CSSProperties } from 'react';
 import styled, { css } from 'styled-components';
 import View from './View';
+import Label from './Label';
 import SvgCheck from '../components/icons/check';
-import { THEME_COLOR, SECONDARY_CHECKBOX, WHITE } from '../constants/colors';
+import { THEME_COLOR, SECONDARY_CHECKBOX, WHITE, TEXT_COLOR } from '../constants/colors';
+import { FONT_SIZE_SMALL } from '../constants/theme';
 
 type ViewProps = ComponentProps<typeof View>;
 
@@ -10,6 +12,9 @@ type CheckboxProps = ViewProps & {
   type?: 'primary' | 'secondary';
   isChecked: boolean;
   onPress: () => void;
+  title?: string;
+  size?: string;
+  iconContainerStyle?: CSSProperties;
 };
 
 type ContainerProps = ViewProps & {
@@ -40,10 +45,15 @@ const focusedStyles = css`
 `;
 
 const Container = styled(View)<ContainerProps>`
-  width: ${SIZE};
-  height: ${SIZE};
+  width: ${(props) => props.size};
+  height: ${(props) => props.size};
   border-radius: ${BORDER_RADIUS};
-  ${(props) => (props.isFocused ? focusedStyles : undefined)}
+  ${(props) => (props.isFocused ? focusedStyles : undefined)};
+`;
+
+const RowedView = styled(View)`
+  flex-direction: row;
+  align-items: center;
 `;
 
 const Backdrop = styled(View)`
@@ -73,20 +83,39 @@ const NativeCheckbox = styled.input.attrs(() => ({ type: 'checkbox' }))`
   ${fillContainer};
 `;
 
+const LabelText = styled(Label)`
+  margin-left: 13px;
+  font-size: ${FONT_SIZE_SMALL};
+  color: ${TEXT_COLOR};
+`;
+
 export default function Checkbox(props: CheckboxProps) {
-  let { isChecked, onPress, type = 'primary', ...otherProps } = props;
+  let {
+    isChecked,
+    onPress,
+    type = 'primary',
+    title,
+    size = SIZE,
+    iconContainerStyle,
+    ...otherProps
+  } = props;
   let [isFocused, setFocus] = useState(false);
   let color = type === 'primary' ? THEME_COLOR : SECONDARY_CHECKBOX;
+  let id = useID();
   return (
-    <Container isFocused={isFocused} {...otherProps}>
-      <Backdrop color={color} />
-      <Check color={color} isVisible={isChecked} />
-      <NativeCheckbox
-        checked={isChecked}
-        onClick={() => onPress()}
-        onFocus={() => setFocus(true)}
-        onBlur={() => setFocus(false)}
-      />
-    </Container>
+    <RowedView {...otherProps}>
+      <Container isFocused={isFocused} size={size} style={iconContainerStyle}>
+        <Backdrop color={color} />
+        <Check color={color} isVisible={isChecked} />
+        <NativeCheckbox
+          id={id}
+          checked={isChecked}
+          onClick={() => onPress()}
+          onFocus={() => setFocus(true)}
+          onBlur={() => setFocus(false)}
+        />
+      </Container>
+      <LabelText text={title} id={id} />
+    </RowedView>
   );
 }
