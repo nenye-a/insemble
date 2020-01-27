@@ -22,11 +22,11 @@ type MatchData {
     address: String
     pop: Int
     income: Int
-    nearby: [PlaceTuple]
+    nearby: [PlaceRecord]
     radius: String
     price: Int
     locations: [[Float]]
-    placeType: [PlaceTuple]
+    placeType: [PlaceRecord]
     likes: Int
     ratings: String
     photoCount: Int
@@ -45,7 +45,7 @@ type Census {
     white: Float
 }
 
-type PlaceTuple {
+type PlaceRecord {
     placeName: String!
     count: Int!
 }

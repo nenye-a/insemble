@@ -13,12 +13,12 @@ const enum MatchType {
     Tmatches,
 }
 
-type PlaceTuple = {
+type PlaceRecord = {
     placeName: string,
     count: number,
 }
 
-function toPlaceTupleArray(obj: {[key: string]: number}) : Array<PlaceTuple> {
+function toPlaceRecordArray(obj: { [key: string]: number }) : Array<PlaceRecord> {
     let key = Object.keys(obj);
 
     return key.map((k) => ({ placeName: k, count: obj[k] }));
@@ -42,8 +42,8 @@ async function processMatch(id: string, matchType: MatchType) {
                 // Format data that's initially a JSON(?) dictionary (i.e. { Restaurant: 10, Library: 2 })
                 // to [ { placeName: Restaurant, count: 10 }, { placeName: Library, count: 2 } ].
                 // This needs to be done since object keys in graphql schema can't be dynamic
-                nearby: toPlaceTupleArray(d.nearby),
-                placeType: toPlaceTupleArray(d.placeType),
+                nearby: toPlaceRecordArray(d.nearby),
+                placeType: toPlaceRecordArray(d.placeType),
             }}
         );
 
@@ -56,6 +56,7 @@ async function processMatch(id: string, matchType: MatchType) {
         return {
             status: MatchStatus.Loading,
             id,
+            data: [],
         }
     }
 }
