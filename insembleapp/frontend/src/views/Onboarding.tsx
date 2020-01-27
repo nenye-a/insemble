@@ -4,6 +4,9 @@ import styled from 'styled-components';
 import { View } from '../core-ui';
 import OnboardingCard from './OnboardingPage/OnboardingCard';
 import ConfirmBusinessDetail from './OnboardingPage/ConfirmBusinessDetail';
+import TenantGoals from './OnboardingPage/TenantGoals';
+import TenantTargetCustomers from './OnboardingPage/TenantTargetCustomers';
+import TenantPhysicalCriteria from './OnboardingPage/TenantPhysicalCriteria';
 
 export default function Onboarding() {
   let [activeSegmentIndex, setActiveSegmentIndex] = useState(0);
@@ -27,6 +30,7 @@ export default function Onboarding() {
     },
     {
       title: 'What are your goals?',
+      content: <TenantGoals />,
       buttons: [
         {
           text: 'Back',
@@ -40,6 +44,7 @@ export default function Onboarding() {
     },
     {
       title: 'Who are your target customers?',
+      content: <TenantTargetCustomers />,
       buttons: [
         {
           text: 'Back',
@@ -53,6 +58,7 @@ export default function Onboarding() {
     },
     {
       title: 'What is your physical site criteria?',
+      content: <TenantPhysicalCriteria />,
       buttons: [
         {
           text: 'Back',
@@ -66,11 +72,12 @@ export default function Onboarding() {
     },
     { title: 'Almost Done.' },
   ];
+
   return (
     <Container flex>
       <OnboardingCard
         title={SEGMENTS[activeSegmentIndex].title}
-        progress={activeSegmentIndex + 1 / SEGMENTS.length}
+        progress={activeSegmentIndex / SEGMENTS.length}
         buttons={SEGMENTS[activeSegmentIndex].buttons}
       >
         {SEGMENTS[activeSegmentIndex].content}
