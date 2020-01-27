@@ -489,12 +489,18 @@ def place_validator(condition=None):
     validating = True
 
     database_query = {'status': UN_PROCESSED_FLAG}
+    batch_size = {'size': 200}
+
     if condition:
         database_query.update(condition)
 
     while validating:
         # Get all spaces that have not been processed
         raw_spaces = DB_RAW_SPACE.find(database_query)
+        raw_spaces = DB_RAW_SPACE.aggregate([
+            {'$match': database_query},
+            {'$sample': batch_size}
+        ])
 
         # set up updates for batching
         _ids = []
@@ -555,13 +561,23 @@ def detail_builder():
     update_size = 15  # how many records to update prior to pinging console
     updating = True
 
+    # Database query
+    data_base_query = {'detailed': {'$exists': False}}
+    batch_size = {'size': 200}
+
     while updating:
 
-        spaces = DB_PROCESSED_SPACE.find({'detailed': {'$exists': False}})
+        # Request cursor from data base that matches query and is a random sample
+        spaces = DB_PROCESSED_SPACE.aggregate([
+            {'$match': data_base_query},
+            {'$sample': batch_size}
+        ])
 
         for space in spaces:
             place_id = space['place_id']
-
+            if 'detailed' in space:
+                print('already has detail')
+                continue
             # Google details will contain the following fields:
             # address_components, formated_address, formated_phone_number, adr_address, geometry
             # icon, international_phone_number, name, opening_hours, photos, place_id, price,
@@ -628,9 +644,16 @@ def proximity_builder(radius=1):
 
     all_queries = type_queries + search_queries
 
+    batch_size = {'size': 200}
+    data_base_query = {'$or': [{'nearby_complete': {'$ne': all_queries}}, {
+        'nearby_complete': {'$exists': False}}]}
+
     while updating:
-        spaces = DB_PROCESSED_SPACE.find(
-            {'$or': [{'nearby_complete': {'$ne': all_queries}}, {'nearby_complete': {'$exists': True}}]})
+
+        spaces = DB_PROCESSED_SPACE.aggregate([
+            {'$match': data_base_query},
+            {'$sample': batch_size}
+        ])
 
         for space in spaces:
 
@@ -717,10 +740,15 @@ def psycho_builder(radius=1):
     cats, spatial_df = spatial.create_spatial_cats_and_df()
     block_df = spatial.create_block_grp_df()
 
+    data_base_query = {'psycho_finished': {'$exists': False}}
+    batch_size = {'size': 200}
+
     while updating:
 
-        spaces = DB_PROCESSED_SPACE.find(
-            {'psycho_finished': {'$exists': False}})
+        spaces = DB_PROCESSED_SPACE.aggregate([
+            {'$match': data_base_query},
+            {'$sample': batch_size}
+        ])
 
         for space in spaces:
             place_id = space['place_id']
@@ -758,10 +786,15 @@ def arcgis_builder(radius=1):
     update_size = 15  # how many records to update prior to pinging console
     updating = True
 
+    data_base_query = {'arcgis_finished': {'$exists': False}}
+    batch_size = {'size': 200}
+
     while updating:
 
-        spaces = DB_PROCESSED_SPACE.find(
-            {'arcgis_finished': {'$exists': False}})
+        spaces = DB_PROCESSED_SPACE.aggregate([
+            {'$match': data_base_query},
+            {'$sample': batch_size}
+        ])
 
         for space in spaces:
             place_id = space['place_id']
@@ -815,10 +848,15 @@ def demo_builder(radius=1):
     cats, demo_df = environics.create_demo_cats_and_df()
     block_df = spatial.create_block_grp_df()
 
+    data_base_query = {'demo_finished': {'$exists': False}}
+    batch_size = {'size': 200}
+
     while updating:
 
-        spaces = DB_PROCESSED_SPACE.find(
-            {'demo_finished': {'$exists': False}})
+        spaces = DB_PROCESSED_SPACE.aggregate([
+            {'$match': data_base_query},
+            {'$sample': batch_size}
+        ])
 
         for space in spaces:
             place_id = space['place_id']
@@ -848,7 +886,6 @@ def demo_builder(radius=1):
                     "(PS) ****** DEMO DETAILS: {} more places updated with demographics".format(update_size))
                 print(
                     "(PS) ****** Total documents demo detailed in this run: {}".format(update_count))
-
 
 
 if __name__ == "__main__":
