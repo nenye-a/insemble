@@ -6,26 +6,27 @@ from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
 
 import urllib
-import logging
 
 from .types.Venue import Venue
 from .types.Retailer import Retailer
 from .types.Location import PairedLocation, MapLocation, return_location, return_matches, return_location_with_address
-from .serializers import *
+from .serializers import PairedLocationSerializer, CategoryMapSerializer, RetailerSerializer, VenueSerializer, MapSerializer
 import data_insights.category_management as cm
 
 from .celery import app as celery_app
 
+
 # VENUE VIEWSET METHODS
 class VenueViewSet(viewsets.ViewSet):
 
-    permission_classes= [
+    permission_classes = [
         permissions.AllowAny
     ]
 
     """
     A simple ViewSet for listing or retrieving venues.
     """
+
     def list(self, request):
         queryset = Venue.get_venues(paired=True)
         serializer = VenueSerializer(queryset, many=True)
@@ -45,18 +46,23 @@ class VenueViewSet(viewsets.ViewSet):
             address = insert_request["address"]
             owner_username = insert_request["owner_username"]
             about_text = None
-            if insert_request["about_text"]: about_text = insert_request["about_text"]
+            if insert_request["about_text"]:
+                about_text = insert_request["about_text"]
             venue_age = None
-            if insert_request["venue_age"]: venue_age = insert_request["venue_age"]
+            if insert_request["venue_age"]:
+                venue_age = insert_request["venue_age"]
             photo = None
-            if insert_request["photo"]: photo = insert_request["photo"]
+            if insert_request["photo"]:
+                photo = insert_request["photo"]
             icon = None
-            if insert_request["icon"]: icon = insert_request["icon"]
+            if insert_request["icon"]:
+                icon = insert_request["icon"]
             name = None
-            if insert_request["name"]: name = insrt_request["name"]
+            if insert_request["name"]:
+                name = insert_request["name"]
 
             Venue.add_venue(address, owner_username, about_text=about_text, venue_age=venue_age,
-                             photo=photo, icon=icon, name=name)
+                            photo=photo, icon=icon, name=name)
             return Response(serializer.initial_data, status=status.HTTP_201_CREATED)
         except:
             return Response("Failed request", status=status.HTTP_400_BAD_REQUEST)
@@ -74,13 +80,14 @@ class VenueViewSet(viewsets.ViewSet):
 # RETAILER VIEWSET METHODS
 class RetailerViewSet(viewsets.ViewSet):
 
-    permission_classes= [
+    permission_classes = [
         permissions.AllowAny
     ]
 
     """
     A simple ViewSet for listing or retrieving retailers.
     """
+
     def list(self, request):
 
         queryset = Retailer.get_retailers()
@@ -95,7 +102,7 @@ class RetailerViewSet(viewsets.ViewSet):
 
     def create(self, request):
 
-        #TODO: update to make use of the other optional fields
+        # TODO: update to make use of the other optional fields
 
         serializer = RetailerSerializer(data=request.data, partial=True)
 
@@ -106,18 +113,23 @@ class RetailerViewSet(viewsets.ViewSet):
             location = insert_request["location"]
             owner_username = insert_request["owner_username"]
             about_text = None
-            if insert_request["about_text"]: about_text = insert_request["about_text"]
+            if insert_request["about_text"]:
+                about_text = insert_request["about_text"]
             preferences = None
-            if insert_request["preferences"]: preferences = insert_request["preferences"]
+            if insert_request["preferences"]:
+                preferences = insert_request["preferences"]
             requirements = None
-            if insert_request["requirements"]: requirements = insert_request["requirements"]
+            if insert_request["requirements"]:
+                requirements = insert_request["requirements"]
             photo = None
-            if insert_request["photo"]: photo = insert_request["photo"]
+            if insert_request["photo"]:
+                photo = insert_request["photo"]
             icon = None
-            if insert_request["icon"]: icon = insert_request["icon"]
+            if insert_request["icon"]:
+                icon = insert_request["icon"]
 
             Retailer.add_retailer(name, location, owner_username, about_text=about_text, preferences=preferences,
-                            requirements=requirements, photo=photo, icon=icon)
+                                  requirements=requirements, photo=photo, icon=icon)
             return Response(serializer.initial_data, status=status.HTTP_201_CREATED)
         except:
             return Response("Failed request", status=status.HTTP_400_BAD_REQUEST)
@@ -139,10 +151,9 @@ class PairedLocationViewSet(viewsets.ViewSet):
     A simple ViewSet for listing or retrieving users.
     """
 
-    permission_classes= [
+    permission_classes = [
         permissions.AllowAny
     ]
-
 
     def list(self, request):
         queryset = PairedLocation.get_paired_locations()
@@ -159,7 +170,7 @@ class PairedLocationViewSet(viewsets.ViewSet):
 # VIEW AND PROVIDE VENUE MATCHES FOR A TENANT
 class SpaceMatchesViewSet(viewsets.ViewSet):
 
-    permission_classes= [
+    permission_classes = [
         permissions.AllowAny
     ]
 
@@ -202,14 +213,15 @@ class SpaceMatchesViewSet(viewsets.ViewSet):
 
         return serializer.data
 
+
 # VIEW AND PROVIDE TENANT MATCHES FOR A VENUE
 class TenantMatchesViewSet(viewsets.ViewSet):
 
-    permission_classes= [
+    permission_classes = [
         permissions.AllowAny
     ]
 
-    def list(self,request):
+    def list(self, request):
         raise Http404('<h1>Page not found</h1>')
 
     def retrieve(self, request, pk=None):
@@ -235,7 +247,8 @@ class TenantMatchesViewSet(viewsets.ViewSet):
         matches = []
         try:
             if "id" in d:
-                matches = PairedLocation.get_matches(_id=d["id"]) # pending definition (pagination not implemented)
+                # pending definition (pagination not implemented)
+                matches = PairedLocation.get_matches(_id=d["id"])
             else:
                 address = urllib.parse.unquote(d["address"])
                 matches = PairedLocation.get_matches(address=address)
@@ -279,8 +292,8 @@ class LocationInfoViewSet(viewsets.ViewSet):
         else:
             return Response("Error, location not found. Please check request.", status=status.HTTP_400_BAD_REQUEST)
 
-# GENERATE HEATMAP LOCATIONS FROM INCOME, PRICE, & CATEGORIES
 
+# GENERATE HEATMAP LOCATIONS FROM INCOME, PRICE, & CATEGORIES
 class CategoryMapAPI(generics.GenericAPIView):
 
     authentication_classes = []
@@ -296,7 +309,6 @@ class CategoryMapAPI(generics.GenericAPIView):
         :return:
         """
         return Response(cm.pull_categories())
-
 
     def post(self, request, *args, **kwargs):
         """
@@ -324,6 +336,7 @@ class CategoryMapAPI(generics.GenericAPIView):
                 "map_rating":
             }]
         })
+
         """
 
         serializer = self.get_serializer(data=request.data)
@@ -344,3 +357,46 @@ class CategoryMapAPI(generics.GenericAPIView):
         map_points = return_matches(data)
         serializer = MapSerializer(map_points, many=True)
         return serializer.data
+
+
+# On queue for rename from 'Search' to 'Category'
+#
+# Viewset for handling search requests. Will pass to backend functions that will be responsible
+# for supplying the match
+class SearchAPI(generics.GenericAPIView):
+
+    def get(self, request, *args, **kwargs):
+        """
+
+        Pending additional definition, initial definition below:
+        Receives get request for proerties uing the key of a user. Returns a list of propertie 
+        including their _id, lat/lng, match percentage, and match_details.
+
+        """
+
+        return Response({}, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        """
+
+        Post request to accept the information for categories, property criteria, and demographics.
+        Request data should come in the following form:
+
+        payload = {
+            'categories': ['','',''],  # list of strings
+            'target_age': [##,##] # integer range seperated by comma
+            'target_income': [##,##] # integer range seperated by comma
+            'target_psychographics': ['','',''] list of strings
+        }
+
+        """
+
+        # Receive and parse the data with a Django provided serializer
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # TODO: Evaluate & store the data in a database to be retrieved by the front_end
+        # when required. In the short term, this function will simply return the payload
+        # and a 200 OK status.
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
