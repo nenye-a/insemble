@@ -1,6 +1,12 @@
 import React, { ComponentProps, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
-import { THEME_COLOR, WHITE, BUTTON_BORDER_COLOR, TEXT_COLOR } from '../constants/colors';
+import {
+  THEME_COLOR,
+  WHITE,
+  BUTTON_BORDER_COLOR,
+  TEXT_COLOR,
+  MUTED_TEXT_COLOR,
+} from '../constants/colors';
 import TouchableOpacity from './TouchableOpacity';
 import Text from './Text';
 import Badge from './Badge';
@@ -37,6 +43,13 @@ export default styled(Button)<Props>`
   flex-direction: row;
   align-items: center;
   ${(props) =>
+    props.mode === 'primary' &&
+    css`
+      &:disabled {
+        background-color: ${MUTED_TEXT_COLOR};
+      }
+    `}
+  ${(props) =>
     props.mode === 'secondary' &&
     css`
       background-color: ${WHITE};
@@ -52,6 +65,9 @@ export default styled(Button)<Props>`
       ${Text} {
         color: ${THEME_COLOR};
       }
+      &:disabled ${Text} {
+        color: ${MUTED_TEXT_COLOR};
+      }
     `}
   &:hover {
     opacity: 0.9;
@@ -59,6 +75,7 @@ export default styled(Button)<Props>`
   &:active {
     opacity: 0.5;
   }
+
 `;
 
 const ButtonBadge = styled(Badge)`

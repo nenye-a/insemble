@@ -34,6 +34,7 @@ type Props = ComponentProps<typeof View> & {
   noPreferenceButton?: boolean;
   hasPreference?: boolean;
   onNoPreferencePress?: () => void;
+  disabled?: boolean; // TODO: pass disabled to other filter components as well when necessary
 };
 
 export default function Filter(props: Props) {
@@ -63,6 +64,7 @@ export default function Filter(props: Props) {
     noPreferenceButton,
     hasPreference,
     onNoPreferencePress,
+    disabled,
     ...otherProps
   } = props;
   let [filteredOptions, setFilteredOptions] = useState(allOptions);
@@ -121,6 +123,7 @@ export default function Filter(props: Props) {
           minimum={minimum}
           postfix={income ? 'K' : ''}
           prefix={income ? '$' : ''}
+          disabled={disabled}
         />
       )}
       {rangeInput && (
@@ -141,6 +144,7 @@ export default function Filter(props: Props) {
               onChange={(e) => {
                 setSearchText(e.target.value);
               }}
+              disabled={disabled}
             />
           </SearchWrapper>
           <FlexRowWrap>
@@ -151,6 +155,7 @@ export default function Filter(props: Props) {
                     key={'selected' + index}
                     primary
                     onClick={() => onUnSelect && onUnSelect(filter)}
+                    disabled={disabled}
                   >
                     {filter}
                   </SmallPillButton>
@@ -167,6 +172,7 @@ export default function Filter(props: Props) {
                   <SmallPillButton
                     key={'filtered' + index}
                     onClick={() => onSelect && onSelect(filter)}
+                    disabled={disabled}
                   >
                     {filter}
                   </SmallPillButton>
@@ -185,6 +191,7 @@ export default function Filter(props: Props) {
             text="No Preference"
             onPress={onNoPreferencePress}
             style={hasPreference ? { fontStyle: 'italic' } : undefined}
+            disabled={disabled}
           />
         )}
         {onDone && <Button onPress={onDone} text="Done" />}

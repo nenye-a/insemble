@@ -9,6 +9,7 @@ const INITIAL_INCOME_RANGE = [100, 200];
 const INITIAL_AGE_RANGE = [25, 40];
 
 export default function TenantTargetCustomers() {
+  let [editCriteriaDisabled, toggleEditCriteria] = useState(true);
   let [noPreferenceAge, setNoPreferenceAge] = useState(false);
   let [noPreferenceIncome, setNoPreferenceIncome] = useState(false);
   let [noPreferencePsychographics, setNoPreferencePsychographics] = useState(false);
@@ -32,6 +33,9 @@ export default function TenantTargetCustomers() {
             textProps={{
               style: { fontStyle: 'italic', fontSize: FONT_SIZE_SMALL, color: MUTED_TEXT_COLOR },
             }}
+            onPress={() => {
+              toggleEditCriteria(!editCriteriaDisabled);
+            }}
           />
         </RowedView>
         <ItalicText fontSize={FONT_SIZE_XSMALL} color={MUTED_TEXT_COLOR}>
@@ -53,6 +57,7 @@ export default function TenantTargetCustomers() {
         onSliderChange={(values: Array<number>) => {
           setSelectedAgeRange(values);
         }}
+        disabled={editCriteriaDisabled}
       />
       <FilterContainer
         title="Income"
@@ -68,6 +73,7 @@ export default function TenantTargetCustomers() {
         minimum={0}
         maximum={500}
         onSliderChange={(values: Array<number>) => setSelectedIncomeRange(values)}
+        disabled={editCriteriaDisabled}
       />
       <FilterContainer
         visible
@@ -88,6 +94,7 @@ export default function TenantTargetCustomers() {
           setSelectedPsychographics(newSelectedOptions);
         }}
         onClear={() => setSelectedPsychographics([])}
+        disabled={editCriteriaDisabled}
       />
     </Container>
   );
