@@ -599,6 +599,8 @@ def detail_builder():
             DB_PROCESSED_SPACE.update_one(
                 {'place_id': place_id}, {'$set': space})
 
+            print(
+                "(DD) ****** DETAILER: {} updated with Details".format(space['name']))
             update_count += 1
             if update_count % update_size == 0:
                 print(
@@ -729,25 +731,23 @@ def psycho_builder(radius=1):
                 lat, lng, 1, spatial_df, block_df, cats)
             psycho_dict3 = spatial.get_psychographics(
                 lat, lng, 3, spatial_df, block_df, cats)
-            psycho_dict5 = spatial.get_psychographics(
-                lat, lng, 5, spatial_df, block_df, cats)
 
             # space has been detailed and will be updated
             DB_PROCESSED_SPACE.update_one(
                 {'place_id': place_id}, {'$set': {
                     'psycho1': psycho_dict1,
                     'psycho3': psycho_dict3,
-                    'psycho5': psycho_dict5,
                     'psycho_finished': True
                 }
                 })
-
+            print(
+                "(PS) ****** PSYCHO DETAILS: {} updated with Psychographics".format(space['name']))
             update_count += 1
             if update_count % update_size == 0:
                 print(
-                    "(DD) ****** PSYCHO DETAILS: {} more places updated with psychographics".format(update_size))
+                    "(PS) ****** PSYCHO DETAILS: {} more places updated with psychographics".format(update_size))
                 print(
-                    "(DD) ****** Total documents psycho detailed in this run: {}".format(update_count))
+                    "(PS) ****** Total documents psycho detailed in this run: {}".format(update_count))
 
         # wait atleast a second before re calling database
         time.sleep(5)
