@@ -569,7 +569,13 @@ def detail_builder():
             # icon, international_phone_number, name, opening_hours, photos, place_id, price,
             # rating, reviews, types, url, vicinity, website
             google_details = goog.details(place_id)
-            space.update(google_details)
+
+            if google_details:
+                space.update(google_details)
+            else:
+                DB_PROCESSED_SPACE.update_one({'place_id': place_id}, {
+                                              '$set': {'no_details': True}})
+                continue
 
             name = space['name']
             lat = space['geometry']['location']['lat']
