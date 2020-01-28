@@ -5,8 +5,6 @@ import urllib
 import os
 #from django.conf import settings
 
-#### TODO: keep key secret by using environment variables
-
 #MONGO_USER = settings.MONGO_USER
 #MONGO_PASS = settings.MONGO_DB_PASS
 MONGO_USER = config("MONGO_USER")

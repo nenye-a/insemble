@@ -56,6 +56,7 @@ class RetailerSite extends React.Component {
       },
     };
 
+    // eslint-disable-next-line no-new
     new Chart(this.canvasRef.current, chartConfig);
   }
 
@@ -128,7 +129,6 @@ class RetailerSite extends React.Component {
 
             {/* View Full Report */}
             <Col className="text-right view-report">
-              {/* eslint-disable-next-line */}
               <a href="#">View full report &rarr;</a>
             </Col>
           </Row>

@@ -29,6 +29,7 @@ export default function UserDetails(props) {
           let isSelected = selectedSegment === item.id;
           return (
             <a
+              key={item.id}
               href={`#${item.id}`}
               className={`touchable h5 ${!isSelected && 'text-muted'}`}
               onClick={() => onSegmentClick(item.id)}

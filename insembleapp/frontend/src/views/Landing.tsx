@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Redirect, useHistory } from 'react-router-dom';
+import styled from 'styled-components';
 
+import { Text, View, ContainedTextInput as TextInput } from '../core-ui';
 import Title from './LandingPage/Title';
 import Masthead from './LandingPage/Masthead';
 import LocationsInput from './LandingPage/LocationsInput';
-import TextInput from './LandingPage/TextInput';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import { session } from '../utils/storage';
 import { useSelector, useDispatch, useStore } from '../redux/helpers';
 import { getLocation, loadMap } from '../redux/actions/space';
 import urlSafeLatLng from '../utils/urlSafeLatLng';
+import { WHITE } from '../constants/colors';
+import { FONT_SIZE_LARGE } from '../constants/theme';
+import CategoriesInput from './LandingPage/CategoriesInput';
 
 function Landing() {
   let { isLoading } = useGoogleMaps();
@@ -28,13 +32,16 @@ function Landing() {
       loadMap(true)(dispatch, getState);
       history.push(`/verify/${placeID}`);
     }
-  }, [locationLoaded]);
+  }, [locationLoaded, dispatch, getState, history, submittingPlace]);
   if (isAuthenticated) {
     return <Redirect to="/find" />;
   }
   return (
     <Masthead>
       <Title style={{ maxWidth: 580 }}>Find the next best location for your business</Title>
+      <Text color={WHITE} fontSize={FONT_SIZE_LARGE}>
+        I have an existing location
+      </Text>
       {isLoading || submittingPlace ? (
         <TextInput placeholder="Loading..." disabled={true} />
       ) : (
@@ -59,8 +66,18 @@ function Landing() {
           }}
         />
       )}
+      <BottomContainer>
+        <Text color={WHITE} fontSize={FONT_SIZE_LARGE}>
+          Exploring a new restaurant or retail concept
+        </Text>
+        <CategoriesInput />
+      </BottomContainer>
     </Masthead>
   );
 }
 
 export default Landing;
+
+const BottomContainer = styled(View)`
+  margin-top: 12px;
+`;

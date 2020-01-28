@@ -1,5 +1,3 @@
-/* eslint jsx-a11y/anchor-is-valid: 0 */
-
 import React from 'react';
 import { Container, Row, Col, Button, ButtonGroup } from 'shards-react';
 import { withRouter } from 'react-router';
@@ -75,7 +73,7 @@ class LocationDeepDive extends React.Component {
   };
 
   render() {
-    var location = this.state.location;
+    let location = this.state.location;
     if (!location) {
       // check if the temp location in currently stored in local storage
       location = JSON.parse(sessionStorage.getItem('temp_location'));
