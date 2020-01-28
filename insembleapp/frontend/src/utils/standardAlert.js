@@ -1,6 +1,6 @@
 import React from 'react';
 
-var infoIcon = function({ message, close }) {
+let infoIcon = function({ message, close }) {
   return (
     <div className="alert alert-info alert-dismissible fade show">
       <strong>Info!</strong> {message}.
@@ -11,22 +11,22 @@ var infoIcon = function({ message, close }) {
   );
 };
 
-var errorIcon = function({ message, close }) {
+let errorIcon = function({ message, close }) {
   return (
-    <div class="alert alert-danger alert-dismissible fade show">
+    <div className="alert alert-danger alert-dismissible fade show">
       <strong>Error!</strong> {message}
-      <button type="button" class={close} data-dismiss="alert">
+      <button type="button" className={close} data-dismiss="alert">
         &times;
       </button>
     </div>
   );
 };
 
-var successIcon = function({ message, close }) {
+let successIcon = function({ message, close }) {
   return (
-    <div class="alert alert-success alert-dismissible fade show">
+    <div className="alert alert-success alert-dismissible fade show">
       <strong>Error!</strong> {message}
-      <button type="button" class={close} data-dismiss="alert">
+      <button type="button" className={close} data-dismiss="alert">
         &times;
       </button>
     </div>
@@ -41,8 +41,8 @@ export const standardTemplate = ({ style, options, message, close }) => (
   </div>
 );
 
-// var AlertTemplate = function AlertTemplate(_ref) {
-//   var message = _ref.message,
+// let AlertTemplate = function AlertTemplate(_ref) {
+//   let message = _ref.message,
 //       options = _ref.options,
 //       style = _ref.style,
 //       close = _ref.close;

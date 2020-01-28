@@ -32,6 +32,7 @@ function get<K extends keyof State>(key: K, id?: string): State[K] | undefined {
       return undefined;
     }
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return value as any;
 }
 

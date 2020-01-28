@@ -8,8 +8,9 @@ import time
 import random
 import urllib.parse
 from smart_search import *
+from decouple import config
 
-GOOG_KEY = "AIzaSyCJjsXi3DbmlB1soI9kHzANRqVkiWj3P2U"
+GOOG_KEY = config("GOOG_KEY")
 MILES_TO_M = 1609.34
 
 TYPE_R = "restaurant"
