@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col } from 'shards-react';
 
-const LoginLayout = ({ children, noNavbar, noFooter }) => (
+const LoginLayout = ({ children }) => (
   // <Container fluid>
   <Row>
     <Col className="main-content" sm="12" tag="main">

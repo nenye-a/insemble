@@ -1,0 +1,12 @@
+node_modules/**/*
+npm-debug.*
+lib/
+
+# prisma
+generated
+
+# macOS
+.DS_Store
+
+# Jest
+coverage/

@@ -29,7 +29,6 @@ class NavbarToggle extends React.Component {
       return (
         <nav className="nav">
           auth
-          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
           <a
             href="#"
             onClick={this.handleClick}
