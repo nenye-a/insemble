@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 import { View } from '../core-ui';
 import OnboardingCard from './OnboardingPage/OnboardingCard';
 import ConfirmBusinessDetail from './OnboardingPage/ConfirmBusinessDetail';
+import TenantGoals from './OnboardingPage/TenantGoals';
+import TenantTargetCustomers from './OnboardingPage/TenantTargetCustomers';
+import TenantPhysicalCriteria from './OnboardingPage/TenantPhysicalCriteria';
 
 export default function Onboarding() {
   let [activeSegmentIndex, setActiveSegmentIndex] = useState(0);
+  let history = useHistory();
   let onNextPress = () => setActiveSegmentIndex(activeSegmentIndex + 1);
   let onBackPress = () => setActiveSegmentIndex(activeSegmentIndex - 1);
 
@@ -17,7 +22,9 @@ export default function Onboarding() {
       buttons: [
         {
           text: 'Not My Address',
-          onPress: () => {},
+          onPress: () => {
+            history.push('/');
+          },
         },
         {
           text: 'Done',
@@ -27,6 +34,7 @@ export default function Onboarding() {
     },
     {
       title: 'What are your goals?',
+      content: <TenantGoals />,
       buttons: [
         {
           text: 'Back',
@@ -40,6 +48,7 @@ export default function Onboarding() {
     },
     {
       title: 'Who are your target customers?',
+      content: <TenantTargetCustomers />,
       buttons: [
         {
           text: 'Back',
@@ -53,6 +62,7 @@ export default function Onboarding() {
     },
     {
       title: 'What is your physical site criteria?',
+      content: <TenantPhysicalCriteria />,
       buttons: [
         {
           text: 'Back',
@@ -66,11 +76,12 @@ export default function Onboarding() {
     },
     { title: 'Almost Done.' },
   ];
+
   return (
     <Container flex>
       <OnboardingCard
         title={SEGMENTS[activeSegmentIndex].title}
-        progress={activeSegmentIndex + 1 / SEGMENTS.length}
+        progress={activeSegmentIndex / SEGMENTS.length}
         buttons={SEGMENTS[activeSegmentIndex].buttons}
       >
         {SEGMENTS[activeSegmentIndex].content}
