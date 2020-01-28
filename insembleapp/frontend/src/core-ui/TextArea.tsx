@@ -18,7 +18,7 @@ type Props = ComponentProps<'textarea'> & {
 };
 
 export default forwardRef((props: Props, forwardedRef: Ref<HTMLTextAreaElement>) => {
-  let { id, values, label, characterLimit = 30, showCharacterLimit, ...otherProps } = props;
+  let { id, values, label, characterLimit = 500, showCharacterLimit, ...otherProps } = props;
   let remainingCharacters = characterLimit - values.length;
   return (
     <>
