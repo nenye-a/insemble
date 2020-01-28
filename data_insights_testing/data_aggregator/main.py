@@ -644,7 +644,7 @@ def proximity_builder(radius=1):
 
     all_queries = type_queries + search_queries
 
-    batch_size = {'size': 100}
+    batch_size = {'size': 50}
     data_base_query = {'$or': [{'nearby_complete': {'$ne': all_queries}}, {
         'nearby_complete': {'$exists': False}}]}
 

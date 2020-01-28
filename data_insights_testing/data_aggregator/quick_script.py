@@ -18,13 +18,13 @@ if __name__ == "__main__":
 
     for space in spaces:
         list_names = [
-            'nearby_store'
-            'nearby_park'
-            'nearby_restaurant'
-            'nearby_subway_station'
-            'nearby_hospital'
-            'nearby_church'
-            'nearby_university'
+            'nearby_store',
+            'nearby_park',
+            'nearby_restaurant',
+            'nearby_subway_station',
+            'nearby_hospital',
+            'nearby_church',
+            'nearby_university',
             'nearby_apartments'
         ]
 
@@ -35,4 +35,6 @@ if __name__ == "__main__":
                 else:
                     space['nearby_complete'] = [name]
 
+        print("{} updated to reflect nearby_complete".format(space['name']))
         DB_PROCESSED_SPACE.update_one({'_id': space['_id']}, {'$set': space})
+
