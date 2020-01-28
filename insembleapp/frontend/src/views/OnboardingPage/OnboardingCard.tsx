@@ -25,9 +25,9 @@ export default function OnboardingCard(props: Props) {
       titleProps={{ style: { textAlign: 'center' } }}
     >
       <ProgressBar progress={progress} />
-      {children}
+      <View flex>{children}</View>
       {buttons && buttons.length > 0 && (
-        <Footer flex>
+        <Footer>
           {buttons.map(({ onPress, text }, index) => {
             return index === 0 ? (
               <TransparentButton key={index} text={text} onPress={onPress} />
@@ -43,6 +43,7 @@ export default function OnboardingCard(props: Props) {
 
 const Container = styled(Card)`
   width: min(100vw, 720px);
+  min-height: 80vh;
 `;
 
 const Footer = styled(View)`
