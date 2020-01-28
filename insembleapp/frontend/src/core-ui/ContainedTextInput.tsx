@@ -18,7 +18,6 @@ const TextInput = forwardRef((props: TextInputProps, forwardedRef: Ref<HTMLInput
   let { onSubmit, ...otherProps } = props;
   return (
     <input
-      {...otherProps}
       type="text"
       ref={forwardedRef}
       onKeyPress={(event) => {
@@ -26,6 +25,7 @@ const TextInput = forwardRef((props: TextInputProps, forwardedRef: Ref<HTMLInput
           onSubmit && onSubmit();
         }
       }}
+      {...otherProps}
     />
   );
 });
@@ -35,6 +35,7 @@ const InputContainer = styled.div`
   position: relative;
   font-family: ${FONT_FAMILY_NORMAL};
   font-size: ${FONT_SIZE_MEDIUM};
+  flex: 1;
 `;
 
 const StyledTextInput = styled(TextInput)`
