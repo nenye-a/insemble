@@ -122,11 +122,11 @@ def details(place_id, fields=None):
 
     response, _id = safe_request.request(
         API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
-    try:
-        details = response['result'] if response else None
-    except:
-        print("Response error in collecting details")
+
+    if 'result' not in response:
+        print(response)
         return None
+    details = response['result'] if response else None
 
     return details
 

@@ -2,11 +2,11 @@ import sys
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)  # include data_insights_testing in path
-from mongo_connect import Connect
-import anmspatial
-import pandas as pd
-import math
 import geopy.distance
+import math
+import pandas as pd
+import anmspatial
+from mongo_connect import Connect
 
 
 
@@ -109,7 +109,7 @@ def test_raw_spaces(file_name, query={}):
     items_df.to_csv(file_name)
 
 
-def test_spaces(file_name, query={}, new=True):
+def test_spaces_batched(file_name, query={}, new=True, batch_size=2000):
     spaces = DB_PROCESSED_SPACE.find(query)
     len_spaces = spaces.count()
     items = []
@@ -120,7 +120,7 @@ def test_spaces(file_name, query={}, new=True):
             space['geometry']['location']['lat'],
             space['geometry']['location']['lng']
         ))
-        if count % 2000 == 0:
+        if count % batch_size == 0:
             items_df = pd.DataFrame(items)
             items_df.to_csv(file_name.split(',')[0] + str(count) + '.csv')
             items = []
@@ -130,6 +130,20 @@ def test_spaces(file_name, query={}, new=True):
             items_df = pd.DataFrame(items)
             items_df.to_csv(file_name.split(',')[0] + str(count) + '.csv')
             items = []
+
+
+def test_spaces(file_name, query={}):
+    spaces = DB_PROCESSED_SPACE.find(query)
+    len_spaces = spaces.count()
+    items = []
+    for space in spaces:
+        items.append((
+            space['name'],
+            space['geometry']['location']['lat'],
+            space['geometry']['location']['lng']
+        ))
+    items_df = pd.DataFrame(items)
+    items_df.to_csv(file_name.split(',')[0] + str(len_spaces) + '.csv')
 
 
 def test_old_spaces(file_name, query={}):
