@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { Redirect, Link } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';\
 import PropTypes from 'prop-types';
 import {
   Container,
@@ -15,6 +15,8 @@ import {
   FormCheckbox,
   Button,
 } from 'shards-react';
+
+import { register } from '../redux/actions/auth';
 
 import { register } from '../redux/actions/auth';
 

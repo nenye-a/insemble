@@ -211,6 +211,7 @@ function MapContainer({ onMarkerClick }: Props) {
         {markerPosition && (
           <Marker position={markerPosition} onClick={onMarkerClick} icon={MapPin}>
             {marker && (
+
               <InfoBox
                 defaultPosition={markerPosition}
                 defaultVisible={true}
