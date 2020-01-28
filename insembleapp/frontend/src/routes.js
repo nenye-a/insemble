@@ -1,15 +1,5 @@
-import React from 'react';
-
 // Layout Types
-import {
-  HeaderNavigation,
-  IconSidebar,
-  LandlordLayout,
-  Tenant,
-  LoginLayout,
-  BlankLayout,
-  BasicLayout,
-} from './layouts';
+import { LoginLayout, BasicLayout } from './layouts';
 
 // Route Views
 import Spaces from './views/Spaces';
@@ -31,12 +21,7 @@ import Matches from './views/Matches';
 import Errors from './views/Errors';
 import NoDeals from './views/NoDeals';
 import UserProfile from './views/UserProfile';
-
-const BlankIconSidebarLayout = ({ children }) => (
-  <IconSidebar noNavbar noFooter>
-    {children}
-  </IconSidebar>
-);
+import MainMap from './views/MainMap';
 
 export default [
   {
@@ -48,37 +33,37 @@ export default [
   },
   {
     path: '/spaces',
-    layout: Tenant,
+    layout: BasicLayout,
     component: Spaces,
   },
   {
     path: '/describe-store',
-    layout: BlankLayout,
+    layout: BasicLayout,
     component: DescribeStore,
   },
   {
     path: '/login',
-    layout: LoginLayout,
+    layout: BasicLayout,
     component: Login,
   },
   {
     path: '/find',
-    layout: BlankLayout,
+    layout: BasicLayout,
     component: Find,
   },
   {
     path: '/existing',
-    layout: BlankLayout,
+    layout: BasicLayout,
     component: Existing,
   },
   {
     path: '/feedback',
-    layout: LoginLayout,
+    layout: BasicLayout,
     component: Feedback,
   },
   {
     path: '/explain',
-    layout: LoginLayout,
+    layout: BasicLayout,
     component: Explain,
   },
   {
@@ -94,52 +79,53 @@ export default [
   },
   {
     path: '/register',
-    layout: LoginLayout,
+    layout: BasicLayout,
     component: Register,
   },
   {
     path: '/forgot-password',
-    layout: LoginLayout,
+    layout: BasicLayout,
     component: ForgotPassword,
   },
   {
     path: '/change-password',
-    layout: BlankIconSidebarLayout,
+    layout: BasicLayout,
     component: ChangePassword,
   },
   {
     path: '/explore',
-    layout: LandlordLayout,
+    layout: BasicLayout,
     component: Explore,
   },
   {
     path: '/location-deep-dive',
-    layout: Tenant,
+    layout: BasicLayout,
     component: LocationDeepDive,
   },
   {
     path: '/matches',
-    layout: LandlordLayout,
+    layout: BasicLayout,
     component: Matches,
   },
   {
     path: '/errors',
-    layout: BlankIconSidebarLayout,
+    layout: BasicLayout,
     component: Errors,
   },
   {
     path: '/no-deals',
-    layout: LandlordLayout,
+    layout: BasicLayout,
     component: NoDeals,
   },
   {
     path: '/tenant-deep-dive',
-    layout: HeaderNavigation,
+    layout: BasicLayout,
     component: TenantDeepDive,
   },
   {
     path: '/users/me',
-    layout: BlankLayout,
+    layout: BasicLayout,
     component: UserProfile,
   },
+  { path: '/map', layout: BasicLayout, component: MainMap },
 ];

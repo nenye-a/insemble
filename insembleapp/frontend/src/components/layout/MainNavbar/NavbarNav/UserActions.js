@@ -43,7 +43,7 @@ class UserActions extends React.Component {
         </Container>
       );
     } else {
-      return <Container className="my-auto mx-auto"></Container>;
+      return <Container className="my-auto mx-auto" />;
     }
   };
 

@@ -1,0 +1,17 @@
+# Root Schema
+
+# import Feedback from "./generated/prisma.graphql"
+
+# =========
+# RESOLVERS
+# =========
+
+type Query {
+    """
+    feedback
+    """
+    feedbacks(
+      where: FeedbackWhereInput
+
+    ): [Feedback!]!
+}

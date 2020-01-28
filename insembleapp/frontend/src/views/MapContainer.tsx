@@ -1,16 +1,20 @@
+// TODO: Remove this next line.
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import React, { useRef, useState, useEffect } from 'react';
-import { Row, Container, Col } from 'shards-react';
 import Joyride, { STATUS, Step } from 'react-joyride';
-import { GoogleMap, Marker, InfoWindow, withGoogleMap } from 'react-google-maps';
+import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 import { useHistory } from 'react-router-dom';
 import { useAlert } from 'react-alert';
-
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
 
+import { View } from '../core-ui';
 import { useSelector } from '../redux/helpers';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import urlSafeLatLng from '../utils/urlSafeLatLng';
+import LocationDetail from '../components/location-detail/LocationDetail';
+import InfoBox from 'react-google-maps/lib/components/addons/InfoBox';
+import MapPin from '../components/icons/map-pin.svg';
 
 type LatLngBounds = google.maps.LatLngBounds;
 type LatLng = google.maps.LatLng;
@@ -33,8 +37,9 @@ type MarkerData = {
   radius: number;
 };
 type Props = {
-  markers: Array<LatLngLiteral>;
-  heats: Array<any>;
+  markers?: Array<LatLngLiteral>;
+  heats?: Array<any>;
+  onMarkerClick?: () => void;
 };
 
 const defaultCenter = {
@@ -43,7 +48,7 @@ const defaultCenter = {
 };
 const defaultZoom = 10;
 
-function MapContainer(props: Props) {
+function MapContainer({ onMarkerClick }: Props) {
   let alert = useAlert();
   let history = useHistory();
   let heatMap = useSelector((state) => state.space.heatMap) || [];
@@ -53,6 +58,7 @@ function MapContainer(props: Props) {
   let [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
   let [bounds, setBounds] = useState<LatLngBounds | null>(null);
   let [showGuide, setShowGuide] = useState(true);
+  let [infoBoxHeight, setInfoBoxHeight] = useState<number>(0);
 
   let mapRef = useRef<GoogleMap | null>(null);
   let searchBoxRef = useRef<SearchBox | null>(null);
@@ -105,10 +111,6 @@ function MapContainer(props: Props) {
       });
   };
 
-  let onMarkerClick = () => {
-    history.push('/location-deep-dive');
-  };
-
   let handleSearchClick = (marker: LatLngLiteral) => {
     // fetch('api/location/lat=34.0522795&lng=-118.3089333')
     //   .then((res) => res.json())
@@ -124,7 +126,6 @@ function MapContainer(props: Props) {
     location: new google.maps.LatLng(lat, lng),
     weight: mapRating,
   }));
-
   let steps: Array<Step> = [
     {
       target: '.heat-map-example',
@@ -208,76 +209,51 @@ function MapContainer(props: Props) {
         onBoundsChanged={onBoundsChanged}
       >
         {markerPosition && (
-          <Marker
-            position={markerPosition}
-            onClick={() => onMarkerClick()}
-            icon={{ url: 'http://maps.google.com/mapfiles/kml/paddle/purple-circle.png' }}
-          >
+          <Marker position={markerPosition} onClick={onMarkerClick} icon={MapPin}>
             {marker && (
-              <InfoWindow
+
+              <InfoBox
+                defaultPosition={markerPosition}
+                defaultVisible={true}
+                options={{
+                  disableAutoPan: false,
+                  pixelOffset: new google.maps.Size(-150, -45 - infoBoxHeight),
+                  infoBoxClearance: new google.maps.Size(1, 1),
+                  isHidden: false,
+                  pane: 'floatPane',
+                  enableEventPropagation: true,
+                  closeBoxMargin: '10px 0 2px 2px',
+                }}
+                onDomReady={() => {
+                  let infoBox = document.querySelector('.infoBox');
+                  if (infoBox) {
+                    let infoBoxHeight = infoBox.getClientRects()[0].height;
+                    setInfoBoxHeight(infoBoxHeight);
+                  }
+                }}
                 onCloseClick={() => {
                   setMarker(null);
                 }}
               >
-                {/* TODO: Make smaller and solve for middle-of-nowhere case. also make it come back when pressed again */}
-                <Container>
-                  <Row>
-                    <h6>{marker.address}</h6>
-                  </Row>
-                  <Row className="py-1">
-                    <Col
-                      className="d-flex flex-column justify-content-center align-items-center"
-                      style={{ fontWeight: 'bold' }}
-                    >
-                      Median Income
-                    </Col>
-                    <Col className="d-flex flex-column justify-content-center align-items-center">
-                      ${marker.income}
-                    </Col>
-                  </Row>
-                  <Row className="py-1">
-                    <Col
-                      className="d-flex flex-column justify-content-center align-items-center"
-                      style={{ fontWeight: 'bold' }}
-                    >
-                      Half-mile population
-                    </Col>
-                    <Col className="d-flex flex-column justify-content-center align-items-center">
-                      {marker.pop}
-                    </Col>
-                  </Row>
-                </Container>
-              </InfoWindow>
+                {/* TODO Change Dummy Data */}
+                <LocationDetail
+                  visible
+                  title={marker.address}
+                  subTitle={'Address Details'}
+                  income={marker.income}
+                  population={marker.pop}
+                  age={50}
+                  ethnicity={['White', 'Hispanic']}
+                  gender={'52% Female'}
+                  onSeeMore={onMarkerClick}
+                />
+              </InfoBox>
             )}
           </Marker>
         )}
         {showGuide && <div className="marker-example heat-map-example empty-container" />}
         <HeatMapLayer data={data} options={{ data, radius: 20, opacity: 1 }} />
-        <SearchBox
-          ref={searchBoxRef}
-          bounds={bounds || undefined}
-          controlPosition={window.google ? google.maps.ControlPosition.TOP_CENTER : undefined}
-          onPlacesChanged={onPlacesChanged}
-        >
-          <input
-            className="search-box"
-            type="text"
-            placeholder="Search an address or retailer"
-            style={{
-              boxSizing: 'border-box',
-              border: '1px solid transparent',
-              width: '300px',
-              height: '32px',
-              marginTop: '17px',
-              padding: '0 12px',
-              borderRadius: '3px',
-              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-              fontSize: '14px',
-              outline: 'none',
-              textOverflow: 'ellipses',
-            }}
-          />
-        </SearchBox>
+
         {markers.map((markerPosition, index) => (
           <Marker
             onClick={() => handleSearchClick(markerPosition)}
@@ -295,10 +271,6 @@ const MapWithMap = withGoogleMap(MapContainer);
 export default (props: Props) => {
   let { isLoading } = useGoogleMaps();
   return isLoading ? null : (
-    <MapWithMap
-      containerElement={<div style={{ height: '85vh', width: '100%' }} />}
-      mapElement={<div style={{ height: '100%' }} />}
-      {...props}
-    />
+    <MapWithMap containerElement={<View flex />} mapElement={<View flex />} {...props} />
   );
 };
