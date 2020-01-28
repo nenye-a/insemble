@@ -9,7 +9,6 @@ import Landing from './views/Landing';
 import Existing from './views/Existing';
 import Feedback from './views/Feedback';
 import Explain from './views/Explain';
-import Verify from './views/Verify';
 import Find from './views/Find';
 import Register from './views/Register';
 import ForgotPassword from './views/ForgotPassword';
