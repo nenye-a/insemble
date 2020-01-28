@@ -1,16 +1,12 @@
 import sys
 from django.conf import settings
-
 sys.path.append(settings.INSIGHTS_DIR)
-
-import numpy as np
-from pymongo import MongoClient
-import urllib
-import logging
-
-from mongo_connect import Connect # ignore errors, works with Django run serfver
-import location_methods as lm # ignore errors, works with Django run server
 import location_builder as lb
+import location_methods as lm  # ignore errors, works with Django run server
+from mongo_connect import Connect  # ignore errors, works with Django run serfver
+import numpy as np
+
+
 
 class PairedLocation(object):
 
@@ -18,7 +14,7 @@ class PairedLocation(object):
     db_space = client.spaceData
 
     def __init__(self, _id, name, lat, lng, address, census, pop, income, traffic, safety, nearby, radius,
-                    place_type, price, locations, likes, ratings, photo_count, age, photo, icon):
+                 place_type, price, locations, likes, ratings, photo_count, age, photo, icon):
 
         self._id = _id
         self.name = name
@@ -53,7 +49,8 @@ class PairedLocation(object):
         Get all the available locations. Limnited to n=100 unless specified otherwise
         '''
 
-        db_space_cursor = PairedLocation.db_space.dataset2.aggregate([{"$sample": {"size": n}}])
+        db_space_cursor = PairedLocation.db_space.dataset2.aggregate(
+            [{"$sample": {"size": n}}])
 
         paired_locations = []
 
@@ -74,8 +71,10 @@ class PairedLocation(object):
 
         try:
             if _id:
-                db_item = PairedLocation.db_space.dataset2.find_one({"_id": _id})
-                matches = lm.generate_location_matches(db_item["location"]["address"])
+                db_item = PairedLocation.db_space.dataset2.find_one({
+                                                                    "_id": _id})
+                matches = lm.generate_location_matches(
+                    db_item["location"]["address"])
             else:
                 matches = lm.generate_location_matches(address)
         except KeyError:
@@ -118,7 +117,7 @@ class PairedLocation(object):
         place_type = retailer["place_type"]
 
         # get other important information
-        age =  db_item["age"]
+        age = db_item["age"]
 
         # get performance information
         likes = db_item["likes"]
@@ -132,16 +131,17 @@ class PairedLocation(object):
         icon = db_item["icon"]
 
         return PairedLocation(_id, name, lat, lng, address, census, pop, income, None, None, nearby,
-                    radius, place_type, price, locations, likes, ratings, photo_count, age, photo, icon)
+                              radius, place_type, price, locations, likes, ratings, photo_count, age, photo, icon)
 
     def to_json(self):
-        return # TODO: actually return JSON version of Location retailer pair
+        return  # TODO: actually return JSON version of Location retailer pair
+
 
 class MapLocation(PairedLocation):
     def __init__(self, _id, name, lat, lng, address, census, pop, income, traffic, safety, nearby, radius,
-                    place_type, price, locations, likes, ratings, photo_count, age, photo, icon, map_rating):
+                 place_type, price, locations, likes, ratings, photo_count, age, photo, icon, map_rating):
         super().__init__(_id, name, lat, lng, address, census, pop, income, traffic, safety, nearby, radius,
-                    place_type, price, locations, likes, ratings, photo_count, age, photo, icon)
+                         place_type, price, locations, likes, ratings, photo_count, age, photo, icon)
 
         self.map_rating = map_rating
 
@@ -176,7 +176,7 @@ class MapLocation(PairedLocation):
         place_type = retailer["place_type"]
 
         # get other important information
-        age =  db_item["age"]
+        age = db_item["age"]
 
         # get performance information
         likes = db_item["likes"]
@@ -191,14 +191,16 @@ class MapLocation(PairedLocation):
         map_rating = db_item["map_rating"]
 
         return MapLocation(_id, name, lat, lng, address, census, pop, income, None, None, nearby,
-                    radius, place_type, price, locations, likes, ratings, photo_count, age, photo, icon, map_rating)
+                           radius, place_type, price, locations, likes, ratings, photo_count, age, photo, icon, map_rating)
+
 
 def return_location(lat, lng, radius):
 
     address, valid = lb.get_address_from_loc(lat, lng)
-    census, pop, income, census_radius, valid2 = lb.get_demographics(lat, lng, radius)
+    census, pop, income, census_radius, valid2 = lb.get_demographics(
+        lat, lng, radius)
     nearby, valid3 = lb.get_nearby_stores(lat, lng, radius)
-    #### TODO: implement all_valid and return up front
+    # TODO: implement all_valid and return up front
     if valid and valid2 and valid3:
         all_valid = True
     else:
@@ -228,6 +230,7 @@ def return_location(lat, lng, radius):
             "nearby": nearby,
             "radius": census_radius
         }
+
 
 def return_location_with_address(address, radius):
 

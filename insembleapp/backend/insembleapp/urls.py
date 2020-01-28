@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'api/category', CategoryMapAPI.as_view(), name='category'),
     url(r'api/search', SearchAPI.as_view(), name='search'),
+    path(r'api/properties/<slug:_id>/', SearchAPI.as_view(), name='properties'),
     url(r'^', include('users.auth_urls')),
     url(r'^', include('feedback.feedback_urls'))
 ]

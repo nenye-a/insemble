@@ -7,10 +7,11 @@ from rest_framework.response import Response
 
 import urllib
 
+from .types.matcher import temp_generate_profile_matches, temp_retrieve_profile_matches
 from .types.Venue import Venue
 from .types.Retailer import Retailer
 from .types.Location import PairedLocation, MapLocation, return_location, return_matches, return_location_with_address
-from .serializers import PairedLocationSerializer, CategoryMapSerializer, RetailerSerializer, VenueSerializer, MapSerializer
+from .serializers import PairedLocationSerializer, CategoryMapSerializer, RetailerSerializer, VenueSerializer, MapSerializer, SearchSerializer
 import data_insights.category_management as cm
 
 from .celery import app as celery_app
@@ -365,16 +366,30 @@ class CategoryMapAPI(generics.GenericAPIView):
 # for supplying the match
 class SearchAPI(generics.GenericAPIView):
 
+    authentication_classes = []
+    permission_classes = [
+        permissions.AllowAny
+    ]
+
+    queryset = []
+    serializer_class = SearchSerializer
+
     def get(self, request, *args, **kwargs):
         """
 
-        Pending additional definition, initial definition below:
-        Receives get request for proerties uing the key of a user. Returns a list of propertie 
-        including their _id, lat/lng, match percentage, and match_details.
+        Given an ID, searches matches database to retrieve pre-processed matches.
 
         """
+        print(kwargs)
+        _id = kwargs.get('_id', None)
+        if not _id:
+            return Response({'status': "Failed_Request"}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({}, status=status.HTTP_200_OK)
+        # try:
+        matches = temp_retrieve_profile_matches(_id)
+        return Response(matches, status=status.HTTP_200_OK)
+        # except:
+        #     return Response({'status': "Failed_Request"}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request, *args, **kwargs):
         """
@@ -385,8 +400,11 @@ class SearchAPI(generics.GenericAPIView):
         payload = {
             'categories': ['','',''],  # list of strings
             'target_age': [##,##] # integer range seperated by comma
-            'target_income': [##,##] # integer range seperated by comma
+            'target_income': integer seperated by comma
             'target_psychographics': ['','',''] list of strings
+            'property_criteria': {
+                # criteria details
+            }
         }
 
         """
@@ -399,4 +417,9 @@ class SearchAPI(generics.GenericAPIView):
         # when required. In the short term, this function will simply return the payload
         # and a 200 OK status.
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            _id = temp_generate_profile_matches(serializer.data)
+        except:
+            return Response("Failed to generate matches", status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'_id': _id}, status=status.HTTP_200_OK)
