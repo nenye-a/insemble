@@ -489,7 +489,7 @@ def place_validator(condition=None):
     validating = True
 
     database_query = {'status': UN_PROCESSED_FLAG}
-    batch_size = {'size': 200}
+    batch_size = {'size': 100}
 
     if condition:
         database_query.update(condition)
@@ -563,7 +563,7 @@ def detail_builder():
 
     # Database query
     data_base_query = {'detailed': {'$exists': False}}
-    batch_size = {'size': 200}
+    batch_size = {'size': 100}
 
     while updating:
 
@@ -644,7 +644,7 @@ def proximity_builder(radius=1):
 
     all_queries = type_queries + search_queries
 
-    batch_size = {'size': 200}
+    batch_size = {'size': 100}
     data_base_query = {'$or': [{'nearby_complete': {'$ne': all_queries}}, {
         'nearby_complete': {'$exists': False}}]}
 
@@ -741,7 +741,7 @@ def psycho_builder(radius=1):
     block_df = spatial.create_block_grp_df()
 
     data_base_query = {'psycho_finished': {'$exists': False}}
-    batch_size = {'size': 200}
+    batch_size = {'size': 100}
 
     while updating:
 
@@ -787,7 +787,7 @@ def arcgis_builder(radius=1):
     updating = True
 
     data_base_query = {'arcgis_finished': {'$exists': False}}
-    batch_size = {'size': 200}
+    batch_size = {'size': 100}
 
     while updating:
 
@@ -849,7 +849,7 @@ def demo_builder(radius=1):
     block_df = spatial.create_block_grp_df()
 
     data_base_query = {'demo_finished': {'$exists': False}}
-    batch_size = {'size': 200}
+    batch_size = {'size': 100}
 
     while updating:
 
