@@ -1,14 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Card, CardHeader, CardBody, CardFooter, Row, Col, FormSelect, Badge } from 'shards-react';
-
-import colors from '../../utils/colors';
-import Chart from '../../utils/chart';
+import { Card, CardHeader, CardBody, Col } from 'shards-react';
 
 class About extends React.Component {
   render() {
-    const retailer = this.props.match;
-    let operations;
+    // const retailer = this.props.match;
+    // let operations;
     // if (Object.keys(retailer.locations).length >= 60){
     //   operations = <div>Operates {Object.keys(retailer.locations).length}+ locations in Los Angeles, California</div>
     // } else {

@@ -1,12 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Container, Row, Col } from 'shards-react';
+import { Row, Col } from 'shards-react';
 
-import MainNavbar from '../components/layout/MainNavbar/MainNavbar';
-import LandlordSidebar from '../components/layout/LandlordSidebar/LandlordSidebar';
-import MainFooter from '../components/layout/MainFooter';
-
-const LoginLayout = ({ children, noNavbar, noFooter }) => (
+const LoginLayout = ({ children }) => (
   // <Container fluid>
   <Row>
     <Col className="main-content" sm="12" tag="main">

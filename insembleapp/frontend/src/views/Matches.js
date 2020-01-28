@@ -1,17 +1,6 @@
-/* eslint-disable jsx-a11y/anchor-is-valid, jsx-a11y/anchor-has-content */
-
+/* eslint-disable no-console */
 import React from 'react';
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Badge,
-  Button,
-} from 'shards-react';
+import { Container, Row, Col, Card, CardBody, CardFooter, Badge, Button } from 'shards-react';
 
 import PageTitle from '../components/common/PageTitle';
 import { NavLink } from 'react-router-dom';
@@ -69,7 +58,7 @@ class Explore extends React.Component {
                       href="#"
                       className="card-post__author-avatar card-post__author-avatar--small"
                       style={{ backgroundImage: `url('${retailer.icon}')` }}
-                    ></a>
+                    />
                   </div>
                 </div>
                 <CardBody>

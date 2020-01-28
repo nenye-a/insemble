@@ -1,4 +1,4 @@
-/* eslint-disable eqeqeq */
+/* eslint-disable eqeqeq, no-console */
 import {
   MAP_LOADING,
   MAP_LOADED,
@@ -63,8 +63,8 @@ export const loadMap = (hasLocation = false, income = 0, categories = []) => (
     },
   };
 
-  var body = null;
-  var apiRequest = '';
+  let body = null;
+  let apiRequest = '';
 
   if (hasLocation || getState().space.hasLocation) {
     const address = getState().space.location.address;
@@ -119,8 +119,6 @@ export const loadMap = (hasLocation = false, income = 0, categories = []) => (
 };
 
 const pingMapApi = (id, dispatch) => {
-  var val = null;
-
   fetch('/api/lmatches/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
