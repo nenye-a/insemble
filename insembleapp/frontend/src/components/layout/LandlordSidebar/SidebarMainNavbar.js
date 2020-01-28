@@ -37,7 +37,6 @@ class SidebarMainNavbar extends React.Component {
               {!hideLogoText && <span className="d-none d-md-inline ml-1">Owner Dashboard</span>}
             </div>
           </NavbarBrand>
-          {/* eslint-disable-next-line */}
           <a
             className="toggle-sidebar d-sm-inline d-md-none d-lg-none"
             onClick={this.handleToggleSidebar}

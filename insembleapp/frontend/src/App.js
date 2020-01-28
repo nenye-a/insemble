@@ -1,12 +1,11 @@
-/* eslint-disable import/first */
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import { transitions, positions, Provider as AlertProvider } from 'react-alert';
-import AlertTemplate from 'react-alert-template-basic';
+import { ClientContextProvider } from 'react-fetching-library';
 
-// optional cofiguration
+import client from './client';
+// optional configuration
 const options = {
   // you can also just use 'bottom center'
   position: positions.TOP_CENTER,
@@ -30,8 +29,8 @@ import { loadUser } from './redux/actions/auth';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './assets/main.scss';
 
-const MyTemplate = ({ style, options, message, close }) => (
-  <div style={style} class="alert alert-danger alert-dismissible fade show">
+const MyTemplate = ({ style, message, close }) => (
+  <div style={style} className="alert alert-danger alert-dismissible fade show">
     {message}
     <button type="button" className="close" onClick={close} data-dismiss="alert">
       &times;
@@ -46,32 +45,34 @@ class App extends React.Component {
 
   render() {
     return (
-      <AlertProvider template={MyTemplate} {...options}>
-        <Provider store={store}>
-          <Router basename={process.env.REACT_APP_BASENAME || ''}>
-            <Switch>
-              <div>
-                {routes.map((route, index) => {
-                  return (
-                    <Route
-                      key={index}
-                      path={route.path}
-                      exact={route.exact}
-                      component={withTracker((props) => {
-                        return (
-                          <route.layout {...props}>
-                            <route.component {...props} />
-                          </route.layout>
-                        );
-                      })}
-                    />
-                  );
-                })}
-              </div>
-            </Switch>
-          </Router>
-        </Provider>
-      </AlertProvider>
+      <ClientContextProvider client={client}>
+        <AlertProvider template={MyTemplate} {...options}>
+          <Provider store={store}>
+            <Router basename={process.env.REACT_APP_BASENAME || ''}>
+              <Switch>
+                <div>
+                  {routes.map((route, index) => {
+                    return (
+                      <Route
+                        key={index}
+                        path={route.path}
+                        exact={route.exact}
+                        component={withTracker((props) => {
+                          return (
+                            <route.layout {...props}>
+                              <route.component {...props} />
+                            </route.layout>
+                          );
+                        })}
+                      />
+                    );
+                  })}
+                </div>
+              </Switch>
+            </Router>
+          </Provider>
+        </AlertProvider>
+      </ClientContextProvider>
     );
   }
 }

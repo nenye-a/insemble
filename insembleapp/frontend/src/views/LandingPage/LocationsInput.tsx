@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useCallback } from 'react';
-import TextInput from './TextInput';
+import TextInput from '../../core-ui/ContainedTextInput';
 
 type PlaceResult = google.maps.places.PlaceResult;
 

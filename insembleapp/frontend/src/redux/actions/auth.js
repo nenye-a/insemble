@@ -1,3 +1,4 @@
+/* eslint-disable no-console, dot-notation */
 import {
   USER_LOADED,
   USER_LOADING,
@@ -39,16 +40,7 @@ export const loadUser = () => (dispatch, getState) => {
 };
 
 // REGISTER USER
-export const register = (
-  firstName,
-  lastName,
-  email,
-  password,
-  company,
-  isLandlord,
-  isRetailer,
-  isBroker
-) => (dispatch) => {
+export const register = (firstName, lastName, email, password, company) => (dispatch) => {
   // Headers
   const config = {
     headers: {

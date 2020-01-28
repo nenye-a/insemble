@@ -1,16 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Row,
-  Col,
-  FormSelect,
-  Container,
-  Badge,
-} from 'shards-react';
+import { Card, CardHeader, CardBody, Row, Col, Container, Badge } from 'shards-react';
 
 import colors from '../../utils/colors';
 import Chart from '../../utils/chart';

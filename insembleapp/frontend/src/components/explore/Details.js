@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Card, CardHeader, CardBody, Row, Col, ButtonGroup, Button, Badge } from 'shards-react';
+import { Card, CardHeader, CardBody, Row, Col, Badge } from 'shards-react';
 
 import colors from '../../utils/colors';
-import Chart from '../../utils/chart';
 
 class Details extends React.Component {
   render() {

@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation, curly */
 // Retailer Dashboards Colors
 
 import camelize from 'camelize';
@@ -86,7 +87,7 @@ let overrides =
 
 // Parse overriden colors
 if (Object.keys(overrides).length !== 0 && overrides.constructor === Object) {
-  for (var colorName in overrides) {
+  for (let colorName in overrides) {
     if (overrides.hasOwnProperty(colorName)) {
       if (!/^#([A-Fa-f0-9]{3}$)|([A-Fa-f0-9]{6}$)/.test(overrides[colorName]))
         throw new Error(
