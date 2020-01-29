@@ -1,4 +1,4 @@
-import React, { ReactNode, ComponentProps, CSSProperties } from 'react';
+import React, { ReactNode, ComponentProps, CSSProperties, SVGProps } from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import View from './View';
@@ -11,15 +11,23 @@ type Props = ComponentProps<typeof View> & {
   children: ReactNode;
   onClose?: () => void;
   overlayStyle?: CSSProperties;
+  svgCloseProps?: SVGProps<typeof SvgClose>;
 };
 
-export default function Modal({ onClose, children, visible, overlayStyle, ...otherProps }: Props) {
+export default function Modal({
+  onClose,
+  children,
+  visible,
+  overlayStyle,
+  svgCloseProps,
+  ...otherProps
+}: Props) {
   if (visible) {
     return ReactDOM.createPortal(
       <Overlay style={overlayStyle}>
         <ModalDialog aria-modal role="dialog" {...otherProps}>
           <CloseIcon onPress={onClose}>
-            <SvgClose />
+            <SvgClose {...svgCloseProps} />
           </CloseIcon>
           {children}
         </ModalDialog>
