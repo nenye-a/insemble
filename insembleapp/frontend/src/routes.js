@@ -1,5 +1,5 @@
 // Layout Types
-import { LoginLayout, BasicLayout } from './layouts';
+import { LoginLayout, BasicLayout, UserProfileLayout } from './layouts';
 
 // Route Views
 import Spaces from './views/Spaces';
@@ -19,9 +19,11 @@ import LocationDeepDive from './views/LocationDeepDive';
 import Matches from './views/Matches';
 import Errors from './views/Errors';
 import NoDeals from './views/NoDeals';
-import UserProfile from './views/UserProfile';
 import MainMap from './views/MainMap';
 import Onboarding from './views/Onboarding';
+import TenantSavedProperties from './views/ProfilePage/TenantSavedProperties';
+import BasicProfile from './views/ProfilePage/BasicProfile';
+import TenantSearchHistory from './views/ProfilePage/TenantSearchHistory';
 
 export default [
   {
@@ -122,10 +124,8 @@ export default [
     layout: BasicLayout,
     component: TenantDeepDive,
   },
-  {
-    path: '/users/me',
-    layout: BasicLayout,
-    component: UserProfile,
-  },
   { path: '/map', layout: BasicLayout, component: MainMap },
+  { path: '/user/edit-profile', layout: UserProfileLayout, component: BasicProfile },
+  { path: '/user/tenant-matches', layout: UserProfileLayout, component: TenantSearchHistory },
+  { path: '/user/saved-properties', layout: UserProfileLayout, component: TenantSavedProperties },
 ];
