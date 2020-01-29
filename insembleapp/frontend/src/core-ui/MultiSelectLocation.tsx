@@ -1,45 +1,43 @@
-import React, { ComponentProps, useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ComponentProps } from 'react';
 import styled from 'styled-components';
 import PillButton from './PillButton';
 import View from './View';
-import TextInput from './ContainedTextInput';
+import TextInput from './TextInput';
 import { TEXT_INPUT_BORDER_COLOR } from '../constants/colors';
 
-type InputProps = ComponentProps<'input'>;
-
-type Props = InputProps & {};
-type PlaceResult = google.maps.places.PlaceResult;
+type Props = ComponentProps<'input'> & {
+  onSelected: (values: Array<string>) => void;
+};
 
 export default function MultiSelectLocation(props: Props) {
+  let { onSelected } = props;
   let [selectedValues, setSelectedValues] = useState<Array<string>>([]);
   let [inputValue, setInputValue] = useState<string>('');
   let inputRef = useRef<HTMLInputElement | null>(null);
-  let selectedPlace = useRef<PlaceResult | null>(null);
-
   useEffect(() => {
     if (inputRef.current) {
-      let autocomplete = new window.google.maps.places.Autocomplete(inputRef.current);
-      let listener = autocomplete.addListener('place_changed', () => {
-        let place = autocomplete.getPlace();
-        selectedPlace.current = place;
-        setSelectedValues((selectedValues) =>
-          selectedPlace.current && selectedPlace.current.formatted_address
-            ? [...selectedValues, selectedPlace.current.formatted_address]
-            : selectedValues
-        );
-        setInputValue('');
-        if (inputRef.current) {
-          inputRef.current.focus();
-        }
-      });
-      return () => {
-        listener.remove();
-      };
+      if (window.google && window.google.maps) {
+        let autocomplete = new window.google.maps.places.Autocomplete(inputRef.current);
+        let listener = autocomplete.addListener('place_changed', () => {
+          let place = autocomplete.getPlace();
+          setSelectedValues((values) =>
+            place && place.formatted_address ? [...values, place.formatted_address] : values
+          );
+          setInputValue('');
+          if (inputRef.current) {
+            inputRef.current.focus();
+          }
+        });
+        return () => {
+          listener.remove();
+        };
+      }
     }
   }, []);
 
-  let onUnselect = () => {
-    let newSelectedOptions = selectedValues.slice(0, selectedValues.length - 1);
+  onSelected(selectedValues);
+  let removeLast = () => {
+    let newSelectedOptions = selectedValues.slice(0, -1);
     setSelectedValues(newSelectedOptions);
   };
 
@@ -47,7 +45,11 @@ export default function MultiSelectLocation(props: Props) {
 
   return (
     <Container>
-      {selectedValues ? selectedValues.map((value) => <Selected primary>{value}</Selected>) : null}
+      {selectedValues.map((value, index) => (
+        <Selected key={index} primary>
+          {value}
+        </Selected>
+      ))}
       <TextSearch
         ref={inputRef}
         placeholder={placeholder}
@@ -55,7 +57,7 @@ export default function MultiSelectLocation(props: Props) {
         onChange={(event) => setInputValue(event.target.value)}
         onKeyUp={(event) => {
           if (event.which === 8 && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
-            onUnselect && onUnselect();
+            removeLast();
           }
         }}
       />
@@ -67,14 +69,14 @@ const Container = styled(View)`
   flex-direction: row;
   flex-flow: row wrap;
   flex: 1;
+  max-height: 156px;
+  overflow-y: scroll;
   min-height: 36px;
-  max-height: 123px;
   border: solid;
   border-width: 1px;
   border-color: ${TEXT_INPUT_BORDER_COLOR};
   border-radius: 5px;
-  margin: 0 0 0 10px;
-  overflow-y: scroll;
+  margin: 10px 0 10px 0;
 `;
 
 const TextSearch = styled(TextInput)`
@@ -82,8 +84,9 @@ const TextSearch = styled(TextInput)`
   width: 100%;
   outline: none;
   padding: 6px 16px 6px 16px;
+  border: none;
 `;
 const Selected = styled(PillButton)`
-  margin: 5px 0 5px 8px;
+  margin: 5px 0 5px 5px;
   outline: none;
 `;

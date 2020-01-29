@@ -18,6 +18,7 @@ const TextInput = forwardRef((props: TextInputProps, forwardedRef: Ref<HTMLInput
   let { onSubmit, ...otherProps } = props;
   return (
     <input
+      {...otherProps}
       type="text"
       ref={forwardedRef}
       onKeyPress={(event) => {
@@ -25,7 +26,6 @@ const TextInput = forwardRef((props: TextInputProps, forwardedRef: Ref<HTMLInput
           onSubmit && onSubmit();
         }
       }}
-      {...otherProps}
     />
   );
 });
