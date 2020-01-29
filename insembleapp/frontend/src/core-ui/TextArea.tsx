@@ -9,6 +9,7 @@ import {
   MUTED_TEXT_COLOR,
 } from '../constants/colors';
 import { DEFAULT_BORDER_RADIUS, FONT_FAMILY_NORMAL, FONT_SIZE_NORMAL } from '../constants/theme';
+import { useID } from '../utils';
 
 type Props = ComponentProps<'textarea'> & {
   label?: string;
@@ -18,14 +19,23 @@ type Props = ComponentProps<'textarea'> & {
 };
 
 export default forwardRef((props: Props, forwardedRef: Ref<HTMLTextAreaElement>) => {
-  let { id, values, label, characterLimit = 500, showCharacterLimit, ...otherProps } = props;
+  let {
+    id: providedID,
+    values,
+    label,
+    characterLimit = 500,
+    showCharacterLimit,
+    ...otherProps
+  } = props;
   let remainingCharacters = characterLimit - values.length;
+
+  let id = providedID || useID();
   return (
     <>
       <RowedView>
-        {label && <Label text={label} />}
+        {label && <Label text={label} id={id} />}
         {showCharacterLimit && (
-          <RemainingCharacters id={id} text={`${remainingCharacters} characters left`} />
+          <RemainingCharacters text={`${remainingCharacters} characters left`} />
         )}
       </RowedView>
       <TextAreaBox {...otherProps} id={id} ref={forwardedRef} maxLength={characterLimit}>

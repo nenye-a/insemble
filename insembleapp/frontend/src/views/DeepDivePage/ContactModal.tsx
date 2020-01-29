@@ -40,7 +40,7 @@ export default function ContactModal(props: Props) {
           radioItemProps={{ style: { marginTop: 8 } }}
         />
         <TextArea
-          label="Messages"
+          label="Message"
           values={message}
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
             setMessage(e.target.value);
