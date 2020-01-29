@@ -1,7 +1,8 @@
-import React, { ComponentProps, forwardRef, Ref } from 'react';
+import React, { ComponentProps, forwardRef, Ref, CSSProperties } from 'react';
 import styled, { css } from 'styled-components';
 
 import Label from './Label';
+import View from './View';
 import { FONT_FAMILY_NORMAL, FONT_SIZE_NORMAL, DEFAULT_BORDER_RADIUS } from '../constants/theme';
 import {
   TEXT_INPUT_BORDER_COLOR,
@@ -13,6 +14,7 @@ import useID from '../utils/useID';
 type InputProps = ComponentProps<'input'>;
 type TextInputProps = Omit<InputProps, 'onSubmit'> & {
   onSubmit?: () => void;
+  containerStyle?: CSSProperties;
 };
 
 type Props = TextInputProps & {
@@ -20,12 +22,12 @@ type Props = TextInputProps & {
 };
 
 export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) => {
-  let { id: providedID, label, onSubmit, ref, disabled, ...otherProps } = props;
+  let { id: providedID, label, onSubmit, ref, disabled, containerStyle, ...otherProps } = props;
   let fallbackID = useID();
 
   let id = providedID || fallbackID;
   return (
-    <>
+    <View flex style={containerStyle}>
       {label && <LabelWrapper id={id} text={label} />}
       <InputBox
         id={id}
@@ -39,7 +41,7 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) =>
         disabled={disabled}
         {...otherProps}
       />
-    </>
+    </View>
   );
 });
 

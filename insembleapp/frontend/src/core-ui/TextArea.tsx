@@ -1,5 +1,5 @@
 import React, { ComponentProps, forwardRef, Ref } from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css, CSSProperties } from 'styled-components';
 import Label from './Label';
 import View from './View';
 import {
@@ -16,6 +16,7 @@ type Props = ComponentProps<'textarea'> & {
   characterLimit?: number;
   showCharacterLimit?: boolean;
   values: string;
+  containerStyle?: CSSProperties;
 };
 
 export default forwardRef((props: Props, forwardedRef: Ref<HTMLTextAreaElement>) => {
@@ -25,13 +26,14 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLTextAreaElement>)
     label,
     characterLimit = 500,
     showCharacterLimit,
+    containerStyle,
     ...otherProps
   } = props;
   let remainingCharacters = characterLimit - values.length;
 
   let id = providedID || useID();
   return (
-    <>
+    <View style={containerStyle}>
       <RowedView>
         {label && <Label text={label} id={id} />}
         {showCharacterLimit && (
@@ -41,7 +43,7 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLTextAreaElement>)
       <TextAreaBox {...otherProps} id={id} ref={forwardedRef} maxLength={characterLimit}>
         {values}
       </TextAreaBox>
-    </>
+    </View>
   );
 });
 
