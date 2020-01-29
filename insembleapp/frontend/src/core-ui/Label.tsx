@@ -10,9 +10,14 @@ type Props = TextProps & {
 };
 
 export default function Label({ text, id, ...otherProps }: Props) {
-  let asLabel = id ? { as: 'label' } : undefined;
   return (
-    <Text fontSize={FONT_SIZE_SMALL} color={THEME_COLOR} htmlFor={id} {...asLabel} {...otherProps}>
+    <Text
+      fontSize={FONT_SIZE_SMALL}
+      color={THEME_COLOR}
+      htmlFor={id}
+      as={id ? 'label' : 'h5'}
+      {...otherProps}
+    >
       {text}
     </Text>
   );
