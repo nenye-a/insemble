@@ -887,6 +887,50 @@ def demo_builder(radius=1):
                 print(
                     "(PS) ****** Total documents demo detailed in this run: {}".format(update_count))
 
+import pprint 
+
+# sales builder
+def sales_builder(radius=1):
+    update_count = 0
+    update_size = 15  # how many records to update prior to pinging console
+    updating = True
+
+    data_base_query = {'sales_finished': {'$exists': False}}
+    batch_size = {'size': 100}
+
+    while updating:
+        spaces = DB_PROCESSED_SPACE.aggregate([
+            {'$match': data_base_query},
+            {'$sample': batch_size}
+        ])
+
+        for space in spaces:
+            print()
+            place_id = space['place_id']
+            # compute sales if possible
+            address = space["formatted_address"] 
+            print("Original goog address", address)
+            name = space["name"] 
+            sales = pitney.get_sales(address, name) 
+            print(sales)
+            
+            # space has been detailed and will be updated
+            DB_PROCESSED_SPACE.update_one(
+                {'place_id': place_id}, {'$set': {
+                    'sales': sales,
+                    #'sales_finished': True
+                }
+                })
+
+            print(
+                "(PS) ****** SALES DETAILS: {} updated with sales".format(space['name']))
+            update_count += 1
+            if update_count % update_size == 0:
+                print(
+                    "(PS) ****** SALES DETAILS: {} more places updated with demographics".format(update_size))
+                print(
+                    "(PS) ****** Total documents sales detailed in this run: {}".format(update_count))
+
 
 if __name__ == "__main__":
 
@@ -901,10 +945,10 @@ if __name__ == "__main__":
     # psycho_builder()
     # arcgis_builder()
 
-    demo_builder()
+    sales_builder()
 
-    spaces = DB_PROCESSED_SPACE.find()
-    for count, space in enumerate(spaces):
-        print(count, space)
-        if count == 1:
-            break
+    #spaces = DB_PROCESSED_SPACE.find()
+    #for count, space in enumerate(spaces):
+    #    print(count, space)
+    #    if count == 1:
+    #        break

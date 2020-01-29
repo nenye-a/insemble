@@ -10,7 +10,9 @@ Pitney Bose algorithms to get an index of all available locations within a regio
 '''
 
 API_NAME = 'Pitney_Bose'
-PITNEY_KEY = config('PITNEY_KEY')
+#PITNEY_KEY = config('PITNEY_KEY')
+PITNEY_KEY = "Bearer srYq7EJLLQXG0IgnvD9AsTVVc5cY"
+GOOG_KEY = config("GOOG_KEY")
 
 # Please note that poi == "Point Of Interest". To see the documentation for the pitney bowes
 # api, please refer here:
@@ -114,32 +116,69 @@ def poi_within_area(country, state, city, zip_code=None, sic_codes=None,
 
 
 def get_sales(address, name, country='USA'):
-
+    GOOG_FINDPLACE_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json'
     url = PITNEY_BY_ADDRESS_SEARCH_ENDPOINT
 
     payload = {}
     headers = {
         'Authorization': PITNEY_KEY
     }
-    params = {
-        'country': country,
-        'address': address,
-        'name': name,
-        'maxCandidates': 1
-    }
 
-    result, _id = safe_request.request(
-        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='Authorization')
+    # loop thru all pages
+    page_num = 1
+    max_can = 100
+    while True:
+    
+        params = {
+            'country': country,
+            'address': address,
+            'name': name,
+            'maxCandidates': max_can,
+            'page': page_num
+        }
 
-    if 'poi' not in result:
-        utils.DB_REQUESTS[API_NAME].delete_one({'_id': _id})
-        if 'errors' in result:
-            print("No match found, error noticed.")
-        print("No match found")
-        return None
+        result, _id = safe_request.request(
+            API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='Authorization')
 
-    return result['poi'][0].get('salesVolume', [{}])[0].get('value', None)
+        if 'poi' not in result:
+            utils.DB_REQUESTS[API_NAME].delete_one({'_id': _id})
+            if 'errors' in result:
+                print("No pitney match found, error noticed.")
+            print("No pitney match found")
+            return None
 
+        for poi in result["poi"]:
+            poss_address = poi["contactDetails"]["address"]["formattedAddress"]
+
+            url = GOOG_FINDPLACE_ENDPOINT
+            payload = {}
+            headers = {}
+            params = {
+                'key': GOOG_KEY,
+                'input': poss_address,
+                'inputtype': 'textquery',  # text input
+                'language': 'en',  # return in english
+                'fields': 'formatted_address'
+            }
+
+            response, _id = safe_request.request(
+                API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
+
+            try:
+                print("   poss google address", response["candidates"][0]['formatted_address'])
+            except:
+                pass
+            
+            if len(response["candidates"]) != 0 and response["candidates"][0]['formatted_address'] == address:
+                return poi.get('salesVolume', [{}])[0].get('value', None)
+
+        # page number shit 
+        if page_num * max_can >= int(result["totalMatchingCandidates"]):
+            break
+        page_num += 1
+
+    # no sales volume found 
+    return None
 
 if __name__ == "__main__":
 
@@ -149,4 +188,6 @@ if __name__ == "__main__":
         print(len(result[0]))
         print(result[1])
 
-    test_poi_within_area()
+    #test_poi_within_area()
+
+    get_sales("327 1/2 E 1st St, Los Angeles, CA 90012", "Little Tokyo Hotel")
