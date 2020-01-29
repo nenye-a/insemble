@@ -21,9 +21,9 @@ import Errors from './views/Errors';
 import NoDeals from './views/NoDeals';
 import MainMap from './views/MainMap';
 import Onboarding from './views/Onboarding';
-import TenantSavedProperties from './views/ProfilePage/TenantSavedProperties';
-import BasicProfile from './views/ProfilePage/BasicProfile';
-import TenantSearchHistory from './views/ProfilePage/TenantSearchHistory';
+import TenantSavedProperties from './views/TenantSavedProperties';
+import EditBasicProfile from './views/EditBasicProfile';
+import TenantSearchHistory from './views/TenantSearchHistory';
 
 export default [
   {
@@ -125,7 +125,7 @@ export default [
     component: TenantDeepDive,
   },
   { path: '/map', layout: BasicLayout, component: MainMap },
-  { path: '/user/edit-profile', layout: UserProfileLayout, component: BasicProfile },
+  { path: '/user/edit-profile', layout: UserProfileLayout, component: EditBasicProfile },
   { path: '/user/tenant-matches', layout: UserProfileLayout, component: TenantSearchHistory },
   { path: '/user/saved-properties', layout: UserProfileLayout, component: TenantSavedProperties },
 ];
