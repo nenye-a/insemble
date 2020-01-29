@@ -1,4 +1,4 @@
-import React, { ComponentProps } from 'react';
+import React, { ComponentProps, ReactElement } from 'react';
 import styled, { css } from 'styled-components';
 
 import { TouchableOpacity, Text, View } from '../../core-ui';
@@ -11,22 +11,25 @@ import SvgFullHeart from '../../components/icons/full-heart';
 
 type Props = {
   role?: 'tenant' | 'landlord';
-  selectedIndex?: number;
+  onMenuPress: (selectedMenu: Menu) => void;
+  selectedMenu: Menu;
 };
 
 type MenuListProps = ComponentProps<typeof TouchableOpacity> & {
   selected: boolean;
 };
 
+export type Menu = 'Profile' | 'Matches' | 'Messages' | 'Saved Properties' | 'Properties';
+
 export default function ProfileMenuList(props: Props) {
-  let { role = 'tenant', selectedIndex } = props;
+  let { role = 'tenant', onMenuPress, selectedMenu } = props;
   let MENUS = role === 'tenant' ? TENANT_PROFILE_MENU : LANDLORD_PROFILE_MENU;
   return (
     <Container>
       {MENUS.map(({ menu, icon }, index) => {
-        let isSelected = selectedIndex === index;
+        let isSelected = selectedMenu === menu;
         return (
-          <MenuList key={index} selected={isSelected}>
+          <MenuList key={index} selected={isSelected} onPress={() => onMenuPress(menu as Menu)}>
             {icon}
             <Text>{menu}</Text>
           </MenuList>
@@ -69,7 +72,12 @@ const MenuList = styled(TouchableOpacity)<MenuListProps>`
     `}
 `;
 
-const TENANT_PROFILE_MENU = [
+type MenuObj = {
+  menu: Menu;
+  icon: ReactElement;
+};
+
+const TENANT_PROFILE_MENU: Array<MenuObj> = [
   {
     menu: 'Profile',
     icon: <SvgPerson />,
