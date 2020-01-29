@@ -1,5 +1,6 @@
 import React, { ComponentProps, ReactElement } from 'react';
 import styled, { css } from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 import { TouchableOpacity, Text, View } from '../../core-ui';
 import { THEME_COLOR, WHITE } from '../../constants/colors';
@@ -11,8 +12,6 @@ import SvgFullHeart from '../../components/icons/full-heart';
 
 type Props = {
   role?: 'tenant' | 'landlord';
-  onMenuPress: (selectedMenu: Menu) => void;
-  selectedMenu: Menu;
 };
 
 type MenuListProps = ComponentProps<typeof TouchableOpacity> & {
@@ -22,14 +21,22 @@ type MenuListProps = ComponentProps<typeof TouchableOpacity> & {
 export type Menu = 'Profile' | 'Matches' | 'Messages' | 'Saved Properties' | 'Properties';
 
 export default function ProfileMenuList(props: Props) {
-  let { role = 'tenant', onMenuPress, selectedMenu } = props;
+  let history = useHistory();
+  let { role = 'tenant' } = props;
   let MENUS = role === 'tenant' ? TENANT_PROFILE_MENU : LANDLORD_PROFILE_MENU;
   return (
     <Container>
-      {MENUS.map(({ menu, icon }, index) => {
-        let isSelected = selectedMenu === menu;
+      {MENUS.map(({ menu, icon, path }, index) => {
+        let isSelected = history.location.pathname === path;
         return (
-          <MenuList key={index} selected={isSelected} onPress={() => onMenuPress(menu as Menu)}>
+          <MenuList
+            key={index}
+            selected={isSelected}
+            forwardedAs="button"
+            onPress={() => {
+              history.push(path);
+            }}
+          >
             {icon}
             <Text>{menu}</Text>
           </MenuList>
@@ -42,6 +49,7 @@ export default function ProfileMenuList(props: Props) {
 const Container = styled(View)`
   padding: 8px 24px;
 `;
+
 const MenuList = styled(TouchableOpacity)<MenuListProps>`
   flex-direction: row;
   height: 36px;
@@ -75,38 +83,46 @@ const MenuList = styled(TouchableOpacity)<MenuListProps>`
 type MenuObj = {
   menu: Menu;
   icon: ReactElement;
+  path: string;
 };
 
 const TENANT_PROFILE_MENU: Array<MenuObj> = [
   {
     menu: 'Profile',
     icon: <SvgPerson />,
+    path: '/user/edit-profile',
   },
   {
     menu: 'Matches',
     icon: <SvgBusiness />,
+    path: '/user/tenant-matches',
   },
   {
     menu: 'Messages',
     icon: <SvgMessage />,
+    path: '/user/messages',
   },
   {
     menu: 'Saved Properties',
     icon: <SvgFullHeart />,
+    path: '/user/saved-properties',
   },
 ];
 
-const LANDLORD_PROFILE_MENU = [
+const LANDLORD_PROFILE_MENU: Array<MenuObj> = [
   {
     menu: 'Profile',
     icon: <SvgPerson />,
+    path: '/',
   },
   {
     menu: 'Properties',
     icon: <SvgBusiness />,
+    path: '/',
   },
   {
     menu: 'Messages',
     icon: <SvgMessage />,
+    path: '/',
   },
 ];
