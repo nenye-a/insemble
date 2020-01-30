@@ -1,12 +1,20 @@
+import sys
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(BASE_DIR,'data_aggregator'))  # include data_agregator in path
 import json
 import time
 import numpy as np
+import pandas as pd
 import urllib.parse
 from Location import Location
 from Retailer import Retailer
 from smart_search import *
 from decouple import config
 import geopy.distance
+import spatial
+import arcgis
+import environics
 
 #from django.conf import settings
 
@@ -213,6 +221,63 @@ def generate_location_profile(address, radius):
 
     #return Location object
     return Location(address, lat, lng, census, pop, income, None, None, nearby, census_radius), location_valid
+
+# 1/29/20 dl
+def generate_location_profile_new(address):
+
+    # get lat long 
+    lat, lng, valid = get_loc_from_input(address)
+
+    if not valid:
+        return None, valid
+
+    # get data 
+    cats, spatial_df = spatial.create_spatial_cats_and_df()
+    block_df = spatial.create_block_grp_df()
+    psycho_dict = spatial.get_psychographics(
+                lat, lng, 1, spatial_df, block_df, cats)
+
+    arcgis_dict = arcgis.details(lat, lng, 1)
+
+    cats, demo_df = environics.create_demo_cats_and_df()
+    demo_dict = environics.get_demographics(
+                lat, lng, 1, demo_df, block_df, cats)
+
+    # create arr as df 
+    # psycho
+    psycho_df = pd.DataFrame([psycho_dict], columns=psycho_dict.keys())
+
+    # arcgis - num households, daytime pop, daytime working pop, income  
+    arcgis_df = pd.DataFrame([arcgis_dict], columns=arcgis_dict.keys())
+    arcgis_df = arcgis_df.drop(columns=["HouseholdGrowth2017-2022", "DaytimeResidentPop"])
+    num_households_df = arcgis_df["TotalHouseholds"]
+    daytime_pop_df = arcgis_df["DaytimePop"]
+    daytime_working_pop_df = arcgis_df["DaytimeWorkingPop"]
+    income_df = arcgis_df["MedHouseholdIncome"]
+
+    # demo - gender, race, age, travel time, transport methods 
+    gender_dict = demo_dict["Current Year Population, Gender"]
+    gender_df = pd.DataFrame([gender_dict], columns=gender_dict.keys())
+    race_dict = demo_dict["Current Year Population, Race"]
+    race_df = pd.DataFrame([race_dict], columns=race_dict.keys())
+    age_dict = demo_dict["Current Year Population, Age"]
+    age_df = pd.DataFrame([age_dict], columns=age_dict.keys())
+    transport_dict = demo_dict["Current Year Workers, Transportation to Work"]
+    transport_df = pd.DataFrame([transport_dict], columns=transport_dict.keys())
+    travel_time_dict = demo_dict["Current Year Workers, Travel Time To Work"]
+    travel_time_df = pd.DataFrame([travel_time_dict], columns=travel_time_dict.keys())
+
+    #demo_dict = {}
+    #demo_dict.update(gender_dict)
+    #demo_dict.update(race_dict)
+    #demo_dict.update(age_dict)
+    #demo_dict.update(transport_dict)
+    #demo_dict.update(travel_time_dict)
+    #demo_df = pd.DataFrame([demo_dict], columns=demo_dict.keys())
+
+    # create final df 
+    df = pd.concat([psycho_df, num_households_df, daytime_pop_df, daytime_working_pop_df, income_df, gender_df, race_df, age_df, transport_df, travel_time_df], axis=1)
+    return df
 
 '''
 This method creates a retailer profile for a particular retailer. It pulls in information from various APIs to create Retailers
@@ -452,6 +517,9 @@ if __name__ == "__main__":
 
     #print(generate_retailer_profile("Broken Yolk Cafe", "California"))
 
-    URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input={0}&inputtype=textquery&fields=geometry&key={1}".format(
-        "New+York", GOOG_KEY)
-    print(smart_search(URL, None))
+    #URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input={0}&inputtype=textquery&fields=geometry&key={1}".format(
+    #    "New+York", GOOG_KEY)
+    #print(smart_search(URL, None))
+
+    generate_location_profile_new("327 1/2 E 1st St, Los Angeles, CA 90012")
+

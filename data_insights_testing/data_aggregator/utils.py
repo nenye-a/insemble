@@ -32,7 +32,7 @@ DB_ZIP_CODES = DB_SPACE.zip_codes
 DB_RAW_SPACE = DB_SPACE.raw_spaces
 DB_PROCESSED_SPACE = DB_SPACE.spaces
 DB_OLD_SPACES = DB_SPACE.dataset2
-
+DB_VECTORS = DB_SPACE.preprocessed_vectors
 
 # simple unique index of a pymongo database collection
 def unique_db_index(collection, *indices):
