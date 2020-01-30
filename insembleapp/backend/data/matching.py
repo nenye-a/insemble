@@ -3,7 +3,7 @@ import pandas as pd
 import api.goog as google
 import api.spatial as spatial
 import api.arcgis as arcgis
-import api.environcs as environics
+import api.environics as environics
 
 '''
 
@@ -88,13 +88,12 @@ def generate_matches_v1(location_address, my_place_type={}):
 
     # get preprocessed vectors
     df = pd.DataFrame(list(utils.DB_VECTORS.find()))
-
-    df = df.drop(columns=["_id"])
+    df2 = df.drop(columns=["_id", "lat", "lng", "loc_id"])
 
     # subtract my vector
-    df = df.append(my_location_df)
-    df = df.fillna(0)
-    diff = df.subtract(df.iloc[-1])
+    df2 = df2.append(my_location_df)
+    df2 = df2.fillna(0)
+    diff = df2.subtract(df2.iloc[-1])
 
     # group into main features
     diff["psycho"] = diff[SPATIAL_LIST].sum(axis=1)
@@ -103,24 +102,23 @@ def generate_matches_v1(location_address, my_place_type={}):
     diff["age"] = diff[AGE_LIST].sum(axis=1)
     diff["travel_time"] = diff[TRAVEL_TIME_LIST].sum(axis=1)
     diff["transport"] = diff[TRANSPORT_LIST].sum(axis=1)
-    print(diff)
+    # print(diff)
 
     # normalize between 0 and 1
-    diff_alt = diff.drop(columns=['lat', 'lng'])
+    diff_alt = diff
     norm_df = (diff_alt - diff_alt.min()) / (diff_alt.max() - diff_alt.min())
-    norm_df['lat'], norm_df['lng'] = df['lat'], df['lng']
+    norm_df['lat'], norm_df['lng'], norm_df['loc_id'] = df['lat'], df['lng'], df['loc_id']
     print(norm_df)
 
     # find sum of diffs
     norm_df["error_sum"] = norm_df[["psycho", "TotalHouseholds", "DaytimePop", "DaytimeWorkingPop",
                                     "MedHouseholdIncome", "gender", "race", "age", "travel_time", "transport"]].sum(axis=1)
 
-    # return only locations that work
+    # return only locations that work (top 1%)
     norm_df = norm_df[:-1]
-    best = norm_df.nsmallest(int(norm_df.shape[0] * 0.03), 'error_sum')
+    best = norm_df.nsmallest(int(norm_df.shape[0] * 0.01), 'error_sum')
 
-    print(best[['lat', 'lng']])
-    return best[['lat', 'lng']]
+    return best[['lat', 'lng', 'loc_id']].to_json(orient='records')
 
 
 # Given an address, generates a vector of a location that can be used
@@ -130,7 +128,7 @@ def _generate_location_vector(address):
     # get lat long
     location = google.find(address)
     lat = location["geometry"]["location"]["lat"]
-    lng = location["geoemtry"]["location"]["lng"]
+    lng = location["geometry"]["location"]["lng"]
 
     # get data
     cats, spatial_df = spatial.create_spatial_cats_and_df()

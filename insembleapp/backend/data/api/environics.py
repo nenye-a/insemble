@@ -93,7 +93,7 @@ def get_demographics(lat, lng, radius, demo_df, block_grp_df, cats):
 
 def create_demo_cats_and_df():
     spatial_dict = {}
-    f = open("raw_data/EA_Los_Angeles_PopFacts.csv", "r")
+    f = open("data/raw_data/EA_Los_Angeles_PopFacts.csv", "r")
     f = f.readlines()
     for line in f[1:]:
         line = line.rstrip().split(",")
@@ -114,7 +114,7 @@ def create_demo_cats_and_df():
 
 
 def create_block_grp_df():
-    f = open("raw_data/cbg_geographic_data_LA.csv", "r")
+    f = open("data/raw_data/cbg_geographic_data_LA.csv", "r")
     f = f.readlines()
     d = {"lat": [], "lng": [], "block_grp": []}
     for line in f[1:]:
