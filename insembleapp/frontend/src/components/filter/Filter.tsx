@@ -8,6 +8,7 @@ import TextInput from '../../core-ui/ContainedTextInput';
 import SliderFilter from './SliderFilter';
 import RangeInput from './RangeInput';
 
+
 type Props = ComponentProps<typeof View> & {
   visible?: boolean;
   title?: string;

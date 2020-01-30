@@ -75,7 +75,6 @@ export default styled(Button)<Props>`
   &:active {
     opacity: 0.5;
   }
-
 `;
 
 const ButtonBadge = styled(Badge)`
