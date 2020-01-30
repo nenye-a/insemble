@@ -443,12 +443,12 @@ def generate_tenant_matches_new(location_address, my_place_type={}):
     client = Connect.get_connection()
     db_space = client.spaceData
     df = pd.DataFrame(list(db_space.preprocessed_vectors.find()))
-    df = df.drop(columns=["_id"])
+    df2 = df.drop(columns=["_id", "lat", "lng", "loc_id"])
 
     # subtract my vector
-    df = df.append(my_location_df)
-    df = df.fillna(0)
-    diff = df.subtract(df.iloc[-1])
+    df2 = df2.append(my_location_df)
+    df2 = df2.fillna(0)
+    diff = df2.subtract(df2.iloc[-1])
 
     # group into main features
     diff["psycho"] = diff[spatial_lst].sum(axis=1)
@@ -460,9 +460,10 @@ def generate_tenant_matches_new(location_address, my_place_type={}):
     print(diff)
 
     # normalize between 0 and 1
-    diff_alt = diff.drop(columns=['lat', 'lng'])
+    #diff_alt = diff.drop(columns=['lat', 'lng', 'loc_id'])
+    diff_alt = diff
     norm_df = (diff_alt - diff_alt.min()) / (diff_alt.max() - diff_alt.min())   
-    norm_df['lat'], norm_df['lng'] = df['lat'], df['lng']
+    norm_df['lat'], norm_df['lng'], norm_df['loc_id'] = df['lat'], df['lng'], df['loc_id']
     print(norm_df)
 
     # find sum of diffs
@@ -472,8 +473,8 @@ def generate_tenant_matches_new(location_address, my_place_type={}):
     norm_df = norm_df[:-1] 
     best = norm_df.nsmallest(int(norm_df.shape[0] * 0.03), 'error_sum')
 
-    print(best[['lat', 'lng']])
-    return best[['lat', 'lng']]
+    print(best[['lat', 'lng', 'loc_id']])
+    return best[['lat', 'lng', 'loc_id']]
 
 def generate_tenant_matches_by_cat(location_address_list):
     """
@@ -743,4 +744,10 @@ if __name__ == '__main__':
 #        "categories": ["Restaurant", "Chinese Restaurant"],
 #    })
 
-    generate_tenant_matches_new("327 1/2 E 1st St, Los Angeles, CA 90012")
+    #df=generate_tenant_matches_new("3321 S La Cienega Blvd, Los Angeles, CA")
+    df=generate_tenant_matches_new("1004 W Slauson Ave, Los Angeles, CA 90044")
+    df.to_csv("space1_matches.csv")
+
+
+
+
