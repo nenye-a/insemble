@@ -1,6 +1,12 @@
 import React, { ComponentProps, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
-import { THEME_COLOR, WHITE, BUTTON_BORDER_COLOR, TEXT_COLOR } from '../constants/colors';
+import {
+  THEME_COLOR,
+  WHITE,
+  BUTTON_BORDER_COLOR,
+  TEXT_COLOR,
+  MUTED_TEXT_COLOR,
+} from '../constants/colors';
 import TouchableOpacity from './TouchableOpacity';
 import Text from './Text';
 import Badge from './Badge';
@@ -10,7 +16,7 @@ type TextProps = ComponentProps<typeof Text>;
 type Props = ComponentProps<typeof TouchableOpacity> & {
   text: string;
   textProps?: TextProps;
-  mode?: 'primary' | 'secondary';
+  mode?: 'primary' | 'secondary' | 'transparent';
   icon?: ReactNode;
   badgeText?: string;
 };
@@ -37,12 +43,30 @@ export default styled(Button)<Props>`
   flex-direction: row;
   align-items: center;
   ${(props) =>
+    props.mode === 'primary' &&
+    css`
+      &:disabled {
+        background-color: ${MUTED_TEXT_COLOR};
+      }
+    `}
+  ${(props) =>
     props.mode === 'secondary' &&
     css`
       background-color: ${WHITE};
       border: 0.5px solid ${BUTTON_BORDER_COLOR};
       ${Text} {
         color: ${TEXT_COLOR};
+      }
+    `}
+  ${(props) =>
+    props.mode === 'transparent' &&
+    css`
+      background-color: transparent;
+      ${Text} {
+        color: ${THEME_COLOR};
+      }
+      &:disabled ${Text} {
+        color: ${MUTED_TEXT_COLOR};
       }
     `}
   &:hover {

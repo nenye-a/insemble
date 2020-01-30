@@ -98,7 +98,7 @@ export default function RadioButton(props: Props) {
           id={id}
           name={name}
           checked={isSelected}
-          onClick={onPress}
+          onChange={onPress}
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
         />

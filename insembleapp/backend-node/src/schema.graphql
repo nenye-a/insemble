@@ -2,16 +2,78 @@
 
 # import Feedback from "./generated/prisma.graphql"
 
+enum MatchStatus {
+    Loading,
+    Ready,
+}
+
+type Match {
+    status: MatchStatus!
+    id: String!
+    data: [MatchData!]!
+}
+
+type MatchData {
+    id: String!
+    name: String
+    lat: Float
+    lng: Float
+    census: Census
+    address: String
+    pop: Int
+    income: Int
+    nearby: [PlaceRecord]
+    radius: String
+    price: Int
+    locations: [[Float]]
+    placeType: [PlaceRecord]
+    likes: Int
+    ratings: String
+    photoCount: Int
+    age: Float
+    photo: String
+    icon: String
+    mapRating: Float
+}
+
+type Census {
+    asian: Float
+    black: Float
+    hispanic: Float
+    indian: Float
+    multi: Float
+    white: Float
+}
+
+type PlaceRecord {
+    placeName: String!
+    count: Int!
+}
+
+input CategoryWhereInput {
+    category: String
+    category_contains: String
+}
 # =========
 # RESOLVERS
 # =========
 
 type Query {
     """
-    feedback
+    legacy interface
     """
+    categories(
+        where: CategoryWhereInput,
+        skip: Int,
+        first: Int,
+        last: Int
+    ): [String!]!
+
+    feedback: Feedback!
     feedbacks(
       where: FeedbackWhereInput
-
     ): [Feedback!]!
+
+    lmatches(id: String!): Match!
+    tmatches(id: String!): Match!
 }

@@ -9,7 +9,6 @@ import Landing from './views/Landing';
 import Existing from './views/Existing';
 import Feedback from './views/Feedback';
 import Explain from './views/Explain';
-import Verify from './views/Verify';
 import Find from './views/Find';
 import Register from './views/Register';
 import ForgotPassword from './views/ForgotPassword';
@@ -22,6 +21,7 @@ import Errors from './views/Errors';
 import NoDeals from './views/NoDeals';
 import UserProfile from './views/UserProfile';
 import MainMap from './views/MainMap';
+import Onboarding from './views/Onboarding';
 
 export default [
   {
@@ -70,12 +70,12 @@ export default [
     path: '/verify',
     exact: true,
     layout: BasicLayout,
-    component: Verify,
+    component: Onboarding,
   },
   {
     path: '/verify/:placeID',
     layout: BasicLayout,
-    component: Verify,
+    component: Onboarding,
   },
   {
     path: '/register',

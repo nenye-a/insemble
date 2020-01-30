@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { View, Text, Button, TouchableOpacity, Modal } from '../../core-ui';
+import { View, Text, Button, TouchableOpacity } from '../../core-ui';
+import ContactModal from './ContactModal';
 import { FONT_SIZE_LARGE } from '../../constants/theme';
 import { THEME_COLOR } from '../../constants/colors';
 import SvgHeart from '../../components/icons/heart';
@@ -12,6 +13,7 @@ type Props = {
 
 export default function PropertyDeepDiveHeader({ isLiked, onLikePress }: Props) {
   let [contactModalVisible, toggleContactModalVisibility] = useState(false);
+
   return (
     <Container>
       <View flex>
@@ -25,12 +27,7 @@ export default function PropertyDeepDiveHeader({ isLiked, onLikePress }: Props) 
       <ContactModal
         visible={contactModalVisible}
         onClose={() => toggleContactModalVisibility(false)}
-        overlayStyle={{ zIndex: 100 }}
-      >
-        <View>
-          <Text>Contact Content</Text>
-        </View>
-      </ContactModal>
+      />
     </Container>
   );
 }
@@ -39,9 +36,4 @@ const Container = styled(View)`
   flex-direction: row;
   padding: 16px;
   align-items: center;
-`;
-
-const ContactModal = styled(Modal)`
-  width: 640px;
-  height: 480px;
 `;
