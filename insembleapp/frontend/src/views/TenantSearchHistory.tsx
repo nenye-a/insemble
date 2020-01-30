@@ -6,7 +6,7 @@ import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
 import { WHITE, THEME_COLOR } from '../constants/colors';
 import { SAVED_SEARCHES } from '../fixtures/dummyData';
 import SvgPlus from '../components/icons/plus';
-import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
+import imgPlaceholder from '../assets/images/image-placeholder.jpg';
 
 export default function TenantSearchHistory() {
   return (

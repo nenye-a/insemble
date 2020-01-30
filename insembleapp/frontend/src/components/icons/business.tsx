@@ -8,6 +8,7 @@ const SvgBusiness = (props: IconProps) => (
     width="24"
     height="24"
     viewBox="0 0 24 24"
+    {...props}
   >
     <path id="Path_3919" data-name="Path 3919" d="M0,0H24V24H0Z" fill="none" />
     <path

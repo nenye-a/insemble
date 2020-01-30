@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import { View, Text, Card } from '../core-ui';
 import { FONT_WEIGHT_BOLD, FONT_SIZE_LARGE, FONT_SIZE_SMALL } from '../constants/theme';
 import { THEME_COLOR } from '../constants/colors';
-import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
+import { SAVED_PROPERTIES } from '../fixtures/dummyData';
+import imgPlaceholder from '../assets/images/image-placeholder.jpg';
 import SvgRent from '../components/icons/rent';
 import SvgSqft from '../components/icons/sqft';
-import { SAVED_PROPERTIES } from '../fixtures/dummyData';
 
 export default function TenantSavedProperties() {
   return (
