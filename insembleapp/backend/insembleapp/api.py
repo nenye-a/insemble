@@ -12,7 +12,7 @@ from .types.Venue import Venue
 from .types.Retailer import Retailer
 from .types.Location import PairedLocation, MapLocation, return_location, return_matches, return_location_with_address
 from .serializers import PairedLocationSerializer, CategoryMapSerializer, RetailerSerializer, VenueSerializer, MapSerializer, SearchSerializer
-import data_insights.category_management as cm
+import data.category_management as cm
 
 from .celery import app as celery_app
 
