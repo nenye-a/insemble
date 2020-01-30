@@ -1,7 +1,10 @@
 import React, { ComponentProps } from 'react';
+import styled from 'styled-components';
+
 import View from './View';
 import RadioButton from './RadioButton';
 import useID from '../utils/useID';
+import Label from './Label';
 
 type ViewProps = ComponentProps<typeof View>;
 
@@ -13,6 +16,7 @@ type RadioGroupProps<T> = ViewProps & {
   keyExtractor?: (item: T, index: number) => string;
   onSelect: (item: T) => void;
   radioItemProps?: ViewProps;
+  label?: string;
 };
 
 const defaultTitleExtractor = (item: unknown) => String(item);
@@ -27,6 +31,7 @@ export default function RadioGroup<T>(props: RadioGroupProps<T>) {
     keyExtractor = defaultKeyExtractor,
     onSelect,
     radioItemProps,
+    label,
     ...otherProps
   } = props;
   let fallbackName = useID();
@@ -34,6 +39,7 @@ export default function RadioGroup<T>(props: RadioGroupProps<T>) {
   let name = providedName || fallbackName;
   return (
     <View {...otherProps}>
+      {label && <LabelWrapper id={name} text={label} />}
       {options.map((item, i) => {
         let key = keyExtractor(item, i);
         return (
@@ -51,3 +57,7 @@ export default function RadioGroup<T>(props: RadioGroupProps<T>) {
     </View>
   );
 }
+
+const LabelWrapper = styled(Label)`
+  padding-bottom: 8px;
+`;
