@@ -62,9 +62,10 @@ def process_data():
     db = client.spaceData
     collections = db.spaces
     print("Total records for the collection" + ' ' + str(collections.count()))
-    results = collections.find().limit(100)
+    results = collections.find().limit(100000)
     indf = pd.DataFrame(list(results))
     print(indf)
+    print(list(indf))
     #df.to_csv("Mega_DataFrame.csv")
     #df = pd.read_csv("Mega_DataFrame.csv")
     #print(df.head())
@@ -83,36 +84,43 @@ def process_data():
     #        dis = place["distance"]
     #        if dis < 0.5:
 
-    # CATEGORIES 
-    # make cat set 
-    catset = set()
-    for cats in indf["types"]:
-        for cat in cats:
-            if cat not in ["establishment", "point_of_interest", "store"]:
-                catset.add(cat)
-    for cats in indf["foursquare_categories"]:
-        if type(cats) is not list or len(cats) == 0:
-            continue
-        d = cats[0]
-        cat = d["category_name"].lower().replace(" ", "_")
-        catset.add(cat)
+#    # CATEGORIES 
+#    # make cat set 
+#    catset = set()
+#    for cats in indf["types"]:
+#        for cat in cats:
+#            if cat not in ["establishment", "point_of_interest", "store"]:
+#                catset.add(cat)
+#    for cats in indf["foursquare_categories"]:
+#        if type(cats) is not list or len(cats) == 0:
+#            continue
+#        d = cats[0]
+#        cat = d["category_name"].lower().replace(" ", "_")
+#        catset.add(cat)
+#
+#    # determine if each place falls into each cat
+#    for i, row in indf.iterrows():
+#        print("Making categories features", i)
+#        for cat in catset:
+#            # check foursquare cat
+#            cats = row.loc["foursquare_categories"]
+#            if type(cats) is list and len(cats) != 0:
+#                if cat in cats[0]["category_name"].lower().replace(" ", "_"):
+#                    outdf.set_value(i, cat, 1)
+#                    continue
+#            # check types cat
+#            if cat in row.loc["types"]:
+#                outdf.set_value(i, cat, 1)
+#                continue
+#            # set 0s
+#            outdf.set_value(i, cat, 0)
 
-    # determine if each place falls into each cat
+    # LAT, LONG
     for i, row in indf.iterrows():
-        print("Making categories features", i)
-        for cat in catset:
-            # check foursquare cat
-            cats = row.loc["foursquare_categories"]
-            if type(cats) is list and len(cats) != 0:
-                if cat in cats[0]["category_name"].lower().replace(" ", "_"):
-                    outdf.set_value(i, cat, 1)
-                    continue
-            # check types cat
-            if cat in row.loc["types"]:
-                outdf.set_value(i, cat, 1)
-                continue
-            # set 0s
-            outdf.set_value(i, cat, 0)
+        lat = row.loc["geometry"]["location"]["lat"]
+        lng = row.loc["geometry"]["location"]["lng"]
+        outdf.set_value(i, "lat", lat)
+        outdf.set_value(i, "lng", lng)
 
     # DEMOGRAPHICS + PSYCHOGRAPHICS  
     for i, row in indf.iterrows():
@@ -123,9 +131,9 @@ def process_data():
                 item = big_dict[big_key]
                 if type(item) is dict:
                     for key in item:
-                        outdf.set_value(i, key + " 1", item[key])
+                        outdf.set_value(i, key, item[key])
                 else:
-                    outdf.set_value(i, big_key + " 1", item)
+                    outdf.set_value(i, big_key, item)
 
         big_dict = row.loc["demo3"]
         if type(big_dict) is dict:
@@ -143,9 +151,9 @@ def process_data():
                 item = big_dict[big_key]
                 if type(item) is dict:
                     for key in item:
-                        outdf.set_value(i, key + " 1", item[key])
+                        outdf.set_value(i, key, item[key])
                 else:
-                    outdf.set_value(i, big_key + " 1", item)
+                    outdf.set_value(i, big_key, item)
 
         big_dict = row.loc["psycho3"]
         if type(big_dict) is dict:
@@ -163,12 +171,12 @@ def process_data():
         agdict = row.loc["arcgis_details1"]
         if type(agdict) is dict:
             for key in agdict:
-                outdf.set_value(i, key, agdict[key])
+                outdf.set_value(i, key[:-1], agdict[key])
 
         agdict = row.loc["arcgis_details3"]
         if type(agdict) is dict:
             for key in agdict:
-                outdf.set_value(i, key, agdict[key])
+                outdf.set_value(i, key[:-1], agdict[key])
 
     # NUM RATINGS, RATING
     for i, row in indf.iterrows():
@@ -180,13 +188,17 @@ def process_data():
         if type(star_rating) is float:
             outdf.set_value(i, "google_star_rating", star_rating)
 
+    # LOC_ID
+    for i, row in indf.iterrows():
+        outdf.set_value(i, "loc_id", row.loc["_id"])
+
     # drop cols without info 
     outdf = outdf.dropna()
 
-    print(outdf)
-    print(list(outdf))
+    #print(outdf)
+    #print(list(outdf))
 
-    #df.to_pickle("preprocessed_data.pkl")
+    outdf.to_csv("data_for_vectors.csv")
 
     return outdf
 
@@ -223,4 +235,9 @@ def find_all_categories(df):
 
 if __name__ == "__main__":
     process_data()
+
+    df = pd.read_csv("data_for_vectors.csv")
+    #for i, j in enumerate(list(df)):
+    #    print(i, j)
+
 

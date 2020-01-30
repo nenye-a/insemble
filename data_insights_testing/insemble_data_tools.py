@@ -137,7 +137,7 @@ def balance_ratings_set(data_set_x, data_set_y):
 
     df["label"].hist(bins=100)
     keptl["label"].hist(bins=100)
-    plt.show()
+    #plt.show()
 
     return keptl.drop("label", axis=1), keptl["label"]
 
@@ -236,7 +236,7 @@ generate label_series and remove anything
 
 def generate_label_series(data_set, desired_label):
 
-    stock_labels = ["ratings", "photo_count", "likes"]
+    stock_labels = ["ratings", "photo_count", "likes", "age"]
     stock_labels = [x for x in stock_labels if x in list(data_set.columns)]
 
     try:
