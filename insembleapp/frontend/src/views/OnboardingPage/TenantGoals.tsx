@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { RadioGroup, Label, View, TextInput } from '../../core-ui';
+import { RadioGroup, Label, View, TextInput, MultiSelectLocation } from '../../core-ui';
+import useGoogleMaps from '../../utils/useGoogleMaps';
 
 export default function TenantGoals() {
+  let { isLoading } = useGoogleMaps();
   let [selectedNewLocationPlan, setNewLocationPlan] = useState('');
+  let [, setSelectedValues] = useState<Array<string>>([]);
 
   return (
     <Container>
@@ -26,14 +29,20 @@ export default function TenantGoals() {
         radioItemProps={{ style: { marginTop: 9 } }}
         style={{ marginBottom: 24 }}
       />
-      {/* TODO: change to Autocomplete TextInput with Pill */}
+
       {selectedNewLocationPlan === 'Yes' && (
         <>
-          <TextInput
-            label="Where will you open your next locations?"
-            style={{ marginBottom: 24 }}
-          />
-          {/* TODO: show location number input after the Autocomplete TextInput is filledx */}
+          {!isLoading && (
+            <>
+              <Label text="where will you open your locations?" />
+              <MultiSelectLocation
+                onSelected={(values: Array<string>) => {
+                  setSelectedValues(values);
+                }}
+              />
+            </>
+          )}
+
           <LocationsNumberInput label="How many locations do you expect to open in the next 2 years?" />
         </>
       )}
