@@ -45,29 +45,6 @@ function Landing() {
       {isLoading || submittingPlace ? (
         <TextInput placeholder="Loading..." disabled={true} />
       ) : (
-<<<<<<< HEAD
-          <LocationsInput
-            placeholder="Enter the address of your top performing restaurant or store"
-            buttonText="Find locations"
-            onSubmit={(place) => {
-              let placeID = place.place_id || '';
-              let address = place.formatted_address || '';
-              session.set(['place', placeID], place);
-              session.set('sessionStoreName', place.name);
-              session.set('sessionAddress', address);
-              session.remove('sessionIncome');
-              session.remove('sessionTags');
-              let location = place.geometry ? place.geometry.location.toJSON() : null;
-              if (location) {
-                let { lat, lng } = urlSafeLatLng(location);
-                // TODO: Using dispatch like this is kinda messy.
-                getLocation(`/api/location/lat=${lat}&lng=${lng}&radius=1/`)(dispatch);
-                setSubmittingPlace(placeID);
-              }
-            }}
-          />
-        )}
-=======
         <LocationsInput
           placeholder="Enter the address of your top performing restaurant or store"
           buttonText="Find locations"
@@ -95,7 +72,6 @@ function Landing() {
         </Text>
         <CategoriesInput />
       </BottomContainer>
->>>>>>> f2fb71ba4679701b3bc469c24a3cdc18aae95012
     </Masthead>
   );
 }

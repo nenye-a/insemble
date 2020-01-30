@@ -1,17 +1,13 @@
-import React, { ComponentProps, useState, useEffect, ChangeEvent } from 'react';
+import React, { ComponentProps, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import 'rc-slider/assets/index.css';
 
 import { View, Text, PillButton, Card, Button } from '../../core-ui';
-import {
-  THEME_COLOR,
-  BOTTOM_CARD_COLOR,
-  UNSELECTED_TEXT_COLOR,
-  TEXT_INPUT_BORDER_COLOR,
-} from '../../constants/colors';
+import { THEME_COLOR, BOTTOM_CARD_COLOR, TEXT_INPUT_BORDER_COLOR } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_SIZE_NORMAL } from '../../constants/theme';
-import { Range } from 'rc-slider';
 import TextInput from '../../core-ui/ContainedTextInput';
+import SliderFilter from './SliderFilter';
+import RangeInput from './RangeInput';
+
 
 type Props = ComponentProps<typeof View> & {
   visible?: boolean;
@@ -34,6 +30,12 @@ type Props = ComponentProps<typeof View> & {
   onSubmit?: () => void;
   onLowRangeInputChange?: (lowValue: string) => void;
   onHighRangeInputChange?: (highValue: string) => void;
+  lowValue?: string;
+  highValue?: string;
+  noPreferenceButton?: boolean;
+  hasPreference?: boolean;
+  onNoPreferencePress?: () => void;
+  disabled?: boolean; // TODO: pass disabled to other filter components as well when necessary
 };
 
 export default function Filter(props: Props) {
@@ -58,6 +60,12 @@ export default function Filter(props: Props) {
     onSubmit,
     onLowRangeInputChange,
     onHighRangeInputChange,
+    lowValue,
+    highValue,
+    noPreferenceButton,
+    hasPreference,
+    onNoPreferencePress,
+    disabled,
     ...otherProps
   } = props;
   let [filteredOptions, setFilteredOptions] = useState(allOptions);
@@ -109,71 +117,23 @@ export default function Filter(props: Props) {
           })}
       </FlexRowWrap>
       {rangeSlide && (
-        <Slider>
-          <Range
-            defaultValue={values}
-            max={maximum}
-            min={minimum}
-            allowCross={false}
-            onChange={(value) => onSliderChange && onSliderChange(value)}
-            trackStyle={[{ backgroundColor: THEME_COLOR, height: 8 }]}
-            railStyle={{ height: 8 }}
-            handleStyle={[
-              {
-                backgroundColor: THEME_COLOR,
-                borderColor: THEME_COLOR,
-                boxShadow: '0px 0px 1px rgba(0,0,0,0.16)',
-                height: 24,
-                width: 24,
-                marginTop: -8,
-              },
-              {
-                backgroundColor: THEME_COLOR,
-                borderColor: THEME_COLOR,
-                boxShadow: '0px 0px 2px rgba(0,0,0,0.16)',
-                height: 24,
-                width: 24,
-                marginTop: -8,
-              },
-            ]}
-          />
-          {income ? (
-            <SliderText>
-              <UnSelectedText>${minimum}K</UnSelectedText>
-              {values && values.length > 1 && (
-                <SmallText>
-                  {values[0]}K - {values[1]}K
-                </SmallText>
-              )}
-              <UnSelectedText>${maximum}K</UnSelectedText>
-            </SliderText>
-          ) : (
-            <SliderText>
-              <UnSelectedText>{minimum}</UnSelectedText>
-              <SmallText>
-                {values && values[0]} - {values && values[1]}
-              </SmallText>
-              <UnSelectedText>{maximum}</UnSelectedText>
-            </SliderText>
-          )}
-        </Slider>
+        <SliderFilter
+          onSliderChange={onSliderChange}
+          values={values}
+          maximum={maximum}
+          minimum={minimum}
+          postfix={income ? 'K' : ''}
+          prefix={income ? '$' : ''}
+          disabled={disabled}
+        />
       )}
       {rangeInput && (
-        <RangeInput>
-          <TextInputWithBorder
-            placeholder="Low"
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              onLowRangeInputChange && onLowRangeInputChange(e.target.value);
-            }}
-          />
-          <Dash>-</Dash>
-          <TextInputWithBorder
-            placeholder="High"
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              onHighRangeInputChange && onHighRangeInputChange(e.target.value);
-            }}
-          />
-        </RangeInput>
+        <RangeInput
+          lowValue={lowValue}
+          highValue={highValue}
+          onLowRangeInputChange={onLowRangeInputChange}
+          onHighRangeInputChange={onHighRangeInputChange}
+        />
       )}
       {search && (
         <>
@@ -185,6 +145,7 @@ export default function Filter(props: Props) {
               onChange={(e) => {
                 setSearchText(e.target.value);
               }}
+              disabled={disabled}
             />
           </SearchWrapper>
           <FlexRowWrap>
@@ -195,6 +156,7 @@ export default function Filter(props: Props) {
                     key={'selected' + index}
                     primary
                     onClick={() => onUnSelect && onUnSelect(filter)}
+                    disabled={disabled}
                   >
                     {filter}
                   </SmallPillButton>
@@ -211,6 +173,7 @@ export default function Filter(props: Props) {
                   <SmallPillButton
                     key={'filtered' + index}
                     onClick={() => onSelect && onSelect(filter)}
+                    disabled={disabled}
                   >
                     {filter}
                   </SmallPillButton>
@@ -223,29 +186,21 @@ export default function Filter(props: Props) {
         {selectedOptions.length > 0 && (
           <ClearButton mode="secondary" onPress={onClear} text="Clear All" />
         )}
-        <Button onPress={onDone} text="Done" />
+        {noPreferenceButton && onNoPreferencePress && (
+          <Button
+            mode={hasPreference ? 'transparent' : 'primary'}
+            text="No Preference"
+            onPress={onNoPreferencePress}
+            style={hasPreference ? { fontStyle: 'italic' } : undefined}
+            disabled={disabled}
+          />
+        )}
+        {onDone && <Button onPress={onDone} text="Done" />}
       </BottomWrapper>
     </Card>
   ) : null;
 }
 
-const Slider = styled(View)`
-  margin: 12px;
-  padding: 0 12px;
-`;
-const SliderText = styled(View)`
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 0 12px;
-  margin: 4px 0;
-`;
-const RangeInput = styled(View)`
-  flex-direction: row;
-  justify-content: space-between;
-  width: '100%';
-  align-items: center;
-  margin: 4px 12px;
-`;
 const TitleWrapper = styled(View)`
   flex-direction: row;
   justify-content: space-between;
@@ -282,10 +237,6 @@ const TextInputWithBorder = styled(TextInput)`
   height: 36px;
   font-size: ${FONT_SIZE_NORMAL};
 `;
-const UnSelectedText = styled(Text)`
-  font-size: ${FONT_SIZE_SMALL};
-  color: ${UNSELECTED_TEXT_COLOR};
-`;
 
 const ShowingResultsText = styled(SmallText)`
   line-height: 2;
@@ -301,8 +252,4 @@ const ClearButton = styled(Button)`
   ${Text} {
     color: ${THEME_COLOR};
   }
-`;
-
-const Dash = styled(Text)`
-  margin: 0px 26px;
 `;

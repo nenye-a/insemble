@@ -1,3 +1,10 @@
-declare module 'shards-react';
-declare module 'react-loading-overlay';
-declare module '*.svg';
+
+declare global {
+  import { ComponentProps } from 'react';
+  import { View, Text } from '../core-ui';
+
+  type ViewProps = ComponentProps<typeof View>;
+  type TextProps = ComponentProps<typeof Text>;
+  export { ViewProps, TextProps };
+}
+export {};

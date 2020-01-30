@@ -11,9 +11,8 @@ function feedbacks(
     });
 }
 
-// TODO: prisma wants the mongodb _id, can we PK with our id?
-// function feedback(_: Root, {id}: {id: string}, {prisma}: Context) {
-//     return prisma.feedback({id});
-// }
+function feedback(_: Root, {id}: {id: string}, {prisma}: Context) {
+     return prisma.feedback({id});
+}
 
-export { feedbacks };
+export { feedback, feedbacks };
