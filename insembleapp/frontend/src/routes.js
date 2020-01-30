@@ -24,6 +24,7 @@ import Onboarding from './views/Onboarding';
 import TenantSavedProperties from './views/TenantSavedProperties';
 import EditBasicProfile from './views/EditBasicProfile';
 import TenantSearchHistory from './views/TenantSearchHistory';
+import Messages from './views/Messages';
 
 export default [
   {
@@ -127,5 +128,6 @@ export default [
   { path: '/map', layout: BasicLayout, component: MainMap },
   { path: '/user/edit-profile', layout: UserProfileLayout, component: EditBasicProfile },
   { path: '/user/tenant-matches', layout: UserProfileLayout, component: TenantSearchHistory },
+  { path: '/user/messages', layout: UserProfileLayout, component: Messages },
   { path: '/user/saved-properties', layout: UserProfileLayout, component: TenantSavedProperties },
 ];
