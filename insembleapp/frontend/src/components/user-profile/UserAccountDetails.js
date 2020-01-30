@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardHeader, ListGroup, ListGroupItem, Row, Col, Form, Button } from 'shards-react';
-import { TextInput } from '../../core-ui/index';
+import { TextInputWithLabel as TextInput } from '../../core-ui/index';
 
 export default function UserAccountDetails({ title }) {
   return (

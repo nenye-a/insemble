@@ -54,7 +54,6 @@ input CategoryWhereInput {
     category: String
     category_contains: String
 }
-
 # =========
 # RESOLVERS
 # =========
