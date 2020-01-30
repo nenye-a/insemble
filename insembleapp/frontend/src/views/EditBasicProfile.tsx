@@ -60,8 +60,10 @@ export default function BasicProfile() {
         label="Phone Number"
         placeholder="Phone Number"
         disabled={!profileEditable}
-        containerStyle={{ ...textInputContainerStyle, width: 'calc(50% - 12px)' }}
-        // put 24px to constants
+        containerStyle={{
+          ...textInputContainerStyle,
+          width: `calc(50% - ${(SPACING_WIDTH / 2).toString() + 'px'})`,
+        }}
       />
       <TextArea
         values=""
@@ -93,13 +95,14 @@ export default function BasicProfile() {
         label="Confirm New Password"
         placeholder="Re-Enter Your New Password"
         disabled={!passwordEditable}
-        containerStyle={{ marginTop: 12, marginBottom: 12 }}
+        containerStyle={textInputContainerStyle}
       />
       <SaveButton text="Save Changes" />
     </Container>
   );
 }
 
+const SPACING_WIDTH = 24;
 const Container = styled(Card)`
   padding: 12px 24px;
 `;
@@ -122,7 +125,7 @@ const Title = styled(Text)`
 `;
 
 const Spacing = styled(View)`
-  width: 24px;
+  width: ${SPACING_WIDTH.toString() + 'px'};
 `;
 
 const SaveButton = styled(Button)`
