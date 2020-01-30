@@ -14,6 +14,7 @@ type Props = {
   avatar: string;
   address: string;
   photo: string;
+  onPress: () => void;
 };
 
 type ContainerProps = ComponentProps<typeof TouchableOpacity> & {
@@ -21,9 +22,9 @@ type ContainerProps = ComponentProps<typeof TouchableOpacity> & {
 };
 
 export default function MessageCard(props: Props) {
-  let { isEven, subject, message, avatar, photo, address } = props;
+  let { isEven, subject, message, avatar, photo, address, onPress } = props;
   return (
-    <Container isEven={isEven}>
+    <Container isEven={isEven} onPress={onPress}>
       <Avatar size="medium" image={avatar} />
       <MessageContent flex>
         <Text fontSize={FONT_SIZE_MEDIUM} color={THEME_COLOR}>

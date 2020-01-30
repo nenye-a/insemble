@@ -110,3 +110,16 @@ export const MESSAGE_LIST = [
     avatar: 'https://cdn.pixabay.com/photo/2016/11/18/19/07/happy-1836445_1280.jpg',
   },
 ];
+
+export const MESSAGE_DETAIL = {
+  photo: 'https://cdn.pixabay.com/photo/2016/11/18/14/05/brick-wall-1834784_1280.jpg',
+  address: '4027 Sepulveda Boulevard, Los Angeles, CA',
+  matchPercentage: 80,
+  landlordAvatar: 'https://cdn.pixabay.com/photo/2016/11/29/12/51/adult-1869624_1280.jpg',
+  landlordMessage:
+    'Hi Armand, you can contact me on email for more information. My email address is michael.andrew@gmail.com',
+  tenantSubject: "I'm very interested in this property for immediate lease",
+  tenantMessage:
+    'Hi there, I wanted to contact you today to ask if we could discuss about leasing this property any time soon. Please let me know if you do have time to talk about it. Really appreciate it! Thanks in advance',
+  numberOfSpace: 1,
+};

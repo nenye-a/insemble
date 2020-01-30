@@ -27,7 +27,7 @@ export default function ProfileMenuList(props: Props) {
   return (
     <Container>
       {MENUS.map(({ menu, icon, path }, index) => {
-        let isSelected = history.location.pathname === path;
+        let isSelected = history.location.pathname.includes(path);
         return (
           <MenuList
             key={index}

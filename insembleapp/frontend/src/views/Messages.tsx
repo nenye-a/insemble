@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 import { Card, Text } from '../core-ui';
 import MessageCard from './ProfilePage/MessageCard';
@@ -8,11 +9,17 @@ import { FONT_WEIGHT_BOLD, FONT_SIZE_LARGE } from '../constants/theme';
 import { MESSAGE_LIST } from '../fixtures/dummyData';
 
 export default function Messages() {
+  let history = useHistory();
   return (
     <Container flex>
       <Title>Messages</Title>
       {MESSAGE_LIST.map((item, index) => (
-        <MessageCard key={index} isEven={(index + 1) % 2 === 0} {...item} />
+        <MessageCard
+          key={index}
+          isEven={(index + 1) % 2 === 0}
+          {...item}
+          onPress={() => history.push('/user/messages/' + index)}
+        />
       ))}
     </Container>
   );
