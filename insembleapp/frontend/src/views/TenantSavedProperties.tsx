@@ -19,7 +19,7 @@ export default function TenantSavedProperties() {
             <DescriptionContainer>
               <Text color={THEME_COLOR}>{item.address}</Text>
               <MatchPercentage color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
-                {item.matchPercentage} customer match
+                {item.matchPercentage}% customer match
               </MatchPercentage>
               <RowedView flex>
                 <RowedView flex>

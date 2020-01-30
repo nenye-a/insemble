@@ -83,18 +83,20 @@ export default function BasicProfile() {
         label="Current Password"
         placeholder="Enter Your Current Password"
         disabled={!passwordEditable}
+        type="password"
         containerStyle={textInputContainerStyle}
       />
       <TextInput
         label="New Password"
         placeholder="Enter Your New Password"
         disabled={!passwordEditable}
-        containerStyle={textInputContainerStyle}
+        type="password"
       />
       <TextInput
         label="Confirm New Password"
         placeholder="Re-Enter Your New Password"
         disabled={!passwordEditable}
+        type="password"
         containerStyle={textInputContainerStyle}
       />
       <SaveButton text="Save Changes" />

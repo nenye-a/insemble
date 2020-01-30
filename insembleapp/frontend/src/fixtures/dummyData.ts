@@ -54,21 +54,21 @@ export const PROPERTY_SUMMARY = {
 export const SAVED_PROPERTIES = [
   {
     photo: 'https://cdn.pixabay.com/photo/2016/11/18/14/05/brick-wall-1834784_1280.jpg',
-    address: '4027 Sepulveda Boulevard,Los Angeles, CA',
+    address: '4027 Sepulveda Boulevard, Los Angeles, CA',
     matchPercentage: 70,
     price: 3900,
     sqft: 200,
   },
   {
     photo: 'https://cdn.pixabay.com/photo/2016/11/18/22/21/architecture-1837150_1280.jpg',
-    address: '4027 Sepulveda Boulevard,Los Angeles, CA',
+    address: '3014 Sepulveda Boulevard, Los Angeles, CA',
     matchPercentage: 80,
     price: 3400,
     sqft: 240,
   },
   {
     photo: 'https://cdn.pixabay.com/photo/2018/08/10/21/52/restaurant-3597677_1280.jpg',
-    address: '4027 Sepulveda Boulevard,Los Angeles, CA',
+    address: '4016 Bentley Avenue, Los Angeles, CA',
     matchPercentage: 90,
     price: 2600,
     sqft: 220,

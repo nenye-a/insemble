@@ -31,6 +31,7 @@ export default function TenantSearchHistory() {
                 </PillContainer>
               </RowedView>
             </LeftContainer>
+            {/* TODO: change to heatmap image/map */}
             <HeatMapImage src={imgPlaceholder} />
           </HistoryContainer>
         </TouchableOpacity>
