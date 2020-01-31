@@ -1,7 +1,6 @@
-import { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
 
-type Props = ComponentProps<'div'> & {
+type Props = React.HTMLAttributes<HTMLDivElement> & {
   flex?: boolean;
 };
 

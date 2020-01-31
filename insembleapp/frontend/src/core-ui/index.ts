@@ -1,4 +1,5 @@
 export { default as Alert } from './Alert';
+export { default as Avatar } from './Avatar';
 export { default as Button } from './Button';
 export { default as Badge } from './Badge';
 export { default as Card } from './Card';
@@ -18,3 +19,5 @@ export { default as TextInput } from './TextInput';
 export { default as TouchableOpacity } from './TouchableOpacity';
 export { default as View } from './View';
 export { default as MultiSelectInput } from './MultiSelectInput';
+export { default as MultiSelectLocation } from './MultiSelectLocation';
+

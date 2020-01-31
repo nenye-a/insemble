@@ -61,6 +61,7 @@ export default styled(Button)<Props>`
   ${(props) =>
     props.mode === 'transparent' &&
     css`
+      padding: 0;
       background-color: transparent;
       ${Text} {
         color: ${THEME_COLOR};
@@ -75,7 +76,6 @@ export default styled(Button)<Props>`
   &:active {
     opacity: 0.5;
   }
-
 `;
 
 const ButtonBadge = styled(Badge)`

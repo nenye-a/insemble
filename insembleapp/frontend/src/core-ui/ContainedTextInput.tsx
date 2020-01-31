@@ -35,6 +35,7 @@ const InputContainer = styled.div`
   position: relative;
   font-family: ${FONT_FAMILY_NORMAL};
   font-size: ${FONT_SIZE_MEDIUM};
+  flex: 1;
 `;
 
 const StyledTextInput = styled(TextInput)`

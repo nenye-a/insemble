@@ -6,6 +6,7 @@ import LandlordLayout from './Landlord';
 import LoginLayout from './LoginLayout';
 import BlankLayout from './BlankLayout';
 import BasicLayout from './BasicLayout';
+import UserProfileLayout from './UserProfileLayout';
 
 export {
   HeaderNavigation,
@@ -16,4 +17,5 @@ export {
   LoginLayout,
   BlankLayout,
   BasicLayout,
+  UserProfileLayout,
 };
