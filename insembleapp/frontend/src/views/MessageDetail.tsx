@@ -22,7 +22,7 @@ export default function MessageDetail() {
     numberOfSpace,
   } = MESSAGE_DETAIL;
   return (
-    <Container flex>
+    <Card flex>
       <NavigationContainer>
         <Button
           mode="transparent"
@@ -59,13 +59,9 @@ export default function MessageDetail() {
           </RepliedMessage>
         </View>
       </RowedView>
-    </Container>
+    </Card>
   );
 }
-
-const Container = styled(Card)`
-  // padding: 12px 0;
-`;
 
 const RowedView = styled(View)`
   flex-direction: row;

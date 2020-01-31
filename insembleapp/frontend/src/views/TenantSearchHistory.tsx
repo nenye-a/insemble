@@ -18,7 +18,7 @@ export default function TenantSearchHistory() {
           key={index}
           style={{ marginBottom: 24 }}
           onPress={() => {
-            history.push(`/user/tenant-matches/${index}`); // TODO: change brandID
+            history.push(`/user/tenant-matches/${index}`); // TODO: change to brandID
           }}
         >
           <HistoryContainer>
