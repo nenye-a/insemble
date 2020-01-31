@@ -2,7 +2,7 @@ import React, { ComponentProps, useState } from 'react';
 import styled, { css } from 'styled-components';
 import View from './View';
 import Text from './Text';
-import { THEME_COLOR, WHITE } from '../constants/colors';
+import { THEME_COLOR, WHITE, BACKGROUND_COLOR, BORDER_COLOR } from '../constants/colors';
 
 type ViewProps = ComponentProps<typeof View>;
 
@@ -11,6 +11,7 @@ type Props = ViewProps & {
   title: string;
   isSelected: boolean;
   onPress: () => void;
+  disabled?: boolean;
 };
 
 type RadioContainerProps = ViewProps & {
@@ -19,6 +20,11 @@ type RadioContainerProps = ViewProps & {
 
 type StyledRadioProps = ViewProps & {
   isVisible: boolean;
+  disabled: boolean;
+};
+
+type BackdropProps = ViewProps & {
+  disabled: boolean;
 };
 
 const SIZE = 18;
@@ -46,11 +52,17 @@ const RadioContainer = styled(View)<RadioContainerProps>`
   ${(props) => (props.isFocused ? focusedStyles : undefined)}
 `;
 
-const Backdrop = styled(View)`
+const Backdrop = styled(View)<BackdropProps>`
   ${fillContainer};
   background-color: ${WHITE};
   border: 1px solid ${THEME_COLOR};
   border-radius: ${BORDER_RADIUS}px;
+  ${({ disabled }) =>
+    disabled &&
+    css`
+      background-color: ${BACKGROUND_COLOR};
+      border-color: ${BORDER_COLOR};
+    `}
 `;
 
 const StyledRadio = styled(View)<StyledRadioProps>`
@@ -61,6 +73,12 @@ const StyledRadio = styled(View)<StyledRadioProps>`
   border-radius: ${BORDER_RADIUS}px;
   opacity: ${(props) => (props.isVisible ? 1 : 0)};
   transition: opacity 150ms linear;
+  ${({ disabled, isVisible }) =>
+    disabled &&
+    isVisible &&
+    css`
+      border-color: ${BORDER_COLOR};
+    `}
 `;
 
 const NativeRadio = styled.input.attrs(() => ({ type: 'radio' }))`
@@ -72,6 +90,11 @@ const NativeRadio = styled.input.attrs(() => ({ type: 'radio' }))`
   opacity: 0;
   cursor: pointer;
   ${fillContainer};
+  ${(props) =>
+    props.disabled &&
+    css`
+      cursor: default;
+    `}
 `;
 
 const Row = styled(View)`
@@ -87,13 +110,13 @@ const TextLabel = styled(Text)`
 `;
 
 export default function RadioButton(props: Props) {
-  let { name, id, title, isSelected, onPress, ...otherProps } = props;
+  let { name, id, title, isSelected, onPress, disabled, ...otherProps } = props;
   let [isFocused, setFocus] = useState(false);
   return (
     <Row {...otherProps}>
       <RadioContainer isFocused={isFocused}>
-        <Backdrop />
-        <StyledRadio isVisible={isSelected} />
+        <Backdrop disabled={disabled} />
+        <StyledRadio isVisible={isSelected} disabled={disabled} />
         <NativeRadio
           id={id}
           name={name}
@@ -101,6 +124,7 @@ export default function RadioButton(props: Props) {
           onChange={onPress}
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
+          disabled={disabled}
         />
       </RadioContainer>
       <TextLabel as="label" htmlFor={id}>

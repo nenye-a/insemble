@@ -24,6 +24,9 @@ import Onboarding from './views/Onboarding';
 import TenantSavedProperties from './views/TenantSavedProperties';
 import EditBasicProfile from './views/EditBasicProfile';
 import TenantSearchHistory from './views/TenantSearchHistory';
+import Messages from './views/Messages';
+import MessageDetail from './views/MessageDetail';
+import BrandDetail from './views/BrandDetail';
 
 export default [
   {
@@ -126,6 +129,18 @@ export default [
   },
   { path: '/map', layout: BasicLayout, component: MainMap },
   { path: '/user/edit-profile', layout: UserProfileLayout, component: EditBasicProfile },
-  { path: '/user/tenant-matches', layout: UserProfileLayout, component: TenantSearchHistory },
+  {
+    path: '/user/tenant-matches',
+    layout: UserProfileLayout,
+    component: TenantSearchHistory,
+    exact: true,
+  }, // TODO: change tenant matches to brand
+  { path: '/user/tenant-matches/:brandID', layout: UserProfileLayout, component: BrandDetail },
+  { path: '/user/messages', layout: UserProfileLayout, component: Messages, exact: true },
+  {
+    path: '/user/messages/:messageID',
+    layout: UserProfileLayout,
+    component: MessageDetail,
+  },
   { path: '/user/saved-properties', layout: UserProfileLayout, component: TenantSavedProperties },
 ];
