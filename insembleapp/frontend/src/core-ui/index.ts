@@ -20,4 +20,3 @@ export { default as TouchableOpacity } from './TouchableOpacity';
 export { default as View } from './View';
 export { default as MultiSelectInput } from './MultiSelectInput';
 export { default as MultiSelectLocation } from './MultiSelectLocation';
-
