@@ -3,7 +3,6 @@ import { IconProps } from '../../types/types';
 import { WHITE } from '../../constants/colors';
 
 const SvgClose = ({ fill, ...otherProps }: IconProps) => (
-
   <svg
     id="close-24px_9_"
     data-name="close-24px (9)"
