@@ -56,7 +56,13 @@ export default function MultiSelectLocation(props: Props) {
         value={inputValue}
         onChange={(event) => setInputValue(event.target.value)}
         onKeyUp={(event) => {
-          if (event.which === 8 && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
+          if (
+            event.which === 8 &&
+            !event.metaKey &&
+            !event.ctrlKey &&
+            !event.shiftKey &&
+            inputValue === ''
+          ) {
             removeLast();
           }
         }}
@@ -66,9 +72,7 @@ export default function MultiSelectLocation(props: Props) {
 }
 
 const Container = styled(View)`
-  flex-direction: row;
   flex-flow: row wrap;
-  flex: 1;
   max-height: 156px;
   overflow-y: scroll;
   min-height: 36px;
@@ -76,17 +80,22 @@ const Container = styled(View)`
   border-width: 1px;
   border-color: ${TEXT_INPUT_BORDER_COLOR};
   border-radius: 5px;
-  margin: 10px 0 10px 0;
+  align-items: center;
+  padding: 4px 0;
 `;
 
 const TextSearch = styled(TextInput)`
-  height: 100%;
+  height: fit-content;
   width: 100%;
   outline: none;
-  padding: 6px 16px 6px 16px;
+  padding-top: 0;
+  padding-bottom: 0;
   border: none;
 `;
+
 const Selected = styled(PillButton)`
-  margin: 5px 0 5px 5px;
+  margin: 2px;
   outline: none;
+  height: 28px;
+  width: max-content;
 `;
