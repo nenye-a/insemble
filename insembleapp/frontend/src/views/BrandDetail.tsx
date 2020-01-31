@@ -2,16 +2,19 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
-import SvgArrowBack from '../components/icons/arrow-back';
+import { View, Card, Button, Text, TextInput, RadioGroup, MultiSelectLocation } from '../core-ui';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../constants/theme';
 import { THEME_COLOR } from '../constants/colors';
-import { View, Card, Button, Text, TextInput, RadioGroup } from '../core-ui';
+import { useGoogleMaps } from '../utils';
+import SvgArrowBack from '../components/icons/arrow-back';
 
 export default function BrandDetail() {
   let history = useHistory();
+  let { isLoading } = useGoogleMaps();
   let [matchesEditable, setMatchesEditable] = useState(false);
   let [goalsEditable, setGoalsEditable] = useState(false);
   let [selectedIsLookingLocation, setSelectedIsLookingLocation] = useState('');
+  let [, setSelectedLocations] = useState<Array<string>>([]);
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
   return (
     <Container flex>
@@ -68,9 +71,18 @@ export default function BrandDetail() {
           setSelectedIsLookingLocation(value);
         }}
         disabled={!goalsEditable}
-        radioItemProps={{ style: { marginBottom: 8 } }}
+        radioItemProps={{ style: { marginTop: 8 } }}
       />
 
+      {!isLoading && (
+        <MultiSelectLocation
+          label="Where will you open your locations?"
+          onSelected={(locations) => {
+            setSelectedLocations(locations);
+          }}
+          containerStyle={inputContainerStyle}
+        />
+      )}
       <LocationsNumberInput
         label="How many locations do you expect to open in the next 2 years?"
         placeholder="1"
