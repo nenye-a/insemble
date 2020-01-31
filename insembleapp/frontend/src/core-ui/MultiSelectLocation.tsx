@@ -1,16 +1,20 @@
-import React, { useState, useEffect, useRef, ComponentProps } from 'react';
+import React, { useState, useEffect, useRef, ComponentProps, CSSProperties } from 'react';
 import styled from 'styled-components';
 import PillButton from './PillButton';
 import View from './View';
 import TextInput from './TextInput';
+import Label from './Label';
 import { TEXT_INPUT_BORDER_COLOR } from '../constants/colors';
+import { useID } from '../utils';
 
 type Props = ComponentProps<'input'> & {
   onSelected: (values: Array<string>) => void;
+  label?: string;
+  containerStyle?: CSSProperties;
 };
 
 export default function MultiSelectLocation(props: Props) {
-  let { onSelected } = props;
+  let { onSelected, label, containerStyle } = props;
   let [selectedValues, setSelectedValues] = useState<Array<string>>([]);
   let [inputValue, setInputValue] = useState<string>('');
   let inputRef = useRef<HTMLInputElement | null>(null);
@@ -41,34 +45,43 @@ export default function MultiSelectLocation(props: Props) {
     setSelectedValues(newSelectedOptions);
   };
 
+  let id = useID();
   let placeholder = selectedValues.length > 0 ? '' : 'Enter a location';
 
   return (
-    <Container>
-      {selectedValues.map((value, index) => (
-        <Selected key={index} primary>
-          {value}
-        </Selected>
-      ))}
-      <TextSearch
-        ref={inputRef}
-        placeholder={placeholder}
-        value={inputValue}
-        onChange={(event) => setInputValue(event.target.value)}
-        onKeyUp={(event) => {
-          if (event.which === 8 && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
-            removeLast();
-          }
-        }}
-      />
-    </Container>
+    <View style={containerStyle}>
+      {label && <LabelWrapper text={label} id={id} />}
+      <Container>
+        {selectedValues.map((value, index) => (
+          <Selected key={index} primary>
+            {value}
+          </Selected>
+        ))}
+        <TextSearch
+          id={id}
+          ref={inputRef}
+          placeholder={placeholder}
+          value={inputValue}
+          onChange={(event) => setInputValue(event.target.value)}
+          onKeyUp={(event) => {
+            if (
+              event.which === 8 &&
+              !event.metaKey &&
+              !event.ctrlKey &&
+              !event.shiftKey &&
+              inputValue === ''
+            ) {
+              removeLast();
+            }
+          }}
+        />
+      </Container>
+    </View>
   );
 }
 
 const Container = styled(View)`
-  flex-direction: row;
   flex-flow: row wrap;
-  flex: 1;
   max-height: 156px;
   overflow-y: scroll;
   min-height: 36px;
@@ -76,17 +89,26 @@ const Container = styled(View)`
   border-width: 1px;
   border-color: ${TEXT_INPUT_BORDER_COLOR};
   border-radius: 5px;
-  margin: 10px 0 10px 0;
+  align-items: center;
+  padding: 4px 0;
 `;
 
 const TextSearch = styled(TextInput)`
-  height: 100%;
+  height: fit-content;
   width: 100%;
   outline: none;
-  padding: 6px 16px 6px 16px;
+  padding-top: 0;
+  padding-bottom: 0;
   border: none;
 `;
+
 const Selected = styled(PillButton)`
-  margin: 5px 0 5px 5px;
+  margin: 2px;
   outline: none;
+  height: 28px;
+  width: max-content;
+`;
+
+const LabelWrapper = styled(Label)`
+  padding-bottom: 8px;
 `;

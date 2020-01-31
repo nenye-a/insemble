@@ -1,10 +1,10 @@
-import React, { ComponentProps, MouseEvent } from 'react';
+import React, { MouseEvent } from 'react';
 import styled, { css } from 'styled-components';
 import View from './View';
 
 type PressHandler = () => void;
 
-type Props = Omit<ComponentProps<typeof View>, 'onClick'> & {
+type Props = Omit<ViewProps, 'onClick'> & {
   onPress?: PressHandler;
 };
 

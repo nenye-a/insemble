@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 import { View, Card, Text, PillButton, TouchableOpacity } from '../core-ui';
 import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
@@ -9,10 +10,17 @@ import SvgPlus from '../components/icons/plus';
 import imgPlaceholder from '../assets/images/image-placeholder.jpg';
 
 export default function TenantSearchHistory() {
+  let history = useHistory();
   return (
     <View flex>
       {SAVED_SEARCHES.map((item, index) => (
-        <TouchableOpacity key={index} style={{ marginBottom: 24 }} onPress={() => {}}>
+        <TouchableOpacity
+          key={index}
+          style={{ marginBottom: 24 }}
+          onPress={() => {
+            history.push(`/user/tenant-matches/${index}`); // TODO: change to brandID
+          }}
+        >
           <HistoryContainer>
             <LeftContainer flex>
               <RowedView>
