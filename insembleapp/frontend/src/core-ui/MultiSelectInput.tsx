@@ -6,7 +6,7 @@ import TextInput from './ContainedTextInput';
 import {
   THEME_COLOR,
   WHITE,
-  HOVERED_LIST_ITEM,
+  HOVERED_LIST_ITEM_BG,
   TEXT_COLOR,
   TEXT_INPUT_BORDER_COLOR,
 } from '../constants/colors';
@@ -20,21 +20,11 @@ type ViewProps = ComponentProps<typeof View>;
 type Props = {
   options: Array<string>;
   placeholder: string;
-  onSelected: (options: Array<string>) => void;
-  titleExtractor?: (item: any) => string;
-  keyExtractor?: (item: any, index: number) => string;
+  onChange: (options: Array<string>) => void;
 };
 
-const defaultTitleExtractor = (item: unknown) => String(item);
-const defaultKeyExtractor = (item: unknown, index: number) => String(index);
-
 export default function MultiSelectInput(props: Props) {
-  let {
-    options,
-    titleExtractor = defaultTitleExtractor,
-    keyExtractor = defaultKeyExtractor,
-    placeholder,
-  } = props;
+  let { options, placeholder, onChange } = props;
   let [selectedValues, setSelectedValues] = useState<Array<string>>([]);
   let [inputValue, setInputValue] = useState<string>('');
   let [isFocused, setFocus] = useState<boolean>(false);
@@ -43,6 +33,7 @@ export default function MultiSelectInput(props: Props) {
   let removeLast = () => {
     let newSelectedOptions = selectedValues.slice(0, selectedValues.length - 1);
     setSelectedValues(newSelectedOptions);
+    onChange(selectedValues);
   };
   let optionList = options.filter((option) => option.toLowerCase().includes(inputValue));
   let newOptionList = optionList.filter((option) => !selectedValues.includes(option));
@@ -52,7 +43,7 @@ export default function MultiSelectInput(props: Props) {
       <SearchContainer isFocused={isFocused}>
         {selectedValues.map((value, index) => (
           <Selected key={index} primary>
-            g{value}
+            {value}
           </Selected>
         ))}
         <TextSearch
@@ -79,10 +70,14 @@ export default function MultiSelectInput(props: Props) {
             {newOptionList.map((item, i) => {
               return (
                 <Option
-                  key={keyExtractor(item, i)}
-                  onPress={() => [setInputValue(''), setSelectedValues([...selectedValues, item])]}
+                  key={i}
+                  onPress={() => [
+                    setInputValue(''),
+                    setSelectedValues([...selectedValues, item]),
+                    onChange(selectedValues),
+                  ]}
                 >
-                  <ListText>{titleExtractor(item)}</ListText>
+                  <ListText>{item}</ListText>
                 </Option>
               );
             })}
@@ -138,7 +133,7 @@ const Option = styled(TouchableOpacity)`
   flex-direction: row;
   &:hover {
     color: ${TEXT_COLOR};
-    background-color: ${HOVERED_LIST_ITEM};
+    background-color: ${HOVERED_LIST_ITEM_BG};
   }
 `;
 

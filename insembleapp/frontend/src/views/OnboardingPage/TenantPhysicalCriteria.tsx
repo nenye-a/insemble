@@ -24,7 +24,7 @@ export default function TenantPhysicalCriteria() {
       <MultiSelectInput
         placeholder={'Set Equipment Preference'}
         options={options}
-        onSelected={(values: Array<string>) => {
+        onChange={(values: Array<string>) => {
           setSelectedEquipmentOptions(values);
         }}
       />
