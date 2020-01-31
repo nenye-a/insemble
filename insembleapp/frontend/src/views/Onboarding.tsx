@@ -8,6 +8,7 @@ import ConfirmBusinessDetail from './OnboardingPage/ConfirmBusinessDetail';
 import TenantGoals from './OnboardingPage/TenantGoals';
 import TenantTargetCustomers from './OnboardingPage/TenantTargetCustomers';
 import TenantPhysicalCriteria from './OnboardingPage/TenantPhysicalCriteria';
+import OnboardingSignUp from './OnboardingPage/OnboardingSignUp';
 
 export default function Onboarding() {
   let [activeSegmentIndex, setActiveSegmentIndex] = useState(0);
@@ -74,7 +75,11 @@ export default function Onboarding() {
         },
       ],
     },
-    { title: 'Almost Done.' },
+    {
+      title: 'Almost Done.',
+      content: <OnboardingSignUp />,
+      buttons: [],
+    },
   ];
 
   return (
