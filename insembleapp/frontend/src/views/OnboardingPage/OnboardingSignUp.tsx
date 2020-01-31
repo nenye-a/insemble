@@ -11,18 +11,18 @@ export default function OnBoardingSignUp() {
       <Form>
         <Input label={'Email Address'} placeholder={'Your Email Address'} />
         <RowView>
-          <FlexView style={{ marginRight: 10 }}>
+          <View flex style={{ marginRight: 10 }}>
             <Input label={'First Name'} placeholder={'Your First Name'} />
-          </FlexView>
-          <FlexView style={{ marginLeft: 10 }}>
+          </View>
+          <View flex style={{ marginLeft: 10 }}>
             <Input label={'Last Name'} placeholder={'Your Last Name'} />
-          </FlexView>
+          </View>
         </RowView>
         <Input label={'Company'} placeholder={'Your Company'} />
         <Input label={'Password'} placeholder={'Enter Password'} />
         <Input label={'Confrim Password'} placeholder={'Re-enter Password'} />
         <SubmitButton text="Create and Submit" onSubmit={() => {}} />
-        <RowView>
+        <RowView style={{ marginBottom: 10 }}>
           <Text>Already have an account? </Text>
           <Button mode="transparent" text="Log in here" />
         </RowView>
@@ -62,15 +62,11 @@ const Description = styled(View)`
   padding: 40px 40px 0 40px;
 `;
 const Input = styled(TextInput)`
-  margin: 0 0 10px 0;
+  margin: 0 0 20px 0;
 `;
 
 const SubmitButton = styled(Button)`
   margin: 15px 0 30px 0;
-`;
-
-const FlexView = styled(View)`
-  flex: 1;
 `;
 
 const DescriptionLargeText = styled(Text)`

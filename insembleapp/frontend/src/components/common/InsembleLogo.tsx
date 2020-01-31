@@ -9,11 +9,7 @@ type Props = {
 
 export default function InsembleLogo(props: Props) {
   let { color } = props;
-  return color === 'white' ? (
-    <Image src={whitelogo} alt="Insemble" />
-  ) : (
-    <Image src={logo} alt="Insemble" />
-  );
+  return <Image src={color === 'white' ? whitelogo : logo} alt="Insemble" />;
 }
 
 const Image = styled('img')`
