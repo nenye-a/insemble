@@ -9,7 +9,7 @@ export default function HeaderNavigationBar() {
   return (
     <Container>
       <TouchableOpacity href="/">
-        <InsembleLogo />
+        <InsembleLogo color="purple" />
       </TouchableOpacity>
       <Button text="Sign Up" />
     </Container>
