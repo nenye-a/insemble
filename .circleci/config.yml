@@ -19,22 +19,21 @@ jobs:
           command: sudo chown -R circleci:circleci /usr/local/lib/python3.7/site-packages
       - run:
           command: pip install requests pip-tools --upgrade
-      
+
       - restore_cache:
           keys:
             # TODO: Use Pipenv so we can use Pipfile.lock
-            - v1-pip-cache-{{ checksum "insembleapp/requirements.txt" }}
+            - v1-pip-cache-{{ checksum "requirements.txt" }}
             - v1-pip-cache-
       - run:
           command: |
-            cd insembleapp
             # ## I don't think we need pip-compile
             # pip-compile requirements.in > requirements.txt;
             # pip-compile dev-requirements.in > dev-requirements.txt;
             pip install --user -r requirements.txt
             pip install -r dev-requirements.txt
       - save_cache:
-          key: v1-pip-cache-{{ checksum "insembleapp/requirements.txt" }}
+          key: v1-pip-cache-{{ checksum "requirements.txt" }}
           paths:
             - .venv
             - /usr/local/bin
@@ -51,13 +50,13 @@ jobs:
     #       command: isort **/*.py --check-only
     #   - run:
     #       command: |
-    #         cd insembleapp/backend
+    #         cd backend
     #         python manage.py has_missing_migrations --ignore authtools
     #       environment:
     #         DJANGO_SETTINGS_MODULE: 'insembleapp.settings.local_base'
     #   - run:
     #       command: |
-    #         cd insembleapp/backend
+    #         cd backend
     #         python manage.py check --deploy
     #       environment:
     #         DJANGO_SETTINGS_MODULE: 'insembleapp.settings.production'
@@ -69,18 +68,17 @@ jobs:
     #         REDIS_URL: 'redis://'
     #   - run:
     #       command: |
-    #         cd insembleapp/backend
+    #         cd backend
     #         coverage run manage.py test
     #   - run:
     #       command: |
-    #         cd insembleapp
     #         mkdir -p test-reports/
     #         coverage xml -o test-reports/results.xml
     #       when: always
     #   - store_test_results:
-    #       path: insembleapp/test-reports
+    #       path: test-reports
     #   - store_artifacts:
-    #       path: insembleapp/test-reports
+    #       path: test-reports
   build_frontend:
     docker:
       - image: circleci/node:12.13
@@ -89,19 +87,17 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "insembleapp/package-lock.json" }}
+            - v1-dependencies-{{ checksum "package-lock.json" }}
             - v1-dependencies-
       - run:
           command: |
-            cd insembleapp
             npm install
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "insembleapp/package-lock.json" }}
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
       - run:
           command: |
-            cd insembleapp
             npm run test
 
 workflows:
