@@ -3,22 +3,59 @@
 /db.sqlite3
 .DS_Store
 .env
-/__pycache__/
-/.vscode/
+*/settings/local.py
+/staticfiles/*
+/mediafiles/*
 .python-version
-
-
-# Don't track IDE config folders 
-.idea
-.vscode
-
-# Don't track content of these folders
-insemble-venv/
-/insemble-venv
-colin-venv/
-/colin-venv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 
+# coverage result
+.coverage
+/coverage/
+
+# Don't track IDE config folders 
+.idea
+.vscode
+
+# data
+*.dump
+dump.rdb
+
+# Node and npm stuff
+node_modules/**/*
+npm-debug.*
+
+# Folders
+.DS_Store
+
+# Webpack
+/frontend/bundles/*
+/frontend/webpack_bundles/*
+/webpack-stats.json
+/jquery-webpack-stats.json
+
+# Sass
+.sass-cache
+*.map
+
+# General
+/venv/
+/env/
+/output/
+/cache/
+
+# Spritesmith
+spritesmith-generated/
+spritesmith.scss
+
+# templated email
+tmp_email/
+
+# Other
+insemble-venv/
+/insemble-venv
+colin-venv/
+/colin-venv
