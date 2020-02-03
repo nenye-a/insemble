@@ -35,7 +35,7 @@ export default function FragmentedProgressBar(props: Props) {
   let remainingValuesForRightBars = progress - LEFT_BAR_VALUE;
 
   return (
-    <Container {...otherProps}>
+    <RowedView {...otherProps}>
       <BarContainer style={{ width: leftBarWidth.toString() + 'px' }}>
         <Bar
           style={{
@@ -53,7 +53,7 @@ export default function FragmentedProgressBar(props: Props) {
           ? '0%'
           : (((remainingValuesForRightBars % 10) * 100) / 10).toString() + '%';
         return (
-          <>
+          <RowedView key={idx}>
             <Spacing />
             <BarContainer style={{ width: rightBarWidth.toString() + 'px' }}>
               <SegmentedBar
@@ -62,14 +62,14 @@ export default function FragmentedProgressBar(props: Props) {
                 }}
               />
             </BarContainer>
-          </>
+          </RowedView>
         );
       })}
-    </Container>
+    </RowedView>
   );
 }
 
-const Container = styled(View)`
+const RowedView = styled(View)`
   flex-direction: row;
 `;
 
@@ -84,7 +84,7 @@ const Bar = styled(View)`
   height: 100%;
   background-color: ${FRAGMENTED_PROGRESS_BAR_SECONDARY_COLOR};
   overflow: hidden;
-  border-radius: 5px;
+  border-radius: ${DEFAULT_BORDER_RADIUS};
 `;
 
 const Spacing = styled(View)`
