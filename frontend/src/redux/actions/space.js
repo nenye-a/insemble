@@ -44,15 +44,12 @@ export const getLocation = (requestUrl) => (dispatch) => {
 
 // CLEAR LOCATION
 export const clearLocation = () => (dispatch) => {
-  // clear the existing loncation - provide no payload
+  // clear the existing location - provide no payload
   dispatch({ type: LOCATION_CLEAR, payload: null });
 };
 
 // LOAD HEAT MAP
-export const loadMap = (hasLocation = false, income = 0, categories = []) => (
-  dispatch,
-  getState
-) => {
+export const loadMap = (hasLocation = false) => (dispatch, getState) => {
   // map is loading
   dispatch({ type: MAP_LOADING });
 
@@ -63,7 +60,6 @@ export const loadMap = (hasLocation = false, income = 0, categories = []) => (
     },
   };
 
-  let body = null;
   let apiRequest = '';
 
   if (hasLocation || getState().space.hasLocation) {
@@ -72,21 +68,20 @@ export const loadMap = (hasLocation = false, income = 0, categories = []) => (
     // body = JSON.stringify({
     //   address,
     // });
-    let new_address = address.replace(/,/g, "").split(' ').join('-').slice(1)
-    apiRequest = '/api/matches/'.concat(new_address)
-    body = {}
+    let normalizedAddress = address.replace(/[,\s]+/g, '-').replace(/^-+|-+$/, '');
+    apiRequest = '/api/matches/' + normalizedAddress;
   } else {
     apiRequest = '/api/category/';
-    body = JSON.stringify({
-      income,
-      categories,
-    });
+    // body = JSON.stringify({
+    //   income,
+    //   categories,
+    // });
   }
 
   fetch(apiRequest, {
     // method: 'POST',
     method: 'GET',
-    headers: config.headers
+    headers: config.headers,
     // body,
   })
     .then((res) => {

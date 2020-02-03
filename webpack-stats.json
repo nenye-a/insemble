@@ -1,1 +1,0 @@
-{"status":"error","publicPath":"http://localhost:3000/frontend/bundles/","error":"unknown-error","message":"[tsl] ERROR in /Users/chukwunenyeanagbogu/insemble/frontend/src/core-ui/Avatar.tsx(3,23)\n      TS2307: Cannot find module '../assets/images/profile-picture-placeholder.png'."}
