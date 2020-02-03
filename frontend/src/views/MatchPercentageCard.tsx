@@ -3,14 +3,16 @@ import styled from 'styled-components';
 
 import { View, FragmentedProgressBar, Text, TouchableOpacity } from '../core-ui';
 import {
-  FONT_SIZE_LARGE,
-  FONT_WEIGHT_MEDIUM,
-  FONT_WEIGHT_HEAVY,
-  FONT_WEIGHT_BOLD,
   FONT_SIZE_MEDIUM,
+  FONT_SIZE_LARGE,
+  FONT_SIZE_XXLARGE,
+  FONT_SIZE_HUGE,
+  FONT_WEIGHT_BOLD,
+  FONT_WEIGHT_HEAVY,
+  FONT_WEIGHT_MEDIUM,
 } from '../constants/theme';
-import SvgTriangleUp from '../components/icons/triangle-up';
 import { GREEN_ICON, GREY_ICON, DARK_TEXT_COLOR } from '../constants/colors';
+import SvgTriangleUp from '../components/icons/triangle-up';
 import SvgArrowDownShort from '../components/icons/arrow-down-short';
 
 type Props = {
@@ -45,9 +47,9 @@ export default function MatchPercentageCard(props: Props) {
   return (
     <Container>
       <PercentageContainer>
-        <PercentageText fontSize="84px" fontWeight={FONT_WEIGHT_HEAVY} style={{ lineHeight: 1 }}>
+        <PercentageText fontSize={FONT_SIZE_HUGE} fontWeight={FONT_WEIGHT_HEAVY}>
           {progress}
-          <Text fontSize="28px" fontWeight={FONT_WEIGHT_HEAVY}>
+          <Text fontSize={FONT_SIZE_XXLARGE} fontWeight={FONT_WEIGHT_HEAVY}>
             %
           </Text>
         </PercentageText>
@@ -59,7 +61,7 @@ export default function MatchPercentageCard(props: Props) {
       <AspectsRowedView>
         {ASPECTS.map(({ name, description, growthIcon }, index) => {
           return (
-            <AspectContainer key={index}>
+            <AspectContainer key={name + '_' + index.toString()}>
               <RowedView>
                 <Text fontSize={FONT_SIZE_LARGE} fontWeight={FONT_WEIGHT_BOLD}>
                   {name}
