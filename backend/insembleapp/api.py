@@ -1,4 +1,4 @@
-import data_insights.category_management as cm
+import data.category_management as cm
 import data.matching as matching
 from .celery import app as celery_app
 import data.category_management as cm
@@ -17,17 +17,6 @@ from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
 
 import urllib
-<< << << < HEAD: insembleapp/backend/insembleapp/api.py
-== == == =
->>>>>> > master: backend/insembleapp/api.py
-
-<< << << < HEAD: insembleapp/backend/insembleapp/api.py
-
-
-== == == =
-
-
->>>>>> > master: backend/insembleapp/api.py
 
 # VENUE VIEWSET METHODS
 

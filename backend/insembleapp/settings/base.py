@@ -12,7 +12,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(
 # INSIGHTS_DIR = os.path.abspath(os.path.join(BASE_DIR, '../../data'))
 
 INSIGHTS_DIR = os.path.abspath(os.path.join(BASE_DIR, 'data'))
-# sys.path.append(INSIGHTS_DIR)
+sys.path.append(INSIGHTS_DIR)
 
 
 def base_dir_join(*args):

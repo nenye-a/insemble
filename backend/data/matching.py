@@ -1,4 +1,4 @@
-import utils
+from . import utils
 import pandas as pd
 import api.goog as google
 import api.spatial as spatial
