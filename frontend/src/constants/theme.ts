@@ -6,10 +6,15 @@ export const FONT_SIZE_NORMAL = '14px';
 export const FONT_SIZE_MEDIUM = '16px';
 export const FONT_SIZE_LARGE = '18px';
 export const FONT_SIZE_XLARGE = '25px';
+export const FONT_SIZE_XXLARGE = '28px';
+export const FONT_SIZE_XXXLARGE = '36px';
+export const FONT_SIZE_HUGE = '84px';
 
 export const DEFAULT_BORDER_RADIUS = '4px';
+export const SECONDARY_BORDER_RADIUS = '10px';
 export const NAVBAR_HEIGHT = '65px';
 
+export const FONT_WEIGHT_LIGHT = '200';
 export const FONT_WEIGHT_NORMAL = '400';
 export const FONT_WEIGHT_MEDIUM = '500';
 export const FONT_WEIGHT_BOLD = '700';
