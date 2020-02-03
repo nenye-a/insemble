@@ -6,7 +6,6 @@ File for spatial analytics data processing
 
 from utils import distance
 import pandas as pd
-import pprint
 
 # get psychographics given lat and lng
 
@@ -39,7 +38,7 @@ def get_psychographics(lat, lng, radius, spatial_df, block_grp_df, cats):
 # create dataframe with all spatial data
 def create_spatial_cats_and_df():
     spatial_dict = {}
-    f = open("raw_data/Spatial_Los_Angeles_Oct1_2019.csv", "r")
+    f = open("data/raw_data/Spatial_Los_Angeles_Oct1_2019.csv", "r")
     f = f.readlines()
     for line in f[2:]:
         line = line.rstrip().split(",")
@@ -56,7 +55,7 @@ def create_spatial_cats_and_df():
 
 # create block group to lat, long dataframe
 def create_block_grp_df():
-    f = open("raw_data/cbg_geographic_data_LA.csv", "r")
+    f = open("data/raw_data/cbg_geographic_data_LA.csv", "r")
     f = f.readlines()
     d = {"lat": [], "lng": [], "block_grp": []}
     for line in f[1:]:
@@ -72,10 +71,9 @@ if __name__ == "__main__":
     cats, spatial_df = create_spatial_cats_and_df()
     block_df = create_block_grp_df()
 
-    ret = get_psychographics(33.655615, -117.998786, 1,
+    ret = get_psychographics(34.0523, -118.2395, 0.5,
                              spatial_df, block_df, cats)
-    pprint.pprint(ret)
-    ret = get_psychographics(33.655615, -117.998786, 3,
+    print(ret)
+    ret = get_psychographics(34.0430, -118.2673, 0.5,
                              spatial_df, block_df, cats)
-    print("3")
-    pprint.pprint(ret)
+    print(ret)

@@ -68,10 +68,13 @@ export const loadMap = (hasLocation = false, income = 0, categories = []) => (
 
   if (hasLocation || getState().space.hasLocation) {
     const address = getState().space.location.address;
-    apiRequest = '/api/lmatches/';
-    body = JSON.stringify({
-      address,
-    });
+    // apiRequest = '/api/lmatches/';
+    // body = JSON.stringify({
+    //   address,
+    // });
+    let new_address = address.replace(/,/g, "").split(' ').join('-').slice(1)
+    apiRequest = '/api/matches/'.concat(new_address)
+    body = {}
   } else {
     apiRequest = '/api/category/';
     body = JSON.stringify({
@@ -81,9 +84,10 @@ export const loadMap = (hasLocation = false, income = 0, categories = []) => (
   }
 
   fetch(apiRequest, {
-    method: 'POST',
-    headers: config.headers,
-    body,
+    // method: 'POST',
+    method: 'GET',
+    headers: config.headers
+    // body,
   })
     .then((res) => {
       // if response status is ready, return the heatmap and update redux state
