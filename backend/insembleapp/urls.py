@@ -8,7 +8,7 @@ import django_js_reverse.views
 from rest_framework import routers
 from .api import PairedLocationViewSet, TenantMatchesViewSet
 from .api import SpaceMatchesViewSet, VenueViewSet, RetailerViewSet
-from .api import LocationInfoViewSet, CategoryMapAPI, SearchAPI
+from .api import LocationInfoViewSet, CategoryMapAPI, SearchAPI, MatchesAPI
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'api/category', CategoryMapAPI.as_view(), name='category'),
     url(r'api/search', SearchAPI.as_view(), name='search'),
     path(r'api/properties/<slug:_id>/', SearchAPI.as_view(), name='properties'),
+    path(r'api/matches/<slug:address>', MatchesAPI.as_view(), name='matches'),
     url(r'^', include('users.auth_urls')),
     url(r'^', include('feedback.feedback_urls'))
 ]

@@ -86,6 +86,8 @@ class PairedLocationSerializer(serializers.Serializer):
     icon = serializers.URLField()
 
 # Serializer of paired location including the map_rating field
+
+
 class MapSerializer(PairedLocationSerializer):
 
     map_rating = serializers.FloatField()
@@ -98,6 +100,7 @@ class CategoryMapSerializer(serializers.Serializer):
     # size_categories = serializers.ListSerializer(default=[], allow_null=True)
     categories = serializers.ListField(required=True, allow_null=False)
 
+
 class SearchSerializer(serializers.Serializer):
 
     categories = serializers.ListField(required=True, allow_null=False)
@@ -105,3 +108,8 @@ class SearchSerializer(serializers.Serializer):
     target_income = serializers.FloatField(required=True)
     target_psychographics = serializers.ListField(required=False)
     property_citeria = serializers.JSONField(required=False)
+
+
+class MatchSerializer(serializers.Serializer):
+
+    address = serializers.CharField(required=True, max_length=250)

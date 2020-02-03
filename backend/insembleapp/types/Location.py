@@ -1,11 +1,10 @@
+import numpy as np
+from mongo_connect import Connect  # ignore errors, works with Django run serfver
+import location_methods as lm  # ignore errors, works with Django run server
+import location_builder as lb
 import sys
 from django.conf import settings
 sys.path.append(settings.INSIGHTS_DIR)
-import location_builder as lb
-import location_methods as lm  # ignore errors, works with Django run server
-from mongo_connect import Connect  # ignore errors, works with Django run serfver
-import numpy as np
-
 
 
 class PairedLocation(object):
@@ -209,7 +208,7 @@ def return_location(lat, lng, radius):
     if valid and valid2 and valid3 and (address != "United States") and (address != "Los Angeles"):
         return {
             # "address": address,
-            "address": "Nearby Address: {}".format(address),
+            "address": address,
             "lat": lat,
             "lng": lng,
             "census": census,
