@@ -53,4 +53,5 @@ def details(lat, lng, radius):
 
 
 if __name__ == "__main__":
-    print(details(34.048339, -118.240157, 1))
+    print(details(33.655615, -117.998786, 1))
+    print(details(33.655615, -117.998786, 3))

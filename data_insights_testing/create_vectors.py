@@ -40,7 +40,7 @@ def create_vectors():
     #travel_time = normalize(travel_time)
     #transport_methods = normalize(transport_methods)
 
-    df_trimmed = df.iloc[:, [1, 2] + [i for i in range(293, 365)] + [440] + [437] + [438] + [442] + [i for i in range(3, 40)] + [i for i in range(97, 106)]]
+    df_trimmed = df.iloc[:, [1, 2] + [i for i in range(293, 365)] + [440] + [437] + [438] + [442] + [i for i in range(3, 40)] + [i for i in range(97, 106)] + [-1]]
 
     data = df_trimmed.to_dict(orient='records')
 

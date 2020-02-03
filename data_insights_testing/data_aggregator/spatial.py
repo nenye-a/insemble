@@ -6,8 +6,11 @@ File for spatial analytics data processing
 
 from utils import distance
 import pandas as pd
+import pprint
 
 # get psychographics given lat and lng
+
+
 def get_psychographics(lat, lng, radius, spatial_df, block_grp_df, cats):
     # get block groups overlapping w circle
     block_grp_df["dist"] = block_grp_df.apply(
@@ -69,9 +72,10 @@ if __name__ == "__main__":
     cats, spatial_df = create_spatial_cats_and_df()
     block_df = create_block_grp_df()
 
-    ret = get_psychographics(34.0523, -118.2395, 0.5,
+    ret = get_psychographics(33.655615, -117.998786, 1,
                              spatial_df, block_df, cats)
-    print(ret)
-    ret = get_psychographics(34.0430, -118.2673, 0.5,
+    pprint.pprint(ret)
+    ret = get_psychographics(33.655615, -117.998786, 3,
                              spatial_df, block_df, cats)
-    print(ret)
+    print("3")
+    pprint.pprint(ret)

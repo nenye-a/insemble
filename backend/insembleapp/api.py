@@ -1,3 +1,14 @@
+import data.category_management as cm
+import data.matching as matching
+from .celery import app as celery_app
+import data.category_management as cm
+from .serializers import MatchSerializer
+from .serializers import PairedLocationSerializer, CategoryMapSerializer, RetailerSerializer, VenueSerializer, MapSerializer, SearchSerializer
+from .types.Location import PairedLocation, MapLocation, return_location, return_matches, return_location_with_address
+from .types.Retailer import Retailer
+from .types.Venue import Venue
+from .types.matcher import temp_generate_profile_matches, temp_retrieve_profile_matches
+import json
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -7,17 +18,9 @@ from rest_framework.response import Response
 
 import urllib
 
-from .types.matcher import temp_generate_profile_matches, temp_retrieve_profile_matches
-from .types.Venue import Venue
-from .types.Retailer import Retailer
-from .types.Location import PairedLocation, MapLocation, return_location, return_matches, return_location_with_address
-from .serializers import PairedLocationSerializer, CategoryMapSerializer, RetailerSerializer, VenueSerializer, MapSerializer, SearchSerializer
-import data_insights.category_management as cm
-
-from .celery import app as celery_app
-
-
 # VENUE VIEWSET METHODS
+
+
 class VenueViewSet(viewsets.ViewSet):
 
     permission_classes = [
@@ -408,7 +411,6 @@ class SearchAPI(generics.GenericAPIView):
         }
 
         """
-
         # Receive and parse the data with a Django provided serializer
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -423,3 +425,27 @@ class SearchAPI(generics.GenericAPIView):
             return Response("Failed to generate matches", status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'_id': _id}, status=status.HTTP_200_OK)
+
+
+class MatchesAPI(generics.GenericAPIView):
+
+    authentication_classes = []
+    permission_classes = [
+        permissions.AllowAny
+    ]
+    queryset = []
+
+    serializer_class = MatchSerializer
+
+    def get(self, request, *args, **kwargs):
+        """
+        Given an address, returns matches for the user.
+        """
+        address = kwargs.get('address', None)
+        if not address:
+            return Response({'status': "Failed_Request"}, status=status.HTTP_400_BAD_REQUEST)
+
+        matches = matching.generate_matches_v1(address)
+        matches = json.loads(matches)
+
+        return Response(matches, status=status.HTTP_200_OK)
