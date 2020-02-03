@@ -1,4 +1,4 @@
-import React, { useState, ComponentProps } from 'react';
+import React, { ComponentProps } from 'react';
 import styled from 'styled-components';
 import { View, TouchableOpacity, Text } from '.';
 import { WHITE, BACKGROUND_COLOR, THEME_COLOR, TEXT_COLOR } from '../constants/colors';
@@ -18,7 +18,7 @@ export default function TabBar(props: Props) {
     <VerticalView>
       {options.map((option, index) => {
         return (
-          <VerticalSegment onPress={() => onPress(index)}>
+          <VerticalSegment key={index} onPress={() => onPress(index)}>
             <VerticalSegmentText isActive={activeTab === index}>{option}</VerticalSegmentText>
           </VerticalSegment>
         );
