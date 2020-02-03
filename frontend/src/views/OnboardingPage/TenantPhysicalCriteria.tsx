@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { View, Alert, Label, Checkbox, TextInput } from '../../core-ui';
+import { View, Alert, Label, Checkbox, MultiSelectInput } from '../../core-ui';
 import { RangeInput } from '../../components';
 
 const SPACE_OPTIONS = ['Stand alone', 'Shopping center', 'Strip mall'];
 
 export default function TenantPhysicalCriteria() {
   let [selectedSpaceOptions, setSelectedSpaceOptions] = useState<Array<string>>([]);
+  let [options] = useState<Array<string>>([]);
+  let [, setSelectedEquipmentOptions] = useState<Array<string>>([]);
   return (
     <Container>
       <Description
@@ -18,8 +20,14 @@ export default function TenantPhysicalCriteria() {
       <RangeInputContainer />
       <LabelText text="Ceiling height" />
       <RangeInputContainer />
-      {/* TODO: change to textinput with pill component */}
-      <TextInput label="Equipment Preference" style={{ marginBottom: 24 }} />
+      <Label text="Equipment Preference" />
+      <MultiSelectInput
+        placeholder={'Set Equipment Preference'}
+        options={options}
+        onChange={(values: Array<string>) => {
+          setSelectedEquipmentOptions(values);
+        }}
+      />
       <LabelText text="Space type" />
       {SPACE_OPTIONS.map((option, index) => {
         let isChecked = selectedSpaceOptions.includes(option);
