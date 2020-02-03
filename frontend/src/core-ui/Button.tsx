@@ -34,7 +34,7 @@ function Button(props: Props) {
   );
 }
 
-export default styled(Button) <Props>`
+export default styled(Button)<Props>`
   background-color: ${THEME_COLOR};
   border-radius: 4px;
   height: 36px;
