@@ -7,14 +7,22 @@ const DETAIL_GREY = '#727272';
 const DARK_DETAIL = '#4B4B4B';
 const BRIGHT_BLUE = '#0D7EFF';
 const RED = '#FF0000';
+const GREEN = '#36DD93';
+const LIGHT_GREEN = '#CAF1DF';
 
 export const WHITE = '#FFFFFF';
 
 export const THEME_COLOR = INSEMBLE_PURPLE;
-export const TEXT_COLOR = DARK_DETAIL;
 export const SECONDARY_COLOR = '#8E7BC4';
-export const HEADER_BORDER_COLOR = 'rgba(103,76,167,0.17)';
+
+// Text colors
+export const TEXT_COLOR = DARK_DETAIL;
+export const MUTED_TEXT_COLOR = LIGHT_GREY;
+export const RED_TEXT = RED;
 export const UNSELECTED_TEXT_COLOR = LIGHT_GREY;
+export const DARK_TEXT_COLOR = DETAIL_GREY;
+
+export const HEADER_BORDER_COLOR = 'rgba(103,76,167,0.17)';
 export const BOTTOM_CARD_COLOR = LIGHTEST_GREY;
 export const TEXT_INPUT_BORDER_COLOR = '#B2B2B2';
 export const DISABLED_TEXT_INPUT_BACKGROUND = LIGHTEST_GREY;
@@ -27,8 +35,15 @@ export const BACKGROUND_COLOR = LIGHTEST_GREY;
 export const PROGRESS_BAR_BACKGROUND = LIGHTEST_PURPLE;
 export const BAR_BACKGROUND = LIGHT_PURPLE;
 export const BUTTON_TRANSPARENT_TEXT_COLOR = LIGHT_GREY;
-export const MUTED_TEXT_COLOR = LIGHT_GREY;
 export const ALERT_BACKGROUND_COLOR = LIGHTEST_PURPLE;
 export const SLIDER_SECONDARY_COLOR = LIGHT_GREY;
 export const HOVERED_LIST_ITEM_BG = '#ECE9F6';
-export const RED_TEXT = RED;
+
+// Fragmented progress bar colors
+export const FRAGMENTED_PROGRESS_BAR_BACKGROUND = LIGHT_GREY;
+export const FRAGMENTED_PROGRESS_BAR_PRIMARY_COLOR = GREEN;
+export const FRAGMENTED_PROGRESS_BAR_SECONDARY_COLOR = LIGHT_GREEN;
+
+// Icon colors
+export const GREEN_ICON = GREEN;
+export const GREY_ICON = DETAIL_GREY;
