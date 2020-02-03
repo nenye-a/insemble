@@ -2,7 +2,7 @@ import React, { ReactNode, ComponentProps } from 'react';
 import styled from 'styled-components';
 import View from './View';
 import Text from './Text';
-import { DEFAULT_BORDER_RADIUS, FONT_SIZE_SMALL } from '../constants/theme';
+import { DEFAULT_BORDER_RADIUS, FONT_SIZE_SMALL, FONT_WEIGHT_BOLD } from '../constants/theme';
 import { THEME_COLOR, WHITE, CARD_GREY_HEADER, TEXT_COLOR } from '../constants/colors';
 
 type TextProps = ComponentProps<typeof Text>;
@@ -33,7 +33,9 @@ export default function Card(props: Props) {
       {title && (
         <TitleContainer titleBackground={titleBackground} {...titleContainerProps}>
           <View flex>
-            <Text {...titleProps}>{title}</Text>
+            <Text fontWeight={FONT_WEIGHT_BOLD} {...titleProps}>
+              {title}
+            </Text>
             <SubTitle>{subTitle}</SubTitle>
           </View>
         </TitleContainer>
@@ -67,6 +69,7 @@ const TitleContainer = styled(View)<TitleContainerProps>`
   ${Text} {
     color: ${({ titleBackground }) => (titleBackground === 'purple' ? WHITE : TEXT_COLOR)}
 `;
+
 const SubTitle = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
 `;
