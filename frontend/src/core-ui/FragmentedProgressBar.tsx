@@ -19,12 +19,12 @@ const NUMBER_OF_SMALL_RIGHT_BARS = 3;
 
 /**
  *  --------------------   ----   ----   ----
- * |    left bar 70     | |    | |    | |    |
+ * |    left bar 70     | | 10 | | 10 | | 10 |
  *  --------------------   ----   ----   ----
  */
 
 export default function FragmentedProgressBar(props: Props) {
-  // TODO: supports other progress partition, e.g left bar 60 or left bar 90 when necessary
+  // TODO: supports other partition, e.g left bar 60 or left bar 90 when necessary
 
   let { progress, width = 320, ...otherProps } = props;
 
@@ -56,7 +56,7 @@ export default function FragmentedProgressBar(props: Props) {
           <RowedView key={idx}>
             <Spacing />
             <BarContainer style={{ width: rightBarWidth.toString() + 'px' }}>
-              <SegmentedBar
+              <FragmentedBar
                 style={{
                   width: progressWidth,
                 }}
@@ -91,6 +91,6 @@ const Spacing = styled(View)`
   width: ${SPACING_WIDTH.toString() + 'px'};
 `;
 
-const SegmentedBar = styled(Bar)`
+const FragmentedBar = styled(Bar)`
   background-color: ${FRAGMENTED_PROGRESS_BAR_PRIMARY_COLOR};
 `;
