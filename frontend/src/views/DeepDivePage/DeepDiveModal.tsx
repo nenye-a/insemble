@@ -6,9 +6,10 @@ import PhotoGallery from './PhotoGallery';
 import SummaryCard from './SummaryCard';
 import DescriptionCard from './DescriptionCard';
 import MatchPercentageCard from '../MatchPercentageCard';
-import { PHOTOS, PROPERTY_DESCRIPTION, PROPERTY_SUMMARY } from '../../fixtures/dummyData';
 import PropertyDeepDiveHeader from './PropertyDeepDiveHeader';
+import RelevantConsumerPersonas from './RelevantConsumerPersonas';
 import { BACKGROUND_COLOR } from '../../constants/colors';
+import { PHOTOS, PROPERTY_DESCRIPTION, PROPERTY_SUMMARY } from '../../fixtures/dummyData';
 
 type Props = {
   visible: boolean;
@@ -18,6 +19,7 @@ type Props = {
 export default function LocationDeepDiveModal(props: Props) {
   let { visible, onClose } = props;
   let [isLiked, toggleIsLiked] = useState(false); // get value from backend
+
   return (
     <Modal onClose={onClose} visible={visible}>
       <TourContainer>
@@ -27,6 +29,7 @@ export default function LocationDeepDiveModal(props: Props) {
       <ScrollView flex>
         {/* TODO: move to the correct tab after tab lands */}
         <MatchPercentageCard progress={87} />
+        <RelevantConsumerPersonas />
         <RowedView flex>
           <PhotoGallery images={PHOTOS} />
           <CardsContainer flex>
