@@ -5,6 +5,7 @@ import { View, Text, Modal } from '../../core-ui';
 import PhotoGallery from './PhotoGallery';
 import SummaryCard from './SummaryCard';
 import DescriptionCard from './DescriptionCard';
+import MatchPercentageCard from '../MatchPercentageCard';
 import { PHOTOS, PROPERTY_DESCRIPTION, PROPERTY_SUMMARY } from '../../fixtures/dummyData';
 import PropertyDeepDiveHeader from './PropertyDeepDiveHeader';
 import { BACKGROUND_COLOR } from '../../constants/colors';
@@ -23,14 +24,18 @@ export default function LocationDeepDiveModal(props: Props) {
         <Text>3D Tour</Text>
       </TourContainer>
       <PropertyDeepDiveHeader isLiked={isLiked} onLikePress={toggleIsLiked} />
-      <RowedView flex>
-        <PhotoGallery images={PHOTOS} />
-        <CardsContainer flex>
-          <SummaryCard {...PROPERTY_SUMMARY} />
-          <Spacing />
-          <DescriptionCard content={PROPERTY_DESCRIPTION} />
-        </CardsContainer>
-      </RowedView>
+      <ScrollView flex>
+        {/* TODO: move to the correct tab after tab lands */}
+        <MatchPercentageCard progress={87} />
+        <RowedView flex>
+          <PhotoGallery images={PHOTOS} />
+          <CardsContainer flex>
+            <SummaryCard {...PROPERTY_SUMMARY} />
+            <Spacing />
+            <DescriptionCard content={PROPERTY_DESCRIPTION} />
+          </CardsContainer>
+        </RowedView>
+      </ScrollView>
     </Modal>
   );
 }
@@ -52,6 +57,8 @@ const TourContainer = styled(View)`
 const RowedView = styled(View)`
   flex-direction: row;
   align-items: flex-start;
-  overflow-y: scroll;
   background-color: ${BACKGROUND_COLOR};
+`;
+const ScrollView = styled(View)`
+  overflow-y: scroll;
 `;
