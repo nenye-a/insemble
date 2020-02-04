@@ -16,6 +16,7 @@ export { default as PillButton } from './PillButton';
 export { default as ProgressBar } from './ProgressBar';
 export { default as RadioButton } from './RadioButton';
 export { default as RadioGroup } from './RadioGroup';
+export { default as TabBar } from './TabBar';
 export { default as Text } from './Text';
 export { default as TextArea } from './TextArea';
 export { default as TextInput } from './TextInput';
