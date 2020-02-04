@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { View, Text, Modal } from '../../core-ui';
-import PhotoGallery from './PhotoGallery';
-import SummaryCard from './SummaryCard';
-import DescriptionCard from './DescriptionCard';
-import { PHOTOS, PROPERTY_DESCRIPTION, PROPERTY_SUMMARY } from '../../fixtures/dummyData';
+import { View, Text, Modal, TabBar } from '../../core-ui';
 import PropertyDeepDiveHeader from './PropertyDeepDiveHeader';
-import { BACKGROUND_COLOR } from '../../constants/colors';
+import Overview from './Overview';
+import PropertyDetailsView from './PropertyDetailsView';
 
 type Props = {
   visible: boolean;
@@ -17,30 +14,27 @@ type Props = {
 export default function LocationDeepDiveModal(props: Props) {
   let { visible, onClose } = props;
   let [isLiked, toggleIsLiked] = useState(false); // get value from backend
+  let [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  let isOverviewSelected = selectedTabIndex === 0;
   return (
     <Modal onClose={onClose} visible={visible}>
       <TourContainer>
         <Text>3D Tour</Text>
       </TourContainer>
-      <PropertyDeepDiveHeader isLiked={isLiked} onLikePress={toggleIsLiked} />
-      <RowedView flex>
-        <PhotoGallery images={PHOTOS} />
-        <CardsContainer flex>
-          <SummaryCard {...PROPERTY_SUMMARY} />
-          <Spacing />
-          <DescriptionCard content={PROPERTY_DESCRIPTION} />
-        </CardsContainer>
-      </RowedView>
+      <TabBar
+        options={['Overview', 'Property Details']}
+        activeTab={selectedTabIndex}
+        onPress={(index: number) => {
+          setSelectedTabIndex(index);
+        }}
+      />
+      <ScrollView flex>
+        <PropertyDeepDiveHeader isLiked={isLiked} onLikePress={toggleIsLiked} />
+        {isOverviewSelected ? <Overview /> : <PropertyDetailsView />}
+      </ScrollView>
     </Modal>
   );
 }
-
-const CardsContainer = styled(View)`
-  padding: 16px;
-`;
-const Spacing = styled(View)`
-  height: 12px;
-`;
 
 const TourContainer = styled(View)`
   height: 320px;
@@ -49,9 +43,6 @@ const TourContainer = styled(View)`
   background-color: grey;
 `;
 
-const RowedView = styled(View)`
-  flex-direction: row;
-  align-items: flex-start;
+const ScrollView = styled(View)`
   overflow-y: scroll;
-  background-color: ${BACKGROUND_COLOR};
 `;
