@@ -7,6 +7,10 @@ enum MatchStatus {
     Ready,
 }
 
+type MatchId { # TODO: naming could be better
+    id: String!
+}
+
 type Match {
     status: MatchStatus!
     id: String!
@@ -76,4 +80,11 @@ type Query {
 
     lmatches(id: String!): Match!
     tmatches(id: String!): Match!
+
+    search(
+        categories: [String!]!
+        target_income: Int!,
+        target_age: [Int!], # TODO: make this an obj, smth like { min: int, max: int } nstead?
+        target_psychographics: [String!]
+    ): MatchId!
 }
