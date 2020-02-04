@@ -1,6 +1,8 @@
 import React, { ComponentProps } from 'react';
 import styled from 'styled-components';
-import { View, TouchableOpacity, Text } from '.';
+import Text from './Text';
+import View from './View';
+import TouchableOpacity from './TouchableOpacity';
 import { WHITE, BACKGROUND_COLOR, THEME_COLOR, TEXT_COLOR } from '../constants/colors';
 import { FONT_WEIGHT_MEDIUM, FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
 
@@ -46,6 +48,7 @@ const TabSegment = styled(TouchableOpacity)<SegmentProps>`
   flex: 1;
   height: 36px;
   align-items: center;
+  justify-content: center;
   &:focus {
     outline: none;
   }

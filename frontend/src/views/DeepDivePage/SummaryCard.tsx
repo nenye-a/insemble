@@ -13,7 +13,7 @@ type Props = CardProps & {
   tenacy: string;
 };
 
-export default function DescriptionCard({
+export default function SummaryCard({
   priceSqft,
   type,
   condition,
