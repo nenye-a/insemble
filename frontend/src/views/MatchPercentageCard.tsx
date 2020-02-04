@@ -109,5 +109,5 @@ const AspectContainer = styled(View)`
 `;
 
 const PercentageText = styled(Text)`
-  lineheight: 1;
+  line-height: 1;
 `;

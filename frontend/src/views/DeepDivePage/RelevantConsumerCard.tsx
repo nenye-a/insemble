@@ -50,7 +50,7 @@ export default function RelevantConsumerCard(props: Props) {
 
 const Container = styled(Card)`
   margin: 0 4px;
-  $:first-child {
+  &:first-child {
     margin-left: 0;
   }
   &:last-child {
