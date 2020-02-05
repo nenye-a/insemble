@@ -9,7 +9,7 @@ const SvgRedArrow = (props: IconProps) => (
         data-name="Polygon 2"
         transform="translate(374 1237)"
         fill="red"
-        stroke-linecap="round"
+        strokeLinecap="round"
       >
         <path
           d="M 12.16054058074951 11.49999523162842 L 0.8394705057144165 11.49999523162842 L 6.500000476837158 1.049795031547546 L 12.16052055358887 11.49999523162842 L 12.16054058074951 11.49999523162842 Z"
@@ -28,8 +28,8 @@ const SvgRedArrow = (props: IconProps) => (
         transform="translate(380.5 1245.5)"
         fill="none"
         stroke="red"
-        stroke-linecap="round"
-        stroke-width="3"
+        strokeLinecap="round"
+        strokeWidth="3"
       />
     </g>
   </svg>

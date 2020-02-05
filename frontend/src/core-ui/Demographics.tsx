@@ -16,8 +16,15 @@ import {
 import SegmentedControl from './SegmentedControl';
 import { View, Text } from '../core-ui';
 
+//TODO Improve Typing for data
+type Data = {
+  name: string;
+  values1: string;
+  values2: string;
+  populationUp: boolean;
+};
 type Props = {
-  data: any;
+  data: Array<Data>;
   population: number;
 };
 export default function Graphic(props: Props) {
