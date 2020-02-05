@@ -7,6 +7,15 @@ enum MatchStatus {
     Ready,
 }
 
+### Generals
+
+input IntRange {
+    min: Int!
+    max: Int!
+}
+
+### Queries
+
 type MatchId { # TODO: naming could be better
     id: String!
 }
@@ -84,7 +93,7 @@ type Query {
     search(
         categories: [String!]!
         target_income: Int!,
-        target_age: [Int!], # TODO: make this an obj, smth like { min: int, max: int } nstead?
+        target_age: IntRange,
         target_psychographics: [String!]
     ): MatchId!
 }
