@@ -16,6 +16,17 @@ input IntRange {
 
 ### Queries
 
+enum PropertyType {
+    Restaurant
+    Retail
+}
+
+input PropertyCriteria {
+    rent: IntRange
+    sqft: IntRange
+    type: PropertyType
+}
+
 type MatchId { # TODO: naming could be better
     id: String!
 }
@@ -95,5 +106,6 @@ type Query {
         target_income: Int!,
         target_age: IntRange,
         target_psychographics: [String!]
+        property_criteria: PropertyCriteria
     ): MatchId!
 }

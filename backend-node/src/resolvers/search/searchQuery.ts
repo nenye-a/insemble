@@ -3,15 +3,23 @@ import axios from 'axios';
 
 import { LEGACY_API_URI } from '../../constants/host';
 
+type IntRange = {
+    min: number,
+    max: number,
+}
+
+type PropertyCriteria = {
+    rent?: IntRange,
+    sqft?: IntRange,
+    type?: "Restaurant" | "Retail",
+}
+
 type SearchInput = {
     categories: Array<string>,
     target_income: number,
-    target_age?: {
-        min: number,
-        max: number,
-    },
+    target_age?: IntRange,
     target_psychographics?: Array<string>,
-    // property_criteria: object, // TODO: type. gql needs it
+    property_criteria?: PropertyCriteria,
 }
 
 async function search(_: Root, args : SearchInput, _ctx: Context) {
