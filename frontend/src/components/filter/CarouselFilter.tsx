@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { View, Text, TouchableOpacity } from '../core-ui';
+import { View, Text, TouchableOpacity } from '../../core-ui';
 import {
   FILTER_CAROUSEL_INDICATOR,
   THEME_COLOR,
   MUTED_TEXT_COLOR,
   LIGHT_GREY_ICON,
-} from '../constants/colors';
-import { DEFAULT_BORDER_RADIUS, FONT_WEIGHT_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
-import SvgArrowLeft from './icons/arrow-left';
-import SvgArrowRight from './icons/arrow-right';
+} from '../../constants/colors';
+import {
+  DEFAULT_BORDER_RADIUS,
+  FONT_WEIGHT_MEDIUM,
+  FONT_WEIGHT_NORMAL,
+} from '../../constants/theme';
+import SvgArrowLeft from '../icons/arrow-left';
+import SvgArrowRight from '../icons/arrow-right';
 
 type Props = {
   selectedOption: string;
@@ -26,16 +30,12 @@ type IndicatorProps = {
 };
 
 /**
- *
- * To future me or whoever reading this
- * The idea
- *
- * I put the arrow icons on
+ * TODO: add swipable snap for touchable devices
  */
 
 const ICON_WIDTH = 24;
 
-export default function FilterCarousel(props: Props) {
+export default function CarouselFilter(props: Props) {
   let { selectedOption, options, onSelectionChange } = props;
   let [allOptionsWidth, setSegmentsWidth] = useState<Array<number>>([]);
   let selectedOptionIndex = options.indexOf(selectedOption);
