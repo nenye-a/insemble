@@ -15,6 +15,7 @@ type Props = ViewProps & {
   children?: ReactNode;
   titleContainerProps?: ViewProps;
   titleProps?: TextProps;
+  rightTitleComponent?: ReactNode;
 };
 
 export default function Card(props: Props) {
@@ -26,18 +27,22 @@ export default function Card(props: Props) {
     titleContainerProps,
     titleProps,
     titleBackground,
+    rightTitleComponent,
     ...otherProps
   } = props;
   return (
     <StyledCard {...otherProps}>
       {title && (
         <TitleContainer titleBackground={titleBackground} {...titleContainerProps}>
-          <View flex>
-            <Text fontWeight={FONT_WEIGHT_BOLD} {...titleProps}>
-              {title}
-            </Text>
-            <SubTitle>{subTitle}</SubTitle>
-          </View>
+          <RowedView flex>
+            <View flex>
+              <Text fontWeight={FONT_WEIGHT_BOLD} {...titleProps}>
+                {title}
+              </Text>
+              <SubTitle>{subTitle}</SubTitle>
+            </View>
+            {rightTitleComponent}
+          </RowedView>
         </TitleContainer>
       )}
       {children}
@@ -67,9 +72,16 @@ const TitleContainer = styled(View)<TitleContainerProps>`
       : WHITE};
   padding: 12px;
   ${Text} {
-    color: ${({ titleBackground }) => (titleBackground === 'purple' ? WHITE : TEXT_COLOR)}
+    color: ${({ titleBackground }) => (titleBackground === 'purple' ? WHITE : TEXT_COLOR)};
+  }
 `;
 
 const SubTitle = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
+`;
+
+const RowedView = styled(View)`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 `;

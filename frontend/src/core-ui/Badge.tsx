@@ -7,13 +7,16 @@ import { FONT_SIZE_XSMALL } from '../constants/theme';
 
 type Props = ComponentProps<typeof View> & {
   text: string;
+  textProps: TextProps;
 };
 
 export default function Badge(props: Props) {
-  let { text, ...otherProps } = props;
+  let { text, textProps, ...otherProps } = props;
   return (
     <Container {...otherProps}>
-      <Content fontSize={FONT_SIZE_XSMALL}>{text}</Content>
+      <Content fontSize={FONT_SIZE_XSMALL} {...textProps}>
+        {text}
+      </Content>
     </Container>
   );
 }

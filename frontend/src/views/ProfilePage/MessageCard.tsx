@@ -62,7 +62,6 @@ const Image = styled.img`
   border-radius: ${DEFAULT_BORDER_RADIUS};
   object-fit: cover;
   width: 120px;
-  background-color: blue;
 `;
 
 const MessageText = styled(Text)`

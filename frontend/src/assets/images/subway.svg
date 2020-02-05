@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <g id="Group_1208" data-name="Group 1208" transform="translate(-693 -163)">
+    <rect id="Rectangle_1342" data-name="Rectangle 1342" width="16" height="16" transform="translate(693 163)" fill="#fff" opacity="0"/>
+    <g id="Group_1207" data-name="Group 1207" transform="translate(-3323 -5620)">
+      <rect id="Rectangle_1202" data-name="Rectangle 1202" width="12" height="12" transform="translate(4018 5785)" fill="#fff" opacity="0"/>
+      <path id="subway" d="M5.333,0H2.667A2.851,2.851,0,0,0,0,3V9a1.457,1.457,0,0,0,1.117,1.475l-.287,1.1,1.28.42.39-1.5h3l.4,1.5,1.28-.419-.3-1.107A1.459,1.459,0,0,0,8,9V3A2.851,2.851,0,0,0,5.333,0ZM2.667,8.625a.755.755,0,0,1,0-1.5.755.755,0,0,1,0,1.5Zm2.667,0a.755.755,0,0,1,0-1.5.755.755,0,0,1,0,1.5ZM4,5.25a5.187,5.187,0,0,1-2.667-.536V3A1.425,1.425,0,0,1,2.667,1.5H5.333A1.425,1.425,0,0,1,6.667,3V4.714A5.185,5.185,0,0,1,4,5.25Z" transform="translate(4020 5785)"/>
+    </g>
+  </g>
+</svg>
