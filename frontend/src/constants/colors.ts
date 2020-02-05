@@ -47,3 +47,7 @@ export const FRAGMENTED_PROGRESS_BAR_SECONDARY_COLOR = LIGHT_GREEN;
 // Icon colors
 export const GREEN_ICON = GREEN;
 export const GREY_ICON = DETAIL_GREY;
+export const LIGHT_GREY_ICON = LIGHT_GREY;
+
+// Filter carousel colors
+export const FILTER_CAROUSEL_INDICATOR = LIGHT_GREY;
