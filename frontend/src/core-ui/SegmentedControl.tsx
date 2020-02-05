@@ -1,6 +1,5 @@
 import React, { ComponentProps, useState } from 'react';
-import { View } from '.';
-import { Text } from '.';
+import { View, Text } from '../core-ui';
 import styled from 'styled-components';
 import { TEXT_INPUT_BORDER_COLOR, THEME_COLOR, WHITE } from '../constants/colors';
 import TouchableOpacity from './TouchableOpacity';
