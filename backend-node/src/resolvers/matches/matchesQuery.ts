@@ -14,11 +14,13 @@ const enum MatchType {
 }
 
 type PlaceRecord = {
-    placeName: string,
-    count: number,
-}
+    placeName: string;
+    count: number;
+};
 
-function toPlaceRecordArray(obj: { [key: string]: number }) : Array<PlaceRecord> {
+function toPlaceRecordArray(obj: {
+    [key: string]: number;
+}): Array<PlaceRecord> {
     let key = Object.keys(obj);
 
     return key.map((k) => ({ placeName: k, count: obj[k] }));
@@ -26,7 +28,9 @@ function toPlaceRecordArray(obj: { [key: string]: number }) : Array<PlaceRecord>
 
 async function processMatch(id: string, matchType: MatchType) {
     let matchRoute = matchType === MatchType.Lmatches ? 'lmatches' : 'tmatches';
-    let response = (await axios.post(`${LEGACY_API_URI}/api/${matchRoute}/`, { id: id }));
+    let response = await axios.post(`${LEGACY_API_URI}/api/${matchRoute}/`, {
+        id: id,
+    });
 
     if (response.status === 200) {
         let camelizedData = camelizeJSON(response.data);
@@ -44,36 +48,28 @@ async function processMatch(id: string, matchType: MatchType) {
                 // This needs to be done since object keys in graphql schema can't be dynamic
                 nearby: toPlaceRecordArray(d.nearby),
                 placeType: toPlaceRecordArray(d.placeType),
-            }}
-        );
+            };
+        });
 
         return {
             status: MatchStatus.Ready,
             id,
             data: resultData,
-        }
+        };
     } else if (response.status === 202) {
         return {
             status: MatchStatus.Loading,
             id,
             data: [],
-        }
+        };
     }
 }
 
-async function lmatches(
-    _: Root,
-    {id}: {id: string},
-    _context: Context,
-) {
+async function lmatches(_: Root, { id }: { id: string }, _context: Context) {
     return await processMatch(id, MatchType.Lmatches);
 }
 
-async function tmatches(
-    _: Root,
-    {id}: {id: string},
-    _context: Context,
-) {
+async function tmatches(_: Root, { id }: { id: string }, _context: Context) {
     return await processMatch(id, MatchType.Tmatches);
 }
 
