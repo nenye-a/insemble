@@ -1,4 +1,4 @@
-import React, { ComponentProps, useState } from 'react';
+import React, { ComponentProps } from 'react';
 import { View, Text } from '../core-ui';
 import styled from 'styled-components';
 import { TEXT_INPUT_BORDER_COLOR, THEME_COLOR, WHITE } from '../constants/colors';
@@ -7,21 +7,18 @@ import TouchableOpacity from './TouchableOpacity';
 type Props = ViewProps & {
   options: Array<string>;
   selectedIndex: number;
+  onPress: (index: number) => void;
 };
 
 export default function SegmentedControl(props: Props) {
-  let { options, selectedIndex, ...otherProps } = props;
-  let [active, setActive] = useState(0);
-  let handleOnPress = (index: number) => {
-    setActive(index);
-    selectedIndex = index;
-  };
+  let { options, selectedIndex, onPress, ...otherProps } = props;
+
   return (
     <RowedView {...otherProps}>
       <Text>Radius</Text>
       <SegmentContainer>
         {options.map((option, index) => (
-          <Segment onPress={() => handleOnPress(index)} isActive={active === index} key={index}>
+          <Segment onPress={() => onPress(index)} isActive={selectedIndex === index} key={index}>
             {option}
           </Segment>
         ))}

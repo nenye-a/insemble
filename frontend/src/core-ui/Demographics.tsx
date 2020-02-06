@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
 import SvgGreenArrow from '../components/icons/green-arrow';
@@ -24,11 +24,12 @@ type Data = {
   populationUp: boolean;
 };
 type Props = {
-  data: Array<Data>;
+  data?: Array<Data>;
   population: number;
 };
 export default function Graphic(props: Props) {
   let { population } = props;
+  let [activeIndex, setActiveIndex] = useState<number>(0);
 
   let data = [
     {
@@ -87,7 +88,7 @@ export default function Graphic(props: Props) {
         <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
           {`${value
             .toString()
-            .slice(0, value.toString().length - 3)
+            .slice(0, -3)
             .concat('k')}`}
         </LabelText>
       </>
@@ -108,7 +109,7 @@ export default function Graphic(props: Props) {
       <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
         {`${value
           .toString()
-          .slice(0, value.toString().length - 3)
+          .slice(0, -3)
           .concat('k')}`}
       </LabelText>
     );
@@ -117,8 +118,12 @@ export default function Graphic(props: Props) {
   return (
     <Container>
       <RowedView>
-        <Title>Demographic</Title>
-        <Segmented options={['1 mile', '3 miles', '5 miles']} selectedIndex={1} />
+        <Title>Demographics</Title>
+        <Segmented
+          onPress={(index: number) => setActiveIndex(index)}
+          options={['1 mile', '3 miles', '5 miles']}
+          selectedIndex={activeIndex}
+        />
       </RowedView>
       <RowedView>
         <Legend barGraph={true} />
@@ -133,7 +138,7 @@ export default function Graphic(props: Props) {
           tickFormatter={(value: number) =>
             value
               .toString()
-              .slice(0, value.toString().length - 3)
+              .slice(0, -3)
               .concat('k')
           }
           domain={[0, (dataMax) => dataMax * 1.3]}
