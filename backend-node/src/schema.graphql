@@ -7,6 +7,30 @@ enum MatchStatus {
     Ready,
 }
 
+### Generals
+
+input IntRange {
+    min: Int!
+    max: Int!
+}
+
+### Queries
+
+enum PropertyType {
+    Restaurant
+    Retail
+}
+
+input PropertyCriteria {
+    rent: IntRange
+    sqft: IntRange
+    type: PropertyType
+}
+
+type MatchId { # TODO: naming could be better
+    id: String!
+}
+
 type Match {
     status: MatchStatus!
     id: String!
@@ -76,4 +100,12 @@ type Query {
 
     lmatches(id: String!): Match!
     tmatches(id: String!): Match!
+
+    search(
+        categories: [String!]!
+        target_income: Int!,
+        target_age: IntRange,
+        target_psychographics: [String!]
+        property_criteria: PropertyCriteria
+    ): MatchId!
 }
