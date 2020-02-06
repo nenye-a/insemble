@@ -11,8 +11,8 @@ function feedbacks(
     });
 }
 
-function feedback(_: Root, {id}: {id: string}, {prisma}: Context) {
-     return prisma.feedback({id});
+function feedback(_: Root, { id }: { id: string }, { prisma }: Context) {
+    return prisma.feedback({ id });
 }
 
 export { feedback, feedbacks };
