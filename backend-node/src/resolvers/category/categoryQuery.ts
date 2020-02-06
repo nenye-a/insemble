@@ -17,7 +17,7 @@ type CategoryArgs = {
 // TODO: fetching categories can be cached
 async function categories(
     _: Root,
-    {where, skip, first, last} : CategoryArgs,
+    { where, skip, first, last }: CategoryArgs,
     _context: Context,
 ) {
     if (first && last) {
@@ -28,13 +28,13 @@ async function categories(
 
     // Process where input
     if (where) {
-        let {category, category_contains: categoryContains} = where;
+        let { category, category_contains: categoryContains } = where;
 
         if (typeof category === 'string') {
             categories = categories.filter((x) => x === category);
         }
         if (typeof categoryContains === 'string') {
-            categories = categories.filter((x) => x.includes(categoryContains));
+            categories = categories.filter((x) => x.includes(categoryContains ? categoryContains : ''));
         }
     }
 
