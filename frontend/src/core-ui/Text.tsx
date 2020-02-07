@@ -7,11 +7,15 @@ type TextProps = ViewProps & {
   fontSize?: string;
   fontFamily?: string;
   fontWeight?: string | number;
+  x?: number | string;
+  y?: number | string;
 };
 
 // TODO: Not sure if we should change this to use styled.span
 let Text = styled.div<TextProps>`
   box-sizing: border-box;
+  x: ${(props) => props.x};
+  y: ${(props) => props.y};
   display: inline;
   margin: 0;
   padding: 0;
