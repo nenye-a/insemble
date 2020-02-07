@@ -5,6 +5,7 @@ export { default as Badge } from './Badge';
 export { default as Card } from './Card';
 export { default as Checkbox } from './Checkbox';
 export { default as ClickAway } from './ClickAway';
+export { default as Collapsible } from './Collapsible';
 export { default as ContainedTextInput } from './ContainedTextInput';
 export { default as Dropdown } from './Dropdown';
 export { default as FragmentedProgressBar } from './FragmentedProgressBar';

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { View, FragmentedProgressBar, Text, TouchableOpacity } from '../core-ui';
+import { View, FragmentedProgressBar, Text, TouchableOpacity } from '../../core-ui';
 import {
   FONT_SIZE_MEDIUM,
   FONT_SIZE_LARGE,
@@ -10,10 +10,10 @@ import {
   FONT_WEIGHT_BOLD,
   FONT_WEIGHT_HEAVY,
   FONT_WEIGHT_MEDIUM,
-} from '../constants/theme';
-import { GREEN_ICON, GREY_ICON, DARK_TEXT_COLOR } from '../constants/colors';
-import SvgTriangleUp from '../components/icons/triangle-up';
-import SvgArrowDownShort from '../components/icons/arrow-down-short';
+} from '../../constants/theme';
+import { GREEN_ICON, GREY_ICON, DARK_TEXT_COLOR } from '../../constants/colors';
+import SvgTriangleUp from '../../components/icons/triangle-up';
+import SvgArrowDownShort from '../../components/icons/arrow-down-short';
 
 type Props = {
   progress: number;
