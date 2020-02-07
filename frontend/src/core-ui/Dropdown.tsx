@@ -1,4 +1,4 @@
-import React, { useState, ComponentProps } from 'react';
+import React, { useState, ComponentProps, CSSProperties } from 'react';
 import styled from 'styled-components';
 import { THEME_COLOR, WHITE, UNSELECTED_TEXT_COLOR, TEXT_COLOR } from '../constants/colors';
 import {
@@ -22,6 +22,7 @@ type Props<T> = {
   onSelect: (value: T) => void;
   titleExtractor?: (item: T) => string;
   keyExtractor?: (item: T, index: number) => string;
+  containerStyle?: CSSProperties;
 };
 
 const defaultTitleExtractor = (item: unknown) => String(item);
@@ -34,11 +35,12 @@ export default function Dropdown<T>(props: Props<T>) {
     onSelect,
     titleExtractor = defaultTitleExtractor,
     keyExtractor = defaultKeyExtractor,
+    containerStyle,
   } = props;
   let [dropdownOpen, toggleDropdown] = useState(false);
 
   return (
-    <View>
+    <View style={{ zIndex: 2, ...containerStyle }}>
       <Container onPress={() => toggleDropdown(!dropdownOpen)}>
         <Text color={THEME_COLOR}>{selectedOption}</Text>
         <ArrowIcon src={arrowIcon} alt="arrow-icon" isOpen={dropdownOpen} />

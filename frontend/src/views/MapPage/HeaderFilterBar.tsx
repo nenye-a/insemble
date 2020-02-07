@@ -148,6 +148,7 @@ const LocationInputContainer = styled(TextInput)`
   height: 36px;
   border: solid;
   border-width: 1px;
+  margin-left: 8px;
 `;
 
 const CategorySelector = styled(MultiSelectBox)`
