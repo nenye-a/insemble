@@ -3,8 +3,11 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import { transitions, positions, Provider as AlertProvider } from 'react-alert';
 import { ClientContextProvider } from 'react-fetching-library';
+import { ApolloProvider } from '@apollo/react-hooks';
 
 import client from './client';
+import apolloClient from './graphql/apolloClient';
+
 // optional configuration
 const options = {
   // you can also just use 'bottom center'
@@ -45,34 +48,36 @@ class App extends React.Component {
 
   render() {
     return (
-      <ClientContextProvider client={client}>
-        <AlertProvider template={MyTemplate} {...options}>
-          <Provider store={store}>
-            <Router basename={process.env.REACT_APP_BASENAME || ''}>
-              <Switch>
-                <div>
-                  {routes.map((route, index) => {
-                    return (
-                      <Route
-                        key={index}
-                        path={route.path}
-                        exact={route.exact}
-                        component={withTracker((props) => {
-                          return (
-                            <route.layout {...props} {...route.props}>
-                              <route.component {...props} />
-                            </route.layout>
-                          );
-                        })}
-                      />
-                    );
-                  })}
-                </div>
-              </Switch>
-            </Router>
-          </Provider>
-        </AlertProvider>
-      </ClientContextProvider>
+      <ApolloProvider client={apolloClient}>
+        <ClientContextProvider client={client}>
+          <AlertProvider template={MyTemplate} {...options}>
+            <Provider store={store}>
+              <Router basename={process.env.REACT_APP_BASENAME || ''}>
+                <Switch>
+                  <div>
+                    {routes.map((route, index) => {
+                      return (
+                        <Route
+                          key={index}
+                          path={route.path}
+                          exact={route.exact}
+                          component={withTracker((props) => {
+                            return (
+                              <route.layout {...props} {...route.props}>
+                                <route.component {...props} />
+                              </route.layout>
+                            );
+                          })}
+                        />
+                      );
+                    })}
+                  </div>
+                </Switch>
+              </Router>
+            </Provider>
+          </AlertProvider>
+        </ClientContextProvider>
+      </ApolloProvider>
     );
   }
 }
