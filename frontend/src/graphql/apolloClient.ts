@@ -1,19 +1,15 @@
 import { ApolloClient } from 'apollo-client';
 import { withClientState } from 'apollo-link-state';
 import { InMemoryCache } from 'apollo-cache-inmemory';
+import { HttpLink } from 'apollo-link-http';
 import { onError } from 'apollo-link-error';
 import { ApolloLink } from 'apollo-link';
-import { RestLink } from 'apollo-link-rest';
-import { DJANGO_API } from '../constants/uris';
+import { API_URI } from '../constants/uris';
 
 const cache = new InMemoryCache();
 
 const errorLink = onError((_) => {
   // TODO: handle error
-});
-
-const restLink = new RestLink({
-  uri: DJANGO_API,
 });
 
 //local state management
@@ -25,8 +21,12 @@ const stateLink = withClientState({
   cache,
 });
 
+const httpLink = new HttpLink({
+  uri: API_URI,
+});
+
 const client = new ApolloClient({
-  link: ApolloLink.from([errorLink, restLink, stateLink]),
+  link: ApolloLink.from([errorLink, stateLink, httpLink]),
   cache,
 });
 

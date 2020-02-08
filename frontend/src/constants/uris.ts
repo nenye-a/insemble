@@ -1,4 +1,4 @@
 let isProduction = false;
 
 // TODO: change prod api
-export const DJANGO_API = isProduction ? 'http://localhost:8000/api' : 'http://localhost:8000/api';
+export const API_URI = isProduction ? 'http://localhost:4000' : 'http://localhost:4000';
