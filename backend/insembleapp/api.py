@@ -402,8 +402,14 @@ class SearchAPI(generics.GenericAPIView):
 
         payload = {
             'categories': ['','',''],  # list of strings
-            'target_age': [##,##] # integer range seperated by comma
-            'target_income': integer seperated by comma
+            'target_age': {
+                'min': ####,
+                'max': ####
+            } # integer range seperated by comma
+            'target_income': {
+                'min': ####,
+                'min': ####
+            }
             'target_psychographics': ['','',''] list of strings
             'property_criteria': {
                 # criteria details
