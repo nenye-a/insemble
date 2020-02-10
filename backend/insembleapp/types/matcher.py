@@ -1,10 +1,9 @@
+# import json
+from bson import ObjectId
+from mongo_connect import Connect
 import sys
 from django.conf import settings
 sys.path.append(settings.INSIGHTS_DIR)
-from mongo_connect import Connect
-from bson import ObjectId
-import json
-
 
 
 '''
@@ -38,8 +37,8 @@ def temp_generate_profile_matches(data):
 
     match_size = 100
 
-    upper_income = data['target_income'] * 1.02
-    lower_income = data['target_income'] * 0.98
+    upper_income = data['target_income']['max']
+    lower_income = data['target_income']['min']
     target_category = data['categories']
 
     query = {
@@ -82,7 +81,6 @@ def temp_generate_profile_matches(data):
 # Temporary file to retrive profile matches
 def temp_retrieve_profile_matches(_id):
 
-    
     _id = ObjectId(_id)
     matches = MATCH_DATABASE.find_one({'_id': _id})
 

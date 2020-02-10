@@ -38,7 +38,7 @@ async function categories(
             categories = categories.filter((x) => x === category);
         }
         if (typeof categoryContains === 'string') {
-            categories = categories.filter((x) => x.includes(categoryContains));
+            categories = categories.filter((x) => x.includes(categoryContains ? categoryContains : ''));
         }
     }
 

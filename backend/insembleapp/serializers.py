@@ -104,8 +104,8 @@ class CategoryMapSerializer(serializers.Serializer):
 class SearchSerializer(serializers.Serializer):
 
     categories = serializers.ListField(required=True, allow_null=False)
-    target_age = serializers.ListField(required=False)
-    target_income = serializers.FloatField(required=True)
+    target_age = serializers.JSONField(required=False)
+    target_income = serializers.JSONField(required=True)
     target_psychographics = serializers.ListField(required=False)
     property_citeria = serializers.JSONField(required=False)
 
