@@ -44,16 +44,6 @@ import urllib
 from new_data_parser import df
 import random
 
-MONGO_USER = 'doron'
-MONGO_PASS = '0sQQCT8PVz4neoiI'
-
-
-def get_connection():
-    mongo_uri = "DELETED_MONGODB_URL"
-    return MongoClient(mongo_uri)
-
-
-
 def zero_col_remover(df):
     cols = list(df)
     cols_to_remove = []
