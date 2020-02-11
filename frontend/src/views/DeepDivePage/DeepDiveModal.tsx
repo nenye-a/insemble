@@ -11,14 +11,28 @@ type Props = {
   onClose: () => void;
 };
 
+const SHRINK_HEIGHT = 160;
 export default function LocationDeepDiveModal(props: Props) {
   let { visible, onClose } = props;
   let [isLiked, toggleIsLiked] = useState(false); // get value from backend
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  let [headerShrink, setHeaderShrink] = useState(false);
   let isOverviewSelected = selectedTabIndex === 0;
+
+  let handleOnScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    if (visible) {
+      let target = e.target as HTMLDivElement;
+      if (target.scrollTop !== 0 && target.scrollHeight + SHRINK_HEIGHT > window.innerHeight) {
+        setHeaderShrink(true);
+      } else if (target.scrollTop === 0) {
+        setHeaderShrink(false);
+      }
+    }
+  };
+
   return (
     <Modal onClose={onClose} visible={visible}>
-      <TourContainer>
+      <TourContainer isShrink={headerShrink}>
         <Text>3D Tour</Text>
       </TourContainer>
       <TabBar
@@ -28,7 +42,8 @@ export default function LocationDeepDiveModal(props: Props) {
           setSelectedTabIndex(index);
         }}
       />
-      <ScrollView flex>
+
+      <ScrollView flex onScroll={handleOnScroll}>
         <PropertyDeepDiveHeader isLiked={isLiked} onLikePress={toggleIsLiked} />
         {isOverviewSelected ? <Overview /> : <PropertyDetailsView />}
       </ScrollView>
@@ -36,8 +51,13 @@ export default function LocationDeepDiveModal(props: Props) {
   );
 }
 
-const TourContainer = styled(View)`
-  height: 320px;
+type TourContainerProps = {
+  isShrink: boolean;
+};
+
+const TourContainer = styled(View)<TourContainerProps>`
+  height: ${(props) => (props.isShrink ? '180px' : '320px')};
+  transition: 0.3s height linear;
   justify-content: center;
   align-items: center;
   background-color: grey;
