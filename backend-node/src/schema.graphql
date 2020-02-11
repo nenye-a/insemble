@@ -27,16 +27,65 @@ enum Role {
 }
 
 enum Tier {
-    Free
-    Explorer
-    Smart
-    Professional
+    FREE
+    EXPLORER
+    SMART
+    PROFESSIONAL
+}
+enum NewLocationPlan {
+    YES
+    NOT_ACTIVE
+    NOT_PLANNING
+}
+
+enum SpaceType {
+    FREE_STANDING
+    SHOPPING_CENTRE
+    INLINE
+    URBAN
 }
 
 input PropertyCriteria {
     rent: IntRange
     sqft: IntRange
     type: PropertyType
+}
+
+input TenantRegisterInput {
+    email: String!
+    password: String!
+    firstName: String!
+    lastName: String!
+    company: String!
+}
+
+input BusinessRegisterInput {
+    name: String!
+    categories: [String!]!
+    userRelation: String!
+    newLocationPlan: NewLocationPlan!
+    locations: [LocationInput!]!
+    locationCount: Int!
+}
+
+input FilterInput {
+    minAge: Int!
+    maxAge: Int!
+    minIncome: Int!
+    maxIncome: Int!
+    personaIds: [String!]!
+    minSize: Int!
+    maxSize: Int!
+    minFrontageWidth: Int!
+    maxFrontageWidth: Int!
+    equipmentIds: [String!]!
+    spaceType: [SpaceType!]!
+}
+
+input LocationInput {
+    name: String!
+    lat: String!
+    lng: String!
 }
 
 type MatchId { # TODO: naming could be better
@@ -86,21 +135,19 @@ type PlaceRecord {
     count: Int!
 }
 
-type User {
+type Tenant {
     id: String!
     email: String!
-    password: String!
     firstName: String!
     lastName: String!
     avatar: String!
     company: String!
-    role: Role!
     tier: Tier!
 }
 
 type Auth {
     token: String!
-    User: User!
+    tenant: Tenant!
 }
 
 input CategoryWhereInput {
@@ -139,4 +186,9 @@ type Query {
 
 type Mutation {
     login(email: String!, password: String!): Auth!
+    registerTenant(
+        tenant: TenantRegisterInput!
+        business: BusinessRegisterInput
+        filter: FilterInput
+    ): Auth!
 }
