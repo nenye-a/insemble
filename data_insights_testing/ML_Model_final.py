@@ -44,17 +44,6 @@ import urllib
 from new_data_parser import df
 import random
 
-MONGO_USER = 'doron'
-MONGO_PASS = '0sQQCT8PVz4neoiI'
-
-
-def get_connection():
-    mongo_uri = "mongodb+srv://" + urllib.parse.quote(MONGO_USER) + ":" + urllib.parse.quote(
-        MONGO_PASS) + "@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE"
-    return MongoClient(mongo_uri)
-
-
-
 def zero_col_remover(df):
     cols = list(df)
     cols_to_remove = []
