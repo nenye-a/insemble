@@ -145,7 +145,7 @@ type Tenant {
     tier: Tier!
 }
 
-type Auth {
+type AuthTenant {
     token: String!
     tenant: Tenant!
 }
@@ -185,10 +185,10 @@ type Query {
 }
 
 type Mutation {
-    login(email: String!, password: String!): Auth!
     registerTenant(
         tenant: TenantRegisterInput!
         business: BusinessRegisterInput
         filter: FilterInput
-    ): Auth!
+    ): AuthTenant!
+    loginTenant(email: String!, password: String!): AuthTenant!
 }
