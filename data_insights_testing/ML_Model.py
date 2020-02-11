@@ -41,22 +41,10 @@ from sklearn.cluster import KMeans
 from pymongo import MongoClient
 from decouple import config
 import urllib
+from mongo_connect import Connect
 
 
-# MONGO_USER = config("MONGO_USER")
-# MONGO_PASS = config("MONGO_DB_PASS")
-
-
-def get_connection():
-    mongo_uri = "mongodb+srv://" + urllib.parse.quote(MONGO_USER) + ":" + urllib.parse.quote(
-        MONGO_PASS) + "@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE"
-    return MongoClient(mongo_uri)
-
-
-MONGO_USER = 'doron'
-MONGO_PASS = '0sQQCT8PVz4neoiI'
-
-client = get_connection()
+client = Connect.get_connection()
 db = client.spaceData
 collections = db.spaces
 print("Total records for the collection" + ' ' + str(collections.count()))
