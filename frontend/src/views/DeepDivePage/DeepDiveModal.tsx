@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, UIEvent } from 'react';
 import styled from 'styled-components';
 
 import { View, Text, Modal, TabBar } from '../../core-ui';
@@ -19,7 +19,7 @@ export default function LocationDeepDiveModal(props: Props) {
   let [headerShrink, setHeaderShrink] = useState(false);
   let isOverviewSelected = selectedTabIndex === 0;
 
-  let handleOnScroll = (e: React.UIEvent<HTMLDivElement>) => {
+  let handleOnScroll = (e: UIEvent<HTMLDivElement>) => {
     if (visible) {
       let target = e.target as HTMLDivElement;
       if (target.scrollTop !== 0 && target.scrollHeight + SHRINK_HEIGHT > window.innerHeight) {
