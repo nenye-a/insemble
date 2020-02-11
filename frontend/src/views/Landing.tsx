@@ -14,6 +14,7 @@ import urlSafeLatLng from '../utils/urlSafeLatLng';
 import { WHITE } from '../constants/colors';
 import { FONT_SIZE_LARGE } from '../constants/theme';
 import CategoriesInput from './LandingPage/CategoriesInput';
+import Button from '../core-ui/Button';
 
 function Landing() {
   let { isLoading } = useGoogleMaps();
@@ -38,6 +39,22 @@ function Landing() {
   }
   return (
     <Masthead>
+      <RowView>
+        <LogIn
+          mode="secondary"
+          text="Log In"
+          textProps={{ style: { color: WHITE } }}
+          onPress={() => {
+            history.push('/login');
+          }}
+        />
+        <Button
+          text="Sign Up"
+          onPress={() => {
+            history.push('/signup');
+          }}
+        />
+      </RowView>
       <Title style={{ maxWidth: 580 }}>Find the next best location for your business</Title>
       <Text color={WHITE} fontSize={FONT_SIZE_LARGE}>
         I have an existing location
@@ -80,4 +97,16 @@ export default Landing;
 
 const BottomContainer = styled(View)`
   margin-top: 12px;
+`;
+const RowView = styled(View)`
+  flex-direction: row;
+  align-items: flex-end;
+  position: absolute;
+  top: 16px;
+  right: 32px;
+`;
+const LogIn = styled(Button)`
+  margin: 0 12px 0 0;
+  border-color: ${WHITE};
+  background-color: transparent;
 `;

@@ -59,7 +59,7 @@ class App extends React.Component {
                         exact={route.exact}
                         component={withTracker((props) => {
                           return (
-                            <route.layout {...props}>
+                            <route.layout {...props} {...route.props}>
                               <route.component {...props} />
                             </route.layout>
                           );
