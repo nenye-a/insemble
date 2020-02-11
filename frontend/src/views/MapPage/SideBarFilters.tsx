@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from 'react';
 import styled from 'styled-components';
-import { View } from '../../core-ui';
+import { View, ClickAway } from '../../core-ui';
 import { Filter } from '../../components';
 import FilterCard from './FilterCard';
 import sideBarFiltersReducer from '../../reducers/sideBarFiltersReducer';
@@ -29,7 +29,7 @@ export default function SideBarFilters() {
     let demographicsWithOptions = demographics.map((item) => {
       let allOptions;
       switch (item.name) {
-        case DEMOGRAPHICS_CATEGORIES.psychographic: {
+        case DEMOGRAPHICS_CATEGORIES.personas: {
           allOptions = ['Sporty', 'Love Nature', 'Other'];
           break;
         }
@@ -96,7 +96,7 @@ export default function SideBarFilters() {
           },
         };
       } else if (
-        openFilterName === DEMOGRAPHICS_CATEGORIES.psychographic ||
+        openFilterName === DEMOGRAPHICS_CATEGORIES.personas ||
         openFilterName === DEMOGRAPHICS_CATEGORIES.commute ||
         openFilterName === PROPERTIES_CATEGORIES.propertyType
       ) {
@@ -187,22 +187,30 @@ export default function SideBarFilters() {
           openFilterName={openFilterName}
         />
       </Container>
-      <FilterContainer
-        visible={!!openFilterName}
-        title={openFilterName}
-        onDone={() => {
+      <ClickAway
+        onClickAway={() =>
           dispatch({
             type: 'DONE_PRESS',
-          });
-        }}
-        onClear={() => {
-          dispatch({
-            type: 'CLEAR_PRESS',
-            name: openFilterName,
-          });
-        }}
-        {...filterProps}
-      />
+          })
+        }
+      >
+        <FilterContainer
+          visible={!!openFilterName}
+          title={openFilterName}
+          onDone={() => {
+            dispatch({
+              type: 'DONE_PRESS',
+            });
+          }}
+          onClear={() => {
+            dispatch({
+              type: 'CLEAR_PRESS',
+              name: openFilterName,
+            });
+          }}
+          {...filterProps}
+        />
+      </ClickAway>
     </RowedView>
   );
 }
@@ -230,7 +238,7 @@ const FilterContainer = styled(Filter)`
 const DEMOGRAPHICS_CATEGORIES = {
   income: 'Income',
   age: 'Age',
-  psychographic: 'Psychographic',
+  personas: 'Personas',
   commute: 'Commute',
   education: 'Education',
 };
@@ -253,7 +261,7 @@ const DEMOGRAPHIC_OPTIONS = [
     selectedValues: [],
   },
   {
-    name: DEMOGRAPHICS_CATEGORIES.psychographic,
+    name: DEMOGRAPHICS_CATEGORIES.personas,
     icon: SvgPsychographic,
     selectedValues: [],
   },
