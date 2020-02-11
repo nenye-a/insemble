@@ -3,8 +3,8 @@
 # import Feedback from "./generated/prisma.graphql"
 
 enum MatchStatus {
-    Loading,
-    Ready,
+    Loading
+    Ready
 }
 
 ### Generals
@@ -19,6 +19,18 @@ input IntRange {
 enum PropertyType {
     Restaurant
     Retail
+}
+
+enum Role {
+    Tenant
+    Landlord
+}
+
+enum Tier {
+    Free
+    Explorer
+    Smart
+    Professional
 }
 
 input PropertyCriteria {
@@ -74,6 +86,23 @@ type PlaceRecord {
     count: Int!
 }
 
+type User {
+    id: String!
+    email: String!
+    password: String!
+    firstName: String!
+    lastName: String!
+    avatar: String!
+    company: String!
+    role: Role!
+    tier: Tier!
+}
+
+type Auth {
+    token: String!
+    User: User!
+}
+
 input CategoryWhereInput {
     category: String
     category_contains: String
@@ -87,25 +116,27 @@ type Query {
     legacy interface
     """
     categories(
-        where: CategoryWhereInput,
-        skip: Int,
-        first: Int,
+        where: CategoryWhereInput
+        skip: Int
+        first: Int
         last: Int
     ): [String!]!
 
     feedback: Feedback!
-    feedbacks(
-      where: FeedbackWhereInput
-    ): [Feedback!]!
+    feedbacks(where: FeedbackWhereInput): [Feedback!]!
 
     lmatches(id: String!): Match!
     tmatches(id: String!): Match!
 
     search(
         categories: [String!]!
-        target_income: Int!,
-        target_age: IntRange,
+        target_income: Int!
+        target_age: IntRange
         target_psychographics: [String!]
         property_criteria: PropertyCriteria
     ): MatchId!
+}
+
+type Mutation {
+    login(email: String!, password: String!): Auth!
 }
