@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from 'react';
 import styled from 'styled-components';
-import { View, Button } from '../../core-ui';
+import { View } from '../../core-ui';
 import { Filter } from '../../components';
 import FilterCard from './FilterCard';
 import sideBarFiltersReducer from '../../reducers/sideBarFiltersReducer';
@@ -186,7 +186,6 @@ export default function SideBarFilters() {
           }}
           openFilterName={openFilterName}
         />
-        <Button text="New Search" />
       </Container>
       <FilterContainer
         visible={!!openFilterName}
