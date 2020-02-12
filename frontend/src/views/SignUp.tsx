@@ -25,8 +25,8 @@ export default function OnBoardingSignUp() {
       >
         <Form>
           <Input
-            label={'Email Address'}
-            placeholder={'Your Email Address'}
+            label="Email Address"
+            placeholder="Your Email Address"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             containerStyle={{ margin: '10px 0 0 0' }}
@@ -34,36 +34,36 @@ export default function OnBoardingSignUp() {
           <RowView>
             <View flex style={{ marginRight: 10 }}>
               <Input
-                label={'First Name'}
-                placeholder={'Your First Name'}
+                label="First Name"
+                placeholder="Your First Name"
                 value={firstName}
                 onChange={(event) => setFirstName(event.target.value)}
               />
             </View>
             <View flex style={{ marginLeft: 10 }}>
               <Input
-                label={'Last Name'}
-                placeholder={'Your Last Name'}
+                label="Last Name"
+                placeholder="Your Last Name"
                 value={lastName}
                 onChange={(event) => setlLastName(event.target.value)}
               />
             </View>
           </RowView>
           <Input
-            label={'Company'}
-            placeholder={'Your Company'}
+            label="Company"
+            placeholder="Your Company"
             value={company}
             onChange={(event) => setCompany(event.target.value)}
           />
           <Input
-            label={'Password'}
-            placeholder={'Enter Password'}
+            label="Password"
+            placeholder="Enter Password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
           />
           <Input
-            label={'Confrim Password'}
-            placeholder={'Re-enter Password'}
+            label="Confrim Password"
+            placeholder="Re-enter Password"
             value={confirm}
             onChange={(event) => setConfirm(event.target.value)}
           />
