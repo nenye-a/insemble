@@ -13,8 +13,12 @@ YELP_KEY = config('YELP_KEY')
 FRSQ_ID = config('FRSQ_ID')
 FRSQ_SECRET = config('FRSQ_SECRET')
 CRIME_KEY = config('CRIME_KEY')
+
 MONGO_USER = config('MONGO_USER', cast=str)
 MONGO_DB_PASS = config("MONGO_DB_PASS", cast=str)
+AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
+
 
 DATABASES = {
     'default': {
