@@ -1,7 +1,5 @@
 '''
-
 File for environics data processing. 
-
 '''
 
 import pprint
@@ -20,7 +18,8 @@ def get_demographics(lat, lng, radius, demo_df, block_grp_df, cats):
     df_trimmed = block_grp_df[block_grp_df["dist"] <= radius]
 
     # get relevant spatial block groups
-    block_grps = list(df_trimmed["block_grp"])
+    block_grps = [str(block) for block in list(df_trimmed["block_grp"])]
+
     try:
         demo_trimmed = demo_df[block_grps]
     except:
