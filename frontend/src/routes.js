@@ -1,5 +1,5 @@
 // Layout Types
-import { LoginLayout, BasicLayout, UserProfileLayout } from './layouts';
+import { BasicLayout, UserProfileLayout, BlankLayout } from './layouts';
 
 // Route Views
 import Spaces from './views/Spaces';
@@ -27,12 +27,13 @@ import TenantSearchHistory from './views/TenantSearchHistory';
 import Messages from './views/Messages';
 import MessageDetail from './views/MessageDetail';
 import BrandDetail from './views/BrandDetail';
+import SignUp from './views/SignUp';
 
 export default [
   {
     path: '/',
     exact: true,
-    layout: LoginLayout,
+    layout: BlankLayout,
     // component: () => <Redirect to="/start" />
     component: Landing,
   },
@@ -50,6 +51,11 @@ export default [
     path: '/login',
     layout: BasicLayout,
     component: Login,
+  },
+  {
+    path: '/signup',
+    layout: BasicLayout,
+    component: SignUp,
   },
   {
     path: '/find',
@@ -127,7 +133,14 @@ export default [
     layout: BasicLayout,
     component: TenantDeepDive,
   },
-  { path: '/map', layout: BasicLayout, component: MainMap },
+  {
+    path: '/map',
+    layout: BasicLayout,
+    component: MainMap,
+    props: {
+      showButton: true,
+    },
+  },
   { path: '/user/edit-profile', layout: UserProfileLayout, component: EditBasicProfile },
   {
     path: '/user/tenant-matches',

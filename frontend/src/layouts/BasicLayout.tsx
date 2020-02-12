@@ -5,6 +5,7 @@ import HeaderNavigationBar from '../components/layout/HeaderNavigationBar';
 
 type Props = {
   children: ReactNode;
+  showButton?: boolean;
 };
 
 const Container = styled.div`
@@ -17,7 +18,7 @@ const Container = styled.div`
 export default function BasicLayout(props: Props) {
   return (
     <Container>
-      <HeaderNavigationBar />
+      <HeaderNavigationBar showButton={props.showButton} />
       {props.children}
     </Container>
   );
