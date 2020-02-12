@@ -1,17 +1,44 @@
 import React from 'react';
 import styled from 'styled-components';
 import InsembleLogo from '../common/InsembleLogo';
-import { TouchableOpacity, Button } from '../../core-ui';
-import { WHITE, HEADER_BORDER_COLOR } from '../../constants/colors';
+import { TouchableOpacity, Button, View } from '../../core-ui';
+import { WHITE, HEADER_BORDER_COLOR, THEME_COLOR } from '../../constants/colors';
 import { NAVBAR_HEIGHT } from '../../constants/theme';
+import { useHistory } from 'react-router-dom';
 
-export default function HeaderNavigationBar() {
+type Props = {
+  showButton?: boolean;
+};
+
+export default function HeaderNavigationBar(props: Props) {
+  let history = useHistory();
   return (
     <Container>
-      <TouchableOpacity href="/">
+      <TouchableOpacity
+        onPress={() => {
+          history.push('/');
+        }}
+      >
         <InsembleLogo color="purple" />
       </TouchableOpacity>
-      <Button text="Sign Up" />
+      {props.showButton && (
+        <RowView>
+          <LogIn
+            mode="secondary"
+            text="Log In"
+            textProps={{ style: { color: THEME_COLOR } }}
+            onPress={() => {
+              history.push('/login');
+            }}
+          />
+          <Button
+            text="Sign Up"
+            onPress={() => {
+              history.push('/signup');
+            }}
+          />
+        </RowView>
+      )}
     </Container>
   );
 }
@@ -28,4 +55,13 @@ const Container = styled('div')`
   position: sticky;
   top: 0px;
   z-index: 99;
+`;
+
+const RowView = styled(View)`
+  flex-direction: row;
+  align-items: flex-end;
+`;
+const LogIn = styled(Button)`
+  margin: 0 12px 0 0;
+  border-color: ${THEME_COLOR};
 `;
