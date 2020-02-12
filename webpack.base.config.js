@@ -29,6 +29,11 @@ module.exports = [
           test: /jquery\/dist\/jquery\.js$/,
           loader: 'expose-loader?jQuery',
         },
+        {
+          test: /\.mjs$/,
+          include: /node_modules/,
+          type: 'javascript/auto',
+        },
       ],
     },
     plugins: [
@@ -75,7 +80,7 @@ module.exports = [
     ],
     resolve: {
       modules: ['node_modules', 'bower_components', path.resolve(__dirname, 'frontend/js/')],
-      extensions: ['.ts', '.tsx', '.js', '.jsx'],
+      extensions: ['.ts', '.tsx', '.mjs', '.js', '.jsx'],
     },
   },
 ];
