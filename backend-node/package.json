@@ -32,6 +32,7 @@
     "bracketSpacing": true,
     "singleQuote": true,
     "trailingComma": "all",
-    "arrowParens": "always"
+    "arrowParens": "always",
+    "tabWidth": 2
   }
 }
