@@ -3,8 +3,16 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import { transitions, positions, Provider as AlertProvider } from 'react-alert';
 import { ClientContextProvider } from 'react-fetching-library';
+import { ApolloProvider } from '@apollo/react-hooks';
+import { Provider as ReduxProvider } from 'react-redux';
 
 import client from './client';
+import apolloClient from './graphql/apolloClient';
+import store from './redux/store';
+import { loadUser } from './redux/actions/auth';
+import routes from './routes';
+import withTracker from './withTracker';
+
 // optional configuration
 const options = {
   // you can also just use 'bottom center'
@@ -15,16 +23,9 @@ const options = {
   transition: transitions.SCALE,
 };
 
-import routes from './routes';
-import withTracker from './withTracker';
-
 const trackingID = 'UA-153536736-1';
 import ReactGA from 'react-ga';
 ReactGA.initialize(trackingID);
-
-import { Provider } from 'react-redux';
-import store from './redux/store';
-import { loadUser } from './redux/actions/auth';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './assets/main.scss';
@@ -45,34 +46,36 @@ class App extends React.Component {
 
   render() {
     return (
-      <ClientContextProvider client={client}>
-        <AlertProvider template={MyTemplate} {...options}>
-          <Provider store={store}>
-            <Router basename={process.env.REACT_APP_BASENAME || ''}>
-              <Switch>
-                <div>
-                  {routes.map((route, index) => {
-                    return (
-                      <Route
-                        key={index}
-                        path={route.path}
-                        exact={route.exact}
-                        component={withTracker((props) => {
-                          return (
-                            <route.layout {...props} {...route.props}>
-                              <route.component {...props} />
-                            </route.layout>
-                          );
-                        })}
-                      />
-                    );
-                  })}
-                </div>
-              </Switch>
-            </Router>
-          </Provider>
-        </AlertProvider>
-      </ClientContextProvider>
+      <ApolloProvider client={apolloClient}>
+        <ClientContextProvider client={client}>
+          <AlertProvider template={MyTemplate} {...options}>
+            <ReduxProvider store={store}>
+              <Router basename={process.env.REACT_APP_BASENAME || ''}>
+                <Switch>
+                  <>
+                    {routes.map((route, index) => {
+                      return (
+                        <Route
+                          key={index}
+                          path={route.path}
+                          exact={route.exact}
+                          component={withTracker((props) => {
+                            return (
+                              <route.layout {...props} {...route.props}>
+                                <route.component {...props} />
+                              </route.layout>
+                            );
+                          })}
+                        />
+                      );
+                    })}
+                  </>
+                </Switch>
+              </Router>
+            </ReduxProvider>
+          </AlertProvider>
+        </ClientContextProvider>
+      </ApolloProvider>
     );
   }
 }
