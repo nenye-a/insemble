@@ -27,7 +27,11 @@ import TenantSearchHistory from './views/TenantSearchHistory';
 import Messages from './views/Messages';
 import MessageDetail from './views/MessageDetail';
 import BrandDetail from './views/BrandDetail';
+<<<<<<< HEAD
 import SignUp from './views/SignUp';
+=======
+import LandlordOnboarding from './views/LandlordOnboarding';
+>>>>>>> Add Landlord Onboarding
 
 export default [
   {
@@ -87,6 +91,12 @@ export default [
     path: '/verify/:placeID',
     layout: BasicLayout,
     component: Onboarding,
+  },
+  {
+    path: '/landlord/verify',
+    exact: true,
+    layout: BasicLayout,
+    component: LandlordOnboarding,
   },
   {
     path: '/register',
