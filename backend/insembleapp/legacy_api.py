@@ -317,7 +317,7 @@ class MatchesAPI(generics.GenericAPIView):
         if not address:
             return Response({'status': "Failed_Request"}, status=status.HTTP_400_BAD_REQUEST)
 
-        matches = matching.generate_matches_v1(address)
+        matches = matching.generate_matches(address)
         matches = json.loads(matches)
 
         return Response(matches, status=status.HTTP_200_OK)
