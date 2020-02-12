@@ -2,31 +2,39 @@ import sys
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(BASE_DIR, 'data_aggregator'))
-import utils
-import goog as google
-import spatial
-import arcgis
-import environics
-from s3fs import S3FileSystem
-import pandas as pd
-import time
 from decouple import config
+import time
+import pandas as pd
+from s3fs import S3FileSystem
+import environics
+import arcgis
+import spatial
+import goog as google
+import utils
+
 
 '''
 Test file for matching algorithms.
 '''
 
 AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY =config("AWS_SECRET_ACCESS_KEY")
+AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
 
-S3_FILESYSTEM = S3FileSystem(key=AWS_ACCESS_KEY_ID,secret=AWS_SECRET_ACCESS_KEY)
+S3_FILESYSTEM = S3FileSystem(
+    key=AWS_ACCESS_KEY_ID, secret=AWS_SECRET_ACCESS_KEY)
 
-BLOCK_DF = utils.read_dataframe_csv('insemble-dataframes/block_df.csv.gz', file_system=S3_FILESYSTEM)
-SPATIAL_DF = utils.read_dataframe_csv('insemble-dataframes/spatial_df.csv.gz', file_system=S3_FILESYSTEM)
-DEMO_DF = utils.read_dataframe_csv('insemble-dataframes/demo_df.csv.gz', file_system=S3_FILESYSTEM)
-MATCHING_DF = utils.read_dataframe_csv('insemble-dataframes/full_df_csv.csv.gz', file_system=S3_FILESYSTEM)
-SPATIAL_CATEGORIES = utils.DB_SPATIAL_CATS.find_one({'name': 'spatial_categories'})['spatial_categories']
-DEMO_CATEGORIES = utils.DB_DEMOGRAPHIC_CATS.find_one({'name':'demo_categories'})['demo_categories']
+BLOCK_DF = utils.read_dataframe_csv(
+    'insemble-dataframes/block_df.csv.gz', file_system=S3_FILESYSTEM)
+SPATIAL_DF = utils.read_dataframe_csv(
+    'insemble-dataframes/spatial_df.csv.gz', file_system=S3_FILESYSTEM)
+DEMO_DF = utils.read_dataframe_csv(
+    'insemble-dataframes/demo_df.csv.gz', file_system=S3_FILESYSTEM)
+MATCHING_DF = utils.read_dataframe_csv(
+    'insemble-dataframes/full_df_csv.csv.gz', file_system=S3_FILESYSTEM)
+SPATIAL_CATEGORIES = utils.DB_SPATIAL_CATS.find_one(
+    {'name': 'spatial_categories'})['spatial_categories']
+DEMO_CATEGORIES = utils.DB_DEMOGRAPHIC_CATS.find_one(
+    {'name': 'demo_categories'})['demo_categories']
 
 # DEFINE LIST OF MATCH CRITERIA
 # TODO: implement logic leveraging growth statistics
@@ -130,37 +138,22 @@ TRANSPORT_LIST = ["Current Year Workers, Transportation To Work: Public Transpor
                   "Current Year Workers, Transportation to Work: Worked at Home"]
 TRANSPORT_LIST_3MILE = [transport + "3" for transport in TRANSPORT_LIST]
 
-FOURSQUARE_CATEGORIES = utils.DB_FOURSQUARE.find_one({'name':'foursquare_categories'})['foursquare_categories']
+FOURSQUARE_CATEGORIES = utils.DB_FOURSQUARE.find_one(
+    {'name': 'foursquare_categories'})['foursquare_categories']
+
 
 def generate_matches_v1(location_address, my_place_type={}):
     """
     Given an address, will generate a ranking of addresses that are the most similar
     accross all aspects to this location.
     """
-    start_time = time.time()
-    print("Get Vector")
-    # get my vector
+
     my_location_df = _generate_location_vector(location_address)
-    vector_time = time.time()
 
     # get preprocessed vectors
-    # list_vectors = list(utils.DB_VECTORS_LA.find())
-    list_vectors_time = time.time()
-    # df = pd.DataFrame(list_vectors)
-    df = MATCHING_DF.copy()
-    df_time = time.time()
-
     df = MATCHING_DF.copy()
 
-    print("Vector Time: {}".format(vector_time - start_time))
-    print("List Creation Time: {}".format(list_vectors_time - vector_time))
-    print("Dataframe Creation Time: {}".format(df_time - vector_time))
-    # print("Dataframe Creation Time: {}".format(df_time - list_vectors_time))
-    print("Total Time: {}".format(df_time - start_time))
-
-    # df = pd.DataFrame(list(utils.DB_VECTORS_LA.find()))
     df2 = df.drop(columns=["_id", "lat", "lng", "loc_id"])
-
     # ADDITIONAL - PREPROCESS FIELDS
     print(my_location_df)
     print("Preprocess start")
@@ -169,8 +162,8 @@ def generate_matches_v1(location_address, my_place_type={}):
     df2 = df2.append(my_location_df)
     df2 = df2.fillna(0)
 
-    # TODO: Clean up pre processing code below
     # convert all tier break downs to percentage
+    # TODO: Clean up pre processing code below
     income_sum = df2[INCOME_LIST].sum(axis=1)
     income_sum3 = df2[INCOME_LIST_3MILE].sum(axis=1)
     age_sum = df2[AGE_LIST].sum(axis=1)

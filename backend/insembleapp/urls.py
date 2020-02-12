@@ -6,9 +6,9 @@ from django.views.generic import TemplateView
 import django_js_reverse.views
 
 from rest_framework import routers
-from .api import PairedLocationViewSet, TenantMatchesViewSet
-from .api import SpaceMatchesViewSet
-from .api import LocationInfoViewSet, CategoryMapAPI, SearchAPI, MatchesAPI
+from .legacy_api import PairedLocationViewSet, TenantMatchesViewSet
+from .legacy_api import SpaceMatchesViewSet
+from .legacy_api import LocationInfoViewSet, CategoryMapAPI, SearchAPI, MatchesAPI
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()

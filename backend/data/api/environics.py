@@ -18,7 +18,8 @@ def get_demographics(lat, lng, radius, demo_df, block_grp_df, cats):
     df_trimmed = block_grp_df[block_grp_df["dist"] <= radius]
 
     # get relevant spatial block groups
-    block_grps = list(df_trimmed["block_grp"])
+    block_grps = [str(block) for block in list(df_trimmed["block_grp"])]
+
     try:
         demo_trimmed = demo_df[block_grps]
     except:
@@ -93,7 +94,7 @@ def get_demographics(lat, lng, radius, demo_df, block_grp_df, cats):
 
 def create_demo_cats_and_df():
     spatial_dict = {}
-    f = open("data/raw_data/EA_Los_Angeles_PopFacts.csv", "r")
+    f = open("raw_data/EA_Los_Angeles_PopFacts.csv", "r")
     f = f.readlines()
     for line in f[1:]:
         line = line.rstrip().split(",")
@@ -114,7 +115,7 @@ def create_demo_cats_and_df():
 
 
 def create_block_grp_df():
-    f = open("data/raw_data/cbg_geographic_data_LA.csv", "r")
+    f = open("raw_data/cbg_geographic_data_LA.csv", "r")
     f = f.readlines()
     d = {"lat": [], "lng": [], "block_grp": []}
     for line in f[1:]:
@@ -124,16 +125,3 @@ def create_block_grp_df():
         d["block_grp"].append(int(line[0]))
 
     return pd.DataFrame(data=d)
-
-
-if __name__ == "__main__":
-    cats, demo_df = create_demo_cats_and_df()
-    # print(len(cats))
-    for i, cat in enumerate(cats):
-        print(i, cat)
-    # print(demo_df)
-
-    block_df = create_block_grp_df()
-
-    ret = get_demographics(34.0523, -118.2395, 0.5, demo_df, block_df, cats)
-    # pprint.pprint(ret)

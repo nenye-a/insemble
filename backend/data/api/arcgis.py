@@ -9,7 +9,7 @@ import json
 
 # TODO: get permanent token. This may fail eventually
 url = "https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/GeoEnrichment/enrich"
-TOKEN = "DHe78UB13fnagGcX6WdOpaLRutsTxDLd5LjfH8WiEbeGYCjucb3nb0z_FWxDmwdDXMnnjjjeg7HR9liWZrevg_E50MI67Nc5nH2-c-J9vHNRAXmRUzYZu0rAqk65GDaoarf9eNSGHGP6gA_u_pSFfHaQkkatGV9FM8OCRKMXQsxtwA9hD4uLXNZYp2HhM9xSdBeih-Ao-5S186O_LgkwQPJ4J3I1YwWIYJsNlZp4otw."
+TOKEN = "8a_g1O93s8lDljS7yrzUqf_zAfqmmppgSLxWdt4mYCx2EZrZ0FEl8qGMoenfMmDLFewp43eHdvHakpy0nQGsOY6y0MTElYMOoRE3uG7tn93K5o3383kqULI1odAt4Vjd_4Yx7LyS1-ei6xuZUf8UVC8BM8Fr6jjUcghoRgUdvE7NEr9scilY4ISRgbkRwyBt1ao2UHMt-iVpsiVW97BX4mO5U4lT8w2PuG8i53Colok."
 
 
 def details(lat, lng, radius):
@@ -50,7 +50,3 @@ def details(lat, lng, radius):
             "TotalHouseholds": num_households, "HouseholdGrowth2017-2022": households_growth, "MedHouseholdIncome": household_income}
 
     return info
-
-
-if __name__ == "__main__":
-    print(details(34.048339, -118.240157, 1))
