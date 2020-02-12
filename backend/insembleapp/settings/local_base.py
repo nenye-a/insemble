@@ -1,5 +1,4 @@
 from .base import *  # noqa
-from pymongo import MongoClient
 import urllib
 
 
@@ -10,7 +9,7 @@ HOST = 'http://localhost:8000'
 SECRET_KEY = 'secret'
 
 GOOG_KEY = config('GOOG_KEY')
-YELP_KEY= config('YELP_KEY')
+YELP_KEY = config('YELP_KEY')
 FRSQ_ID = config('FRSQ_ID')
 FRSQ_SECRET = config('FRSQ_SECRET')
 CRIME_KEY = config('CRIME_KEY')

@@ -1,17 +1,151 @@
 import data.category_management as cm
 import data.matching as matching
 from .celery import app as celery_app
+import data.category_management as cm
 from .serializers import MatchSerializer
-from .serializers import PairedLocationSerializer, CategoryMapSerializer, MapSerializer, SearchSerializer
+from .serializers import PairedLocationSerializer, CategoryMapSerializer, RetailerSerializer, VenueSerializer, MapSerializer, SearchSerializer
 from .types.Location import PairedLocation, MapLocation, return_location, return_matches, return_location_with_address
+from .types.Retailer import Retailer
+from .types.Venue import Venue
 from .types.matcher import temp_generate_profile_matches, temp_retrieve_profile_matches
 import json
 from django.http import Http404
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
 
 import urllib
+
+# VENUE VIEWSET METHODS
+
+
+class VenueViewSet(viewsets.ViewSet):
+
+    permission_classes = [
+        permissions.AllowAny
+    ]
+
+    """
+    A simple ViewSet for listing or retrieving venues.
+    """
+
+    def list(self, request):
+        queryset = Venue.get_venues(paired=True)
+        serializer = VenueSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        p_location = Venue.get_venue(pk)
+        serializer = VenueSerializer(p_location)
+        return Response(serializer.data)
+
+    def create(self, request):
+        serializer = VenueSerializer(data=request.data, partial=True)
+
+        try:
+            insert_request = serializer.initial_data
+
+            address = insert_request["address"]
+            owner_username = insert_request["owner_username"]
+            about_text = None
+            if insert_request["about_text"]:
+                about_text = insert_request["about_text"]
+            venue_age = None
+            if insert_request["venue_age"]:
+                venue_age = insert_request["venue_age"]
+            photo = None
+            if insert_request["photo"]:
+                photo = insert_request["photo"]
+            icon = None
+            if insert_request["icon"]:
+                icon = insert_request["icon"]
+            name = None
+            if insert_request["name"]:
+                name = insert_request["name"]
+
+            Venue.add_venue(address, owner_username, about_text=about_text, venue_age=venue_age,
+                            photo=photo, icon=icon, name=name)
+            return Response(serializer.initial_data, status=status.HTTP_201_CREATED)
+        except:
+            return Response("Failed request", status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, pk=None):
+        pass
+
+    def partial_update(self, request, pk=None):
+        pass
+
+    def destroy(self, request, pk=None):
+        pass
+
+
+# RETAILER VIEWSET METHODS
+class RetailerViewSet(viewsets.ViewSet):
+
+    permission_classes = [
+        permissions.AllowAny
+    ]
+
+    """
+    A simple ViewSet for listing or retrieving retailers.
+    """
+
+    def list(self, request):
+
+        queryset = Retailer.get_retailers()
+        serializer = RetailerSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+
+        retailer = Retailer.get_retailer(pk)
+        serializer = RetailerSerializer(retailer)
+        return Response(serializer.data)
+
+    def create(self, request):
+
+        # TODO: update to make use of the other optional fields
+
+        serializer = RetailerSerializer(data=request.data, partial=True)
+
+        try:
+            insert_request = serializer.data
+
+            name = insert_request["name"]
+            location = insert_request["location"]
+            owner_username = insert_request["owner_username"]
+            about_text = None
+            if insert_request["about_text"]:
+                about_text = insert_request["about_text"]
+            preferences = None
+            if insert_request["preferences"]:
+                preferences = insert_request["preferences"]
+            requirements = None
+            if insert_request["requirements"]:
+                requirements = insert_request["requirements"]
+            photo = None
+            if insert_request["photo"]:
+                photo = insert_request["photo"]
+            icon = None
+            if insert_request["icon"]:
+                icon = insert_request["icon"]
+
+            Retailer.add_retailer(name, location, owner_username, about_text=about_text, preferences=preferences,
+                                  requirements=requirements, photo=photo, icon=icon)
+            return Response(serializer.initial_data, status=status.HTTP_201_CREATED)
+        except:
+            return Response("Failed request", status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, pk=None):
+        pass
+
+    def partial_update(self, request, pk=None):
+        pass
+
+    def destroy(self, request, pk=None):
+        pass
 
 
 # GENERIC PAIRED LOCATION VIEWSET

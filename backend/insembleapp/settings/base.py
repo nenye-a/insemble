@@ -9,8 +9,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
 
 # Path to include data when in insemble folder
-# INSIGHTS_DIR = os.path.abspath(os.path.join(BASE_DIR, '../../data'))
-
 INSIGHTS_DIR = os.path.abspath(os.path.join(BASE_DIR, 'data'))
 sys.path.append(INSIGHTS_DIR)
 
@@ -26,14 +24,14 @@ SECURE_HSTS_PRELOAD = False
 DEBUG = True
 
 LOGIN_URL = "/login/"
-LOGIN_REDIRECT_URL = "/api/pair"
+# LOGIN_REDIRECT_URL = "/api/pair"
 
 ADMINS = (
     ('Admin', 'nenye@insemblegroup.com'),
     ('Admin', 'colin@insemblegroup.com'),
 )
 
-AUTH_USER_MODEL = 'users.User'
+# AUTH_USER_MODEL = 'users.User'
 
 ALLOWED_HOSTS = []
 
@@ -51,9 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'common',
-    'users',
     'feedback',
-    'knox',
 ]
 
 MIDDLEWARE = [
@@ -73,11 +69,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        ('knox.auth.TokenAuthentication')
-        # 'rest_framework.authentication.BasicAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
-    ]
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     ('knox.auth.TokenAuthentication')
+    #     # 'rest_framework.authentication.BasicAuthentication',
+    #     # 'rest_framework.authentication.SessionAuthentication',
+    # ]
 }
 
 ROOT_URLCONF = 'insembleapp.urls'
