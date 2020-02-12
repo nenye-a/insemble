@@ -1,7 +1,5 @@
 '''
-
 File for spatial analytics data processing
-
 '''
 
 from utils import distance
@@ -19,7 +17,8 @@ def get_psychographics(lat, lng, radius, spatial_df, block_grp_df, cats):
     df_trimmed = block_grp_df[block_grp_df["dist"] <= radius]
 
     # get relevant spatial block groups
-    block_grps = list(df_trimmed["block_grp"])
+    block_grps = [str(block) for block in list(df_trimmed["block_grp"])]
+
     try:
         spatial_trimmed = spatial_df[block_grps]
     except:

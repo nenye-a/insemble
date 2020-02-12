@@ -1,0 +1,3026 @@
+Arts & Entertainment icon
+Arts & Entertainment
+4d4b7104d754a06370d81259
+Amphitheater icon
+Amphitheater
+56aa371be4b08b9a8d5734db
+Aquarium icon
+Aquarium
+4fceea171983d5d06c3e9823
+Arcade icon
+Arcade
+4bf58dd8d48988d1e1931735
+Art Gallery icon
+Art Gallery
+4bf58dd8d48988d1e2931735
+Bowling Alley icon
+Bowling Alley
+4bf58dd8d48988d1e4931735
+Casino icon
+Casino
+4bf58dd8d48988d17c941735
+Circus icon
+Circus
+52e81612bcbc57f1066b79e7
+Comedy Club icon
+Comedy Club
+4bf58dd8d48988d18e941735
+Concert Hall icon
+Concert Hall
+5032792091d4c4b30a586d5c
+Country Dance Club icon
+Country Dance Club
+52e81612bcbc57f1066b79ef
+Disc Golf icon
+Disc Golf
+52e81612bcbc57f1066b79e8
+Exhibit icon
+Exhibit
+56aa371be4b08b9a8d573532
+General Entertainment icon
+General Entertainment
+4bf58dd8d48988d1f1931735
+Go Kart Track icon
+Go Kart Track
+52e81612bcbc57f1066b79ea
+Historic Site icon
+Historic Site
+4deefb944765f83613cdba6e
+Karaoke Box icon
+Karaoke Box
+5744ccdfe4b0c0459246b4bb
+Supported countries: JP
+Laser Tag icon
+Laser Tag
+52e81612bcbc57f1066b79e6
+Memorial Site icon
+Memorial Site
+5642206c498e4bfca532186c
+Mini Golf icon
+Mini Golf
+52e81612bcbc57f1066b79eb
+Movie Theater icon
+Movie Theater
+4bf58dd8d48988d17f941735
+Drive-in Theater icon
+Drive-in Theater
+56aa371be4b08b9a8d5734de
+Indie Movie Theater icon
+Indie Movie Theater
+4bf58dd8d48988d17e941735
+Multiplex icon
+Multiplex
+4bf58dd8d48988d180941735
+Museum icon
+Museum
+4bf58dd8d48988d181941735
+Art Museum icon
+Art Museum
+4bf58dd8d48988d18f941735
+Erotic Museum icon
+Erotic Museum
+559acbe0498e472f1a53fa23
+History Museum icon
+History Museum
+4bf58dd8d48988d190941735
+Planetarium icon
+Planetarium
+4bf58dd8d48988d192941735
+Science Museum icon
+Science Museum
+4bf58dd8d48988d191941735
+Music Venue icon
+Music Venue
+4bf58dd8d48988d1e5931735
+Jazz Club icon
+Jazz Club
+4bf58dd8d48988d1e7931735
+Piano Bar icon
+Piano Bar
+4bf58dd8d48988d1e8931735
+Rock Club icon
+Rock Club
+4bf58dd8d48988d1e9931735
+Pachinko Parlor icon
+Pachinko Parlor
+5744ccdfe4b0c0459246b4b8
+Supported countries: JP
+Performing Arts Venue icon
+Performing Arts Venue
+4bf58dd8d48988d1f2931735
+Dance Studio icon
+Dance Studio
+4bf58dd8d48988d134941735
+Indie Theater icon
+Indie Theater
+4bf58dd8d48988d135941735
+Opera House icon
+Opera House
+4bf58dd8d48988d136941735
+Theater icon
+Theater
+4bf58dd8d48988d137941735
+Pool Hall icon
+Pool Hall
+4bf58dd8d48988d1e3931735
+Public Art icon
+Public Art
+507c8c4091d498d9fc8c67a9
+Outdoor Sculpture icon
+Outdoor Sculpture
+52e81612bcbc57f1066b79ed
+Street Art icon
+Street Art
+52e81612bcbc57f1066b79ee
+Racecourse icon
+Racecourse
+56aa371be4b08b9a8d573514
+Racetrack icon
+Racetrack
+4bf58dd8d48988d1f4931735
+Roller Rink icon
+Roller Rink
+52e81612bcbc57f1066b79e9
+Salsa Club icon
+Salsa Club
+52e81612bcbc57f1066b79ec
+Samba School icon
+Samba School
+56aa371be4b08b9a8d5734f9
+Supported countries: BR
+Stadium icon
+Stadium
+4bf58dd8d48988d184941735
+Baseball Stadium icon
+Baseball Stadium
+4bf58dd8d48988d18c941735
+Basketball Stadium icon
+Basketball Stadium
+4bf58dd8d48988d18b941735
+Cricket Ground icon
+Cricket Ground
+4bf58dd8d48988d18a941735
+Football Stadium icon
+Football Stadium
+4bf58dd8d48988d189941735
+Hockey Arena icon
+Hockey Arena
+4bf58dd8d48988d185941735
+Rugby Stadium icon
+Rugby Stadium
+56aa371be4b08b9a8d573556
+Soccer Stadium icon
+Soccer Stadium
+4bf58dd8d48988d188941735
+Tennis Stadium icon
+Tennis Stadium
+4e39a891bd410d7aed40cbc2
+Track Stadium icon
+Track Stadium
+4bf58dd8d48988d187941735
+Theme Park icon
+Theme Park
+4bf58dd8d48988d182941735
+Theme Park Ride / Attraction icon
+Theme Park Ride / Attraction
+5109983191d435c0d71c2bb1
+Tour Provider icon
+Tour Provider
+56aa371be4b08b9a8d573520
+Water Park icon
+Water Park
+4bf58dd8d48988d193941735
+Zoo icon
+Zoo
+4bf58dd8d48988d17b941735
+Zoo Exhibit icon
+Zoo Exhibit
+58daa1558bbb0b01f18ec1fd
+College & University icon
+College & University
+4d4b7105d754a06372d81259
+College Academic Building icon
+College Academic Building
+4bf58dd8d48988d198941735
+College Arts Building icon
+College Arts Building
+4bf58dd8d48988d199941735
+College Communications Building icon
+College Communications Building
+4bf58dd8d48988d19a941735
+College Engineering Building icon
+College Engineering Building
+4bf58dd8d48988d19e941735
+College History Building icon
+College History Building
+4bf58dd8d48988d19d941735
+College Math Building icon
+College Math Building
+4bf58dd8d48988d19c941735
+College Science Building icon
+College Science Building
+4bf58dd8d48988d19b941735
+College Technology Building icon
+College Technology Building
+4bf58dd8d48988d19f941735
+College Administrative Building icon
+College Administrative Building
+4bf58dd8d48988d197941735
+College Auditorium icon
+College Auditorium
+4bf58dd8d48988d1af941735
+College Bookstore icon
+College Bookstore
+4bf58dd8d48988d1b1941735
+College Cafeteria icon
+College Cafeteria
+4bf58dd8d48988d1a1941735
+College Classroom icon
+College Classroom
+4bf58dd8d48988d1a0941735
+College Gym icon
+College Gym
+4bf58dd8d48988d1b2941735
+College Lab icon
+College Lab
+4bf58dd8d48988d1a5941735
+College Library icon
+College Library
+4bf58dd8d48988d1a7941735
+College Quad icon
+College Quad
+4bf58dd8d48988d1aa941735
+College Rec Center icon
+College Rec Center
+4bf58dd8d48988d1a9941735
+College Residence Hall icon
+College Residence Hall
+4bf58dd8d48988d1a3941735
+College Stadium icon
+College Stadium
+4bf58dd8d48988d1b4941735
+College Baseball Diamond icon
+College Baseball Diamond
+4bf58dd8d48988d1bb941735
+College Basketball Court icon
+College Basketball Court
+4bf58dd8d48988d1ba941735
+College Cricket Pitch icon
+College Cricket Pitch
+4bf58dd8d48988d1b9941735
+College Football Field icon
+College Football Field
+4bf58dd8d48988d1b8941735
+College Hockey Rink icon
+College Hockey Rink
+4bf58dd8d48988d1b5941735
+College Soccer Field icon
+College Soccer Field
+4bf58dd8d48988d1b7941735
+College Tennis Court icon
+College Tennis Court
+4e39a9cebd410d7aed40cbc4
+College Track icon
+College Track
+4bf58dd8d48988d1b6941735
+College Theater icon
+College Theater
+4bf58dd8d48988d1ac941735
+Community College icon
+Community College
+4bf58dd8d48988d1a2941735
+Fraternity House icon
+Fraternity House
+4bf58dd8d48988d1b0941735
+General College & University icon
+General College & University
+4bf58dd8d48988d1a8941735
+Law School icon
+Law School
+4bf58dd8d48988d1a6941735
+Medical School icon
+Medical School
+4bf58dd8d48988d1b3941735
+Sorority House icon
+Sorority House
+4bf58dd8d48988d141941735
+Student Center icon
+Student Center
+4bf58dd8d48988d1ab941735
+Trade School icon
+Trade School
+4bf58dd8d48988d1ad941735
+University icon
+University
+4bf58dd8d48988d1ae941735
+Event icon
+Event
+4d4b7105d754a06373d81259
+Christmas Market icon
+Christmas Market
+52f2ab2ebcbc57f1066b8b3b
+Conference icon
+Conference
+5267e4d9e4b0ec79466e48c6
+Convention icon
+Convention
+5267e4d9e4b0ec79466e48c9
+Festival icon
+Festival
+5267e4d9e4b0ec79466e48c7
+Line / Queue icon
+Line / Queue
+58daa1558bbb0b01f18ec1fa
+Music Festival icon
+Music Festival
+5267e4d9e4b0ec79466e48d1
+Other Event icon
+Other Event
+5267e4d9e4b0ec79466e48c8
+Parade icon
+Parade
+52741d85e4b0d5d1e3c6a6d9
+Sporting Event icon
+Sporting Event
+5bae9231bedf3950379f89c5
+Stoop Sale icon
+Stoop Sale
+52f2ab2ebcbc57f1066b8b54
+Street Fair icon
+Street Fair
+5267e4d8e4b0ec79466e48c5
+Trade Fair icon
+Trade Fair
+5bae9231bedf3950379f89c3
+Food icon
+Food
+4d4b7105d754a06374d81259
+Afghan Restaurant icon
+Afghan Restaurant
+503288ae91d4c4b30a586d67
+African Restaurant icon
+African Restaurant
+4bf58dd8d48988d1c8941735
+Ethiopian Restaurant icon
+Ethiopian Restaurant
+4bf58dd8d48988d10a941735
+American Restaurant icon
+American Restaurant
+4bf58dd8d48988d14e941735
+New American Restaurant icon
+New American Restaurant
+4bf58dd8d48988d157941735
+Asian Restaurant icon
+Asian Restaurant
+4bf58dd8d48988d142941735
+Burmese Restaurant icon
+Burmese Restaurant
+56aa371be4b08b9a8d573568
+Cambodian Restaurant icon
+Cambodian Restaurant
+52e81612bcbc57f1066b7a03
+Chinese Restaurant icon
+Chinese Restaurant
+4bf58dd8d48988d145941735
+Anhui Restaurant icon
+Anhui Restaurant
+52af3a5e3cf9994f4e043bea
+Supported countries: CN, HK, MO, MY, TW, SG
+Beijing Restaurant icon
+Beijing Restaurant
+52af3a723cf9994f4e043bec
+Supported countries: CN, HK, MO, MY, TW, SG, JP
+Cantonese Restaurant icon
+Cantonese Restaurant
+52af3a7c3cf9994f4e043bed
+Cha Chaan Teng icon
+Cha Chaan Teng
+58daa1558bbb0b01f18ec1d3
+Chinese Aristocrat Restaurant icon
+Chinese Aristocrat Restaurant
+52af3a673cf9994f4e043beb
+Supported countries: CN, HK, MO, MY, TW, SG
+Chinese Breakfast Place icon
+Chinese Breakfast Place
+52af3a903cf9994f4e043bee
+Supported countries: CN, HK, MO, MY, TW, SG
+Dim Sum Restaurant icon
+Dim Sum Restaurant
+4bf58dd8d48988d1f5931735
+Dongbei Restaurant icon
+Dongbei Restaurant
+52af3a9f3cf9994f4e043bef
+Supported countries: CN, HK, MO, MY, TW, SG, CA, US
+Fujian Restaurant icon
+Fujian Restaurant
+52af3aaa3cf9994f4e043bf0
+Supported countries: CN, HK, MO, MY, TW, SG, US, CA
+Guizhou Restaurant icon
+Guizhou Restaurant
+52af3ab53cf9994f4e043bf1
+Supported countries: CN, HK, MO, MY, TW, SG
+Hainan Restaurant icon
+Hainan Restaurant
+52af3abe3cf9994f4e043bf2
+Supported countries: CN, HK, MO, MY, TW, SG
+Hakka Restaurant icon
+Hakka Restaurant
+52af3ac83cf9994f4e043bf3
+Supported countries: CN, HK, MO, MY, TW, SG, US, CA
+Henan Restaurant icon
+Henan Restaurant
+52af3ad23cf9994f4e043bf4
+Supported countries: CN, HK, MO, MY, TW, SG
+Hong Kong Restaurant icon
+Hong Kong Restaurant
+52af3add3cf9994f4e043bf5
+Supported countries: CN, HK, MO, MY, TW, SG
+Huaiyang Restaurant icon
+Huaiyang Restaurant
+52af3af23cf9994f4e043bf7
+Supported countries: CN, HK, MO, MY, TW, SG
+Hubei Restaurant icon
+Hubei Restaurant
+52af3ae63cf9994f4e043bf6
+Supported countries: CN, HK, MO, MY, TW, SG
+Hunan Restaurant icon
+Hunan Restaurant
+52af3afc3cf9994f4e043bf8
+Supported countries: CN, HK, MO, MY, TW, SG, US, CA
+Imperial Restaurant icon
+Imperial Restaurant
+52af3b053cf9994f4e043bf9
+Supported countries: CN, HK, MO, MY, TW, SG
+Jiangsu Restaurant icon
+Jiangsu Restaurant
+52af3b213cf9994f4e043bfa
+Supported countries: CN, HK, MO, MY, TW, SG
+Jiangxi Restaurant icon
+Jiangxi Restaurant
+52af3b293cf9994f4e043bfb
+Supported countries: CN, HK, MO, MY, TW, SG
+Macanese Restaurant icon
+Macanese Restaurant
+52af3b343cf9994f4e043bfc
+Supported countries: CN, HK, MO, MY, TW, SG
+Manchu Restaurant icon
+Manchu Restaurant
+52af3b3b3cf9994f4e043bfd
+Supported countries: CN, HK, MO, MY, TW, SG
+Peking Duck Restaurant icon
+Peking Duck Restaurant
+52af3b463cf9994f4e043bfe
+Supported countries: CN, HK, MO, MY, TW, SG, US, CA
+Shaanxi Restaurant icon
+Shaanxi Restaurant
+52af3b633cf9994f4e043c01
+Supported countries: CN, HK, MO, MY, TW, SG
+Shandong Restaurant icon
+Shandong Restaurant
+52af3b513cf9994f4e043bff
+Supported countries: CN, HK, MO, MY, TW, SG
+Shanghai Restaurant icon
+Shanghai Restaurant
+52af3b593cf9994f4e043c00
+Supported countries: CN, HK, MO, MY, TW, SG, US, CA, JP
+Shanxi Restaurant icon
+Shanxi Restaurant
+52af3b6e3cf9994f4e043c02
+Supported countries: CN, HK, MO, MY, TW, SG
+Szechuan Restaurant icon
+Szechuan Restaurant
+52af3b773cf9994f4e043c03
+Taiwanese Restaurant icon
+Taiwanese Restaurant
+52af3b813cf9994f4e043c04
+Supported countries: CN, HK, MO, MY, TW, SG, US, CA, JP, AU
+Tianjin Restaurant icon
+Tianjin Restaurant
+52af3b893cf9994f4e043c05
+Supported countries: CN, HK, MO, MY, TW, SG
+Xinjiang Restaurant icon
+Xinjiang Restaurant
+52af3b913cf9994f4e043c06
+Supported countries: CN, HK, MO, MY, TW, SG, US, CA
+Yunnan Restaurant icon
+Yunnan Restaurant
+52af3b9a3cf9994f4e043c07
+Supported countries: CN, HK, MO, MY, TW, SG
+Zhejiang Restaurant icon
+Zhejiang Restaurant
+52af3ba23cf9994f4e043c08
+Supported countries: CN, HK, MO, MY, TW, SG
+Filipino Restaurant icon
+Filipino Restaurant
+4eb1bd1c3b7b55596b4a748f
+Himalayan Restaurant icon
+Himalayan Restaurant
+52e81612bcbc57f1066b79fb
+Hotpot Restaurant icon
+Hotpot Restaurant
+52af0bd33cf9994f4e043bdd
+Supported countries: CN, HK, MO, MY, TW, SG, US, CA, JP, TH, VN, KR
+Indonesian Restaurant icon
+Indonesian Restaurant
+4deefc054765f83613cdba6f
+Acehnese Restaurant icon
+Acehnese Restaurant
+52960eda3cf9994f4e043ac9
+Supported countries: ID
+Balinese Restaurant icon
+Balinese Restaurant
+52960eda3cf9994f4e043acb
+Supported countries: ID
+Betawinese Restaurant icon
+Betawinese Restaurant
+52960eda3cf9994f4e043aca
+Supported countries: ID
+Indonesian Meatball Place icon
+Indonesian Meatball Place
+52960eda3cf9994f4e043acc
+Supported countries: ID
+Javanese Restaurant icon
+Javanese Restaurant
+52960eda3cf9994f4e043ac7
+Supported countries: ID
+Manadonese Restaurant icon
+Manadonese Restaurant
+52960eda3cf9994f4e043ac8
+Supported countries: ID
+Padangnese Restaurant icon
+Padangnese Restaurant
+52960eda3cf9994f4e043ac5
+Supported countries: ID
+Sundanese Restaurant icon
+Sundanese Restaurant
+52960eda3cf9994f4e043ac6
+Supported countries: ID
+Japanese Restaurant icon
+Japanese Restaurant
+4bf58dd8d48988d111941735
+Donburi Restaurant icon
+Donburi Restaurant
+55a59bace4b013909087cb0c
+Supported countries: JP
+Japanese Curry Restaurant icon
+Japanese Curry Restaurant
+55a59bace4b013909087cb30
+Kaiseki Restaurant icon
+Kaiseki Restaurant
+55a59bace4b013909087cb21
+Supported countries: JP
+Kushikatsu Restaurant icon
+Kushikatsu Restaurant
+55a59bace4b013909087cb06
+Supported countries: JP
+Monjayaki Restaurant icon
+Monjayaki Restaurant
+55a59bace4b013909087cb1b
+Supported countries: JP
+Nabe Restaurant icon
+Nabe Restaurant
+55a59bace4b013909087cb1e
+Supported countries: JP
+Okonomiyaki Restaurant icon
+Okonomiyaki Restaurant
+55a59bace4b013909087cb18
+Supported countries: JP
+Ramen Restaurant icon
+Ramen Restaurant
+55a59bace4b013909087cb24
+Shabu-Shabu Restaurant icon
+Shabu-Shabu Restaurant
+55a59bace4b013909087cb15
+Soba Restaurant icon
+Soba Restaurant
+55a59bace4b013909087cb27
+Sukiyaki Restaurant icon
+Sukiyaki Restaurant
+55a59bace4b013909087cb12
+Supported countries: JP
+Sushi Restaurant icon
+Sushi Restaurant
+4bf58dd8d48988d1d2941735
+Takoyaki Place icon
+Takoyaki Place
+55a59bace4b013909087cb2d
+Supported countries: JP
+Tempura Restaurant icon
+Tempura Restaurant
+55a59a31e4b013909087cb00
+Supported countries: JP
+Tonkatsu Restaurant icon
+Tonkatsu Restaurant
+55a59af1e4b013909087cb03
+Supported countries: JP
+Udon Restaurant icon
+Udon Restaurant
+55a59bace4b013909087cb2a
+Unagi Restaurant icon
+Unagi Restaurant
+55a59bace4b013909087cb0f
+Supported countries: JP
+Wagashi Place icon
+Wagashi Place
+55a59bace4b013909087cb33
+Supported countries: JP
+Yakitori Restaurant icon
+Yakitori Restaurant
+55a59bace4b013909087cb09
+Supported countries: JP
+Yoshoku Restaurant icon
+Yoshoku Restaurant
+55a59bace4b013909087cb36
+Supported countries: JP
+Korean Restaurant icon
+Korean Restaurant
+4bf58dd8d48988d113941735
+Bossam/Jokbal Restaurant icon
+Bossam/Jokbal Restaurant
+56aa371be4b08b9a8d5734e4
+Supported countries: KR
+Bunsik Restaurant icon
+Bunsik Restaurant
+56aa371be4b08b9a8d5734f0
+Supported countries: KR
+Gukbap Restaurant icon
+Gukbap Restaurant
+56aa371be4b08b9a8d5734e7
+Supported countries: KR
+Janguh Restaurant icon
+Janguh Restaurant
+56aa371be4b08b9a8d5734ed
+Supported countries: KR
+Samgyetang Restaurant icon
+Samgyetang Restaurant
+56aa371be4b08b9a8d5734ea
+Supported countries: KR
+Malay Restaurant icon
+Malay Restaurant
+4bf58dd8d48988d156941735
+Mamak Restaurant icon
+Mamak Restaurant
+5ae9595eb77c77002c2f9f26
+Supported countries: MY
+Mongolian Restaurant icon
+Mongolian Restaurant
+4eb1d5724b900d56c88a45fe
+Noodle House icon
+Noodle House
+4bf58dd8d48988d1d1941735
+Satay Restaurant icon
+Satay Restaurant
+56aa371be4b08b9a8d57350e
+Thai Restaurant icon
+Thai Restaurant
+4bf58dd8d48988d149941735
+Som Tum Restaurant icon
+Som Tum Restaurant
+56aa371be4b08b9a8d573502
+Supported countries: TH
+Tibetan Restaurant icon
+Tibetan Restaurant
+52af39fb3cf9994f4e043be9
+Vietnamese Restaurant icon
+Vietnamese Restaurant
+4bf58dd8d48988d14a941735
+Australian Restaurant icon
+Australian Restaurant
+4bf58dd8d48988d169941735
+Austrian Restaurant icon
+Austrian Restaurant
+52e81612bcbc57f1066b7a01
+BBQ Joint icon
+BBQ Joint
+4bf58dd8d48988d1df931735
+Bagel Shop icon
+Bagel Shop
+4bf58dd8d48988d179941735
+Bakery icon
+Bakery
+4bf58dd8d48988d16a941735
+Bangladeshi Restaurant icon
+Bangladeshi Restaurant
+5e179ee74ae8e90006e9a746
+Belgian Restaurant icon
+Belgian Restaurant
+52e81612bcbc57f1066b7a02
+Bistro icon
+Bistro
+52e81612bcbc57f1066b79f1
+Breakfast Spot icon
+Breakfast Spot
+4bf58dd8d48988d143941735
+Bubble Tea Shop icon
+Bubble Tea Shop
+52e81612bcbc57f1066b7a0c
+Buffet icon
+Buffet
+52e81612bcbc57f1066b79f4
+Burger Joint icon
+Burger Joint
+4bf58dd8d48988d16c941735
+Cafeteria icon
+Cafeteria
+4bf58dd8d48988d128941735
+Café icon
+Café
+4bf58dd8d48988d16d941735
+Cajun / Creole Restaurant icon
+Cajun / Creole Restaurant
+4bf58dd8d48988d17a941735
+Caribbean Restaurant icon
+Caribbean Restaurant
+4bf58dd8d48988d144941735
+Cuban Restaurant icon
+Cuban Restaurant
+4bf58dd8d48988d154941735
+Caucasian Restaurant icon
+Caucasian Restaurant
+5293a7d53cf9994f4e043a45
+Coffee Shop icon
+Coffee Shop
+4bf58dd8d48988d1e0931735
+Comfort Food Restaurant icon
+Comfort Food Restaurant
+52e81612bcbc57f1066b7a00
+Creperie icon
+Creperie
+52e81612bcbc57f1066b79f2
+Czech Restaurant icon
+Czech Restaurant
+52f2ae52bcbc57f1066b8b81
+Deli / Bodega icon
+Deli / Bodega
+4bf58dd8d48988d146941735
+Dessert Shop icon
+Dessert Shop
+4bf58dd8d48988d1d0941735
+Cupcake Shop icon
+Cupcake Shop
+4bf58dd8d48988d1bc941735
+Frozen Yogurt Shop icon
+Frozen Yogurt Shop
+512e7cae91d4cbb4e5efe0af
+Ice Cream Shop icon
+Ice Cream Shop
+4bf58dd8d48988d1c9941735
+Pastry Shop icon
+Pastry Shop
+5744ccdfe4b0c0459246b4e2
+Pie Shop icon
+Pie Shop
+52e81612bcbc57f1066b7a0a
+Diner icon
+Diner
+4bf58dd8d48988d147941735
+Donut Shop icon
+Donut Shop
+4bf58dd8d48988d148941735
+Dumpling Restaurant icon
+Dumpling Restaurant
+4bf58dd8d48988d108941735
+Dutch Restaurant icon
+Dutch Restaurant
+5744ccdfe4b0c0459246b4d0
+Eastern European Restaurant icon
+Eastern European Restaurant
+4bf58dd8d48988d109941735
+Belarusian Restaurant icon
+Belarusian Restaurant
+52e928d0bcbc57f1066b7e97
+Supported countries: RU, UA, KZ, BY, AZ, UZ, TM, GE, AM, TJ, KY, MO
+Bosnian Restaurant icon
+Bosnian Restaurant
+58daa1558bbb0b01f18ec1ee
+Bulgarian Restaurant icon
+Bulgarian Restaurant
+56aa371be4b08b9a8d5734f3
+Romanian Restaurant icon
+Romanian Restaurant
+52960bac3cf9994f4e043ac4
+Tatar Restaurant icon
+Tatar Restaurant
+52e928d0bcbc57f1066b7e98
+Supported countries: RU, UA, KZ, BY, AZ, UZ, TM, GE, AM, TJ, KY, MO
+English Restaurant icon
+English Restaurant
+52e81612bcbc57f1066b7a05
+Falafel Restaurant icon
+Falafel Restaurant
+4bf58dd8d48988d10b941735
+Fast Food Restaurant icon
+Fast Food Restaurant
+4bf58dd8d48988d16e941735
+Fish & Chips Shop icon
+Fish & Chips Shop
+4edd64a0c7ddd24ca188df1a
+Fondue Restaurant icon
+Fondue Restaurant
+52e81612bcbc57f1066b7a09
+Food Court icon
+Food Court
+4bf58dd8d48988d120951735
+Food Stand icon
+Food Stand
+56aa371be4b08b9a8d57350b
+Food Truck icon
+Food Truck
+4bf58dd8d48988d1cb941735
+French Restaurant icon
+French Restaurant
+4bf58dd8d48988d10c941735
+Alsatian Restaurant icon
+Alsatian Restaurant
+57558b36e4b065ecebd306b6
+Supported countries: FR
+Auvergne Restaurant icon
+Auvergne Restaurant
+57558b36e4b065ecebd306b8
+Supported countries: FR
+Basque Restaurant icon
+Basque Restaurant
+57558b36e4b065ecebd306bc
+Supported countries: FR
+Brasserie icon
+Brasserie
+57558b36e4b065ecebd306b0
+Breton Restaurant icon
+Breton Restaurant
+57558b36e4b065ecebd306c5
+Supported countries: FR
+Burgundian Restaurant icon
+Burgundian Restaurant
+57558b36e4b065ecebd306c0
+Supported countries: FR
+Catalan Restaurant icon
+Catalan Restaurant
+57558b36e4b065ecebd306cb
+Supported countries: FR
+Ch'ti Restaurant icon
+Ch'ti Restaurant
+57558b36e4b065ecebd306ce
+Supported countries: FR
+Corsican Restaurant icon
+Corsican Restaurant
+57558b36e4b065ecebd306d1
+Supported countries: FR
+Estaminet icon
+Estaminet
+57558b36e4b065ecebd306b4
+Supported countries: FR, BE
+Labour Canteen icon
+Labour Canteen
+57558b36e4b065ecebd306b2
+Supported countries: FR
+Lyonese Bouchon icon
+Lyonese Bouchon
+57558b35e4b065ecebd306ad
+Supported countries: FR
+Norman Restaurant icon
+Norman Restaurant
+57558b36e4b065ecebd306d4
+Supported countries: FR
+Provençal Restaurant icon
+Provençal Restaurant
+57558b36e4b065ecebd306d7
+Supported countries: FR
+Savoyard Restaurant icon
+Savoyard Restaurant
+57558b36e4b065ecebd306da
+Supported countries: FR
+Southwestern French Restaurant icon
+Southwestern French Restaurant
+57558b36e4b065ecebd306ba
+Supported countries: FR
+Fried Chicken Joint icon
+Fried Chicken Joint
+4d4ae6fc7a7b7dea34424761
+Friterie icon
+Friterie
+55d25775498e9f6a0816a37a
+Supported countries: BE, NL, IT
+Gastropub icon
+Gastropub
+4bf58dd8d48988d155941735
+German Restaurant icon
+German Restaurant
+4bf58dd8d48988d10d941735
+Apple Wine Pub icon
+Apple Wine Pub
+56aa371ce4b08b9a8d573583
+Supported countries: DE
+Bavarian Restaurant icon
+Bavarian Restaurant
+56aa371ce4b08b9a8d573572
+Supported countries: DE
+Bratwurst Joint icon
+Bratwurst Joint
+56aa371ce4b08b9a8d57358e
+Supported countries: DE, AT, CH
+Currywurst Joint icon
+Currywurst Joint
+56aa371ce4b08b9a8d57358b
+Supported countries: DE
+Franconian Restaurant icon
+Franconian Restaurant
+56aa371ce4b08b9a8d573574
+Supported countries: DE
+German Pop-Up Restaurant icon
+German Pop-Up Restaurant
+56aa371ce4b08b9a8d573592
+Supported countries: DE
+Palatine Restaurant icon
+Palatine Restaurant
+56aa371ce4b08b9a8d573578
+Supported countries: DE
+Rhenisch Restaurant icon
+Rhenisch Restaurant
+56aa371ce4b08b9a8d57357b
+Supported countries: DE
+Schnitzel Restaurant icon
+Schnitzel Restaurant
+56aa371ce4b08b9a8d573587
+Supported countries: DE
+Silesian Restaurant icon
+Silesian Restaurant
+56aa371ce4b08b9a8d57357f
+Supported countries: DE
+Swabian Restaurant icon
+Swabian Restaurant
+56aa371ce4b08b9a8d573576
+Supported countries: DE
+Gluten-free Restaurant icon
+Gluten-free Restaurant
+4c2cd86ed066bed06c3c5209
+Greek Restaurant icon
+Greek Restaurant
+4bf58dd8d48988d10e941735
+Bougatsa Shop icon
+Bougatsa Shop
+53d6c1b0e4b02351e88a83e8
+Supported countries: GR, CY
+Cretan Restaurant icon
+Cretan Restaurant
+53d6c1b0e4b02351e88a83e2
+Supported countries: GR, CY
+Fish Taverna icon
+Fish Taverna
+53d6c1b0e4b02351e88a83d8
+Supported countries: GR, CY
+Grilled Meat Restaurant icon
+Grilled Meat Restaurant
+53d6c1b0e4b02351e88a83d6
+Supported countries: GR, CY
+Kafenio icon
+Kafenio
+53d6c1b0e4b02351e88a83e6
+Supported countries: GR, CY
+Magirio icon
+Magirio
+53d6c1b0e4b02351e88a83e4
+Supported countries: GR, CY
+Meze Restaurant icon
+Meze Restaurant
+53d6c1b0e4b02351e88a83da
+Supported countries: GR, CY
+Modern Greek Restaurant icon
+Modern Greek Restaurant
+53d6c1b0e4b02351e88a83d4
+Supported countries: GR, CY
+Ouzeri icon
+Ouzeri
+53d6c1b0e4b02351e88a83dc
+Supported countries: GR, CY
+Patsa Restaurant icon
+Patsa Restaurant
+53d6c1b0e4b02351e88a83e0
+Supported countries: GR, CY
+Souvlaki Shop icon
+Souvlaki Shop
+52e81612bcbc57f1066b79f3
+Taverna icon
+Taverna
+53d6c1b0e4b02351e88a83d2
+Supported countries: GR, DE, CY
+Tsipouro Restaurant icon
+Tsipouro Restaurant
+53d6c1b0e4b02351e88a83de
+Supported countries: GR, CY
+Halal Restaurant icon
+Halal Restaurant
+52e81612bcbc57f1066b79ff
+Hawaiian Restaurant icon
+Hawaiian Restaurant
+52e81612bcbc57f1066b79fe
+Poke Place icon
+Poke Place
+5bae9231bedf3950379f89d4
+Hot Dog Joint icon
+Hot Dog Joint
+4bf58dd8d48988d16f941735
+Hungarian Restaurant icon
+Hungarian Restaurant
+52e81612bcbc57f1066b79fa
+Indian Restaurant icon
+Indian Restaurant
+4bf58dd8d48988d10f941735
+Andhra Restaurant icon
+Andhra Restaurant
+54135bf5e4b08f3d2429dfe5
+Supported countries: IN
+Awadhi Restaurant icon
+Awadhi Restaurant
+54135bf5e4b08f3d2429dff3
+Supported countries: IN
+Bengali Restaurant icon
+Bengali Restaurant
+54135bf5e4b08f3d2429dff5
+Supported countries: IN
+Chaat Place icon
+Chaat Place
+54135bf5e4b08f3d2429dfe2
+Chettinad Restaurant icon
+Chettinad Restaurant
+54135bf5e4b08f3d2429dff2
+Supported countries: IN
+Dhaba icon
+Dhaba
+54135bf5e4b08f3d2429dfe1
+Supported countries: IN
+Dosa Place icon
+Dosa Place
+54135bf5e4b08f3d2429dfe3
+Supported countries: US
+Goan Restaurant icon
+Goan Restaurant
+54135bf5e4b08f3d2429dfe8
+Supported countries: IN
+Gujarati Restaurant icon
+Gujarati Restaurant
+54135bf5e4b08f3d2429dfe9
+Supported countries: IN
+Hyderabadi Restaurant icon
+Hyderabadi Restaurant
+54135bf5e4b08f3d2429dfe6
+Supported countries: IN
+Indian Chinese Restaurant icon
+Indian Chinese Restaurant
+54135bf5e4b08f3d2429dfdf
+Indian Sweet Shop icon
+Indian Sweet Shop
+54135bf5e4b08f3d2429dfe4
+Supported countries: IN
+Irani Cafe icon
+Irani Cafe
+54135bf5e4b08f3d2429dfe7
+Supported countries: IN
+Jain Restaurant icon
+Jain Restaurant
+54135bf5e4b08f3d2429dfea
+Supported countries: IN
+Karnataka Restaurant icon
+Karnataka Restaurant
+54135bf5e4b08f3d2429dfeb
+Supported countries: IN
+Kerala Restaurant icon
+Kerala Restaurant
+54135bf5e4b08f3d2429dfed
+Supported countries: IN
+Maharashtrian Restaurant icon
+Maharashtrian Restaurant
+54135bf5e4b08f3d2429dfee
+Supported countries: IN
+Mughlai Restaurant icon
+Mughlai Restaurant
+54135bf5e4b08f3d2429dff4
+Supported countries: IN
+Multicuisine Indian Restaurant icon
+Multicuisine Indian Restaurant
+54135bf5e4b08f3d2429dfe0
+Supported countries: IN
+North Indian Restaurant icon
+North Indian Restaurant
+54135bf5e4b08f3d2429dfdd
+Northeast Indian Restaurant icon
+Northeast Indian Restaurant
+54135bf5e4b08f3d2429dff6
+Supported countries: IN
+Parsi Restaurant icon
+Parsi Restaurant
+54135bf5e4b08f3d2429dfef
+Supported countries: IN
+Punjabi Restaurant icon
+Punjabi Restaurant
+54135bf5e4b08f3d2429dff0
+Supported countries: IN
+Rajasthani Restaurant icon
+Rajasthani Restaurant
+54135bf5e4b08f3d2429dff1
+Supported countries: IN
+South Indian Restaurant icon
+South Indian Restaurant
+54135bf5e4b08f3d2429dfde
+Udupi Restaurant icon
+Udupi Restaurant
+54135bf5e4b08f3d2429dfec
+Supported countries: IN
+Irish Pub icon
+Irish Pub
+52e81612bcbc57f1066b7a06
+Italian Restaurant icon
+Italian Restaurant
+4bf58dd8d48988d110941735
+Abruzzo Restaurant icon
+Abruzzo Restaurant
+55a5a1ebe4b013909087cbb6
+Supported countries: IT
+Agriturismo icon
+Agriturismo
+55a5a1ebe4b013909087cb7c
+Supported countries: IT, DE, CH, AT
+Aosta Restaurant icon
+Aosta Restaurant
+55a5a1ebe4b013909087cba7
+Supported countries: IT
+Basilicata Restaurant icon
+Basilicata Restaurant
+55a5a1ebe4b013909087cba1
+Supported countries: IT
+Calabria Restaurant icon
+Calabria Restaurant
+55a5a1ebe4b013909087cba4
+Supported countries: IT
+Campanian Restaurant icon
+Campanian Restaurant
+55a5a1ebe4b013909087cb95
+Supported countries: IT
+Emilia Restaurant icon
+Emilia Restaurant
+55a5a1ebe4b013909087cb89
+Supported countries: IT
+Friuli Restaurant icon
+Friuli Restaurant
+55a5a1ebe4b013909087cb9b
+Supported countries: IT
+Ligurian Restaurant icon
+Ligurian Restaurant
+55a5a1ebe4b013909087cb98
+Supported countries: IT
+Lombard Restaurant icon
+Lombard Restaurant
+55a5a1ebe4b013909087cbbf
+Supported countries: IT
+Malga icon
+Malga
+55a5a1ebe4b013909087cb79
+Supported countries: IT, DE, CH, AT
+Marche Restaurant icon
+Marche Restaurant
+55a5a1ebe4b013909087cbb0
+Supported countries: IT
+Molise Restaurant icon
+Molise Restaurant
+55a5a1ebe4b013909087cbb3
+Supported countries: IT
+Piadineria icon
+Piadineria
+55a5a1ebe4b013909087cb74
+Supported countries: IT
+Piedmontese Restaurant icon
+Piedmontese Restaurant
+55a5a1ebe4b013909087cbaa
+Supported countries: IT
+Puglia Restaurant icon
+Puglia Restaurant
+55a5a1ebe4b013909087cb83
+Supported countries: IT
+Romagna Restaurant icon
+Romagna Restaurant
+55a5a1ebe4b013909087cb8c
+Supported countries: IT
+Roman Restaurant icon
+Roman Restaurant
+55a5a1ebe4b013909087cb92
+Supported countries: IT
+Sardinian Restaurant icon
+Sardinian Restaurant
+55a5a1ebe4b013909087cb8f
+Supported countries: IT
+Sicilian Restaurant icon
+Sicilian Restaurant
+55a5a1ebe4b013909087cb86
+Supported countries: IT
+South Tyrolean Restaurant icon
+South Tyrolean Restaurant
+55a5a1ebe4b013909087cbb9
+Supported countries: IT
+Trattoria/Osteria icon
+Trattoria/Osteria
+55a5a1ebe4b013909087cb7f
+Supported countries: IT, DE
+Trentino Restaurant icon
+Trentino Restaurant
+55a5a1ebe4b013909087cbbc
+Supported countries: IT
+Tuscan Restaurant icon
+Tuscan Restaurant
+55a5a1ebe4b013909087cb9e
+Supported countries: IT
+Umbrian Restaurant icon
+Umbrian Restaurant
+55a5a1ebe4b013909087cbc2
+Supported countries: IT
+Veneto Restaurant icon
+Veneto Restaurant
+55a5a1ebe4b013909087cbad
+Supported countries: IT
+Jewish Restaurant icon
+Jewish Restaurant
+52e81612bcbc57f1066b79fd
+Kosher Restaurant icon
+Kosher Restaurant
+52e81612bcbc57f1066b79fc
+Juice Bar icon
+Juice Bar
+4bf58dd8d48988d112941735
+Kebab Restaurant icon
+Kebab Restaurant
+5283c7b4e4b094cb91ec88d7
+Latin American Restaurant icon
+Latin American Restaurant
+4bf58dd8d48988d1be941735
+Arepa Restaurant icon
+Arepa Restaurant
+4bf58dd8d48988d152941735
+Empanada Restaurant icon
+Empanada Restaurant
+52939a8c3cf9994f4e043a35
+Salvadoran Restaurant icon
+Salvadoran Restaurant
+5745c7ac498e5d0483112fdb
+South American Restaurant icon
+South American Restaurant
+4bf58dd8d48988d1cd941735
+Argentinian Restaurant icon
+Argentinian Restaurant
+4bf58dd8d48988d107941735
+Brazilian Restaurant icon
+Brazilian Restaurant
+4bf58dd8d48988d16b941735
+Acai House icon
+Acai House
+5294c7523cf9994f4e043a62
+Supported countries: BR
+Baiano Restaurant icon
+Baiano Restaurant
+52939ae13cf9994f4e043a3b
+Supported countries: BR
+Central Brazilian Restaurant icon
+Central Brazilian Restaurant
+52939a9e3cf9994f4e043a36
+Supported countries: BR
+Churrascaria icon
+Churrascaria
+52939a643cf9994f4e043a33
+Supported countries: BR, DE
+Empada House icon
+Empada House
+5294c55c3cf9994f4e043a61
+Supported countries: BR
+Goiano Restaurant icon
+Goiano Restaurant
+52939af83cf9994f4e043a3d
+Supported countries: BR
+Mineiro Restaurant icon
+Mineiro Restaurant
+52939aed3cf9994f4e043a3c
+Supported countries: BR
+Northeastern Brazilian Restaurant icon
+Northeastern Brazilian Restaurant
+52939aae3cf9994f4e043a37
+Supported countries: BR
+Northern Brazilian Restaurant icon
+Northern Brazilian Restaurant
+52939ab93cf9994f4e043a38
+Supported countries: BR
+Pastelaria icon
+Pastelaria
+5294cbda3cf9994f4e043a63
+Supported countries: BR
+Southeastern Brazilian Restaurant icon
+Southeastern Brazilian Restaurant
+52939ac53cf9994f4e043a39
+Supported countries: BR
+Southern Brazilian Restaurant icon
+Southern Brazilian Restaurant
+52939ad03cf9994f4e043a3a
+Supported countries: BR
+Tapiocaria icon
+Tapiocaria
+52939a7d3cf9994f4e043a34
+Supported countries: BR
+Colombian Restaurant icon
+Colombian Restaurant
+58daa1558bbb0b01f18ec1f4
+Peruvian Restaurant icon
+Peruvian Restaurant
+4eb1bfa43b7b52c0e1adc2e8
+Venezuelan Restaurant icon
+Venezuelan Restaurant
+56aa371be4b08b9a8d573558
+Mac & Cheese Joint icon
+Mac & Cheese Joint
+4bf58dd8d48988d1bf941735
+Supported countries: US, CA
+Mediterranean Restaurant icon
+Mediterranean Restaurant
+4bf58dd8d48988d1c0941735
+Moroccan Restaurant icon
+Moroccan Restaurant
+4bf58dd8d48988d1c3941735
+Mexican Restaurant icon
+Mexican Restaurant
+4bf58dd8d48988d1c1941735
+Botanero icon
+Botanero
+58daa1558bbb0b01f18ec1d9
+Supported countries: MX
+Burrito Place icon
+Burrito Place
+4bf58dd8d48988d153941735
+Taco Place icon
+Taco Place
+4bf58dd8d48988d151941735
+Tex-Mex Restaurant icon
+Tex-Mex Restaurant
+56aa371ae4b08b9a8d5734ba
+Supported countries: US, CA
+Yucatecan Restaurant icon
+Yucatecan Restaurant
+5744ccdfe4b0c0459246b4d3
+Supported countries: MX
+Middle Eastern Restaurant icon
+Middle Eastern Restaurant
+4bf58dd8d48988d115941735
+Egyptian Restaurant icon
+Egyptian Restaurant
+5bae9231bedf3950379f89e1
+Iraqi Restaurant icon
+Iraqi Restaurant
+5bae9231bedf3950379f89e7
+Israeli Restaurant icon
+Israeli Restaurant
+56aa371be4b08b9a8d573529
+Kurdish Restaurant icon
+Kurdish Restaurant
+5744ccdfe4b0c0459246b4ca
+Lebanese Restaurant icon
+Lebanese Restaurant
+58daa1558bbb0b01f18ec1cd
+Persian Restaurant icon
+Persian Restaurant
+52e81612bcbc57f1066b79f7
+Ash and Haleem Place icon
+Ash and Haleem Place
+58daa1558bbb0b01f18ec1bc
+Supported countries: IR
+Dizi Place icon
+Dizi Place
+58daa1558bbb0b01f18ec1c0
+Supported countries: IR
+Gilaki Restaurant icon
+Gilaki Restaurant
+58daa1558bbb0b01f18ec1c4
+Supported countries: IR
+Jegaraki icon
+Jegaraki
+58daa1558bbb0b01f18ec1c7
+Supported countries: IR
+Tabbakhi icon
+Tabbakhi
+5744ccdfe4b0c0459246b4a8
+Supported countries: IR
+Shawarma Place icon
+Shawarma Place
+5bae9231bedf3950379f89e4
+Syrian Restaurant icon
+Syrian Restaurant
+5bae9231bedf3950379f89da
+Yemeni Restaurant icon
+Yemeni Restaurant
+5bae9231bedf3950379f89ea
+Modern European Restaurant icon
+Modern European Restaurant
+52e81612bcbc57f1066b79f9
+Molecular Gastronomy Restaurant icon
+Molecular Gastronomy Restaurant
+4bf58dd8d48988d1c2941735
+Pakistani Restaurant icon
+Pakistani Restaurant
+52e81612bcbc57f1066b79f8
+Pet Café icon
+Pet Café
+56aa371be4b08b9a8d573508
+Pizza Place icon
+Pizza Place
+4bf58dd8d48988d1ca941735
+Polish Restaurant icon
+Polish Restaurant
+52e81612bcbc57f1066b7a04
+Portuguese Restaurant icon
+Portuguese Restaurant
+4def73e84765ae376e57713a
+Poutine Place icon
+Poutine Place
+56aa371be4b08b9a8d5734c7
+Supported countries: US, CA
+Restaurant icon
+Restaurant
+4bf58dd8d48988d1c4941735
+Russian Restaurant icon
+Russian Restaurant
+5293a7563cf9994f4e043a44
+Blini House icon
+Blini House
+52e928d0bcbc57f1066b7e9d
+Supported countries: RU, UA, KZ, BY, AZ, UZ, TM, GE, AM, TJ, KY, MO
+Pelmeni House icon
+Pelmeni House
+52e928d0bcbc57f1066b7e9c
+Supported countries: RU, UA, KZ, BY, AZ, UZ, TM, GE, AM, TJ, KY, MO
+Salad Place icon
+Salad Place
+4bf58dd8d48988d1bd941735
+Sandwich Place icon
+Sandwich Place
+4bf58dd8d48988d1c5941735
+Scandinavian Restaurant icon
+Scandinavian Restaurant
+4bf58dd8d48988d1c6941735
+Scottish Restaurant icon
+Scottish Restaurant
+5744ccdde4b0c0459246b4a3
+Seafood Restaurant icon
+Seafood Restaurant
+4bf58dd8d48988d1ce941735
+Slovak Restaurant icon
+Slovak Restaurant
+56aa371be4b08b9a8d57355a
+Snack Place icon
+Snack Place
+4bf58dd8d48988d1c7941735
+Soup Place icon
+Soup Place
+4bf58dd8d48988d1dd931735
+Southern / Soul Food Restaurant icon
+Southern / Soul Food Restaurant
+4bf58dd8d48988d14f941735
+Spanish Restaurant icon
+Spanish Restaurant
+4bf58dd8d48988d150941735
+Paella Restaurant icon
+Paella Restaurant
+4bf58dd8d48988d14d941735
+Tapas Restaurant icon
+Tapas Restaurant
+4bf58dd8d48988d1db931735
+Sri Lankan Restaurant icon
+Sri Lankan Restaurant
+5413605de4b0ae91d18581a9
+Steakhouse icon
+Steakhouse
+4bf58dd8d48988d1cc941735
+Swiss Restaurant icon
+Swiss Restaurant
+4bf58dd8d48988d158941735
+Tea Room icon
+Tea Room
+4bf58dd8d48988d1dc931735
+Theme Restaurant icon
+Theme Restaurant
+56aa371be4b08b9a8d573538
+Truck Stop icon
+Truck Stop
+57558b36e4b065ecebd306dd
+Turkish Restaurant icon
+Turkish Restaurant
+4f04af1f2fb6e1c99f3db0bb
+Borek Place icon
+Borek Place
+530faca9bcbc57f1066bc2f3
+Supported countries: TR, CY, IR
+Cigkofte Place icon
+Cigkofte Place
+530faca9bcbc57f1066bc2f4
+Supported countries: TR, DE, CY, IR, AT
+Doner Restaurant icon
+Doner Restaurant
+5283c7b4e4b094cb91ec88d8
+Gozleme Place icon
+Gozleme Place
+5283c7b4e4b094cb91ec88d9
+Supported countries: TR, CY, IR
+Kofte Place icon
+Kofte Place
+5283c7b4e4b094cb91ec88db
+Supported countries: TR, DE, CY, IR
+Kokoreç Restaurant icon
+Kokoreç Restaurant
+5283c7b4e4b094cb91ec88d6
+Supported countries: TR, CY, IR
+Kumpir Restaurant icon
+Kumpir Restaurant
+56aa371be4b08b9a8d573535
+Supported countries: TR, DE, CY, IR
+Kumru Restaurant icon
+Kumru Restaurant
+56aa371be4b08b9a8d5734bd
+Supported countries: TR, CY, IR
+Manti Place icon
+Manti Place
+5283c7b4e4b094cb91ec88d5
+Supported countries: TR, CY, IR
+Meyhane icon
+Meyhane
+5283c7b4e4b094cb91ec88da
+Supported countries: TR, CY, IR
+Pide Place icon
+Pide Place
+530faca9bcbc57f1066bc2f2
+Supported countries: TR, DE, CY, IR
+Pilavcı icon
+Pilavcı
+58daa1558bbb0b01f18ec1df
+Supported countries: TR
+Söğüş Place icon
+Söğüş Place
+58daa1558bbb0b01f18ec1dc
+Supported countries: TR
+Tantuni Restaurant icon
+Tantuni Restaurant
+56aa371be4b08b9a8d5734bf
+Supported countries: TR, CY, IR
+Turkish Coffeehouse icon
+Turkish Coffeehouse
+56aa371be4b08b9a8d5734c1
+Supported countries: TR, CY, IR
+Turkish Home Cooking Restaurant icon
+Turkish Home Cooking Restaurant
+5283c7b4e4b094cb91ec88d4
+Supported countries: TR, CY, IR
+Çöp Şiş Place icon
+Çöp Şiş Place
+58daa1558bbb0b01f18ec1e2
+Supported countries: TR
+Ukrainian Restaurant icon
+Ukrainian Restaurant
+52e928d0bcbc57f1066b7e96
+Varenyky restaurant icon
+Varenyky restaurant
+52e928d0bcbc57f1066b7e9a
+Supported countries: RU, UA, KZ, BY, AZ, UZ, TM, GE, AM, TJ, KY, MO
+West-Ukrainian Restaurant icon
+West-Ukrainian Restaurant
+52e928d0bcbc57f1066b7e9b
+Supported countries: RU, UA, KZ, BY, AZ, UZ, TM, GE, AM, TJ, KY, MO
+Vegetarian / Vegan Restaurant icon
+Vegetarian / Vegan Restaurant
+4bf58dd8d48988d1d3941735
+Wings Joint icon
+Wings Joint
+4bf58dd8d48988d14c941735
+Nightlife Spot icon
+Nightlife Spot
+4d4b7105d754a06376d81259
+Bar icon
+Bar
+4bf58dd8d48988d116941735
+Beach Bar icon
+Beach Bar
+52e81612bcbc57f1066b7a0d
+Beer Bar icon
+Beer Bar
+56aa371ce4b08b9a8d57356c
+Beer Garden icon
+Beer Garden
+4bf58dd8d48988d117941735
+Champagne Bar icon
+Champagne Bar
+52e81612bcbc57f1066b7a0e
+Supported countries: GB
+Cocktail Bar icon
+Cocktail Bar
+4bf58dd8d48988d11e941735
+Dive Bar icon
+Dive Bar
+4bf58dd8d48988d118941735
+Gay Bar icon
+Gay Bar
+4bf58dd8d48988d1d8941735
+Hookah Bar icon
+Hookah Bar
+4bf58dd8d48988d119941735
+Hotel Bar icon
+Hotel Bar
+4bf58dd8d48988d1d5941735
+Karaoke Bar icon
+Karaoke Bar
+4bf58dd8d48988d120941735
+Pub icon
+Pub
+4bf58dd8d48988d11b941735
+Sake Bar icon
+Sake Bar
+4bf58dd8d48988d11c941735
+Speakeasy icon
+Speakeasy
+4bf58dd8d48988d1d4941735
+Sports Bar icon
+Sports Bar
+4bf58dd8d48988d11d941735
+Tiki Bar icon
+Tiki Bar
+56aa371be4b08b9a8d57354d
+Whisky Bar icon
+Whisky Bar
+4bf58dd8d48988d122941735
+Wine Bar icon
+Wine Bar
+4bf58dd8d48988d123941735
+Brewery icon
+Brewery
+50327c8591d4c4b30a586d5d
+Lounge icon
+Lounge
+4bf58dd8d48988d121941735
+Night Market icon
+Night Market
+53e510b7498ebcb1801b55d4
+Nightclub icon
+Nightclub
+4bf58dd8d48988d11f941735
+Other Nightlife icon
+Other Nightlife
+4bf58dd8d48988d11a941735
+Strip Club icon
+Strip Club
+4bf58dd8d48988d1d6941735
+Outdoors & Recreation icon
+Outdoors & Recreation
+4d4b7105d754a06377d81259
+Athletics & Sports icon
+Athletics & Sports
+4f4528bc4b90abdf24c9de85
+Badminton Court icon
+Badminton Court
+52e81612bcbc57f1066b7a2b
+Baseball Field icon
+Baseball Field
+4bf58dd8d48988d1e8941735
+Basketball Court icon
+Basketball Court
+4bf58dd8d48988d1e1941735
+Bowling Green icon
+Bowling Green
+52e81612bcbc57f1066b7a2f
+Curling Ice icon
+Curling Ice
+56aa371be4b08b9a8d57351a
+Golf Course icon
+Golf Course
+4bf58dd8d48988d1e6941735
+Golf Driving Range icon
+Golf Driving Range
+58daa1558bbb0b01f18ec1b0
+Gym / Fitness Center icon
+Gym / Fitness Center
+4bf58dd8d48988d175941735
+Boxing Gym icon
+Boxing Gym
+52f2ab2ebcbc57f1066b8b47
+Climbing Gym icon
+Climbing Gym
+503289d391d4c4b30a586d6a
+Cycle Studio icon
+Cycle Studio
+52f2ab2ebcbc57f1066b8b49
+Gym Pool icon
+Gym Pool
+4bf58dd8d48988d105941735
+Gymnastics Gym icon
+Gymnastics Gym
+52f2ab2ebcbc57f1066b8b48
+Gym icon
+Gym
+4bf58dd8d48988d176941735
+Martial Arts Dojo icon
+Martial Arts Dojo
+4bf58dd8d48988d101941735
+Outdoor Gym icon
+Outdoor Gym
+58daa1558bbb0b01f18ec203
+Pilates Studio icon
+Pilates Studio
+5744ccdfe4b0c0459246b4b2
+Track icon
+Track
+4bf58dd8d48988d106941735
+Weight Loss Center icon
+Weight Loss Center
+590a0744340a5803fd8508c3
+Yoga Studio icon
+Yoga Studio
+4bf58dd8d48988d102941735
+Hockey Field icon
+Hockey Field
+4f452cd44b9081a197eba860
+Hockey Rink icon
+Hockey Rink
+56aa371be4b08b9a8d57352c
+Paintball Field icon
+Paintball Field
+5032829591d4c4b30a586d5e
+Rugby Pitch icon
+Rugby Pitch
+52e81612bcbc57f1066b7a2c
+Skate Park icon
+Skate Park
+4bf58dd8d48988d167941735
+Skating Rink icon
+Skating Rink
+4bf58dd8d48988d168941735
+Soccer Field icon
+Soccer Field
+4cce455aebf7b749d5e191f5
+Sports Club icon
+Sports Club
+52e81612bcbc57f1066b7a2e
+Squash Court icon
+Squash Court
+52e81612bcbc57f1066b7a2d
+Tennis Court icon
+Tennis Court
+4e39a956bd410d7aed40cbc3
+Volleyball Court icon
+Volleyball Court
+4eb1bf013b7b6f98df247e07
+Bathing Area icon
+Bathing Area
+52e81612bcbc57f1066b7a28
+Bay icon
+Bay
+56aa371be4b08b9a8d573544
+Beach icon
+Beach
+4bf58dd8d48988d1e2941735
+Nudist Beach icon
+Nudist Beach
+52e81612bcbc57f1066b7a30
+Surf Spot icon
+Surf Spot
+4bf58dd8d48988d1e3941735
+Bike Trail icon
+Bike Trail
+56aa371be4b08b9a8d57355e
+Botanical Garden icon
+Botanical Garden
+52e81612bcbc57f1066b7a22
+Bridge icon
+Bridge
+4bf58dd8d48988d1df941735
+Campground icon
+Campground
+4bf58dd8d48988d1e4941735
+Canal Lock icon
+Canal Lock
+56aa371be4b08b9a8d57353b
+Canal icon
+Canal
+56aa371be4b08b9a8d573562
+Castle icon
+Castle
+50aaa49e4b90af0d42d5de11
+Cave icon
+Cave
+56aa371be4b08b9a8d573511
+Cemetery icon
+Cemetery
+4bf58dd8d48988d15c941735
+Dive Spot icon
+Dive Spot
+52e81612bcbc57f1066b7a12
+Dog Run icon
+Dog Run
+4bf58dd8d48988d1e5941735
+Farm icon
+Farm
+4bf58dd8d48988d15b941735
+Field icon
+Field
+4bf58dd8d48988d15f941735
+Fishing Spot icon
+Fishing Spot
+52e81612bcbc57f1066b7a0f
+Forest icon
+Forest
+52e81612bcbc57f1066b7a23
+Fountain icon
+Fountain
+56aa371be4b08b9a8d573547
+Garden icon
+Garden
+4bf58dd8d48988d15a941735
+Gun Range icon
+Gun Range
+52e81612bcbc57f1066b7a11
+Harbor / Marina icon
+Harbor / Marina
+4bf58dd8d48988d1e0941735
+Hill icon
+Hill
+5bae9231bedf3950379f89cd
+Hot Spring icon
+Hot Spring
+4bf58dd8d48988d160941735
+Indoor Play Area icon
+Indoor Play Area
+5744ccdfe4b0c0459246b4b5
+Island icon
+Island
+50aaa4314b90af0d42d5de10
+Lake icon
+Lake
+4bf58dd8d48988d161941735
+Lighthouse icon
+Lighthouse
+4bf58dd8d48988d15d941735
+Mountain Hut icon
+Mountain Hut
+55a5a1ebe4b013909087cb77
+Supported countries: IT, DE, AT, CH, JP, ES, FR
+Mountain icon
+Mountain
+4eb1d4d54b900d56c88a45fc
+National Park icon
+National Park
+52e81612bcbc57f1066b7a21
+Nature Preserve icon
+Nature Preserve
+52e81612bcbc57f1066b7a13
+Other Great Outdoors icon
+Other Great Outdoors
+4bf58dd8d48988d162941735
+Palace icon
+Palace
+52e81612bcbc57f1066b7a14
+Park icon
+Park
+4bf58dd8d48988d163941735
+Pedestrian Plaza icon
+Pedestrian Plaza
+52e81612bcbc57f1066b7a25
+Playground icon
+Playground
+4bf58dd8d48988d1e7941735
+Plaza icon
+Plaza
+4bf58dd8d48988d164941735
+Pool icon
+Pool
+4bf58dd8d48988d15e941735
+Rafting icon
+Rafting
+52e81612bcbc57f1066b7a29
+Recreation Center icon
+Recreation Center
+52e81612bcbc57f1066b7a26
+Reservoir icon
+Reservoir
+56aa371be4b08b9a8d573541
+River icon
+River
+4eb1d4dd4b900d56c88a45fd
+Rock Climbing Spot icon
+Rock Climbing Spot
+50328a4b91d4c4b30a586d6b
+Roof Deck icon
+Roof Deck
+4bf58dd8d48988d133951735
+Scenic Lookout icon
+Scenic Lookout
+4bf58dd8d48988d165941735
+Sculpture Garden icon
+Sculpture Garden
+4bf58dd8d48988d166941735
+Ski Area icon
+Ski Area
+4bf58dd8d48988d1e9941735
+Apres Ski Bar icon
+Apres Ski Bar
+4bf58dd8d48988d1ea941735
+Ski Chairlift icon
+Ski Chairlift
+4eb1c0ed3b7b52c0e1adc2ea
+Ski Chalet icon
+Ski Chalet
+4bf58dd8d48988d1ec941735
+Ski Lodge icon
+Ski Lodge
+4bf58dd8d48988d1eb941735
+Ski Trail icon
+Ski Trail
+4eb1c0f63b7b52c0e1adc2eb
+Skydiving Drop Zone icon
+Skydiving Drop Zone
+58daa1558bbb0b01f18ec1b9
+Stables icon
+Stables
+4eb1baf03b7b2c5b1d4306ca
+State / Provincial Park icon
+State / Provincial Park
+5bae9231bedf3950379f89d0
+States & Municipalities icon
+States & Municipalities
+530e33ccbcbc57f1066bbfe4
+City icon
+City
+50aa9e094b90af0d42d5de0d
+County icon
+County
+5345731ebcbc57f1066c39b2
+Country icon
+Country
+530e33ccbcbc57f1066bbff7
+Neighborhood icon
+Neighborhood
+4f2a25ac4b909258e854f55f
+State icon
+State
+530e33ccbcbc57f1066bbff8
+Town icon
+Town
+530e33ccbcbc57f1066bbff3
+Village icon
+Village
+530e33ccbcbc57f1066bbff9
+Summer Camp icon
+Summer Camp
+52e81612bcbc57f1066b7a10
+Trail icon
+Trail
+4bf58dd8d48988d159941735
+Tree icon
+Tree
+52e81612bcbc57f1066b7a24
+Vineyard icon
+Vineyard
+4bf58dd8d48988d1de941735
+Volcano icon
+Volcano
+5032848691d4c4b30a586d61
+Waterfall icon
+Waterfall
+56aa371be4b08b9a8d573560
+Waterfront icon
+Waterfront
+56aa371be4b08b9a8d5734c3
+Well icon
+Well
+4fbc1be21983fc883593e321
+Windmill icon
+Windmill
+5bae9231bedf3950379f89c7
+Professional & Other Places icon
+Professional & Other Places
+4d4b7105d754a06375d81259
+Animal Shelter icon
+Animal Shelter
+4e52d2d203646f7c19daa8ae
+Art Studio icon
+Art Studio
+58daa1558bbb0b01f18ec1d6
+Auditorium icon
+Auditorium
+4bf58dd8d48988d173941735
+Ballroom icon
+Ballroom
+56aa371be4b08b9a8d5734cf
+Building icon
+Building
+4bf58dd8d48988d130941735
+Business Center icon
+Business Center
+56aa371be4b08b9a8d573517
+Cidery icon
+Cidery
+5e189fd6eee47d000759bbfd
+Supported countries: US
+Club House icon
+Club House
+52e81612bcbc57f1066b7a35
+Community Center icon
+Community Center
+52e81612bcbc57f1066b7a34
+Convention Center icon
+Convention Center
+4bf58dd8d48988d1ff931735
+Meeting Room icon
+Meeting Room
+4bf58dd8d48988d100941735
+Cultural Center icon
+Cultural Center
+52e81612bcbc57f1066b7a32
+Distillery icon
+Distillery
+4e0e22f5a56208c4ea9a85a0
+Distribution Center icon
+Distribution Center
+52e81612bcbc57f1066b7a37
+Event Space icon
+Event Space
+4bf58dd8d48988d171941735
+Outdoor Event Space icon
+Outdoor Event Space
+56aa371be4b08b9a8d57356a
+Factory icon
+Factory
+4eb1bea83b7b6f98df247e06
+Fair icon
+Fair
+4eb1daf44b900d56c88a4600
+Funeral Home icon
+Funeral Home
+4f4534884b9074f6e4fb0174
+Government Building icon
+Government Building
+4bf58dd8d48988d126941735
+Capitol Building icon
+Capitol Building
+4bf58dd8d48988d12a941735
+City Hall icon
+City Hall
+4bf58dd8d48988d129941735
+Courthouse icon
+Courthouse
+4bf58dd8d48988d12b941735
+Embassy / Consulate icon
+Embassy / Consulate
+4bf58dd8d48988d12c951735
+Fire Station icon
+Fire Station
+4bf58dd8d48988d12c941735
+Monument / Landmark icon
+Monument / Landmark
+4bf58dd8d48988d12d941735
+Police Station icon
+Police Station
+4bf58dd8d48988d12e941735
+Town Hall icon
+Town Hall
+52e81612bcbc57f1066b7a38
+Industrial Estate icon
+Industrial Estate
+56aa371be4b08b9a8d5734d7
+Laboratory icon
+Laboratory
+5744ccdfe4b0c0459246b4d6
+Library icon
+Library
+4bf58dd8d48988d12f941735
+Meadery icon
+Meadery
+5e189d71eee47d000759b7e2
+Supported countries: US
+Medical Center icon
+Medical Center
+4bf58dd8d48988d104941735
+Acupuncturist icon
+Acupuncturist
+52e81612bcbc57f1066b7a3b
+Alternative Healer icon
+Alternative Healer
+52e81612bcbc57f1066b7a3c
+Chiropractor icon
+Chiropractor
+52e81612bcbc57f1066b7a3a
+Dentist's Office icon
+Dentist's Office
+4bf58dd8d48988d178941735
+Doctor's Office icon
+Doctor's Office
+4bf58dd8d48988d177941735
+Emergency Room icon
+Emergency Room
+4bf58dd8d48988d194941735
+Eye Doctor icon
+Eye Doctor
+522e32fae4b09b556e370f19
+Hospital icon
+Hospital
+4bf58dd8d48988d196941735
+Hospital Ward icon
+Hospital Ward
+58daa1558bbb0b01f18ec1f7
+Maternity Clinic icon
+Maternity Clinic
+56aa371be4b08b9a8d5734ff
+Medical Lab icon
+Medical Lab
+4f4531b14b9074f6e4fb0103
+Mental Health Office icon
+Mental Health Office
+52e81612bcbc57f1066b7a39
+Nutritionist icon
+Nutritionist
+58daa1558bbb0b01f18ec1d0
+Physical Therapist icon
+Physical Therapist
+5744ccdfe4b0c0459246b4af
+Rehab Center icon
+Rehab Center
+56aa371be4b08b9a8d57351d
+Urgent Care Center icon
+Urgent Care Center
+56aa371be4b08b9a8d573526
+Veterinarian icon
+Veterinarian
+4d954af4a243a5684765b473
+Military Base icon
+Military Base
+4e52adeebd41615f56317744
+Non-Profit icon
+Non-Profit
+50328a8e91d4c4b30a586d6c
+Observatory icon
+Observatory
+5744ccdfe4b0c0459246b4d9
+Office icon
+Office
+4bf58dd8d48988d124941735
+Advertising Agency icon
+Advertising Agency
+52e81612bcbc57f1066b7a3d
+Campaign Office icon
+Campaign Office
+5032764e91d4c4b30a586d5a
+Conference Room icon
+Conference Room
+4bf58dd8d48988d127941735
+Corporate Amenity icon
+Corporate Amenity
+5665ef1d498ec706735f0e59
+Corporate Cafeteria icon
+Corporate Cafeteria
+54f4ba06498e2cf5561da814
+Corporate Coffee Shop icon
+Corporate Coffee Shop
+5665c7b9498e7d8a4f2c0f06
+Coworking Space icon
+Coworking Space
+4bf58dd8d48988d174941735
+Tech Startup icon
+Tech Startup
+4bf58dd8d48988d125941735
+Parking icon
+Parking
+4c38df4de52ce0d596b336e1
+Post Office icon
+Post Office
+4bf58dd8d48988d172941735
+Power Plant icon
+Power Plant
+58daa1548bbb0b01f18ec1a9
+Prison icon
+Prison
+5310b8e5bcbc57f1066bcbf1
+Radio Station icon
+Radio Station
+5032856091d4c4b30a586d63
+Recruiting Agency icon
+Recruiting Agency
+52f2ab2ebcbc57f1066b8b57
+Research Station icon
+Research Station
+58daa1558bbb0b01f18ec1b2
+School icon
+School
+4bf58dd8d48988d13b941735
+Adult Education Center icon
+Adult Education Center
+56aa371ce4b08b9a8d573570
+Circus School icon
+Circus School
+52e81612bcbc57f1066b7a43
+Cooking School icon
+Cooking School
+58daa1558bbb0b01f18ec200
+Driving School icon
+Driving School
+52e81612bcbc57f1066b7a42
+Elementary School icon
+Elementary School
+4f4533804b9074f6e4fb0105
+Flight School icon
+Flight School
+52e81612bcbc57f1066b7a49
+High School icon
+High School
+4bf58dd8d48988d13d941735
+Language School icon
+Language School
+52e81612bcbc57f1066b7a48
+Middle School icon
+Middle School
+4f4533814b9074f6e4fb0106
+Music School icon
+Music School
+4f04b10d2fb6e1c99f3db0be
+Nursery School icon
+Nursery School
+4f4533814b9074f6e4fb0107
+Preschool icon
+Preschool
+52e81612bcbc57f1066b7a45
+Private School icon
+Private School
+52e81612bcbc57f1066b7a46
+Religious School icon
+Religious School
+52e81612bcbc57f1066b7a47
+Swim School icon
+Swim School
+52e81612bcbc57f1066b7a44
+Social Club icon
+Social Club
+52e81612bcbc57f1066b7a33
+Spiritual Center icon
+Spiritual Center
+4bf58dd8d48988d131941735
+Buddhist Temple icon
+Buddhist Temple
+52e81612bcbc57f1066b7a3e
+Cemevi icon
+Cemevi
+58daa1558bbb0b01f18ec1eb
+Church icon
+Church
+4bf58dd8d48988d132941735
+Confucian Temple icon
+Confucian Temple
+56aa371be4b08b9a8d5734fc
+Hindu Temple icon
+Hindu Temple
+52e81612bcbc57f1066b7a3f
+Kingdom Hall icon
+Kingdom Hall
+5744ccdfe4b0c0459246b4ac
+Monastery icon
+Monastery
+52e81612bcbc57f1066b7a40
+Mosque icon
+Mosque
+4bf58dd8d48988d138941735
+Prayer Room icon
+Prayer Room
+52e81612bcbc57f1066b7a41
+Shrine icon
+Shrine
+4eb1d80a4b900d56c88a45ff
+Sikh Temple icon
+Sikh Temple
+5bae9231bedf3950379f89c9
+Synagogue icon
+Synagogue
+4bf58dd8d48988d139941735
+Temple icon
+Temple
+4bf58dd8d48988d13a941735
+Terreiro icon
+Terreiro
+56aa371be4b08b9a8d5734f6
+Supported countries: BR
+TV Station icon
+TV Station
+52e81612bcbc57f1066b7a31
+Voting Booth icon
+Voting Booth
+4cae28ecbf23941eb1190695
+Warehouse icon
+Warehouse
+52e81612bcbc57f1066b7a36
+Waste Facility icon
+Waste Facility
+58daa1558bbb0b01f18ec1ac
+Wedding Hall icon
+Wedding Hall
+56aa371be4b08b9a8d5734c5
+Winery icon
+Winery
+4bf58dd8d48988d14b941735
+Residence icon
+Residence
+4e67e38e036454776db1fb3a
+Assisted Living icon
+Assisted Living
+5032891291d4c4b30a586d68
+Home (private) icon
+Home (private)
+4bf58dd8d48988d103941735
+Housing Development icon
+Housing Development
+4f2a210c4b9023bd5841ed28
+Residential Building (Apartment / Condo) icon
+Residential Building (Apartment / Condo)
+4d954b06a243a5684965b473
+Trailer Park icon
+Trailer Park
+52f2ab2ebcbc57f1066b8b55
+Shop & Service icon
+Shop & Service
+4d4b7105d754a06378d81259
+ATM icon
+ATM
+52f2ab2ebcbc57f1066b8b56
+Adult Boutique icon
+Adult Boutique
+5267e446e4b0ec79466e48c4
+Antique Shop icon
+Antique Shop
+4bf58dd8d48988d116951735
+Arts & Crafts Store icon
+Arts & Crafts Store
+4bf58dd8d48988d127951735
+Astrologer icon
+Astrologer
+52f2ab2ebcbc57f1066b8b43
+Auto Dealership icon
+Auto Dealership
+4eb1c1623b7b52c0e1adc2ec
+Auto Garage icon
+Auto Garage
+52f2ab2ebcbc57f1066b8b44
+Auto Workshop icon
+Auto Workshop
+56aa371be4b08b9a8d5734d3
+Automotive Shop icon
+Automotive Shop
+4bf58dd8d48988d124951735
+Baby Store icon
+Baby Store
+52f2ab2ebcbc57f1066b8b32
+Bank icon
+Bank
+4bf58dd8d48988d10a951735
+Bath House icon
+Bath House
+52e81612bcbc57f1066b7a27
+Batik Shop icon
+Batik Shop
+56aa371be4b08b9a8d5734cb
+Supported countries: ID
+Betting Shop icon
+Betting Shop
+52f2ab2ebcbc57f1066b8b40
+Big Box Store icon
+Big Box Store
+52f2ab2ebcbc57f1066b8b42
+Bike Shop icon
+Bike Shop
+4bf58dd8d48988d115951735
+Board Shop icon
+Board Shop
+4bf58dd8d48988d1f1941735
+Bookstore icon
+Bookstore
+4bf58dd8d48988d114951735
+Bridal Shop icon
+Bridal Shop
+4bf58dd8d48988d11a951735
+Business Service icon
+Business Service
+5453de49498eade8af355881
+Camera Store icon
+Camera Store
+4eb1bdf03b7b55596b4a7491
+Candy Store icon
+Candy Store
+4bf58dd8d48988d117951735
+Car Wash icon
+Car Wash
+4f04ae1f2fb6e1c99f3db0ba
+Carpet Store icon
+Carpet Store
+52f2ab2ebcbc57f1066b8b2a
+Check Cashing Service icon
+Check Cashing Service
+52f2ab2ebcbc57f1066b8b2d
+Child Care Service icon
+Child Care Service
+5744ccdfe4b0c0459246b4c7
+Daycare icon
+Daycare
+4f4532974b9074f6e4fb0104
+Chocolate Shop icon
+Chocolate Shop
+52f2ab2ebcbc57f1066b8b31
+Clothing Store icon
+Clothing Store
+4bf58dd8d48988d103951735
+Accessories Store icon
+Accessories Store
+4bf58dd8d48988d102951735
+Boutique icon
+Boutique
+4bf58dd8d48988d104951735
+Kids Store icon
+Kids Store
+4bf58dd8d48988d105951735
+Lingerie Store icon
+Lingerie Store
+4bf58dd8d48988d109951735
+Men's Store icon
+Men's Store
+4bf58dd8d48988d106951735
+Shoe Store icon
+Shoe Store
+4bf58dd8d48988d107951735
+Women's Store icon
+Women's Store
+4bf58dd8d48988d108951735
+Comic Shop icon
+Comic Shop
+52f2ab2ebcbc57f1066b8b18
+Construction & Landscaping icon
+Construction & Landscaping
+5454144b498ec1f095bff2f2
+Convenience Store icon
+Convenience Store
+4d954b0ea243a5684a65b473
+Cosmetics Shop icon
+Cosmetics Shop
+4bf58dd8d48988d10c951735
+Costume Shop icon
+Costume Shop
+52f2ab2ebcbc57f1066b8b17
+Credit Union icon
+Credit Union
+5032850891d4c4b30a586d62
+Currency Exchange icon
+Currency Exchange
+5744ccdfe4b0c0459246b4be
+Department Store icon
+Department Store
+4bf58dd8d48988d1f6941735
+Design Studio icon
+Design Studio
+4bf58dd8d48988d1f4941735
+Discount Store icon
+Discount Store
+52dea92d3cf9994f4e043dbb
+Dive Shop icon
+Dive Shop
+52f2ab2ebcbc57f1066b8b1a
+Drugstore icon
+Drugstore
+5745c2e4498e11e7bccabdbd
+Dry Cleaner icon
+Dry Cleaner
+52f2ab2ebcbc57f1066b8b1d
+EV Charging Station icon
+EV Charging Station
+5032872391d4c4b30a586d64
+Electronics Store icon
+Electronics Store
+4bf58dd8d48988d122951735
+Entertainment Service icon
+Entertainment Service
+56aa371be4b08b9a8d573554
+Event Service icon
+Event Service
+5454152e498ef71e2b9132c6
+Fabric Shop icon
+Fabric Shop
+52f2ab2ebcbc57f1066b8b26
+Film Studio icon
+Film Studio
+56aa371be4b08b9a8d573523
+Financial or Legal Service icon
+Financial or Legal Service
+503287a291d4c4b30a586d65
+Fireworks Store icon
+Fireworks Store
+52f2ab2ebcbc57f1066b8b3a
+Fishing Store icon
+Fishing Store
+52f2ab2ebcbc57f1066b8b16
+Flea Market icon
+Flea Market
+4bf58dd8d48988d1f7941735
+Floating Market icon
+Floating Market
+56aa371be4b08b9a8d573505
+Flower Shop icon
+Flower Shop
+4bf58dd8d48988d11b951735
+Food & Drink Shop icon
+Food & Drink Shop
+4bf58dd8d48988d1f9941735
+Beer Store icon
+Beer Store
+5370f356bcbc57f1066c94c2
+Butcher icon
+Butcher
+4bf58dd8d48988d11d951735
+Cheese Shop icon
+Cheese Shop
+4bf58dd8d48988d11e951735
+Coffee Roaster icon
+Coffee Roaster
+5e18993feee47d000759b256
+Dairy Store icon
+Dairy Store
+58daa1558bbb0b01f18ec1ca
+Farmers Market icon
+Farmers Market
+4bf58dd8d48988d1fa941735
+Fish Market icon
+Fish Market
+4bf58dd8d48988d10e951735
+Food Service icon
+Food Service
+56aa371be4b08b9a8d573550
+Gourmet Shop icon
+Gourmet Shop
+4bf58dd8d48988d1f5941735
+Grocery Store icon
+Grocery Store
+4bf58dd8d48988d118951735
+Health Food Store icon
+Health Food Store
+50aa9e744b90af0d42d5de0e
+Kuruyemişçi icon
+Kuruyemişçi
+58daa1558bbb0b01f18ec1e8
+Supported countries: TR
+Liquor Store icon
+Liquor Store
+4bf58dd8d48988d186941735
+Organic Grocery icon
+Organic Grocery
+52f2ab2ebcbc57f1066b8b45
+Sausage Shop icon
+Sausage Shop
+56aa371be4b08b9a8d573564
+Street Food Gathering icon
+Street Food Gathering
+53e0feef498e5aac066fd8a9
+Supermarket icon
+Supermarket
+52f2ab2ebcbc57f1066b8b46
+Turşucu icon
+Turşucu
+58daa1558bbb0b01f18ec1e5
+Supported countries: TR
+Wine Shop icon
+Wine Shop
+4bf58dd8d48988d119951735
+Frame Store icon
+Frame Store
+52f2ab2ebcbc57f1066b8b24
+Fruit & Vegetable Store icon
+Fruit & Vegetable Store
+52f2ab2ebcbc57f1066b8b1c
+Furniture / Home Store icon
+Furniture / Home Store
+4bf58dd8d48988d1f8941735
+Lighting Store icon
+Lighting Store
+55888a5a498e782e3303b43a
+Gaming Cafe icon
+Gaming Cafe
+4bf58dd8d48988d18d941735
+Garden Center icon
+Garden Center
+4eb1c0253b7b52c0e1adc2e9
+Gas Station icon
+Gas Station
+4bf58dd8d48988d113951735
+Gift Shop icon
+Gift Shop
+4bf58dd8d48988d128951735
+Gun Shop icon
+Gun Shop
+52f2ab2ebcbc57f1066b8b19
+Hardware Store icon
+Hardware Store
+4bf58dd8d48988d112951735
+Health & Beauty Service icon
+Health & Beauty Service
+54541900498ea6ccd0202697
+Herbs & Spices Store icon
+Herbs & Spices Store
+52f2ab2ebcbc57f1066b8b2c
+Hobby Shop icon
+Hobby Shop
+4bf58dd8d48988d1fb941735
+Home Service icon
+Home Service
+545419b1498ea6ccd0202f58
+Hunting Supply icon
+Hunting Supply
+50aaa5234b90af0d42d5de12
+IT Services icon
+IT Services
+52f2ab2ebcbc57f1066b8b36
+Insurance Office icon
+Insurance Office
+58daa1558bbb0b01f18ec1f1
+Internet Cafe icon
+Internet Cafe
+4bf58dd8d48988d1f0941735
+Jewelry Store icon
+Jewelry Store
+4bf58dd8d48988d111951735
+Kitchen Supply Store icon
+Kitchen Supply Store
+58daa1558bbb0b01f18ec1b4
+Knitting Store icon
+Knitting Store
+52f2ab2ebcbc57f1066b8b25
+Laundromat icon
+Laundromat
+52f2ab2ebcbc57f1066b8b33
+Laundry Service icon
+Laundry Service
+4bf58dd8d48988d1fc941735
+Lawyer icon
+Lawyer
+52f2ab2ebcbc57f1066b8b3f
+Leather Goods Store icon
+Leather Goods Store
+52f2ab2ebcbc57f1066b8b2b
+Locksmith icon
+Locksmith
+52f2ab2ebcbc57f1066b8b1e
+Lottery Retailer icon
+Lottery Retailer
+52f2ab2ebcbc57f1066b8b38
+Luggage Store icon
+Luggage Store
+52f2ab2ebcbc57f1066b8b29
+Marijuana Dispensary icon
+Marijuana Dispensary
+52c71aaf3cf9994f4e043d17
+Supported countries: US, NL, UY, CA
+Market icon
+Market
+50be8ee891d4fa8dcc7199a7
+Massage Studio icon
+Massage Studio
+52f2ab2ebcbc57f1066b8b3c
+Mattress Store icon
+Mattress Store
+52f2ab2ebcbc57f1066b8b27
+Medical Supply Store icon
+Medical Supply Store
+58daa1558bbb0b01f18ec206
+Miscellaneous Shop icon
+Miscellaneous Shop
+4bf58dd8d48988d1ff941735
+Mobile Phone Shop icon
+Mobile Phone Shop
+4f04afc02fb6e1c99f3db0bc
+Mobility Store icon
+Mobility Store
+56aa371be4b08b9a8d57354a
+Motorcycle Shop icon
+Motorcycle Shop
+5032833091d4c4b30a586d60
+Motorsports Shop icon
+Motorsports Shop
+59d79d6b2e268052fa2a3332
+Music Store icon
+Music Store
+4bf58dd8d48988d1fe941735
+Nail Salon icon
+Nail Salon
+4f04aa0c2fb6e1c99f3db0b8
+Newsstand icon
+Newsstand
+4f04ad622fb6e1c99f3db0b9
+Notary icon
+Notary
+5ae95d208a6f17002ce792b2
+Optical Shop icon
+Optical Shop
+4d954afda243a5684865b473
+Other Repair Shop icon
+Other Repair Shop
+52f2ab2ebcbc57f1066b8b2f
+Outdoor Supply Store icon
+Outdoor Supply Store
+52f2ab2ebcbc57f1066b8b22
+Outlet Mall icon
+Outlet Mall
+5744ccdfe4b0c0459246b4df
+Outlet Store icon
+Outlet Store
+52f2ab2ebcbc57f1066b8b35
+Paper / Office Supplies Store icon
+Paper / Office Supplies Store
+4bf58dd8d48988d121951735
+Pawn Shop icon
+Pawn Shop
+52f2ab2ebcbc57f1066b8b34
+Perfume Shop icon
+Perfume Shop
+52f2ab2ebcbc57f1066b8b23
+Pet Service icon
+Pet Service
+5032897c91d4c4b30a586d69
+Pet Store icon
+Pet Store
+4bf58dd8d48988d100951735
+Pharmacy icon
+Pharmacy
+4bf58dd8d48988d10f951735
+Photography Lab icon
+Photography Lab
+4eb1bdde3b7b55596b4a7490
+Photography Studio icon
+Photography Studio
+554a5e17498efabeda6cc559
+Piercing Parlor icon
+Piercing Parlor
+52f2ab2ebcbc57f1066b8b20
+Pop-Up Shop icon
+Pop-Up Shop
+52f2ab2ebcbc57f1066b8b3d
+Print Shop icon
+Print Shop
+52f2ab2ebcbc57f1066b8b28
+Public Bathroom icon
+Public Bathroom
+5744ccdfe4b0c0459246b4c4
+Real Estate Office icon
+Real Estate Office
+5032885091d4c4b30a586d66
+Record Shop icon
+Record Shop
+4bf58dd8d48988d10d951735
+Recording Studio icon
+Recording Studio
+52f2ab2ebcbc57f1066b8b37
+Recycling Facility icon
+Recycling Facility
+4f4531084b9074f6e4fb0101
+Rental Service icon
+Rental Service
+56aa371be4b08b9a8d573552
+Salon / Barbershop icon
+Salon / Barbershop
+4bf58dd8d48988d110951735
+Sauna / Steam Room icon
+Sauna / Steam Room
+58daa1558bbb0b01f18ec1ae
+Shipping Store icon
+Shipping Store
+52f2ab2ebcbc57f1066b8b1f
+Shoe Repair icon
+Shoe Repair
+52f2ab2ebcbc57f1066b8b39
+Shopping Mall icon
+Shopping Mall
+4bf58dd8d48988d1fd941735
+Shopping Plaza icon
+Shopping Plaza
+5744ccdfe4b0c0459246b4dc
+Skate Shop icon
+Skate Shop
+5bae9231bedf3950379f89d2
+Ski Shop icon
+Ski Shop
+56aa371be4b08b9a8d573566
+Smoke Shop icon
+Smoke Shop
+4bf58dd8d48988d123951735
+Smoothie Shop icon
+Smoothie Shop
+52f2ab2ebcbc57f1066b8b41
+Souvenir Shop icon
+Souvenir Shop
+52f2ab2ebcbc57f1066b8b1b
+Spa icon
+Spa
+4bf58dd8d48988d1ed941735
+Sporting Goods Shop icon
+Sporting Goods Shop
+4bf58dd8d48988d1f2941735
+Stationery Store icon
+Stationery Store
+52f2ab2ebcbc57f1066b8b21
+Storage Facility icon
+Storage Facility
+4f04b1572fb6e1c99f3db0bf
+Supplement Shop icon
+Supplement Shop
+5744ccdfe4b0c0459246b4cd
+Tailor Shop icon
+Tailor Shop
+5032781d91d4c4b30a586d5b
+Tanning Salon icon
+Tanning Salon
+4d1cf8421a97d635ce361c31
+Tattoo Parlor icon
+Tattoo Parlor
+4bf58dd8d48988d1de931735
+Thrift / Vintage Store icon
+Thrift / Vintage Store
+4bf58dd8d48988d101951735
+Toy / Game Store icon
+Toy / Game Store
+4bf58dd8d48988d1f3941735
+Travel Agency icon
+Travel Agency
+4f04b08c2fb6e1c99f3db0bd
+Used Bookstore icon
+Used Bookstore
+52f2ab2ebcbc57f1066b8b30
+Vape Store icon
+Vape Store
+56aa371be4b08b9a8d57355c
+Video Game Store icon
+Video Game Store
+4bf58dd8d48988d10b951735
+Video Store icon
+Video Store
+4bf58dd8d48988d126951735
+Warehouse Store icon
+Warehouse Store
+52e816a6bcbc57f1066b7a54
+Watch Shop icon
+Watch Shop
+52f2ab2ebcbc57f1066b8b2e
+Travel & Transport icon
+Travel & Transport
+4d4b7105d754a06379d81259
+Airport icon
+Airport
+4bf58dd8d48988d1ed931735
+Airport Food Court icon
+Airport Food Court
+4bf58dd8d48988d1ef931735
+Airport Gate icon
+Airport Gate
+4bf58dd8d48988d1f0931735
+Airport Lounge icon
+Airport Lounge
+4eb1bc533b7b2c5b1d4306cb
+Airport Service icon
+Airport Service
+56aa371be4b08b9a8d57352f
+Airport Terminal icon
+Airport Terminal
+4bf58dd8d48988d1eb931735
+Airport Tram icon
+Airport Tram
+4bf58dd8d48988d1ec931735
+Baggage Claim icon
+Baggage Claim
+5744ccdfe4b0c0459246b4e5
+Plane icon
+Plane
+4bf58dd8d48988d1f7931735
+Baggage Locker icon
+Baggage Locker
+5744ccdfe4b0c0459246b4e8
+Bike Rental / Bike Share icon
+Bike Rental / Bike Share
+4e4c9077bd41f78e849722f9
+Boat Rental icon
+Boat Rental
+5744ccdfe4b0c0459246b4c1
+Boat or Ferry icon
+Boat or Ferry
+4bf58dd8d48988d12d951735
+Border Crossing icon
+Border Crossing
+52f2ab2ebcbc57f1066b8b4b
+Bus Station icon
+Bus Station
+4bf58dd8d48988d1fe931735
+Bus Line icon
+Bus Line
+4bf58dd8d48988d12b951735
+Bus Stop icon
+Bus Stop
+52f2ab2ebcbc57f1066b8b4f
+Cable Car icon
+Cable Car
+52f2ab2ebcbc57f1066b8b50
+Cruise icon
+Cruise
+55077a22498e5e9248869ba2
+Duty-free Shop icon
+Duty-free Shop
+589ddde98ae3635c072819ee
+General Travel icon
+General Travel
+4bf58dd8d48988d1f6931735
+Heliport icon
+Heliport
+56aa371ce4b08b9a8d57356e
+Hotel icon
+Hotel
+4bf58dd8d48988d1fa931735
+Bed & Breakfast icon
+Bed & Breakfast
+4bf58dd8d48988d1f8931735
+Boarding House icon
+Boarding House
+4f4530a74b9074f6e4fb0100
+Hostel icon
+Hostel
+4bf58dd8d48988d1ee931735
+Hotel Pool icon
+Hotel Pool
+4bf58dd8d48988d132951735
+Inn icon
+Inn
+5bae9231bedf3950379f89cb
+Motel icon
+Motel
+4bf58dd8d48988d1fb931735
+Resort icon
+Resort
+4bf58dd8d48988d12f951735
+Vacation Rental icon
+Vacation Rental
+56aa371be4b08b9a8d5734e1
+Intersection icon
+Intersection
+52f2ab2ebcbc57f1066b8b4c
+Light Rail Station icon
+Light Rail Station
+4bf58dd8d48988d1fc931735
+Metro Station icon
+Metro Station
+4bf58dd8d48988d1fd931735
+Moving Target icon
+Moving Target
+4f2a23984b9023bd5841ed2c
+Pier icon
+Pier
+4e74f6cabd41c4836eac4c31
+Port icon
+Port
+56aa371be4b08b9a8d57353e
+RV Park icon
+RV Park
+52f2ab2ebcbc57f1066b8b53
+Rental Car Location icon
+Rental Car Location
+4bf58dd8d48988d1ef941735
+Rest Area icon
+Rest Area
+4d954b16a243a5684b65b473
+Road icon
+Road
+4bf58dd8d48988d1f9931735
+Taxi Stand icon
+Taxi Stand
+53fca564498e1a175f32528b
+Taxi icon
+Taxi
+4bf58dd8d48988d130951735
+Toll Booth icon
+Toll Booth
+52f2ab2ebcbc57f1066b8b4d
+Toll Plaza icon
+Toll Plaza
+52f2ab2ebcbc57f1066b8b4e
+Tourist Information Center icon
+Tourist Information Center
+4f4530164b9074f6e4fb00ff
+Train Station icon
+Train Station
+4bf58dd8d48988d129951735
+Platform icon
+Platform
+4f4531504b9074f6e4fb0102
+Train icon
+Train
+4bf58dd8d48988d12a951735
+Tram Station icon
+Tram Station
+52f2ab2ebcbc57f1066b8b51
+Transportation Service icon
+Transportation Service
+54541b70498ea6ccd0204bff
+Travel Lounge icon
+Travel Lounge
+4f04b25d2fb6e1c99f3db0c0
+Tunnel icon
+Tunnel
+52f2ab2ebcbc57f1066b8b4a

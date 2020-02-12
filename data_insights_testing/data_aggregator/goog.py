@@ -3,9 +3,7 @@ import utils
 import safe_request
 
 '''
-
 All google related methods to confirm a location, and build dataset of all information needed.
-
 '''
 
 API_NAME = 'Google'
@@ -21,8 +19,7 @@ GOOG_TEXTSEARCH_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/textsearc
 # Provided a location address & name, method corrects address if available in google. Method
 # corrects address if available in google. Returns google place_id, geometry, address, & name
 # If bias needed, please specific in bias field as per the google API
-# TODO: ensure that no duplicates are stored, and that no repeat searches are completed
-def find(address, name="", bias='ipbias'):
+def find(address, name="", bias='ipbias', allow_non_establishments=False):
 
     url = GOOG_FINDPLACE_ENDPOINT
     payload = {}
@@ -40,11 +37,12 @@ def find(address, name="", bias='ipbias'):
         API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
 
     if response['status'] == 'ZERO_RESULTS':
+        print('Zero results from google')
         return None
 
     place = response['candidates'][0]  # first candidate is the actual place
 
-    if 'permanently_closed' in place or 'establishment' not in place['types']:
+    if 'permanently_closed' in place or ('establishment' not in place['types'] and not allow_non_establishments):
         return None
 
     return place
@@ -122,6 +120,9 @@ def details(place_id, fields=None):
 
     response, _id = safe_request.request(
         API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
+
+    if response is None:
+        return None
 
     if 'result' not in response:
         print(response)

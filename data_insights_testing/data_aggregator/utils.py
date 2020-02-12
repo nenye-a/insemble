@@ -7,14 +7,12 @@ import math
 import pandas as pd
 import anmspatial
 from mongo_connect import Connect
-
+import gzip
 
 
 '''
-
 Utility methods & fields that are used to make the overall dataset building more
 efficient & powerful
-
 '''
 
 # regular statics
@@ -33,6 +31,10 @@ DB_RAW_SPACE = DB_SPACE.raw_spaces
 DB_PROCESSED_SPACE = DB_SPACE.spaces
 DB_OLD_SPACES = DB_SPACE.dataset2
 DB_VECTORS = DB_SPACE.preprocessed_vectors
+DB_VECTORS_LA = DB_SPACE.LA_space_vectors
+DB_SPATIAL_CATS = DB_SPACE.spatial_categories
+DB_DEMOGRAPHIC_CATS = DB_SPACE.demographic_categories
+
 
 # simple unique index of a pymongo database collection
 def unique_db_index(collection, *indices):
@@ -109,6 +111,21 @@ def test_raw_spaces(file_name, query={}):
     items_df.to_csv(file_name)
 
 
+# retrieves csv from file_system. If no file_system specified,
+# assumes the file is locally hosted.
+def read_dataframe_csv(path, file_system=None, is_zipped=True):   
+    if file_system:   
+        f_open = lambda file_path: file_system.open(file_path, 'rb')
+    else:
+        f_open = lambda file_path: open(file_path, 'rb')
+    
+    with f_open(path) as f:
+        unzipped_file = gzip.GzipFile(fileobj=f) if is_zipped else f
+        dataframe = pd.read_csv(unzipped_file)
+        dataframe.pop("Unnamed: 0") if "Unnamed: 0" in dataframe else None
+        return dataframe
+
+
 def test_spaces_batched(file_name, query={}, new=True, batch_size=2000):
     spaces = DB_PROCESSED_SPACE.find(query)
     len_spaces = spaces.count()
@@ -176,6 +193,14 @@ def observe_collector(file_name, run_name):
     items_df = pd.DataFrame(items)
     items_df.to_csv(file_name)
 
+
+# Translates value from one range to another
+def translate(value, left_min, left_max, right_min, right_max):
+
+    left_span = left_max - left_min
+    right_span = right_max - right_min
+    value_scaled = float(value - left_min) / float(left_span)
+    return right_min + (value_scaled * right_span)
 
 # Provided your current latitude, current longitude, a desired distance
 # can determine the latitude and longitude of a point at the distance
