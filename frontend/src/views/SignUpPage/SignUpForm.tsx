@@ -1,0 +1,117 @@
+import React from 'react';
+import styled from 'styled-components';
+import { useForm, FieldError } from 'react-hook-form';
+import { useMutation } from '@apollo/react-hooks';
+
+import { View, TextInput, Form, Button } from '../../core-ui';
+import { validateEmail } from '../../utils/validation';
+import { WHITE } from '../../constants/colors';
+
+type Props = {
+  role: 'Tenant' | 'Landlord'; //change to constants
+};
+
+export default function SignUpForm(props: Props) {
+  let { register, handleSubmit, errors, watch } = useForm();
+  // let [signUp, { data }] = useMutation(SIGN_UP);
+
+  let inputContainerStyle = { marginTop: 12 };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onSubmit = (_values: any) => {
+    // console.log(values, 'TEST');
+  };
+
+  return (
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      <FormContent>
+        <TextInput
+          name="email"
+          ref={register({
+            required: 'Email should not be empty',
+            validate: (val) => validateEmail(val) || 'Incorrect email format',
+          })}
+          label="Email Address"
+          placeholder="Your Email Address"
+          errorMessage={(errors?.email as FieldError)?.message || ''}
+          containerStyle={inputContainerStyle}
+        />
+        <RowedView>
+          <View flex style={{ marginRight: 10 }}>
+            <TextInput
+              name="firstName"
+              ref={register({
+                required: 'First name should not be empty',
+              })}
+              label="First Name"
+              placeholder="Your First Name"
+              errorMessage={(errors?.firstName as FieldError)?.message || ''}
+              containerStyle={inputContainerStyle}
+            />
+          </View>
+          <View flex style={{ marginLeft: 10 }}>
+            <TextInput
+              name="lastName"
+              ref={register({
+                required: 'Last name should not be empty',
+              })}
+              label="Last Name"
+              placeholder="Your Last Name"
+              errorMessage={(errors?.lastName as FieldError)?.message || ''}
+              containerStyle={inputContainerStyle}
+            />
+          </View>
+        </RowedView>
+        <TextInput
+          name="company"
+          ref={register({
+            required: 'Company name should not be empty',
+          })}
+          label="Company"
+          placeholder="Your Company"
+          errorMessage={(errors?.company as FieldError)?.message || ''}
+          containerStyle={inputContainerStyle}
+        />
+        <TextInput
+          name="password"
+          ref={register({
+            required: 'Password should not be empty',
+            minLength: {
+              value: 8,
+              message: 'Password must be at least 8 characters',
+            },
+          })}
+          label="Password"
+          placeholder="Enter Password"
+          type="password"
+          errorMessage={(errors?.password as FieldError)?.message || ''}
+          containerStyle={inputContainerStyle}
+        />
+        <TextInput
+          name="confirmPassword"
+          ref={register({
+            required: 'Confirm password should not be empty',
+            validate: (val) => val === watch('password') || 'Confirm password does not match',
+          })}
+          label="Confirm Password"
+          placeholder="Re-enter Password"
+          type="password"
+          errorMessage={(errors?.confirmPassword as FieldError)?.message || ''}
+          containerStyle={inputContainerStyle}
+        />
+        <SubmitButton text="Create and Submit" type="submit" />
+      </FormContent>
+    </Form>
+  );
+}
+
+const FormContent = styled(View)`
+  background-color: ${WHITE};
+  padding: 10px 50px 0 50px;
+`;
+
+const RowedView = styled(View)`
+  flex-direction: row;
+`;
+const SubmitButton = styled(Button)`
+  margin: 15px 0 30px 0;
+`;
