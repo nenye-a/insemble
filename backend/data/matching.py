@@ -136,13 +136,13 @@ FOURSQUARE_CATEGORIES = utils.DB_FOURSQUARE.find_one(
     {'name': 'foursquare_categories'})['foursquare_categories']
 
 
-def generate_matches_v1(location_address, my_place_type={}):
+def generate_matches(location_address, name=None, my_place_type={}):
     """
     Given an address, will generate a ranking of addresses that are the most similar
     accross all aspects to this location.
     """
 
-    my_location_df = _generate_location_vector(location_address)
+    my_location_df = _generate_location_vector(location_address, name)
 
     # get preprocessed vectors
     df = MATCHING_DF.copy()
@@ -288,10 +288,13 @@ def generate_matches_v1(location_address, my_place_type={}):
 
 # Given an address, generates a vector of a location that can be used
 # to compare against vectors stored in mongodb.
-def _generate_location_vector(address):
+def _generate_location_vector(address, name=None):
 
     # get latitude and longitude from the address.
-    location = google.find(address, allow_non_establishments=True)
+    if name:
+        location = google.find(address, name=name, allow_non_establishments=True)
+    else:
+        location = google.find(address, allow_non_establishments=True)
 
     lat = location["geometry"]["location"]["lat"]
     lng = location["geometry"]["location"]["lng"]
