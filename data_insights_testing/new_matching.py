@@ -130,17 +130,7 @@ TRANSPORT_LIST = ["Current Year Workers, Transportation To Work: Public Transpor
                   "Current Year Workers, Transportation to Work: Worked at Home"]
 TRANSPORT_LIST_3MILE = [transport + "3" for transport in TRANSPORT_LIST]
 
-# TODO: place all foursquare details online
-raw_foursquare_categories = open('../foursquare_categories.txt').readlines()
-processed_categories = []
-for category in raw_foursquare_categories:
-    is_digit = category[0].isdigit()
-    has_incorrect_strings = "icon" in category or "Supported countries" in category
-    if not (is_digit or has_incorrect_strings):
-        processed_categories.append(category[:-1])
-
-FOURSQUARE_CATEGORIES = processed_categories
-
+FOURSQUARE_CATEGORIES = utils.DB_FOURSQUARE.find_one({'name':'foursquare_categories'})['foursquare_categories']
 
 def generate_matches_v1(location_address, my_place_type={}):
     """

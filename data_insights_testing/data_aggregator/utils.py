@@ -34,6 +34,7 @@ DB_VECTORS = DB_SPACE.preprocessed_vectors
 DB_VECTORS_LA = DB_SPACE.LA_space_vectors
 DB_SPATIAL_CATS = DB_SPACE.spatial_categories
 DB_DEMOGRAPHIC_CATS = DB_SPACE.demographic_categories
+DB_FOURSQUARE = DB_SPACE.foursquare_categories
 
 
 # simple unique index of a pymongo database collection
