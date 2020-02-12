@@ -9,9 +9,7 @@ import arcgis
 import environics
 
 '''
-
 Underlying functions for the executable file in run.
-
 '''
 
 PROCESSED_FLAG = 'PROCESSED'
@@ -625,7 +623,7 @@ def detail_builder():
 
 # gather all places that are near this location
 def proximity_builder(radius=1):
-
+    # TODO: With each nearby store & restaurant, we should get foursquare categories
     update_count = 0
     updating = True
 

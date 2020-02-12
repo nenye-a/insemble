@@ -1,7 +1,5 @@
 '''
-
 File for ArcGIS & ESRI data processing
-
 '''
 
 import requests
@@ -9,7 +7,7 @@ import json
 
 # TODO: get permanent token. This may fail eventually
 url = "https://geoenrich.arcgis.DELETED_BASE64_STRING"
-TOKEN = "DELETED_BASE64_STRING_FWxDmwdDXMnnjjjeg7HR9liWZrevg_E50MI67Nc5nH2-c-DELETED_BASE64_STRING_u_DELETED_BASE64_STRING-Ao-5S186O_LgkwQPJ4J3I1YwWIYJsNlZp4otw."
+TOKEN = "8a_g1O93s8lDljS7yrzUqf_DELETED_BASE64_STRING_4Yx7LyS1-DELETED_BASE64_STRING-iVpsiVW97BX4mO5U4lT8w2PuG8i53Colok."
 
 
 def details(lat, lng, radius):
