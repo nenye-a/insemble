@@ -9,7 +9,7 @@ from rest_framework import routers
 from .legacy_api import PairedLocationViewSet, TenantMatchesViewSet
 from .legacy_api import SpaceMatchesViewSet
 from .legacy_api import LocationInfoViewSet, CategoryMapAPI, SearchAPI, MatchesAPI
-from .api import TenantMatchAPI
+from .tenant_api import TenantMatchAPI, FilterDetailAPI
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
@@ -28,12 +28,13 @@ urlpatterns = [
     # send non-backend specific routes to react for accurate routing
     url(r'^(?!%)(?!static)(?!fav)(?!admin)(?!accounts)(?!sock)(?!js)(?!api)(?:.*)/?$',
         TemplateView.as_view(template_name='insembleapp/index.html'), name='home'),
-    # enable bakend routes
+    # enable backend routes
     url(r'^', include(router.urls)),
     url(r'api/category', CategoryMapAPI.as_view(), name='category'),
     url(r'api/search', SearchAPI.as_view(), name='search'),
     url(r'api/tenantMatches/', TenantMatchAPI.as_view(), name='tenantMatch'),
-    # TODO: remove the legacy api calls 
+    url(r'api/filter/', FilterDetailAPI.as_view(), name='filterDetail'),
+    # TODO: remove the legacy api calls
     path(r'api/properties/<slug:_id>/', SearchAPI.as_view(), name='properties'),
     path(r'api/matches/<slug:address>', MatchesAPI.as_view(), name='matches'),
     # url(r'^', include('users.auth_urls')),
