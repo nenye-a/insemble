@@ -5,6 +5,7 @@ module.exports = {
     test: {
       // For the test environment (jest) we need typescript support.
       presets: ['@babel/preset-env', '@babel/typescript', '@babel/preset-react'],
+      plugins: ['@babel/plugin-proposal-optional-chaining'],
     },
   },
 };

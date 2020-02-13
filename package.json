@@ -109,6 +109,7 @@
     "@babel/cli": "~7.5.0",
     "@babel/core": "~7.5.0",
     "@babel/node": "~7.5.0",
+    "@babel/plugin-proposal-optional-chaining": "^7.8.3",
     "@babel/polyfill": "~7.4.4",
     "@babel/preset-env": "~7.5.0",
     "@babel/preset-react": "~7.0.0",
