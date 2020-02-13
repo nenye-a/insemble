@@ -11,7 +11,7 @@ let asyncStorage = {
   getTenantToken: () => {
     return window.localStorage.getItem('tenant-token');
   },
-  removeTenantRole: () => {
+  removeRole: () => {
     return window.localStorage.removeItem('role');
   },
   removeTenantToken: () => {
