@@ -1,0 +1,84 @@
+
+datasource db {
+  provider = "postgresql"
+  url = "***"
+}
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Tier {
+  FREE
+  EXPLORE
+  SMART
+  PROFESSIONAL
+}
+
+enum NewLocationPlan {
+  YES
+  NOT_ACTIVE
+  NOT_PLANNING
+}
+
+enum SpaceType {
+  FREE_STANDING
+  SHOPPING_CENTRE
+  INLINE
+  URBAN
+}
+
+
+model Location {
+  id   String @id
+  name String
+  lat  String
+  lng  String
+}
+
+model LocationAndPerformance {
+  id           String @id
+  address      String
+  physicalSale String
+  onlineSale   String
+  estimate     String
+}
+
+model TenantUser {
+  id          String  @id
+  email       String
+  password    String
+  firstName   String
+  lastName    String
+  company     String
+  title       String
+  description String
+  brands      Brand[]
+  Tier        Tier
+}
+
+model Brand {
+  id                     String                   @id
+  // Note: All field can be empty because some case
+  // Brand description
+  name                   String
+  categories             String[]
+  // Also for filter and description
+  userRelation           String
+  // Goal of this brand
+  newLocationPlan        NewLocationPlan
+  locations              Location[]
+  locationCount          Int
+  // Filter params for heatmap
+  minAge                 Int
+  maxAge                 Int
+  minIncome              Int
+  maxIncome              Int
+  personaIds             String[]
+  minSize                Int
+  maxSize                Int
+  equipmentIds           String[]
+  spaceType              SpaceType[]
+  locationAndPerformance LocationAndPerformance[]
+}
