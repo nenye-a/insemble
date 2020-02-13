@@ -31,14 +31,14 @@ enum SpaceType {
 
 
 model Location {
-  id   String @id
+  id   String @id @default(cuid())
   name String
   lat  String
   lng  String
 }
 
 model LocationAndPerformance {
-  id           String @id
+  id           String @id @default(cuid())
   address      String
   physicalSale String
   onlineSale   String
@@ -46,8 +46,9 @@ model LocationAndPerformance {
 }
 
 model TenantUser {
-  id          String  @id
+  id          String  @id @default(cuid())
   email       String
+  avatar      String
   password    String
   firstName   String
   lastName    String
@@ -55,11 +56,11 @@ model TenantUser {
   title       String
   description String
   brands      Brand[]
-  Tier        Tier
+  tier        Tier
 }
 
 model Brand {
-  id                     String                   @id
+  id                     String                   @id @default(cuid())
   // Note: All field can be empty because some case
   // Brand description
   name                   String
