@@ -25,11 +25,10 @@ class FilterDetailAPI(generics.GenericAPIView):
         status: int,                                (always provided)
         status_detail: string or list[string],      (always provided)
         brand_categories: list[string],             (always provided)
-        personas: list[string],          (always provided)
-        income: list[string],                       (always provided)
-        age: list[string],                          (always provided)
+        personas: list[string],                     (always provided)
         education: list[string],                    (always provided)
         commute: list[string],                      (always provided)
+        type: list[string]
     }
 
     """
@@ -46,12 +45,10 @@ class FilterDetailAPI(generics.GenericAPIView):
             'status_detail': "Success",
             'brand_categories': matching.FOURSQUARE_CATEGORIES,
             'personas': matching.SPATIAL_CATEGORIES,
-            'income': matching.INCOME_LIST,
-            'age': matching.AGE_LIST,
             'education': matching.EDUCATION_LIST,
-            'commute': matching.TRANSPORT_LIST
+            'commute': matching.TRANSPORT_LIST,
+            'type': ["Retail", "Restaurant"]
         }
-
         return Response(response, status=status.HTTP_200_OK)
 
 # TenantMatchApi - referenced by api/tenantMatch/
@@ -157,6 +154,8 @@ class LocationQueryAPI(generics.GenericAPIView):
         my_location: {                          (required)
             address: string,
             brand_name: string,
+            categories: list[string],
+
         },
         target_location: {                      (required)
             lat: int,
