@@ -6,17 +6,16 @@ from django.views.generic import TemplateView
 import django_js_reverse.views
 
 from rest_framework import routers
-from .api import PairedLocationViewSet, TenantMatchesViewSet
-from .api import SpaceMatchesViewSet, VenueViewSet, RetailerViewSet
-from .api import LocationInfoViewSet, CategoryMapAPI, SearchAPI, MatchesAPI
+from .legacy_api import PairedLocationViewSet, TenantMatchesViewSet
+from .legacy_api import SpaceMatchesViewSet
+from .legacy_api import LocationInfoViewSet, CategoryMapAPI, SearchAPI, MatchesAPI
+from .api import TenantMatchAPI
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'api/pair', PairedLocationViewSet, basename='pair')
 router.register(r'api/tmatches', TenantMatchesViewSet, basename='tmatches')
 router.register(r'api/lmatches', SpaceMatchesViewSet, 'lmatches')
-router.register(r'api/venue', VenueViewSet, basename='venue')
-router.register(r'api/retailer', RetailerViewSet, basename='retailer')
 router.register(r'api/location', LocationInfoViewSet, basename="location")
 
 urlpatterns = [
@@ -33,8 +32,10 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'api/category', CategoryMapAPI.as_view(), name='category'),
     url(r'api/search', SearchAPI.as_view(), name='search'),
+    url(r'api/tenantMatches/', TenantMatchAPI.as_view(), name='tenantMatch'),
+    # TODO: remove the legacy api calls 
     path(r'api/properties/<slug:_id>/', SearchAPI.as_view(), name='properties'),
     path(r'api/matches/<slug:address>', MatchesAPI.as_view(), name='matches'),
-    url(r'^', include('users.auth_urls')),
+    # url(r'^', include('users.auth_urls')),
     url(r'^', include('feedback.feedback_urls'))
 ]

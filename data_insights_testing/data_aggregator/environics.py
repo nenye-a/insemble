@@ -5,7 +5,6 @@ File for environics data processing.
 import pprint
 from utils import distance
 import pandas as pd
-import time
 
 # get demographics given lat and lng
 

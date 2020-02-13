@@ -1,6 +1,10 @@
-import geopy.distance
+
 import math
+import gzip
+import pandas as pd
+import geopy.distance
 from mongo_connect import Connect
+from data.api import anmspatial
 
 
 '''
@@ -17,9 +21,16 @@ EARTHS_RADIUS_MILES = 3958.8
 # Database connections
 DB_SPACE = Connect.get_connection().spaceData
 DB_REQUESTS = Connect.get_connection().requests
-DB_PROCESSED = DB_SPACE.spaces
+DB_AGGREGATE = DB_SPACE.aggregate_records
+DB_COLLECT = DB_SPACE.collect_records
+DB_ZIP_CODES = DB_SPACE.zip_codes
+DB_PROCESSED_SPACE = DB_SPACE.spaces
 DB_OLD_SPACES = DB_SPACE.dataset2
 DB_VECTORS = DB_SPACE.preprocessed_vectors
+DB_VECTORS_LA = DB_SPACE.LA_space_vectors
+DB_SPATIAL_CATS = DB_SPACE.spatial_categories
+DB_DEMOGRAPHIC_CATS = DB_SPACE.demographic_categories
+DB_FOURSQUARE = DB_SPACE.foursquare_categories
 
 
 # simple unique index of a pymongo database collection
@@ -38,8 +49,9 @@ def get_column_from_txt(file_name):
     items = [item[:-1] for item in items]
     return items
 
-
 # return the difference between two lists
+
+
 def list_diff(list1, list2):
     diff = list1.difference(list2)
     return ','.join(list(diff))
@@ -82,6 +94,97 @@ def miles_to_meters(miles):
     return miles*MILES_TO_METERS_FACTOR
 
 
+# retrieves csv from file_system. If no file_system specified,
+# assumes the file is locally hosted.
+def read_dataframe_csv(path, file_system=None, is_zipped=True):   
+    if file_system:   
+        f_open = lambda file_path: file_system.open(file_path, 'rb')
+    else:
+        f_open = lambda file_path: open(file_path, 'rb')
+    
+    with f_open(path) as f:
+        unzipped_file = gzip.GzipFile(fileobj=f) if is_zipped else f
+        dataframe = pd.read_csv(unzipped_file)
+        dataframe.pop("Unnamed: 0") if "Unnamed: 0" in dataframe else None
+        return dataframe
+
+
+def test_spaces_batched(file_name, query={}, new=True, batch_size=2000):
+    spaces = DB_PROCESSED_SPACE.find(query)
+    len_spaces = spaces.count()
+    items = []
+    count = 1
+    for space in spaces:
+        items.append((
+            space['name'],
+            space['geometry']['location']['lat'],
+            space['geometry']['location']['lng']
+        ))
+        if count % batch_size == 0:
+            items_df = pd.DataFrame(items)
+            items_df.to_csv(file_name.split(',')[0] + str(count) + '.csv')
+            items = []
+
+        count += 1
+        if count == len_spaces:
+            items_df = pd.DataFrame(items)
+            items_df.to_csv(file_name.split(',')[0] + str(count) + '.csv')
+            items = []
+
+
+def test_spaces(file_name, query={}):
+    spaces = DB_PROCESSED_SPACE.find(query)
+    len_spaces = spaces.count()
+    items = []
+    for space in spaces:
+        items.append((
+            space['name'],
+            space['geometry']['location']['lat'],
+            space['geometry']['location']['lng']
+        ))
+    items_df = pd.DataFrame(items)
+    items_df.to_csv(file_name.split(',')[0] + str(len_spaces) + '.csv')
+
+
+def test_old_spaces(file_name, query={}):
+    spaces = DB_OLD_SPACES.find(query)
+    len_spaces = spaces.count()
+    items = []
+    count = 1
+    for space in spaces:
+        items.append((
+            space['name'],
+            space['lat'],
+            space['lng']
+        ))
+        if count % 2000 == 0:
+            items_df = pd.DataFrame(items)
+            items_df.to_csv(file_name.split(',')[0] + str(count) + '.csv')
+            items = []
+        count += 1
+        if count == len_spaces:
+            items_df = pd.DataFrame(items)
+            items_df.to_csv(file_name.split(',')[0] + str(count) + '.csv')
+            items = []
+
+
+def observe_collector(file_name, run_name):
+    run_record = DB_COLLECT.find_one({'run_name': run_name})
+    items = []
+    for call in run_record['calls']:
+        items.insert(0, (call['lat'], call['lng']))
+    items_df = pd.DataFrame(items)
+    items_df.to_csv(file_name)
+
+
+# Translates value from one range to another
+def translate(value, left_min, left_max, right_min, right_max):
+
+    left_span = left_max - left_min
+    right_span = right_max - right_min
+    value_scaled = float(value - left_min) / float(left_span)
+    return right_min + (value_scaled * right_span)
+
 # Provided your current latitude, current longitude, a desired distance
 # can determine the latitude and longitude of a point at the distance
 # and in the direction provided. Direction provided in degrees. Distance
@@ -103,3 +206,81 @@ def location_at_distance(current_lat, current_lng, distance, degrees):
     next_lng = math.degrees(next_lng)
 
     return (next_lat, next_lng)
+
+
+# Provided a latitude, longitude, and radius, this function will return
+# all block groups that intersect the circle. This method will roughly
+# estimate block group interseciton recursively through reduced radius circles.
+# Currently method of choice opts to risk gaps in data due to block group
+# size. Radius is provided in miles
+# FIXME: This algorithm never congerges, and alternative method has been created
+def intersecting_block_groups(lat, lng, radius, state=None):
+
+    # Create function depending on state or not.
+    if state:
+        def get_block_group(
+            x, y): return anmspatial.point_to_block_group(x, y, state)
+    else:
+        def get_block_group(
+            x, y): return anmspatial.point_to_block_group(x, y)
+
+    # Current algorithm splits circle into 7 circles (6 circuling around a
+    # central circle of smaller radius). Algorithm, then recurses on each until
+    # blockgroup is found
+    bearings = [0, 60, 120, 180, 240, 300]
+    search_points = [location_at_distance(
+        lat, lng, radius, bearing) for bearing in bearings] + [(lat, lng)]
+
+    print(search_points)
+
+    block_groups = [get_block_group(point_lat, point_lng)
+                    for point_lat, point_lng in search_points]
+
+    if len(set(block_groups)) == 1:
+        # all block groups are the same, circle is fully within a block group
+        print("base case ret", list(set(block_groups)))
+        return list(set(block_groups))
+
+    sub_circle_distance = float(radius)*2/3
+    sub_circle_radius = float(radius)/3
+    sub_circle_points = [location_at_distance(
+        lat, lng, sub_circle_distance, bearing) for bearing in bearings] + [(lat, lng)]
+
+    unflat_block_groups = [intersecting_block_groups(
+        point_lat, point_lng, sub_circle_radius, state) for point_lat, point_lng in sub_circle_points]
+
+    ret = flatten(unflat_block_groups)
+    ret = list(set(ret))
+    print("ret", ret)
+    return ret
+
+
+if __name__ == "__main__":
+
+    def test_location_at_distance():
+        target_distance = 1.5
+        lat = 34.056186
+        lng = -118.276942
+        next_location = location_at_distance(lat, lng, target_distance, 90)
+        actual_distance = distance((lat, lng), next_location)
+        actual_bearing = bearing((lat, lng), next_location)
+
+        print(next_location)
+
+        print("Actual distance: {}".format(actual_distance))
+        print("Actual bearing: {}".format(actual_bearing))
+
+    def test_intersecting_block_groups():
+        lat = 34.056186
+        lng = -118.276942
+        print(intersecting_block_groups(lat, lng, .02275, 'CA'))
+
+    def test_get_sics():
+        filename = 'pitney_sics.txt'
+        sics = get_column_from_txt(filename)
+        print(sics)
+
+    def test_get_types():
+        filename = 'types.txt'
+        types = get_column_from_txt(filename)
+        print(types)
