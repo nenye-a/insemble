@@ -1,0 +1,368 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateEnum",
+      "enum": "Tier",
+      "values": [
+        "FREE",
+        "EXPLORE",
+        "SMART",
+        "PROFESSIONAL"
+      ]
+    },
+    {
+      "tag": "CreateEnum",
+      "enum": "NewLocationPlan",
+      "values": [
+        "YES",
+        "NOT_ACTIVE",
+        "NOT_PLANNING"
+      ]
+    },
+    {
+      "tag": "CreateEnum",
+      "enum": "SpaceType",
+      "values": [
+        "FREE_STANDING",
+        "SHOPPING_CENTRE",
+        "INLINE",
+        "URBAN"
+      ]
+    },
+    {
+      "tag": "CreateSource",
+      "source": "db"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Source",
+        "source": "db"
+      },
+      "argument": "provider",
+      "value": "\"postgresql\""
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Source",
+        "source": "db"
+      },
+      "argument": "url",
+      "value": "\"postgresql://prisma:prisma@localhost:5432/insemble?schema=public\""
+    },
+    {
+      "tag": "CreateModel",
+      "model": "Location"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Location",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Location",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "Location",
+      "field": "name",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Location",
+      "field": "lat",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Location",
+      "field": "lng",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateModel",
+      "model": "LocationAndPerformance"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LocationAndPerformance",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "LocationAndPerformance",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "LocationAndPerformance",
+      "field": "address",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LocationAndPerformance",
+      "field": "physicalSale",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LocationAndPerformance",
+      "field": "onlineSale",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LocationAndPerformance",
+      "field": "estimate",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateModel",
+      "model": "TenantUser"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantUser",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "TenantUser",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantUser",
+      "field": "email",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantUser",
+      "field": "password",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantUser",
+      "field": "firstName",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantUser",
+      "field": "lastName",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantUser",
+      "field": "company",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantUser",
+      "field": "title",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantUser",
+      "field": "description",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantUser",
+      "field": "brands",
+      "type": "Brand",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantUser",
+      "field": "Tier",
+      "type": "Tier",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateModel",
+      "model": "Brand"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Brand",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "name",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "categories",
+      "type": "String",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "userRelation",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "newLocationPlan",
+      "type": "NewLocationPlan",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "locations",
+      "type": "Location",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "locationCount",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "minAge",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "maxAge",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "minIncome",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "maxIncome",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "personaIds",
+      "type": "String",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "minSize",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "maxSize",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "equipmentIds",
+      "type": "String",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "spaceType",
+      "type": "SpaceType",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "locationAndPerformance",
+      "type": "LocationAndPerformance",
+      "arity": "List"
+    }
+  ]
+}

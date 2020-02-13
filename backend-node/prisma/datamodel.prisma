@@ -1,7 +1,0 @@
-type Feedback @db(name: "feedback_feedback") {
-   id: ID! @id
-   user: String!
-   content: String
-   type: String!
-   timeStamp: DateTime! @db(name: "time_stamp")
-}
