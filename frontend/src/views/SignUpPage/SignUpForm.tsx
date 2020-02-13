@@ -1,25 +1,44 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useForm, FieldError } from 'react-hook-form';
+import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useMutation } from '@apollo/react-hooks';
+import { useHistory } from 'react-router-dom';
 
 import { View, TextInput, Form, Button } from '../../core-ui';
 import { validateEmail } from '../../utils/validation';
 import { WHITE } from '../../constants/colors';
+import { SIGN_UP } from '../../graphql/queries/server/auth';
+import { SignUpVariables, SignUp } from '../../generated/server/SignUp';
 
 type Props = {
   role: 'Tenant' | 'Landlord'; //change to constants
 };
 
-export default function SignUpForm(props: Props) {
+export default function SignUpForm(_props: Props) {
   let { register, handleSubmit, errors, watch } = useForm();
-  // let [signUp, { data }] = useMutation(SIGN_UP);
-
+  let history = useHistory();
+  let [signUp, { data, loading }] = useMutation<SignUp, SignUpVariables>(SIGN_UP);
   let inputContainerStyle = { marginTop: 12 };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onSubmit = (_values: any) => {
-    // console.log(values, 'TEST');
+
+  let onSubmit = (data: FieldValues) => {
+    let { email, firstName, lastName, company, password } = data;
+    signUp({
+      variables: {
+        tenant: {
+          email,
+          firstName,
+          lastName,
+          company,
+          password,
+        },
+      },
+    });
   };
+  if (data) {
+    // TODO: save user login
+    history.push('/map');
+  }
+  // TODO: handle if error
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -98,7 +117,7 @@ export default function SignUpForm(props: Props) {
           errorMessage={(errors?.confirmPassword as FieldError)?.message || ''}
           containerStyle={inputContainerStyle}
         />
-        <SubmitButton text="Create and Submit" type="submit" />
+        <SubmitButton text="Create and Submit" type="submit" loading={loading} />
       </FormContent>
     </Form>
   );

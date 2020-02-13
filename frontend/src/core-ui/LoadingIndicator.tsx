@@ -5,11 +5,16 @@ import loadingPurple from '../assets/images/loading-purple.gif';
 
 type Props = {
   color: 'purple' | 'white';
+  visible?: boolean;
 };
 
 export default function LoadingIndicator(props: Props) {
-  let { color } = props;
-  return <Icon src={color === 'white' ? loadingWhite : loadingPurple} />;
+  let { color, visible = true } = props;
+
+  if (visible) {
+    return <Icon src={color === 'white' ? loadingWhite : loadingPurple} />;
+  }
+  return null;
 }
 
 const Icon = styled.img`
