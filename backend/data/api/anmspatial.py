@@ -1,6 +1,6 @@
 from decouple import config
-import data.utils as utils
-import safe_request
+import utils
+from . import safe_request
 
 
 '''

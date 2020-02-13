@@ -1,4 +1,4 @@
-import data.utils as utils
+import utils
 import requests
 import time
 

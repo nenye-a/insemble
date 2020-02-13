@@ -1,8 +1,6 @@
 import sentry_sdk
 
 import os
-from decouple import Csv, config
-from dj_database_url import parse as db_url
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from .base import *  # noqa
@@ -15,12 +13,16 @@ DEBUG = False
 SECRET_KEY = os.environ['SECRET_KEY']
 
 GOOG_KEY = os.environ['GOOG_KEY']
-YELP_KEY= os.environ['YELP_KEY']
+YELP_KEY = os.environ['YELP_KEY']
 FRSQ_ID = os.environ['FRSQ_ID']
 FRSQ_SECRET = os.environ['FRSQ_SECRET']
 CRIME_KEY = os.environ['CRIME_KEY']
+
 MONGO_USER = os.environ['MONGO_USER']
 MONGO_DB_PASS = os.environ["MONGO_DB_PASS"]
+AWS_ACCESS_KEY_ID = os.environ["AWS_SECRET_KEY_ID"]
+AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
+
 
 DATABASES = {
     'default': {
