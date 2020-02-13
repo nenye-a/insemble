@@ -64,12 +64,13 @@ model Brand {
   // Note: All field can be empty because some case
   // Brand description
   name                   String
+  location               Location                 @relation(name: "currentLocation")
   categories             String[]
   // Also for filter and description
   userRelation           String
   // Goal of this brand
   newLocationPlan        NewLocationPlan
-  locations              Location[]
+  nextLocations          Location[]               @relation(name: "nextLocation")
   locationCount          Int
   // Filter params for heatmap
   minAge                 Int
