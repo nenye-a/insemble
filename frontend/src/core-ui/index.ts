@@ -11,6 +11,7 @@ export { default as Dropdown } from './Dropdown';
 export { default as Form } from './Form';
 export { default as FragmentedProgressBar } from './FragmentedProgressBar';
 export { default as Label } from './Label';
+export { default as LoadingIndicator } from './LoadingIndicator';
 export { default as Modal } from './Modal';
 export { default as MultiSelectInput } from './MultiSelectInput';
 export { default as MultiSelectLocation } from './MultiSelectLocation';
