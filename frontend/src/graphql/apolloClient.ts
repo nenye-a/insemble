@@ -5,6 +5,8 @@ import { HttpLink } from 'apollo-link-http';
 import { onError } from 'apollo-link-error';
 import { ApolloLink } from 'apollo-link';
 import { API_URI } from '../constants/uris';
+import { defaultState } from './localState';
+import { loginSuccess } from './resolvers';
 
 const cache = new InMemoryCache();
 
@@ -14,10 +16,12 @@ const errorLink = onError((_) => {
 
 //local state management
 const stateLink = withClientState({
-  defaults: {
-    // default state
+  defaults: defaultState,
+  resolvers: {
+    Mutation: {
+      loginSuccess,
+    },
   },
-  resolvers: {},
   cache,
 });
 

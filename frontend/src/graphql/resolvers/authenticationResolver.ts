@@ -1,0 +1,28 @@
+import { ApolloCache } from 'apollo-cache';
+import { asyncStorage } from '../../utils';
+import { UserContent } from '../localState';
+
+export let loginSuccess = async (
+  _obj: ObjectKey,
+  props: UserContent,
+  { cache }: { cache: ApolloCache<any> }
+) => {
+  let { token, firstName, lastName, avatar, company, email, tier, role } = props;
+  let data = {
+    userState: {
+      __typename: 'UserState',
+      token,
+      email,
+      firstName,
+      lastName,
+      avatar,
+      company,
+      tier,
+      role,
+    },
+  };
+  await asyncStorage.saveTenantToken(token);
+  await asyncStorage.saveRole(role);
+  cache.writeData({ data });
+  return null;
+};

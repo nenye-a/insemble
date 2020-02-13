@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
-export const SIGN_UP = gql`
-  mutation SignUp(
+export const REGISTER_TENANT = gql`
+  mutation RegisterTenant(
     $tenant: TenantRegisterInput!
     $business: BusinessRegisterInput
     $filter: FilterInput
@@ -18,5 +18,29 @@ export const SIGN_UP = gql`
         tier
       }
     }
+  }
+`;
+
+export const SAVE_TENANT_LOGIN = gql`
+  mutation loginSuccess(
+    $token: String!
+    $email: String!
+    $firstName: String!
+    $lastName: String!
+    $avatar: String
+    $company: String
+    $tier: String!
+    $role: String!
+  ) {
+    loginSuccess(
+      token: $token
+      email: $email
+      firstName: $firstName
+      lastName: $lastName
+      avatar: $avatar
+      company: $company
+      tier: $tier
+      role: $role
+    ) @client
   }
 `;

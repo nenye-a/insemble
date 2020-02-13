@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 import { View, TextInput, Form, Button } from '../../core-ui';
 import { validateEmail } from '../../utils/validation';
 import { WHITE } from '../../constants/colors';
-import { SIGN_UP } from '../../graphql/queries/server/auth';
+import { REGISTER_TENANT } from '../../graphql/queries/server/auth';
 import { SignUpVariables, SignUp } from '../../generated/server/SignUp';
 
 type Props = {
@@ -17,12 +17,12 @@ type Props = {
 export default function SignUpForm(_props: Props) {
   let { register, handleSubmit, errors, watch } = useForm();
   let history = useHistory();
-  let [signUp, { data, loading }] = useMutation<SignUp, SignUpVariables>(SIGN_UP);
+  let [registerTenant, { data, loading }] = useMutation<SignUp, SignUpVariables>(REGISTER_TENANT);
   let inputContainerStyle = { marginTop: 12 };
 
   let onSubmit = (data: FieldValues) => {
     let { email, firstName, lastName, company, password } = data;
-    signUp({
+    registerTenant({
       variables: {
         tenant: {
           email,

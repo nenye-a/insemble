@@ -1,0 +1,1 @@
+export { loginSuccess } from './authenticationResolver';
