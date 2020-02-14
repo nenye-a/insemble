@@ -10,9 +10,10 @@ export let registerTenant = mutationField('registerTenant', {
   },
   resolve: async (_, { tenant }, context: Context) => {
     let password = bcrypt.hashSync(tenant.password, 10);
+    let lowerCasedEmail = tenant.email.toLocaleLowerCase();
     let exist = await context.prisma.tenantUser.findMany({
       where: {
-        email: tenant.email,
+        email: lowerCasedEmail,
       },
     });
     if (exist) {
@@ -21,6 +22,7 @@ export let registerTenant = mutationField('registerTenant', {
     let createdTenant = await context.prisma.tenantUser.create({
       data: {
         ...tenant,
+        email: lowerCasedEmail,
         password,
         tier: 'FREE',
       },
