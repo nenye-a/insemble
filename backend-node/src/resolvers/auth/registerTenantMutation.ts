@@ -1,6 +1,7 @@
 import { mutationField, arg } from 'nexus';
 import { Context } from 'serverTypes';
 import bcrypt from 'bcrypt';
+import { createTenantSession } from '../../helpers/auth';
 
 export let registerTenant = mutationField('registerTenant', {
   type: 'TenantAuth',
@@ -25,7 +26,7 @@ export let registerTenant = mutationField('registerTenant', {
       },
     });
     return {
-      token: 'put token here',
+      token: createTenantSession(createdTenant),
       tenant: createdTenant,
     };
   },
