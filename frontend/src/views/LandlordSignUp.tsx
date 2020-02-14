@@ -15,7 +15,7 @@ export default function LandlordSignUp() {
   let history = useHistory();
   let [email, setEmail] = useState('');
   let [firstName, setFirstName] = useState('');
-  let [lastName, setlLastName] = useState('');
+  let [lastName, setLastName] = useState('');
   let [company, setCompany] = useState('');
   let [password, setPassword] = useState('');
   let [confirm, setConfirm] = useState('');
@@ -58,7 +58,7 @@ export default function LandlordSignUp() {
               placeholder="Your Last Name"
               containerStyle={flexNone}
               value={lastName}
-              onChange={(event) => setlLastName(event.target.value)}
+              onChange={(event) => setLastName(event.target.value)}
             />
           </View>
         </SignUpRowView>
