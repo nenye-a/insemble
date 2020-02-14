@@ -19,7 +19,9 @@ export default function OnBoardingSignUp() {
         titleProps={{ style: { fontSize: FONT_SIZE_MEDIUM, fontWeight: FONT_WEIGHT_NORMAL } }}
         titleBackground="purple"
       >
-        <SignUpForm role="Tenant" />
+        <FormContainer>
+          <SignUpForm role="Tenant" />
+        </FormContainer>
       </Card>
       <RowView style={{ marginTop: 16 }}>
         <Text>Already have an account? </Text>
@@ -34,6 +36,10 @@ export default function OnBoardingSignUp() {
     </Container>
   );
 }
+
+const FormContainer = styled(View)`
+  padding: 10px 50px 0 50px;
+`;
 
 const RowView = styled(View)`
   flex-direction: row;

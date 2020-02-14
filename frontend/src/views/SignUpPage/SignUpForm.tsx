@@ -26,7 +26,7 @@ export default function SignUpForm(_props: Props) {
   let [registerTenant, { data, loading }] = useMutation<RegisterTenant, RegisterTenantVariables>(
     REGISTER_TENANT
   );
-  let inputContainerStyle = { marginTop: 12 };
+  let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
 
   let onSubmit = (data: FieldValues) => {
     let { email, firstName, lastName, company, password } = data;
@@ -142,7 +142,6 @@ export default function SignUpForm(_props: Props) {
 
 const FormContent = styled(View)`
   background-color: ${WHITE};
-  padding: 10px 50px 0 50px;
 `;
 
 const RowedView = styled(View)`

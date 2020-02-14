@@ -44,7 +44,7 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) =>
 
   let id = providedID || fallbackID;
   return (
-    <Container flex style={containerStyle}>
+    <View flex style={containerStyle}>
       {label && <LabelWrapper id={id} text={label} />}
       <InputBox
         id={id}
@@ -59,13 +59,10 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) =>
         {...otherProps}
       />
       {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-    </Container>
+    </View>
   );
 });
 
-const Container = styled(View)`
-  height: 76px;
-`;
 const LabelWrapper = styled(Label)`
   padding-bottom: 8px;
 `;
@@ -91,5 +88,5 @@ const InputBox = styled.input`
 const ErrorMessage = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
   color: ${RED_TEXT};
-  margin-top: 8px;
+  margin-top: 6px;
 `;
