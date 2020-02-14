@@ -61,11 +61,11 @@ export default function AvailableProperties(props: Props) {
 const Container = styled(View)<ContainerProps>`
   width: 350px;
   position: absolute;
-  right: ${(props) => (props.visible ? '0px' : '-350px')};
+  right: 0px;
   background-color: white;
   padding: 8px;
-  transition: all 500ms linear;
-  overflow-y: scroll;
+  transition: transform 500ms linear;
+  transform: translateX(${(props) => (props.visible ? '0px' : '350px')});
   height: 100%;
 `;
 
