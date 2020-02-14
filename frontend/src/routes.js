@@ -28,6 +28,7 @@ import Messages from './views/Messages';
 import MessageDetail from './views/MessageDetail';
 import BrandDetail from './views/BrandDetail';
 import SignUp from './views/SignUp';
+import LandlordOnboarding from './views/LandlordOnboarding';
 import LandlordSignUp from './views/LandlordSignUp';
 import LandlordLogin from './views/LanlordLogin';
 
@@ -101,6 +102,12 @@ export default [
     path: '/verify/:placeID',
     layout: BasicLayout,
     component: Onboarding,
+  },
+  {
+    path: '/landlord/verify',
+    exact: true,
+    layout: BasicLayout,
+    component: LandlordOnboarding,
   },
   {
     path: '/register',

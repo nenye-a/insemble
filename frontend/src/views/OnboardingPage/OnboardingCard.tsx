@@ -8,7 +8,7 @@ type Props = {
   title: string;
   children: ReactNode;
   progress: number;
-  buttons?: Array<Button>;
+  buttons: Array<Button>;
 };
 
 type Button = {
@@ -26,7 +26,7 @@ export default function OnboardingCard(props: Props) {
     >
       <ProgressBar progress={progress} />
       <View flex>{children}</View>
-      {buttons && buttons.length > 0 && (
+      {buttons.length > 1 ? (
         <Footer>
           {buttons.map(({ onPress, text }, index) => {
             return index === 0 ? (
@@ -35,6 +35,10 @@ export default function OnboardingCard(props: Props) {
               <Button key={index} text={text} onPress={onPress} />
             );
           })}
+        </Footer>
+      ) : (
+        <Footer>
+          <Button text={buttons[0].text} onPress={buttons[0].onPress} />
         </Footer>
       )}
     </Container>
