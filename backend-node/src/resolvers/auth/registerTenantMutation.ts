@@ -16,7 +16,7 @@ export let registerTenant = mutationField('registerTenant', {
         email: lowerCasedEmail,
       },
     });
-    if (exist) {
+    if (exist.length) {
       throw new Error('user already exist');
     }
     let createdTenant = await context.prisma.tenantUser.create({
