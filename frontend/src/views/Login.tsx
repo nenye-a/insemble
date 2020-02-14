@@ -6,16 +6,7 @@ import { Card, Text, View, Button } from '../core-ui';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
 import LoginForm from './LoginForm';
 
-enum Role {
-  Tenant = 'Tenant',
-  Landlord = 'Landlord',
-}
-
-type Props = {
-  role: 'Tenant' | 'Landlord'; //change to constants
-};
-
-export default function Login(_props: Props) {
+export default function Login() {
   let history = useHistory();
   let noAccount = "Don't have an account?";
 
