@@ -1,19 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
 
-import { TextInput, View, RadioGroup, Text, Label, Button, ClickAway } from '../../core-ui';
+import { TextInput, View, RadioGroup, Text, Label, Button, ClickAway, Form } from '../../core-ui';
 import { Filter } from '../../components';
 import { session } from '../../utils/storage';
 import urlEncode from '../../utils/urlEncode';
 import { useSelector } from '../../redux/helpers';
-import { BUTTON_TRANSPARENT_TEXT_COLOR } from '../../constants/colors';
+import { BUTTON_TRANSPARENT_TEXT_COLOR, RED_TEXT } from '../../constants/colors';
 import { MAPS_IFRAME_URL_SEARCH, MAPS_IFRAME_URL_PLACE } from '../../constants/googleMaps';
 import { FONT_SIZE_SMALL } from '../../constants/theme';
+import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
+import { OnboardingContext } from '../Onboarding';
 
 export default function ConfirmBusinessDetail() {
+  let { data: categoriesData } = useQuery(GET_CATEGORIES);
   let [selectedBusinessRelation, setBussinesRelation] = useState('');
   let [categorySelectionVisible, toggleCategorySelection] = useState(false);
+  let [selectedCategories, setSelectedCategories] = useState<Array<string>>([]);
+  let contextValue = useContext(OnboardingContext);
+  let { values, onValuesChange } = contextValue;
   let { placeID } = useParams();
   let fallbackAddress = useSelector((state) =>
     state.space.location && typeof state.space.location.address === 'string'
@@ -40,7 +47,7 @@ export default function ConfirmBusinessDetail() {
     : MAPS_IFRAME_URL_SEARCH + '&q=' + urlEncode(name + ', ' + address);
 
   return (
-    <>
+    <Form>
       <Iframe src={mapURL} />
       <FormContainer>
         <TextInput label="Business Name" defaultValue={name} disabled />
@@ -53,15 +60,20 @@ export default function ConfirmBusinessDetail() {
         </RowedView>
         <ClickAway onClickAway={() => toggleCategorySelection(false)}>
           {/* TODO: fetch categories */}
-          <FilterContainer
-            search
-            visible={categorySelectionVisible}
-            selectedOptions={[]}
-            allOptions={[]}
-            onSelect={() => {}}
-            onUnSelect={() => {}}
-          />
+          {categoriesData && (
+            <FilterContainer
+              search
+              visible={categorySelectionVisible}
+              selectedOptions={[]}
+              allOptions={categoriesData.categories}
+              onSelect={(category) => {
+                setSelectedCategory([...selected]);
+              }}
+              onUnSelect={() => {}}
+            />
+          )}
         </ClickAway>
+        {selectedCategories.length === 0 && <ErrorText>Please Select Categories</ErrorText>}
         <Label text="What is your relationship to this business?" />
         <RadioGroup
           name="business-relationship"
@@ -79,7 +91,7 @@ export default function ConfirmBusinessDetail() {
         />
         <OtherTextInput placeholder="Landlord" />
       </FormContainer>
-    </>
+    </Form>
   );
 }
 
@@ -117,4 +129,9 @@ const EditButton = styled(Button)`
 const OtherTextInput = styled(TextInput)`
   margin: 9px 24px;
   width: 130px;
+`;
+
+const ErrorText = styled(Text)`
+  font-size: ${FONT_SIZE_SMALL};
+  color: ${RED_TEXT};
 `;
