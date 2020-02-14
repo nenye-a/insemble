@@ -1,6 +1,7 @@
 import { mutationField, arg } from 'nexus';
-import { Context } from 'serverTypes';
 import bcrypt from 'bcrypt';
+
+import { Context } from 'serverTypes';
 import { createTenantSession } from '../../helpers/auth';
 
 export let registerTenant = mutationField('registerTenant', {
