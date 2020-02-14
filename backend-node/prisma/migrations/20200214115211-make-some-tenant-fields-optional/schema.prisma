@@ -1,7 +1,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://prisma:prisma@localhost:5432/insemble?schema=public"
+  url = "***"
 }
 
 
@@ -47,7 +47,7 @@ model LocationAndPerformance {
 
 model TenantUser {
   id          String  @id @default(cuid())
-  email       String  @unique
+  email       String
   avatar      String?
   password    String
   firstName   String

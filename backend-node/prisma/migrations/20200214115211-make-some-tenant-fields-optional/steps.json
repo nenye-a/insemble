@@ -1,0 +1,23 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "UpdateField",
+      "model": "TenantUser",
+      "field": "title",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "TenantUser",
+      "field": "description",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "TenantUser",
+      "field": "avatar",
+      "arity": "Optional"
+    }
+  ]
+}
