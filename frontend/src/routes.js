@@ -29,6 +29,8 @@ import MessageDetail from './views/MessageDetail';
 import BrandDetail from './views/BrandDetail';
 import SignUp from './views/SignUp';
 import LandlordOnboarding from './views/LandlordOnboarding';
+import LandlordSignUp from './views/LandlordSignUp';
+import LandlordLogin from './views/LanlordLogin';
 
 export default [
   {
@@ -37,6 +39,18 @@ export default [
     layout: BlankLayout,
     // component: () => <Redirect to="/start" />
     component: Landing,
+  },
+  {
+    path: '/landlord/signup',
+    exact: true,
+    layout: BlankLayout,
+    component: LandlordSignUp,
+  },
+  {
+    path: '/landlord/login',
+    exact: true,
+    layout: BlankLayout,
+    component: LandlordLogin,
   },
   {
     path: '/spaces',
@@ -155,12 +169,25 @@ export default [
     component: TenantSearchHistory,
     exact: true,
   }, // TODO: change tenant matches to brand
-  { path: '/user/tenant-matches/:brandID', layout: UserProfileLayout, component: BrandDetail },
-  { path: '/user/messages', layout: UserProfileLayout, component: Messages, exact: true },
+  {
+    path: '/user/tenant-matches/:brandID',
+    layout: UserProfileLayout,
+    component: BrandDetail,
+  },
+  {
+    path: '/user/messages',
+    layout: UserProfileLayout,
+    component: Messages,
+    exact: true,
+  },
   {
     path: '/user/messages/:messageID',
     layout: UserProfileLayout,
     component: MessageDetail,
   },
-  { path: '/user/saved-properties', layout: UserProfileLayout, component: TenantSavedProperties },
+  {
+    path: '/user/saved-properties',
+    layout: UserProfileLayout,
+    component: TenantSavedProperties,
+  },
 ];

@@ -3,13 +3,12 @@ from rest_framework import serializers
 '''
 
 This file contains all the serializers that will be used to validate the data received from any requests.
-These serializers are primarily utilized by the "api.py" file which fields requests.
+These serializers are primarily utilized by the "tenant_api.py" file which fields requests.
 
 '''
 
+
 # Tenant Match Serializer
-
-
 class TenantMatchSerializer(serializers.Serializer):
 
     """
@@ -57,14 +56,18 @@ class TenantMatchSerializer(serializers.Serializer):
 
         error_message = {}
         if not ((has_address and has_brand_name) or (has_categories and has_income)):
-            error_message['status_detail'] = ["Please provide either (address and brand_name) or (categories and income)"]
+            error_message['status_detail'] = [
+                "Please provide either (address and brand_name) or (categories and income)"]
         if has_income and 'min' not in data['income']:
-            error_message['status_detail'] = error_message.get('status_detail', []) + ['min must be provided if income provided']
+            error_message['status_detail'] = error_message.get(
+                'status_detail', []) + ['min must be provided if income provided']
         if has_age and 'min' not in data['age']:
-            error_message['status_detail'] = error_message.get('status_detail', []) + ['min must be provided if age provided']
+            error_message['status_detail'] = error_message.get(
+                'status_detail', []) + ['min must be provided if age provided']
         if has_rent and 'min' not in data['rent']:
-            error_message['status_detail'] = error_message.get('status_detail', []) + ['min must be provided if rent provided']
-        
+            error_message['status_detail'] = error_message.get(
+                'status_detail', []) + ['min must be provided if rent provided']
+
         if len(error_message) > 0:
             error_message['status'] = 400
             raise serializers.ValidationError(error_message)
