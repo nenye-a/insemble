@@ -22,14 +22,6 @@ enum NewLocationPlan {
   NOT_PLANNING
 }
 
-enum SpaceType {
-  FREE_STANDING
-  SHOPPING_CENTRE
-  INLINE
-  URBAN
-}
-
-
 model Location {
   id   String @id @default(cuid())
   name String
@@ -77,10 +69,12 @@ model Brand {
   maxAge                 Int
   minIncome              Int
   maxIncome              Int
-  personaIds             String[]
+  personas               String[]
+  education              String[]
+  commute                String[]
   minSize                Int
   maxSize                Int
   equipmentIds           String[]
-  spaceType              SpaceType[]
+  spaceType              String[]
   locationAndPerformance LocationAndPerformance[]
 }
