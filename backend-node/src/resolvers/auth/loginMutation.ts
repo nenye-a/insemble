@@ -1,26 +1,30 @@
 import { Root, Context } from 'serverTypes';
+import { mutationField, stringArg } from 'nexus';
 
-async function loginTenant(
+let loginTenant = mutationField('loginTenant', {
+  type: 'TenantAuth',
+  args: {
+    email: stringArg({ required: true }),
+    password: stringArg({ required: true }),
+  },
+  resolve: (
     _: Root,
     { email, password }: { email: string; password: string },
     _context: Context,
-) {
-    if (password) {
-        return {
-            tenant: {
-                id: '1',
-                email,
-                firstName: 'Sams',
-                lastName: 'Udin',
-                company: 'Mock Fried Chicken',
-                tier: 'Free',
-                role: 'Tenant',
-                avatar: '',
-            },
-            token: 's3cr3t-t0ken_here',
-        };
-    }
-    return null;
-}
+  ) => {
+    return {
+      tenant: {
+        id: '1',
+        email,
+        firstName: 'Sams',
+        lastName: 'Udin',
+        company: 'Mock Fried Chicken',
+        tier: 'FREE',
+        avatar: '',
+      },
+      token: 's3cr3t-t0ken_here',
+    };
+  },
+});
 
 export { loginTenant };
