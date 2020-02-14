@@ -92,7 +92,7 @@ class TenantMatchAPI(generics.GenericAPIView):
         status_detail: string or list,      (always provided)
         matching_locations: [               (not provided if error occurs)
             {                               (all fields provided if matching locations provided)
-                lat: float,                     
+                lat: float,
                 lng: float,
                 match_score: float,
             },
@@ -176,7 +176,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
         status: int (HTTP),                     (always provided)
         status_detail: string,                  (always provided)
         result: {                               (not provided if error occurs)
-            match_value: float,                
+            match_value: float,
             affinities: {
                 growth: boolean,
                 personas: boolean,
@@ -228,7 +228,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
                     }
                 },
                 income: {
-                    <$50K: { 
+                    <$50K: {
                         my_location: float,                                 (only provided if address is provided)
                         target_location: float,
                         growth: float
@@ -260,7 +260,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
                     some_college: { ... same as above },
                     associate: { ... same as above },
                     bachelor: { ... same as above },
-                    masters: { ... same as above }, 
+                    masters: { ... same as above },
                     professional: { ... same as above },
                     doctorate: { ... same as above }
                 },
@@ -284,7 +284,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
                     distance: float,
                     restaurant: boolean,                                    (only provided if True)
                     retail: boolean,                                        (only provided if True)
-                    similar: boolean                                        
+                    similar: boolean
                 },
                 ... many more
             ],
@@ -300,16 +300,22 @@ class LocationDetailsAPI(generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
 
+        # register all celery tasks
+        self._register_tasks()
+
         # ensure that the data is received correctly
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
 
         # TODO: KO acquisition of details for my location
-        my_location = {}
         if 'address' in validated_params['my_location']:
-            # TODO: get the information for this address
-            pass
+
+            # my_location = [self._get_location_details(validated_params['my_location'])]
+            # get location match details asynchronously
+            l_process, my_location = self._get_location_details.delay(validated_params['my_location']), []
+            my_location_listener = self._celery_listener(l_process, my_location)
+            my_location_listener.start()
         else:
             # TODO: get the information for the categories
             pass
@@ -324,21 +330,23 @@ class LocationDetailsAPI(generics.GenericAPIView):
             lat = validated_params['target_location']['lat']
             lng = validated_params['target_location']['lng']
 
+            # target_location = [self._get_location_details(validated_params["target_location"], False)]
+            # get location match details asynchronously
+            l_process, target_location = self._get_location_details.delay(validated_params["target_location"], False), []
+            target_location_listener = self._celery_listener(l_process, target_location)
+            target_location_listener.start()
+
             # obtain key facts asynchronously
-            celery_app.register_task(self._get_match_details)
             kf_process, key_facts = self._get_key_facts.delay(lat, lng), []
             key_facts_listener = self._celery_listener(kf_process, key_facts)
             key_facts_listener.start()
 
             # obtain the demographic details asynchronously
-            celery_app.register_task(self._get_demographics)
             d_process, target_demo1 = self._get_demographics.delay(lat, lng, 1), []
             target_demo1_listener = self._celery_listener(d_process, target_demo1)
             target_demo1_listener.start()
 
-            # target_nearby = [self._get_nearby(lat, lng, validated_params['my_location']['categories'])]
             # obtain the nearby details asynchronously
-            celery_app.register_task(self._get_nearby)
             # n_process, target_nearby = self._get_nearby.delay(lat, lng, validated_params['my_location']['categories']), []
             n_process, target_nearby = self._get_nearby.delay(lat, lng, validated_params['my_location']['categories']), []
             target_nearby_listener = self._celery_listener(n_process, target_nearby)
@@ -349,6 +357,8 @@ class LocationDetailsAPI(generics.GenericAPIView):
         key_facts_listener.join()  # need to account for non definition of the listeners
         target_demo1_listener.join()  # need to acount for non declaration of the listener
         target_nearby_listener.join()
+        my_location_listener.join()
+        target_location_listener.join()
 
         # TODO: process demographics
 
@@ -357,7 +367,9 @@ class LocationDetailsAPI(generics.GenericAPIView):
             'status_detail': 'Success',
             'key_facts': key_facts[0],
             # 'demo': target_demo1[0],
-            'target_nearby': target_nearby[0]
+            'target_nearby': target_nearby[0],
+            'my_location': my_location[0]['HouseholdGrowth2017-2022-1'],
+            'target_location': target_location[0]['HouseholdGrowth2017-2022-1']
         }
 
         return Response(response, status=status.HTTP_200_OK)
@@ -376,11 +388,24 @@ class LocationDetailsAPI(generics.GenericAPIView):
 
         return threading.Thread(target=listen, args=(celery_process, result_pool,))
 
+    # location assumed to be the same structure as "my_location", and target_location assumed to be the
+    # same structure as "target_location"
     @staticmethod
     @celery_app.task
-    def _get_match_details(self, location, target_location):
+    def _get_match_details(location, target_location):
+
         # TODO: get the match details for two locations
         pass
+
+    # location expected to either have address & brand_name, otherwise it's assumed to have a latitude
+    # longitude pair
+    @staticmethod
+    @celery_app.task
+    def _get_location_details(location, has_address_and_brand_name=True):
+        if has_address_and_brand_name:
+            return dict(matching.generate_vector_address(location["address"], location["brand_name"]).iloc[0])
+        else:
+            return dict(matching.generate_vector_location(location["lat"], location["lng"]).iloc[0])
 
     @staticmethod
     @celery_app.task
@@ -402,3 +427,11 @@ class LocationDetailsAPI(generics.GenericAPIView):
     @celery_app.task
     def _get_nearby(lat, lng, categories):
         return provider.get_nearby(lat, lng, categories)
+
+    def _register_tasks(self) -> None:
+        celery_app.register_task(self._get_nearby)
+        celery_app.register_task(self._get_demographics)
+        celery_app.register_task(self._get_match_details)
+        celery_app.register_task(self._get_location_details)
+        celery_app.register_task(self._get_personas)
+        celery_app.register_task(self._get_key_facts)

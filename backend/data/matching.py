@@ -286,18 +286,26 @@ def generate_matches(location_address, name=None, my_place_type={}):
     return best[['lat', 'lng', 'match', 'loc_id']].to_json(orient='records')
 
 
+def generate_vector_address(address, name):
+    return _generate_location_vector(address, name)
+
+
+def generate_vector_location(lat, lng):
+    return _generate_location_vector(None, lat=lat, lng=lng)
+
+
 # Given an address, generates a vector of a location that can be used
 # to compare against vectors stored in mongodb.
-def _generate_location_vector(address, name=None):
+def _generate_location_vector(address, name=None, lat=None, lng=None):
 
     # get latitude and longitude from the address.
-    if name:
-        location = google.find(address, name=name, allow_non_establishments=True)
-    else:
-        location = google.find(address, allow_non_establishments=True)
-
-    lat = location["geometry"]["location"]["lat"]
-    lng = location["geometry"]["location"]["lng"]
+    if not (lat and lng):
+        if name:
+            location = google.find(address, name=name, allow_non_establishments=True)
+        else:
+            location = google.find(address, allow_non_establishments=True)
+        lat = location["geometry"]["location"]["lat"]
+        lng = location["geometry"]["location"]["lng"]
 
     # get data (1 mile)
     psycho_dict = spatial.get_psychographics(
