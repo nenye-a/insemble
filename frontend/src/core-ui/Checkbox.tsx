@@ -2,18 +2,21 @@ import React, { ComponentProps, useState, CSSProperties } from 'react';
 import styled, { css } from 'styled-components';
 import View from './View';
 import Label from './Label';
+import Text from './Text';
 import SvgCheck from '../components/icons/check';
 import { THEME_COLOR, SECONDARY_CHECKBOX, WHITE, TEXT_COLOR } from '../constants/colors';
 import { FONT_SIZE_SMALL } from '../constants/theme';
 import useID from '../utils/useID';
 
 type ViewProps = ComponentProps<typeof View>;
+type TextProps = ComponentProps<typeof Text>;
 
 type CheckboxProps = ViewProps & {
   type?: 'primary' | 'secondary';
   isChecked: boolean;
   onPress: () => void;
   title?: string;
+  titleProps?: TextProps;
   size?: string;
   iconContainerStyle?: CSSProperties;
 };
@@ -96,6 +99,7 @@ export default function Checkbox(props: CheckboxProps) {
     onPress,
     type = 'primary',
     title,
+    titleProps,
     size = SIZE,
     iconContainerStyle,
     ...otherProps
@@ -116,7 +120,7 @@ export default function Checkbox(props: CheckboxProps) {
           onBlur={() => setFocus(false)}
         />
       </Container>
-      <LabelText text={title} id={id} />
+      <LabelText text={title} id={id} {...titleProps} />
     </RowedView>
   );
 }
