@@ -159,7 +159,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
         my_location: {                          (required)
             address: string,                    (required -> not required if categories are provided)
             brand_name: string,                 (required -> not required if categories are provided)
-            categories: list[string],           (required -> not required if brand_name and address provided)
+            categories: list[string],           (required)
             income: {                           (required -> not required if brand_name and address provided)
                 min: int,                       (required if income provided)
                 max: int,
@@ -193,7 +193,15 @@ class LocationDetailsAPI(generics.GenericAPIView):
                 num_universities: int,                (will never exceed 60)
                 num_hospitals: int,                   (will never exceed 60)
                 num_apartments: int                   (will never exceed 60)
-            }
+            },
+            commute: {
+                Public Transport: int,
+                Bicycle: int,
+                Carpooled: int,
+                Drove Alone: int,
+                Walked: int,
+                Worked at Home: int
+            },
             top_personas: [
                 {
                     percentile: float,
@@ -265,30 +273,21 @@ class LocationDetailsAPI(generics.GenericAPIView):
                     female: { ... same as above }
                 }
             },
-            nearby: {
-                relevant_locations: [
-                    {
-                        name: string,
-                        rating: float,
-                        number_rating: float,
-                        distance: float,
-                        lat: float,
-                        lng: float
-                    },
-                    ... many more
-                ],
-                similar_locations: [
-                    {
-                        name: string,
-                        rating: float,
-                        number_rating: float,
-                        distance: float,
-                        lat: float,
-                        lng: float
-                    },
-                    ... many more
-                ],
-            }
+            nearby : [
+                {
+                    lat: float,
+                    lng: float,
+                    name: string,
+                    rating: float,                                          (only provided if available)
+                    number_rating: float,                                   (only provided if available)
+                    category: string,                                       (may be null)
+                    distance: float,
+                    restaurant: boolean,                                    (only provided if True)
+                    retail: boolean,                                        (only provided if True)
+                    similar: boolean                                        
+                },
+                ... many more
+            ],
         }
     }
 
@@ -331,31 +330,40 @@ class LocationDetailsAPI(generics.GenericAPIView):
             key_facts_listener = self._celery_listener(kf_process, key_facts)
             key_facts_listener.start()
 
-            # target_demo1 = [self._get_demographics(lat, lng, 1)]
-
             # obtain the demographic details asynchronously
             celery_app.register_task(self._get_demographics)
             d_process, target_demo1 = self._get_demographics.delay(lat, lng, 1), []
             target_demo1_listener = self._celery_listener(d_process, target_demo1)
             target_demo1_listener.start()
 
+            # target_nearby = [self._get_nearby(lat, lng, validated_params['my_location']['categories'])]
+            # obtain the nearby details asynchronously
+            celery_app.register_task(self._get_nearby)
+            # n_process, target_nearby = self._get_nearby.delay(lat, lng, validated_params['my_location']['categories']), []
+            n_process, target_nearby = self._get_nearby.delay(lat, lng, validated_params['my_location']['categories']), []
+            target_nearby_listener = self._celery_listener(n_process, target_nearby)
+            target_nearby_listener.start()
+
         # TODO: get top personas (factor in the cases of both the property id and the regular params)
 
-        key_facts_listener.join() if key_facts_listener else None  # join the key_facts listener if there is one
-        target_demo1_listener.join() if target_demo1_listener else None
+        key_facts_listener.join()  # need to account for non definition of the listeners
+        target_demo1_listener.join()  # need to acount for non declaration of the listener
+        target_nearby_listener.join()
 
-        # TODO: process dempgraphics
+        # TODO: process demographics
 
         response = {
             'status': 200,
             'status_detail': 'Success',
             'key_facts': key_facts[0],
-            # 'demo': target_demo1[0]
+            # 'demo': target_demo1[0],
+            'target_nearby': target_nearby[0]
         }
 
         return Response(response, status=status.HTTP_200_OK)
 
-    # Takes the ID of a celery task and returns a threading task that will
+    # Takes a celery process and returns a threading task that will update
+    # result pool with the final items when the process completes.
     # celery_process: celery task item that tracks celery progress
     # result_pool: mutable list that will contain the item results when done
     def _celery_listener(self, celery_process, result_pool):
@@ -392,6 +400,5 @@ class LocationDetailsAPI(generics.GenericAPIView):
 
     @staticmethod
     @celery_app.task
-    def _get_nearby(lat, lng):
-        # TODO: function to get nearby store details
-        pass
+    def _get_nearby(lat, lng, categories):
+        return provider.get_nearby(lat, lng, categories)
