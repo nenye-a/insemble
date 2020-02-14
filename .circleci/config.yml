@@ -98,6 +98,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package-lock.json" }}
       - run:
           command: |
+            npm run apollo:generate
             npm run test
 
 workflows:

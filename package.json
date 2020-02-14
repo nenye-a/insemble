@@ -16,14 +16,8 @@
     "format": "prettier --write \"frontend/src/**/*.{js,jsx,ts,tsx}\"",
     "format:check": "prettier --check \"frontend/src/**/*.{js,jsx,ts,tsx}\"",
     "coverage": "jest --coverage",
-    "create-generated-folder": "cd frontend/src/generated || mkdir frontend/src/generated ",
-    "clean-client-generated-folder": "if find frontend/src/generated/client/*; then  rm -r frontend/src/generated/client/*; fi",
-    "clean-server-generated-folder": "if find frontend/src/generated/server/*; then rm -r frontend/src/generated/server/*; fi",
-    "apollo:typegen-client": "npm run create-generated-folder && npm clean-client-generated-folder && apollo client:codegen frontend/src/generated/client --target typescript --includes=frontend/src/graphql/queries/client/*.ts --tagName gql --localSchemaFile=frontend/src/graphql/schema.graphql --outputFlat",
-    "apollo:typegen-local-server": "npm run create-generated-folder && npm run clean-server-generated-folder && apollo client:codegen frontend/src/generated/server --target typescript --includes='frontend/src/graphql/queries/server/*.ts' --endpoint http://localhost:4000/ --tagName gql --outputFlat",
-    "apollo:typegen-remote-server": "npm run create-generated-folder && npm run clean-server-generated-folder && apollo client:codegen frontend/src/generated/server --target typescript --includes='frontend/src/graphql/queries/server/*.ts' --endpoint https://localhost:4000/ --tagName gql --outputFlat",
-    "watch:typegen-client": "npm-watch apollo:typegen-client",
-    "watch:typegen-server": "npm-watch apollo:typegen-local-server",
+    "schema:generate": "cd backend-node && yarn && ts-node src/schema.ts && cd ..",
+    "apollo:generate": "npm run schema:generate && apollo codegen:generate --excludes=frontend/node_modules/* --includes=frontend/src/graphql/queries/server/*.ts --localSchemaFile=backend-node/src/generated/schema.graphql  --target typescript --tagName gql --outputFlat frontend/src/generated",
     "start:dev": "concurrently \"npm-watch:typegen-client\" \"npm-watch:typegen-server\""
   },
   "dependencies": {
