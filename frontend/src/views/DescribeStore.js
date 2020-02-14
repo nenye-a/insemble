@@ -296,10 +296,5 @@ const mapStateToProps = (state) => ({
 });
 
 export default withAlert()(
-  withRouter(
-    connect(
-      mapStateToProps,
-      { loadMap, clearLocation }
-    )(DescribeStore)
-  )
+  withRouter(connect(mapStateToProps, { loadMap, clearLocation })(DescribeStore))
 );

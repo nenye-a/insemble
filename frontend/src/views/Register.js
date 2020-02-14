@@ -213,9 +213,4 @@ const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
 });
 
-export default withRouter(
-  connect(
-    mapStateToProps,
-    { register }
-  )(Register)
-);
+export default withRouter(connect(mapStateToProps, { register })(Register));
