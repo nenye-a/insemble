@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { Root, Context } from 'serverTypes';
 import { LEGACY_API_URI } from '../../constants/host';
+import { queryField } from 'nexus';
+import { FilterOptions } from 'dataTypes';
 
 export interface CategoryWhereInput {
   category?: string | null;
@@ -14,8 +16,15 @@ type CategoryArgs = {
   last?: number;
 };
 
+// TODO: add categoryArgs
+let categories = queryField('categories', {
+  type: 'String',
+  list: true,
+  resolve: categoriesResolver,
+});
+
 // TODO: fetching categories can be cached
-async function categories(
+async function categoriesResolver(
   _: Root,
   { where, skip, first, last }: CategoryArgs,
   _context: Context,
@@ -26,8 +35,8 @@ async function categories(
     );
   }
 
-  let categories: Array<string> = (
-    await axios.get(`${LEGACY_API_URI}/api/category`)
+  let { brand_categories: categories }: FilterOptions = (
+    await axios.get(`${LEGACY_API_URI}/api/filter`)
   ).data;
 
   // Process where input
