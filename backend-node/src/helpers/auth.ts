@@ -1,4 +1,4 @@
-import { prisma } from '../main';
+import { prisma } from '../prisma';
 import getRandomBytes from './getRandomBytes';
 import { TenantUser } from '@prisma/client';
 
