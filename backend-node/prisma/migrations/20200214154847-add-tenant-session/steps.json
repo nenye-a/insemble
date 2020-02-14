@@ -1,0 +1,235 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "DeleteEnum",
+      "enum": "SpaceType"
+    },
+    {
+      "tag": "CreateModel",
+      "model": "TenantSession"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantSession",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "TenantSession",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "TenantSession",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "cuid()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "TenantSession",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantSession",
+      "field": "token",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantSession",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "TenantSession",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "TenantSession",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantSession",
+      "field": "user",
+      "type": "TenantUser",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "location",
+      "type": "Location",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Brand",
+          "field": "location"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Brand",
+          "field": "location"
+        },
+        "directive": "relation"
+      },
+      "argument": "name",
+      "value": "\"currentLocation\""
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "nextLocations",
+      "type": "Location",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Brand",
+          "field": "nextLocations"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Brand",
+          "field": "nextLocations"
+        },
+        "directive": "relation"
+      },
+      "argument": "name",
+      "value": "\"nextLocation\""
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "personas",
+      "type": "String",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "education",
+      "type": "String",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "commute",
+      "type": "String",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Brand",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Brand",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Brand",
+      "field": "locations"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Brand",
+      "field": "personaIds"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Brand",
+      "field": "spaceType",
+      "type": "String"
+    }
+  ]
+}

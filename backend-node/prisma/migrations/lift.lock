@@ -7,3 +7,4 @@
 20200213161533-update-fields-name-and-convention
 20200214115211-make-some-tenant-fields-optional
 20200214115812-add-unique-email-constraint
+20200214154847-add-tenant-session
