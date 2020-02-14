@@ -8,7 +8,13 @@ import { View, TextInput, Form, Button } from '../../core-ui';
 import { validateEmail } from '../../utils/validation';
 import { WHITE } from '../../constants/colors';
 import { REGISTER_TENANT } from '../../graphql/queries/server/auth';
-import { SignUpVariables, SignUp } from '../../generated/server/SignUp';
+import { RegisterTenant, RegisterTenantVariables } from '../../generated/server/RegisterTenant';
+import { asyncStorage } from '../../utils';
+
+enum Role {
+  Tenant = 'Tenant',
+  Landlord = 'Landlord',
+}
 
 type Props = {
   role: 'Tenant' | 'Landlord'; //change to constants
@@ -17,7 +23,9 @@ type Props = {
 export default function SignUpForm(_props: Props) {
   let { register, handleSubmit, errors, watch } = useForm();
   let history = useHistory();
-  let [registerTenant, { data, loading }] = useMutation<SignUp, SignUpVariables>(REGISTER_TENANT);
+  let [registerTenant, { data, loading }] = useMutation<RegisterTenant, RegisterTenantVariables>(
+    REGISTER_TENANT
+  );
   let inputContainerStyle = { marginTop: 12 };
 
   let onSubmit = (data: FieldValues) => {
@@ -34,8 +42,17 @@ export default function SignUpForm(_props: Props) {
       },
     });
   };
+
+  let saveUserData = async (token: string, role: Role) => {
+    await asyncStorage.saveTenantToken(token);
+    await asyncStorage.saveRole(role);
+  };
+
   if (data) {
-    // TODO: save user login
+    let { registerTenant } = data;
+    let { token } = registerTenant;
+
+    saveUserData(token, Role.Tenant);
     history.push('/map');
   }
   // TODO: handle if error
