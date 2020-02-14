@@ -117,3 +117,5 @@ class LocationDetailSerializer(serializers.Serializer):
             error_message['status_detail'] = [
                 "Please provide either (address and brand_name) or (categories and income) in my_location"]
             raise serializers.ValidationError(error_message)
+
+        return data

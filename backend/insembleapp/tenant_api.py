@@ -1,5 +1,8 @@
 import json
+import time
+import threading
 import data.matching as matching
+import data.provider as provider
 from rest_framework import status, generics, permissions, serializers
 from rest_framework.response import Response
 from .tenant_serializers import TenantMatchSerializer, LocationDetailSerializer
@@ -173,17 +176,23 @@ class LocationDetailsAPI(generics.GenericAPIView):
         status: int (HTTP),                     (always provided)
         status_detail: string,                  (always provided)
         result: {                               (not provided if error occurs)
-            match_value: float,                 
+            match_value: float,                
             affinities: {
                 growth: boolean,
                 personas: boolean,
                 demographics: boolean,
                 ecosystem: boolean,
             },
-            day_time_population: float,
-            medium_household_income: float,
-            total_households: float,
-            household_growth: float,
+            key_facts: {
+                'DaytimePop': float,
+                'MediumHouseholdIncome': float,
+                'TotalHousholds': float,
+                'HouseholdGrowth2017-2022': float,
+                'num_metro': int,                       (will never exceed 60)
+                'num_universities': int,                (will never exceed 60)
+                'num_hospitals': int,                   (will never exceed 60)
+                'num_apartments': int                   (will never exceed 60)
+            }
             top_personas: [
                 {
                     percentile: float,
@@ -293,6 +302,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
 
         # ensure that the data is received correctly
         serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
 
         # TODO: KO acquisition of details for my location
@@ -311,28 +321,63 @@ class LocationDetailsAPI(generics.GenericAPIView):
             pass
         else:
             # TODO: get all the information from the latitude & longitude
-            pass
+            lat = validated_params['target_location']['lat']
+            lng = validated_params['target_location']['lng']
 
+            # key_facts = LocationDetailsAPI._get_key_facts(lat, lng)
+
+            celery_app.register_task(self._get_match_details)
+            kf_process, key_facts = self._get_key_facts.delay(lat, lng), []
+            key_facts_listener = self._celery_listener(kf_process, key_facts)
+            key_facts_listener.start()
+
+        key_facts_listener.join()
+        response = {
+            'status': 200,
+            'status_detail': 'Success',
+            'key_facts': key_facts[0]
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+
+    # Takes the ID of a celery task and returns a threading task that will
+    # celery_process: celery task item that tracks celery progress
+    # result_pool: mutable list that will contain the item results when done
+    def _celery_listener(self, celery_process, result_pool):
+
+        def listen(process, dump):
+            while not process.ready():
+                # wait a fraction of a second prior to checking again
+                time.sleep(0.1)
+            dump.append(process.get(timeout=1))
+
+        return threading.Thread(target=listen, args=(celery_process, result_pool,))
+
+    @staticmethod
     @celery_app.task
     def _get_match_details(self, location, target_location):
         # TODO: get the match details for two locations
         pass
 
+    @staticmethod
     @celery_app.task
-    def _get_key_facts(self, lat, lng):
+    def _get_key_facts(lat, lng):
         # TODO: get the key facts from a location required
-        pass
+        return provider.get_key_facts(lat, lng)
 
+    @staticmethod
     @celery_app.task
     def _get_personas(self, lat, lng):
         # TODO: get the paersonas
         pass
 
+    @staticmethod
     @celery_app.task
     def _get_demographics(self, lat, lng):
         # TODO: function to get demographics
         pass
 
+    @staticmethod
     @celery_app.task
     def _get_nearby(self, lat, lng):
         # TODO: function to get nearby store details
