@@ -1,19 +1,14 @@
 import React, { useEffect, useReducer } from 'react';
 import styled from 'styled-components';
-import { View, Button } from '../../core-ui';
+import { View, ClickAway } from '../../core-ui';
 import { Filter } from '../../components';
 import FilterCard from './FilterCard';
 import sideBarFiltersReducer from '../../reducers/sideBarFiltersReducer';
 import SvgIncome from '../../components/icons/income';
 import SvgAge from '../../components/icons/age';
-import SvgGender from '../../components/icons/gender';
 import SvgPsychographic from '../../components/icons/psychographic';
-import SvgEthnicity from '../../components/icons/ethnicity';
 import SvgCommute from '../../components/icons/commute';
-import SvgProfession from '../../components/icons/profession';
 import SvgEducation from '../../components/icons/education';
-import SvgMaritalStatus from '../../components/icons/marital-status';
-import SvgCrime from '../../components/icons/crime';
 import SvgRent from '../../components/icons/rent';
 import SvgSqft from '../../components/icons/sqft';
 import SvgPropertyType from '../../components/icons/property-type';
@@ -34,35 +29,12 @@ export default function SideBarFilters() {
     let demographicsWithOptions = demographics.map((item) => {
       let allOptions;
       switch (item.name) {
-        case DEMOGRAPHICS_CATEGORIES.gender: {
-          allOptions = ['Female', 'Male', 'Other'];
-          break;
-        }
-        case DEMOGRAPHICS_CATEGORIES.psychographic: {
+        case DEMOGRAPHICS_CATEGORIES.personas: {
           allOptions = ['Sporty', 'Love Nature', 'Other'];
-          break;
-        }
-        case DEMOGRAPHICS_CATEGORIES.ethnicity: {
-          allOptions = ['White', 'Hispanic', 'Black', 'Asian', 'Indian', 'Other'];
           break;
         }
         case DEMOGRAPHICS_CATEGORIES.commute: {
           allOptions = ['Car pool', 'Drive Alone', 'Public Transit', 'Bike', 'Walk', 'At Home'];
-          break;
-        }
-        case DEMOGRAPHICS_CATEGORIES.profession: {
-          allOptions = [
-            'Manager',
-            'Software Engineer',
-            'Human Resources',
-            'Designer',
-            'Marketing',
-            'Doctor',
-          ];
-          break;
-        }
-        case DEMOGRAPHICS_CATEGORIES.maritalStatus: {
-          allOptions = ['Single', 'Married'];
           break;
         }
         case DEMOGRAPHICS_CATEGORIES.education: {
@@ -124,11 +96,8 @@ export default function SideBarFilters() {
           },
         };
       } else if (
-        openFilterName === DEMOGRAPHICS_CATEGORIES.gender ||
-        openFilterName === DEMOGRAPHICS_CATEGORIES.psychographic ||
-        openFilterName === DEMOGRAPHICS_CATEGORIES.ethnicity ||
+        openFilterName === DEMOGRAPHICS_CATEGORIES.personas ||
         openFilterName === DEMOGRAPHICS_CATEGORIES.commute ||
-        openFilterName === DEMOGRAPHICS_CATEGORIES.maritalStatus ||
         openFilterName === PROPERTIES_CATEGORIES.propertyType
       ) {
         return {
@@ -146,10 +115,7 @@ export default function SideBarFilters() {
             });
           },
         };
-      } else if (
-        openFilterName === DEMOGRAPHICS_CATEGORIES.profession ||
-        openFilterName === DEMOGRAPHICS_CATEGORIES.education
-      ) {
+      } else if (openFilterName === DEMOGRAPHICS_CATEGORIES.education) {
         return {
           search: true,
           selectedOptions: selectedValues,
@@ -220,24 +186,31 @@ export default function SideBarFilters() {
           }}
           openFilterName={openFilterName}
         />
-        <Button text="New Search" />
       </Container>
-      <FilterContainer
-        visible={!!openFilterName}
-        title={openFilterName}
-        onDone={() => {
+      <ClickAway
+        onClickAway={() =>
           dispatch({
             type: 'DONE_PRESS',
-          });
-        }}
-        onClear={() => {
-          dispatch({
-            type: 'CLEAR_PRESS',
-            name: openFilterName,
-          });
-        }}
-        {...filterProps}
-      />
+          })
+        }
+      >
+        <FilterContainer
+          visible={!!openFilterName}
+          title={openFilterName}
+          onDone={() => {
+            dispatch({
+              type: 'DONE_PRESS',
+            });
+          }}
+          onClear={() => {
+            dispatch({
+              type: 'CLEAR_PRESS',
+              name: openFilterName,
+            });
+          }}
+          {...filterProps}
+        />
+      </ClickAway>
     </RowedView>
   );
 }
@@ -252,7 +225,6 @@ const Container = styled(View)`
   width: 160px;
   margin-top: 10px;
   margin-bottom: 10px;
-  justify-content: space-between;
   height: calc(100% - ${NAVBAR_HEIGHT});
 `;
 
@@ -266,14 +238,9 @@ const FilterContainer = styled(Filter)`
 const DEMOGRAPHICS_CATEGORIES = {
   income: 'Income',
   age: 'Age',
-  gender: 'Gender',
-  psychographic: 'Psychographic',
-  ethnicity: 'Ethnicity',
+  personas: 'Personas',
   commute: 'Commute',
-  profession: 'Profession',
   education: 'Education',
-  maritalStatus: 'Marital Status',
-  crime: 'Crime',
 };
 
 const PROPERTIES_CATEGORIES = {
@@ -294,18 +261,8 @@ const DEMOGRAPHIC_OPTIONS = [
     selectedValues: [],
   },
   {
-    name: DEMOGRAPHICS_CATEGORIES.gender,
-    icon: SvgGender,
-    selectedValues: [],
-  },
-  {
-    name: DEMOGRAPHICS_CATEGORIES.psychographic,
+    name: DEMOGRAPHICS_CATEGORIES.personas,
     icon: SvgPsychographic,
-    selectedValues: [],
-  },
-  {
-    name: DEMOGRAPHICS_CATEGORIES.ethnicity,
-    icon: SvgEthnicity,
     selectedValues: [],
   },
   {
@@ -314,23 +271,8 @@ const DEMOGRAPHIC_OPTIONS = [
     selectedValues: [],
   },
   {
-    name: DEMOGRAPHICS_CATEGORIES.profession,
-    icon: SvgProfession,
-    selectedValues: [],
-  },
-  {
     name: DEMOGRAPHICS_CATEGORIES.education,
     icon: SvgEducation,
-    selectedValues: [],
-  },
-  {
-    name: DEMOGRAPHICS_CATEGORIES.maritalStatus,
-    icon: SvgMaritalStatus,
-    selectedValues: [],
-  },
-  {
-    name: DEMOGRAPHICS_CATEGORIES.crime,
-    icon: SvgCrime,
     selectedValues: [],
   },
 ];

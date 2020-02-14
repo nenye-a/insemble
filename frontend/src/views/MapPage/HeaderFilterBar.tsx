@@ -109,7 +109,7 @@ export default function HeaderFilterBar() {
           selectedOption={selectedDropdownValue}
           onSelect={(newValue: string) => setSelectedDropdownValue(newValue)}
         />
-        <SaveButton text="Save Search" />
+        <SaveButton text="Publish Changes" />
       </RowedView>
       <LocationInputContainer
         icon
