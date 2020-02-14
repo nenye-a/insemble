@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import { schema } from '../src/schema';
 import { Context } from 'serverTypes';
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 
 const server = new GraphQLServer({
   schema,
