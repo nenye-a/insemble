@@ -39,7 +39,7 @@ def temp_generate_profile_matches(data):
 
     upper_income = data['target_income']['max']
     lower_income = data['target_income']['min']
-    target_category = data['categories']
+    # target_category = data['categories']
 
     query = {
         'arcgis_details1.MedHouseholdIncome1': {

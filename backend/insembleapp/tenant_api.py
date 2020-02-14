@@ -2,7 +2,9 @@ import json
 import data.matching as matching
 from rest_framework import status, generics, permissions, serializers
 from rest_framework.response import Response
-from .tenant_serializers import TenantMatchSerializer
+from .tenant_serializers import TenantMatchSerializer, LocationDetailSerializer
+from .celery import app as celery_app
+
 
 '''
 
@@ -116,7 +118,7 @@ class TenantMatchAPI(generics.GenericAPIView):
         # validate the input parameters
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
-        validated_params = serializer.data
+        validated_params = serializer.validated_data
 
         # Execute match generation based on the parameters provided,
         if 'address' in validated_params:
@@ -143,8 +145,8 @@ class TenantMatchAPI(generics.GenericAPIView):
         # TODO: utilize the other parameters in the matching algorithms
 
 
-# LocationQueryApi - referenced by api/locationQuery/
-class LocationQueryAPI(generics.GenericAPIView):
+# LocationDetailsApi - referenced by api/locationDetails/
+class LocationDetailsAPI(generics.GenericAPIView):
 
     """
 
@@ -152,12 +154,15 @@ class LocationQueryAPI(generics.GenericAPIView):
 
     parameters: {
         my_location: {                          (required)
-            address: string,
-            brand_name: string,
-            categories: list[string],
-
+            address: string,                    (required -> not required if categories are provided)
+            brand_name: string,                 (required -> not required if categories are provided)
+            categories: list[string],           (required -> not required if brand_name and address provided)
+            income: {                           (required -> not required if brand_name and address provided)
+                min: int,                       (required if income provided)
+                max: int,
+            }
         },
-        target_location: {                      (required)
+        target_location: {                      (required, not used if property_id is provided)
             lat: int,
             lng: int,
         },
@@ -192,7 +197,7 @@ class LocationQueryAPI(generics.GenericAPIView):
             demographics: {
                 age: {
                     under_eighteen: {
-                        my_location: float,
+                        my_location: float,                                 (only provided if address is provided)
                         target_location: float,
                         growth: float
                     },
@@ -206,7 +211,7 @@ class LocationQueryAPI(generics.GenericAPIView):
                 },
                 income: {
                     under_fifty: { 
-                        my_location: float,
+                        my_location: float,                                 (only provided if address is provided)
                         target_location: float,
                         growth: float
                     },
@@ -217,7 +222,7 @@ class LocationQueryAPI(generics.GenericAPIView):
                 },
                 ethnicity: {
                     white: {
-                        my_location: float,
+                        my_location: float,                                 (only provided if address is provided)
                         target_location: float,
                         growth: float
                     },
@@ -229,7 +234,7 @@ class LocationQueryAPI(generics.GenericAPIView):
                 },
                 education: {
                     some_highschool: {
-                        my_location: float,
+                        my_location: float,                                 (only provided if address is provided)
                         target_location: float,
                         growth: float
                     },
@@ -243,7 +248,7 @@ class LocationQueryAPI(generics.GenericAPIView):
                 },
                 gender: {
                     male: {
-                        my_location: float,
+                        my_location: float,                                 (only provided if address is provided)
                         target_location: float,
                         growth: float
                     },
@@ -278,4 +283,57 @@ class LocationQueryAPI(generics.GenericAPIView):
     }
 
     """
-    pass
+
+    permission_classes = [
+        permissions.AllowAny
+    ]
+    serializer_class = LocationDetailSerializer
+
+    def get(self, request, *args, **kwargs):
+
+        # ensure that the data is received correctly
+        serializer = self.get_serializer(data=request.query_params)
+        validated_params = serializer.validated_data
+
+        # TODO: KO acquisition of details for my location
+        my_location = {}
+        if 'address' in validated_params['my_location']:
+            # TODO: get the information for this address
+            pass
+        else:
+            # TODO: get the information for the categories
+            pass
+
+        # KO data request for target location. If target location is an existing
+        # property, we will provide the details here.
+        if 'property_id' in validated_params:
+            # TODO: get all the infromation from property database
+            pass
+        else:
+            # TODO: get all the information from the latitude & longitude
+            pass
+
+    @celery_app.task
+    def _get_match_details(self, location, target_location):
+        # TODO: get the match details for two locations
+        pass
+
+    @celery_app.task
+    def _get_key_facts(self, lat, lng):
+        # TODO: get the key facts from a location required
+        pass
+
+    @celery_app.task
+    def _get_personas(self, lat, lng):
+        # TODO: get the paersonas
+        pass
+
+    @celery_app.task
+    def _get_demographics(self, lat, lng):
+        # TODO: function to get demographics
+        pass
+
+    @celery_app.task
+    def _get_nearby(self, lat, lng):
+        # TODO: function to get nearby store details
+        pass
