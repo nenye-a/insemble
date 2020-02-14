@@ -1,3 +1,5 @@
+import gql from 'graphql-tag';
+
 export const SAVE_TENANT_LOGIN = gql`
   mutation loginSuccess(
     $token: String!

@@ -8,7 +8,7 @@ import { View, TextInput, Form, Button } from '../../core-ui';
 import { validateEmail } from '../../utils/validation';
 import { WHITE } from '../../constants/colors';
 import { REGISTER_TENANT } from '../../graphql/queries/server/auth';
-import { RegisterTenant, RegisterTenantVariables } from '../../generated/server/RegisterTenant';
+import { RegisterTenant, RegisterTenantVariables } from '../../generated/RegisterTenant';
 import { asyncStorage } from '../../utils';
 
 enum Role {
