@@ -56,15 +56,15 @@ export default function LandlordOnboarding() {
       ],
     },
   ];
-
+  let activeSegment = SEGMENTS[activeSegmentIndex];
   return (
     <Container flex>
       <OnboardingCard
-        title={SEGMENTS[activeSegmentIndex].title}
+        title={activeSegment.title}
         progress={activeSegmentIndex / SEGMENTS.length}
-        buttons={SEGMENTS[activeSegmentIndex].buttons}
+        buttons={activeSegment.buttons}
       >
-        {SEGMENTS[activeSegmentIndex].content}
+        {activeSegment.content}
       </OnboardingCard>
     </Container>
   );

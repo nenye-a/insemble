@@ -27,11 +27,8 @@ import TenantSearchHistory from './views/TenantSearchHistory';
 import Messages from './views/Messages';
 import MessageDetail from './views/MessageDetail';
 import BrandDetail from './views/BrandDetail';
-<<<<<<< HEAD
 import SignUp from './views/SignUp';
-=======
 import LandlordOnboarding from './views/LandlordOnboarding';
->>>>>>> Add Landlord Onboarding
 
 export default [
   {
