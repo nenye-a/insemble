@@ -184,14 +184,15 @@ class LocationDetailsAPI(generics.GenericAPIView):
                 ecosystem: boolean,
             },
             key_facts: {
-                'DaytimePop': float,
-                'MediumHouseholdIncome': float,
-                'TotalHousholds': float,
-                'HouseholdGrowth2017-2022': float,
-                'num_metro': int,                       (will never exceed 60)
-                'num_universities': int,                (will never exceed 60)
-                'num_hospitals': int,                   (will never exceed 60)
-                'num_apartments': int                   (will never exceed 60)
+                mile: int
+                DaytimePop: float,
+                MediumHouseholdIncome: float,
+                TotalHousholds: float,
+                HouseholdGrowth2017-2022: float,
+                num_metro: int,                       (will never exceed 60)
+                num_universities: int,                (will never exceed 60)
+                num_hospitals: int,                   (will never exceed 60)
+                num_apartments: int                   (will never exceed 60)
             }
             top_personas: [
                 {
@@ -205,29 +206,29 @@ class LocationDetailsAPI(generics.GenericAPIView):
             ],
             demographics: {
                 age: {
-                    under_eighteen: {
+                    <18: {
                         my_location: float,                                 (only provided if address is provided)
                         target_location: float,
                         growth: float
                     },
-                    eighteen_twentyfour: { ... same as above },
-                    twentyfive_thirtyfour: { ... same as above },
-                    thirtyfive_fourtyfour: { ... same as above },
-                    fourtyfive_fiftyfour: { ... same as above },
-                    fiftyfive_sixtyfour: { ... same as above },
-                    sixtyfive_plus : {... same as above}
+                    18-24: { ... same as above },
+                    25-34: { ... same as above },
+                    35-54: { ... same as above },
+                    45-54: { ... same as above },
+                    55-64: { ... same as above },
+                    65+ : {... same as above}
                     }
                 },
                 income: {
-                    under_fifty: { 
+                    <$50K: { 
                         my_location: float,                                 (only provided if address is provided)
                         target_location: float,
                         growth: float
                     },
-                    fifty_seventyfour: { ... same as above },
-                    seventyfour_onetwentyfive: { ... same as above },
-                    onetwentyfive_twohundred: { ... same as above },
-                    twohundred_plus: { ... same as above}
+                    $50K-$74K: { ... same as above },
+                    $75K-$124K: { ... same as above },
+                    $125K-$199K: { ... same as above },
+                    $200K: { ... same as above}
                 },
                 ethnicity: {
                     white: {
@@ -324,18 +325,32 @@ class LocationDetailsAPI(generics.GenericAPIView):
             lat = validated_params['target_location']['lat']
             lng = validated_params['target_location']['lng']
 
-            # key_facts = LocationDetailsAPI._get_key_facts(lat, lng)
-
+            # obtain key facts asynchronously
             celery_app.register_task(self._get_match_details)
             kf_process, key_facts = self._get_key_facts.delay(lat, lng), []
             key_facts_listener = self._celery_listener(kf_process, key_facts)
             key_facts_listener.start()
 
-        key_facts_listener.join()
+            # target_demo1 = [self._get_demographics(lat, lng, 1)]
+
+            # obtain the demographic details asynchronously
+            celery_app.register_task(self._get_demographics)
+            d_process, target_demo1 = self._get_demographics.delay(lat, lng, 1), []
+            target_demo1_listener = self._celery_listener(d_process, target_demo1)
+            target_demo1_listener.start()
+
+        # TODO: get top personas (factor in the cases of both the property id and the regular params)
+
+        key_facts_listener.join() if key_facts_listener else None  # join the key_facts listener if there is one
+        target_demo1_listener.join() if target_demo1_listener else None
+
+        # TODO: process dempgraphics
+
         response = {
             'status': 200,
             'status_detail': 'Success',
-            'key_facts': key_facts[0]
+            'key_facts': key_facts[0],
+            # 'demo': target_demo1[0]
         }
 
         return Response(response, status=status.HTTP_200_OK)
@@ -362,23 +377,21 @@ class LocationDetailsAPI(generics.GenericAPIView):
     @staticmethod
     @celery_app.task
     def _get_key_facts(lat, lng):
-        # TODO: get the key facts from a location required
         return provider.get_key_facts(lat, lng)
 
     @staticmethod
     @celery_app.task
-    def _get_personas(self, lat, lng):
+    def _get_personas(lat, lng):
         # TODO: get the paersonas
         pass
 
     @staticmethod
     @celery_app.task
-    def _get_demographics(self, lat, lng):
-        # TODO: function to get demographics
-        pass
+    def _get_demographics(lat, lng, radius):
+        return provider.get_demographics(lat, lng, radius)
 
     @staticmethod
     @celery_app.task
-    def _get_nearby(self, lat, lng):
+    def _get_nearby(lat, lng):
         # TODO: function to get nearby store details
         pass

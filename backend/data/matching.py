@@ -74,11 +74,11 @@ INCOME_LIST = ["Current Year Households, Household Income < $15,000",
 INCOME_LIST_3MILE = [income + "3" for income in INCOME_LIST]
 
 # age keys for 1 and 3 miles
-AGE_LIST = ["Current Year Population, Age 0 - 4", "Current Year Population, Age 10 - 14",
-            "Current Year Population, Age 15 - 17", "Current Year Population, Age 18 - 20",
-            "Current Year Population, Age 21 - 24", "Current Year Population, Age 25 - 34",
-            "Current Year Population, Age 35 - 44", "Current Year Population, Age 45 - 54",
-            "Current Year Population, Age 5 - 9", "Current Year Population, Age 55 - 64",
+AGE_LIST = ["Current Year Population, Age 0 - 4", "Current Year Population, Age 5 - 9",
+            "Current Year Population, Age 10 - 14", "Current Year Population, Age 15 - 17",
+            "Current Year Population, Age 18 - 20", "Current Year Population, Age 21 - 24",
+            "Current Year Population, Age 25 - 34", "Current Year Population, Age 35 - 44",
+            "Current Year Population, Age 45 - 54", "Current Year Population, Age 55 - 64",
             "Current Year Population, Age 65+"]
 AGE_LIST_3MILE = [age + "3" for age in AGE_LIST]
 
@@ -117,9 +117,9 @@ EDUCATION_LIST = ["Current Year Population 25+, Some High School, No Diploma",
 EDUCATION_LIST_3MILE = [education + "3" for education in EDUCATION_LIST]
 
 # travel time keys for 1 and 3 miles
-TRAVEL_TIME_LIST = ["Current Year Workers, Travel Time To Work: 15 - 29 Minutes",
-                    "Current Year Workers, Travel Time To Work: 30 - 44 Minutes",
-                    "Current Year Workers, Travel Time To Work: < 15 Minutes"]
+TRAVEL_TIME_LIST = ["Current Year Workers, Travel Time To Work: < 15 Minutes",
+                    "Current Year Workers, Travel Time To Work: 15 - 29 Minutes",
+                    "Current Year Workers, Travel Time To Work: 30 - 44 Minutes"]
 TRAVEL_TIME_LIST_3MILE = [travel_time +
                           "3" for travel_time in TRAVEL_TIME_LIST]
 
