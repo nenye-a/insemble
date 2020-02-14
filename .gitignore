@@ -16,7 +16,7 @@ __pycache__/
 .coverage
 /coverage/
 
-# Don't track IDE config folders 
+# Don't track IDE config folders
 .idea
 .vscode
 
@@ -60,3 +60,6 @@ insemble-venv/
 /insemble-venv
 colin-venv/
 /colin-venv
+
+# Apollo
+/frontend/src/generated/*

@@ -1,3 +1,4 @@
 frontend/bundles/
 frontend/webpack_bundles/
 frontend/src/styles/landing-template/
+frontend/src/generated

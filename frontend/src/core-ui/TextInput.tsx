@@ -3,11 +3,18 @@ import styled, { css } from 'styled-components';
 
 import Label from './Label';
 import View from './View';
-import { FONT_FAMILY_NORMAL, FONT_SIZE_NORMAL, DEFAULT_BORDER_RADIUS } from '../constants/theme';
+import Text from './Text';
+import {
+  FONT_FAMILY_NORMAL,
+  FONT_SIZE_NORMAL,
+  DEFAULT_BORDER_RADIUS,
+  FONT_SIZE_SMALL,
+} from '../constants/theme';
 import {
   TEXT_INPUT_BORDER_COLOR,
   TEXT_COLOR,
   DISABLED_TEXT_INPUT_BACKGROUND,
+  RED_TEXT,
 } from '../constants/colors';
 import useID from '../utils/useID';
 
@@ -19,10 +26,20 @@ type TextInputProps = Omit<InputProps, 'onSubmit'> & {
 
 type Props = TextInputProps & {
   label?: string;
+  errorMessage?: string;
 };
 
 export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) => {
-  let { id: providedID, label, onSubmit, ref, disabled, containerStyle, ...otherProps } = props;
+  let {
+    id: providedID,
+    label,
+    onSubmit,
+    ref,
+    disabled,
+    containerStyle,
+    errorMessage,
+    ...otherProps
+  } = props;
   let fallbackID = useID();
 
   let id = providedID || fallbackID;
@@ -41,6 +58,7 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) =>
         disabled={disabled}
         {...otherProps}
       />
+      {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
     </View>
   );
 });
@@ -65,4 +83,10 @@ const InputBox = styled.input`
     css`
       background-color: ${DISABLED_TEXT_INPUT_BACKGROUND};
     `}
+`;
+
+const ErrorMessage = styled(Text)`
+  font-size: ${FONT_SIZE_SMALL};
+  color: ${RED_TEXT};
+  margin-top: 6px;
 `;

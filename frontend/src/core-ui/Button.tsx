@@ -10,6 +10,7 @@ import {
 import TouchableOpacity from './TouchableOpacity';
 import Text from './Text';
 import Badge from './Badge';
+import LoadingIndicator from './LoadingIndicator';
 
 type TextProps = ComponentProps<typeof Text>;
 
@@ -19,16 +20,28 @@ type Props = ComponentProps<typeof TouchableOpacity> & {
   mode?: 'primary' | 'secondary' | 'transparent';
   icon?: ReactNode;
   badgeText?: string;
+  loading?: boolean;
 };
 
 function Button(props: Props) {
-  let { text, textProps, icon, badgeText, ...otherProps } = props;
+  let { mode, text, textProps, icon, badgeText, loading, disabled, ...otherProps } = props;
   return (
-    <TouchableOpacity forwardedAs="button" type="button" {...otherProps}>
-      {icon}
-      <Text as="span" color="white" {...textProps}>
-        {text}
-      </Text>
+    <TouchableOpacity
+      forwardedAs="button"
+      type="button"
+      disabled={loading || disabled}
+      {...otherProps}
+    >
+      {loading ? (
+        <LoadingIndicator color={mode === 'primary' ? 'white' : 'purple'} />
+      ) : (
+        <>
+          {icon}
+          <Text as="span" color="white" {...textProps}>
+            {text}
+          </Text>
+        </>
+      )}
       {badgeText && <ButtonBadge text={badgeText} />}
     </TouchableOpacity>
   );
@@ -42,13 +55,6 @@ export default styled(Button)<Props>`
   padding: 0 12px;
   flex-direction: row;
   align-items: center;
-  ${(props) =>
-    props.mode === 'primary' &&
-    css`
-      &:disabled {
-        background-color: ${MUTED_TEXT_COLOR};
-      }
-    `}
   ${(props) =>
     props.mode === 'secondary' &&
     css`
@@ -70,11 +76,14 @@ export default styled(Button)<Props>`
         color: ${MUTED_TEXT_COLOR};
       }
     `}
-  &:hover {
+  &:hover, &:not():disabled {
     opacity: 0.9;
   }
   &:active {
     opacity: 0.5;
+  }
+  &:disabled {
+    background-color: ${MUTED_TEXT_COLOR};
   }
 `;
 
