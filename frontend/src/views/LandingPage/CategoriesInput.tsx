@@ -77,10 +77,7 @@ let mapStateToProps = (state: any) => ({
   hasLocation: state.space.hasLocation,
 });
 
-export default connect(
-  mapStateToProps,
-  { loadMap }
-)(CategoriesInput);
+export default connect(mapStateToProps, { loadMap })(CategoriesInput);
 
 const Container = styled(View)`
   flex-direction: row;

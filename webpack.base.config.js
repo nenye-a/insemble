@@ -70,7 +70,7 @@ module.exports = [
           loader: 'url-loader?limit=100000',
         },
         {
-          test: /\.(jpg|png|jpeg)?$/,
+          test: /\.(jpg|png|jpeg|gif)?$/,
           loaders: ['file-loader?name=i-[hash].[ext]'],
         },
       ],

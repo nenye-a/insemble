@@ -162,11 +162,4 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default withAlert()(
-  withRouter(
-    connect(
-      mapStateToProps,
-      { getLocation }
-    )(Feedback)
-  )
-);
+export default withAlert()(withRouter(connect(mapStateToProps, { getLocation })(Feedback)));

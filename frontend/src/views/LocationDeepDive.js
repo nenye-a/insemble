@@ -150,10 +150,7 @@ const mapStateToProps = (state) => ({
 });
 
 export default withRouter(
-  connect(
-    mapStateToProps,
-    {
-      getLocation,
-    }
-  )(LocationDeepDive)
+  connect(mapStateToProps, {
+    getLocation,
+  })(LocationDeepDive)
 );

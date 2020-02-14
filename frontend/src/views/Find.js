@@ -90,9 +90,4 @@ const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
 });
 
-export default withRouter(
-  connect(
-    mapStateToProps,
-    { login }
-  )(Find)
-);
+export default withRouter(connect(mapStateToProps, { login })(Find));

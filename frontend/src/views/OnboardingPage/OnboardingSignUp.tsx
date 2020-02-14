@@ -1,32 +1,22 @@
 import React from 'react';
-import { View, TextInput, Text, Button } from '../../core-ui';
 import styled from 'styled-components';
+
+import { View, Text, Button } from '../../core-ui';
 import { WHITE, SECONDARY_COLOR } from '../../constants/colors';
 import { FONT_SIZE_XLARGE, FONT_SIZE_SMALL, FONT_WEIGHT_BOLD } from '../../constants/theme';
+import SignUpForm from '../SignUpPage/SignUpForm';
 import InsembleLogo from '../../components/common/InsembleLogo';
 
 export default function OnBoardingSignUp() {
   return (
     <Container>
-      <Form>
-        <Input label={'Email Address'} placeholder={'Your Email Address'} />
-        <RowView>
-          <View flex style={{ marginRight: 10 }}>
-            <Input label={'First Name'} placeholder={'Your First Name'} />
-          </View>
-          <View flex style={{ marginLeft: 10 }}>
-            <Input label={'Last Name'} placeholder={'Your Last Name'} />
-          </View>
-        </RowView>
-        <Input label={'Company'} placeholder={'Your Company'} />
-        <Input label={'Password'} placeholder={'Enter Password'} />
-        <Input label={'Confrim Password'} placeholder={'Re-enter Password'} />
-        <SubmitButton text="Create and Submit" onSubmit={() => {}} />
+      <FormContainer flex>
+        <SignUpForm role="Tenant" />
         <RowView style={{ marginBottom: 10 }}>
           <Text>Already have an account? </Text>
           <Button mode="transparent" text="Log in here" />
         </RowView>
-      </Form>
+      </FormContainer>
       <Description>
         <InsembleLogo color="white" />
         <DescriptionLargeText>Find the next best location for your business</DescriptionLargeText>
@@ -50,23 +40,14 @@ const RowView = styled(View)`
   justify-content: center;
   align-items: center;
 `;
-const Form = styled(View)`
-  flex: 2;
-  background-color: ${WHITE};
-  padding: 10px 50px 0 50px;
+const FormContainer = styled(View)`
+  padding: 24px 48px 0 48px;
 `;
 
 const Description = styled(View)`
-  flex: 2;
+  flex: 1;
   background-color: ${SECONDARY_COLOR};
   padding: 40px 40px 0 40px;
-`;
-const Input = styled(TextInput)`
-  margin: 0 0 20px 0;
-`;
-
-const SubmitButton = styled(Button)`
-  margin: 15px 0 30px 0;
 `;
 
 const DescriptionLargeText = styled(Text)`

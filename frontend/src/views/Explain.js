@@ -134,11 +134,8 @@ class Explain extends React.Component {
 const mapStateToProps = (_state) => ({});
 
 export default withRouter(
-  connect(
-    mapStateToProps,
-    {
-      getLocation,
-      loadMap,
-    }
-  )(Explain)
+  connect(mapStateToProps, {
+    getLocation,
+    loadMap,
+  })(Explain)
 );
