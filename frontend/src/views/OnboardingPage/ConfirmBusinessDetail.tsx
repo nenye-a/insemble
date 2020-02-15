@@ -1,50 +1,77 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, Dispatch, useEffect } from 'react';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
-import { TextInput, View, RadioGroup, Text, Label, Button, ClickAway, Form } from '../../core-ui';
+import {
+  TextInput,
+  View,
+  RadioGroup,
+  Text,
+  Label,
+  Button,
+  ClickAway,
+  Form,
+  PillButton,
+} from '../../core-ui';
 import { Filter } from '../../components';
-import { session } from '../../utils/storage';
-import urlEncode from '../../utils/urlEncode';
-import { useSelector } from '../../redux/helpers';
 import { BUTTON_TRANSPARENT_TEXT_COLOR, RED_TEXT } from '../../constants/colors';
-import { MAPS_IFRAME_URL_SEARCH, MAPS_IFRAME_URL_PLACE } from '../../constants/googleMaps';
+import { MAPS_IFRAME_URL_PLACE } from '../../constants/googleMaps';
 import { FONT_SIZE_SMALL } from '../../constants/theme';
 import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
-import { OnboardingContext } from '../Onboarding';
+import { Categories } from '../../generated/categories';
+import {
+  Action,
+  ConfirmBusinessDetail as ConfirmBusinessDetailType,
+  State as OnboardingState,
+} from '../../reducers/tenantOnboardingReducer';
 
-export default function ConfirmBusinessDetail() {
-  let { data: categoriesData } = useQuery(GET_CATEGORIES);
-  let [selectedBusinessRelation, setBussinesRelation] = useState('');
+type Props = {
+  dispatch: Dispatch<Action>;
+  state: OnboardingState;
+};
+
+type LocationState = {
+  placeID: string;
+  name: string;
+  formattedAddress: string;
+  lat: number;
+  lng: number;
+};
+
+export default function ConfirmBusinessDetail(props: Props) {
+  let { dispatch, state: onboardingState } = props;
+  let { data: categoriesData } = useQuery<Categories>(GET_CATEGORIES);
+  let [selectedBusinessRelation, setBussinesRelation] = useState(
+    onboardingState.confirmBusinessDetail.userRelation || ''
+  );
   let [categorySelectionVisible, toggleCategorySelection] = useState(false);
-  let [selectedCategories, setSelectedCategories] = useState<Array<string>>([]);
-  let contextValue = useContext(OnboardingContext);
-  let { values, onValuesChange } = contextValue;
-  let { placeID } = useParams();
-  let fallbackAddress = useSelector((state) =>
-    state.space.location && typeof state.space.location.address === 'string'
-      ? state.space.location.address
-      : ''
+  let [selectedCategories, setSelectedCategories] = useState<Array<string>>(
+    onboardingState.confirmBusinessDetail.categories || []
   );
 
-  let place;
-  if (placeID != null) {
-    place = session.get('place', placeID);
-  }
-  let name = '';
-  let address = '';
-  if (place != null) {
-    name = place.name;
-    address = place.formatted_address || '';
-  } else {
-    name = session.get('sessionStoreName') || '';
-    address = fallbackAddress;
-  }
+  let { placeID } = useParams();
+  let history = useHistory<LocationState>();
+  let { state: landingState } = history.location;
+  let { name } = landingState;
+  let mapURL = MAPS_IFRAME_URL_PLACE + '&q=place_id:' + placeID;
 
-  let mapURL = place
-    ? MAPS_IFRAME_URL_PLACE + '&q=place_id:' + place.place_id
-    : MAPS_IFRAME_URL_SEARCH + '&q=' + urlEncode(name + ', ' + address);
+  useEffect(() => {
+    let allValid = selectedBusinessRelation && selectedCategories.length > 0 && name;
+    if (allValid) {
+      dispatch({ type: 'ENABLE_NEXT_BUTTON' });
+      dispatch({
+        type: 'SAVE_CHANGES',
+        values: ({
+          confirmBusinessDetail: {
+            name,
+            categories: selectedCategories,
+            userRelation: selectedBusinessRelation,
+          },
+        } as unknown) as ConfirmBusinessDetailType,
+      });
+    }
+  }, [selectedBusinessRelation, selectedCategories, name, dispatch]);
 
   return (
     <Form>
@@ -58,18 +85,30 @@ export default function ConfirmBusinessDetail() {
             onPress={() => toggleCategorySelection(!categorySelectionVisible)}
           />
         </RowedView>
+        <RowWrap>
+          {selectedCategories.map((category, index) => (
+            <PillButton primary key={index} style={{ marginRight: 4, marginTop: 4 }}>
+              {category}
+            </PillButton>
+          ))}
+        </RowWrap>
         <ClickAway onClickAway={() => toggleCategorySelection(false)}>
-          {/* TODO: fetch categories */}
           {categoriesData && (
             <FilterContainer
               search
               visible={categorySelectionVisible}
-              selectedOptions={[]}
+              selectedOptions={selectedCategories}
               allOptions={categoriesData.categories}
-              onSelect={(category) => {
-                setSelectedCategory([...selected]);
+              onSelect={(category: string) => {
+                setSelectedCategories([...selectedCategories, category]);
               }}
-              onUnSelect={() => {}}
+              onUnSelect={(category: string) => {
+                let newSelectedCategories = selectedCategories.filter(
+                  (el: string) => !el.includes(category)
+                );
+                setSelectedCategories(newSelectedCategories);
+              }}
+              onDone={() => toggleCategorySelection(false)}
             />
           )}
         </ClickAway>
@@ -108,7 +147,6 @@ const FormContainer = styled(View)`
 
 const RowedView = styled(View)`
   flex-direction: row;
-  margin: 20px 0;
 `;
 
 const FilterContainer = styled(Filter)`
@@ -134,4 +172,7 @@ const OtherTextInput = styled(TextInput)`
 const ErrorText = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
   color: ${RED_TEXT};
+`;
+const RowWrap = styled(View)`
+  flex-flow: row wrap;
 `;
