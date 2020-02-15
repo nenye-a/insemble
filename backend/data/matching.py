@@ -152,22 +152,19 @@ def generate_matches(location_address, name=None, my_place_type={}):
     df2 = df2.fillna(0)
 
     print("** Matching: Pre-processing start.")
-    # PREPROCESS FIELDS
     df2 = preprocess_match_df(df2)
 
-    # SUBTRACT VECTOR
+    # subtract vector from remaining matches
     diff = df2.subtract(df2.iloc[-1])
     diff = diff.iloc[:-1]
 
     print("** Matching: Post-processing start.")
-    # POST PROCESS
     processed_diff = postprocess_match_df(diff)
 
     print("** Matching: Matching start.")
-    # CALCULATE DISTANCE & MATCH
     norm_df = weight_and_evaluate(processed_diff)
 
-    # re-assign ids, and location pins
+    # re-assign the important tracking information (location id & positioning)
     norm_df['lat'], norm_df['lng'], norm_df['loc_id'] = df['lat'], df['lng'], df['loc_id']
 
     print("** Matching: Matching complete, results immenent.")
@@ -463,13 +460,19 @@ def weight_and_evaluate(processed_difference_df):
         'gender3': 2.6,
     }
     weight_df = pd.DataFrame([weight])
-    normalized_dataframe["error_sum"] = normalized_dataframe[weight.keys()].dot(weight_df.transpose())
+    normalized_dataframe["error_sum"] = normalized_dataframe[weight.keys()].dot(weight_df.transpose()) / \
+        sum(weight.values())
 
     return normalized_dataframe
 
 
 def _map_difference_to_match(difference):
     # map difference to a match rating between 0 and 100
-    difference_max = 88
-    difference_min_est = 13
+    difference_max = 1
+    difference_min_est = 0.145
+
+    # previous values
+    # difference_max = 88
+    # difference_min_est = 13
+
     return utils.translate(difference, difference_max, difference_min_est, 0, 100)

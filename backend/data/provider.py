@@ -370,3 +370,48 @@ def _update_place(place_id, lat, lng, categories):
         'distance': distance,
         'similar': similar
     }
+
+
+# Receives un-processed vectors and generates the match value between them.
+# It uses the location as the reference & finds a match with the target
+
+def get_match_value(target, location):
+
+    match_df = pd.DataFrame([target, location]).fillna(0)
+
+    # use other locations as reference to generate match.
+    match_df = matching.MATCHING_DF.copy().append(match_df)
+    match_df = match_df.drop(columns=["_id", "lat", "lng", "loc_id"])
+    match_df = matching.preprocess_match_df(match_df)
+    diff_df = match_df.subtract(match_df.iloc[-1])
+    diff_df = diff_df.iloc[:-1]
+    processed_df = matching.postprocess_match_df(diff_df)
+    result_df = matching.weight_and_evaluate(processed_df)
+
+    match_vector = result_df.iloc[-1]
+    demo_weight = {
+        'income': 4.6,
+        'age': 4,
+        'education': 3.6,
+        'race': 3.6,
+        'gender': 3.6
+    }
+    # no need to renormalize, as this vector has already been normalized
+    match_vector["demo_error"] = match_vector[demo_weight.keys()].sum() / sum(demo_weight.values())
+
+    # High growth (20% over 5 years) considered positive (could alternatively be calculated from EA data)
+    growth = True if target["HouseholdGrowth2017-2022-1"] > 20 else False
+    demographics = True if matching._map_difference_to_match(match_vector["demo_error"]) > 80 else False
+    # High persona or ecosystem match (80%) and above considered positive
+    personas = True if matching._map_difference_to_match(match_vector["psycho"]) > 80 else False
+    ecosystem = True if matching._map_difference_to_match(match_vector["nearby_categories"]) > 80 else False
+
+    return {
+        'match': matching._map_difference_to_match(match_vector["error_sum"]),
+        'affinities': {
+            'growth': growth,
+            'demographics': demographics,
+            'personas': personas,
+            'ecosystem': ecosystem
+        }
+    }

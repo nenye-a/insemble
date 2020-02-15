@@ -358,11 +358,14 @@ class LocationDetailsAPI(generics.GenericAPIView):
         my_location_listener.join()
         target_location_listener.join()
 
+        match_details = self._get_match_value(target_location[0], my_location[0])
+
         # TODO: process demographics
 
         response = {
             'status': 200,
             'status_detail': 'Success',
+            'match_details': match_details,
             'key_facts': key_facts[0],
             # 'demo': target_demo1[0],
             'target_nearby': target_nearby[0],
@@ -390,10 +393,8 @@ class LocationDetailsAPI(generics.GenericAPIView):
     # same structure as "target_location"
     @staticmethod
     @celery_app.task
-    def _get_match_details(location, target_location):
-
-        # TODO: get the match details for two locations
-        pass
+    def _get_match_value(target_location, location):
+        return provider.get_match_value(location, target_location)
 
     # location expected to either have address & brand_name, otherwise it's assumed to have a latitude
     # longitude pair
@@ -429,7 +430,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
     def _register_tasks(self) -> None:
         celery_app.register_task(self._get_nearby)
         celery_app.register_task(self._get_demographics)
-        celery_app.register_task(self._get_match_details)
+        celery_app.register_task(self._get_match_value)
         celery_app.register_task(self._get_location_details)
         celery_app.register_task(self._get_personas)
         celery_app.register_task(self._get_key_facts)
