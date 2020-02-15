@@ -5,6 +5,7 @@ import View from './View';
 import RadioButton from './RadioButton';
 import useID from '../utils/useID';
 import Label from './Label';
+import { isEqual } from '../utils/isEqual';
 
 type ViewProps = ComponentProps<typeof View>;
 
@@ -50,7 +51,7 @@ export default function RadioGroup<T>(props: RadioGroupProps<T>) {
             name={name}
             id={name + '_' + key}
             title={titleExtractor(item)}
-            isSelected={item === selectedOption}
+            isSelected={isEqual(item, selectedOption)}
             onPress={() => onSelect(item)}
             disabled={disabled}
             {...radioItemProps}
