@@ -1,5 +1,6 @@
 from . import utils, matching
 import json
+import numpy as np
 import pandas as pd
 import data.api.goog as google
 import data.api.spatial as spatial
@@ -374,7 +375,6 @@ def _update_place(place_id, lat, lng, categories):
 
 # Receives un-processed vectors and generates the match value between them.
 # It uses the location as the reference & finds a match with the target
-
 def get_match_value(target, location):
 
     match_df = pd.DataFrame([target, location]).fillna(0)
@@ -415,3 +415,27 @@ def get_match_value(target, location):
             'ecosystem': ecosystem
         }
     }
+
+
+# Receiving un-processed vectors, generates the top 3 matching psychogrpahics
+# Top 3 matching psychographics are currently the highest rated of the most
+# similar psychographics
+def get_matching_personas(target, location):
+
+    personas_list = matching.SPATIAL_LIST
+    target_df = pd.DataFrame([target])
+    eval_df = pd.DataFrame([target, location]).fillna(0)
+    eval_df = eval_df.subtract(eval_df.iloc[-1]).iloc[:-1][personas_list]
+
+    smallest_10_columns = np.argsort(eval_df.values, axis=1)[0, :10]
+    top_10_similar_personas = list(eval_df.columns[smallest_10_columns])
+
+    print(top_10_similar_personas)
+    top_10_similar = target_df[top_10_similar_personas]
+    print(top_10_similar)
+    largest_similar_3_columns = np.argsort(-top_10_similar.values, axis=1)[0, :3]
+    print(largest_similar_3_columns)
+    top_3_largest_similar_personas = list(top_10_similar.columns[largest_similar_3_columns])
+    print(top_3_largest_similar_personas)
+
+    return dict(target_df.iloc[0][top_3_largest_similar_personas])

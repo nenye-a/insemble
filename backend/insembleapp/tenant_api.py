@@ -358,14 +358,16 @@ class LocationDetailsAPI(generics.GenericAPIView):
         my_location_listener.join()
         target_location_listener.join()
 
-        match_details = self._get_match_value(target_location[0], my_location[0])
+        top_personas = self._get_personas(target_location[0], my_location[0])
+        # match_details = self._get_match_value(target_location[0], my_location[0])
 
         # TODO: process demographics
 
         response = {
             'status': 200,
             'status_detail': 'Success',
-            'match_details': match_details,
+            'top_personas': top_personas,
+            # 'match_details': match_details,
             'key_facts': key_facts[0],
             # 'demo': target_demo1[0],
             'target_nearby': target_nearby[0],
@@ -413,9 +415,8 @@ class LocationDetailsAPI(generics.GenericAPIView):
 
     @staticmethod
     @celery_app.task
-    def _get_personas(lat, lng):
-        # TODO: get the paersonas
-        pass
+    def _get_personas(target, location):
+        return provider.get_matching_personas(target, location)
 
     @staticmethod
     @celery_app.task
