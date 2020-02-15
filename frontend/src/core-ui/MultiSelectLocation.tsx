@@ -17,11 +17,12 @@ type Props = ComponentProps<'input'> & {
   onSelected: (values: Array<GPlaceResult>) => void;
   label?: string;
   containerStyle?: CSSProperties;
+  defaultSelected?: Array<GPlaceResult>;
 };
 
 export default function MultiSelectLocation(props: Props) {
-  let { onSelected, label, containerStyle } = props;
-  let [selectedValues, setSelectedValues] = useState<Array<GPlaceResult>>([]);
+  let { onSelected, label, containerStyle, defaultSelected } = props;
+  let [selectedValues, setSelectedValues] = useState<Array<GPlaceResult>>(defaultSelected || []);
   let [inputValue, setInputValue] = useState<string>('');
   let inputRef = useRef<HTMLInputElement | null>(null);
   useEffect(() => {
@@ -63,9 +64,9 @@ export default function MultiSelectLocation(props: Props) {
     <View style={containerStyle}>
       {label && <LabelWrapper text={label} id={id} />}
       <Container>
-        {selectedValues.map((value, index) => (
+        {selectedValues.map(({ address }, index) => (
           <Selected key={index} primary>
-            {value}
+            {address}
           </Selected>
         ))}
         <TextSearch

@@ -88,8 +88,8 @@ export default function Onboarding() {
   let Content = SEGMENTS[activeSegmentIndex].content;
 
   let [state, dispatch] = useReducer(tenantOnboardingReducer, tenantOnboardingInitialState);
-  if (!history.location.state.name) {
-    <Redirect to="/" />;
+  if (!history.location.state) {
+    return <Redirect to="/" />;
   }
   return (
     <Container flex>

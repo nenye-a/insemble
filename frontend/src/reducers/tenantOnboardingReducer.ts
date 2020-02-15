@@ -1,3 +1,16 @@
+import { GPlaceResult } from '../core-ui/MultiSelectLocation';
+
+export enum NewLocationPlan {
+  YES = 'YES',
+  NOT_ACTIVE = 'NOT_ACTIVE',
+  NOT_PLANNING = 'NOT_PLANNING',
+}
+
+export type NewLocationPlanObj = {
+  label: string;
+  value: NewLocationPlan;
+};
+
 export type ConfirmBusinessDetail = {
   name: string;
   categories: Array<string>;
@@ -5,9 +18,9 @@ export type ConfirmBusinessDetail = {
 };
 
 export type TenantGoals = {
-  newLocationPlan: string;
-  location: Array<object>;
-  locationCount?: number;
+  newLocationPlan?: NewLocationPlanObj;
+  location: Array<GPlaceResult>;
+  locationCount?: string;
 };
 
 export type TargetCustomers = {
@@ -44,7 +57,7 @@ export type Action =
     }
   | {
       type: 'SAVE_CHANGES';
-      values: ConfirmBusinessDetail | TenantGoals | TargetCustomers | PhysicalSiteCriteria; // TODO: add type for each step
+      values: ConfirmBusinessDetail | TenantGoals | TargetCustomers | PhysicalSiteCriteria;
     };
 
 export let tenantOnboardingInitialState = {
@@ -55,7 +68,7 @@ export let tenantOnboardingInitialState = {
     userRelation: '',
   },
   tenantGoals: {
-    newLocationPlan: '',
+    newLocationPlan: undefined,
     location: [],
   },
   targetCustomers: {},
