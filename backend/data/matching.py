@@ -143,138 +143,34 @@ def generate_matches(location_address, name=None, my_place_type={}):
     """
 
     my_location_df = _generate_location_vector(location_address, name)
-
     # get preprocessed vectors
     df = MATCHING_DF.copy()
 
+    # combine matching df & subtraction vector
     df2 = df.drop(columns=["_id", "lat", "lng", "loc_id"])
-    # ADDITIONAL - PREPROCESS FIELDS
-    print(my_location_df)
-    print("Preprocess start")
-
-    # add my vector to the list
     df2 = df2.append(my_location_df)
     df2 = df2.fillna(0)
 
-    # convert all tier break downs to percentage
-    # TODO: Clean up pre processing code below
-    income_sum = df2[INCOME_LIST].sum(axis=1)
-    income_sum3 = df2[INCOME_LIST_3MILE].sum(axis=1)
-    age_sum = df2[AGE_LIST].sum(axis=1)
-    age_sum3 = df2[AGE_LIST_3MILE].sum(axis=1)
-    transport_sum = df2[TRANSPORT_LIST].sum(axis=1)
-    transport_sum3 = df2[TRANSPORT_LIST_3MILE].sum(axis=1)
-    travel_time_sum = df2[TRAVEL_TIME_LIST].sum(axis=1)
-    travel_time_sum3 = df2[TRAVEL_TIME_LIST_3MILE].sum(axis=1)
-    education_sum = df2[EDUCATION_LIST].sum(axis=1)
-    education_sum3 = df2[EDUCATION_LIST_3MILE].sum(axis=1)
-    race_sum = df2[RACE_LIST].sum(axis=1)
-    race_sum3 = df2[RACE_LIST_3MILE].sum(axis=1)
-    gender_sum = df2[GENDER_LIST].sum(axis=1)
-    gender_sum3 = df2[GENDER_LIST_3MILE].sum(axis=1)
-    for income in INCOME_LIST:
-        df2[income] = df2[income] / income_sum
-    for income_3mile in INCOME_LIST_3MILE:
-        df2[income_3mile] = df2[income_3mile] / income_sum3
-    for age in AGE_LIST:
-        df2[age] = df2[age] / age_sum
-    for age_3mile in AGE_LIST_3MILE:
-        df2[age_3mile] = df2[age_3mile] / age_sum3
-    for transport_method in TRANSPORT_LIST:
-        df2[transport_method] = df2[transport_method] / transport_sum
-    for transport_method_3mile in TRANSPORT_LIST_3MILE:
-        df2[transport_method_3mile] = df2[transport_method_3mile] / transport_sum3
-    for travel_time in TRAVEL_TIME_LIST:
-        df2[travel_time] = df2[travel_time] / travel_time_sum
-    for travel_time_3mile in TRAVEL_TIME_LIST_3MILE:
-        df2[travel_time_3mile] = df2[travel_time_3mile] / travel_time_sum3
-    for eductation_level in EDUCATION_LIST:
-        df2[eductation_level] = df2[eductation_level] / education_sum
-    for eductation_level_3mile in EDUCATION_LIST_3MILE:
-        df2[eductation_level_3mile] = df2[eductation_level_3mile] / education_sum3
-    for ethnicity in RACE_LIST:
-        df2[ethnicity] = df2[ethnicity] / race_sum
-    for ethnicity_3mile in RACE_LIST_3MILE:
-        df2[ethnicity_3mile] = df2[ethnicity_3mile] / race_sum3
-    for gender in GENDER_LIST:
-        df2[gender] = df2[gender] / gender_sum
-    for gender_3mile in GENDER_LIST_3MILE:
-        df2[gender_3mile] = df2[gender_3mile] / gender_sum3
-    print("% pre-processing-complete")
-
-    # No penalty for having higher daytime population than the existing location.
-    arcgis_items = ["DaytimePop1", "DaytimePop13", "DaytimeWorkingPop1", "DaytimeWorkingPop13", "DaytimeResidentPop1", "DaytimeResidentPop13",
-                    "TotalHouseholds1", "TotalHouseholds13", "HouseholdGrowth2017-2022-1", "HouseholdGrowth2017-2022-13"]
-    for item in arcgis_items:
-        df2.loc[df2[item] > df2.iloc[-1].loc[item],
-                item] = df2.iloc[-1].loc[item]
-
-    print("day time pre-processing complete")
+    print("** Matching: Pre-processing start.")
+    # PREPROCESS FIELDS
+    df2 = preprocess_match_df(df2)
 
     # SUBTRACT VECTOR
     diff = df2.subtract(df2.iloc[-1])
     diff = diff.iloc[:-1]
 
+    print("** Matching: Post-processing start.")
     # POST PROCESS
-    # group features that are evaluated & normalized together
-    diff["psycho"] = diff[SPATIAL_LIST].sum(axis=1)
-    diff["income"] = diff[INCOME_LIST].sum(axis=1)
-    diff["gender"] = diff[GENDER_LIST].sum(axis=1)
-    diff["race"] = diff[RACE_LIST].sum(axis=1)
-    diff["age"] = diff[AGE_LIST].sum(axis=1)
-    diff["education"] = diff[EDUCATION_LIST].sum(axis=1)
-    diff["travel_time"] = diff[TRAVEL_TIME_LIST].sum(axis=1)
-    diff["transport"] = diff[TRANSPORT_LIST].sum(axis=1)
-    diff["psycho3"] = diff[SPATIAL_LIST_3MILE].sum(axis=1)
-    diff["income3"] = diff[INCOME_LIST_3MILE].sum(axis=1)
-    diff["gender3"] = diff[GENDER_LIST_3MILE].sum(axis=1)
-    diff["race3"] = diff[RACE_LIST_3MILE].sum(axis=1)
-    diff["age3"] = diff[AGE_LIST_3MILE].sum(axis=1)
-    diff["education3"] = diff[EDUCATION_LIST_3MILE].sum(axis=1)
-    diff["travel_time3"] = diff[TRAVEL_TIME_LIST_3MILE].sum(axis=1)
-    diff["transport3"] = diff[TRANSPORT_LIST_3MILE].sum(axis=1)
-    diff["nearby_categories"] = diff[FOURSQUARE_CATEGORIES].sum(axis=1)
+    processed_diff = postprocess_match_df(diff)
 
-    # normalize between 0 and 1
-    norm_df = (diff - diff.min()) / (diff.max() - diff.min())
+    print("** Matching: Matching start.")
+    # CALCULATE DISTANCE & MATCH
+    norm_df = weight_and_evaluate(processed_diff)
+
+    # re-assign ids, and location pins
     norm_df['lat'], norm_df['lng'], norm_df['loc_id'] = df['lat'], df['lng'], df['loc_id']
 
-    # weight and sum the differences
-    weight = {
-        # 1 mile weights
-        'DaytimePop1': 5,
-        'MedHouseholdIncome1': 4.8,
-        'income': 4.6,
-        'TotalHouseholds1': 4.4,
-        'nearby_categories': 4.2,
-        'DaytimeResidentPop1': 4,
-        'psycho': 4,
-        'age': 4,
-        'transport': 3.8,
-        'travel_time': 3.6,
-        'education': 3.6,
-        'race': 3.6,
-        'gender': 3.6,
-        # 3 mile weights
-        'DaytimePop13': 3.5,
-        'MedHouseholdIncome13': 3.3,
-        'income3': 3.1,
-        'TotalHouseholds13': 3,
-        'DaytimeResidentPop13': 3,
-        'psycho3': 3,
-        'age3': 3,
-        'transport3': 2.9,
-        'travel_time3': 2.7,
-        'education3': 2.7,
-        'race3': 2.6,
-        'gender3': 2.6,
-    }
-    weight_df = pd.DataFrame([weight])
-
-    # CALCULATE DISTANCE & MATCH
-    # Investigation into using euclidean distance ongoing.
-    norm_df["error_sum"] = norm_df[weight.keys()].dot(weight_df.transpose())
-
+    print("** Matching: Matching complete, results immenent.")
     # Return only the top 1% of locations.
     norm_df = norm_df[:-1]
     best = norm_df.nsmallest(int(norm_df.shape[0] * 0.01), 'error_sum')
@@ -443,6 +339,133 @@ def _generate_location_vector(address, name=None, lat=None, lng=None):
                        array_3mile_dataframes + categories, axis=1)
 
     return vector
+
+
+# given a match dataframe, will preprocess into the correct format
+def preprocess_match_df(dataframe):
+
+    # convert all tier break downs to percentage
+    # TODO: Clean up pre processing code below
+    income_sum = dataframe[INCOME_LIST].sum(axis=1)
+    income_sum3 = dataframe[INCOME_LIST_3MILE].sum(axis=1)
+    age_sum = dataframe[AGE_LIST].sum(axis=1)
+    age_sum3 = dataframe[AGE_LIST_3MILE].sum(axis=1)
+    transport_sum = dataframe[TRANSPORT_LIST].sum(axis=1)
+    transport_sum3 = dataframe[TRANSPORT_LIST_3MILE].sum(axis=1)
+    travel_time_sum = dataframe[TRAVEL_TIME_LIST].sum(axis=1)
+    travel_time_sum3 = dataframe[TRAVEL_TIME_LIST_3MILE].sum(axis=1)
+    education_sum = dataframe[EDUCATION_LIST].sum(axis=1)
+    education_sum3 = dataframe[EDUCATION_LIST_3MILE].sum(axis=1)
+    race_sum = dataframe[RACE_LIST].sum(axis=1)
+    race_sum3 = dataframe[RACE_LIST_3MILE].sum(axis=1)
+    gender_sum = dataframe[GENDER_LIST].sum(axis=1)
+    gender_sum3 = dataframe[GENDER_LIST_3MILE].sum(axis=1)
+    for income in INCOME_LIST:
+        dataframe[income] = dataframe[income] / income_sum
+    for income_3mile in INCOME_LIST_3MILE:
+        dataframe[income_3mile] = dataframe[income_3mile] / income_sum3
+    for age in AGE_LIST:
+        dataframe[age] = dataframe[age] / age_sum
+    for age_3mile in AGE_LIST_3MILE:
+        dataframe[age_3mile] = dataframe[age_3mile] / age_sum3
+    for transport_method in TRANSPORT_LIST:
+        dataframe[transport_method] = dataframe[transport_method] / transport_sum
+    for transport_method_3mile in TRANSPORT_LIST_3MILE:
+        dataframe[transport_method_3mile] = dataframe[transport_method_3mile] / transport_sum3
+    for travel_time in TRAVEL_TIME_LIST:
+        dataframe[travel_time] = dataframe[travel_time] / travel_time_sum
+    for travel_time_3mile in TRAVEL_TIME_LIST_3MILE:
+        dataframe[travel_time_3mile] = dataframe[travel_time_3mile] / travel_time_sum3
+    for eductation_level in EDUCATION_LIST:
+        dataframe[eductation_level] = dataframe[eductation_level] / education_sum
+    for eductation_level_3mile in EDUCATION_LIST_3MILE:
+        dataframe[eductation_level_3mile] = dataframe[eductation_level_3mile] / education_sum3
+    for ethnicity in RACE_LIST:
+        dataframe[ethnicity] = dataframe[ethnicity] / race_sum
+    for ethnicity_3mile in RACE_LIST_3MILE:
+        dataframe[ethnicity_3mile] = dataframe[ethnicity_3mile] / race_sum3
+    for gender in GENDER_LIST:
+        dataframe[gender] = dataframe[gender] / gender_sum
+    for gender_3mile in GENDER_LIST_3MILE:
+        dataframe[gender_3mile] = dataframe[gender_3mile] / gender_sum3
+
+    # No penalty for having higher daytime population than the existing location.
+    arcgis_items = ["DaytimePop1", "DaytimePop13", "DaytimeWorkingPop1", "DaytimeWorkingPop13", "DaytimeResidentPop1", "DaytimeResidentPop13",
+                    "TotalHouseholds1", "TotalHouseholds13", "HouseholdGrowth2017-2022-1", "HouseholdGrowth2017-2022-13"]
+    for item in arcgis_items:
+        dataframe.loc[dataframe[item] > dataframe.iloc[-1].loc[item],
+                      item] = dataframe.iloc[-1].loc[item]
+
+    return dataframe
+
+
+# given difference matrix, post proesses items into groups that work together
+def postprocess_match_df(difference_dataframe):
+
+    # POST PROCESS
+    # group features that are evaluated & normalized together
+    difference_dataframe["psycho"] = difference_dataframe[SPATIAL_LIST].sum(axis=1)
+    difference_dataframe["income"] = difference_dataframe[INCOME_LIST].sum(axis=1)
+    difference_dataframe["gender"] = difference_dataframe[GENDER_LIST].sum(axis=1)
+    difference_dataframe["race"] = difference_dataframe[RACE_LIST].sum(axis=1)
+    difference_dataframe["age"] = difference_dataframe[AGE_LIST].sum(axis=1)
+    difference_dataframe["education"] = difference_dataframe[EDUCATION_LIST].sum(axis=1)
+    difference_dataframe["travel_time"] = difference_dataframe[TRAVEL_TIME_LIST].sum(axis=1)
+    difference_dataframe["transport"] = difference_dataframe[TRANSPORT_LIST].sum(axis=1)
+    difference_dataframe["psycho3"] = difference_dataframe[SPATIAL_LIST_3MILE].sum(axis=1)
+    difference_dataframe["income3"] = difference_dataframe[INCOME_LIST_3MILE].sum(axis=1)
+    difference_dataframe["gender3"] = difference_dataframe[GENDER_LIST_3MILE].sum(axis=1)
+    difference_dataframe["race3"] = difference_dataframe[RACE_LIST_3MILE].sum(axis=1)
+    difference_dataframe["age3"] = difference_dataframe[AGE_LIST_3MILE].sum(axis=1)
+    difference_dataframe["education3"] = difference_dataframe[EDUCATION_LIST_3MILE].sum(axis=1)
+    difference_dataframe["travel_time3"] = difference_dataframe[TRAVEL_TIME_LIST_3MILE].sum(axis=1)
+    difference_dataframe["transport3"] = difference_dataframe[TRANSPORT_LIST_3MILE].sum(axis=1)
+    difference_dataframe["nearby_categories"] = difference_dataframe[FOURSQUARE_CATEGORIES].sum(axis=1)
+
+    return difference_dataframe
+
+
+# will normalize, weight, and evaluate the vectors
+def weight_and_evaluate(processed_difference_df):
+
+    # normalize between 0 and 1
+    normalized_dataframe = (processed_difference_df - processed_difference_df.min()) / \
+        (processed_difference_df.max() - processed_difference_df.min())
+
+    # weight and sum the differences
+    weight = {
+        # 1 mile weights
+        'DaytimePop1': 5,
+        'MedHouseholdIncome1': 4.8,
+        'income': 4.6,
+        'TotalHouseholds1': 4.4,
+        'nearby_categories': 4.2,
+        'DaytimeResidentPop1': 4,
+        'psycho': 4,
+        'age': 4,
+        'transport': 3.8,
+        'travel_time': 3.6,
+        'education': 3.6,
+        'race': 3.6,
+        'gender': 3.6,
+        # 3 mile weights
+        'DaytimePop13': 3.5,
+        'MedHouseholdIncome13': 3.3,
+        'income3': 3.1,
+        'TotalHouseholds13': 3,
+        'DaytimeResidentPop13': 3,
+        'psycho3': 3,
+        'age3': 3,
+        'transport3': 2.9,
+        'travel_time3': 2.7,
+        'education3': 2.7,
+        'race3': 2.6,
+        'gender3': 2.6,
+    }
+    weight_df = pd.DataFrame([weight])
+    normalized_dataframe["error_sum"] = normalized_dataframe[weight.keys()].dot(weight_df.transpose())
+
+    return normalized_dataframe
 
 
 def _map_difference_to_match(difference):

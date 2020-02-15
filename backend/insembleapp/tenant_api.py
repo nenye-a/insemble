@@ -300,10 +300,10 @@ class LocationDetailsAPI(generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
 
-        # register all celery tasks
+        # indempotently register all celery tasks
         self._register_tasks()
 
-        # ensure that the data is received correctly
+        # validate request
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
@@ -311,7 +311,6 @@ class LocationDetailsAPI(generics.GenericAPIView):
         # TODO: KO acquisition of details for my location
         if 'address' in validated_params['my_location']:
 
-            # my_location = [self._get_location_details(validated_params['my_location'])]
             # get location match details asynchronously
             l_process, my_location = self._get_location_details.delay(validated_params['my_location']), []
             my_location_listener = self._celery_listener(l_process, my_location)
@@ -330,7 +329,6 @@ class LocationDetailsAPI(generics.GenericAPIView):
             lat = validated_params['target_location']['lat']
             lng = validated_params['target_location']['lng']
 
-            # target_location = [self._get_location_details(validated_params["target_location"], False)]
             # get location match details asynchronously
             l_process, target_location = self._get_location_details.delay(validated_params["target_location"], False), []
             target_location_listener = self._celery_listener(l_process, target_location)
@@ -368,8 +366,8 @@ class LocationDetailsAPI(generics.GenericAPIView):
             'key_facts': key_facts[0],
             # 'demo': target_demo1[0],
             'target_nearby': target_nearby[0],
-            'my_location': my_location[0]['HouseholdGrowth2017-2022-1'],
-            'target_location': target_location[0]['HouseholdGrowth2017-2022-1']
+            # 'my_location': my_location[0]['HouseholdGrowth2017-2022-1'],
+            # 'target_location': target_location[0]['HouseholdGrowth2017-2022-1']
         }
 
         return Response(response, status=status.HTTP_200_OK)
