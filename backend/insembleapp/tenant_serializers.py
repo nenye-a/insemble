@@ -84,13 +84,13 @@ class LocationDetailSerializer(serializers.Serializer):
         my_location: {                          (required)
             address: string,                    (required -> not required if categories are provided)
             brand_name: string,                 (required -> not required if categories are provided)
-            categories: list[string],           (required -> not required if brand_name and address provided)
+            categories: list[string],           (required)
             income: {                           (required -> not required if brand_name and address provided)
                 min: int,                       (required if income provided)
                 max: int,
             }
         },
-        target_location: {                      (required)
+        target_location: {                      (required, not used if property_id is provided)
             lat: int,
             lng: int,
         },
@@ -111,11 +111,10 @@ class LocationDetailSerializer(serializers.Serializer):
         has_income = 'income' in data['my_location']
 
         error_message = {}
-        if not ((has_address and has_brand_name) or (has_categories and has_income)):
-
+        if not ((has_address and has_brand_name and has_categories) or (has_categories and has_income)):
             error_message['status'] = 400
             error_message['status_detail'] = [
-                "Please provide either (address and brand_name) or (categories and income) in my_location"]
+                "Please provide either (address, brand_name, and categories) or (categories and income) in my_location"]
             raise serializers.ValidationError(error_message)
 
         return data

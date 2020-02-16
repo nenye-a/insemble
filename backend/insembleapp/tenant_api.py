@@ -175,7 +175,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
     response: {
         status: int (HTTP),                     (always provided)
         status_detail: string,                  (always provided)
-        result: {                               (not provided if error occurs)
+        overview: {                               (not provided if error occurs)
             match_value: float,
             affinities: {
                 growth: boolean,
@@ -213,7 +213,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
                 { ... same as above }
             ],
             demographics1: {
-                age: {
+                age: {          
                     <18: {
                         my_location: float,                                 (only provided if address is provided)
                         target_location: float,
@@ -238,7 +238,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
                     $125K-$199K: { ... same as above },
                     $200K: { ... same as above}
                 },
-                ethnicity: {
+                ethnicity: {                                                (no subcategory will contain growth)
                     white: {
                         my_location: float,                                 (only provided if address is provided)
                         target_location: float,
@@ -250,7 +250,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
                     pacific_islander: { ... same as above },
                     other: { ... same as above }
                 },
-                education: {
+                education: {                                                (no subcategory will contain growth)
                     some_highschool: {
                         my_location: float,                                 (only provided if address is provided)
                         target_location: float,
@@ -261,8 +261,8 @@ class LocationDetailsAPI(generics.GenericAPIView):
                     associate: { ... same as above },
                     bachelor: { ... same as above },
                     masters: { ... same as above },
-                    professional: { ... same as above },
-                    doctorate: { ... same as above }
+                    professional: { ... same as above },                    
+                    doctorate: { ... same as above }                        
                 },
                 gender: {
                     male: {
@@ -286,10 +286,25 @@ class LocationDetailsAPI(generics.GenericAPIView):
                     distance: float,
                     restaurant: boolean,                                    (only provided if True)
                     retail: boolean,                                        (only provided if True)
-                    similar: boolean
+                    similar: boolean,
+                    hospital: boolean,
+                    apartment: boolean,
+                    metro: boolean,
                 },
                 ... many more
             ],
+        },  
+        property_details: {                                                 (only provided if property_details provided)
+            3D_tour: url, (matterport media)                                (provided only when available)
+            main_photo: url,
+            sqft: int,
+            photos: list[urls],
+            summary: {
+                price/sqft: int,
+                type: string,
+                condition: string
+            },
+            description: string
         }
     }
 
@@ -337,13 +352,23 @@ class LocationDetailsAPI(generics.GenericAPIView):
             my_demo5_listener.start()
 
         else:
-            # TODO: get the match details information for the categories
-            pass
+            # TODO: get the match details information for the categories. In the short term grabs details for
+            # a known address (similar to the matches)
+
+            temp_location = {
+                'address': "371 E 2nd Street, LA",
+                "brand_name": "Spitz",
+                "categories": ["Turkish Restaurant"]
+            }
+
+            l_process, my_location = self._get_location_details.delay(temp_location), []
+            my_location_listener = self._celery_listener(l_process, my_location)
+            my_location_listener.start()
 
         # KO data request for target location. If target location is an existing
         # property, we will provide the details here.
         if 'property_id' in validated_params:
-            # TODO: get all the infromation from property database
+            # TODO: get all the infromation from property database (pending completion and organization of property databas)
             pass
         else:
             target_lat = validated_params['target_location']['lat']
