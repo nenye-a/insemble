@@ -5,3 +5,9 @@ export let GET_CATEGORIES = gql`
     categories
   }
 `;
+
+export const GET_PERSONA_LIST = gql`
+  query Personas {
+    personas
+  }
+`;

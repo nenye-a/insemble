@@ -26,9 +26,12 @@ export type TenantGoals = {
 export type TargetCustomers = {
   minAge?: number;
   maxAge?: number;
+  noAgePreference?: boolean;
   minIncome?: number;
   maxIncome?: number;
+  noIncomePreference?: boolean;
   personas?: Array<string>;
+  noPersonasPreference?: boolean;
 };
 
 export type PhysicalSiteCriteria = {
