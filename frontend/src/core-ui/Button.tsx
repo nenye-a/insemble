@@ -23,13 +23,23 @@ type Props = ComponentProps<typeof TouchableOpacity> & {
   loading?: boolean;
 };
 
-function Button(props: Props) {
-  let { mode, text, textProps, icon, badgeText, loading, disabled, ...otherProps } = props;
+export default function Button(props: Props) {
+  let {
+    mode = 'primary',
+    text,
+    textProps,
+    icon,
+    badgeText,
+    loading,
+    disabled,
+    ...otherProps
+  } = props;
   return (
-    <TouchableOpacity
+    <Container
       forwardedAs="button"
       type="button"
       disabled={loading || disabled}
+      mode={mode}
       {...otherProps}
     >
       {loading ? (
@@ -43,11 +53,11 @@ function Button(props: Props) {
         </>
       )}
       {badgeText && <ButtonBadge text={badgeText} />}
-    </TouchableOpacity>
+    </Container>
   );
 }
 
-export default styled(Button)<Props>`
+const Container = styled(TouchableOpacity)<Props>`
   background-color: ${THEME_COLOR};
   border-radius: 4px;
   height: 36px;
@@ -55,6 +65,13 @@ export default styled(Button)<Props>`
   padding: 0 12px;
   flex-direction: row;
   align-items: center;
+  ${(props) =>
+    props.mode === 'primary' &&
+    css`
+      &:disabled {
+        background-color: ${MUTED_TEXT_COLOR};
+      }
+    `}
   ${(props) =>
     props.mode === 'secondary' &&
     css`
@@ -82,9 +99,7 @@ export default styled(Button)<Props>`
   &:active {
     opacity: 0.5;
   }
-  &:disabled {
-    background-color: ${MUTED_TEXT_COLOR};
-  }
+
 `;
 
 const ButtonBadge = styled(Badge)`
