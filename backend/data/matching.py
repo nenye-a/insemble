@@ -180,7 +180,9 @@ def generate_matches(location_address, name=None, my_place_type={}):
 
 
 def generate_vector_address(address, name):
-    return _generate_location_vector(address, name)
+    print("Address: {}".format(address))
+    print("Name: {}".format(name))
+    return _generate_location_vector(address, name=name)
 
 
 def generate_vector_location(lat, lng):
@@ -194,6 +196,9 @@ def _generate_location_vector(address, name=None, lat=None, lng=None):
     # get latitude and longitude from the address.
     if not (lat and lng):
         if name:
+            print(address)
+            print()
+            print(name)
             location = google.find(address, name=name, allow_non_establishments=True)
         else:
             location = google.find(address, allow_non_establishments=True)

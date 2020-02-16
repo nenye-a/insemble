@@ -53,17 +53,24 @@ def get_key_facts(lat, lng):
     }
 
 
-def get_demographics(lat, lng, radius):
+# get demographics. If no existing demographic vector it will grab demographics. If a demographic
+# vector is provided, then lat, lng, and arius are ignored.
+def get_demographics(lat, lng, radius, demographic_vector=None):
+    """
+    get demographics. If no existing demographic vector it will grab demographics. If a demographic
+    vector is provided, then lat, lng, and arius are ignored.
+    """
 
-    demographics = environics.get_demographics(
-        lat, lng, 1, matching.DEMO_DF, matching.BLOCK_DF, matching.DEMO_CATEGORIES)
-
-    age, income, ethnicity, education, gender = {}, {}, {}, {}, {}
+    if demographic_vector:
+        demographics = demographic_vector
+    else:
+        demographics = environics.get_demographics(
+            lat, lng, radius, matching.DEMO_DF, matching.BLOCK_DF, matching.DEMO_CATEGORIES)
 
     # parse age
     # all the data is referred to by index on the matching algorithm (refer to matching)
-    age_demographics = demographics["Current Year Population, Age"]
-    age_demographics_fiveyear = demographics["Five Year Population, Age"]
+    age_demographics = demographics if demographic_vector else demographics["Current Year Population, Age"]
+    age_demographics_fiveyear = demographics if demographic_vector else demographics["Five Year Population, Age"]
     five_year_age = [value.replace("Current", "Five") for value in matching.AGE_LIST]
 
     age = {
@@ -112,8 +119,8 @@ def get_demographics(lat, lng, radius):
     }
 
     # parse income
-    income_demographics = demographics["Current Year Households, Household Income"]
-    income_demographics_fiveyear = demographics["Five Year Households, Household Income"]
+    income_demographics = demographics if demographic_vector else demographics["Current Year Households, Household Income"]
+    income_demographics_fiveyear = demographics if demographic_vector else demographics["Five Year Households, Household Income"]
     five_year_income = [value.replace("Current", "Five") for value in matching.INCOME_LIST]
 
     income = {
@@ -151,8 +158,8 @@ def get_demographics(lat, lng, radius):
     }
 
     # parse ethnicity (future ethnicity growth not provided right now)
-    ethnicity_demographics = demographics["Current Year Population, Race"]
-    # ethnicity_demographics_fiveyear = demographics["Five Year Population, Race"]
+    ethnicity_demographics = demographics if demographic_vector else demographics["Current Year Population, Race"]
+    # ethnicity_demographics_fiveyear = demographics if demographic_vector else demographics["Five Year Population, Race"]
 
     ethnicity = {
         'white': {
@@ -195,8 +202,8 @@ def get_demographics(lat, lng, radius):
     }
 
     # parse education (future education growth not present right now)
-    education_demographics = demographics["Current Year Population 25+, Education"]
-    # education_demographics_fiveyear = demographics["Five Year Population 25+, Education"]
+    education_demographics = demographics if demographic_vector else demographics["Current Year Population 25+, Education"]
+    # education_demographics_fiveyear = demographics if demographic_vector else demographics["Five Year Population 25+, Education"]
 
     education = {
         'some_highschool': {
@@ -250,11 +257,8 @@ def get_demographics(lat, lng, radius):
     }
 
     # parse gender
-    gender_demographics = demographics["Current Year Population, Gender"]
-    gender_demographics_fiveyear = demographics["Five Year Population, Gender"]
-
-    gender['female'] = gender_demographics["Current Year Population, Female"]
-    gender['male'] = gender_demographics["Current Year Population, Male"]
+    gender_demographics = demographics if demographic_vector else demographics["Current Year Population, Gender"]
+    gender_demographics_fiveyear = demographics if demographic_vector else demographics["Five Year Population, Gender"]
 
     gender = {
         'female': {
@@ -272,7 +276,7 @@ def get_demographics(lat, lng, radius):
     }
 
     # parse commute
-    commute_demographics = demographics["Current Year Workers, Transportation to Work"]
+    commute_demographics = demographics if demographic_vector else demographics["Current Year Workers, Transportation to Work"]
     commute = {
         key.replace("Current Year Workers, Transportation To Work: ", ""): value for key, value in commute_demographics.items()
     }
@@ -438,4 +442,29 @@ def get_matching_personas(target, location):
     top_3_largest_similar_personas = list(top_10_similar.columns[largest_similar_3_columns])
     print(top_3_largest_similar_personas)
 
-    return dict(target_df.iloc[0][top_3_largest_similar_personas])
+    detailed_personas = utils.DB_SPATIAL_TAXONOMY.find({'label': {'$in': top_3_largest_similar_personas}})
+
+    persona_values = dict(target_df.iloc[0][top_3_largest_similar_personas])
+
+    return [{
+        "name": persona["label"],
+        "percentile": persona_values[persona["label"]],
+        "description": persona["sections"]["overview"]["description"],
+        "tags": persona["sections"]["topics"]["list"],
+    } for persona in detailed_personas]
+
+
+# combine two dictionaries generated from the "get_demographics" method in order to
+# return a dictionary in the form expected from location details
+def combine_demographics(my_location, target_location):
+
+    for demographic_category in target_location:
+        for sub_category in target_location[demographic_category]:
+            sub_category_dict = target_location[demographic_category][sub_category]
+            if not isinstance(sub_category_dict, dict):
+                continue
+            my_value = my_location[demographic_category][sub_category]["value"]
+            sub_category_dict["my_location"] = my_value
+            sub_category_dict["target_location"] = sub_category_dict.pop("value")
+
+    return target_location

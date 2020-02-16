@@ -207,12 +207,12 @@ class LocationDetailsAPI(generics.GenericAPIView):
                     percentile: float,
                     name: string,
                     description: string,
-                    tag: string
+                    tags: List[string]
                 },
                 { ... same as above },
                 { ... same as above }
             ],
-            demographics: {
+            demographics1: {
                 age: {
                     <18: {
                         my_location: float,                                 (only provided if address is provided)
@@ -224,7 +224,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
                     35-54: { ... same as above },
                     45-54: { ... same as above },
                     55-64: { ... same as above },
-                    65+ : {... same as above}
+                    65+ : { ... same as above}
                     }
                 },
                 income: {
@@ -273,6 +273,8 @@ class LocationDetailsAPI(generics.GenericAPIView):
                     female: { ... same as above }
                 }
             },
+            demographics3: ... same as demographics,
+            demographics5: ... same as demographics,
             nearby : [
                 {
                     lat: float,
@@ -308,15 +310,34 @@ class LocationDetailsAPI(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
 
-        # TODO: KO acquisition of details for my location
         if 'address' in validated_params['my_location']:
+
+            # TODO: clean up the listener pattern (relatively repetative)
 
             # get location match details asynchronously
             l_process, my_location = self._get_location_details.delay(validated_params['my_location']), []
             my_location_listener = self._celery_listener(l_process, my_location)
             my_location_listener.start()
+
+            location = provider.get_location(validated_params['my_location']['address'], validated_params['my_location']['brand_name'])
+            my_lat = location['lat']
+            my_lng = location['lng']
+
+            # obtain the 1, 3, & 5 mile demographic details asynchronously
+            d_process, my_demo1 = self._get_demographics.delay(my_lat, my_lng, 1), []
+            my_demo1_listener = self._celery_listener(d_process, my_demo1)
+            my_demo1_listener.start()
+
+            d_process, my_demo3 = self._get_demographics.delay(my_lat, my_lng, 3), []
+            my_demo3_listener = self._celery_listener(d_process, my_demo3)
+            my_demo3_listener.start()
+
+            d_process, my_demo5 = self._get_demographics.delay(my_lat, my_lng, 5), []
+            my_demo5_listener = self._celery_listener(d_process, my_demo5)
+            my_demo5_listener.start()
+
         else:
-            # TODO: get the information for the categories
+            # TODO: get the match details information for the categories
             pass
 
         # KO data request for target location. If target location is an existing
@@ -325,9 +346,8 @@ class LocationDetailsAPI(generics.GenericAPIView):
             # TODO: get all the infromation from property database
             pass
         else:
-            # TODO: get all the information from the latitude & longitude
-            lat = validated_params['target_location']['lat']
-            lng = validated_params['target_location']['lng']
+            target_lat = validated_params['target_location']['lat']
+            target_lng = validated_params['target_location']['lng']
 
             # get location match details asynchronously
             l_process, target_location = self._get_location_details.delay(validated_params["target_location"], False), []
@@ -335,44 +355,78 @@ class LocationDetailsAPI(generics.GenericAPIView):
             target_location_listener.start()
 
             # obtain key facts asynchronously
-            kf_process, key_facts = self._get_key_facts.delay(lat, lng), []
+            kf_process, key_facts = self._get_key_facts.delay(target_lat, target_lng), []
             key_facts_listener = self._celery_listener(kf_process, key_facts)
             key_facts_listener.start()
 
-            # obtain the demographic details asynchronously
-            d_process, target_demo1 = self._get_demographics.delay(lat, lng, 1), []
+            # obtain the 1, 3, & 5 mile demographic details asynchronously
+            d_process, target_demo1 = self._get_demographics.delay(target_lat, target_lng, 1), []
             target_demo1_listener = self._celery_listener(d_process, target_demo1)
             target_demo1_listener.start()
 
+            d_process, target_demo3 = self._get_demographics.delay(target_lat, target_lng, 3), []
+            target_demo3_listener = self._celery_listener(d_process, target_demo3)
+            target_demo3_listener.start()
+
+            d_process, target_demo5 = self._get_demographics.delay(target_lat, target_lng, 5), []
+            target_demo5_listener = self._celery_listener(d_process, target_demo5)
+            target_demo5_listener.start()
+
             # obtain the nearby details asynchronously
-            # n_process, target_nearby = self._get_nearby.delay(lat, lng, validated_params['my_location']['categories']), []
-            n_process, target_nearby = self._get_nearby.delay(lat, lng, validated_params['my_location']['categories']), []
+            n_process, target_nearby = self._get_nearby.delay(target_lat, target_lng, validated_params['my_location']['categories']), []
             target_nearby_listener = self._celery_listener(n_process, target_nearby)
             target_nearby_listener.start()
 
-        # TODO: get top personas (factor in the cases of both the property id and the regular params)
-
-        key_facts_listener.join()  # need to account for non definition of the listeners
-        target_demo1_listener.join()  # need to acount for non declaration of the listener
-        target_nearby_listener.join()
         my_location_listener.join()
         target_location_listener.join()
 
-        top_personas = self._get_personas(target_location[0], my_location[0])
-        # match_details = self._get_match_value(target_location[0], my_location[0])
+        # obtain the match values asynchronously
+        m_process, match_values = self._get_match_value.delay(target_location[0], my_location[0]), []
+        match_value_listener = self._celery_listener(m_process, match_values)
+        match_value_listener.start()
 
-        # TODO: process demographics
+        # obtain the top personas asynchronously
+        p_process, top_personas = self._get_personas.delay(target_location[0], my_location[0]), []
+        personas_nearby_listener = self._celery_listener(p_process, top_personas)
+        personas_nearby_listener.start()
+
+        target_demo1_listener.join()
+        target_demo3_listener.join()
+        target_demo5_listener.join()
+
+        # combine demographics if comparing against existing address.
+        if 'address' in validated_params['my_location']:
+            my_demo1_listener.join()
+            my_demo3_listener.join()
+            my_demo5_listener.join()
+
+            demographics1 = provider.combine_demographics(my_demo1[0], target_demo1[0])
+            demographics3 = provider.combine_demographics(my_demo3[0], target_demo3[0])
+            demographics5 = provider.combine_demographics(my_demo5[0], target_demo5[0])
+        else:
+            demographics1 = target_demo1[0]
+            demographics3 = target_demo3[0]
+            demographics5 = target_demo5[0]
+
+        key_facts_listener.join()
+        target_nearby_listener.join()
+        match_value_listener.join()
+        personas_nearby_listener.join()
 
         response = {
             'status': 200,
             'status_detail': 'Success',
-            'top_personas': top_personas,
-            # 'match_details': match_details,
-            'key_facts': key_facts[0],
-            # 'demo': target_demo1[0],
-            'target_nearby': target_nearby[0],
-            # 'my_location': my_location[0]['HouseholdGrowth2017-2022-1'],
-            # 'target_location': target_location[0]['HouseholdGrowth2017-2022-1']
+            'result': {
+                'match_value': match_values[0]['match'],
+                'affinities': match_values[0]['affinities'],
+                'key_facts': key_facts[0],
+                'commute': target_demo3[0].pop('commute'),
+                'top_personas': top_personas[0],
+                'demographics1': demographics1,
+                'demographics3': demographics3,
+                'demographics5': demographics5,
+                'nearby': target_nearby[0]
+            }
         }
 
         return Response(response, status=status.HTTP_200_OK)
@@ -420,8 +474,8 @@ class LocationDetailsAPI(generics.GenericAPIView):
 
     @staticmethod
     @celery_app.task
-    def _get_demographics(lat, lng, radius):
-        return provider.get_demographics(lat, lng, radius)
+    def _get_demographics(lat, lng, radius, demographic_vector=None):
+        return provider.get_demographics(lat, lng, radius, demographic_vector)
 
     @staticmethod
     @celery_app.task
