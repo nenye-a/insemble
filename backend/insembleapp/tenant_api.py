@@ -213,7 +213,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
                 { ... same as above }
             ],
             demographics1: {
-                age: {          
+                age: {
                     <18: {
                         my_location: float,                                 (only provided if address is provided)
                         target_location: float,
@@ -261,8 +261,8 @@ class LocationDetailsAPI(generics.GenericAPIView):
                     associate: { ... same as above },
                     bachelor: { ... same as above },
                     masters: { ... same as above },
-                    professional: { ... same as above },                    
-                    doctorate: { ... same as above }                        
+                    professional: { ... same as above },
+                    doctorate: { ... same as above }
                 },
                 gender: {
                     male: {
@@ -293,7 +293,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
                 },
                 ... many more
             ],
-        },  
+        },
         property_details: {                                                 (only provided if property_details provided)
             3D_tour: url, (matterport media)                                (provided only when available)
             main_photo: url,
@@ -514,3 +514,90 @@ class LocationDetailsAPI(generics.GenericAPIView):
         celery_app.register_task(self._get_location_details)
         celery_app.register_task(self._get_personas)
         celery_app.register_task(self._get_key_facts)
+
+
+# LocationPreviewAPI - referenced by api/locationPreview/ | inherits from LocationDetailsAPI
+class LocationPreviewAPI(LocationDetailsAPI):
+    """
+
+    Provided the latitude and longitude of a location, will provide details for a preview.
+
+    parameters: {
+        my_location: {                          (required)
+            address: string,                    (required -> not required if categories are provided)
+            brand_name: string,                 (required -> not required if categories are provided)
+            categories: list[string],           (required)
+            income: {                           (required -> not required if brand_name and address provided)
+                min: int,                       (required if income provided)
+                max: int,
+            }
+        },
+        target_location: {                      (required, not used if property_id is provided)
+            lat: int,
+            lng: int,
+        },
+        property_id: string,                    (optional)
+    }
+
+    response: {
+        status: int (HTTP),
+        status_detail: string or list[string],
+        target_address: string,
+        target_neighborhoood: string,
+        DaytimePop_3mile: float,
+        median_income: float,
+        median_age: int
+    }
+
+    """
+
+    def get(self, request, *args, **kwargs):
+
+        self._register_tasks()
+
+        # validate input
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        validated_params = serializer.validated_data
+
+        # TODO: determine match value (for next generation preview)
+
+        target_lat = validated_params["target_location"]["lat"]
+        target_lng = validated_params["target_location"]["lng"]
+
+        # get demographic details asynchronously
+        d_process, preview_demographics = self._get_preview_demographics.delay(target_lat, target_lng, 3), []
+        demo_listener = self._celery_listener(d_process, preview_demographics)
+        demo_listener.start()
+
+        location = provider.get_address_neighborhood(target_lat, target_lng)
+        address = None
+        neighborhood = None
+
+        if location:
+            address = location['address']
+            neighborhood = location['neighborhood']
+
+        daytime_pop_3mile = provider.get_daytimepop(target_lat, target_lng, 3)
+
+        demo_listener.join()
+
+        response = {
+            'status': 200,
+            'status_detail': "Success",
+            'target_address': address,
+            'target_neighborhood': neighborhood,
+            'DaytimePop_3mile': daytime_pop_3mile,
+            'median_income': preview_demographics[0]['median_income'],
+            'median_age ': preview_demographics[0]['median_age']
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+
+    @staticmethod
+    @celery_app.task
+    def _get_preview_demographics(lat, lng, radius):
+        return provider.get_preview_demographics(lat, lng, radius)
+
+    def _register_tasks(self) -> None:
+        celery_app.register_task(self._get_preview_demographics)

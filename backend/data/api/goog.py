@@ -16,11 +16,13 @@ GOOG_FINDPLACE_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/findplacef
 GOOG_NEARBY_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json'
 GOOG_DETAILS_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/details/json'
 GOOG_TEXTSEARCH_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/textsearch/json?'
-
+GOOG_GEOCODE_ENDPOINT = 'https://maps.googleapis.com/maps/api/geocode/json'
 
 # Provided a location address & name, method corrects address if available in google. Method
 # corrects address if available in google. Returns google place_id, geometry, address, & name
 # If bias needed, please specific in bias field as per the google API
+
+
 def find(address, name="", bias='ipbias', allow_non_establishments=False):
 
     url = GOOG_FINDPLACE_ENDPOINT
@@ -48,6 +50,31 @@ def find(address, name="", bias='ipbias', allow_non_establishments=False):
         return None
 
     return place
+
+# Provided a latitude and longitude, this endpoint will provide address including all address components:
+
+
+def reverse_geocode(lat, lng):
+
+    url = GOOG_GEOCODE_ENDPOINT
+    payload = {}
+    headers = {}
+
+    latlng = str(lat) + ',' + str(lng)
+    params = {
+        'key': GOOG_KEY,
+        'latlng': latlng,
+    }
+
+    result, _id = safe_request.request(API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
+
+    if 'results' not in result:
+        print('Zero results from google')
+        return None
+
+    location = result['results'][0]
+
+    return location
 
 
 # Given google place ID, can generate the other nearby locations.

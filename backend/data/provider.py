@@ -1,9 +1,7 @@
 from . import utils, matching
-import json
 import numpy as np
 import pandas as pd
 import data.api.goog as google
-import data.api.spatial as spatial
 import data.api.arcgis as arcgis
 import data.api.environics as environics
 
@@ -20,6 +18,27 @@ between the main application api, and our calls data_api calls.
 # {lat:float, lng:float}
 def get_location(address, name=None):
     return google.find(address, name, allow_non_establishments=True)['geometry']['location']
+
+
+# Returns the address and neighborhood of a specific latitude and longitude
+def get_address_neighborhood(lat, lng):
+    google_location = google.reverse_geocode(lat, lng)
+
+    address = google_location['formatted_address']
+    neighborhood = None
+    locality = None
+    for component in google_location['address_components']:
+        if 'neighborhood' in component['types']:
+            neighborhood = component['short_name']
+        if 'locality' in component['types']:
+            locality = component['short_name']
+
+    neighborhood = neighborhood + ', ' + locality if locality else neighborhood
+
+    return {
+        'address': address,
+        'neighborhood': neighborhood
+    }
 
 
 def get_key_facts(lat, lng):
@@ -468,3 +487,22 @@ def combine_demographics(my_location, target_location):
             sub_category_dict["target_location"] = sub_category_dict.pop("value")
 
     return target_location
+
+
+def get_preview_demographics(lat, lng, radius):
+
+    demographics = environics.get_demographics(
+        lat, lng, radius, matching.DEMO_DF, matching.BLOCK_DF, matching.DEMO_CATEGORIES)
+
+    median_age = round(demographics["Current Year Median Age"])
+    median_income = round(demographics["Current Year Median Household Income"], 2)
+
+    return {
+        'median_age': median_age,
+        'median_income': median_income
+    }
+
+
+def get_daytimepop(lat, lng, radius):
+    arcgis_details = arcgis.details(lat, lng, radius)
+    return arcgis_details['DaytimePop']
