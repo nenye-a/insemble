@@ -35,6 +35,12 @@ def get_address_neighborhood(lat, lng):
 
     neighborhood = neighborhood + ', ' + locality if locality else neighborhood
 
+    # return both neighborhood and locality, but return None if neighther are present
+    if neighborhood:
+        neighborhood = neighborhood + ', ' + locality if locality else neighborhood
+    else:
+        neighborhood = locality
+
     return {
         'address': address,
         'neighborhood': neighborhood
