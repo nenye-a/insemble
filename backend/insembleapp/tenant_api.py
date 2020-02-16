@@ -174,7 +174,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
 
     response: {
         status: int (HTTP),                     (always provided)
-        status_detail: string,                  (always provided)
+        status_detail: string or list,          (always provided)
         overview: {                               (not provided if error occurs)
             match_value: float,
             affinities: {
