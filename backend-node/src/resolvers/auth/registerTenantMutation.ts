@@ -66,6 +66,9 @@ export let registerTenant = mutationField('registerTenant', {
               commute: {
                 set: commute,
               },
+              location: {
+                create: location,
+              },
             },
           },
         },
