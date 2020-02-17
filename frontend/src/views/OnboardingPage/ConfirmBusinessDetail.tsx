@@ -29,16 +29,26 @@ type Props = {
 };
 
 type LocationState = {
-  placeID: string;
-  name: string;
-  formattedAddress: string;
-  lat: number;
-  lng: number;
+  placeID?: string;
+  name?: string;
+  formattedAddress?: string;
+  lat?: number;
+  lng?: number;
+  income?: number;
+  categories?: Array<string>;
 };
 
 export default function ConfirmBusinessDetail(props: Props) {
   let { dispatch, state: onboardingState } = props;
   let { confirmBusinessDetail } = onboardingState;
+
+  let { register, errors, watch } = useForm();
+  let otherBusinessRelation = watch('otherBusinessRelation');
+
+  let history = useHistory<LocationState>();
+  let { state: landingState } = history.location;
+  let { name: nameOnLanding, lat, lng, formattedAddress, categories } = landingState;
+  let name = nameOnLanding || confirmBusinessDetail.name || watch('businessName');
 
   let { data: categoriesData } = useQuery<Categories>(GET_CATEGORIES);
 
@@ -47,22 +57,17 @@ export default function ConfirmBusinessDetail(props: Props) {
   );
   let [categorySelectionVisible, toggleCategorySelection] = useState(false);
   let [selectedCategories, setSelectedCategories] = useState<Array<string>>(
-    confirmBusinessDetail.categories || []
+    categories || confirmBusinessDetail.categories || []
   );
 
-  let { register, errors, watch } = useForm();
-  let otherBusinessRelation = watch('otherBusinessRelation');
-
   let { placeID } = useParams();
-  let history = useHistory<LocationState>();
-  let { state: landingState } = history.location;
-  let { name, lat, lng } = landingState;
   let mapURL = MAPS_IFRAME_URL_PLACE + '&q=place_id:' + placeID;
 
   let businessRelationValid =
     (selectedBusinessRelation && selectedBusinessRelation !== 'Other') ||
     (selectedBusinessRelation === 'Other' && otherBusinessRelation);
   let allValid = businessRelationValid && selectedCategories.length > 0 && name;
+
   useEffect(() => {
     if (allValid) {
       dispatch({ type: 'ENABLE_NEXT_BUTTON' });
@@ -75,9 +80,9 @@ export default function ConfirmBusinessDetail(props: Props) {
             userRelation: selectedBusinessRelation,
             otherUserRelation: otherBusinessRelation,
             location: {
-              lat: lat.toString(),
-              lng: lng.toString(),
-              name,
+              lat: (lat && lat.toString()) || '',
+              lng: (lng && lng.toString()) || '',
+              address: formattedAddress || '',
             },
           },
         },
@@ -94,13 +99,22 @@ export default function ConfirmBusinessDetail(props: Props) {
     lat,
     lng,
     otherBusinessRelation,
+    formattedAddress,
   ]);
 
   return (
     <Form>
-      <Iframe src={mapURL} />
+      {placeID && <Iframe src={mapURL} />}
       <FormContainer>
-        <TextInput label="Business Name" defaultValue={name} disabled />
+        <TextInput
+          label="Business Name"
+          defaultValue={name}
+          name="businessName"
+          ref={register({
+            required: 'Business Name should not be empty',
+          })}
+          errorMessage={(errors?.businessName as FieldError)?.message || ''}
+        />
         <RowedView>
           <Label text="Categories" />
           <EditButton
@@ -108,7 +122,6 @@ export default function ConfirmBusinessDetail(props: Props) {
             onPress={() => toggleCategorySelection(!categorySelectionVisible)}
           />
         </RowedView>
-
         <ClickAway onClickAway={() => toggleCategorySelection(false)}>
           {categoriesData && (
             <FilterContainer

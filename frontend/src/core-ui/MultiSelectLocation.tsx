@@ -29,7 +29,7 @@ export default function MultiSelectLocation(props: Props) {
           setSelectedValues((values) => [
             ...values,
             {
-              name: place.formatted_address || '',
+              address: place.formatted_address || '',
               lat: place.geometry?.location.lat().toString() || '',
               lng: place.geometry?.location.lng().toString() || '',
             },
@@ -60,9 +60,9 @@ export default function MultiSelectLocation(props: Props) {
       {label && <LabelWrapper text={label} id={id} />}
       <Container>
         {/* TODO: need to change this back to address soon as the backend adjusted */}
-        {selectedValues.map(({ name }, index) => (
+        {selectedValues.map(({ address }, index) => (
           <Selected key={index} primary>
-            {name}
+            {address}
           </Selected>
         ))}
         <TextSearch
