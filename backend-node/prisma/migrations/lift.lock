@@ -8,3 +8,4 @@
 20200214115211-make-some-tenant-fields-optional
 20200214115812-add-unique-email-constraint
 20200214154847-add-tenant-session
+20200217154257-refactor-brand-data-model
