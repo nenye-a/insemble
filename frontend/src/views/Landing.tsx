@@ -7,7 +7,6 @@ import Title from './LandingPage/Title';
 import Masthead from './LandingPage/Masthead';
 import LocationsInput from './LandingPage/LocationsInput';
 import useGoogleMaps from '../utils/useGoogleMaps';
-import urlSafeLatLng from '../utils/urlSafeLatLng';
 import { WHITE } from '../constants/colors';
 import { FONT_SIZE_LARGE } from '../constants/theme';
 import CategoriesInput from './LandingPage/CategoriesInput';
@@ -50,14 +49,15 @@ function Landing() {
             if (geometry) {
               let { location } = geometry;
               if (location) {
-                let formatedLocation = location.toJSON();
-                let { lat, lng } = urlSafeLatLng(formatedLocation);
+                let { lat, lng } = location;
+                let latitude = lat();
+                let longitude = lng();
                 history.push(`/verify/${placeID}`, {
                   placeID,
                   name,
                   formattedAddress,
-                  lat,
-                  lng,
+                  lat: latitude.toString(),
+                  lng: longitude.toString(),
                 });
               }
             }
