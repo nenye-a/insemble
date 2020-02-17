@@ -1,8 +1,8 @@
-import { Request } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, TenantSession } from '@prisma/client';
 
 export type Root = object | undefined;
 
 export type Context = {
   prisma: PrismaClient;
+  tenantUserId: string;
 };

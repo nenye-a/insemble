@@ -7,10 +7,12 @@ export async function authTenantSession(authToken: string | undefined) {
   if (!sessionID || !sessionToken) {
     return null;
   }
-  let session = await prisma.tenantSession.findOne({
-    where: { id: sessionID },
-  });
-  return session && session.token === sessionToken ? session : null;
+  let user = await prisma.tenantSession
+    .findOne({
+      where: { id: sessionID },
+    })
+    .user();
+  return (user && user.id) || null;
 }
 
 export async function createTenantSession(user: TenantUser) {
