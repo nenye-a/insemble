@@ -7,13 +7,17 @@ export let FilterInput = inputObjectType({
     t.int('maxAge');
     t.int('minIncome');
     t.int('maxIncome');
+    t.int('minRent');
+    t.int('maxRent');
     t.int('minSize');
     t.int('maxSize');
     t.int('minFrontageWidth');
     t.int('maxFrontageWidth');
-    t.string('personaIds', { list: true });
+    t.string('categories', { list: true });
+    t.string('personas', { list: true });
     t.string('equipmentIds', { list: true });
     t.string('spaceType', { list: true });
-    t.string('categories', { list: true });
+    t.string('commute', { list: true });
+    t.string('education', { list: true });
   },
 });
