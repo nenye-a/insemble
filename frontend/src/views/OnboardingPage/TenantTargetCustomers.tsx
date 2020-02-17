@@ -6,15 +6,14 @@ import { View, Alert, Label, Button, Text } from '../../core-ui';
 import { Filter } from '../../components';
 import { MUTED_TEXT_COLOR } from '../../constants/colors';
 import { FONT_SIZE_XSMALL, FONT_SIZE_SMALL } from '../../constants/theme';
-import {
-  Action,
-  State as OnboardingState,
-  TargetCustomers,
-} from '../../reducers/tenantOnboardingReducer';
+import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import { GET_PERSONA_LIST } from '../../graphql/queries/server/filters';
 
-const INITIAL_INCOME_RANGE = [100, 200];
-const INITIAL_AGE_RANGE = [25, 40];
+// remove this when it's connected to endpoint that returns prefilled values
+const INITIAL_MIN_INCOME = 100;
+const INITIAL_MAX_INCOME = 200;
+const INTIIAL_MIN_AGE = 25;
+const INTIIAL_MAX_AGE = 40;
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -35,12 +34,12 @@ export default function TenantTargetCustomers(props: Props) {
     targetCustomers.personas || []
   );
   let [[minAge, maxAge], setSelectedAgeRange] = useState<Array<number>>([
-    targetCustomers.minAge || INITIAL_AGE_RANGE[0],
-    targetCustomers.maxAge || INITIAL_AGE_RANGE[1],
+    targetCustomers.minAge || INTIIAL_MIN_AGE,
+    targetCustomers.maxAge || INTIIAL_MAX_AGE,
   ]);
   let [[minIncome, maxIncome], setSelectedIncomeRange] = useState<Array<number>>([
-    targetCustomers.minIncome || INITIAL_INCOME_RANGE[0],
-    targetCustomers.maxIncome || INITIAL_INCOME_RANGE[1],
+    targetCustomers.minIncome || INITIAL_MIN_INCOME,
+    targetCustomers.maxIncome || INITIAL_MAX_INCOME,
   ]);
 
   useEffect(() => {
