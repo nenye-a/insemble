@@ -1,4 +1,4 @@
-import React, { ComponentProps, useState, useRef } from 'react';
+import React, { ComponentProps, useState, useRef, CSSProperties } from 'react';
 import styled from 'styled-components';
 import PillButton from './PillButton';
 import View from './View';
@@ -21,10 +21,11 @@ type Props = {
   options: Array<string>;
   placeholder: string;
   onChange: (options: Array<string>) => void;
+  containerStyle?: CSSProperties;
 };
 
 export default function MultiSelectInput(props: Props) {
-  let { options, placeholder, onChange } = props;
+  let { options, placeholder, onChange, containerStyle } = props;
   let [selectedValues, setSelectedValues] = useState<Array<string>>([]);
   let [inputValue, setInputValue] = useState<string>('');
   let [isFocused, setFocus] = useState<boolean>(false);
@@ -39,7 +40,7 @@ export default function MultiSelectInput(props: Props) {
   let newOptionList = optionList.filter((option) => !selectedValues.includes(option));
 
   return (
-    <Container>
+    <View style={containerStyle}>
       <SearchContainer isFocused={isFocused}>
         {selectedValues.map((value, index) => (
           <Selected key={index} primary>
@@ -84,7 +85,7 @@ export default function MultiSelectInput(props: Props) {
           </OptionContainer>
         </ClickAway>
       ) : null}
-    </Container>
+    </View>
   );
 }
 
@@ -108,9 +109,6 @@ const TextSearch = styled(TextInput)`
   line-height: 36px;
   outline: none;
   background-color: transparent;
-`;
-const Container = styled(View)`
-  flex-direction: column;
 `;
 
 const Selected = styled(PillButton)`
