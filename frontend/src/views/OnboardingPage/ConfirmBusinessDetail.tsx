@@ -19,7 +19,7 @@ import { BUTTON_TRANSPARENT_TEXT_COLOR, RED_TEXT } from '../../constants/colors'
 import { MAPS_IFRAME_URL_PLACE } from '../../constants/googleMaps';
 import { FONT_SIZE_SMALL } from '../../constants/theme';
 import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
-import { Categories } from '../../generated/categories';
+import { Categories } from '../../generated/Categories';
 import {
   Action,
   ConfirmBusinessDetail as ConfirmBusinessDetailType,
@@ -70,6 +70,8 @@ export default function ConfirmBusinessDetail(props: Props) {
           },
         } as unknown) as ConfirmBusinessDetailType,
       });
+    } else {
+      dispatch({ type: 'DISABLE_NEXT_BUTTON' });
     }
   }, [selectedBusinessRelation, selectedCategories, name, dispatch]);
 
