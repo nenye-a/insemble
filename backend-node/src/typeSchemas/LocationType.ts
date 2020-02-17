@@ -1,10 +1,11 @@
 import { objectType } from 'nexus';
 
-export let LocationType = objectType({
-  name: 'LocationType',
+export let Location = objectType({
+  name: 'Location',
   definition(t) {
-    t.string('address');
-    t.string('lat');
-    t.string('lng');
+    t.model.id();
+    t.model.address();
+    t.model.lng();
+    t.model.lat();
   },
 });

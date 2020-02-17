@@ -22,6 +22,7 @@ let tenantMatches = queryField('tenantMatches', {
       include: {
         location: true,
         matchingProperties: true,
+        nextLocations: true,
       },
     });
     if (!selectedBrand) {
@@ -52,6 +53,7 @@ let tenantMatches = queryField('tenantMatches', {
       userRelation,
       minFrontageWidth,
       maxFrontageWidth,
+      nextLocations,
     } = selectedBrand;
 
     if (!(name && location) && !(categories.length > 0 && minIncome)) {
@@ -104,6 +106,7 @@ let tenantMatches = queryField('tenantMatches', {
           userRelation,
           minFrontageWidth,
           maxFrontageWidth,
+          nextLocations,
         },
       };
     }
@@ -189,6 +192,7 @@ let tenantMatches = queryField('tenantMatches', {
         userRelation,
         minFrontageWidth,
         maxFrontageWidth,
+        nextLocations,
       },
     };
   },
