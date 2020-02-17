@@ -1,0 +1,31 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "Location",
+      "field": "name",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Location",
+      "field": "address"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "minFrontageWidth",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "maxFrontageWidth",
+      "type": "Int",
+      "arity": "Optional"
+    }
+  ]
+}
