@@ -10,6 +10,7 @@ import { WHITE } from '../../constants/colors';
 import { REGISTER_TENANT } from '../../graphql/queries/server/auth';
 import { RegisterTenant, RegisterTenantVariables } from '../../generated/RegisterTenant';
 import { asyncStorage } from '../../utils';
+import { State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 
 enum Role {
   Tenant = 'Tenant',
@@ -18,9 +19,11 @@ enum Role {
 
 type Props = {
   role: 'Tenant' | 'Landlord'; //change to constants
+  onboardingState?: OnboardingState;
 };
 
-export default function SignUpForm(_props: Props) {
+export default function SignUpForm(props: Props) {
+  let { onboardingState } = props;
   let { register, handleSubmit, errors, watch } = useForm();
   let history = useHistory();
   let [registerTenant, { data, loading }] = useMutation<RegisterTenant, RegisterTenantVariables>(
@@ -28,8 +31,46 @@ export default function SignUpForm(_props: Props) {
   );
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
 
+  let getBussinessAndFilterParams = () => {
+    if (onboardingState) {
+      let {
+        confirmBusinessDetail,
+        tenantGoals,
+        targetCustomers,
+        physicalSiteCriteria,
+      } = onboardingState;
+      return {
+        business: {
+          name: confirmBusinessDetail.name,
+          userRelation:
+            confirmBusinessDetail.userRelation === 'Other'
+              ? confirmBusinessDetail.otherUserRelation || ''
+              : confirmBusinessDetail.userRelation,
+          location: confirmBusinessDetail.location,
+          locationCount: Number(tenantGoals.locationCount),
+          newLocationPlan: tenantGoals.newLocationPlan?.value,
+        },
+        filter: {
+          categories: confirmBusinessDetail.categories,
+          personaIds: targetCustomers.noPersonasPreference ? [] : targetCustomers.personas,
+          minAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.minAge),
+          maxAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.maxAge),
+          minIncome: targetCustomers.noIncomePreference ? null : Number(targetCustomers.minIncome),
+          maxIncome: targetCustomers.noIncomePreference ? null : Number(targetCustomers.maxIncome),
+          minSize: Number(physicalSiteCriteria.minSize),
+          maxSize: Number(physicalSiteCriteria.maxSize),
+          minFrontageWidth: Number(physicalSiteCriteria.minFrontageWidth),
+          maxFrontageWidth: Number(physicalSiteCriteria.maxFrontageWidth),
+          spaceType: physicalSiteCriteria.spaceType,
+          equipmentIds: physicalSiteCriteria.equipments,
+        },
+      };
+    }
+  };
+
   let onSubmit = (data: FieldValues) => {
     let { email, firstName, lastName, company, password } = data;
+
     registerTenant({
       variables: {
         tenant: {
@@ -39,6 +80,7 @@ export default function SignUpForm(_props: Props) {
           company,
           password,
         },
+        ...getBussinessAndFilterParams(),
       },
     });
   };
@@ -53,6 +95,7 @@ export default function SignUpForm(_props: Props) {
     let { token } = registerTenant;
 
     saveUserData(token, Role.Tenant);
+    // add brandID returned by endpoint
     history.push('/map');
   }
   // TODO: handle if error

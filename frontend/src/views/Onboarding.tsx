@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useReducer } from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Redirect } from 'react-router-dom';
 
 import { View } from '../core-ui';
 import OnboardingCard from './OnboardingPage/OnboardingCard';
@@ -9,6 +9,9 @@ import TenantGoals from './OnboardingPage/TenantGoals';
 import TenantTargetCustomers from './OnboardingPage/TenantTargetCustomers';
 import TenantPhysicalCriteria from './OnboardingPage/TenantPhysicalCriteria';
 import OnboardingSignUp from './OnboardingPage/OnboardingSignUp';
+import tenantOnboardingReducer, {
+  tenantOnboardingInitialState,
+} from '../reducers/tenantOnboardingReducer';
 
 export default function Onboarding() {
   let [activeSegmentIndex, setActiveSegmentIndex] = useState(0);
@@ -19,7 +22,7 @@ export default function Onboarding() {
   const SEGMENTS = [
     {
       title: 'Let’s confirm your business details.',
-      content: <ConfirmBusinessDetail />,
+      content: ConfirmBusinessDetail,
       buttons: [
         {
           text: 'Not My Address',
@@ -35,7 +38,7 @@ export default function Onboarding() {
     },
     {
       title: 'What are your goals?',
-      content: <TenantGoals />,
+      content: TenantGoals,
       buttons: [
         {
           text: 'Back',
@@ -49,7 +52,7 @@ export default function Onboarding() {
     },
     {
       title: 'Who are your target customers?',
-      content: <TenantTargetCustomers />,
+      content: TenantTargetCustomers,
       buttons: [
         {
           text: 'Back',
@@ -63,7 +66,7 @@ export default function Onboarding() {
     },
     {
       title: 'What is your physical site criteria?',
-      content: <TenantPhysicalCriteria />,
+      content: TenantPhysicalCriteria,
       buttons: [
         {
           text: 'Back',
@@ -77,19 +80,26 @@ export default function Onboarding() {
     },
     {
       title: 'Almost Done.',
-      content: <OnboardingSignUp />,
+      content: OnboardingSignUp,
       buttons: [],
     },
   ];
 
+  let Content = SEGMENTS[activeSegmentIndex].content;
+
+  let [state, dispatch] = useReducer(tenantOnboardingReducer, tenantOnboardingInitialState);
+  if (!history.location.state) {
+    return <Redirect to="/" />;
+  }
   return (
     <Container flex>
       <OnboardingCard
         title={SEGMENTS[activeSegmentIndex].title}
         progress={activeSegmentIndex / SEGMENTS.length}
+        canPressNext={state.canPressNext}
         buttons={SEGMENTS[activeSegmentIndex].buttons}
       >
-        {SEGMENTS[activeSegmentIndex].content}
+        <Content dispatch={dispatch} state={state} />
       </OnboardingCard>
     </Container>
   );
