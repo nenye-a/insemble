@@ -59,6 +59,7 @@ export default function MultiSelectLocation(props: Props) {
     <View style={containerStyle}>
       {label && <LabelWrapper text={label} id={id} />}
       <Container>
+        {/* TODO: need to change this back to address soon as the backend adjusted */}
         {selectedValues.map(({ name }, index) => (
           <Selected key={index} primary>
             {name}

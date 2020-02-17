@@ -42,6 +42,7 @@ export default function MultiSelectInput(props: Props) {
   useEffect(() => {
     onChange(selectedValues);
   }, [selectedValues, onChange]);
+
   return (
     <Container style={containerStyle}>
       <SearchContainer isFocused={isFocused}>
