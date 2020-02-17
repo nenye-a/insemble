@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { Card, TextInput, Button, Text, View } from '../core-ui';
 import { useHistory } from 'react-router-dom';
+
+import { Card, Text, View, Button } from '../core-ui';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
+import LoginForm from './LoginForm';
 
 export default function Login() {
   let history = useHistory();
-  let [email, setEmail] = useState<string>('');
-  let [password, setPassword] = useState<string>('');
   let noAccount = "Don't have an account?";
+
   return (
     <Container>
       <LoginCard
@@ -17,27 +18,7 @@ export default function Login() {
         titleProps={{ style: { fontSize: FONT_SIZE_MEDIUM, fontWeight: FONT_WEIGHT_NORMAL } }}
         titleBackground="purple"
       >
-        <Content>
-          <TextInput
-            label="Title"
-            placeholder="Your Email Address"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
-          <TextInput
-            label="Current Password"
-            placeholder="Enter Password"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-          <Button
-            text="Submit"
-            onPress={() => {
-              history.push('/map');
-            }}
-          />
-        </Content>
+        <LoginForm role="Tenant" />
       </LoginCard>
       <RowView>
         <Text>{noAccount} </Text>
@@ -68,11 +49,4 @@ const Container = styled(View)`
 
 const LoginCard = styled(Card)`
   width: 360px;
-  height: 310px;
-`;
-
-const Content = styled(View)`
-  flex: 1;
-  justify-content: space-around;
-  margin: 24px;
 `;

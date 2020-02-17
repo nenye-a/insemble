@@ -21,3 +21,20 @@ export const REGISTER_TENANT = gql`
     }
   }
 `;
+
+export const LOGIN_TENANT = gql`
+  mutation LoginTenant($email: String!, $password: String!) {
+    loginTenant(email: $email, password: $password) {
+      token
+      tenant {
+        id
+        email
+        firstName
+        lastName
+        avatar
+        company
+        tier
+      }
+    }
+  }
+`;
