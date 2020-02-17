@@ -12,7 +12,7 @@ type MatchingLocation = {
 };
 
 let tenantMatches = queryField('tenantMatches', {
-  type: 'TenantMatchesResult',
+  type: 'Brand',
   args: {
     brandId: arg({ type: 'String', required: true }),
   },
@@ -68,46 +68,42 @@ let tenantMatches = queryField('tenantMatches', {
       );
 
       return {
-        status: 200,
-        statusDetail: 'Success',
         matchingLocations: existMatchingLocations,
         matchingProperties: existMatchingProperties,
-        selectedFilter: {
-          categories,
-          location,
-          name,
-          maxIncome,
-          minIncome,
-          minAge,
-          maxAge,
-          personas,
-          commute: commute.map((rawValue) => {
-            let splitCommuteValue = rawValue.split(': ');
-            return {
-              rawValue,
-              displayValue: splitCommuteValue[1],
-            };
-          }),
-          education: education.map((rawValue) => {
-            let splitEducationValue = rawValue.split('+, ');
-            return {
-              rawValue,
-              displayValue: splitEducationValue[1],
-            };
-          }),
-          minRent,
-          maxRent,
-          equipmentIds,
-          locationCount,
-          minSize,
-          maxSize,
-          newLocationPlan,
-          spaceType,
-          userRelation,
-          minFrontageWidth,
-          maxFrontageWidth,
-          nextLocations,
-        },
+        categories,
+        location,
+        name,
+        maxIncome,
+        minIncome,
+        minAge,
+        maxAge,
+        personas,
+        commute: commute.map((rawValue) => {
+          let splitCommuteValue = rawValue.split(': ');
+          return {
+            rawValue,
+            displayValue: splitCommuteValue[1],
+          };
+        }),
+        education: education.map((rawValue) => {
+          let splitEducationValue = rawValue.split('+, ');
+          return {
+            rawValue,
+            displayValue: splitEducationValue[1],
+          };
+        }),
+        minRent,
+        maxRent,
+        equipmentIds,
+        locationCount,
+        minSize,
+        maxSize,
+        newLocationPlan,
+        spaceType,
+        userRelation,
+        minFrontageWidth,
+        maxFrontageWidth,
+        nextLocations,
       };
     }
 
@@ -154,46 +150,42 @@ let tenantMatches = queryField('tenantMatches', {
     });
 
     return {
-      status,
-      statusDetail,
       matchingLocations: newMatchingLocations,
       matchingProperties: newMatchingProperties,
-      selectedFilter: {
-        categories,
-        location,
-        name,
-        maxIncome,
-        minIncome,
-        minAge,
-        maxAge,
-        personas,
-        commute: commute.map((rawValue) => {
-          let splitCommuteValue = rawValue.split(': ');
-          return {
-            rawValue,
-            displayValue: splitCommuteValue[1],
-          };
-        }),
-        education: education.map((rawValue) => {
-          let splitEducationValue = rawValue.split('+, ');
-          return {
-            rawValue,
-            displayValue: splitEducationValue[1],
-          };
-        }),
-        minRent,
-        maxRent,
-        equipmentIds,
-        locationCount,
-        minSize,
-        maxSize,
-        newLocationPlan,
-        spaceType,
-        userRelation,
-        minFrontageWidth,
-        maxFrontageWidth,
-        nextLocations,
-      },
+      categories,
+      location,
+      name,
+      maxIncome,
+      minIncome,
+      minAge,
+      maxAge,
+      personas,
+      commute: commute.map((rawValue) => {
+        let splitCommuteValue = rawValue.split(': ');
+        return {
+          rawValue,
+          displayValue: splitCommuteValue[1],
+        };
+      }),
+      education: education.map((rawValue) => {
+        let splitEducationValue = rawValue.split('+, ');
+        return {
+          rawValue,
+          displayValue: splitEducationValue[1],
+        };
+      }),
+      minRent,
+      maxRent,
+      equipmentIds,
+      locationCount,
+      minSize,
+      maxSize,
+      newLocationPlan,
+      spaceType,
+      userRelation,
+      minFrontageWidth,
+      maxFrontageWidth,
+      nextLocations,
     };
   },
 });

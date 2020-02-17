@@ -10,5 +10,5 @@ export * from './BusinessInput';
 export * from './MatchingLocation';
 export * from './MatchingProperty';
 export * from './TenantMatchesResult';
-export * from './SelectedFilterObject';
+export * from './Brand';
 export * from './LocationType';
