@@ -6,16 +6,18 @@ import TextInput from './TextInput';
 import Label from './Label';
 import { TEXT_INPUT_BORDER_COLOR } from '../constants/colors';
 import { useID } from '../utils';
+import { LocationInput } from '../generated/globalTypes';
 
 type Props = ComponentProps<'input'> & {
-  onSelected: (values: Array<string>) => void;
+  onSelected: (values: Array<LocationInput>) => void;
   label?: string;
   containerStyle?: CSSProperties;
+  defaultSelected?: Array<LocationInput>;
 };
 
 export default function MultiSelectLocation(props: Props) {
-  let { onSelected, label, containerStyle } = props;
-  let [selectedValues, setSelectedValues] = useState<Array<string>>([]);
+  let { onSelected, label, containerStyle, defaultSelected } = props;
+  let [selectedValues, setSelectedValues] = useState<Array<LocationInput>>(defaultSelected || []);
   let [inputValue, setInputValue] = useState<string>('');
   let inputRef = useRef<HTMLInputElement | null>(null);
   useEffect(() => {
@@ -24,9 +26,14 @@ export default function MultiSelectLocation(props: Props) {
         let autocomplete = new window.google.maps.places.Autocomplete(inputRef.current);
         let listener = autocomplete.addListener('place_changed', () => {
           let place = autocomplete.getPlace();
-          setSelectedValues((values) =>
-            place && place.formatted_address ? [...values, place.formatted_address] : values
-          );
+          setSelectedValues((values) => [
+            ...values,
+            {
+              address: place.formatted_address || '',
+              lat: place.geometry?.location.lat().toString() || '',
+              lng: place.geometry?.location.lng().toString() || '',
+            },
+          ]);
           setInputValue('');
           if (inputRef.current) {
             inputRef.current.focus();
@@ -52,9 +59,10 @@ export default function MultiSelectLocation(props: Props) {
     <View style={containerStyle}>
       {label && <LabelWrapper text={label} id={id} />}
       <Container>
-        {selectedValues.map((value, index) => (
+        {/* TODO: need to change this back to address soon as the backend adjusted */}
+        {selectedValues.map(({ address }, index) => (
           <Selected key={index} primary>
-            {value}
+            {address}
           </Selected>
         ))}
         <TextSearch

@@ -1,4 +1,4 @@
-import React, { ComponentProps, useState, useRef } from 'react';
+import React, { ComponentProps, useState, useRef, CSSProperties, useEffect } from 'react';
 import styled from 'styled-components';
 import PillButton from './PillButton';
 import View from './View';
@@ -21,10 +21,11 @@ type Props = {
   options: Array<string>;
   placeholder: string;
   onChange: (options: Array<string>) => void;
+  containerStyle?: CSSProperties;
 };
 
 export default function MultiSelectInput(props: Props) {
-  let { options, placeholder, onChange } = props;
+  let { options, placeholder, onChange, containerStyle } = props;
   let [selectedValues, setSelectedValues] = useState<Array<string>>([]);
   let [inputValue, setInputValue] = useState<string>('');
   let [isFocused, setFocus] = useState<boolean>(false);
@@ -38,8 +39,12 @@ export default function MultiSelectInput(props: Props) {
   let optionList = options.filter((option) => option.toLowerCase().includes(inputValue));
   let newOptionList = optionList.filter((option) => !selectedValues.includes(option));
 
+  useEffect(() => {
+    onChange(selectedValues);
+  }, [selectedValues, onChange]);
+
   return (
-    <Container>
+    <Container style={containerStyle}>
       <SearchContainer isFocused={isFocused}>
         {selectedValues.map((value, index) => (
           <Selected key={index} primary>
@@ -71,11 +76,10 @@ export default function MultiSelectInput(props: Props) {
               return (
                 <Option
                   key={i}
-                  onPress={() => [
-                    setInputValue(''),
-                    setSelectedValues([...selectedValues, item]),
-                    onChange(selectedValues),
-                  ]}
+                  onPress={() => {
+                    setInputValue('');
+                    setSelectedValues([...selectedValues, item]);
+                  }}
                 >
                   <ListText>{item}</ListText>
                 </Option>
@@ -91,12 +95,14 @@ export default function MultiSelectInput(props: Props) {
 type SearchContainerProps = ViewProps & {
   isFocused: boolean;
 };
+
+const Container = styled(View)`
+  z-index: 2;
+`;
 const SearchContainer = styled(View)<SearchContainerProps>`
-  flex-direction: row;
-  flex-flow: row-wrap;
+  flex-flow: row wrap;
   align-items: center;
   width: 100%;
-  height: 40px;
   border: solid;
   border-width: 1px;
   border-color: ${(props) => (props.isFocused ? THEME_COLOR : TEXT_INPUT_BORDER_COLOR)};
@@ -105,12 +111,9 @@ const SearchContainer = styled(View)<SearchContainerProps>`
 
 const TextSearch = styled(TextInput)`
   width: 100%;
-  line-height: 36px;
+  height: 36px;
   outline: none;
   background-color: transparent;
-`;
-const Container = styled(View)`
-  flex-direction: column;
 `;
 
 const Selected = styled(PillButton)`

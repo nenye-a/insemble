@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Redirect, useHistory } from 'react-router-dom';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { Text, View, ContainedTextInput as TextInput } from '../core-ui';
@@ -7,9 +7,6 @@ import Title from './LandingPage/Title';
 import Masthead from './LandingPage/Masthead';
 import LocationsInput from './LandingPage/LocationsInput';
 import useGoogleMaps from '../utils/useGoogleMaps';
-import { session } from '../utils/storage';
-import { useSelector, useDispatch, useStore } from '../redux/helpers';
-import { getLocation, loadMap } from '../redux/actions/space';
 import urlSafeLatLng from '../utils/urlSafeLatLng';
 import { WHITE } from '../constants/colors';
 import { FONT_SIZE_LARGE } from '../constants/theme';
@@ -19,24 +16,7 @@ import Button from '../core-ui/Button';
 function Landing() {
   let { isLoading } = useGoogleMaps();
   let history = useHistory();
-  let dispatch = useDispatch();
-  let { getState } = useStore();
-  let isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  let locationLoaded = useSelector((state) => state.space.locationLoaded);
-  // TODO: Handle error state
-  // let locationErr = useSelector((state) => state.space.locationErr);
-  let [submittingPlace, setSubmittingPlace] = useState<string | null>(null);
-  useEffect(() => {
-    if (locationLoaded === true) {
-      let placeID = submittingPlace;
-      // TODO: Using dispatch/getState like this is kinda messy.
-      loadMap(true)(dispatch, getState);
-      history.push(`/verify/${placeID}`);
-    }
-  }, [locationLoaded, dispatch, getState, history, submittingPlace]);
-  if (isAuthenticated) {
-    return <Redirect to="/find" />;
-  }
+
   return (
     <Masthead>
       <RowView>
@@ -59,26 +39,27 @@ function Landing() {
       <Text color={WHITE} fontSize={FONT_SIZE_LARGE}>
         I have an existing location
       </Text>
-      {isLoading || submittingPlace ? (
+      {isLoading ? (
         <TextInput placeholder="Loading..." disabled={true} />
       ) : (
         <LocationsInput
           placeholder="Enter the address of your top performing restaurant or store"
           buttonText="Find locations"
-          onSubmit={(place) => {
-            let placeID = place.place_id || '';
-            let address = place.formatted_address || '';
-            session.set(['place', placeID], place);
-            session.set('sessionStoreName', place.name);
-            session.set('sessionAddress', address);
-            session.remove('sessionIncome');
-            session.remove('sessionTags');
-            let location = place.geometry ? place.geometry.location.toJSON() : null;
-            if (location) {
-              let { lat, lng } = urlSafeLatLng(location);
-              // TODO: Using dispatch like this is kinda messy.
-              getLocation(`/api/location/lat=${lat}&lng=${lng}&radius=1/`)(dispatch);
-              setSubmittingPlace(placeID);
+          onSubmit={(place: google.maps.places.PlaceResult) => {
+            let { geometry, formatted_address: formattedAddress, name, place_id: placeID } = place;
+            if (geometry) {
+              let { location } = geometry;
+              if (location) {
+                let formatedLocation = location.toJSON();
+                let { lat, lng } = urlSafeLatLng(formatedLocation);
+                history.push(`/verify/${placeID}`, {
+                  placeID,
+                  name,
+                  formattedAddress,
+                  lat,
+                  lng,
+                });
+              }
             }
           }}
         />
