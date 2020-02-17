@@ -7,7 +7,6 @@ import Title from './LandingPage/Title';
 import Masthead from './LandingPage/Masthead';
 import LocationsInput from './LandingPage/LocationsInput';
 import useGoogleMaps from '../utils/useGoogleMaps';
-import urlSafeLatLng from '../utils/urlSafeLatLng';
 import { WHITE } from '../constants/colors';
 import { FONT_SIZE_LARGE } from '../constants/theme';
 import CategoriesInput from './LandingPage/CategoriesInput';
