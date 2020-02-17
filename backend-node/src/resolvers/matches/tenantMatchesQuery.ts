@@ -4,69 +4,101 @@ import { LEGACY_API_URI } from '../../constants/host';
 import { queryField, arg } from 'nexus';
 import { TenantMatchesType } from 'dataTypes';
 
+type MatchingLocation = {
+  loc_id: string;
+  lat: number;
+  lng: number;
+  match: number;
+};
+
 let tenantMatches = queryField('tenantMatches', {
   type: 'TenantMatchesResult',
   args: {
-    business: arg({ type: 'BusinessInput' }),
-    filter: arg({ type: 'FilterInput' }),
-    optionalFilter: arg({ type: 'OptionalFilterInput' }),
+    brandId: arg({ type: 'String', required: true }),
   },
-  resolve: async (
-    _: Root,
-    { business, filter, optionalFilter },
-    _context: Context,
-  ) => {
-    if (!business && !filter) {
-      throw new Error(
-        'Please provide either (address and brand_name) or (categories and income)',
-      );
+  resolve: async (_: Root, { brandId }, context: Context) => {
+    let selectedBrand = await context.prisma.brand.findOne({
+      where: { id: brandId },
+      include: {
+        location: true,
+        matchingProperties: true,
+      },
+    });
+    if (!selectedBrand) {
+      throw new Error('Brand not found!');
     }
     let {
-      matching_locations: matchingLocationsRaw,
+      categories,
+      location,
+      name,
+      maxIncome,
+      minIncome,
+      minAge,
+      maxAge,
+      personas,
+      commute,
+      education,
+      minRent,
+      maxRent,
+      matchingLocations: matchingLocationsJSON,
+      matchingProperties: existMatchingProperties,
+    } = selectedBrand;
+
+    if (!(name && location) && !(categories.length > 0 && minIncome)) {
+      throw new Error(
+        'Please update your brand and provide either (address and brand_name) or (categories and income)',
+      );
+    }
+
+    if (matchingLocationsJSON) {
+      let existMatchingLocations: Array<MatchingLocation> = JSON.parse(
+        matchingLocationsJSON,
+      );
+
+      return {
+        status: 200,
+        statusDetail: 'Success',
+        matchingLocations: existMatchingLocations,
+        matchingProperties: existMatchingProperties,
+      };
+    }
+
+    let {
+      matching_locations: newMatchingLocations,
       status,
       status_detail: statusDetail,
-      matching_properties: matchingProperties,
+      matching_properties: newMatchingProperties,
     }: TenantMatchesType = (
       await axios.get(`${LEGACY_API_URI}/api/tenantMatches`, {
         params: {
-          address: business?.location.address,
-          brand_name: business?.name,
-          categories: filter?.categories,
-          income: filter?.minIncome && {
-            min: filter?.maxIncome,
-            max: filter?.maxIncome,
+          address: location?.address,
+          brand_name: name,
+          categories: categories,
+          income: minIncome && {
+            min: maxIncome,
+            max: maxIncome,
           },
-          age: optionalFilter?.minAge && {
-            min: optionalFilter?.minAge,
-            max: optionalFilter?.maxAge,
+          age: minAge && {
+            min: minAge,
+            max: maxAge,
           },
-          personas: optionalFilter?.personas,
-          commute: optionalFilter?.commute,
-          education: optionalFilter?.education,
-          rent: optionalFilter?.minRent && {
-            min: optionalFilter?.minRent,
-            max: optionalFilter?.maxRent,
+          personas: personas,
+          commute: commute,
+          education: education,
+          rent: minRent && {
+            min: minRent,
+            max: maxRent,
           },
         },
       })
     ).data;
-    let matchingLocations =
-      matchingLocationsRaw &&
-      matchingLocationsRaw.map(({ loc_id: id, ...rest }) => {
-        return { id, ...rest };
-      });
-    if (business) {
-      // TODO: save to database also check token to determine User
-    }
     return {
       status,
       statusDetail,
-      matchingLocations,
-      matchingProperties,
+      matchingLocations: newMatchingLocations,
+      matchingProperties: newMatchingProperties,
     };
   },
 });
-
-// TODO:
 
 export { tenantMatches };
