@@ -7,5 +7,6 @@ export let TenantAuth = objectType({
     t.field('tenant', {
       type: 'TenantUser',
     });
+    t.string('brandId');
   },
 });
