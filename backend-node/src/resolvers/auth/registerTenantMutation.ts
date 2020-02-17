@@ -1,6 +1,8 @@
 import { mutationField, arg } from 'nexus';
-import { Context } from 'serverTypes';
 import bcrypt from 'bcrypt';
+
+import { Context } from 'serverTypes';
+import { createTenantSession } from '../../helpers/auth';
 
 export let registerTenant = mutationField('registerTenant', {
   type: 'TenantAuth',
@@ -9,23 +11,25 @@ export let registerTenant = mutationField('registerTenant', {
   },
   resolve: async (_, { tenant }, context: Context) => {
     let password = bcrypt.hashSync(tenant.password, 10);
+    let lowerCasedEmail = tenant.email.toLocaleLowerCase();
     let exist = await context.prisma.tenantUser.findMany({
       where: {
-        email: tenant.email,
+        email: lowerCasedEmail,
       },
     });
-    if (exist) {
+    if (exist.length) {
       throw new Error('user already exist');
     }
     let createdTenant = await context.prisma.tenantUser.create({
       data: {
         ...tenant,
+        email: lowerCasedEmail,
         password,
         tier: 'FREE',
       },
     });
     return {
-      token: 'put token here',
+      token: createTenantSession(createdTenant),
       tenant: createdTenant,
     };
   },
