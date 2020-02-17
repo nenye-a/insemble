@@ -16,6 +16,7 @@ type MatchingLocationType = {
 };
 
 type MatchingPropertyType = {
+  property_id: string;
   address: string;
   rent: number;
   sqft: number;

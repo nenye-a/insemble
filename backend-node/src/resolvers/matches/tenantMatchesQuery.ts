@@ -108,7 +108,7 @@ let tenantMatches = queryField('tenantMatches', {
       matching_locations: newMatchingLocations,
       status,
       status_detail: statusDetail,
-      matching_properties: newMatchingProperties,
+      matching_properties: rawMatchingProperties,
     }: TenantMatchesType = (
       await axios.get(`${LEGACY_API_URI}/api/tenantMatches`, {
         params: {
@@ -133,6 +133,19 @@ let tenantMatches = queryField('tenantMatches', {
         },
       })
     ).data;
+    let newMatchingProperties = rawMatchingProperties?.map(
+      ({ property_id: propertyId, ...other }) => {
+        return { propertyId, ...other };
+      },
+    );
+    await context.prisma.brand.update({
+      where: { id: brandId },
+      data: {
+        matchingLocations: JSON.stringify(newMatchingLocations),
+        matchingProperties: { create: newMatchingProperties },
+      },
+    });
+
     return {
       status,
       statusDetail,
