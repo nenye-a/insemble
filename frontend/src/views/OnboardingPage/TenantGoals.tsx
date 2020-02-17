@@ -6,15 +6,14 @@ import { RadioGroup, Label, View, TextInput, MultiSelectLocation, Text } from '.
 import useGoogleMaps from '../../utils/useGoogleMaps';
 import {
   Action,
-  TenantGoals as TenantGoalsType,
   State as OnboardingState,
   NewLocationPlan,
   NewLocationPlanObj,
 } from '../../reducers/tenantOnboardingReducer';
 import { validateNumber } from '../../utils/validation';
-import { GPlaceResult } from '../../core-ui/MultiSelectLocation';
 import { FONT_SIZE_SMALL } from '../../constants/theme';
 import { RED_TEXT } from '../../constants/colors';
+import { LocationInput } from '../../generated/globalTypes';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -43,7 +42,7 @@ export default function TenantGoals(props: Props) {
   let [selectedNewLocationPlan, setNewLocationPlan] = useState<NewLocationPlanObj>(
     onboardingState.tenantGoals?.newLocationPlan || NEW_LOCATION_PLAN_OPTIONS[0]
   );
-  let [selectedLocations, setSelectedLocations] = useState<Array<GPlaceResult>>(
+  let [selectedLocations, setSelectedLocations] = useState<Array<LocationInput>>(
     onboardingState.tenantGoals?.location || []
   );
   let hasFillLocations = selectedLocations.length > 0;
@@ -102,7 +101,7 @@ export default function TenantGoals(props: Props) {
             <>
               <Label text="Where will you open your locations?" />
               <MultiSelectLocation
-                onSelected={(values: Array<GPlaceResult>) => {
+                onSelected={(values: Array<LocationInput>) => {
                   setSelectedLocations(values);
                 }}
                 defaultSelected={onboardingState.tenantGoals?.location}

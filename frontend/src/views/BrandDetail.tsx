@@ -6,8 +6,8 @@ import { View, Card, Button, Text, TextInput, RadioGroup, MultiSelectLocation } 
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../constants/theme';
 import { THEME_COLOR } from '../constants/colors';
 import { useGoogleMaps } from '../utils';
+import { LocationInput } from '../generated/globalTypes';
 import SvgArrowBack from '../components/icons/arrow-back';
-import { GPlaceResult } from '../core-ui/MultiSelectLocation';
 
 export default function BrandDetail() {
   let history = useHistory();
@@ -15,7 +15,7 @@ export default function BrandDetail() {
   let [matchesEditable, setMatchesEditable] = useState(false);
   let [goalsEditable, setGoalsEditable] = useState(false);
   let [selectedIsLookingLocation, setSelectedIsLookingLocation] = useState('');
-  let [, setSelectedLocations] = useState<Array<GPlaceResult>>([]);
+  let [, setSelectedLocations] = useState<Array<LocationInput>>([]);
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
   return (
     <Container flex>

@@ -6,23 +6,18 @@ import TextInput from './TextInput';
 import Label from './Label';
 import { TEXT_INPUT_BORDER_COLOR } from '../constants/colors';
 import { useID } from '../utils';
-
-export type GPlaceResult = {
-  address: string;
-  lat?: number;
-  lng?: number;
-};
+import { LocationInput } from '../generated/globalTypes';
 
 type Props = ComponentProps<'input'> & {
-  onSelected: (values: Array<GPlaceResult>) => void;
+  onSelected: (values: Array<LocationInput>) => void;
   label?: string;
   containerStyle?: CSSProperties;
-  defaultSelected?: Array<GPlaceResult>;
+  defaultSelected?: Array<LocationInput>;
 };
 
 export default function MultiSelectLocation(props: Props) {
   let { onSelected, label, containerStyle, defaultSelected } = props;
-  let [selectedValues, setSelectedValues] = useState<Array<GPlaceResult>>(defaultSelected || []);
+  let [selectedValues, setSelectedValues] = useState<Array<LocationInput>>(defaultSelected || []);
   let [inputValue, setInputValue] = useState<string>('');
   let inputRef = useRef<HTMLInputElement | null>(null);
   useEffect(() => {
@@ -34,9 +29,9 @@ export default function MultiSelectLocation(props: Props) {
           setSelectedValues((values) => [
             ...values,
             {
-              address: place.formatted_address || '',
-              lat: place.geometry?.location.lat(),
-              lng: place.geometry?.location.lng(),
+              name: place.formatted_address || '',
+              lat: place.geometry?.location.lat().toString() || '',
+              lng: place.geometry?.location.lng().toString() || '',
             },
           ]);
           setInputValue('');

@@ -22,7 +22,7 @@ export type ConfirmBusinessDetail = {
 
 export type TenantGoals = {
   newLocationPlan?: NewLocationPlanObj;
-  location: Array<GPlaceResult>;
+  location: Array<LocationInput>;
   locationCount?: string;
 };
 
