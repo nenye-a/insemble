@@ -27,6 +27,7 @@ let loginTenant = mutationField('loginTenant', {
     return {
       token: createTenantSession(tenantUser),
       tenant: tenantUser,
+      brandId: '', //TODO: temporary solution for login, we need to replace this with getting latest brandId
     };
   },
 });
