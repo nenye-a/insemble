@@ -3,9 +3,13 @@
 # Tech Stacks
 
 Runtime: NodeJS
+
 Language: TypeScript
+
 Framework: Nexus GraphQL server
+
 ORM: Prisma2
+
 Database: PostgresQL + Mongo(existing DB)
 
 ## Setup & Installation
