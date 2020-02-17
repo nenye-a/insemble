@@ -45,8 +45,8 @@ export default function TenantTargetCustomers(props: Props) {
 
   useEffect(() => {
     dispatch({
-      type: 'SAVE_CHANGES',
-      values: ({
+      type: 'SAVE_CHANGES_TARGET_CUSTOMERS',
+      values: {
         targetCustomers: {
           minAge,
           maxAge,
@@ -57,7 +57,7 @@ export default function TenantTargetCustomers(props: Props) {
           noIncomePreference,
           noPersonasPreference,
         },
-      } as unknown) as TargetCustomers,
+      },
     });
   }, [
     dispatch,

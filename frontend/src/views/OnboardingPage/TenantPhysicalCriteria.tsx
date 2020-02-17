@@ -3,11 +3,7 @@ import styled from 'styled-components';
 
 import { View, Alert, Label, Checkbox, MultiSelectInput, Text } from '../../core-ui';
 import { RangeInput } from '../../components';
-import {
-  Action,
-  State as OnboardingState,
-  PhysicalSiteCriteria,
-} from '../../reducers/tenantOnboardingReducer';
+import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import { RED_TEXT } from '../../constants/colors';
 import { FONT_SIZE_SMALL } from '../../constants/theme';
 import { validateNumber } from '../../utils/validation';
@@ -29,18 +25,6 @@ export default function TenantPhysicalCriteria(props: Props) {
   let [options] = useState<Array<string>>([]);
   let [, setSelectedEquipmentOptions] = useState<Array<string>>([]);
 
-  let getRangeInputError = (minValue: string, maxValue: string) => {
-    if (minValue && maxValue) {
-      if (!validateNumber(minSqft) || !validateNumber(maxValue)) {
-        return 'Input can only be number';
-      } else if (Number(minValue) >= Number(maxValue)) {
-        return 'Minimum value should be lower than maximum value';
-      }
-      return '';
-    }
-    return '';
-  };
-
   let sqftError = useMemo(() => getRangeInputError(minSqft, maxSqft), [minSqft, maxSqft]);
 
   let frontageWidthError = useMemo(() => getRangeInputError(minFrontageWidth, maxFrontageWidth), [
@@ -48,14 +32,14 @@ export default function TenantPhysicalCriteria(props: Props) {
     maxFrontageWidth,
   ]);
 
+  let allFilled = minSqft && maxSqft && minFrontageWidth && maxFrontageWidth;
+  let allValid = allFilled && !sqftError && !frontageWidthError;
   useEffect(() => {
-    let allFilled = minSqft && maxSqft && minFrontageWidth && maxFrontageWidth;
-    let allValid = allFilled && !sqftError && !frontageWidthError;
     if (allValid) {
       dispatch({ type: 'ENABLE_NEXT_BUTTON' });
       dispatch({
-        type: 'SAVE_CHANGES',
-        values: ({
+        type: 'SAVE_CHANGES_PHYSICAL_SITE_CRITERIA',
+        values: {
           physicalSiteCriteria: {
             minSize: minSqft,
             maxSize: maxSqft,
@@ -64,10 +48,11 @@ export default function TenantPhysicalCriteria(props: Props) {
             equipments: [],
             spaceType: selectedSpaceOptions,
           },
-        } as unknown) as PhysicalSiteCriteria,
+        },
       });
     }
-  }, [sqftError, frontageWidthError, selectedSpaceOptions.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allValid, dispatch]);
 
   return (
     <Container>
@@ -125,6 +110,18 @@ export default function TenantPhysicalCriteria(props: Props) {
       })}
     </Container>
   );
+}
+
+function getRangeInputError(minValue: string, maxValue: string) {
+  if (minValue && maxValue) {
+    if (!validateNumber(minValue) || !validateNumber(maxValue)) {
+      return 'Input can only be number';
+    } else if (Number(minValue) >= Number(maxValue)) {
+      return 'Minimum value should be lower than maximum value';
+    }
+    return '';
+  }
+  return '';
 }
 
 const Container = styled(View)`

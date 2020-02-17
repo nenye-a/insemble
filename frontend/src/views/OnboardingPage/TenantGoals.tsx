@@ -53,7 +53,7 @@ export default function TenantGoals(props: Props) {
 
   useEffect(() => {
     triggerValidation('locationCount');
-  }, [locationCount]);
+  }, [locationCount, triggerValidation]);
 
   useEffect(() => {
     let allValid =
@@ -64,14 +64,14 @@ export default function TenantGoals(props: Props) {
       dispatch({ type: 'ENABLE_NEXT_BUTTON' });
 
       dispatch({
-        type: 'SAVE_CHANGES',
-        values: ({
+        type: 'SAVE_CHANGES_TENANT_GOALS',
+        values: {
           tenantGoals: {
             newLocationPlan: selectedNewLocationPlan,
             location: selectedLocations,
             locationCount,
           },
-        } as unknown) as TenantGoalsType,
+        },
       });
     } else {
       dispatch({ type: 'DISABLE_NEXT_BUTTON' });
@@ -117,11 +117,6 @@ export default function TenantGoals(props: Props) {
               label="How many locations do you expect to open in the next 2 years?"
               name="locationCount"
               defaultValue={onboardingState.tenantGoals?.locationCount}
-              // value={locationCount}
-              // onChange={(e) => {
-              //   setLocationCount(e.target.value);
-              // }}
-              // errorMessage={!validateNumber(locationCount) ? 'Invalid number of location' : ''}
               ref={register({
                 required: 'Number of locations should not be empty',
                 validate: (val) => validateNumber(val) || 'Incorrect number of location',

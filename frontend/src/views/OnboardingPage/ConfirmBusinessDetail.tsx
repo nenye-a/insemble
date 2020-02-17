@@ -2,6 +2,7 @@ import React, { useState, Dispatch, useEffect } from 'react';
 import styled from 'styled-components';
 import { useParams, useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
+import { useForm, FieldError } from 'react-hook-form';
 
 import {
   TextInput,
@@ -20,11 +21,7 @@ import { MAPS_IFRAME_URL_PLACE } from '../../constants/googleMaps';
 import { FONT_SIZE_SMALL } from '../../constants/theme';
 import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
 import { Categories } from '../../generated/Categories';
-import {
-  Action,
-  ConfirmBusinessDetail as ConfirmBusinessDetailType,
-  State as OnboardingState,
-} from '../../reducers/tenantOnboardingReducer';
+import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -41,39 +38,62 @@ type LocationState = {
 
 export default function ConfirmBusinessDetail(props: Props) {
   let { dispatch, state: onboardingState } = props;
+  let { confirmBusinessDetail } = onboardingState;
+
   let { data: categoriesData } = useQuery<Categories>(GET_CATEGORIES);
+
   let [selectedBusinessRelation, setBussinesRelation] = useState(
-    onboardingState.confirmBusinessDetail.userRelation || ''
+    confirmBusinessDetail.userRelation || ''
   );
   let [categorySelectionVisible, toggleCategorySelection] = useState(false);
   let [selectedCategories, setSelectedCategories] = useState<Array<string>>(
-    onboardingState.confirmBusinessDetail.categories || []
+    confirmBusinessDetail.categories || []
   );
+
+  let { register, errors, watch } = useForm();
+  let otherBusinessRelation = watch('otherBusinessRelation');
 
   let { placeID } = useParams();
   let history = useHistory<LocationState>();
   let { state: landingState } = history.location;
-  let { name } = landingState;
+  let { name, lat, lng } = landingState;
   let mapURL = MAPS_IFRAME_URL_PLACE + '&q=place_id:' + placeID;
 
+  let businessRelationValid =
+    selectedBusinessRelation || (selectedBusinessRelation === 'Other' && otherBusinessRelation);
+  let allValid = businessRelationValid && selectedCategories.length > 0 && name;
   useEffect(() => {
-    let allValid = selectedBusinessRelation && selectedCategories.length > 0 && name;
     if (allValid) {
       dispatch({ type: 'ENABLE_NEXT_BUTTON' });
       dispatch({
-        type: 'SAVE_CHANGES',
-        values: ({
+        type: 'SAVE_CHANGES_CONFIRM_BUSINESS_DETAIL',
+        values: {
           confirmBusinessDetail: {
             name,
             categories: selectedCategories,
             userRelation: selectedBusinessRelation,
+            otherUserRelation: otherBusinessRelation,
+            location: {
+              lat: lat.toString(),
+              lng: lng.toString(),
+              name,
+            },
           },
-        } as unknown) as ConfirmBusinessDetailType,
+        },
       });
     } else {
       dispatch({ type: 'DISABLE_NEXT_BUTTON' });
     }
-  }, [selectedBusinessRelation, selectedCategories, name, dispatch]);
+  }, [
+    selectedBusinessRelation,
+    selectedCategories,
+    name,
+    dispatch,
+    allValid,
+    lat,
+    lng,
+    otherBusinessRelation,
+  ]);
 
   return (
     <Form>
@@ -87,13 +107,7 @@ export default function ConfirmBusinessDetail(props: Props) {
             onPress={() => toggleCategorySelection(!categorySelectionVisible)}
           />
         </RowedView>
-        <RowWrap>
-          {selectedCategories.map((category, index) => (
-            <PillButton primary key={index} style={{ marginRight: 4, marginTop: 4 }}>
-              {category}
-            </PillButton>
-          ))}
-        </RowWrap>
+
         <ClickAway onClickAway={() => toggleCategorySelection(false)}>
           {categoriesData && (
             <FilterContainer
@@ -114,6 +128,13 @@ export default function ConfirmBusinessDetail(props: Props) {
             />
           )}
         </ClickAway>
+        <RowWrap>
+          {selectedCategories.map((category, index) => (
+            <PillButton primary key={index} style={{ marginRight: 4, marginTop: 4 }}>
+              {category}
+            </PillButton>
+          ))}
+        </RowWrap>
         {selectedCategories.length === 0 && <ErrorText>Please Select Categories</ErrorText>}
         <Label text="What is your relationship to this business?" />
         <RadioGroup
@@ -130,7 +151,18 @@ export default function ConfirmBusinessDetail(props: Props) {
           }}
           radioItemProps={{ style: { marginTop: 9 } }}
         />
-        <OtherTextInput placeholder="Landlord" />
+        {/* TODO: put to constants */}
+        {selectedBusinessRelation === 'Other' && (
+          <OtherTextInput
+            placeholder="Landlord"
+            ref={register({
+              required: 'Input should not be empty',
+            })}
+            name="otherBusinessRelation"
+            errorMessage={(errors?.otherBusinessRelation as FieldError)?.message || ''}
+            defaultValue={onboardingState.confirmBusinessDetail.otherUserRelation}
+          />
+        )}
       </FormContainer>
     </Form>
   );

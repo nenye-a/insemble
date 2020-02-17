@@ -1,4 +1,5 @@
 import { GPlaceResult } from '../core-ui/MultiSelectLocation';
+import { LocationInput } from '../generated/globalTypes';
 
 export enum NewLocationPlan {
   YES = 'YES',
@@ -13,8 +14,10 @@ export type NewLocationPlanObj = {
 
 export type ConfirmBusinessDetail = {
   name: string;
+  location?: LocationInput;
   categories: Array<string>;
   userRelation: string;
+  otherUserRelation?: string;
 };
 
 export type TenantGoals = {
@@ -35,10 +38,10 @@ export type TargetCustomers = {
 };
 
 export type PhysicalSiteCriteria = {
-  minSize?: number;
-  maxSize?: number;
-  minFrontageWidth?: number;
-  maxFrontageWidth?: number;
+  minSize?: number | string;
+  maxSize?: number | string;
+  minFrontageWidth?: number | string;
+  maxFrontageWidth?: number | string;
   equipments?: Array<string>;
   spaceType?: Array<string>;
 };
@@ -59,8 +62,20 @@ export type Action =
       type: 'ENABLE_NEXT_BUTTON';
     }
   | {
-      type: 'SAVE_CHANGES';
-      values: ConfirmBusinessDetail | TenantGoals | TargetCustomers | PhysicalSiteCriteria;
+      type: 'SAVE_CHANGES_CONFIRM_BUSINESS_DETAIL';
+      values: { confirmBusinessDetail: ConfirmBusinessDetail };
+    }
+  | {
+      type: 'SAVE_CHANGES_TENANT_GOALS';
+      values: { tenantGoals: TenantGoals };
+    }
+  | {
+      type: 'SAVE_CHANGES_TARGET_CUSTOMERS';
+      values: { targetCustomers: TargetCustomers };
+    }
+  | {
+      type: 'SAVE_CHANGES_PHYSICAL_SITE_CRITERIA';
+      values: { physicalSiteCriteria: PhysicalSiteCriteria };
     };
 
 export let tenantOnboardingInitialState = {
@@ -89,7 +104,10 @@ export default function tenantOnboardingReducer(state: State, action: Action): S
     case 'ENABLE_NEXT_BUTTON': {
       return { ...state, canPressNext: true };
     }
-    case 'SAVE_CHANGES': {
+    case 'SAVE_CHANGES_CONFIRM_BUSINESS_DETAIL':
+    case 'SAVE_CHANGES_TENANT_GOALS':
+    case 'SAVE_CHANGES_TARGET_CUSTOMERS':
+    case 'SAVE_CHANGES_PHYSICAL_SITE_CRITERIA': {
       return { ...state, ...action.values };
     }
     default:

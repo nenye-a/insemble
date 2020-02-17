@@ -30,7 +30,7 @@ export default function OnboardingCard(props: Props) {
     >
       <ProgressBar progress={progress} />
       <View flex>{children}</View>
-      {buttons.length > 1 ? (
+      {buttons.length > 1 && (
         <Footer>
           {buttons.map(({ onPress, text }, index) => {
             return index === 0 ? (
@@ -39,10 +39,6 @@ export default function OnboardingCard(props: Props) {
               <Button key={index} text={text} onPress={onPress} disabled={!canPressNext} />
             );
           })}
-        </Footer>
-      ) : (
-        <Footer>
-          <Button text={buttons[0].text} onPress={buttons[0].onPress} />
         </Footer>
       )}
     </Container>

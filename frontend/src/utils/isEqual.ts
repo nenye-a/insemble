@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isEqual<T, U>(a: any, b: any): boolean {
   if (a == null && b == null) {
     return true;
@@ -21,6 +22,7 @@ export function isObjectEqual(a: ObjectKey, b: ObjectKey): boolean {
   return aKeys.every((key) => isEqual(a[key], b[key]));
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isArrayEqual(a: Array<any>, b: Array<any>): boolean {
   if (a.length !== b.length) {
     return false;
