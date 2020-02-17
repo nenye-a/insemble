@@ -18,6 +18,8 @@ export let Brand = objectType({
     t.model.maxSize();
     t.model.minRent();
     t.model.maxRent();
+    t.model.minFrontageWidth();
+    t.model.maxFrontageWidth();
     t.field('education', { type: 'RawFilter', list: true, nullable: true });
     t.field('commute', { type: 'RawFilter', list: true, nullable: true });
     t.model.personas();

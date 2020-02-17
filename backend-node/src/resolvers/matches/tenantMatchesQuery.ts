@@ -50,6 +50,8 @@ let tenantMatches = queryField('tenantMatches', {
       newLocationPlan,
       spaceType,
       userRelation,
+      minFrontageWidth,
+      maxFrontageWidth,
     } = selectedBrand;
 
     if (!(name && location) && !(categories.length > 0 && minIncome)) {
@@ -100,6 +102,8 @@ let tenantMatches = queryField('tenantMatches', {
           newLocationPlan,
           spaceType,
           userRelation,
+          minFrontageWidth,
+          maxFrontageWidth,
         },
       };
     }
@@ -183,6 +187,8 @@ let tenantMatches = queryField('tenantMatches', {
         newLocationPlan,
         spaceType,
         userRelation,
+        minFrontageWidth,
+        maxFrontageWidth,
       },
     };
   },
