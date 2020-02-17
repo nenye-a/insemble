@@ -2,6 +2,7 @@ from . import utils, matching
 import numpy as np
 import pandas as pd
 import data.api.goog as google
+import data.api.foursquare as foursquare
 import data.api.arcgis as arcgis
 import data.api.environics as environics
 
@@ -15,9 +16,12 @@ between the main application api, and our calls data_api calls.
 
 
 # Return the location latitude and object details. Details are in the following form
-# {lat:float, lng:float}
+# {lat:float, lng:float, place_id:'place_id}
 def get_location(address, name=None):
-    return google.find(address, name, allow_non_establishments=True)['geometry']['location']
+    google_location = google.find(address, name=name, allow_non_establishments=True)
+    location = google_location['geometry']['location']
+    location["place_id"] = google_location["place_id"]
+    return location
 
 
 # Returns the address and neighborhood of a specific latitude and longitude
@@ -514,6 +518,67 @@ def get_daytimepop(lat, lng, radius):
     return arcgis_details['DaytimePop']
 
 
-def get_categories(lat, lng, address, place_id):
+def get_categories(place_id):
 
     space = utils.DB_PROCESSED_SPACE.find_one({'place_id': place_id})
+
+    if not space:
+        space = _find_ommitted_place(place_id)
+
+    if 'foursquare_categories' not in space or len(space["foursquare_categories"]) == 0:
+        return []
+
+    categories = [category["category_name"] for category in space["foursquare_categories"]]
+    return categories
+
+
+def _find_ommitted_place(place_id):
+
+    print("Finding ommitted space - ", end=" ")
+    space = google.details(place_id)
+    if not space:
+        return None
+    name = space['name']
+    lat = space['geometry']['location']['lat']
+    lng = space['geometry']['location']['lng']
+    address = space['formatted_address']
+
+    print(name, "({})".format(place_id))
+
+    # Grab the four square categories for this location if they exist
+    foursquare_details = foursquare.find(name, lat, lng, address)
+    if foursquare_details:
+        foursquare_categories = [{
+            'category_name': category['name'],
+            'category_short_name': category['shortName'],
+            'primary': category['primary']
+        } for category in foursquare_details['categories']]
+        space['foursquare_categories'] = foursquare_categories
+
+    # TODO: Check if the space has sales data & query pitney if it doesnt
+    # space has been detailed and will be updated
+    space['detailed'] = True
+    try:
+        utils.DB_PROCESSED_SPACE.insert_one(space)
+    except:
+        print("error inserting likely due to duplicate")
+        return None
+
+    return space
+
+
+def get_personas(categories):
+
+    full_categories = utils.DB_CATEGORIES.find({'name': {'$in': categories}})
+
+    if not full_categories:
+        return []
+
+    personas = []
+    for category in full_categories:
+        if 'positive_personas' not in category:
+            continue
+
+        personas += category['positive_personas']
+
+    return personas

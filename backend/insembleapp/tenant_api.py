@@ -627,7 +627,8 @@ class LocationPreviewAPI(LocationDetailsAPI):
         celery_app.register_task(self._get_preview_demographics)
 
 
-class AutoPopulateAPI(generics.GenericAPIView):
+# AutoPopulateAPI - referenced by /api/autoPopulate/
+class AutoPopulateAPI(AsynchronousAPI):
     """
 
     Provided an address and brandname, will provide estimated age and population filters.
@@ -659,6 +660,8 @@ class AutoPopulateAPI(generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
 
+        self._register_tasks()
+
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
@@ -668,7 +671,48 @@ class AutoPopulateAPI(generics.GenericAPIView):
         my_lng = location['lng']
         place_id = location['place_id']
 
+        # get demographic details asynchronously
+        d_process, preview_demographics = self._get_preview_demographics.delay(my_lat, my_lng, 3), []
+        demo_listener = self._celery_listener(d_process, preview_demographics)
+        demo_listener.start()
+
         # Get categories (from foursquare)
+        categories = provider.get_categories(place_id)
         # Get personas (from spatial taxonomy)
-        # Get income
-        # Get age
+        personas = provider.get_personas(categories)
+
+        # get demographic_filters
+        demo_listener.join()
+        median_income = preview_demographics[0]['median_income']
+        median_age = preview_demographics[0]['median_age']
+
+        # get income | TODO: actually do this using some sort of learning
+        min_income = max(0, round(median_income - (median_income % 1000)) - 25000)  # only send in the thousands
+        max_income = min(200000, round(median_income - (median_income % 1000)) + 25000)
+
+        # get age | TODO: actually do this using some sort of learning
+        min_age = max(5, round(median_age) - 10)
+        max_age = min(65, round(median_age) + 10)
+
+        response = {
+            'categories': categories,
+            'personas': personas,
+            'income': {
+                'min': min_income,
+                'max': max_income
+            },
+            'age': {
+                'min': min_age,
+                'max': max_age
+            }
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+
+    @staticmethod
+    @celery_app.task
+    def _get_preview_demographics(lat, lng, radius):
+        return provider.get_preview_demographics(lat, lng, radius)
+
+    def _register_tasks(self) -> None:
+        celery_app.register_task(self._get_preview_demographics)

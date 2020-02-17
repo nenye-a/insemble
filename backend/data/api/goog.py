@@ -209,26 +209,3 @@ def search(lat, lng, query, radius=1, pagetoken=None):
         result['results'].extend(next_page)
 
     return result['results']
-
-
-if __name__ == "__main__":
-
-    def test_find():
-        print(find('Spitz 371 E 2nd Street'))
-
-    def test_nearby():
-        item = nearby(34.0482327, -118.239857, 'restaurant')
-        print(len(item))
-
-    def test_details():
-        place = find('Spitz 371 E 2nd Street')
-        place_id = place['place_id']
-        result = details(place_id, 'name')
-        print(result['name'])
-
-    def test_search():
-        item = search(34.0482327, -118.239857, 'Apartments')
-        print(item)
-        print(len(item))
-
-    test_find()
