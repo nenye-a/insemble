@@ -1,7 +1,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://prisma:prisma@localhost:5432/insemble?schema=public"
+  url = "***"
 }
 
 
@@ -39,10 +39,10 @@ model MatchingProperty {
 }
 
 model Location {
-  id   String @id @default(cuid())
-  name String
-  lat  String
-  lng  String
+  id      String @id @default(cuid())
+  address String
+  lat     String
+  lng     String
 }
 
 model LocationAndPerformance {
