@@ -31,7 +31,7 @@ export let registerTenant = mutationField('registerTenant', {
         tier: 'FREE',
       },
     });
-    if (business && filter) {
+    if (business || filter) {
       let {
         categories = [],
         equipmentIds = [],
@@ -40,43 +40,45 @@ export let registerTenant = mutationField('registerTenant', {
         education = [],
         commute = [],
         ...filterInput
-      } = filter;
-      let { location, ...businessInput } = business;
-      let brand = await context.prisma.tenantUser.update({
-        data: {
-          brands: {
-            create: {
-              ...businessInput,
-              ...filterInput,
-              categories: {
-                set: categories,
-              },
-              equipmentIds: {
-                set: equipmentIds,
-              },
-              personas: {
-                set: personas,
-              },
-              spaceType: {
-                set: spaceType,
-              },
-              education: {
-                set: education,
-              },
-              commute: {
-                set: commute,
-              },
-              location: {
-                create: location,
+      } = filter || {};
+      let { location, ...businessInput } = business || {};
+      let brands = await context.prisma.tenantUser
+        .update({
+          data: {
+            brands: {
+              create: {
+                ...businessInput,
+                ...filterInput,
+                categories: {
+                  set: categories,
+                },
+                equipmentIds: {
+                  set: equipmentIds,
+                },
+                personas: {
+                  set: personas,
+                },
+                spaceType: {
+                  set: spaceType,
+                },
+                education: {
+                  set: education,
+                },
+                commute: {
+                  set: commute,
+                },
+                location: {
+                  create: location,
+                },
               },
             },
           },
-        },
-        where: {
-          id: createdTenant.id,
-        },
-      });
-      brandId = brand.id;
+          where: {
+            id: createdTenant.id,
+          },
+        })
+        .brands();
+      brandId = brands[0].id;
     }
     return {
       token: createTenantSession(createdTenant),
