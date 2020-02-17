@@ -20,9 +20,13 @@ file.
 
 class AsynchronousAPI(generics.GenericAPIView):
     """
-    Can be inherited by any other views in order to enable asyncchrnous functions.
+    Can be inherited by any other views in order to enable asynchronous functions.
     """
 
+    # Takes a celery process and returns a threading task that will update
+    # result pool with the final items when the process completes.
+    # celery_process: celery task item that tracks celery progress
+    # result_pool: mutable list that will contain the item results when done
     def _celery_listener(self, celery_process, result_pool):
 
         def listen(process, dump):
@@ -173,7 +177,7 @@ class TenantMatchAPI(generics.GenericAPIView):
 
 
 # LocationDetailsApi - referenced by api/locationDetails/
-class LocationDetailsAPI(generics.GenericAPIView):
+class LocationDetailsAPI(AsynchronousAPI):
 
     """
 
@@ -479,20 +483,6 @@ class LocationDetailsAPI(generics.GenericAPIView):
         }
 
         return Response(response, status=status.HTTP_200_OK)
-
-    # Takes a celery process and returns a threading task that will update
-    # result pool with the final items when the process completes.
-    # celery_process: celery task item that tracks celery progress
-    # result_pool: mutable list that will contain the item results when done
-    def _celery_listener(self, celery_process, result_pool):
-
-        def listen(process, dump):
-            while not process.ready():
-                # wait a fraction of a second prior to checking again
-                time.sleep(0.1)
-            dump.append(process.get(timeout=1))
-
-        return threading.Thread(target=listen, args=(celery_process, result_pool,))
 
     # location assumed to be the same structure as "my_location", and target_location assumed to be the
     # same structure as "target_location"
