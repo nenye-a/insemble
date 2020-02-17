@@ -1,0 +1,17 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "matchingProperties",
+      "type": "MatchingProperty",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Brand",
+      "field": "matchingProperies"
+    }
+  ]
+}
