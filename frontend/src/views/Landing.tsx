@@ -50,14 +50,15 @@ function Landing() {
             if (geometry) {
               let { location } = geometry;
               if (location) {
-                let formatedLocation = location.toJSON();
-                let { lat, lng } = urlSafeLatLng(formatedLocation);
+                let { lat, lng } = location;
+                let latitude = lat();
+                let longitude = lng();
                 history.push(`/verify/${placeID}`, {
                   placeID,
                   name,
                   formattedAddress,
-                  lat,
-                  lng,
+                  lat: latitude.toString(),
+                  lng: longitude.toString(),
                 });
               }
             }
