@@ -4,7 +4,7 @@ import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
-import { View, TextInput, Form, Button } from '../../core-ui';
+import { View, TextInput, Form, Button, Alert } from '../../core-ui';
 import { validateEmail } from '../../utils/validation';
 import { WHITE } from '../../constants/colors';
 import { REGISTER_TENANT } from '../../graphql/queries/server/auth';
@@ -26,9 +26,10 @@ export default function SignUpForm(props: Props) {
   let { onboardingState } = props;
   let { register, handleSubmit, errors, watch } = useForm();
   let history = useHistory();
-  let [registerTenant, { data, loading }] = useMutation<RegisterTenant, RegisterTenantVariables>(
-    REGISTER_TENANT
-  );
+  let [registerTenant, { data, loading, error }] = useMutation<
+    RegisterTenant,
+    RegisterTenantVariables
+  >(REGISTER_TENANT);
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
 
   let getBussinessAndFilterParams = () => {
@@ -46,13 +47,14 @@ export default function SignUpForm(props: Props) {
             confirmBusinessDetail.userRelation === 'Other'
               ? confirmBusinessDetail.otherUserRelation || ''
               : confirmBusinessDetail.userRelation,
-          location: confirmBusinessDetail.location,
-          locationCount: Number(tenantGoals.locationCount),
+          location: confirmBusinessDetail.location || { lat: '', lng: '', address: '' }, // this should be optional i guess
+          locationCount: tenantGoals.locationCount ? Number(tenantGoals.locationCount) : null,
           newLocationPlan: tenantGoals.newLocationPlan?.value,
+          nextLocations: tenantGoals.location,
         },
         filter: {
           categories: confirmBusinessDetail.categories,
-          personaIds: targetCustomers.noPersonasPreference ? [] : targetCustomers.personas,
+          personas: targetCustomers.noPersonasPreference ? [] : targetCustomers.personas,
           minAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.minAge),
           maxAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.maxAge),
           minIncome: targetCustomers.noIncomePreference ? null : Number(targetCustomers.minIncome),
@@ -92,16 +94,15 @@ export default function SignUpForm(props: Props) {
 
   if (data) {
     let { registerTenant } = data;
-    let { token } = registerTenant;
+    let { token, brandId } = registerTenant;
 
     saveUserData(token, Role.Tenant);
     // add brandID returned by endpoint
-    history.push('/map');
+    history.push(`/map/${brandId}`);
   }
-  // TODO: handle if error
-
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
+      {!!error && <Alert visible={true} text={error.toString()} />}
       <FormContent>
         <TextInput
           name="email"

@@ -41,7 +41,7 @@ export let registerTenant = mutationField('registerTenant', {
         commute = [],
         ...filterInput
       } = filter || {};
-      let { location, ...businessInput } = business || {};
+      let { location, nextLocations, ...businessInput } = business || {};
       let brands = await context.prisma.tenantUser
         .update({
           data: {

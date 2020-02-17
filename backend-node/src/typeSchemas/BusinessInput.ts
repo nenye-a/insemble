@@ -8,6 +8,6 @@ export let BusinessInput = inputObjectType({
     t.string('userRelation');
     t.int('locationCount');
     t.field('newLocationPlan', { type: 'NewLocationPlan' }); //enum
-    t.field('nextLocation', { type: 'LocationInput', list: true });
+    t.field('nextLocations', { type: 'LocationInput', list: true });
   },
 });

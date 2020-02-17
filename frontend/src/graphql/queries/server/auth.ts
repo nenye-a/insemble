@@ -17,6 +17,7 @@ export const REGISTER_TENANT = gql`
         company
         tier
       }
+      brandId
     }
   }
 `;

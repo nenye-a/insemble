@@ -155,7 +155,7 @@ export default [
     component: TenantDeepDive,
   },
   {
-    path: '/map',
+    path: '/map/:brandId',
     layout: BasicLayout,
     component: MainMap,
     props: {
