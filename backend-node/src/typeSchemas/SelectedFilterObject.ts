@@ -25,5 +25,15 @@ export let Brand = objectType({
     t.model.personas();
     t.model.equipmentIds();
     t.model.spaceType();
+    t.field('matchingLocations', {
+      type: 'MatchingLocation',
+      list: true,
+      nullable: true,
+    });
+    t.field('matchingProperties', {
+      type: 'MatchingProperty',
+      list: true,
+      nullable: true,
+    });
   },
 });
