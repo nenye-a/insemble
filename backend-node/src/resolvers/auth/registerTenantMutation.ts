@@ -33,37 +33,44 @@ export let registerTenant = mutationField('registerTenant', {
     });
     if (business && filter) {
       let {
-        categories,
-        equipmentIds,
-        personas,
-        spaceType,
-        education,
-        commute,
+        categories = [],
+        equipmentIds = [],
+        personas = [],
+        spaceType = [],
+        education = [],
+        commute = [],
         ...filterInput
       } = filter;
       let { location, ...businessInput } = business;
-      let brand = await context.prisma.brand.create({
+      let brand = await context.prisma.tenantUser.update({
         data: {
-          ...businessInput,
-          ...filterInput,
-          categories: {
-            set: categories,
+          brands: {
+            create: {
+              ...businessInput,
+              ...filterInput,
+              categories: {
+                set: categories,
+              },
+              equipmentIds: {
+                set: equipmentIds,
+              },
+              personas: {
+                set: personas,
+              },
+              spaceType: {
+                set: spaceType,
+              },
+              education: {
+                set: education,
+              },
+              commute: {
+                set: commute,
+              },
+            },
           },
-          equipmentIds: {
-            set: equipmentIds,
-          },
-          personas: {
-            set: personas,
-          },
-          spaceType: {
-            set: spaceType,
-          },
-          education: {
-            set: education,
-          },
-          commute: {
-            set: commute,
-          },
+        },
+        where: {
+          id: createdTenant.id,
         },
       });
       brandId = brand.id;
