@@ -9,3 +9,5 @@ export * from './OptionalFilterInput';
 export * from './MatchingLocation';
 export * from './MatchingProperty';
 export * from './TenantMatchesResult';
+export * from './SelectedFilterObject';
+export * from './LocationType';

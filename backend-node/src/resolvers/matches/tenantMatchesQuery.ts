@@ -42,6 +42,14 @@ let tenantMatches = queryField('tenantMatches', {
       maxRent,
       matchingLocations: matchingLocationsJSON,
       matchingProperties: existMatchingProperties,
+      // NOTE: Unused filter params, will use later!
+      equipmentIds,
+      locationCount,
+      minSize,
+      maxSize,
+      newLocationPlan,
+      spaceType,
+      userRelation,
     } = selectedBrand;
 
     if (!(name && location) && !(categories.length > 0 && minIncome)) {
@@ -60,6 +68,39 @@ let tenantMatches = queryField('tenantMatches', {
         statusDetail: 'Success',
         matchingLocations: existMatchingLocations,
         matchingProperties: existMatchingProperties,
+        selectedFilter: {
+          categories,
+          location,
+          name,
+          maxIncome,
+          minIncome,
+          minAge,
+          maxAge,
+          personas,
+          commute: commute.map((rawValue) => {
+            let splitCommuteValue = rawValue.split(': ');
+            return {
+              rawValue,
+              displayValue: splitCommuteValue[1],
+            };
+          }),
+          education: education.map((rawValue) => {
+            let splitEducationValue = rawValue.split('+, ');
+            return {
+              rawValue,
+              displayValue: splitEducationValue[1],
+            };
+          }),
+          minRent,
+          maxRent,
+          equipmentIds,
+          locationCount,
+          minSize,
+          maxSize,
+          newLocationPlan,
+          spaceType,
+          userRelation,
+        },
       };
     }
 
@@ -97,6 +138,39 @@ let tenantMatches = queryField('tenantMatches', {
       statusDetail,
       matchingLocations: newMatchingLocations,
       matchingProperties: newMatchingProperties,
+      selectedFilter: {
+        categories,
+        location,
+        name,
+        maxIncome,
+        minIncome,
+        minAge,
+        maxAge,
+        personas,
+        commute: commute.map((rawValue) => {
+          let splitCommuteValue = rawValue.split(': ');
+          return {
+            rawValue,
+            displayValue: splitCommuteValue[1],
+          };
+        }),
+        education: education.map((rawValue) => {
+          let splitEducationValue = rawValue.split('+, ');
+          return {
+            rawValue,
+            displayValue: splitEducationValue[1],
+          };
+        }),
+        minRent,
+        maxRent,
+        equipmentIds,
+        locationCount,
+        minSize,
+        maxSize,
+        newLocationPlan,
+        spaceType,
+        userRelation,
+      },
     };
   },
 });

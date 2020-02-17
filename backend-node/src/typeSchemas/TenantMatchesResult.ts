@@ -15,5 +15,9 @@ export let TenantMatchesResult = objectType({
       list: true,
       nullable: true,
     });
+    t.field('selectedFilter', {
+      type: 'Brand',
+      nullable: true,
+    });
   },
 });
