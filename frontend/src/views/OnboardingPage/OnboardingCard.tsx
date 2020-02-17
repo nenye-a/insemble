@@ -29,7 +29,9 @@ export default function OnboardingCard(props: Props) {
       titleProps={{ style: { textAlign: 'center' } }}
     >
       <ProgressBar progress={progress} />
-      <View flex>{children}</View>
+      <View flex style={{ zIndex: 1 }}>
+        {children}
+      </View>
       {buttons.length > 1 && (
         <Footer>
           {buttons.map(({ onPress, text }, index) => {

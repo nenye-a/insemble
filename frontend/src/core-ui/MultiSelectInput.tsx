@@ -40,7 +40,7 @@ export default function MultiSelectInput(props: Props) {
   let newOptionList = optionList.filter((option) => !selectedValues.includes(option));
 
   return (
-    <View style={containerStyle}>
+    <Container style={containerStyle}>
       <SearchContainer isFocused={isFocused}>
         {selectedValues.map((value, index) => (
           <Selected key={index} primary>
@@ -85,19 +85,21 @@ export default function MultiSelectInput(props: Props) {
           </OptionContainer>
         </ClickAway>
       ) : null}
-    </View>
+    </Container>
   );
 }
 
 type SearchContainerProps = ViewProps & {
   isFocused: boolean;
 };
+
+const Container = styled(View)`
+  z-index: 2;
+`;
 const SearchContainer = styled(View)<SearchContainerProps>`
-  flex-direction: row;
-  flex-flow: row-wrap;
+  flex-flow: row wrap;
   align-items: center;
   width: 100%;
-  height: 40px;
   border: solid;
   border-width: 1px;
   border-color: ${(props) => (props.isFocused ? THEME_COLOR : TEXT_INPUT_BORDER_COLOR)};
@@ -106,7 +108,7 @@ const SearchContainer = styled(View)<SearchContainerProps>`
 
 const TextSearch = styled(TextInput)`
   width: 100%;
-  line-height: 36px;
+  height: 36px;
   outline: none;
   background-color: transparent;
 `;

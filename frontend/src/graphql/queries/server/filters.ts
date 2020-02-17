@@ -11,3 +11,9 @@ export const GET_PERSONA_LIST = gql`
     personas
   }
 `;
+
+export const GET_EQUIPMENT_LIST = gql`
+  query Equipments {
+    equipments
+  }
+`;

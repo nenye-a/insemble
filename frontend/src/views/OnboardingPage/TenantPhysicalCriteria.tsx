@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, Dispatch } from 'react';
 import styled from 'styled-components';
+import { useQuery } from '@apollo/react-hooks';
 
 import { View, Alert, Label, Checkbox, MultiSelectInput, Text } from '../../core-ui';
 import { RangeInput } from '../../components';
@@ -7,6 +8,8 @@ import { Action, State as OnboardingState } from '../../reducers/tenantOnboardin
 import { RED_TEXT } from '../../constants/colors';
 import { FONT_SIZE_SMALL } from '../../constants/theme';
 import { validateNumber } from '../../utils/validation';
+import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
+import { Equipments } from '../../generated/Equipments';
 
 const SPACE_OPTIONS = ['Stand alone', 'Shopping center', 'Strip mall'];
 
@@ -17,12 +20,12 @@ type Props = {
 
 export default function TenantPhysicalCriteria(props: Props) {
   let { dispatch } = props;
+  let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
   let [minSqft, setMinSqft] = useState('');
   let [maxSqft, setMaxSqft] = useState('');
   let [minFrontageWidth, setMinFrontageWidth] = useState('');
   let [maxFrontageWidth, setMaxFrontageWidth] = useState('');
   let [selectedSpaceOptions, setSelectedSpaceOptions] = useState<Array<string>>([]);
-  let [options] = useState<Array<string>>([]);
   let [, setSelectedEquipmentOptions] = useState<Array<string>>([]);
 
   let sqftError = useMemo(() => getRangeInputError(minSqft, maxSqft), [minSqft, maxSqft]);
@@ -76,15 +79,17 @@ export default function TenantPhysicalCriteria(props: Props) {
         onHighRangeInputChange={setMaxFrontageWidth}
       />
       <ErrorMessage>{frontageWidthError}</ErrorMessage>
-      <Label text="Equipment Preference" />
-      <MultiSelectInput
-        placeholder={'Set Equipment Preference'}
-        options={options}
-        onChange={(values: Array<string>) => {
-          setSelectedEquipmentOptions(values);
-        }}
-        containerStyle={{ marginBottom: 24 }}
-      />
+      <LabelText text="Equipment Preference" />
+      {!equipmentLoading && equipmentData && (
+        <MultiSelectInput
+          placeholder="Set Equipment Preference"
+          options={equipmentData.equipments}
+          onChange={(values: Array<string>) => {
+            setSelectedEquipmentOptions(values);
+          }}
+          containerStyle={{ marginBottom: 24 }}
+        />
+      )}
       <LabelText text="Space type" />
       {SPACE_OPTIONS.map((option, index) => {
         let isChecked = selectedSpaceOptions.includes(option);
