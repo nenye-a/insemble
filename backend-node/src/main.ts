@@ -4,6 +4,7 @@ import { ContextParameters } from 'graphql-yoga/dist/types';
 import { prisma } from './prisma';
 import { schema } from '../src/schema';
 import { authTenantSession } from './helpers/auth';
+import { permissions } from './middlewares/permission';
 
 const server = new GraphQLServer({
   schema,
@@ -21,6 +22,7 @@ const server = new GraphQLServer({
       prisma,
     };
   },
+  middlewares: [permissions],
 });
 
 server.start(() => {
