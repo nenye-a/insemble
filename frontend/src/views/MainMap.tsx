@@ -10,7 +10,6 @@ import DeepDiveModal from './DeepDivePage/DeepDiveModal';
 import { WHITE, THEME_COLOR, HEADER_BORDER_COLOR } from '../constants/colors';
 import { FONT_WEIGHT_MEDIUM } from '../constants/theme';
 import SvgPropertyLocation from '../components/icons/property-location';
-import { useSelector } from '../redux/helpers';
 
 export default function MainMap() {
   let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
