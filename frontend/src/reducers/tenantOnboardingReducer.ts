@@ -1,4 +1,3 @@
-import { GPlaceResult } from '../core-ui/MultiSelectLocation';
 import { LocationInput } from '../generated/globalTypes';
 
 export enum NewLocationPlan {

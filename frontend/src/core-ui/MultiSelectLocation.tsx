@@ -59,9 +59,9 @@ export default function MultiSelectLocation(props: Props) {
     <View style={containerStyle}>
       {label && <LabelWrapper text={label} id={id} />}
       <Container>
-        {selectedValues.map(({ address }, index) => (
+        {selectedValues.map(({ name }, index) => (
           <Selected key={index} primary>
-            {address}
+            {name}
           </Selected>
         ))}
         <TextSearch
