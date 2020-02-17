@@ -22,7 +22,7 @@ const server = new GraphQLServer({
       prisma,
     };
   },
-  middlewares: [permissions],
+  // middlewares: [permissions],
 });
 
 server.start(() => {
