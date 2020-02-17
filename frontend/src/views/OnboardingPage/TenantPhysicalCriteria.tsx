@@ -26,8 +26,7 @@ export default function TenantPhysicalCriteria(props: Props) {
   let [minFrontageWidth, setMinFrontageWidth] = useState('');
   let [maxFrontageWidth, setMaxFrontageWidth] = useState('');
   let [selectedSpaceOptions, setSelectedSpaceOptions] = useState<Array<string>>([]);
-  let [, setSelectedEquipmentOptions] = useState<Array<string>>([]);
-
+  let [selectedEquipmentOptions, setSelectedEquipmentOptions] = useState<Array<string>>([]);
   let sqftError = useMemo(() => getRangeInputError(minSqft, maxSqft), [minSqft, maxSqft]);
 
   let frontageWidthError = useMemo(() => getRangeInputError(minFrontageWidth, maxFrontageWidth), [
@@ -48,14 +47,16 @@ export default function TenantPhysicalCriteria(props: Props) {
             maxSize: maxSqft,
             minFrontageWidth: minFrontageWidth,
             maxFrontageWidth: maxFrontageWidth,
-            equipments: [],
+            equipments: selectedEquipmentOptions,
             spaceType: selectedSpaceOptions,
           },
         },
       });
+    } else {
+      dispatch({ type: 'DISABLE_NEXT_BUTTON' });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allValid, dispatch]);
+  }, [allValid, dispatch, selectedEquipmentOptions, selectedSpaceOptions]);
 
   return (
     <Container>
@@ -84,9 +85,7 @@ export default function TenantPhysicalCriteria(props: Props) {
         <MultiSelectInput
           placeholder="Set Equipment Preference"
           options={equipmentData.equipments}
-          onChange={(values: Array<string>) => {
-            setSelectedEquipmentOptions(values);
-          }}
+          onChange={setSelectedEquipmentOptions}
           containerStyle={{ marginBottom: 24 }}
         />
       )}

@@ -42,15 +42,17 @@ export default function SignUpForm(props: Props) {
       return {
         business: {
           name: confirmBusinessDetail.name,
-          userRelation: confirmBusinessDetail.userRelation,
+          userRelation:
+            confirmBusinessDetail.userRelation === 'Other'
+              ? confirmBusinessDetail.otherUserRelation || ''
+              : confirmBusinessDetail.userRelation,
           location: confirmBusinessDetail.location,
           locationCount: Number(tenantGoals.locationCount),
           newLocationPlan: tenantGoals.newLocationPlan?.value,
         },
         filter: {
           categories: confirmBusinessDetail.categories,
-          equipmentIds: [],
-          personasIds: targetCustomers.noPersonasPreference ? [] : targetCustomers.personas,
+          personaIds: targetCustomers.noPersonasPreference ? [] : targetCustomers.personas,
           minAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.minAge),
           maxAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.maxAge),
           minIncome: targetCustomers.noIncomePreference ? null : Number(targetCustomers.minIncome),
@@ -60,6 +62,7 @@ export default function SignUpForm(props: Props) {
           minFrontageWidth: Number(physicalSiteCriteria.minFrontageWidth),
           maxFrontageWidth: Number(physicalSiteCriteria.maxFrontageWidth),
           spaceType: physicalSiteCriteria.spaceType,
+          equipmentIds: physicalSiteCriteria.equipments,
         },
       };
     }
@@ -67,6 +70,7 @@ export default function SignUpForm(props: Props) {
 
   let onSubmit = (data: FieldValues) => {
     let { email, firstName, lastName, company, password } = data;
+
     registerTenant({
       variables: {
         tenant: {

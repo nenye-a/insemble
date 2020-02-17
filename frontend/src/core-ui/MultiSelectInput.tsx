@@ -1,4 +1,4 @@
-import React, { ComponentProps, useState, useRef, CSSProperties } from 'react';
+import React, { ComponentProps, useState, useRef, CSSProperties, useEffect } from 'react';
 import styled from 'styled-components';
 import PillButton from './PillButton';
 import View from './View';
@@ -39,6 +39,9 @@ export default function MultiSelectInput(props: Props) {
   let optionList = options.filter((option) => option.toLowerCase().includes(inputValue));
   let newOptionList = optionList.filter((option) => !selectedValues.includes(option));
 
+  useEffect(() => {
+    onChange(selectedValues);
+  }, [selectedValues, onChange]);
   return (
     <Container style={containerStyle}>
       <SearchContainer isFocused={isFocused}>
@@ -72,11 +75,10 @@ export default function MultiSelectInput(props: Props) {
               return (
                 <Option
                   key={i}
-                  onPress={() => [
-                    setInputValue(''),
-                    setSelectedValues([...selectedValues, item]),
-                    onChange(selectedValues),
-                  ]}
+                  onPress={() => {
+                    setInputValue('');
+                    setSelectedValues([...selectedValues, item]);
+                  }}
                 >
                   <ListText>{item}</ListText>
                 </Option>

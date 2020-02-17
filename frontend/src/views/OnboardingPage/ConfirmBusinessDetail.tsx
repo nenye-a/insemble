@@ -60,7 +60,8 @@ export default function ConfirmBusinessDetail(props: Props) {
   let mapURL = MAPS_IFRAME_URL_PLACE + '&q=place_id:' + placeID;
 
   let businessRelationValid =
-    selectedBusinessRelation || (selectedBusinessRelation === 'Other' && otherBusinessRelation);
+    (selectedBusinessRelation && selectedBusinessRelation !== 'Other') ||
+    (selectedBusinessRelation === 'Other' && otherBusinessRelation);
   let allValid = businessRelationValid && selectedCategories.length > 0 && name;
   useEffect(() => {
     if (allValid) {
