@@ -5,3 +5,4 @@ export * from './filter/personaQuery';
 export * from './filter/commuteQuery';
 export * from './filter/educationQuery';
 export * from './filter/propertyTypeQuery';
+export * from './filter/equipmentQuery';
