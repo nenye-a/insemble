@@ -3,18 +3,24 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Joyride, { STATUS, Step } from 'react-joyride';
 import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
-import { useHistory } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAlert } from 'react-alert';
 import HeatMapLayer from 'react-google-DELETED_BASE64_STRING';
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
+import { useQuery } from '@apollo/react-hooks';
+import styled from 'styled-components';
 
-import { View } from '../core-ui';
+import { View, Text } from '../core-ui';
 import { useSelector } from '../redux/helpers';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import urlSafeLatLng from '../utils/urlSafeLatLng';
 import LocationDetail from '../components/location-detail/LocationDetail';
+import { GET_HEATMAP_DATA } from '../graphql/queries/server/heatmap';
 import InfoBox from 'react-google-maps/lib/components/addons/InfoBox';
 import MapPin from '../components/icons/map-pin.svg';
+import { FONT_SIZE_LARGE } from '../constants/theme';
+import { WHITE } from '../constants/colors';
+import { TenantMatches, TenantMatchesVariables } from '../generated/TenantMatches';
 
 type LatLngBounds = google.maps.LatLngBounds;
 type LatLng = google.maps.LatLng;
@@ -42,6 +48,9 @@ type Props = {
   onMarkerClick?: () => void;
 };
 
+type BrandId = {
+  brandId: string;
+};
 const defaultCenter = {
   lat: 34.0522342,
   lng: -118.2436849,
@@ -49,9 +58,25 @@ const defaultCenter = {
 const defaultZoom = 10;
 
 function MapContainer({ onMarkerClick }: Props) {
+  let params = useParams<BrandId>();
+  let { brandId } = params;
+  let { data: tenantMatchesData, error, loading } = useQuery<TenantMatches, TenantMatchesVariables>(
+    GET_HEATMAP_DATA,
+    {
+      variables: {
+        brandId,
+      },
+    }
+  );
+  let heatmapData =
+    tenantMatchesData && tenantMatchesData.tenantMatches.matchingLocations
+      ? tenantMatchesData.tenantMatches.matchingLocations.map(({ lat, lng, match }) => ({
+          location: new google.maps.LatLng(lat, lng),
+          weight: match,
+        }))
+      : [];
+
   let alert = useAlert();
-  let history = useHistory();
-  let heatMap = useSelector((state) => state.space.heatMap) || [];
 
   let [marker, setMarker] = useState<MarkerData | null>(null);
   let [markers, setMarkers] = useState<Array<LatLngLiteral>>([]);
@@ -122,10 +147,6 @@ function MapContainer({ onMarkerClick }: Props) {
     //   });
   };
 
-  let data = heatMap.map(({ lat, lng, map_rating: mapRating }) => ({
-    location: new google.maps.LatLng(lat, lng),
-    weight: mapRating,
-  }));
   let steps: Array<Step> = [
     {
       target: '.heat-map-example',
@@ -196,6 +217,13 @@ function MapContainer({ onMarkerClick }: Props) {
         locale={{ last: 'Done' }}
         spotlightClicks={false}
       />
+      {loading && (
+        <LoadingOverlay>
+          <Text fontSize={FONT_SIZE_LARGE} color={WHITE}>
+            Evaluating thousands of locations to find your matches. May take a couple minutes...
+          </Text>
+        </LoadingOverlay>
+      )}
       <GoogleMap
         ref={mapRef}
         defaultZoom={defaultZoom}
@@ -251,7 +279,12 @@ function MapContainer({ onMarkerClick }: Props) {
           </Marker>
         )}
         {showGuide && <div className="marker-example heat-map-example empty-container" />}
-        <HeatMapLayer data={data} options={{ data, radius: 20, opacity: 1 }} />
+        {heatmapData && (
+          <HeatMapLayer
+            data={heatmapData}
+            options={{ data: heatmapData, radius: 20, opacity: 1 }}
+          />
+        )}
 
         {markers.map((markerPosition, index) => (
           <Marker
@@ -273,3 +306,15 @@ export default (props: Props) => {
     <MapWithMap containerElement={<View flex />} mapElement={<View flex />} {...props} />
   );
 };
+
+const LoadingOverlay = styled(View)`
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  background-color: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+`;
