@@ -1,0 +1,193 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateModel",
+      "model": "MatchingProperty"
+    },
+    {
+      "tag": "CreateField",
+      "model": "MatchingProperty",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "MatchingProperty",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "MatchingProperty",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "MatchingProperty",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "cuid()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "MatchingProperty",
+      "field": "propertyId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "MatchingProperty",
+      "field": "address",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "MatchingProperty",
+      "field": "rent",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "MatchingProperty",
+      "field": "sqft",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "MatchingProperty",
+      "field": "type",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Location",
+      "field": "address",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Location",
+      "field": "name"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "minRent",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "maxRent",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "matchingLocations",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "matchingProperies",
+      "type": "MatchingProperty",
+      "arity": "List"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Brand",
+      "field": "name",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Brand",
+      "field": "userRelation",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Brand",
+      "field": "newLocationPlan",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Brand",
+      "field": "locationCount",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Brand",
+      "field": "minAge",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Brand",
+      "field": "maxAge",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Brand",
+      "field": "minIncome",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Brand",
+      "field": "maxIncome",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Brand",
+      "field": "minSize",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Brand",
+      "field": "maxSize",
+      "arity": "Optional"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Brand",
+      "field": "location",
+      "arity": "Optional"
+    }
+  ]
+}
