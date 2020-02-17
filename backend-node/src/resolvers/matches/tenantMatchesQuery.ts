@@ -109,15 +109,14 @@ let tenantMatches = queryField('tenantMatches', {
 
     let {
       matching_locations: newMatchingLocations,
-      status,
-      status_detail: statusDetail,
       matching_properties: rawMatchingProperties,
     }: TenantMatchesType = (
       await axios.get(`${LEGACY_API_URI}/api/tenantMatches`, {
         params: {
           address: location?.address,
           brand_name: name,
-          categories: categories,
+          categories:
+            categories.length > 0 ? JSON.stringify(categories) : undefined,
           income: minIncome && {
             min: maxIncome,
             max: maxIncome,
@@ -126,9 +125,10 @@ let tenantMatches = queryField('tenantMatches', {
             min: minAge,
             max: maxAge,
           },
-          personas: personas,
-          commute: commute,
-          education: education,
+          personas: personas.length > 0 ? JSON.stringify(personas) : undefined,
+          commute: commute.length > 0 ? JSON.stringify(commute) : undefined,
+          education:
+            education.length > 0 ? JSON.stringify(education) : undefined,
           rent: minRent && {
             min: minRent,
             max: maxRent,
