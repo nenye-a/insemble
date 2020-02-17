@@ -5,7 +5,6 @@ export * from './LocationInput';
 export * from './RawFilter';
 export * from './FilterInput';
 export * from './BusinessInput';
-export * from './OptionalFilterInput';
 export * from './MatchingLocation';
 export * from './MatchingProperty';
 export * from './TenantMatchesResult';
