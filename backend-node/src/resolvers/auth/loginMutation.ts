@@ -1,5 +1,8 @@
-import { Root, Context } from 'serverTypes';
 import { mutationField, stringArg } from 'nexus';
+import bcrypt from 'bcrypt';
+
+import { Root, Context } from 'serverTypes';
+import { createTenantSession } from '../../helpers/auth';
 
 let loginTenant = mutationField('loginTenant', {
   type: 'TenantAuth',
@@ -7,22 +10,23 @@ let loginTenant = mutationField('loginTenant', {
     email: stringArg({ required: true }),
     password: stringArg({ required: true }),
   },
-  resolve: (
-    _: Root,
-    { email, password }: { email: string; password: string },
-    _context: Context,
-  ) => {
-    return {
-      tenant: {
-        id: '1',
-        email,
-        firstName: 'Sams',
-        lastName: 'Udin',
-        company: 'Mock Fried Chicken',
-        tier: 'FREE',
-        avatar: '',
+  resolve: async (_: Root, { email, password }, context: Context) => {
+    let lowercasedEmail = email.toLowerCase();
+    let tenantUser = await context.prisma.tenantUser.findOne({
+      where: {
+        email: lowercasedEmail,
       },
-      token: 's3cr3t-t0ken_here',
+    });
+    if (!tenantUser) {
+      throw new Error('Email not found or wrong password');
+    }
+    let validPassword = bcrypt.compareSync(password, tenantUser.password);
+    if (!validPassword) {
+      throw new Error('Email not found or wrong password');
+    }
+    return {
+      token: createTenantSession(tenantUser),
+      tenant: tenantUser,
     };
   },
 });
