@@ -4,14 +4,14 @@ import { LEGACY_API_URI } from '../../constants/host';
 import { queryField } from 'nexus';
 import { FilterOptions } from 'dataTypes';
 
-let propertyType = queryField('propertyType', {
+let spaceType = queryField('spaceType', {
   type: 'String',
   list: true,
-  resolve: propertyTypeResolver,
+  resolve: spaceTypeResolver,
 });
 
 // TODO: Add where args
-async function propertyTypeResolver(_: Root, _args: {}, _context: Context) {
+async function spaceTypeResolver(_: Root, _args: {}, _context: Context) {
   let { type }: FilterOptions = (
     await axios.get(`${LEGACY_API_URI}/api/filter`)
   ).data;
@@ -19,4 +19,4 @@ async function propertyTypeResolver(_: Root, _args: {}, _context: Context) {
   return type;
 }
 
-export { propertyType };
+export { spaceType };
