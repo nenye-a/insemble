@@ -2,12 +2,13 @@ import sys
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)  # include data_insights_testing in path
-import geopy.distance
-import math
-import pandas as pd
-import anmspatial
-from mongo_connect import Connect
 import gzip
+from mongo_connect import Connect
+import anmspatial
+import pandas as pd
+import math
+import geopy.distance
+
 
 
 '''
@@ -36,6 +37,7 @@ DB_SPATIAL_CATS = DB_SPACE.spatial_categories
 DB_DEMOGRAPHIC_CATS = DB_SPACE.demographic_categories
 DB_FOURSQUARE = DB_SPACE.foursquare_categories
 DB_SPATIAL_TAXONOMY = DB_SPACE.spatial_taxonomy
+DB_CATEGORIES = DB_SPACE.categories
 
 
 # simple unique index of a pymongo database collection
@@ -115,12 +117,12 @@ def test_raw_spaces(file_name, query={}):
 
 # retrieves csv from file_system. If no file_system specified,
 # assumes the file is locally hosted.
-def read_dataframe_csv(path, file_system=None, is_zipped=True):   
-    if file_system:   
-        f_open = lambda file_path: file_system.open(file_path, 'rb')
+def read_dataframe_csv(path, file_system=None, is_zipped=True):
+    if file_system:
+        def f_open(file_path): return file_system.open(file_path, 'rb')
     else:
-        f_open = lambda file_path: open(file_path, 'rb')
-    
+        def f_open(file_path): return open(file_path, 'rb')
+
     with f_open(path) as f:
         unzipped_file = gzip.GzipFile(fileobj=f) if is_zipped else f
         dataframe = pd.read_csv(unzipped_file)
@@ -208,6 +210,8 @@ def translate(value, left_min, left_max, right_min, right_max):
 # can determine the latitude and longitude of a point at the distance
 # and in the direction provided. Direction provided in degrees. Distance
 # in miles
+
+
 def location_at_distance(current_lat, current_lng, distance, degrees):
 
     # all important details converted to radians

@@ -75,6 +75,20 @@ class TenantMatchSerializer(serializers.Serializer):
             return data
 
 
+class LocationSerializer(serializers.Serializer):
+    """
+
+    parameters: {
+        address: string,            (required)
+        brand_name: string,         (required)
+    }
+
+    """
+
+    address = serializers.CharField(required=True, max_length=300)
+    brand_name = serializers.CharField(required=True, max_length=300)
+
+
 # Location Details Serializer
 class LocationDetailSerializer(serializers.Serializer):
 

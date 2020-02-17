@@ -5,7 +5,7 @@ import data.matching as matching
 import data.provider as provider
 from rest_framework import status, generics, permissions, serializers
 from rest_framework.response import Response
-from .tenant_serializers import TenantMatchSerializer, LocationDetailSerializer
+from .tenant_serializers import TenantMatchSerializer, LocationDetailSerializer, LocationSerializer
 from .celery import app as celery_app
 
 
@@ -16,6 +16,30 @@ The endpoints to access this interface is presented in the "urls.py"
 file.
 
 '''
+
+
+class AsynchronousAPI(generics.GenericAPIView):
+    """
+    Can be inherited by any other views in order to enable asyncchrnous functions.
+    """
+
+    def _celery_listener(self, celery_process, result_pool):
+
+        def listen(process, dump):
+            while not process.ready():
+                # wait a fraction of a second prior to checking again
+                time.sleep(0.1)
+            dump.append(process.get(timeout=1))
+
+        return threading.Thread(target=listen, args=(celery_process, result_pool,))
+
+    def _register_tasks(self) -> None:
+        """
+        Register any celery tasks defined.
+        """
+        # example call:
+        # celery_app.register_task(self._get_nearby)
+        pass
 
 
 # FilterDetailApi - referenced by api/filter/
@@ -601,3 +625,50 @@ class LocationPreviewAPI(LocationDetailsAPI):
 
     def _register_tasks(self) -> None:
         celery_app.register_task(self._get_preview_demographics)
+
+
+class AutoPopulateAPI(generics.GenericAPIView):
+    """
+
+    Provided an address and brandname, will provide estimated age and population filters.
+
+    parameters: {
+        address: string,            (required)
+        brand_name: string,         (required)
+    }
+
+    response: {
+        categories: list[string],
+        personas: list[string],
+        income: {
+            min: int,
+            max: int
+        },
+        age: {
+            min: int,
+            max: int
+        },
+    }
+
+    """
+
+    permission_classes = [
+        permissions.AllowAny
+    ]
+    serializer_class = LocationSerializer
+
+    def get(self, request, *args, **kwargs):
+
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        validated_params = serializer.validated_data
+
+        location = provider.get_location(validated_params['address'], validated_params['brand_name'])
+        my_lat = location['lat']
+        my_lng = location['lng']
+        place_id = location['place_id']
+
+        # Get categories (from foursquare)
+        # Get personas (from spatial taxonomy)
+        # Get income
+        # Get age

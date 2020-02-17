@@ -512,3 +512,8 @@ def get_preview_demographics(lat, lng, radius):
 def get_daytimepop(lat, lng, radius):
     arcgis_details = arcgis.details(lat, lng, radius)
     return arcgis_details['DaytimePop']
+
+
+def get_categories(lat, lng, address, place_id):
+
+    space = utils.DB_PROCESSED_SPACE.find_one({'place_id': place_id})
