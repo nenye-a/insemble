@@ -24,7 +24,33 @@ def get_location(address, name=None):
     return location
 
 
+def get_representative_location(categories, income_dict):
+
+    income_query = {'$gte': income_dict["min"]}
+    income_query.update({'$lte': income_dict["max"]}) if 'max' in income_dict else None
+
+    candidates = utils.DB_PROCESSED_SPACE.find({
+        'foursquare_categories.category_name': {'$in': categories},
+        'arcgis_details1.MedHouseholdIncome1': income_query,
+        'arcgis_details3.MedHouseholdIncome3': income_query,
+        'user_ratings_total': {'$exists': True},
+        'rating': {'$gte': 4.2}
+    }).sort([('user_ratings_total', -1)]).limit(10)
+
+    if candidates.count() == 0:
+        return None
+
+    place = list(candidates)[0]
+    return {
+        'address': place['formatted_address'],
+        'lat': place['geometry']['location']['lat'],
+        'lng': place['geometry']['location']['lng'],
+        'name': place['name']
+    }
+
 # Returns the address and neighborhood of a specific latitude and longitude
+
+
 def get_address_neighborhood(lat, lng):
     google_location = google.reverse_geocode(lat, lng)
 

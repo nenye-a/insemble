@@ -1,5 +1,6 @@
 import json
 import time
+import ast
 import threading
 import data.matching as matching
 import data.provider as provider
@@ -157,10 +158,19 @@ class TenantMatchAPI(generics.GenericAPIView):
                 validated_params['address'], name=validated_params['brand_name']
             )
         else:
-            # TODO: implement case that relies only on categories & income
-            # in the mean time, will return the matches from a default location
+            print("Match categories", validated_params['categories'])
+            # FIXME: change url parsing & parameters to better receive lists of information, current method is error prone
+            categories = [string.strip() for string in ast.literal_eval(validated_params['categories'][0])]
+            print(categories)
+            location = provider.get_representative_location(categories, validated_params['income'])
+            if not location:
+                return Response({
+                    'status': 400,
+                    'status_detail': ['No Categories Found']
+                }, status=status.HTTP_400_BAD_REQUEST)
+
             matches = matching.generate_matches(
-                "371 E 2nd Street, LA, CA"
+                location['address'], name=location['name']
             )
 
         # ensure that the response is an object. May not be necessary
@@ -380,16 +390,18 @@ class LocationDetailsAPI(AsynchronousAPI):
             my_demo5_listener.start()
 
         else:
-            # TODO: get the match details information for the categories. In the short term grabs details for
-            # a known address (similar to the matches)
 
-            temp_location = {
-                'address': "371 E 2nd Street, LA",
-                "brand_name": "Spitz",
-                "categories": ["Turkish Restaurant"]
-            }
+            categories = validated_params['my_location']['categories']
+            income = validated_params['my_location']['income']
+            print(categories)
+            my_location = provider.get_representative_location(categories, income)
+            if not my_location:
+                return Response({
+                    'status': 400,
+                    'status_detail': ['No Categories Found']
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-            l_process, my_location = self._get_location_details.delay(temp_location), []
+            l_process, my_location = self._get_location_details.delay(my_location, False), []
             my_location_listener = self._celery_listener(l_process, my_location)
             my_location_listener.start()
 
