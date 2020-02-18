@@ -1,9 +1,18 @@
 import React, { useEffect, useReducer } from 'react';
 import styled from 'styled-components';
+import { useQuery } from '@apollo/react-hooks';
+
 import { View, ClickAway } from '../../core-ui';
 import { Filter } from '../../components';
 import FilterCard from './FilterCard';
 import sideBarFiltersReducer from '../../reducers/sideBarFiltersReducer';
+import {
+  GET_PERSONA_LIST,
+  GET_COMMUTE_LIST,
+  GET_EDUCATION_LIST,
+  GET_PROPERTY_TYPE_LIST,
+} from '../../graphql/queries/server/filters';
+import { Personas } from '../../generated/Personas';
 import SvgIncome from '../../components/icons/income';
 import SvgAge from '../../components/icons/age';
 import SvgPsychographic from '../../components/icons/psychographic';
@@ -13,8 +22,17 @@ import SvgRent from '../../components/icons/rent';
 import SvgSqft from '../../components/icons/sqft';
 import SvgPropertyType from '../../components/icons/property-type';
 import { NAVBAR_HEIGHT } from '../../constants/theme';
+import { Commute } from '../../generated/Commute';
+import { Education } from '../../generated/Education';
 
-export default function SideBarFilters() {
+type Props = {};
+
+export default function SideBarFilters(props: Props) {
+  let { data: personasData, loading: personasLoading } = useQuery<Personas>(GET_PERSONA_LIST);
+  let { data: commuteData, loading: commuteLoading } = useQuery<Commute>(GET_COMMUTE_LIST);
+  let { data: educationData, loading: educationLoading } = useQuery<Education>(GET_EDUCATION_LIST);
+  let { data: spaceTypeData, loading: spaceTypeLoading } = useQuery(GET_PROPERTY_TYPE_LIST);
+
   let getInitialState = () => ({
     openFilterName: null,
     demographics: DEMOGRAPHIC_OPTIONS.map((item) => ({ ...item, allOptions: [] })),
@@ -25,41 +43,48 @@ export default function SideBarFilters() {
   let { demographics, properties, openFilterName } = state;
 
   useEffect(() => {
-    // TODO: fetch backend to get option values
     let demographicsWithOptions = demographics.map((item) => {
       let allOptions;
       switch (item.name) {
         case DEMOGRAPHICS_CATEGORIES.personas: {
-          allOptions = ['Sporty', 'Love Nature', 'Other'];
+          allOptions = personasData ? personasData.personas : [];
           break;
         }
         case DEMOGRAPHICS_CATEGORIES.commute: {
-          allOptions = ['Car pool', 'Drive Alone', 'Public Transit', 'Bike', 'Walk', 'At Home'];
+          let commuteOptions = commuteData
+            ? commuteData.commute.map((item) => item.displayValue)
+            : [];
+          allOptions = commuteOptions;
           break;
         }
         case DEMOGRAPHICS_CATEGORIES.education: {
-          allOptions = ['Doctorate', 'Masters', 'Bachelors', 'High School', 'No High School'];
+          let educationOptions = educationData
+            ? educationData.education.map((item) => item.displayValue)
+            : [];
+          allOptions = educationOptions;
           break;
         }
       }
       return { ...item, allOptions };
     });
+
     let propertiesWithOptions = properties.map((item) => {
       let allOptions;
       switch (item.name) {
         case PROPERTIES_CATEGORIES.propertyType: {
-          allOptions = ['Retail', 'Restaurant'];
+          allOptions = spaceTypeData ? spaceTypeData.spaceType : [];
         }
       }
       return { ...item, allOptions };
     });
+
     dispatch({
       type: 'OPTIONS_FETCH_SUCCESS',
       demographics: demographicsWithOptions,
       properties: propertiesWithOptions,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [commuteLoading, personasLoading, educationLoading, spaceTypeLoading]);
 
   let getFilterProps = (name: string | null) => {
     let found = [...demographics, ...properties].find((item) => item.name === name);
@@ -208,6 +233,7 @@ export default function SideBarFilters() {
               name: openFilterName,
             });
           }}
+          loading={personasLoading}
           {...filterProps}
         />
       </ClickAway>
