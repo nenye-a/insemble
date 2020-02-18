@@ -10,8 +10,7 @@ import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
 import { useQuery } from '@apollo/react-hooks';
 import styled from 'styled-components';
 
-import { View, Text } from '../core-ui';
-import { useSelector } from '../redux/helpers';
+import { View, Text, LoadingIndicator } from '../core-ui';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import urlSafeLatLng from '../utils/urlSafeLatLng';
 import LocationDetail from '../components/location-detail/LocationDetail';
@@ -219,6 +218,7 @@ function MapContainer({ onMarkerClick }: Props) {
       />
       {loading && (
         <LoadingOverlay>
+          <LoadingIndicator visible={true} color="white" size="large" />
           <Text fontSize={FONT_SIZE_LARGE} color={WHITE}>
             Evaluating thousands of locations to find your matches. May take a couple minutes...
           </Text>
