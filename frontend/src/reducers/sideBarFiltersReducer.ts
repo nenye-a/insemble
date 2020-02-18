@@ -1,5 +1,6 @@
 import { ComponentType } from 'react';
 import { IconProps } from '../types/types';
+import { TenantMatchesContextType } from '../views/MainMap';
 
 export type FilterObj =
   | {
@@ -15,13 +16,13 @@ export type FilterObj =
       allOptions?: Array<string>;
     };
 
-type State = {
+export type State = {
   demographics: Array<FilterObj>;
   properties: Array<FilterObj>;
   openFilterName: string | null;
 };
 
-type Action =
+export type Action =
   | {
       type: 'PILL_SELECT';
       name: string | null;
@@ -64,7 +65,11 @@ type Action =
       value: string;
     };
 
-export default function sideBarFiltersReducer(state: State, action: Action): State {
+export default function sideBarFiltersReducer(
+  state: State,
+  action: Action,
+  context: TenantMatchesContextType
+): State {
   let { demographics, properties } = state;
   switch (action.type) {
     case 'PILL_SELECT': {
@@ -165,6 +170,7 @@ export default function sideBarFiltersReducer(state: State, action: Action): Sta
       return { ...state, openFilterName: action.name };
     }
     case 'DONE_PRESS': {
+      context.onFilterChange(state);
       return { ...state, openFilterName: null };
     }
     case 'OPTIONS_FETCH_SUCCESS': {
