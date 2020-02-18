@@ -202,4 +202,6 @@ if __name__ == "__main__":
         print(item)
         print(len(item))
 
-    test_find()
+    # test_find()
+
+    print(find("5011 S Western Ave, Los Angeles, CA 90062", name='Sonsonate Grill', allow_non_establishments=True))

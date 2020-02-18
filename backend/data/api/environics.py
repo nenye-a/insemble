@@ -5,7 +5,7 @@ File for environics data processing.
 '''
 
 from data.utils import distance
-import pandas as pd
+# import pandas as pd
 
 # get demographics given lat and lng
 
@@ -88,40 +88,3 @@ def get_demographics(lat, lng, radius, demo_df, block_grp_df, cats):
     ret["Five Year Aggregate Household Effective Buying Income"] = sums[144]
 
     return ret
-
-# create dataframe with all spatial data
-
-
-def create_demo_cats_and_df():
-    spatial_dict = {}
-    f = open("raw_data/EA_Los_Angeles_PopFacts.csv", "r")
-    f = f.readlines()
-    for line in f[1:]:
-        line = line.rstrip().split(",")
-        if line[1] == "":
-            continue
-        spatial_dict[int(line[0])] = [float(line[i])
-                                      for i in range(1, len(line))]
-
-    # get categories
-    cats = f[0].rstrip().split("\"")
-    for i in range(len(cats)-1, -1, -1):
-        if cats[i] == ",":
-            del cats[i]
-
-    return cats[1:-1], pd.DataFrame(data=spatial_dict)
-
-# create block group to lat, long dataframe
-
-
-def create_block_grp_df():
-    f = open("raw_data/cbg_geographic_data_LA.csv", "r")
-    f = f.readlines()
-    d = {"lat": [], "lng": [], "block_grp": []}
-    for line in f[1:]:
-        line = line.rstrip().split(",")
-        d["lat"].append(float(line[3]))
-        d["lng"].append(float(line[4]))
-        d["block_grp"].append(int(line[0]))
-
-    return pd.DataFrame(data=d)
