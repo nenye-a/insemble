@@ -35,6 +35,10 @@ import SvgRent from '../../components/icons/rent';
 import SvgSqft from '../../components/icons/sqft';
 import SvgPropertyType from '../../components/icons/property-type';
 import { NAVBAR_HEIGHT } from '../../constants/theme';
+import { Commute } from '../../generated/Commute';
+import { Education } from '../../generated/Education';
+
+type Props = {};
 
 export default function SideBarFilters() {
   let { filters, onFilterChange } = useContext(TenantMatchesContext);
