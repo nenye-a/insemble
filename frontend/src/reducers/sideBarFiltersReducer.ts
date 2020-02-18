@@ -2,19 +2,12 @@ import { ComponentType } from 'react';
 import { IconProps } from '../types/types';
 import { TenantMatchesContextType } from '../views/MainMap';
 
-export type FilterObj =
-  | {
-      name: string;
-      icon: ComponentType<IconProps>;
-      selectedValues: Array<string>;
-      allOptions?: Array<string>;
-    }
-  | {
-      name: string;
-      icon: ComponentType<IconProps>;
-      selectedValues: Array<number>;
-      allOptions?: Array<string>;
-    };
+export type FilterObj = {
+  name: string;
+  icon: ComponentType<IconProps>;
+  selectedValues: Array<string>;
+  allOptions?: Array<string>;
+};
 
 export type State = {
   demographics: Array<FilterObj>;
@@ -170,7 +163,7 @@ export default function sideBarFiltersReducer(
       return { ...state, openFilterName: action.name };
     }
     case 'DONE_PRESS': {
-      context.onFilterChange(state);
+      context && context.onFilterChange && context.onFilterChange(state);
       return { ...state, openFilterName: null };
     }
     case 'OPTIONS_FETCH_SUCCESS': {

@@ -27,7 +27,7 @@ export default function HeaderFilterBar(props: Props) {
   let [selectedDropdownValue, setSelectedDropdownValue] = useState<string>('Recommended');
   let [selectedOptions, setSelectedOptions] = useState<Array<string>>(props.categories || []);
   let { data: categoryData, loading: categoryLoading } = useQuery<Categories>(GET_CATEGORIES);
-  let { onFilterChange } = useContext(TenantMatchesContext);
+  let { onCategoryChange } = useContext(TenantMatchesContext);
   let { getState } = useStore();
   let history = useHistory();
   let dispatch = useDispatch();
@@ -106,7 +106,7 @@ export default function HeaderFilterBar(props: Props) {
           placeholder="Select Category"
           onClear={() => setSelectedOptions([])}
           onPickerClose={() => {
-            onFilterChange({ categories: selectedOptions });
+            onCategoryChange && onCategoryChange(selectedOptions);
           }}
           loading={categoryLoading}
         />

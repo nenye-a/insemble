@@ -19,27 +19,28 @@ import { TenantMatches, TenantMatchesVariables } from '../generated/TenantMatche
 
 import SvgPropertyLocation from '../components/icons/property-location';
 import { useGoogleMaps } from '../utils';
+import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer';
 
 type BrandId = {
   brandId: string;
 };
 
 export type DemographicsFilter = {
-  minIncome?: number | null;
-  maxIncome?: number | null;
-  minAge?: number | null;
-  maxAge?: number | null;
-  personas?: Array<string> | null;
-  commute?: Array<string> | null;
-  education?: Array<string> | null;
+  minIncome: number | null;
+  maxIncome: number | null;
+  minAge: number | null;
+  maxAge: number | null;
+  personas: Array<string>;
+  commute: Array<string> | null;
+  education: Array<string> | null;
 };
 
 export type PropertyFilter = {
-  minRent?: number | null;
-  maxRent?: number | null;
-  minSize?: number | null;
-  maxSize?: number | null;
-  spaceType?: Array<string> | null;
+  minRent: number | null;
+  maxRent: number | null;
+  minSize: number | null;
+  maxSize: number | null;
+  spaceType: Array<string>;
 };
 
 type TenantMatchesContextFilter = {
@@ -50,32 +51,41 @@ type TenantMatchesContextFilter = {
 
 export type TenantMatchesContextType = {
   filters: TenantMatchesContextFilter;
-  onFilterChange: (state: any) => void;
+  onFilterChange?: (state: SideBarFiltersState) => void;
   onCategoryChange?: (state: Array<string>) => void;
 };
 
 let tenantMatchesInit = {
   filters: {
-    demographics: {},
-    property: {},
+    demographics: {
+      minIncome: null,
+      maxIncome: null,
+      minAge: null,
+      maxAge: null,
+      personas: [],
+      commute: [],
+      education: [],
+    },
+    property: {
+      minRent: null,
+      maxRent: null,
+      minSize: null,
+      maxSize: null,
+      spaceType: [],
+    },
   },
-  onFilterChange: (state: any) => {},
-  onCategoryChange: (categories: Array<string>) => {},
 };
 
 export const TenantMatchesContext = createContext<TenantMatchesContextType>(tenantMatchesInit);
 
 export default function MainMap() {
-  let [filters, setFilters] = useState<TenantMatchesContextFilter>({
-    demographics: {},
-    property: {},
-  });
+  let [filters, setFilters] = useState<TenantMatchesContextFilter>(tenantMatchesInit.filters);
   let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
   let [deepDiveModalVisible, toggleDeepDiveModal] = useState(false);
   let { isLoading } = useGoogleMaps();
   let params = useParams<BrandId>();
   let { brandId } = params;
-  let { data: tenantMatchesData, loading, error } = useQuery<TenantMatches, TenantMatchesVariables>(
+  let { data: tenantMatchesData, loading } = useQuery<TenantMatches, TenantMatchesVariables>(
     GET_TENANT_MATCHES_DATA,
     {
       variables: {
@@ -84,7 +94,7 @@ export default function MainMap() {
     }
   );
 
-  let onFilterChange = (state: any) => {
+  let onFilterChange = (state: SideBarFiltersState) => {
     let { demographics, properties, openFilterName } = state;
     let foundObj = [...demographics, ...properties].find((item) => item.name === openFilterName);
 
@@ -125,8 +135,8 @@ export default function MainMap() {
             ...filters,
             demographics: {
               ...filters.demographics,
-              minIncome: foundObj.selectedValues[0],
-              maxIncome: foundObj.selectedValues[1],
+              minIncome: Number(foundObj.selectedValues[0]),
+              maxIncome: Number(foundObj.selectedValues[1]),
             },
           });
           break;
@@ -136,13 +146,21 @@ export default function MainMap() {
             ...filters,
             demographics: {
               ...filters.demographics,
-              minAge: foundObj.selectedValues[0],
-              maxAge: foundObj.selectedValues[1],
+              minAge: Number(foundObj.selectedValues[0]),
+              maxAge: Number(foundObj.selectedValues[1]),
             },
           });
           break;
         }
         case PROPERTIES_CATEGORIES.rent: {
+          setFilters({
+            ...filters,
+            property: {
+              ...filters.property,
+              minRent: Number(foundObj.selectedValues[0]),
+              maxRent: Number(foundObj.selectedValues[1]),
+            },
+          });
           break;
         }
         case PROPERTIES_CATEGORIES.sqft: {
@@ -170,25 +188,42 @@ export default function MainMap() {
   };
 
   useEffect(() => {
-    setFilters({
-      demographics: {
-        minIncome: tenantMatchesData?.tenantMatches.minIncome,
-        maxIncome: tenantMatchesData?.tenantMatches.maxIncome,
-        maxAge: tenantMatchesData?.tenantMatches.maxAge,
-        minAge: tenantMatchesData?.tenantMatches.minAge,
-        personas: tenantMatchesData?.tenantMatches.personas,
-        commute: tenantMatchesData?.tenantMatches.commute?.map((item) => item.displayValue),
-        education: tenantMatchesData?.tenantMatches.education?.map((item) => item.displayValue),
-      },
-      property: {
-        minRent: tenantMatchesData?.tenantMatches.minRent,
-        maxRent: tenantMatchesData?.tenantMatches.maxRent,
-        minSize: tenantMatchesData?.tenantMatches.minSize,
-        maxSize: tenantMatchesData?.tenantMatches.maxSize,
-        spaceType: tenantMatchesData?.tenantMatches.spaceType,
-      },
-      categories: tenantMatchesData?.tenantMatches.categories,
-    });
+    if (tenantMatchesData) {
+      let {
+        minIncome,
+        maxIncome,
+        minAge,
+        maxAge,
+        personas,
+        commute,
+        education,
+        minRent,
+        maxRent,
+        minSize,
+        maxSize,
+        spaceType,
+        categories,
+      } = tenantMatchesData.tenantMatches;
+      setFilters({
+        demographics: {
+          minIncome,
+          maxIncome,
+          maxAge,
+          minAge,
+          personas,
+          commute: (commute && commute.map((item) => item.displayValue)) ?? [],
+          education: (education && education.map((item) => item.displayValue)) ?? [],
+        },
+        property: {
+          minRent,
+          maxRent,
+          minSize,
+          maxSize,
+          spaceType,
+        },
+        categories,
+      });
+    }
   }, [loading, tenantMatchesData]);
 
   return (
