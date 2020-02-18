@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import View from './View';
 import loadingWhite from '../assets/images/loading-white.gif';
 import loadingPurple from '../assets/images/loading-purple.gif';
 
@@ -18,7 +19,11 @@ export default function LoadingIndicator(props: Props) {
   let { color, visible = true, size = 'small' as IconSize } = props;
 
   if (visible) {
-    return <Icon src={color === 'white' ? loadingWhite : loadingPurple} size={ICON_SIZES[size]} />;
+    return (
+      <LoadingIndicatorContainer {...otherProps}>
+        <Icon src={color === 'white' ? loadingWhite : loadingPurple} size={ICON_SIZES[size]} />
+      </LoadingIndicatorContainer>
+    );
   }
   return null;
 }
@@ -32,4 +37,10 @@ const Icon = styled.img<IconProps>`
   object-fit: contain;
   width: ${(props) => props.size};
   height: ${(props) => props.size};
+`;
+
+const LoadingIndicatorContainer = styled(View)`
+  padding: 12px;
+  align-items: center;
+  justify-content: 'center';
 `;
