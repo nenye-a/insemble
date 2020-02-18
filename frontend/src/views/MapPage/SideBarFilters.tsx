@@ -198,6 +198,8 @@ export default function SideBarFilters() {
               value,
             });
           },
+          lowValue: selectedValues[0],
+          highValue: selectedValues[1],
         };
       }
     }

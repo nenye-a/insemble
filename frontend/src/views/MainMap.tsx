@@ -51,6 +51,7 @@ type TenantMatchesContextFilter = {
 export type TenantMatchesContextType = {
   filters: TenantMatchesContextFilter;
   onFilterChange: (state: any) => void;
+  onCategoryChange?: (state: Array<string>) => void;
 };
 
 let tenantMatchesInit = {
@@ -59,6 +60,7 @@ let tenantMatchesInit = {
     property: {},
   },
   onFilterChange: (state: any) => {},
+  onCategoryChange: (categories: Array<string>) => {},
 };
 
 export const TenantMatchesContext = createContext<TenantMatchesContextType>(tenantMatchesInit);
@@ -118,12 +120,40 @@ export default function MainMap() {
           });
           break;
         }
-        case DEMOGRAPHICS_CATEGORIES.commute: {
+        case DEMOGRAPHICS_CATEGORIES.income: {
           setFilters({
             ...filters,
             demographics: {
               ...filters.demographics,
-              commute: foundObj.selectedValues,
+              minIncome: foundObj.selectedValues[0],
+              maxIncome: foundObj.selectedValues[1],
+            },
+          });
+          break;
+        }
+        case DEMOGRAPHICS_CATEGORIES.age: {
+          setFilters({
+            ...filters,
+            demographics: {
+              ...filters.demographics,
+              minAge: foundObj.selectedValues[0],
+              maxAge: foundObj.selectedValues[1],
+            },
+          });
+          break;
+        }
+        case PROPERTIES_CATEGORIES.rent: {
+          break;
+        }
+        case PROPERTIES_CATEGORIES.sqft: {
+          break;
+        }
+        case PROPERTIES_CATEGORIES.propertyType: {
+          setFilters({
+            ...filters,
+            property: {
+              ...filters.property,
+              spaceType: foundObj.selectedValues,
             },
           });
           break;
@@ -131,7 +161,14 @@ export default function MainMap() {
       }
     }
   };
-  console.log(filters, 'FILTERS');
+
+  let onCategoryChange = (categories: Array<string>) => {
+    setFilters({
+      ...filters,
+      categories,
+    });
+  };
+
   useEffect(() => {
     setFilters({
       demographics: {
@@ -159,6 +196,7 @@ export default function MainMap() {
       value={{
         filters,
         onFilterChange,
+        onCategoryChange,
       }}
     >
       <View flex>
@@ -166,7 +204,9 @@ export default function MainMap() {
           visible={deepDiveModalVisible}
           onClose={() => toggleDeepDiveModal(!deepDiveModalVisible)}
         />
-        {!isLoading && <HeaderFilterBar />}
+        {!isLoading && tenantMatchesData && (
+          <HeaderFilterBar categories={tenantMatchesData.tenantMatches.categories} />
+        )}
         {loading && (
           <LoadingOverlay>
             <LoadingIndicator visible={true} color="white" size="large" />
