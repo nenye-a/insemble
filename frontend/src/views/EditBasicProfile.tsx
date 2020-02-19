@@ -155,7 +155,6 @@ export default function BasicProfile() {
                 validate: (val) => validateUSPhoneNumber(val) || 'Invalid phone number',
               }),
             })}
-            // TODO: validate US phone number
             errorMessage={(errors?.phoneNumber as FieldError)?.message || ''}
           />
           <TextArea
