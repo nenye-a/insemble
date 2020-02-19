@@ -3,6 +3,7 @@ import { objectType } from 'nexus';
 export let Brand = objectType({
   name: 'Brand',
   definition(t) {
+    t.model.id();
     t.model.name();
     t.field('location', { type: 'Location', nullable: true });
     t.model.userRelation();

@@ -9,4 +9,5 @@ export * from './filter/spaceTypeQuery';
 export * from './matches/tenantMatchesQuery';
 export * from './tenant/profileQuery';
 export * from './brand/createBrandMutation';
+export * from './brand/editBrandMutation';
 export * from './brand/brandsQuery';
