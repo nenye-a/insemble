@@ -25,6 +25,12 @@ const server = new GraphQLServer({
   // middlewares: [permissions],
 });
 
-server.start(() => {
+server.express.use((req, res, next) => {
+  res.setTimeout(500000, () => {
+    // call back function is called when request timed out.
+  });
+  next();
+});
+server.start({}, () => {
   console.log(`Server is running on http://localhost:4000`);
 });
