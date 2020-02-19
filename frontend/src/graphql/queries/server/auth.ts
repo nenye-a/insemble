@@ -35,10 +35,7 @@ export const LOGIN_TENANT = gql`
         company
         tier
       }
-<<<<<<< Updated upstream
-=======
       brandId
->>>>>>> Stashed changes
     }
   }
 `;

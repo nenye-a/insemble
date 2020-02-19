@@ -22,7 +22,7 @@ function Landing() {
     if (token && brandId) {
       history.push('./map/' + brandId);
     }
-  }, []);
+  }, [history]);
 
   return (
     <Masthead>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
@@ -28,7 +28,7 @@ export default function HeaderNavigationBar(props: Props) {
       </TouchableOpacity>
 
       {avatar ? (
-        <Avatar size="medium" image="" />
+        <Avatar size="medium" image={avatar} />
       ) : (
         <>
           {props.showButton ? (
@@ -76,8 +76,4 @@ const RowView = styled(View)`
 const LogIn = styled(Button)`
   margin: 0 12px 0 0;
   border-color: ${THEME_COLOR};
-`;
-const Image = styled('img')`
-  height: 36px;
-  max-height: 100%;
 `;
