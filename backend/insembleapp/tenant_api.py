@@ -459,11 +459,20 @@ class LocationDetailsAPI(AsynchronousAPI):
         target_demo3_listener.join()
         target_demo5_listener.join()
 
+        # remove commute from 1 and 5 mile (will use the 3 mile to fill)
+        target_demo1[0].pop('commute')
+        commute = target_demo3[0].pop('commute')
+        target_demo5[0].pop('commute')
+
         # combine demographics if comparing against existing address.
         if 'address' in validated_params['my_location']:
             my_demo1_listener.join()
             my_demo3_listener.join()
             my_demo5_listener.join()
+
+            my_demo1[0].pop('commute')
+            my_demo3[0].pop('commute')
+            my_demo5[0].pop('commute')
 
             demographics1 = provider.combine_demographics(my_demo1[0], target_demo1[0])
             demographics3 = provider.combine_demographics(my_demo3[0], target_demo3[0])
@@ -485,7 +494,7 @@ class LocationDetailsAPI(AsynchronousAPI):
                 'match_value': match_values[0]['match'],
                 'affinities': match_values[0]['affinities'],
                 'key_facts': key_facts[0],
-                'commute': target_demo3[0].pop('commute'),
+                'commute': commute,
                 'top_personas': top_personas[0],
                 'demographics1': demographics1,
                 'demographics3': demographics3,

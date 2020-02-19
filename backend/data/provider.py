@@ -1,5 +1,6 @@
 from . import utils, matching
 import numpy as np
+import re
 import pandas as pd
 import data.api.goog as google
 import data.api.foursquare as foursquare
@@ -332,8 +333,9 @@ def get_demographics(lat, lng, radius, demographic_vector=None):
 
     # parse commute
     commute_demographics = demographics if demographic_vector else demographics["Current Year Workers, Transportation to Work"]
+    strip_header = re.compile("Current year workers, transportation to work: ", re.IGNORECASE)
     commute = {
-        key.replace("Current Year Workers, Transportation To Work: ", ""): value for key, value in commute_demographics.items()
+        strip_header.sub("", key): value for key, value in commute_demographics.items()
     }
 
     return {
