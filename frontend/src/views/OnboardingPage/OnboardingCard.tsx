@@ -17,6 +17,7 @@ type Button = {
   text: string;
   onPress: () => void;
   disabled?: boolean;
+  loading?: boolean;
 };
 
 export default function OnboardingCard(props: Props) {
@@ -34,11 +35,17 @@ export default function OnboardingCard(props: Props) {
       </View>
       {buttons.length > 1 && (
         <Footer>
-          {buttons.map(({ onPress, text }, index) => {
+          {buttons.map(({ onPress, text, loading }, index) => {
             return index === 0 ? (
               <TransparentButton key={index} text={text} onPress={onPress} />
             ) : (
-              <Button key={index} text={text} onPress={onPress} disabled={!canPressNext} />
+              <Button
+                key={index}
+                text={text}
+                onPress={onPress}
+                disabled={!canPressNext}
+                loading={loading}
+              />
             );
           })}
         </Footer>

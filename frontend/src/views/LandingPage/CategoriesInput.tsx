@@ -23,7 +23,9 @@ function CategoriesInput() {
           buttonText="Find Locations"
           value={selectedCategories.join(', ')}
           onSubmit={() => {
-            history.push('/verify', { categories: selectedCategories });
+            history.push('/verify', {
+              categories: selectedCategories,
+            });
           }}
         />
       </TouchableOpacity>

@@ -20,7 +20,7 @@ export default function OnBoardingSignUp() {
         titleBackground="purple"
       >
         <FormContainer>
-          <SignUpForm role="Tenant" />
+          <SignUpForm role="Tenant" signUpFirst={true} />
         </FormContainer>
       </Card>
       <RowView style={{ marginTop: 16 }}>
