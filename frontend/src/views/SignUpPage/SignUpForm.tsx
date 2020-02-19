@@ -77,19 +77,20 @@ export default function SignUpForm(props: Props) {
 
   let onSubmit = (data: FieldValues) => {
     let { email, firstName, lastName, company, password } = data;
-
-    registerTenant({
-      variables: {
-        tenant: {
-          email,
-          firstName,
-          lastName,
-          company,
-          password,
+    if (Object.keys(errors).length === 0) {
+      registerTenant({
+        variables: {
+          tenant: {
+            email,
+            firstName,
+            lastName,
+            company,
+            password,
+          },
+          ...getBussinessAndFilterParams(),
         },
-        ...getBussinessAndFilterParams(),
-      },
-    });
+      });
+    }
   };
 
   let saveUserData = async (token: string, role: Role) => {

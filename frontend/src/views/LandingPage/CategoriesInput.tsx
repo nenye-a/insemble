@@ -43,7 +43,7 @@ function CategoriesInput(props: Props) {
             onSubmit={() => {
               // TODO: validate input
               props.loadMap(false, Number(income), selectedCategories);
-              history.push('/verify', { targetIncome: income, selectedCategories });
+              history.push('/verify', { targetIncome: income, categories: selectedCategories });
             }}
           />
         </TargetIncomeContainer>
