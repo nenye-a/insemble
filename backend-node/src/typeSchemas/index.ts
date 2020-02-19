@@ -11,3 +11,4 @@ export * from './TenantMatchesResult';
 export * from './Brand';
 export * from './LocationType';
 export * from './BrandThumbnail';
+export * from './EditProfileInput';

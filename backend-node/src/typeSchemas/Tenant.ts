@@ -9,6 +9,8 @@ export let Tenant = objectType({
     t.model.lastName();
     t.model.avatar();
     t.model.company();
+    t.model.description();
+    t.model.title();
     t.model.tier();
   },
 });
