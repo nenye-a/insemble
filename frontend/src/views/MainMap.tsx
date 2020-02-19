@@ -1,9 +1,9 @@
 import React, { useState, createContext, useEffect } from 'react';
 import styled from 'styled-components';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
 
-import { View, Button, Text, LoadingIndicator } from '../core-ui';
+import { View, Button, Text, LoadingIndicator, Alert } from '../core-ui';
 import AvailableProperties from './MapPage/AvailableProperties';
 import SideBarFilters, {
   DEMOGRAPHICS_CATEGORIES,
@@ -13,6 +13,7 @@ import HeaderFilterBar from './MapPage/HeaderFilterBar';
 import MapContainer from './MapContainer';
 import DeepDiveModal from './DeepDivePage/DeepDiveModal';
 import { GET_TENANT_MATCHES_DATA } from '../graphql/queries/server/matches';
+import { EDIT_BRAND } from '../graphql/queries/server/brand';
 import { WHITE, THEME_COLOR, HEADER_BORDER_COLOR } from '../constants/colors';
 import { FONT_WEIGHT_MEDIUM, FONT_SIZE_LARGE } from '../constants/theme';
 import { TenantMatches, TenantMatchesVariables } from '../generated/TenantMatches';
@@ -20,6 +21,7 @@ import { TenantMatches, TenantMatchesVariables } from '../generated/TenantMatche
 import SvgPropertyLocation from '../components/icons/property-location';
 import { useGoogleMaps } from '../utils';
 import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer';
+import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 
 type BrandId = {
   brandId: string;
@@ -85,15 +87,22 @@ export default function MainMap() {
   let { isLoading } = useGoogleMaps();
   let params = useParams<BrandId>();
   let { brandId } = params;
-  let { data: tenantMatchesData, loading } = useQuery<TenantMatches, TenantMatchesVariables>(
-    GET_TENANT_MATCHES_DATA,
-    {
-      variables: {
-        brandId,
-      },
-    }
-  );
+  let {
+    data: tenantMatchesData,
+    loading,
+    error: tenantMatchesError,
+    refetch: tenantMatchesRefetch,
+  } = useQuery<TenantMatches, TenantMatchesVariables>(GET_TENANT_MATCHES_DATA, {
+    variables: {
+      brandId,
+    },
+    fetchPolicy: 'network-only',
+  });
 
+  let [editBrand, { loading: editBrandLoading, error: editBrandError }] = useMutation<
+    EditBrand,
+    EditBrandVariables
+  >(EDIT_BRAND);
   let onFilterChange = (state: SideBarFiltersState) => {
     let { demographics, properties, openFilterName } = state;
     let foundObj = [...demographics, ...properties].find((item) => item.name === openFilterName);
@@ -187,6 +196,35 @@ export default function MainMap() {
     });
   };
 
+  let onPublishChangesPress = async () => {
+    let { demographics, categories, property } = filters;
+    let { minIncome, maxIncome, minAge, maxAge, personas, commute, education } = demographics;
+    let { minSize, maxSize, minRent, maxRent, spaceType } = property;
+    let result = await editBrand({
+      variables: {
+        filter: {
+          categories,
+          personas,
+          minAge: Number(minAge),
+          maxAge: Number(maxAge),
+          minIncome: Number(minIncome),
+          maxIncome: Number(maxIncome),
+          minSize,
+          maxSize,
+          minRent,
+          maxRent,
+          spaceType,
+          commute,
+          education,
+        },
+        brandId,
+      },
+    });
+    if (result.data?.editBrand) {
+      tenantMatchesRefetch({ brandId });
+    }
+  };
+
   useEffect(() => {
     if (tenantMatchesData) {
       let {
@@ -240,9 +278,12 @@ export default function MainMap() {
           onClose={() => toggleDeepDiveModal(!deepDiveModalVisible)}
         />
         {!isLoading && tenantMatchesData && (
-          <HeaderFilterBar categories={tenantMatchesData.tenantMatches.categories} />
+          <HeaderFilterBar
+            categories={tenantMatchesData.tenantMatches.categories}
+            onPublishChangesPress={onPublishChangesPress}
+          />
         )}
-        {loading && (
+        {(loading || editBrandLoading) && (
           <LoadingOverlay>
             <LoadingIndicator visible={true} color="white" size="large" />
             <Text fontSize={FONT_SIZE_LARGE} color={WHITE}>
@@ -251,6 +292,8 @@ export default function MainMap() {
           </LoadingOverlay>
         )}
         <Container flex>
+          <Alert visible={!!tenantMatchesError} text={tenantMatchesError?.message || ''} />
+          <Alert visible={!!editBrandError} text={editBrandError?.message || ''} />
           <ShowPropertyButton
             mode="secondary"
             onPress={() => togglePropertyRecommendation(true)}
