@@ -210,8 +210,8 @@ export let NearbyOverview = objectType({
   },
 });
 
-export let OverviewType = objectType({
-  name: 'OverviewType',
+export let DeepDiveResultType = objectType({
+  name: 'DeepDiveResultType',
   definition(t) {
     t.float('matchValue');
     t.field('affinities', {
@@ -270,7 +270,7 @@ export let LocationDetailsResult = objectType({
   name: 'LocationDetailsResult',
   definition(t) {
     t.field('result', {
-      type: 'OverviewType',
+      type: 'DeepDiveResultType',
     });
     t.field('propertyDetails', {
       type: 'PropertyDetails',
