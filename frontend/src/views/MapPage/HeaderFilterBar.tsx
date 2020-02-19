@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
 
 import { View, Dropdown, Button } from '../../core-ui';
 import { MultiSelectBox } from '../../components';
@@ -12,13 +13,21 @@ import { useDispatch, useSelector, useStore } from '../../redux/helpers';
 import { getLocation, loadMap } from '../../redux/actions/space';
 import Legend from '../MapPage/Legend';
 import TextInput from '../../core-ui/ContainedTextInput';
+import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
+import { Categories } from '../../generated/Categories';
+import { TenantMatchesContext } from '../MainMap';
 
 type PlaceResult = google.maps.places.PlaceResult;
 
-export default function HeaderFilterBar() {
+type Props = {
+  categories?: Array<string>;
+};
+
+export default function HeaderFilterBar(props: Props) {
   let [selectedDropdownValue, setSelectedDropdownValue] = useState<string>('Recommended');
-  let [selectedOptions, setSelectedOptions] = useState<Array<string>>([]);
-  let [categoryData, setCategoryData] = useState<Array<string>>([]);
+  let [selectedOptions, setSelectedOptions] = useState<Array<string>>(props.categories || []);
+  let { data: categoryData, loading: categoryLoading } = useQuery<Categories>(GET_CATEGORIES);
+  let { onCategoryChange } = useContext(TenantMatchesContext);
   let { getState } = useStore();
   let history = useHistory();
   let dispatch = useDispatch();
@@ -47,17 +56,6 @@ export default function HeaderFilterBar() {
         listener.remove();
       };
     }
-  }, []);
-
-  useEffect(() => {
-    // TODO: use fetching library & handle error
-    fetch('api/category/').then((res) => {
-      if (res.ok) {
-        res.json().then((data) => {
-          setCategoryData(data);
-        });
-      }
-    });
   }, []);
 
   let onSubmit = (place: PlaceResult) => {
@@ -98,11 +96,19 @@ export default function HeaderFilterBar() {
       <RowedView>
         <CategorySelector
           selectedOptions={selectedOptions}
-          options={categoryData}
-          onSelect={(item: string) => setTagSelected(item, false)}
-          onUnSelect={(item: string) => setTagSelected(item, true)}
+          options={categoryData?.categories || []}
+          onSelect={(item: string) => {
+            setTagSelected(item, false);
+          }}
+          onUnSelect={(item: string) => {
+            setTagSelected(item, true);
+          }}
           placeholder="Select Category"
           onClear={() => setSelectedOptions([])}
+          onPickerClose={() => {
+            onCategoryChange && onCategoryChange(selectedOptions);
+          }}
+          loading={categoryLoading}
         />
         <Dropdown
           options={PROPERTY_TYPES}

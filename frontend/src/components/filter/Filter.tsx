@@ -1,7 +1,7 @@
 import React, { ComponentProps, useState, useEffect } from 'react';
 import styled from 'styled-components';
 
-import { View, Text, PillButton, Card, Button } from '../../core-ui';
+import { View, Text, PillButton, Card, Button, LoadingIndicator } from '../../core-ui';
 import { THEME_COLOR, BOTTOM_CARD_COLOR, TEXT_INPUT_BORDER_COLOR } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_SIZE_NORMAL } from '../../constants/theme';
 import TextInput from '../../core-ui/ContainedTextInput';
@@ -35,6 +35,7 @@ type Props = ComponentProps<typeof View> & {
   hasPreference?: boolean;
   onNoPreferencePress?: () => void;
   disabled?: boolean; // TODO: pass disabled to other filter components as well when necessary
+  loading?: boolean;
 };
 
 export default function Filter(props: Props) {
@@ -65,6 +66,7 @@ export default function Filter(props: Props) {
     hasPreference,
     onNoPreferencePress,
     disabled,
+    loading,
     ...otherProps
   } = props;
   let [filteredOptions, setFilteredOptions] = useState(allOptions);
@@ -93,92 +95,98 @@ export default function Filter(props: Props) {
           </SmallText>
         )}
       </TitleWrapper>
-      <FlexRowWrap>
-        {selection &&
-          allOptions &&
-          allOptions.map((filter, index) => {
-            let isSelected = selectedOptions.includes(filter);
-            return (
-              <SmallPillButton
-                key={'available' + index}
-                primary={!!isSelected}
-                onClick={() => {
-                  if (isSelected) {
-                    onUnSelect && onUnSelect(filter);
-                  } else {
-                    onSelect && onSelect(filter);
-                  }
-                }}
-              >
-                {filter}
-              </SmallPillButton>
-            );
-          })}
-      </FlexRowWrap>
-      {rangeSlide && (
-        <SliderFilter
-          onSliderChange={onSliderChange}
-          values={values}
-          maximum={maximum}
-          minimum={minimum}
-          postfix={income ? 'K' : ''}
-          prefix={income ? '$' : ''}
-          disabled={disabled}
-        />
-      )}
-      {rangeInput && (
-        <RangeInput
-          lowValue={lowValue}
-          highValue={highValue}
-          onLowRangeInputChange={onLowRangeInputChange}
-          onHighRangeInputChange={onHighRangeInputChange}
-        />
-      )}
-      {search && (
+      {loading ? (
+        <LoadingIndicator color="purple" />
+      ) : (
         <>
-          <SearchWrapper>
-            <TextInputWithBorder
-              onSubmit={onSubmit}
-              placeholder="Search"
-              icon
-              onChange={(e) => {
-                setSearchText(e.target.value);
-              }}
+          <FlexRowWrap>
+            {selection &&
+              allOptions &&
+              allOptions.map((filter, index) => {
+                let isSelected = selectedOptions.includes(filter);
+                return (
+                  <SmallPillButton
+                    key={'available' + index}
+                    primary={!!isSelected}
+                    onClick={() => {
+                      if (isSelected) {
+                        onUnSelect && onUnSelect(filter);
+                      } else {
+                        onSelect && onSelect(filter);
+                      }
+                    }}
+                  >
+                    {filter}
+                  </SmallPillButton>
+                );
+              })}
+          </FlexRowWrap>
+          {rangeSlide && (
+            <SliderFilter
+              onSliderChange={onSliderChange}
+              values={values}
+              maximum={maximum}
+              minimum={minimum}
+              postfix={income ? 'K' : ''}
+              prefix={income ? '$' : ''}
               disabled={disabled}
             />
-          </SearchWrapper>
-          <FlexRowWrap>
-            {selectedOptions &&
-              selectedOptions.map((filter, index) => {
-                return (
-                  <SmallPillButton
-                    key={'selected' + index}
-                    primary
-                    onClick={() => onUnSelect && onUnSelect(filter)}
-                    disabled={disabled}
-                  >
-                    {filter}
-                  </SmallPillButton>
-                );
-              })}
-          </FlexRowWrap>
-          <ShowingResultsText>
-            Showing {allOptions && allOptions.length} result(s)
-          </ShowingResultsText>
-          <FlexRowWrap>
-            {filteredOptions &&
-              filteredOptions.map((filter, index) => {
-                return (
-                  <SmallPillButton
-                    key={'filtered' + index}
-                    onClick={() => onSelect && onSelect(filter)}
-                    disabled={disabled}
-                  >
-                    {filter}
-                  </SmallPillButton>
-                );
-              })}
-          </FlexRowWrap>
+          )}
+          {rangeInput && (
+            <RangeInput
+              lowValue={lowValue}
+              highValue={highValue}
+              onLowRangeInputChange={onLowRangeInputChange}
+              onHighRangeInputChange={onHighRangeInputChange}
+            />
+          )}
+          {search && (
+            <>
+              <SearchWrapper>
+                <TextInputWithBorder
+                  onSubmit={onSubmit}
+                  placeholder="Search"
+                  icon
+                  onChange={(e) => {
+                    setSearchText(e.target.value);
+                  }}
+                  disabled={disabled}
+                />
+              </SearchWrapper>
+              <FlexRowWrap>
+                {selectedOptions &&
+                  selectedOptions.map((filter, index) => {
+                    return (
+                      <SmallPillButton
+                        key={'selected' + index}
+                        primary
+                        onClick={() => onUnSelect && onUnSelect(filter)}
+                        disabled={disabled}
+                      >
+                        {filter}
+                      </SmallPillButton>
+                    );
+                  })}
+              </FlexRowWrap>
+              <ShowingResultsText>
+                Showing {allOptions && allOptions.length} result(s)
+              </ShowingResultsText>
+              <FlexRowWrap>
+                {filteredOptions &&
+                  filteredOptions.map((filter, index) => {
+                    return (
+                      <SmallPillButton
+                        key={'filtered' + index}
+                        onClick={() => onSelect && onSelect(filter)}
+                        disabled={disabled}
+                      >
+                        {filter}
+                      </SmallPillButton>
+                    );
+                  })}
+              </FlexRowWrap>
+            </>
+          )}
         </>
       )}
       <BottomWrapper>

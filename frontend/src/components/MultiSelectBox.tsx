@@ -12,6 +12,8 @@ type Props = ComponentProps<typeof View> & {
   onUnSelect: (item: string) => void;
   placeholder: string;
   onClear: () => void;
+  onPickerClose?: () => void;
+  loading?: boolean;
 };
 
 export default function MultiSelectBox(props: Props) {
@@ -22,6 +24,8 @@ export default function MultiSelectBox(props: Props) {
     onUnSelect,
     placeholder,
     onClear,
+    onPickerClose,
+    loading,
     ...otherProps
   } = props;
   let [pickerOpen, togglePicker] = useState(false);
@@ -40,7 +44,12 @@ export default function MultiSelectBox(props: Props) {
         {selectedOptionSize > 0 && <SelectorBadge text={selectedOptionSize} />}
       </Container>
       {pickerOpen && (
-        <ClickAway onClickAway={() => togglePicker(false)}>
+        <ClickAway
+          onClickAway={() => {
+            togglePicker(false);
+            onPickerClose && onPickerClose();
+          }}
+        >
           <PickerContainer
             visible
             search
@@ -48,8 +57,12 @@ export default function MultiSelectBox(props: Props) {
             allOptions={options}
             onUnSelect={onUnSelect}
             onSelect={onSelect}
-            onDone={() => togglePicker(false)}
+            onDone={() => {
+              togglePicker(false);
+              onPickerClose && onPickerClose();
+            }}
             onClear={onClear}
+            loading={loading}
           />
         </ClickAway>
       )}

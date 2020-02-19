@@ -17,3 +17,25 @@ export const GET_EQUIPMENT_LIST = gql`
     equipments
   }
 `;
+
+export const GET_COMMUTE_LIST = gql`
+  query Commute {
+    commute {
+      displayValue
+    }
+  }
+`;
+
+export const GET_EDUCATION_LIST = gql`
+  query Education {
+    education {
+      displayValue
+    }
+  }
+`;
+
+export const GET_PROPERTY_TYPE_LIST = gql`
+  query SpaceType {
+    spaceType
+  }
+`;
