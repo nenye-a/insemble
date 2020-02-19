@@ -22,6 +22,7 @@ import SvgPropertyLocation from '../components/icons/property-location';
 import { useGoogleMaps } from '../utils';
 import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer';
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
+import { isEqual } from '../utils/isEqual';
 
 type BrandId = {
   brandId: string;
@@ -225,6 +226,29 @@ export default function MainMap() {
     }
   };
 
+  let filtersAreEqual = isEqual(
+    {
+      categories: tenantMatchesData?.tenantMatches.categories,
+      demographics: {
+        minIncome: tenantMatchesData?.tenantMatches.minIncome,
+        maxIncome: tenantMatchesData?.tenantMatches.maxIncome,
+        minAge: tenantMatchesData?.tenantMatches.minAge,
+        maxAge: tenantMatchesData?.tenantMatches.maxAge,
+        personas: tenantMatchesData?.tenantMatches.personas,
+        commute: tenantMatchesData?.tenantMatches.commute,
+        education: tenantMatchesData?.tenantMatches.education,
+      },
+      property: {
+        minRent: tenantMatchesData?.tenantMatches.minRent,
+        maxRent: tenantMatchesData?.tenantMatches.maxRent,
+        minSize: tenantMatchesData?.tenantMatches.minSize,
+        maxSize: tenantMatchesData?.tenantMatches.maxSize,
+        spaceType: tenantMatchesData?.tenantMatches.spaceType,
+      },
+    },
+    filters
+  );
+
   useEffect(() => {
     if (tenantMatchesData) {
       let {
@@ -281,6 +305,7 @@ export default function MainMap() {
           <HeaderFilterBar
             categories={tenantMatchesData.tenantMatches.categories}
             onPublishChangesPress={onPublishChangesPress}
+            publishButtonDisabled={filtersAreEqual}
           />
         )}
         {(loading || editBrandLoading) && (
