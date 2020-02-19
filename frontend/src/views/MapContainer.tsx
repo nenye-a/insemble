@@ -1,25 +1,21 @@
 // TODO: Remove this next line.
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useRef, useState, useEffect } from 'react';
 import Joyride, { STATUS, Step } from 'react-joyride';
 import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
-import { useParams } from 'react-router-dom';
 import { useAlert } from 'react-alert';
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
-import { useQuery } from '@apollo/react-hooks';
-import styled from 'styled-components';
 
-import { View, Text, LoadingIndicator } from '../core-ui';
-import useGoogleMaps from '../utils/useGoogleMaps';
+import { View } from '../core-ui';
 import urlSafeLatLng from '../utils/urlSafeLatLng';
 import LocationDetail from '../components/location-detail/LocationDetail';
-import { GET_HEATMAP_DATA } from '../graphql/queries/server/heatmap';
 import InfoBox from 'react-google-maps/lib/components/addons/InfoBox';
 import MapPin from '../components/icons/map-pin.svg';
-import { FONT_SIZE_LARGE } from '../constants/theme';
-import { WHITE } from '../constants/colors';
-import { TenantMatches, TenantMatchesVariables } from '../generated/TenantMatches';
+import {
+  TenantMatches_tenantMatches_matchingLocations as TenantMatchesMatchingLocations,
+  TenantMatches_tenantMatches_matchingProperties as TenantMatchesMatchingProperties,
+} from '../generated/TenantMatches';
 
 type LatLngBounds = google.maps.LatLngBounds;
 type LatLng = google.maps.LatLng;
@@ -43,33 +39,21 @@ type MarkerData = {
 };
 type Props = {
   markers?: Array<LatLngLiteral>;
-  heats?: Array<any>;
   onMarkerClick?: () => void;
+  matchingLocations?: Array<TenantMatchesMatchingLocations> | null;
+  matchingProperties?: Array<TenantMatchesMatchingProperties> | null;
 };
 
-type BrandId = {
-  brandId: string;
-};
 const defaultCenter = {
   lat: 34.0522342,
   lng: -118.2436849,
 };
 const defaultZoom = 10;
 
-function MapContainer({ onMarkerClick }: Props) {
-  let params = useParams<BrandId>();
-  let { brandId } = params;
-  let { data: tenantMatchesData, error, loading } = useQuery<TenantMatches, TenantMatchesVariables>(
-    GET_HEATMAP_DATA,
-    {
-      variables: {
-        brandId,
-      },
-    }
-  );
+function MapContainer({ onMarkerClick, matchingLocations }: Props) {
   let heatmapData =
-    tenantMatchesData && tenantMatchesData.tenantMatches.matchingLocations
-      ? tenantMatchesData.tenantMatches.matchingLocations.map(({ lat, lng, match }) => ({
+    matchingLocations && matchingLocations
+      ? matchingLocations.map(({ lat, lng, match }) => ({
           location: new google.maps.LatLng(lat, lng),
           weight: match,
         }))
@@ -216,14 +200,7 @@ function MapContainer({ onMarkerClick }: Props) {
         locale={{ last: 'Done' }}
         spotlightClicks={false}
       />
-      {loading && (
-        <LoadingOverlay>
-          <LoadingIndicator visible={true} color="white" size="large" />
-          <Text fontSize={FONT_SIZE_LARGE} color={WHITE}>
-            Evaluating thousands of locations to find your matches. May take a couple minutes...
-          </Text>
-        </LoadingOverlay>
-      )}
+
       <GoogleMap
         ref={mapRef}
         defaultZoom={defaultZoom}
@@ -301,20 +278,5 @@ function MapContainer({ onMarkerClick }: Props) {
 const MapWithMap = withGoogleMap(MapContainer);
 
 export default (props: Props) => {
-  let { isLoading } = useGoogleMaps();
-  return isLoading ? null : (
-    <MapWithMap containerElement={<View flex />} mapElement={<View flex />} {...props} />
-  );
+  return <MapWithMap containerElement={<View flex />} mapElement={<View flex />} {...props} />;
 };
-
-const LoadingOverlay = styled(View)`
-  position: absolute;
-  left: 0px;
-  right: 0px;
-  top: 0px;
-  bottom: 0px;
-  background-color: rgba(0, 0, 0, 0.6);
-  justify-content: center;
-  align-items: center;
-  z-index: 99;
-`;

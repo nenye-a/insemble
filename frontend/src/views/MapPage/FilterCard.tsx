@@ -3,7 +3,8 @@ import styled, { css } from 'styled-components';
 import { Card, Text, View, TouchableOpacity } from '../../core-ui';
 import { FONT_SIZE_XSMALL } from '../../constants/theme';
 import { SECONDARY_COLOR, WHITE, THEME_COLOR } from '../../constants/colors';
-import { FilterObj } from '../../reducers/sideBarFiltersReducer';
+import { FilterObj, FilterType } from '../../reducers/sideBarFiltersReducer';
+import { DEMOGRAPHICS_CATEGORIES } from './SideBarFilters';
 
 type Props = ComponentProps<typeof View> & {
   title: string;
@@ -15,6 +16,7 @@ type Props = ComponentProps<typeof View> & {
 
 export default function FilterCard(props: Props) {
   let { title, options, contentStyle, onOptionPress, openFilterName, ...otherProps } = props;
+
   return (
     <Card
       title={title}
@@ -25,24 +27,42 @@ export default function FilterCard(props: Props) {
       {...otherProps}
     >
       <View style={contentStyle}>
-        {options.map((item, index) => (
-          <OptionItem
-            key={item.name + index}
-            selected={item.selectedValues && item.selectedValues.length > 0}
-            onPress={() => onOptionPress && onOptionPress(item)}
-            isOpen={openFilterName === item.name}
-          >
-            <View style={{ width: 24, height: 24 }}>
-              <item.icon />
-            </View>
-            <View style={{ marginLeft: 5 }}>
-              <Text>{item.name}</Text>
-              {item.selectedValues && (
-                <Text fontSize={FONT_SIZE_XSMALL}>{item.selectedValues.join(', ')}</Text>
-              )}
-            </View>
-          </OptionItem>
-        ))}
+        {options.map(({ type, name, selectedValues, icon: Icon, allOptions }, index) => {
+          let selectedText = '';
+          if (type === FilterType.RANGE_SLIDER || type === FilterType.RANGE_INPUT) {
+            if (selectedValues.length > 1) {
+              if (name === DEMOGRAPHICS_CATEGORIES.income) {
+                selectedText = `${selectedValues[0]}K - ${selectedValues[1]}K`;
+              } else {
+                selectedText = selectedValues[0] + ' - ' + selectedValues[1];
+              }
+            }
+          } else {
+            selectedText = selectedValues.length + ' selected';
+          }
+
+          return (
+            <OptionItem
+              key={name + index}
+              selected={selectedValues && selectedValues.length > 0}
+              onPress={() =>
+                onOptionPress &&
+                onOptionPress({ type, name, selectedValues, allOptions, icon: Icon })
+              }
+              isOpen={openFilterName === name}
+            >
+              <View style={{ width: 24, height: 24 }}>
+                <Icon />
+              </View>
+              <View style={{ marginLeft: 5 }}>
+                <Text>{name}</Text>
+                {selectedValues.length > 0 && (
+                  <Text fontSize={FONT_SIZE_XSMALL}>{selectedText}</Text>
+                )}
+              </View>
+            </OptionItem>
+          );
+        })}
       </View>
     </Card>
   );
