@@ -6,7 +6,7 @@ import loadingPurple from '../assets/images/loading-purple.gif';
 
 type IconSize = keyof typeof ICON_SIZES;
 type Props = {
-  color: 'purple' | 'white';
+  color?: 'purple' | 'white';
   visible?: boolean;
   size?: IconSize;
 };
@@ -16,7 +16,7 @@ type IconProps = {
 };
 
 export default function LoadingIndicator(props: Props) {
-  let { color, visible = true, size = 'small' as IconSize, ...otherProps } = props;
+  let { color = 'purple', visible = true, size = 'small' as IconSize, ...otherProps } = props;
 
   if (visible) {
     return (

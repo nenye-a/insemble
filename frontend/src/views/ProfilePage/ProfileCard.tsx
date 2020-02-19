@@ -1,32 +1,50 @@
 import React from 'react';
 import styled from 'styled-components';
+<<<<<<< HEAD
 import { useHistory } from 'react-router-dom';
 import { View, Card, Avatar, Text, Button } from '../../core-ui';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
 import { THEME_COLOR, RED_TEXT, BACKGROUND_COLOR } from '../../constants/colors';
 import ProfileMenuList from './ProfileMenuList';
 import asyncStorage from '../../utils/asyncStorage';
+=======
+import { useQuery } from '@apollo/react-hooks';
 
-type Props = {
-  name: string;
-  company: string;
-  position: string;
-  avatar?: string;
-};
+import { View, Card, Avatar, Text, Button, LoadingIndicator } from '../../core-ui';
+import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
+import { THEME_COLOR, RED_TEXT, BACKGROUND_COLOR } from '../../constants/colors';
+import ProfileMenuList from './ProfileMenuList';
+import { GetTenantProfile } from '../../generated/GetTenantProfile';
+import { GET_TENANT_PROFILE } from '../../graphql/queries/server/profile';
+>>>>>>> connect profile card
 
+export default function ProfileCard() {
+  let { loading, data, error } = useQuery<GetTenantProfile>(GET_TENANT_PROFILE);
+  let name = data?.profileTenant.firstName + ' ' + data?.profileTenant.lastName;
+  let company = data?.profileTenant.company || '';
+  let title = data?.profileTenant.title || '';
+
+<<<<<<< HEAD
 export default function ProfileCard(props: Props) {
   let { name, company, position, avatar } = props;
   let history = useHistory();
+=======
+>>>>>>> connect profile card
   return (
     <Container>
-      <ProfileWrapper>
-        <ProfilePicture size="large" src={avatar} />
-        <ProfileText fontSize={FONT_SIZE_LARGE} fontWeight={FONT_WEIGHT_BOLD} color={THEME_COLOR}>
-          {name}
-        </ProfileText>
-        <ProfileText>{company}</ProfileText>
-        <ProfileText>{position}</ProfileText>
-      </ProfileWrapper>
+      {loading ? (
+        <LoadingIndicator />
+      ) : (
+        <ProfileWrapper>
+          <ProfilePicture size="large" image={data?.profileTenant.avatar} />
+          <ProfileText fontSize={FONT_SIZE_LARGE} fontWeight={FONT_WEIGHT_BOLD} color={THEME_COLOR}>
+            {name}
+          </ProfileText>
+          <ProfileText>{company}</ProfileText>
+          <ProfileText>{title}</ProfileText>
+        </ProfileWrapper>
+      )}
+
       <ProfileMenuList />
       <SignOutButton
         text="Sign Out"
