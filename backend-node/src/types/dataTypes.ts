@@ -31,23 +31,23 @@ type Personas = {
 export type DemographicStat = {
   my_location?: number;
   target_location: number;
-  growth: number;
+  growth?: number;
 };
 
 type NearbyObject = {
   lat: number;
   lng: number;
   name: string;
-  rating: number;
-  number_rating: number;
-  category: string;
+  rating: number | null;
+  number_rating: number | null;
+  category: string | null;
   distance: number;
-  restaurant: boolean;
-  retail: boolean;
+  restaurant?: boolean;
+  retail?: boolean;
   similar: boolean;
-  hospital: boolean;
-  apartment: boolean;
-  metro: boolean;
+  hospital?: boolean;
+  apartment?: boolean;
+  metro?: boolean;
 };
 
 type Demographics = {
@@ -61,11 +61,11 @@ type Demographics = {
     '65+': DemographicStat;
   };
   income: {
-    '<$50K': DemographicStat;
+    '<50K': DemographicStat;
     '$50K-$74K': DemographicStat;
     '$75K-$124K': DemographicStat;
     '$125K-$199K': DemographicStat;
-    $200K: DemographicStat;
+    '$200K+': DemographicStat;
   };
   ethnicity: {
     white: DemographicStat;
@@ -77,7 +77,7 @@ type Demographics = {
   };
   education: {
     some_highschool: DemographicStat;
-    highschool: DemographicStat;
+    high_school: DemographicStat;
     some_college: DemographicStat;
     associate: DemographicStat;
     bachelor: DemographicStat;
@@ -111,7 +111,7 @@ export type LocationPreviewType = {
 export type LocationDetailsType = {
   status: number;
   status_detail: string;
-  overview: {
+  result?: {
     match_value: number;
     affinities: {
       growth: boolean;
@@ -132,11 +132,16 @@ export type LocationDetailsType = {
     };
     commute: {
       'Public Transport': number;
-      Bicycle: number;
-      Carpooled: number;
-      'Drove Alone': number;
-      Walked: number;
-      'Worked at Home': number;
+      // Bicycle: number; // Intended
+      // Carpooled: number;
+      // 'Drove Alone': number;
+      // Walked: number;
+      // 'Worked at Home': number;
+      'Current Year Workers, Transportation to Work: Worked at Home': number; // Temporary
+      'Current Year Workers, Transportation to Work: Walked': number;
+      'Current Year Workers, Transportation to Work: Bicycle': number;
+      'Current Year Workers, Transportation to Work: Carpooled': number;
+      'Current Year Workers, Transportation to Work: Drove Alone': number;
     };
     top_personas: Array<Personas>;
     demographics1: Demographics;
@@ -144,7 +149,7 @@ export type LocationDetailsType = {
     demographics5: Demographics;
     nearby: Array<NearbyObject>;
   };
-  property_details: {
+  property_details?: {
     '3D_tour': string;
     main_photo: string;
     sqft: number;

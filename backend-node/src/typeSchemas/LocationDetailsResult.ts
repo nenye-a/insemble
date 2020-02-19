@@ -52,7 +52,7 @@ export let DemographicStat = objectType({
   definition(t) {
     t.float('myLoaction', { nullable: true });
     t.float('targetLocation');
-    t.float('growth');
+    t.float('growth', { nullable: true });
   },
 });
 
@@ -197,16 +197,16 @@ export let NearbyOverview = objectType({
     t.float('lat');
     t.float('lng');
     t.string('name');
-    t.float('rating');
+    t.float('rating', { nullable: true });
     t.float('numberRating');
     t.string('category');
     t.float('distance');
-    t.boolean('restaurant');
-    t.boolean('retail');
+    t.boolean('restaurant', { nullable: true });
+    t.boolean('retail', { nullable: true });
     t.boolean('similar');
-    t.boolean('hospital');
-    t.boolean('apartment');
-    t.boolean('metro');
+    t.boolean('hospital', { nullable: true });
+    t.boolean('apartment', { nullable: true });
+    t.boolean('metro', { nullable: true });
   },
 });
 
@@ -269,11 +269,12 @@ export let PropertyDetails = objectType({
 export let LocationDetailsResult = objectType({
   name: 'LocationDetailsResult',
   definition(t) {
-    t.field('overview', {
+    t.field('result', {
       type: 'OverviewType',
     });
     t.field('propertyDetails', {
       type: 'PropertyDetails',
+      nullable: true,
     });
   },
 });
