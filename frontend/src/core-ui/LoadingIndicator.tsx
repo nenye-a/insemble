@@ -16,7 +16,7 @@ type IconProps = {
 };
 
 export default function LoadingIndicator(props: Props) {
-  let { color, visible = true, size = 'small' as IconSize } = props;
+  let { color, visible = true, size = 'small' as IconSize, ...otherProps } = props;
 
   if (visible) {
     return (

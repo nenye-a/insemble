@@ -201,7 +201,8 @@ export default function SideBarFilters() {
           }}
           openFilterName={openFilterName}
         />
-        <FilterCard
+        {/* Hiding this for now */}
+        {/* <FilterCard
           title="Property"
           options={properties}
           style={{ maxHeight: '30%', marginTop: 10, marginBottom: 10 }}
@@ -213,7 +214,7 @@ export default function SideBarFilters() {
             });
           }}
           openFilterName={openFilterName}
-        />
+        /> */}
       </Container>
       <ClickAway
         onClickAway={() =>
