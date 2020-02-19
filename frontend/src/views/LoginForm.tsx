@@ -34,14 +34,15 @@ export default function Login(_props: Props) {
     });
   };
 
-  let saveUserData = async (token: string, role: Role) => {
+  let saveUserData = async (token: string, role: Role, brandId: string) => {
     await asyncStorage.saveTenantToken(token);
     await asyncStorage.saveRole(role);
+    await asyncStorage.saveBrandId(brandId);
   };
   if (data) {
     let { loginTenant } = data;
-    let { token } = loginTenant;
-    saveUserData(token, Role.Tenant);
+    let { token, brandId } = loginTenant;
+    saveUserData(token, Role.Tenant, brandId);
     history.push('/map');
   }
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -11,10 +11,18 @@ import { WHITE } from '../constants/colors';
 import { FONT_SIZE_LARGE } from '../constants/theme';
 import CategoriesInput from './LandingPage/CategoriesInput';
 import Button from '../core-ui/Button';
+import asyncStorage from '../utils/asyncStorage';
 
 function Landing() {
   let { isLoading } = useGoogleMaps();
   let history = useHistory();
+  useEffect(() => {
+    let token = asyncStorage.getTenantToken();
+    let brandId = asyncStorage.getBrandId();
+    if (token && brandId) {
+      history.push('./map/' + brandId);
+    }
+  }, []);
 
   return (
     <Masthead>
