@@ -14,8 +14,10 @@ import data.api.spatial as spatial
 
 '''
 
-This file will the main provider of key details that need to leverage the api. This will be the interface
-between the main application api, and our calls data_api calls.
+Tenant provider
+
+This file will be the main provider of data and functions to the retailer api. This will be the main interface
+between the actual api, and the actual underlying data infrastructure.
 
 '''
 

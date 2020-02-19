@@ -6,6 +6,7 @@ yarn-error.log
 
 # prisma
 generated
+yarn-error.log
 
 # macOS
 .DS_Store
