@@ -3,10 +3,11 @@ import styled from 'styled-components';
 import loadingWhite from '../assets/images/loading-white.gif';
 import loadingPurple from '../assets/images/loading-purple.gif';
 
+type IconSize = keyof typeof ICON_SIZES;
 type Props = {
   color: 'purple' | 'white';
   visible?: boolean;
-  size?: keyof typeof ICON_SIZES;
+  size?: IconSize;
 };
 
 type IconProps = {
@@ -14,7 +15,7 @@ type IconProps = {
 };
 
 export default function LoadingIndicator(props: Props) {
-  let { color, visible = true, size = 'small' as keyof typeof ICON_SIZES } = props;
+  let { color, visible = true, size = 'small' as IconSize } = props;
 
   if (visible) {
     return <Icon src={color === 'white' ? loadingWhite : loadingPurple} size={ICON_SIZES[size]} />;
