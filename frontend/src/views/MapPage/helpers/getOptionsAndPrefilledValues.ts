@@ -6,11 +6,12 @@ import { DemographicsFilter, PropertyFilter } from '../../MainMap';
 
 export function getDemographicsOptionsAndPrefilledValues(
   demographics: Array<FilterObj>,
-  demographicsFilterValues: DemographicsFilter,
+  demographicsFilterValues: DemographicsFilter, // unformatted filter values from BE
   filter: {
     personas: Array<string> | undefined;
     commute: Array<CommuteCommute> | undefined;
     education: Array<EducationEducation> | undefined;
+    // option list
   }
 ): Array<FilterObj> {
   let selectedValues: Array<string> = [];

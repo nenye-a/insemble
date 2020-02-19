@@ -2,10 +2,18 @@ import { ComponentType } from 'react';
 import { IconProps } from '../types/types';
 import { TenantMatchesContextType } from '../views/MainMap';
 
+export enum FilterType {
+  RANGE_SLIDER,
+  RANGE_INPUT,
+  SELECTION,
+  SEARCH_SELECTION,
+}
+
 export type FilterObj = {
   name: string;
   icon: ComponentType<IconProps>;
   selectedValues: Array<string>;
+  type: FilterType;
   allOptions?: Array<string>;
 };
 

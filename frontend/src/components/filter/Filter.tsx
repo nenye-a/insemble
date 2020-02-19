@@ -260,7 +260,3 @@ const ClearButton = styled(Button)`
     color: ${THEME_COLOR};
   }
 `;
-
-const LoadingIndicatorContainer = styled(View)`
-  justify-content: center;
-`;

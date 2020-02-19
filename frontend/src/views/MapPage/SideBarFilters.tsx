@@ -5,7 +5,12 @@ import { useQuery } from '@apollo/react-hooks';
 import { View, ClickAway } from '../../core-ui';
 import { Filter } from '../../components';
 import FilterCard from './FilterCard';
-import sideBarFiltersReducer, { Action, State } from '../../reducers/sideBarFiltersReducer';
+import sideBarFiltersReducer, {
+  Action,
+  State,
+  FilterObj,
+  FilterType,
+} from '../../reducers/sideBarFiltersReducer';
 import {
   GET_PERSONA_LIST,
   GET_COMMUTE_LIST,
@@ -17,6 +22,10 @@ import {
   getDemographicsOptionsAndPrefilledValues,
   getPropertyOptionsAndPrefilledValues,
 } from './helpers/getOptionsAndPrefilledValues';
+import { Commute } from '../../generated/Commute';
+import { Education } from '../../generated/Education';
+import { TenantMatchesContext } from '../MainMap';
+
 import SvgIncome from '../../components/icons/income';
 import SvgAge from '../../components/icons/age';
 import SvgPsychographic from '../../components/icons/psychographic';
@@ -26,23 +35,10 @@ import SvgRent from '../../components/icons/rent';
 import SvgSqft from '../../components/icons/sqft';
 import SvgPropertyType from '../../components/icons/property-type';
 import { NAVBAR_HEIGHT } from '../../constants/theme';
-import { Commute } from '../../generated/Commute';
-import { Education } from '../../generated/Education';
-import { TenantMatchesContext } from '../MainMap';
 
 export default function SideBarFilters() {
   let { filters, onFilterChange } = useContext(TenantMatchesContext);
   let { demographics: demographicsInitialFilter, property: propertyInitialFilter } = filters;
-  let {
-    minIncome,
-    maxIncome,
-    minAge,
-    maxAge,
-    personas,
-    commute,
-    education,
-  } = demographicsInitialFilter;
-  let { minRent, maxRent, minSize, maxSize, spaceType } = propertyInitialFilter;
   let { data: personasData, loading: personasLoading } = useQuery<Personas>(GET_PERSONA_LIST);
   let { data: commuteData, loading: commuteLoading } = useQuery<Commute>(GET_COMMUTE_LIST);
   let { data: educationData, loading: educationLoading } = useQuery<Education>(GET_EDUCATION_LIST);
@@ -62,6 +58,7 @@ export default function SideBarFilters() {
     getInitialState()
   );
   let { demographics, properties, openFilterName } = state;
+
   useEffect(() => {
     // Get options and prefilled value;
     let demographicsWithOptions = getDemographicsOptionsAndPrefilledValues(
@@ -88,65 +85,50 @@ export default function SideBarFilters() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    commuteLoading,
-    personasLoading,
-    educationLoading,
-    spaceTypeLoading,
-    minRent,
-    maxRent,
-    minSize,
-    maxSize,
-    spaceType,
-    minIncome,
-    maxIncome,
-    minAge,
-    maxAge,
-    personas,
-    commute,
-    education,
-
-    //recheck this
+    commuteData,
+    spaceTypeData,
+    educationData,
+    personasData,
+    demographicsInitialFilter,
+    propertyInitialFilter,
   ]);
 
   let getFilterProps = (name: string | null) => {
     let found = [...demographics, ...properties].find((item) => item.name === name);
     if (found) {
       let selectedValues = found.selectedValues;
-
-      if (openFilterName === DEMOGRAPHICS_CATEGORIES.income) {
-        return {
-          income: true,
-          rangeSlide: true,
-          minimum: 0,
-          maximum: 800,
-          values: selectedValues.length > 1 ? selectedValues : [0, 800],
-          onSliderChange: (values: Array<number>) => {
-            dispatch({
-              type: 'SLIDE_CHANGE',
-              name: DEMOGRAPHICS_CATEGORIES.income,
-              selectedValues: values,
-            });
-          },
-        };
-      } else if (openFilterName === DEMOGRAPHICS_CATEGORIES.age) {
-        return {
-          rangeSlide: true,
-          minimum: 0,
-          maximum: 100,
-          values: selectedValues.length > 1 ? selectedValues : [1, 100],
-          onSliderChange: (values: Array<number>) => {
-            dispatch({
-              type: 'SLIDE_CHANGE',
-              name: DEMOGRAPHICS_CATEGORIES.age,
-              selectedValues: values,
-            });
-          },
-        };
-      } else if (
-        openFilterName === DEMOGRAPHICS_CATEGORIES.personas ||
-        openFilterName === DEMOGRAPHICS_CATEGORIES.commute ||
-        openFilterName === PROPERTIES_CATEGORIES.propertyType
-      ) {
+      if (found.type === FilterType.RANGE_SLIDER) {
+        if (openFilterName === DEMOGRAPHICS_CATEGORIES.income) {
+          return {
+            income: true,
+            rangeSlide: true,
+            minimum: 0,
+            maximum: 800,
+            values: selectedValues.length > 1 ? selectedValues : [0, 800],
+            onSliderChange: (values: Array<number>) => {
+              dispatch({
+                type: 'SLIDE_CHANGE',
+                name: DEMOGRAPHICS_CATEGORIES.income,
+                selectedValues: values,
+              });
+            },
+          };
+        } else if (openFilterName === DEMOGRAPHICS_CATEGORIES.age) {
+          return {
+            rangeSlide: true,
+            minimum: 0,
+            maximum: 100,
+            values: selectedValues.length > 1 ? selectedValues : [1, 100],
+            onSliderChange: (values: Array<number>) => {
+              dispatch({
+                type: 'SLIDE_CHANGE',
+                name: DEMOGRAPHICS_CATEGORIES.age,
+                selectedValues: values,
+              });
+            },
+          };
+        }
+      } else if (found.type === FilterType.SELECTION) {
         return {
           selection: true,
           selectedOptions: selectedValues,
@@ -162,7 +144,7 @@ export default function SideBarFilters() {
             });
           },
         };
-      } else if (openFilterName === DEMOGRAPHICS_CATEGORIES.education) {
+      } else if (found.type === FilterType.SEARCH_SELECTION) {
         return {
           search: true,
           selectedOptions: selectedValues,
@@ -178,10 +160,7 @@ export default function SideBarFilters() {
             });
           },
         };
-      } else if (
-        openFilterName === PROPERTIES_CATEGORIES.sqft ||
-        openFilterName === PROPERTIES_CATEGORIES.rent
-      ) {
+      } else if (found.type === FilterType.RANGE_INPUT) {
         return {
           rangeInput: true,
           onLowRangeInputChange: (value: string) => {
@@ -257,7 +236,7 @@ export default function SideBarFilters() {
               name: openFilterName,
             });
           }}
-          loading={personasLoading}
+          loading={personasLoading || commuteLoading || educationLoading || spaceTypeLoading}
           {...filterProps}
         />
       </ClickAway>
@@ -299,44 +278,51 @@ export const PROPERTIES_CATEGORIES = {
   propertyType: 'Type',
 };
 
-const DEMOGRAPHIC_OPTIONS = [
+const DEMOGRAPHIC_OPTIONS: Array<FilterObj> = [
   {
     name: DEMOGRAPHICS_CATEGORIES.income,
     icon: SvgIncome,
     selectedValues: [],
+    type: FilterType.RANGE_SLIDER,
   },
   {
     name: DEMOGRAPHICS_CATEGORIES.age,
     icon: SvgAge,
     selectedValues: [],
+    type: FilterType.RANGE_SLIDER,
   },
   {
     name: DEMOGRAPHICS_CATEGORIES.personas,
     icon: SvgPsychographic,
     selectedValues: [],
+    type: FilterType.SELECTION,
   },
   {
     name: DEMOGRAPHICS_CATEGORIES.commute,
     icon: SvgCommute,
     selectedValues: [],
+    type: FilterType.SELECTION,
   },
   {
     name: DEMOGRAPHICS_CATEGORIES.education,
     icon: SvgEducation,
     selectedValues: [],
+    type: FilterType.SEARCH_SELECTION,
   },
 ];
 
-const PROPERTIES_OPTIONS = [
+const PROPERTIES_OPTIONS: Array<FilterObj> = [
   {
     name: 'Rent',
     icon: SvgRent,
     selectedValues: [],
+    type: FilterType.RANGE_INPUT,
   },
   {
     name: 'Sqft',
     icon: SvgSqft,
     selectedValues: [],
+    type: FilterType.RANGE_INPUT,
   },
-  { name: 'Type', icon: SvgPropertyType, selectedValues: [] },
+  { name: 'Type', icon: SvgPropertyType, selectedValues: [], type: FilterType.SELECTION },
 ];

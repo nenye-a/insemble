@@ -211,8 +211,8 @@ export default function MainMap() {
           maxAge,
           minAge,
           personas,
-          commute: (commute && commute.map((item) => item.displayValue)) ?? [],
-          education: (education && education.map((item) => item.displayValue)) ?? [],
+          commute: (commute && commute.map(({ displayValue }) => displayValue)) || [],
+          education: (education && education.map(({ displayValue }) => displayValue)) || [],
         },
         property: {
           minRent,
@@ -277,7 +277,7 @@ export default function MainMap() {
 
 const Container = styled(View)`
   flex-direction: row;
-  overflow-x: hidden;
+  overflow: hidden;
 `;
 
 const ShowPropertyButton = styled(Button)`

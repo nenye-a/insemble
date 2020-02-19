@@ -1,5 +1,5 @@
 // TODO: Remove this next line.
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useRef, useState, useEffect } from 'react';
 import Joyride, { STATUS, Step } from 'react-joyride';
 import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
@@ -177,7 +177,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
 
   return (
     <div>
-      {/* <Joyride
+      <Joyride
         steps={steps}
         scrollToFirstStep={true}
         continuous={true}
@@ -199,7 +199,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         }}
         locale={{ last: 'Done' }}
         spotlightClicks={false}
-      /> */}
+      />
 
       <GoogleMap
         ref={mapRef}
