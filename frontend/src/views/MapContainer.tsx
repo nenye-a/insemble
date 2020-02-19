@@ -177,7 +177,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
 
   return (
     <div>
-      {/* <Joyride
+      <Joyride
         steps={steps}
         scrollToFirstStep={true}
         continuous={true}
@@ -199,7 +199,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         }}
         locale={{ last: 'Done' }}
         spotlightClicks={false}
-      /> */}
+      />
 
       <GoogleMap
         ref={mapRef}

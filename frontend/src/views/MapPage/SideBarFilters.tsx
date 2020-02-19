@@ -58,6 +58,7 @@ export default function SideBarFilters() {
     getInitialState()
   );
   let { demographics, properties, openFilterName } = state;
+
   useEffect(() => {
     // Get options and prefilled value;
     let demographicsWithOptions = getDemographicsOptionsAndPrefilledValues(
