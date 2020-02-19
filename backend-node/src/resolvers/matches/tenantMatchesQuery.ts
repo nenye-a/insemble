@@ -4,7 +4,7 @@ import { LEGACY_API_URI } from '../../constants/host';
 import { queryField, arg } from 'nexus';
 import { TenantMatchesType } from 'dataTypes';
 
-type MatchingLocation = {
+export type MatchingLocation = {
   loc_id: string;
   lat: number;
   lng: number;
