@@ -42,7 +42,7 @@ let tenantMatches = queryField('tenantMatches', {
       minRent,
       maxRent,
       matchingLocations: matchingLocationsJSON,
-      matchingProperties: existMatchingProperties,
+      matchingProperties,
       // NOTE: Unused filter params, will use later!
       equipmentIds,
       locationCount,
@@ -61,97 +61,65 @@ let tenantMatches = queryField('tenantMatches', {
         'Please update your brand and provide either (address and brand_name) or (categories and income)',
       );
     }
+    let matchingLocations;
 
     if (matchingLocationsJSON) {
       let existMatchingLocations: Array<MatchingLocation> = JSON.parse(
         matchingLocationsJSON,
       );
-
-      return {
-        matchingLocations: existMatchingLocations,
-        matchingProperties: existMatchingProperties,
-        categories,
-        location,
-        name,
-        maxIncome,
-        minIncome,
-        minAge,
-        maxAge,
-        personas,
-        commute: commute.map((rawValue) => {
-          let splitCommuteValue = rawValue.split(': ');
-          return {
-            rawValue,
-            displayValue: splitCommuteValue[1],
-          };
-        }),
-        education: education.map((rawValue) => {
-          let splitEducationValue = rawValue.split('+, ');
-          return {
-            rawValue,
-            displayValue: splitEducationValue[1],
-          };
-        }),
-        minRent,
-        maxRent,
-        equipmentIds,
-        locationCount,
-        minSize,
-        maxSize,
-        newLocationPlan,
-        spaceType,
-        userRelation,
-        minFrontageWidth,
-        maxFrontageWidth,
-        nextLocations,
-      };
+      matchingLocations = existMatchingLocations;
+    } else {
+      let {
+        matching_locations: newMatchingLocations,
+        matching_properties: rawMatchingProperties,
+      }: TenantMatchesType = (
+        await axios.get(`${LEGACY_API_URI}/api/tenantMatches`, {
+          params: {
+            address: location?.address,
+            brand_name: name,
+            categories:
+              categories.length > 0 ? JSON.stringify(categories) : undefined,
+            income: minIncome && {
+              min: maxIncome,
+              max: maxIncome,
+            },
+            age: minAge && {
+              min: minAge,
+              max: maxAge,
+            },
+            personas:
+              personas.length > 0 ? JSON.stringify(personas) : undefined,
+            commute: commute.length > 0 ? JSON.stringify(commute) : undefined,
+            education:
+              education.length > 0 ? JSON.stringify(education) : undefined,
+            rent: minRent && {
+              min: minRent,
+              max: maxRent,
+            },
+          },
+        })
+      ).data;
+      let newMatchingProperties = rawMatchingProperties?.map(
+        ({ property_id: propertyId, ...other }) => {
+          return { propertyId, ...other };
+        },
+      );
+      matchingLocations = newMatchingLocations;
+      matchingProperties = await context.prisma.brand
+        .update({
+          where: { id: brandId },
+          data: {
+            matchingLocations: JSON.stringify(newMatchingLocations),
+            matchingProperties: { create: newMatchingProperties },
+          },
+        })
+        .matchingProperties();
     }
 
-    let {
-      matching_locations: newMatchingLocations,
-      matching_properties: rawMatchingProperties,
-    }: TenantMatchesType = (
-      await axios.get(`${LEGACY_API_URI}/api/tenantMatches`, {
-        params: {
-          address: location?.address,
-          brand_name: name,
-          categories:
-            categories.length > 0 ? JSON.stringify(categories) : undefined,
-          income: minIncome && {
-            min: maxIncome,
-            max: maxIncome,
-          },
-          age: minAge && {
-            min: minAge,
-            max: maxAge,
-          },
-          personas: personas.length > 0 ? JSON.stringify(personas) : undefined,
-          commute: commute.length > 0 ? JSON.stringify(commute) : undefined,
-          education:
-            education.length > 0 ? JSON.stringify(education) : undefined,
-          rent: minRent && {
-            min: minRent,
-            max: maxRent,
-          },
-        },
-      })
-    ).data;
-    let newMatchingProperties = rawMatchingProperties?.map(
-      ({ property_id: propertyId, ...other }) => {
-        return { propertyId, ...other };
-      },
-    );
-    await context.prisma.brand.update({
-      where: { id: brandId },
-      data: {
-        matchingLocations: JSON.stringify(newMatchingLocations),
-        matchingProperties: { create: newMatchingProperties },
-      },
-    });
-
     return {
-      matchingLocations: newMatchingLocations,
-      matchingProperties: newMatchingProperties,
+      id: brandId,
+      matchingLocations,
+      matchingProperties,
       categories,
       location,
       name,

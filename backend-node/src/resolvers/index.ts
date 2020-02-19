@@ -10,4 +10,5 @@ export * from './matches/tenantMatchesQuery';
 export * from './tenant/profileQuery';
 export * from './tenant/editProfileTenantMutation';
 export * from './brand/createBrandMutation';
+export * from './brand/editBrandMutation';
 export * from './brand/brandsQuery';
