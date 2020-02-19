@@ -455,8 +455,9 @@ def get_match_value(target, location):
         'race': 3.6,
         'gender': 3.6
     }
+    demo_weight_df = pd.DataFrame([demo_weight])
     # no need to renormalize, as this vector has already been normalized
-    match_vector["demo_error"] = match_vector[demo_weight.keys()].sum() / sum(demo_weight.values())
+    match_vector["demo_error"] = match_vector[list(demo_weight.keys())].dot(demo_weight_df.transpose()) / sum(demo_weight.values())
 
     # High growth (20% over 5 years) considered positive (could alternatively be calculated from EA data)
     growth = True if target["HouseholdGrowth2017-2022-1"] > 20 else False
