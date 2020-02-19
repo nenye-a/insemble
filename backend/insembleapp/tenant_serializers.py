@@ -36,7 +36,7 @@ class TenantMatchSerializer(serializers.Serializer):
 
     address = serializers.CharField(required=False, max_length=300)
     brand_name = serializers.CharField(required=False, max_length=300)
-    categories = serializers.ListField(required=False)
+    categories = serializers.ListField(required=False, child=serializers.CharField())
     income = serializers.JSONField(required=False)
     age = serializers.JSONField(required=False)
     personas = serializers.ListField(required=False)
@@ -73,6 +73,20 @@ class TenantMatchSerializer(serializers.Serializer):
             raise serializers.ValidationError(error_message)
         else:
             return data
+
+
+class LocationSerializer(serializers.Serializer):
+    """
+
+    parameters: {
+        address: string,            (required)
+        brand_name: string,         (required)
+    }
+
+    """
+
+    address = serializers.CharField(required=True, max_length=300)
+    brand_name = serializers.CharField(required=True, max_length=300)
 
 
 # Location Details Serializer

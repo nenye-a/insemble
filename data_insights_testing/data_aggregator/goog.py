@@ -1,6 +1,7 @@
 from decouple import config
 import utils
 import safe_request
+import pprint
 
 '''
 All google related methods to confirm a location, and build dataset of all information needed.
@@ -14,6 +15,7 @@ GOOG_FINDPLACE_ENDPOINT = 'https://maps.googleapis.DELETED_BASE64_STRING'
 GOOG_NEARBY_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json'
 GOOG_DETAILS_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/details/json'
 GOOG_TEXTSEARCH_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/textsearch/json?'
+GOOG_GEOCODE_ENDPOINT = 'https://maps.googleapis.com/maps/api/geocode/json'
 
 
 # Provided a location address & name, method corrects address if available in google. Method
@@ -46,6 +48,30 @@ def find(address, name="", bias='ipbias', allow_non_establishments=False):
         return None
 
     return place
+
+
+# Provided a latitude and longitude, this endpoint will provide address including all address components:
+def reverse_geocode(lat, lng):
+
+    url = GOOG_GEOCODE_ENDPOINT
+    payload = {}
+    headers = {}
+
+    latlng = str(lat) + ',' + str(lng)
+    params = {
+        'key': GOOG_KEY,
+        'latlng': latlng,
+    }
+
+    result, _id = safe_request.request(API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
+
+    if 'results' not in result:
+        print('Zero results from google')
+        return None
+
+    location = result['results'][0]
+
+    return location
 
 
 # Given google place ID, can generate the other nearby locations.
@@ -202,6 +228,12 @@ if __name__ == "__main__":
         print(item)
         print(len(item))
 
-    # test_find()
+    def test_reverse_geocode():
+        lat = 34.008336
+        lng = -118.404085
+        location = reverse_geocode(lat, lng)
+        pprint.pprint(location)
 
-    print(find("5011 S Western Ave, Los Angeles, CA 90062", name='Sonsonate Grill', allow_non_establishments=True))
+    # test_find()
+    # print(find("5011 S Western Ave, Los Angeles, CA 90062", name='Sonsonate Grill', allow_non_establishments=True))
+    test_reverse_geocode()

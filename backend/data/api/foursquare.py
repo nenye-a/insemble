@@ -1,5 +1,5 @@
 from decouple import config
-import safe_request
+from . import safe_request
 
 '''
 
