@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 export const PROFILE_TENANT = gql`
   query ProfileTenant {
-    tenantUser {
+    profileTenant {
       id
       avatar
       email
