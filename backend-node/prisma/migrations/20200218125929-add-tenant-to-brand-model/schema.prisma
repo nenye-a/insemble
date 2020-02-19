@@ -1,7 +1,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://prisma:prisma@localhost:5432/insemble?schema=public"
+  url = "***"
 }
 
 
@@ -73,7 +73,7 @@ model Brand {
   // Brand description
   name                   String?
   location               Location?                @relation(name: "currentLocation")
-  tenantUser             TenantUser
+  tenantUser             TenantUser?
   categories             String[]
   // Also for filter and description
   userRelation           String?

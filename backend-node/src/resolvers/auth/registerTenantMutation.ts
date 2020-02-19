@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 
 import { Context } from 'serverTypes';
 import { createTenantSession } from '../../helpers/auth';
+import { createBrandResolver } from '../brand/createBrandMutation';
 
 export let registerTenant = mutationField('registerTenant', {
   type: 'TenantAuth',
@@ -11,7 +12,7 @@ export let registerTenant = mutationField('registerTenant', {
     business: arg({ type: 'BusinessInput' }),
     filter: arg({ type: 'FilterInput' }),
   },
-  resolve: async (_, { tenant, business, filter }, context: Context) => {
+  resolve: async (_, { tenant, business, filter }, context: Context, info) => {
     let password = bcrypt.hashSync(tenant.password, 10);
     let lowerCasedEmail = tenant.email.toLocaleLowerCase();
     let exist = await context.prisma.tenantUser.findMany({
@@ -32,53 +33,12 @@ export let registerTenant = mutationField('registerTenant', {
       },
     });
     if (business || filter) {
-      let {
-        categories = [],
-        equipmentIds = [],
-        personas = [],
-        spaceType = [],
-        education = [],
-        commute = [],
-        ...filterInput
-      } = filter || {};
-      let { location, nextLocations, ...businessInput } = business || {};
-      let brands = await context.prisma.tenantUser
-        .update({
-          data: {
-            brands: {
-              create: {
-                ...businessInput,
-                ...filterInput,
-                categories: {
-                  set: categories,
-                },
-                equipmentIds: {
-                  set: equipmentIds,
-                },
-                personas: {
-                  set: personas,
-                },
-                spaceType: {
-                  set: spaceType,
-                },
-                education: {
-                  set: education,
-                },
-                commute: {
-                  set: commute,
-                },
-                location: {
-                  create: location,
-                },
-              },
-            },
-          },
-          where: {
-            id: createdTenant.id,
-          },
-        })
-        .brands();
-      brandId = brands[0].id;
+      brandId = await createBrandResolver(
+        {},
+        { business, filter },
+        { ...context, tenantUserId: createdTenant.id },
+        info,
+      );
     }
     return {
       token: createTenantSession(createdTenant),
