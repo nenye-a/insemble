@@ -8,5 +8,6 @@ export * from './filter/equipmentQuery';
 export * from './filter/spaceTypeQuery';
 export * from './matches/tenantMatchesQuery';
 export * from './tenant/profileQuery';
+export * from './tenant/editProfileTenantMutation';
 export * from './brand/createBrandMutation';
 export * from './brand/brandsQuery';
