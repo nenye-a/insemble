@@ -19,3 +19,4 @@ export * from './LocationType';
 export * from './BrandThumbnail';
 export * from './LocationPreviewResult';
 export * from './EditProfileTenantInput';
+export * from './LocationDetailsResult';
