@@ -1,9 +1,9 @@
 from . import utils, matching
-import json
 import numpy as np
+import re
 import pandas as pd
 import data.api.goog as google
-import data.api.spatial as spatial
+import data.api.foursquare as foursquare
 import data.api.arcgis as arcgis
 import data.api.environics as environics
 
@@ -17,9 +17,65 @@ between the main application api, and our calls data_api calls.
 
 
 # Return the location latitude and object details. Details are in the following form
-# {lat:float, lng:float}
+# {lat:float, lng:float, place_id:'place_id}
 def get_location(address, name=None):
-    return google.find(address, name, allow_non_establishments=True)['geometry']['location']
+    google_location = google.find(address, name=name, allow_non_establishments=True)
+    location = google_location['geometry']['location']
+    location["place_id"] = google_location["place_id"]
+    return location
+
+
+def get_representative_location(categories, income_dict):
+
+    income_query = {'$gte': income_dict["min"]}
+    income_query.update({'$lte': income_dict["max"]}) if 'max' in income_dict else None
+
+    candidates = utils.DB_PROCESSED_SPACE.find({
+        'foursquare_categories.category_name': {'$in': categories},
+        'arcgis_details1.MedHouseholdIncome1': income_query,
+        'arcgis_details3.MedHouseholdIncome3': income_query,
+        'user_ratings_total': {'$exists': True},
+        'rating': {'$gte': 4.2}
+    }).sort([('user_ratings_total', -1)]).limit(10)
+
+    if candidates.count() == 0:
+        return None
+
+    place = list(candidates)[0]
+    return {
+        'address': place['formatted_address'],
+        'lat': place['geometry']['location']['lat'],
+        'lng': place['geometry']['location']['lng'],
+        'name': place['name']
+    }
+
+# Returns the address and neighborhood of a specific latitude and longitude
+
+
+def get_address_neighborhood(lat, lng):
+    google_location = google.reverse_geocode(lat, lng)
+
+    address = google_location['formatted_address']
+    neighborhood = None
+    locality = None
+    for component in google_location['address_components']:
+        if 'neighborhood' in component['types']:
+            neighborhood = component['short_name']
+        if 'locality' in component['types']:
+            locality = component['short_name']
+
+    neighborhood = neighborhood + ', ' + locality if locality else neighborhood
+
+    # return both neighborhood and locality, but return None if neighther are present
+    if neighborhood:
+        neighborhood = neighborhood + ', ' + locality if locality else neighborhood
+    else:
+        neighborhood = locality
+
+    return {
+        'address': address,
+        'neighborhood': neighborhood
+    }
 
 
 def get_key_facts(lat, lng):
@@ -277,8 +333,9 @@ def get_demographics(lat, lng, radius, demographic_vector=None):
 
     # parse commute
     commute_demographics = demographics if demographic_vector else demographics["Current Year Workers, Transportation to Work"]
+    strip_header = re.compile("Current year workers, transportation to work: ", re.IGNORECASE)
     commute = {
-        key.replace("Current Year Workers, Transportation To Work: ", ""): value for key, value in commute_demographics.items()
+        strip_header.sub("", key): value for key, value in commute_demographics.items()
     }
 
     return {
@@ -400,8 +457,9 @@ def get_match_value(target, location):
         'race': 3.6,
         'gender': 3.6
     }
+    demo_weight_df = pd.DataFrame([demo_weight])
     # no need to renormalize, as this vector has already been normalized
-    match_vector["demo_error"] = match_vector[demo_weight.keys()].sum() / sum(demo_weight.values())
+    match_vector["demo_error"] = match_vector[list(demo_weight.keys())].dot(demo_weight_df.transpose()) / sum(demo_weight.values())
 
     # High growth (20% over 5 years) considered positive (could alternatively be calculated from EA data)
     growth = True if target["HouseholdGrowth2017-2022-1"] > 20 else False
@@ -468,3 +526,88 @@ def combine_demographics(my_location, target_location):
             sub_category_dict["target_location"] = sub_category_dict.pop("value")
 
     return target_location
+
+
+def get_preview_demographics(lat, lng, radius):
+
+    demographics = environics.get_demographics(
+        lat, lng, radius, matching.DEMO_DF, matching.BLOCK_DF, matching.DEMO_CATEGORIES)
+
+    median_age = round(demographics["Current Year Median Age"])
+    median_income = round(demographics["Current Year Median Household Income"], 2)
+
+    return {
+        'median_age': median_age,
+        'median_income': median_income
+    }
+
+
+def get_daytimepop(lat, lng, radius):
+    arcgis_details = arcgis.details(lat, lng, radius)
+    return arcgis_details['DaytimePop']
+
+
+def get_categories(place_id):
+
+    space = utils.DB_PROCESSED_SPACE.find_one({'place_id': place_id})
+
+    if not space:
+        space = _find_ommitted_place(place_id)
+
+    if 'foursquare_categories' not in space or len(space["foursquare_categories"]) == 0:
+        return []
+
+    categories = [category["category_name"] for category in space["foursquare_categories"]]
+    return categories
+
+
+def _find_ommitted_place(place_id):
+
+    print("Finding ommitted space - ", end=" ")
+    space = google.details(place_id)
+    if not space:
+        return None
+    name = space['name']
+    lat = space['geometry']['location']['lat']
+    lng = space['geometry']['location']['lng']
+    address = space['formatted_address']
+
+    print(name, "({})".format(place_id))
+
+    # Grab the four square categories for this location if they exist
+    foursquare_details = foursquare.find(name, lat, lng, address)
+    if foursquare_details:
+        foursquare_categories = [{
+            'category_name': category['name'],
+            'category_short_name': category['shortName'],
+            'primary': category['primary']
+        } for category in foursquare_details['categories']]
+        space['foursquare_categories'] = foursquare_categories
+
+    # TODO: Check if the space has sales data & query pitney if it doesnt
+    # space has been detailed and will be updated
+    space['detailed'] = True
+    try:
+        utils.DB_PROCESSED_SPACE.insert_one(space)
+    except:
+        print("error inserting likely due to duplicate")
+        return None
+
+    return space
+
+
+def get_personas(categories):
+
+    full_categories = utils.DB_CATEGORIES.find({'name': {'$in': categories}})
+
+    if not full_categories:
+        return []
+
+    personas = []
+    for category in full_categories:
+        if 'positive_personas' not in category:
+            continue
+
+        personas += category['positive_personas']
+
+    return personas

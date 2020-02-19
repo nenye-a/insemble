@@ -460,7 +460,7 @@ def weight_and_evaluate(processed_difference_df):
         'gender3': 2.6,
     }
     weight_df = pd.DataFrame([weight])
-    normalized_dataframe["error_sum"] = normalized_dataframe[weight.keys()].dot(weight_df.transpose()) / \
+    normalized_dataframe["error_sum"] = normalized_dataframe[list(weight.keys())].dot(weight_df.transpose()) / \
         sum(weight.values())
 
     return normalized_dataframe

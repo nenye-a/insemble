@@ -1,11 +1,12 @@
 import json
 import time
+import ast
 import threading
 import data.matching as matching
 import data.provider as provider
 from rest_framework import status, generics, permissions, serializers
 from rest_framework.response import Response
-from .tenant_serializers import TenantMatchSerializer, LocationDetailSerializer
+from .tenant_serializers import TenantMatchSerializer, LocationDetailSerializer, LocationSerializer
 from .celery import app as celery_app
 
 
@@ -16,6 +17,34 @@ The endpoints to access this interface is presented in the "urls.py"
 file.
 
 '''
+
+
+class AsynchronousAPI(generics.GenericAPIView):
+    """
+    Can be inherited by any other views in order to enable asynchronous functions.
+    """
+
+    # Takes a celery process and returns a threading task that will update
+    # result pool with the final items when the process completes.
+    # celery_process: celery task item that tracks celery progress
+    # result_pool: mutable list that will contain the item results when done
+    def _celery_listener(self, celery_process, result_pool):
+
+        def listen(process, dump):
+            while not process.ready():
+                # wait a fraction of a second prior to checking again
+                time.sleep(0.1)
+            dump.append(process.get(timeout=1))
+
+        return threading.Thread(target=listen, args=(celery_process, result_pool,))
+
+    def _register_tasks(self) -> None:
+        """
+        Register any celery tasks defined.
+        """
+        # example call:
+        # celery_app.register_task(self._get_nearby)
+        pass
 
 
 # FilterDetailApi - referenced by api/filter/
@@ -129,10 +158,19 @@ class TenantMatchAPI(generics.GenericAPIView):
                 validated_params['address'], name=validated_params['brand_name']
             )
         else:
-            # TODO: implement case that relies only on categories & income
-            # in the mean time, will return the matches from a default location
+            print("Match categories", validated_params['categories'])
+            # FIXME: change url parsing & parameters to better receive lists of information, current method is error prone
+            categories = [string.strip() for string in ast.literal_eval(validated_params['categories'][0])]
+            print(categories)
+            location = provider.get_representative_location(categories, validated_params['income'])
+            if not location:
+                return Response({
+                    'status': 400,
+                    'status_detail': ['No Categories Found']
+                }, status=status.HTTP_400_BAD_REQUEST)
+
             matches = matching.generate_matches(
-                "371 E 2nd Street, LA, CA"
+                location['address'], name=location['name']
             )
 
         # ensure that the response is an object. May not be necessary
@@ -149,7 +187,7 @@ class TenantMatchAPI(generics.GenericAPIView):
 
 
 # LocationDetailsApi - referenced by api/locationDetails/
-class LocationDetailsAPI(generics.GenericAPIView):
+class LocationDetailsAPI(AsynchronousAPI):
 
     """
 
@@ -213,7 +251,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
                 { ... same as above }
             ],
             demographics1: {
-                age: {          
+                age: {
                     <18: {
                         my_location: float,                                 (only provided if address is provided)
                         target_location: float,
@@ -261,8 +299,8 @@ class LocationDetailsAPI(generics.GenericAPIView):
                     associate: { ... same as above },
                     bachelor: { ... same as above },
                     masters: { ... same as above },
-                    professional: { ... same as above },                    
-                    doctorate: { ... same as above }                        
+                    professional: { ... same as above },
+                    doctorate: { ... same as above }
                 },
                 gender: {
                     male: {
@@ -293,7 +331,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
                 },
                 ... many more
             ],
-        },  
+        },
         property_details: {                                                 (only provided if property_details provided)
             3D_tour: url, (matterport media)                                (provided only when available)
             main_photo: url,
@@ -352,16 +390,18 @@ class LocationDetailsAPI(generics.GenericAPIView):
             my_demo5_listener.start()
 
         else:
-            # TODO: get the match details information for the categories. In the short term grabs details for
-            # a known address (similar to the matches)
 
-            temp_location = {
-                'address': "371 E 2nd Street, LA",
-                "brand_name": "Spitz",
-                "categories": ["Turkish Restaurant"]
-            }
+            categories = validated_params['my_location']['categories']
+            income = validated_params['my_location']['income']
+            print(categories)
+            my_location = provider.get_representative_location(categories, income)
+            if not my_location:
+                return Response({
+                    'status': 400,
+                    'status_detail': ['No Categories Found']
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-            l_process, my_location = self._get_location_details.delay(temp_location), []
+            l_process, my_location = self._get_location_details.delay(my_location, False), []
             my_location_listener = self._celery_listener(l_process, my_location)
             my_location_listener.start()
 
@@ -419,11 +459,20 @@ class LocationDetailsAPI(generics.GenericAPIView):
         target_demo3_listener.join()
         target_demo5_listener.join()
 
+        # remove commute from 1 and 5 mile (will use the 3 mile to fill)
+        target_demo1[0].pop('commute')
+        commute = target_demo3[0].pop('commute')
+        target_demo5[0].pop('commute')
+
         # combine demographics if comparing against existing address.
         if 'address' in validated_params['my_location']:
             my_demo1_listener.join()
             my_demo3_listener.join()
             my_demo5_listener.join()
+
+            my_demo1[0].pop('commute')
+            my_demo3[0].pop('commute')
+            my_demo5[0].pop('commute')
 
             demographics1 = provider.combine_demographics(my_demo1[0], target_demo1[0])
             demographics3 = provider.combine_demographics(my_demo3[0], target_demo3[0])
@@ -445,7 +494,7 @@ class LocationDetailsAPI(generics.GenericAPIView):
                 'match_value': match_values[0]['match'],
                 'affinities': match_values[0]['affinities'],
                 'key_facts': key_facts[0],
-                'commute': target_demo3[0].pop('commute'),
+                'commute': commute,
                 'top_personas': top_personas[0],
                 'demographics1': demographics1,
                 'demographics3': demographics3,
@@ -455,20 +504,6 @@ class LocationDetailsAPI(generics.GenericAPIView):
         }
 
         return Response(response, status=status.HTTP_200_OK)
-
-    # Takes a celery process and returns a threading task that will update
-    # result pool with the final items when the process completes.
-    # celery_process: celery task item that tracks celery progress
-    # result_pool: mutable list that will contain the item results when done
-    def _celery_listener(self, celery_process, result_pool):
-
-        def listen(process, dump):
-            while not process.ready():
-                # wait a fraction of a second prior to checking again
-                time.sleep(0.1)
-            dump.append(process.get(timeout=1))
-
-        return threading.Thread(target=listen, args=(celery_process, result_pool,))
 
     # location assumed to be the same structure as "my_location", and target_location assumed to be the
     # same structure as "target_location"
@@ -514,3 +549,181 @@ class LocationDetailsAPI(generics.GenericAPIView):
         celery_app.register_task(self._get_location_details)
         celery_app.register_task(self._get_personas)
         celery_app.register_task(self._get_key_facts)
+
+
+# LocationPreviewAPI - referenced by api/locationPreview/ | inherits from LocationDetailsAPI
+class LocationPreviewAPI(LocationDetailsAPI):
+    """
+
+    Provided the latitude and longitude of a location, will provide details for a preview.
+
+    parameters: {
+        my_location: {                          (required)
+            address: string,                    (required -> not required if categories are provided)
+            brand_name: string,                 (required -> not required if categories are provided)
+            categories: list[string],           (required)
+            income: {                           (required -> not required if brand_name and address provided)
+                min: int,                       (required if income provided)
+                max: int,
+            }
+        },
+        target_location: {                      (required, not used if property_id is provided)
+            lat: int,
+            lng: int,
+        },
+        property_id: string,                    (optional)
+    }
+
+    response: {
+        status: int (HTTP),
+        status_detail: string or list[string],
+        target_address: string,
+        target_neighborhoood: string,
+        DaytimePop_3mile: float,
+        median_income: float,
+        median_age: int
+    }
+
+    """
+
+    def get(self, request, *args, **kwargs):
+
+        self._register_tasks()
+
+        # validate input
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        validated_params = serializer.validated_data
+
+        # TODO: determine match value (for next generation preview)
+
+        target_lat = validated_params["target_location"]["lat"]
+        target_lng = validated_params["target_location"]["lng"]
+
+        # get demographic details asynchronously
+        d_process, preview_demographics = self._get_preview_demographics.delay(target_lat, target_lng, 3), []
+        demo_listener = self._celery_listener(d_process, preview_demographics)
+        demo_listener.start()
+
+        location = provider.get_address_neighborhood(target_lat, target_lng)
+        address = None
+        neighborhood = None
+
+        if location:
+            address = location['address']
+            neighborhood = location['neighborhood']
+
+        daytime_pop_3mile = provider.get_daytimepop(target_lat, target_lng, 3)
+
+        demo_listener.join()
+
+        response = {
+            'status': 200,
+            'status_detail': "Success",
+            'target_address': address,
+            'target_neighborhood': neighborhood,
+            'DaytimePop_3mile': daytime_pop_3mile,
+            'median_income': preview_demographics[0]['median_income'],
+            'median_age ': preview_demographics[0]['median_age']
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+
+    @staticmethod
+    @celery_app.task
+    def _get_preview_demographics(lat, lng, radius):
+        return provider.get_preview_demographics(lat, lng, radius)
+
+    def _register_tasks(self) -> None:
+        celery_app.register_task(self._get_preview_demographics)
+
+
+# AutoPopulateAPI - referenced by /api/autoPopulate/
+class AutoPopulateAPI(AsynchronousAPI):
+    """
+
+    Provided an address and brandname, will provide estimated age and population filters.
+
+    parameters: {
+        address: string,            (required)
+        brand_name: string,         (required)
+    }
+
+    response: {
+        categories: list[string],
+        personas: list[string],
+        income: {
+            min: int,
+            max: int
+        },
+        age: {
+            min: int,
+            max: int
+        },
+    }
+
+    """
+
+    permission_classes = [
+        permissions.AllowAny
+    ]
+    serializer_class = LocationSerializer
+
+    def get(self, request, *args, **kwargs):
+
+        self._register_tasks()
+
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        validated_params = serializer.validated_data
+
+        location = provider.get_location(validated_params['address'], validated_params['brand_name'])
+        my_lat = location['lat']
+        my_lng = location['lng']
+        place_id = location['place_id']
+
+        # get demographic details asynchronously
+        d_process, preview_demographics = self._get_preview_demographics.delay(my_lat, my_lng, 3), []
+        demo_listener = self._celery_listener(d_process, preview_demographics)
+        demo_listener.start()
+
+        # Get categories (from foursquare)
+        categories = provider.get_categories(place_id)
+        # Get personas (from spatial taxonomy)
+        personas = provider.get_personas(categories)
+
+        # get demographic_filters
+        demo_listener.join()
+        median_income = preview_demographics[0]['median_income']
+        median_age = preview_demographics[0]['median_age']
+
+        # get income | TODO: actually do this using some sort of learning
+        min_income = max(0, round(median_income - (median_income % 1000)) - 25000)  # only send in the thousands
+        max_income = min(200000, round(median_income - (median_income % 1000)) + 25000)
+
+        # get age | TODO: actually do this using some sort of learning
+        min_age = max(5, round(median_age) - 10)
+        max_age = min(65, round(median_age) + 10)
+
+        response = {
+            'categories': categories,
+            'personas': personas,
+            'income': {
+                'min': min_income,
+                'max': max_income
+            },
+            'age': {
+                'min': min_age,
+                'max': max_age
+            }
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+
+    @staticmethod
+    @celery_app.task
+    def _get_preview_demographics(lat, lng, radius):
+        return provider.get_preview_demographics(lat, lng, radius)
+
+    def _register_tasks(self) -> None:
+        celery_app.register_task(self._get_preview_demographics)

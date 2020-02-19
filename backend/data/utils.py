@@ -32,6 +32,7 @@ DB_SPATIAL_CATS = DB_SPACE.spatial_categories
 DB_DEMOGRAPHIC_CATS = DB_SPACE.demographic_categories
 DB_FOURSQUARE = DB_SPACE.foursquare_categories
 DB_SPATIAL_TAXONOMY = DB_SPACE.spatial_taxonomy
+DB_CATEGORIES = DB_SPACE.categories
 
 
 # simple unique index of a pymongo database collection
