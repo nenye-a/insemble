@@ -104,89 +104,73 @@ export default function MainMap() {
     EditBrand,
     EditBrandVariables
   >(EDIT_BRAND);
+
   let onFilterChange = (state: SideBarFiltersState) => {
     let { demographics, properties, openFilterName } = state;
     let foundObj = [...demographics, ...properties].find((item) => item.name === openFilterName);
 
     if (foundObj) {
-      switch (foundObj.name) {
+      let { name, selectedValues } = foundObj;
+      let affectedDemographicsState = {};
+      let affectedPropertyState = {};
+      switch (name) {
         case DEMOGRAPHICS_CATEGORIES.personas: {
-          setFilters({
-            ...filters,
-            demographics: {
-              ...filters.demographics,
-              personas: foundObj.selectedValues,
-            },
-          });
+          affectedDemographicsState = { personas: selectedValues };
           break;
         }
         case DEMOGRAPHICS_CATEGORIES.commute: {
-          setFilters({
-            ...filters,
-            demographics: {
-              ...filters.demographics,
-              commute: foundObj.selectedValues,
-            },
-          });
+          affectedDemographicsState = { commute: selectedValues };
           break;
         }
         case DEMOGRAPHICS_CATEGORIES.education: {
-          setFilters({
-            ...filters,
-            demographics: {
-              ...filters.demographics,
-              education: foundObj.selectedValues,
-            },
-          });
+          affectedDemographicsState = { education: selectedValues };
           break;
         }
         case DEMOGRAPHICS_CATEGORIES.income: {
-          setFilters({
-            ...filters,
-            demographics: {
-              ...filters.demographics,
-              minIncome: Number(foundObj.selectedValues[0]),
-              maxIncome: Number(foundObj.selectedValues[1]),
-            },
-          });
+          affectedDemographicsState = {
+            minIncome: !isNaN ? Number(selectedValues[0]) : null,
+            maxIncome: !isNaN ? Number(selectedValues[1]) : null,
+          };
           break;
         }
         case DEMOGRAPHICS_CATEGORIES.age: {
-          setFilters({
-            ...filters,
-            demographics: {
-              ...filters.demographics,
-              minAge: Number(foundObj.selectedValues[0]),
-              maxAge: Number(foundObj.selectedValues[1]),
-            },
-          });
+          affectedDemographicsState = {
+            minAge: !isNaN ? Number(selectedValues[0]) : null,
+            maxAge: !isNaN ? Number(selectedValues[1]) : null,
+          };
           break;
         }
         case PROPERTIES_CATEGORIES.rent: {
-          setFilters({
-            ...filters,
-            property: {
-              ...filters.property,
-              minRent: Number(foundObj.selectedValues[0]),
-              maxRent: Number(foundObj.selectedValues[1]),
-            },
-          });
+          affectedPropertyState = {
+            minRent: !isNaN ? Number(selectedValues[0]) : null,
+            maxRent: !isNaN ? Number(selectedValues[1]) : null,
+          };
+
           break;
         }
         case PROPERTIES_CATEGORIES.sqft: {
+          // TODO: edit state when property filter is unhide
           break;
         }
         case PROPERTIES_CATEGORIES.propertyType: {
-          setFilters({
-            ...filters,
-            property: {
-              ...filters.property,
-              spaceType: foundObj.selectedValues,
-            },
-          });
+          affectedPropertyState = {
+            spaceType: selectedValues,
+          };
+
           break;
         }
       }
+      setFilters({
+        ...filters,
+        demographics: {
+          ...filters.demographics,
+          ...affectedDemographicsState,
+        },
+        property: {
+          ...filters.property,
+          ...affectedPropertyState,
+        },
+      });
     }
   };
 
