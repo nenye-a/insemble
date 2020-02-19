@@ -1,7 +1,7 @@
 import { objectType } from 'nexus';
 
-export let AffinitiesOverview = objectType({
-  name: 'AffinitiesOverview',
+export let AffinitiesDeepDive = objectType({
+  name: 'AffinitiesDeepDive',
   definition(t) {
     t.boolean('growth');
     t.boolean('personas');
@@ -10,8 +10,8 @@ export let AffinitiesOverview = objectType({
   },
 });
 
-export let KeyFactsOverview = objectType({
-  name: 'KeyFactsOverview',
+export let KeyFactsDeepDive = objectType({
+  name: 'KeyFactsDeepDive',
   definition(t) {
     t.int('mile');
     t.float('daytimePop');
@@ -25,8 +25,8 @@ export let KeyFactsOverview = objectType({
   },
 });
 
-export let CommuteOverview = objectType({
-  name: 'CommuteOverview',
+export let CommuteDeepDive = objectType({
+  name: 'CommuteDeepDive',
   definition(t) {
     t.int('publicTransport');
     t.int('bicycle');
@@ -37,8 +37,8 @@ export let CommuteOverview = objectType({
   },
 });
 
-export let PersonaOverview = objectType({
-  name: 'PersonaOverview',
+export let PersonaDeepDive = objectType({
+  name: 'PersonaDeepDive',
   definition(t) {
     t.float('percentile');
     t.string('name');
@@ -170,8 +170,8 @@ export let GenderDemographic = objectType({
   },
 });
 
-export let DemographicOverview = objectType({
-  name: 'DemographicOverview',
+export let DemographicDeepDive = objectType({
+  name: 'DemographicDeepDive',
   definition(t) {
     t.field('age', {
       type: 'AgeDemographic',
@@ -191,8 +191,8 @@ export let DemographicOverview = objectType({
   },
 });
 
-export let NearbyOverview = objectType({
-  name: 'NearbyOverview',
+export let NearbyDeepDive = objectType({
+  name: 'NearbyDeepDive',
   definition(t) {
     t.float('lat');
     t.float('lng');
@@ -215,29 +215,29 @@ export let DeepDiveResultType = objectType({
   definition(t) {
     t.float('matchValue');
     t.field('affinities', {
-      type: 'AffinitiesOverview',
+      type: 'AffinitiesDeepDive',
     });
     t.field('keyFacts', {
-      type: 'KeyFactsOverview',
+      type: 'KeyFactsDeepDive',
     });
     t.field('commute', {
-      type: 'CommuteOverview',
+      type: 'CommuteDeepDive',
     });
     t.field('topPersonas', {
-      type: 'PersonaOverview',
+      type: 'PersonaDeepDive',
       list: true,
     });
     t.field('demographics1', {
-      type: 'DemographicOverview',
+      type: 'DemographicDeepDive',
     });
     t.field('demographics3', {
-      type: 'DemographicOverview',
+      type: 'DemographicDeepDive',
     });
     t.field('demographics5', {
-      type: 'DemographicOverview',
+      type: 'DemographicDeepDive',
     });
     t.field('nearby', {
-      type: 'NearbyOverview',
+      type: 'NearbyDeepDive',
       list: true,
     });
   },
