@@ -31,6 +31,7 @@ import SvgAge from '../../components/icons/age';
 import SvgPsychographic from '../../components/icons/psychographic';
 import SvgCommute from '../../components/icons/commute';
 import SvgEducation from '../../components/icons/education';
+import SvgEthnicity from '../../components/icons/ethnicity';
 import SvgRent from '../../components/icons/rent';
 import SvgSqft from '../../components/icons/sqft';
 import SvgPropertyType from '../../components/icons/property-type';
@@ -271,6 +272,7 @@ export const DEMOGRAPHICS_CATEGORIES = {
   personas: 'Personas',
   commute: 'Commute',
   education: 'Education',
+  ethnicity: 'Ethnicity',
 };
 
 export const PROPERTIES_CATEGORIES = {
@@ -309,6 +311,12 @@ const DEMOGRAPHIC_OPTIONS: Array<FilterObj> = [
     icon: SvgEducation,
     selectedValues: [],
     type: FilterType.SEARCH_SELECTION,
+  },
+  {
+    name: DEMOGRAPHICS_CATEGORIES.ethnicity,
+    icon: SvgEthnicity,
+    selectedValues: [],
+    type: FilterType.SELECTION,
   },
 ];
 
