@@ -2,7 +2,7 @@ import React, { useState, Dispatch, useEffect } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 
-import { View, Alert, Label, Button, Text } from '../../core-ui';
+import { View, Alert, Label, Button, Text, TextInput } from '../../core-ui';
 import { Filter } from '../../components';
 import { MUTED_TEXT_COLOR } from '../../constants/colors';
 import { FONT_SIZE_XSMALL, FONT_SIZE_SMALL } from '../../constants/theme';
@@ -41,6 +41,7 @@ export default function TenantTargetCustomers(props: Props) {
   let [selectedEducations, setSelectedEducations] = useState<Array<string>>(
     targetCustomers.educations || []
   );
+  let [minDaytimePopulation, setMinDaytimePopulation] = useState('');
   let [[minAge, maxAge], setSelectedAgeRange] = useState<Array<number>>([
     targetCustomers.minAge || INTIIAL_MIN_AGE,
     targetCustomers.maxAge || INTIIAL_MAX_AGE,
@@ -65,6 +66,7 @@ export default function TenantTargetCustomers(props: Props) {
           noIncomePreference,
           noPersonasPreference,
           noEducationsPreference,
+          minDaytimePopulation,
         },
       },
     });
@@ -81,6 +83,7 @@ export default function TenantTargetCustomers(props: Props) {
     selectedPersonas.length,
     selectedEducations,
     noEducationsPreference,
+    minDaytimePopulation,
   ]);
 
   return (
@@ -192,12 +195,23 @@ export default function TenantTargetCustomers(props: Props) {
           disabled={editCriteriaDisabled}
         />
       )}
+      <MinDaytimePopulationInput
+        onChange={(e) => {
+          setMinDaytimePopulation(e.target.value);
+        }}
+        label="Minimum Daytime Population"
+        placeholder="0"
+      />
     </Container>
   );
 }
 
 const Container = styled(View)`
   padding: 24px 48px;
+`;
+
+const MinDaytimePopulationInput = styled(TextInput)`
+  width: 100px;
 `;
 
 const RowedView = styled(View)`
