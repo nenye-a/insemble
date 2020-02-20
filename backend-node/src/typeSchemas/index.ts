@@ -12,3 +12,4 @@ export * from './Brand';
 export * from './LocationType';
 export * from './BrandThumbnail';
 export * from './EditProfileInput';
+export * from './LocationPreviewResult';
