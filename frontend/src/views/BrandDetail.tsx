@@ -77,7 +77,7 @@ export default function BrandDetail() {
 
       {!isLoading && (
         <MultiSelectLocation
-          label="Where will you open your locations?"
+          label="Where will you open your locations? (Cities, regions, or counties)"
           onSelected={(locations) => {
             setSelectedLocations(locations);
           }}
