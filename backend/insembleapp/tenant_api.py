@@ -82,7 +82,7 @@ class FilterDetailAPI(generics.GenericAPIView):
             'education': matching.EDUCATION_LIST,
             'ethnicity': matching.RACE_LIST,
             'commute': matching.TRANSPORT_LIST,
-            'type': ["Retail", "Restaurant"],
+            'type': ["Free standing, Shopping Center, Inline, Endcap, and Pedestrian"],
             'equipment': provider.EQUIPMENT_LIST
         }
         return Response(response, status=status.HTTP_200_OK)
