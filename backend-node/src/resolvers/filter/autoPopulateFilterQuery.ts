@@ -10,7 +10,7 @@ let autoPopulateFilterResolver: FieldResolver<
   'autoPopulateFilter'
 > = async (_: Root, { address, brandName }, _context: Context) => {
   let autoPopulateResponse: AutoPopulateResponse = (
-    await axios.get(`${LEGACY_API_URI}/api/autoPopulate`, {
+    await axios.get(`${LEGACY_API_URI}/api/autoPopulate/`, {
       params: {
         address: address,
         brand_name: brandName,
