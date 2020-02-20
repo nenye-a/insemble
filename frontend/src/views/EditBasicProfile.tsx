@@ -18,6 +18,7 @@ import { THEME_COLOR } from '../constants/colors';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../constants/theme';
 import { GET_TENANT_PROFILE, EDIT_TENANT_PROFILE } from '../graphql/queries/server/profile';
 import { EditTenantProfile, EditTenantProfileVariables } from '../generated/EditTenantProfile';
+import { validateUSPhoneNumber } from '../utils/validation';
 
 export default function BasicProfile() {
   let [profileEditable, setProfileEditable] = useState(false);
@@ -144,7 +145,11 @@ export default function BasicProfile() {
               width: `calc(50% - ${(SPACING_WIDTH / 2).toString() + 'px'})`,
             }}
             name="phoneNumber"
-            ref={register}
+            ref={register({
+              ...(watch('phoneNumber') && {
+                validate: (val) => validateUSPhoneNumber(val) || 'Invalid phone number',
+              }),
+            })}
             // TODO: validate US phone number
             errorMessage={(errors?.phoneNumber as FieldError)?.message || ''}
           />

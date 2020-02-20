@@ -19,7 +19,7 @@ import { GET_TENANT_PROFILE } from '../../graphql/queries/server/profile';
 >>>>>>> connect profile card
 
 export default function ProfileCard() {
-  let { loading, data, error } = useQuery<GetTenantProfile>(GET_TENANT_PROFILE);
+  let { loading, data } = useQuery<GetTenantProfile>(GET_TENANT_PROFILE);
   let name = data?.profileTenant.firstName + ' ' + data?.profileTenant.lastName;
   let company = data?.profileTenant.company || '';
   let title = data?.profileTenant.title || '';
