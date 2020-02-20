@@ -175,6 +175,7 @@ class TenantMatchAPI(generics.GenericAPIView):
 
         # ensure that the response is an object. May not be necessary
         matches = json.loads(matches)
+
         response = {
             'status': status.HTTP_200_OK,
             'status_detail': "Success",

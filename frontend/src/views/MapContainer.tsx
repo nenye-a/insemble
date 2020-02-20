@@ -259,7 +259,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         {heatmapData && (
           <HeatMapLayer
             data={heatmapData}
-            options={{ data: heatmapData, radius: 20, opacity: 1 }}
+            options={{ data: heatmapData, radius: 0.006, opacity: 0.5, dissipating: false }}
           />
         )}
 
