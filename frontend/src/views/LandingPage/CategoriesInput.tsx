@@ -2,52 +2,33 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useQuery } from 'react-fetching-library';
 import { useHistory } from 'react-router-dom';
-import { connect } from 'react-redux';
 
-import { View, TouchableOpacity, ContainedTextInput, ClickAway } from '../../core-ui';
+import { TouchableOpacity, ContainedTextInput, ClickAway } from '../../core-ui';
 import { Filter } from '../../components';
-import { loadMap } from '../../redux/actions/space';
 
-type Props = {
-  loadMap: (hasLocation: boolean, income: number, selectedCategories: Array<string>) => void;
-};
-
-function CategoriesInput(props: Props) {
+function CategoriesInput() {
   let history = useHistory();
   let { loading, payload } = useQuery({
     method: 'GET',
     endpoint: '/api/category/',
   });
-  let [income, setIncome] = useState('');
   let [categoryListOpen, toggleCategoryList] = useState(false);
   let [selectedCategories, setSelectedCategories] = useState<Array<string>>([]);
 
   return (
     <>
-      <Container flex>
-        <TouchableOpacity onPress={() => toggleCategoryList(!categoryListOpen)}>
-          <ContainedTextInput
-            disabled
-            placeholder={loading ? 'Loading' : 'Enter store categories'}
-            value={selectedCategories.join(', ')}
-          />
-        </TouchableOpacity>
-        <TargetIncomeContainer flex>
-          <ContainedTextInput
-            placeholder="Enter target househould income categories"
-            buttonText="Find Locations"
-            value={income}
-            onChange={(e) => {
-              setIncome(e.target.value);
-            }}
-            onSubmit={() => {
-              // TODO: validate input
-              props.loadMap(false, Number(income), selectedCategories);
-              history.push('/verify', { targetIncome: income, categories: selectedCategories });
-            }}
-          />
-        </TargetIncomeContainer>
-      </Container>
+      <TouchableOpacity onPress={() => toggleCategoryList(!categoryListOpen)}>
+        <ContainedTextInput
+          placeholder={loading ? 'Loading' : 'Enter store categories'}
+          buttonText="Find Locations"
+          value={selectedCategories.join(', ')}
+          onSubmit={() => {
+            history.push('/verify', {
+              categories: selectedCategories,
+            });
+          }}
+        />
+      </TouchableOpacity>
       {categoryListOpen && payload && (
         <ClickAway onClickAway={() => toggleCategoryList(false)}>
           <FilterContainer
@@ -72,21 +53,7 @@ function CategoriesInput(props: Props) {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let mapStateToProps = (state: any) => ({
-  hasLocation: state.space.hasLocation,
-});
-
-export default connect(mapStateToProps, { loadMap })(CategoriesInput);
-
-const Container = styled(View)`
-  flex-direction: row;
-  width: 100%;
-`;
-
-const TargetIncomeContainer = styled(View)`
-  margin-left: 8px;
-`;
+export default CategoriesInput;
 
 const FilterContainer = styled(Filter)`
   margin: 8px 0;
