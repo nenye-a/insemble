@@ -1,10 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
+
 import InsembleLogo from '../common/InsembleLogo';
-import { TouchableOpacity, Button, View } from '../../core-ui';
+import { TouchableOpacity, Button, View, Avatar } from '../../core-ui';
 import { WHITE, HEADER_BORDER_COLOR, THEME_COLOR } from '../../constants/colors';
 import { NAVBAR_HEIGHT } from '../../constants/theme';
-import { useHistory } from 'react-router-dom';
+import { PROFILE_TENANT } from '../../graphql/queries/server/profile';
 
 type Props = {
   showButton?: boolean;
@@ -12,6 +15,8 @@ type Props = {
 
 export default function HeaderNavigationBar(props: Props) {
   let history = useHistory();
+  let { data } = useQuery(PROFILE_TENANT);
+  let avatar = data.avatar;
   return (
     <Container>
       <TouchableOpacity
@@ -21,23 +26,30 @@ export default function HeaderNavigationBar(props: Props) {
       >
         <InsembleLogo color="purple" />
       </TouchableOpacity>
-      {props.showButton && (
-        <RowView>
-          <LogIn
-            mode="secondary"
-            text="Log In"
-            textProps={{ style: { color: THEME_COLOR } }}
-            onPress={() => {
-              history.push('/login');
-            }}
-          />
-          <Button
-            text="Sign Up"
-            onPress={() => {
-              history.push('/signup');
-            }}
-          />
-        </RowView>
+
+      {avatar ? (
+        <Avatar size="medium" image={avatar} />
+      ) : (
+        <>
+          {props.showButton ? (
+            <RowView>
+              <LogIn
+                mode="secondary"
+                text="Log In"
+                textProps={{ style: { color: THEME_COLOR } }}
+                onPress={() => {
+                  history.push('/login');
+                }}
+              />
+              <Button
+                text="Sign Up"
+                onPress={() => {
+                  history.push('/signup');
+                }}
+              />
+            </RowView>
+          ) : null}
+        </>
       )}
     </Container>
   );
