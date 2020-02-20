@@ -41,7 +41,7 @@ export default function TenantTargetCustomers(props: Props) {
   let [selectedEducations, setSelectedEducations] = useState<Array<string>>(
     targetCustomers.educations || []
   );
-  let [minDaytimePopulation, setMinDaytimePopulation] = useState('');
+  let [minDaytimePopulation, setMinDaytimePopulation] = useState('0');
   let [[minAge, maxAge], setSelectedAgeRange] = useState<Array<number>>([
     targetCustomers.minAge || INTIIAL_MIN_AGE,
     targetCustomers.maxAge || INTIIAL_MAX_AGE,
@@ -201,6 +201,7 @@ export default function TenantTargetCustomers(props: Props) {
         }}
         label="Minimum Daytime Population"
         placeholder="0"
+        errorMessage={!minDaytimePopulation ? 'Field should not be empty' : ''}
       />
     </Container>
   );
