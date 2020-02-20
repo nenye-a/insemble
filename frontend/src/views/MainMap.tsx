@@ -1,9 +1,9 @@
 import React, { useState, createContext, useEffect } from 'react';
 import styled from 'styled-components';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
 
-import { View, Button, Text, LoadingIndicator } from '../core-ui';
+import { View, Button, Text, LoadingIndicator, Alert } from '../core-ui';
 import AvailableProperties from './MapPage/AvailableProperties';
 import SideBarFilters, {
   DEMOGRAPHICS_CATEGORIES,
@@ -13,6 +13,7 @@ import HeaderFilterBar from './MapPage/HeaderFilterBar';
 import MapContainer from './MapContainer';
 import DeepDiveModal from './DeepDivePage/DeepDiveModal';
 import { GET_TENANT_MATCHES_DATA } from '../graphql/queries/server/matches';
+import { EDIT_BRAND } from '../graphql/queries/server/brand';
 import { WHITE, THEME_COLOR, HEADER_BORDER_COLOR } from '../constants/colors';
 import { FONT_WEIGHT_MEDIUM, FONT_SIZE_LARGE } from '../constants/theme';
 import { TenantMatches, TenantMatchesVariables } from '../generated/TenantMatches';
@@ -20,6 +21,8 @@ import { TenantMatches, TenantMatchesVariables } from '../generated/TenantMatche
 import SvgPropertyLocation from '../components/icons/property-location';
 import { useGoogleMaps } from '../utils';
 import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer';
+import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
+import { isEqual } from '../utils/isEqual';
 
 type BrandId = {
   brandId: string;
@@ -85,98 +88,90 @@ export default function MainMap() {
   let { isLoading } = useGoogleMaps();
   let params = useParams<BrandId>();
   let { brandId } = params;
-  let { data: tenantMatchesData, loading } = useQuery<TenantMatches, TenantMatchesVariables>(
-    GET_TENANT_MATCHES_DATA,
-    {
-      variables: {
-        brandId,
-      },
-    }
-  );
+  let {
+    data: tenantMatchesData,
+    loading,
+    error: tenantMatchesError,
+    refetch: tenantMatchesRefetch,
+  } = useQuery<TenantMatches, TenantMatchesVariables>(GET_TENANT_MATCHES_DATA, {
+    variables: {
+      brandId,
+    },
+    fetchPolicy: 'network-only',
+    notifyOnNetworkStatusChange: true,
+  });
+
+  let [editBrand, { loading: editBrandLoading, error: editBrandError }] = useMutation<
+    EditBrand,
+    EditBrandVariables
+  >(EDIT_BRAND);
 
   let onFilterChange = (state: SideBarFiltersState) => {
     let { demographics, properties, openFilterName } = state;
     let foundObj = [...demographics, ...properties].find((item) => item.name === openFilterName);
 
     if (foundObj) {
-      switch (foundObj.name) {
+      let { name, selectedValues } = foundObj;
+      let affectedDemographicsState = {};
+      let affectedPropertyState = {};
+      switch (name) {
         case DEMOGRAPHICS_CATEGORIES.personas: {
-          setFilters({
-            ...filters,
-            demographics: {
-              ...filters.demographics,
-              personas: foundObj.selectedValues,
-            },
-          });
+          affectedDemographicsState = { personas: selectedValues };
           break;
         }
         case DEMOGRAPHICS_CATEGORIES.commute: {
-          setFilters({
-            ...filters,
-            demographics: {
-              ...filters.demographics,
-              commute: foundObj.selectedValues,
-            },
-          });
+          affectedDemographicsState = { commute: selectedValues };
           break;
         }
         case DEMOGRAPHICS_CATEGORIES.education: {
-          setFilters({
-            ...filters,
-            demographics: {
-              ...filters.demographics,
-              education: foundObj.selectedValues,
-            },
-          });
+          affectedDemographicsState = { education: selectedValues };
           break;
         }
         case DEMOGRAPHICS_CATEGORIES.income: {
-          setFilters({
-            ...filters,
-            demographics: {
-              ...filters.demographics,
-              minIncome: Number(foundObj.selectedValues[0]),
-              maxIncome: Number(foundObj.selectedValues[1]),
-            },
-          });
+          affectedDemographicsState = {
+            minIncome: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[0]) : null,
+            maxIncome: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[1]) : null,
+          };
           break;
         }
         case DEMOGRAPHICS_CATEGORIES.age: {
-          setFilters({
-            ...filters,
-            demographics: {
-              ...filters.demographics,
-              minAge: Number(foundObj.selectedValues[0]),
-              maxAge: Number(foundObj.selectedValues[1]),
-            },
-          });
+          affectedDemographicsState = {
+            minAge: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[0]) : null,
+            maxAge: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[1]) : null,
+          };
           break;
         }
         case PROPERTIES_CATEGORIES.rent: {
-          setFilters({
-            ...filters,
-            property: {
-              ...filters.property,
-              minRent: Number(foundObj.selectedValues[0]),
-              maxRent: Number(foundObj.selectedValues[1]),
-            },
-          });
+          affectedPropertyState = {
+            minRent: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[0]) : null,
+            maxRent: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[1]) : null,
+          };
+
           break;
         }
         case PROPERTIES_CATEGORIES.sqft: {
+          // TODO: edit state when property filter is unhide
           break;
         }
         case PROPERTIES_CATEGORIES.propertyType: {
-          setFilters({
-            ...filters,
-            property: {
-              ...filters.property,
-              spaceType: foundObj.selectedValues,
-            },
-          });
+          affectedPropertyState = {
+            spaceType: selectedValues,
+          };
+
           break;
         }
       }
+      setFilters({
+        ...filters,
+        demographics: {
+          ...filters.demographics,
+          ...affectedDemographicsState,
+        },
+        property: {
+          ...filters.property,
+          ...affectedPropertyState,
+        },
+      });
     }
   };
 
@@ -186,6 +181,58 @@ export default function MainMap() {
       categories,
     });
   };
+
+  let onPublishChangesPress = async () => {
+    let { demographics, categories, property } = filters;
+    let { minIncome, maxIncome, minAge, maxAge, personas, commute, education } = demographics;
+    let { minSize, maxSize, minRent, maxRent, spaceType } = property;
+    let result = await editBrand({
+      variables: {
+        filter: {
+          categories,
+          personas,
+          minAge: Number(minAge),
+          maxAge: Number(maxAge),
+          minIncome: Number(minIncome),
+          maxIncome: Number(maxIncome),
+          minSize,
+          maxSize,
+          minRent,
+          maxRent,
+          spaceType,
+          commute,
+          education,
+        },
+        brandId,
+      },
+    });
+    if (result.data?.editBrand) {
+      tenantMatchesRefetch({ brandId });
+    }
+  };
+
+  let filtersAreEqual = isEqual(
+    {
+      categories: tenantMatchesData?.tenantMatches.categories,
+      demographics: {
+        minIncome: tenantMatchesData?.tenantMatches.minIncome,
+        maxIncome: tenantMatchesData?.tenantMatches.maxIncome,
+        minAge: tenantMatchesData?.tenantMatches.minAge,
+        maxAge: tenantMatchesData?.tenantMatches.maxAge,
+        personas: tenantMatchesData?.tenantMatches.personas,
+        commute: tenantMatchesData?.tenantMatches.commute,
+        education: tenantMatchesData?.tenantMatches.education,
+      },
+      property: {
+        minRent: tenantMatchesData?.tenantMatches.minRent,
+        maxRent: tenantMatchesData?.tenantMatches.maxRent,
+        minSize: tenantMatchesData?.tenantMatches.minSize,
+        maxSize: tenantMatchesData?.tenantMatches.maxSize,
+        spaceType: tenantMatchesData?.tenantMatches.spaceType,
+      },
+    },
+    filters
+  );
 
   useEffect(() => {
     if (tenantMatchesData) {
@@ -240,9 +287,13 @@ export default function MainMap() {
           onClose={() => toggleDeepDiveModal(!deepDiveModalVisible)}
         />
         {!isLoading && tenantMatchesData && (
-          <HeaderFilterBar categories={tenantMatchesData.tenantMatches.categories} />
+          <HeaderFilterBar
+            categories={tenantMatchesData.tenantMatches.categories}
+            onPublishChangesPress={onPublishChangesPress}
+            publishButtonDisabled={filtersAreEqual}
+          />
         )}
-        {loading && (
+        {(loading || editBrandLoading) && (
           <LoadingOverlay>
             <LoadingIndicator visible={true} color="white" size="large" />
             <Text fontSize={FONT_SIZE_LARGE} color={WHITE}>
@@ -250,6 +301,8 @@ export default function MainMap() {
             </Text>
           </LoadingOverlay>
         )}
+        <Alert visible={!!tenantMatchesError} text={tenantMatchesError?.message || ''} />
+        <Alert visible={!!editBrandError} text={editBrandError?.message || ''} />
         <Container flex>
           <ShowPropertyButton
             mode="secondary"

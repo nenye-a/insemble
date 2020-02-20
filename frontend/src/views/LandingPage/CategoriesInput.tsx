@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useQuery } from 'react-fetching-library';
+import { useQuery } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
 import { TouchableOpacity, ContainedTextInput, ClickAway } from '../../core-ui';
 import { Filter } from '../../components';
+import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
+import { Categories } from '../../generated/Categories';
 
 function CategoriesInput() {
   let history = useHistory();
-  let { loading, payload } = useQuery({
-    method: 'GET',
-    endpoint: '/api/category/',
-  });
+  let { loading, data } = useQuery<Categories>(GET_CATEGORIES);
   let [categoryListOpen, toggleCategoryList] = useState(false);
   let [selectedCategories, setSelectedCategories] = useState<Array<string>>([]);
 
@@ -29,13 +28,13 @@ function CategoriesInput() {
           }}
         />
       </TouchableOpacity>
-      {categoryListOpen && payload && (
+      {categoryListOpen && data && (
         <ClickAway onClickAway={() => toggleCategoryList(false)}>
           <FilterContainer
             visible
             search
             selectedOptions={selectedCategories}
-            allOptions={payload}
+            allOptions={data.categories}
             onUnSelect={(tag: string) => {
               let newTagList = selectedCategories.filter((item) => item !== tag);
               setSelectedCategories(newTagList);

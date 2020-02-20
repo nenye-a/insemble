@@ -21,11 +21,14 @@ type PlaceResult = google.maps.places.PlaceResult;
 
 type Props = {
   categories?: Array<string>;
+  onPublishChangesPress?: () => void;
+  publishButtonDisabled?: boolean;
 };
 
 export default function HeaderFilterBar(props: Props) {
+  let { categories, onPublishChangesPress, publishButtonDisabled } = props;
   let [selectedDropdownValue, setSelectedDropdownValue] = useState<string>('Recommended');
-  let [selectedOptions, setSelectedOptions] = useState<Array<string>>(props.categories || []);
+  let [selectedOptions, setSelectedOptions] = useState<Array<string>>(categories || []);
   let { data: categoryData, loading: categoryLoading } = useQuery<Categories>(GET_CATEGORIES);
   let { onCategoryChange } = useContext(TenantMatchesContext);
   let { getState } = useStore();
@@ -115,7 +118,11 @@ export default function HeaderFilterBar(props: Props) {
           selectedOption={selectedDropdownValue}
           onSelect={(newValue: string) => setSelectedDropdownValue(newValue)}
         />
-        <SaveButton text="Publish Changes" />
+        <SaveButton
+          text="Publish Changes"
+          onPress={onPublishChangesPress}
+          disabled={publishButtonDisabled}
+        />
       </RowedView>
       <LocationInputContainer
         icon
