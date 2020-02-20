@@ -2,7 +2,7 @@ import { mutationField, arg } from 'nexus';
 import bcrypt from 'bcrypt';
 
 import { Context } from 'serverTypes';
-import { createTenantSession } from '../../helpers/auth';
+import { createSession } from '../../helpers/auth';
 import { createBrandResolver } from '../brand/createBrandMutation';
 
 export let registerTenant = mutationField('registerTenant', {
@@ -41,7 +41,7 @@ export let registerTenant = mutationField('registerTenant', {
       );
     }
     return {
-      token: createTenantSession(createdTenant),
+      token: createSession(createdTenant, 'TENANT'),
       tenant: createdTenant,
       brandId,
     };

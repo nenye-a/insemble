@@ -13,3 +13,5 @@
 20200217175050-revert-name-change-back-to-address
 20200218125929-add-tenant-to-brand-model
 20200218163644-add-phone-number-on-tenant-model
+20200219172155-add-landlord
+20200219174008-add-landlord-session

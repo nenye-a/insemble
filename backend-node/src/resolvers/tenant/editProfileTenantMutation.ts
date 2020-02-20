@@ -48,7 +48,7 @@ let editProfileResolver: FieldResolver<
 
 let editProfile = mutationField('editProfileTenant', {
   type: 'TenantUser',
-  args: { profile: arg({ type: 'EditProfileInput', required: true }) },
+  args: { profile: arg({ type: 'EditProfileTenantInput', required: true }) },
   resolve: editProfileResolver,
 });
 

@@ -1,8 +1,14 @@
 export * from './Tenant';
 export * from './TenantAuth';
 export * from './TenantRegisterInput';
+
+export * from './Landlord';
+export * from './LandlordAuth';
+export * from './LandlordRegisterInput';
+
 export * from './BusinessInput';
 export * from './FilterInput';
+
 export * from './LocationInput';
 export * from './RawFilter';
 export * from './MatchingLocation';
@@ -11,5 +17,5 @@ export * from './TenantMatchesResult';
 export * from './Brand';
 export * from './LocationType';
 export * from './BrandThumbnail';
-export * from './EditProfileInput';
 export * from './LocationPreviewResult';
+export * from './EditProfileTenantInput';
