@@ -396,7 +396,7 @@ class LocationDetailsAPI(AsynchronousAPI):
             if not my_location:
                 return Response({
                     'status': 501,
-                    'status_detail': ['Matches for when no categories found unimplemented.']
+                    'status_detail': ['Details for when no categories found unimplemented.']
                 }, status=status.HTTP_501_NOT_IMPLEMENTED)
 
             l_process, my_location = self._get_location_details.delay(my_location, False), []
