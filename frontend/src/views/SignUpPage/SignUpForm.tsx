@@ -61,8 +61,8 @@ export default function SignUpForm(props: Props) {
         filter: {
           categories: confirmBusinessDetail.categories,
           personas: targetCustomers.noPersonasPreference ? [] : targetCustomers.personas,
-          educations: targetCustomers.noEducationsPreference ? [] : targetCustomers.educations,
-          minDaytimePopulation: targetCustomers.minDaytimePopulation,
+          education: targetCustomers.noEducationsPreference ? [] : targetCustomers.educations,
+          // minDaytimePopulation: targetCustomers.minDaytimePopulation,
           minAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.minAge),
           maxAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.maxAge),
           minIncome: targetCustomers.noIncomePreference ? null : Number(targetCustomers.minIncome),
