@@ -57,6 +57,11 @@ export default function BasicProfile() {
             newPassword,
           },
         },
+        refetchQueries: [
+          {
+            query: GET_TENANT_PROFILE,
+          },
+        ],
       });
     }
   };
@@ -221,7 +226,6 @@ const Container = styled(Card)`
 const RowedView = styled(View)`
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
 `;
 
 const TextArea = styled(BaseTextArea)`
