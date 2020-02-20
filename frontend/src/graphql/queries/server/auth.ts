@@ -35,6 +35,7 @@ export const LOGIN_TENANT = gql`
         company
         tier
       }
+      brandId
     }
   }
 `;
