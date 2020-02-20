@@ -11,15 +11,10 @@ const server = new GraphQLServer({
   context: async ({ request }: ContextParameters) => {
     let authorization = request.get('Authorization') || '';
     let token = authorization.replace(/^Bearer /, '');
-    let tenantUserId = await authSession(token);
-    if (tenantUserId) {
-      return {
-        prisma,
-        tenantUserId,
-      };
-    }
+    let authSessionResult = await authSession(token);
     return {
       prisma,
+      ...authSessionResult,
     };
   },
   // middlewares: [permissions],
