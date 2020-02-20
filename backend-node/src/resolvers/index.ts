@@ -12,3 +12,4 @@ export * from './tenant/editProfileTenantMutation';
 export * from './brand/createBrandMutation';
 export * from './brand/editBrandMutation';
 export * from './brand/brandsQuery';
+export * from './preview/locationPreview';
