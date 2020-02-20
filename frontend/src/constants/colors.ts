@@ -9,6 +9,9 @@ const BRIGHT_BLUE = '#0D7EFF';
 const RED = '#FF0000';
 const GREEN = '#36DD93';
 const LIGHT_GREEN = '#CAF1DF';
+export const GREY = '#B2B2B2';
+
+export const DARKER_GREY = '#D3D3D3';
 
 export const WHITE = '#FFFFFF';
 
@@ -24,7 +27,7 @@ export const DARK_TEXT_COLOR = DETAIL_GREY;
 
 export const HEADER_BORDER_COLOR = 'rgba(103,76,167,0.17)';
 export const BOTTOM_CARD_COLOR = LIGHTEST_GREY;
-export const TEXT_INPUT_BORDER_COLOR = '#B2B2B2';
+export const TEXT_INPUT_BORDER_COLOR = GREY;
 export const DISABLED_TEXT_INPUT_BACKGROUND = LIGHTEST_GREY;
 export const BUTTON_BORDER_COLOR = DETAIL_GREY;
 export const SECONDARY_CHECKBOX = BRIGHT_BLUE;
@@ -39,6 +42,8 @@ export const ALERT_BACKGROUND_COLOR = LIGHTEST_PURPLE;
 export const SLIDER_SECONDARY_COLOR = LIGHT_GREY;
 export const HOVERED_LIST_ITEM_BG = '#ECE9F6';
 export const TAG_BACKGROUND = LIGHTEST_PURPLE;
+
+export const DISABLED_COLOR = GREY;
 
 // Fragmented progress bar colors
 export const FRAGMENTED_PROGRESS_BAR_BACKGROUND = LIGHT_GREY;
