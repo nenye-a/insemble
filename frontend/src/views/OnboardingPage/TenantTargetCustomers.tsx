@@ -5,10 +5,10 @@ import { useQuery } from '@apollo/react-hooks';
 import { View, Alert, Label, Button, Text, TextInput } from '../../core-ui';
 import { Filter } from '../../components';
 import { MUTED_TEXT_COLOR } from '../../constants/colors';
-import { FONT_SIZE_XSMALL, FONT_SIZE_SMALL } from '../../constants/theme';
+import { FONT_SIZE_SMALL, FONT_SIZE_MEDIUMSMALL } from '../../constants/theme';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import { GET_PERSONA_LIST, GET_EDUCATION_LIST } from '../../graphql/queries/server/filters';
-import { Education_education } from '../../generated/Education';
+import { Education_education as EducationEducation } from '../../generated/Education';
 
 // remove this when it's connected to endpoint that returns prefilled values
 const INITIAL_MIN_INCOME = 100;
@@ -107,7 +107,7 @@ export default function TenantTargetCustomers(props: Props) {
             }}
           />
         </RowedView>
-        <ItalicText fontSize={FONT_SIZE_XSMALL} color={MUTED_TEXT_COLOR}>
+        <ItalicText fontSize={FONT_SIZE_MEDIUMSMALL} color={MUTED_TEXT_COLOR}>
           If you have no preference, select “no preference” and we will handle the rest.
         </ItalicText>
       </DescriptionContainer>
@@ -157,7 +157,7 @@ export default function TenantTargetCustomers(props: Props) {
           title="Education"
           allOptions={
             educationData.education
-              ? educationData.education.map((item: Education_education) => item.displayValue)
+              ? educationData.education.map((item: EducationEducation) => item.displayValue)
               : []
           }
           selectedOptions={selectedEducations}
