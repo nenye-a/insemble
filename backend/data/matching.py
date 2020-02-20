@@ -1,6 +1,7 @@
 from . import utils
 from django.conf import settings
 import pandas as pd
+import math
 from s3fs import S3FileSystem
 import data.api.goog as google
 import data.api.spatial as spatial
@@ -169,11 +170,16 @@ def generate_matches(location_address, name=None, my_place_type={}):
 
     print("** Matching: Matching complete, results immenent.")
     # Return only the top 1% of locations.
-    norm_df = norm_df[:-1]
-    best = norm_df.nsmallest(int(norm_df.shape[0] * 0.01), 'error_sum')
+
+    best = norm_df[norm_df['error_sum'] < .3]
+    # best = best.sample(frac=.25)
+    # best = norm_df.nsmallest(15000, 'error_sum')
+
+
+    # best = norm_df.nsmallest(int(norm_df.shape[0] * 0.01), 'error_sum')
 
     # Convert distance to match value, and convert any object ids to strings to allow JSON serialization
-    best["match"] = best["error_sum"].apply(_map_difference_to_match)
+    best["match"] = best["error_sum"].apply(_map_difference_to_heatmap)
     best["loc_id"] = best["loc_id"].apply(str)
 
     return best[['lat', 'lng', 'match', 'loc_id']].to_json(orient='records')
@@ -400,6 +406,9 @@ def preprocess_match_df(dataframe):
 def postprocess_match_df(difference_dataframe):
 
     # POST PROCESS
+
+    difference_dataframe = difference_dataframe.abs()
+
     # group features that are evaluated & normalized together
     difference_dataframe["psycho"] = difference_dataframe[SPATIAL_LIST].sum(axis=1)
     difference_dataframe["income"] = difference_dataframe[INCOME_LIST].sum(axis=1)
@@ -459,6 +468,7 @@ def weight_and_evaluate(processed_difference_df):
         'race3': 2.6,
         'gender3': 2.6,
     }
+
     weight_df = pd.DataFrame([weight])
     normalized_dataframe["error_sum"] = normalized_dataframe[list(weight.keys())].dot(weight_df.transpose()) / \
         sum(weight.values())
@@ -469,10 +479,22 @@ def weight_and_evaluate(processed_difference_df):
 def _map_difference_to_match(difference):
     # map difference to a match rating between 0 and 100
     difference_max = 1
-    difference_min_est = 0.145
-
-    # previous values
-    # difference_max = 88
-    # difference_min_est = 13
+    difference_min_est = 0
 
     return utils.translate(difference, difference_max, difference_min_est, 0, 100)
+
+
+def _map_difference_to_heatmap(difference):
+
+    # difference expected to be between 0 and 1
+
+    value = 1 - difference
+
+    if value < .7:
+        return 0.1
+    if value < .75:
+        return 0.3
+    if value < 0.8:
+        return 0.6
+    return 4
+
