@@ -36,7 +36,7 @@ async function categoriesResolver(
   }
 
   let { brand_categories: categories }: FilterOptions = (
-    await axios.get(`${LEGACY_API_URI}/api/filter`)
+    await axios.get(`${LEGACY_API_URI}/api/filter/`)
   ).data;
 
   // Process where input
