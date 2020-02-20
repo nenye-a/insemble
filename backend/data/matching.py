@@ -455,19 +455,52 @@ def weight_and_evaluate(processed_difference_df):
         'race': 3.6,
         'gender': 3.6,
         # 3 mile weights
-        'DaytimePop13': 2,
-        'MedHouseholdIncome13': 1.95,
-        'income3': 1.8,
-        'TotalHouseholds13': 1.75,
-        'DaytimeResidentPop13': 1.7,
-        'psycho3': 1.72,
-        'age3': 1.72,
-        'transport3': 1.7,
-        'travel_time3': 1.6,
-        'education3': 1.6,
-        'race3': 1.5,
-        'gender3': 1.5,
+        'DaytimePop13': 3.5,
+        'MedHouseholdIncome13': 3.3,
+        'income3': 3.1,
+        'TotalHouseholds13': 3,
+        'DaytimeResidentPop13': 3,
+        'psycho3': 3,
+        'age3': 3,
+        'transport3': 2.9,
+        'travel_time3': 2.7,
+        'education3': 2.7,
+        'race3': 2.6,
+        'gender3': 2.6,
     }
+
+
+    # weight and sum the differences -> alternative weights
+    # weight = {
+    #     # 1 mile weights
+    #     'DaytimePop1': 5,
+    #     'MedHouseholdIncome1': 4.8,
+    #     'income': 4.6,
+    #     'TotalHouseholds1': 4.4,
+    #     'nearby_categories': 4.2,
+    #     'DaytimeResidentPop1': 4,
+    #     'psycho': 4,
+    #     'age': 4,
+    #     'transport': 3.8,
+    #     'travel_time': 3.6,
+    #     'education': 3.6,
+    #     'race': 3.6,
+    #     'gender': 3.6,
+    #     # 3 mile weights
+    #     'DaytimePop13': 2,
+    #     'MedHouseholdIncome13': 1.95,
+    #     'income3': 1.8,
+    #     'TotalHouseholds13': 1.75,
+    #     'DaytimeResidentPop13': 1.7,
+    #     'psycho3': 1.72,
+    #     'age3': 1.72,
+    #     'transport3': 1.7,
+    #     'travel_time3': 1.6,
+    #     'education3': 1.6,
+    #     'race3': 1.5,
+    #     'gender3': 1.5,
+    # }
+    
     weight_df = pd.DataFrame([weight])
     normalized_dataframe["error_sum"] = normalized_dataframe[list(weight.keys())].dot(weight_df.transpose()) / \
         sum(weight.values())
