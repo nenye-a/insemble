@@ -2,7 +2,7 @@ import { mutationField, stringArg } from 'nexus';
 import bcrypt from 'bcrypt';
 
 import { Root, Context } from 'serverTypes';
-import { createTenantSession } from '../../helpers/auth';
+import { createSession } from '../../helpers/auth';
 
 let loginTenant = mutationField('loginTenant', {
   type: 'TenantAuth',
@@ -16,18 +16,22 @@ let loginTenant = mutationField('loginTenant', {
       where: {
         email: lowercasedEmail,
       },
+      include: {
+        brands: true,
+      },
     });
     if (!tenantUser) {
       throw new Error('Email not found or wrong password');
     }
+    let brandId = tenantUser.brands[0].id;
     let validPassword = bcrypt.compareSync(password, tenantUser.password);
     if (!validPassword) {
       throw new Error('Email not found or wrong password');
     }
     return {
-      token: createTenantSession(tenantUser),
+      token: createSession(tenantUser, 'TENANT'),
       tenant: tenantUser,
-      brandId: '', //TODO: temporary solution for login, we need to replace this with getting latest brandId
+      brandId: brandId || '',
     };
   },
 });

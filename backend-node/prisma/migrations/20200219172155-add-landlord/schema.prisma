@@ -1,7 +1,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://prisma:prisma@localhost:5432/insemble?schema=public"
+  url = "***"
 }
 
 
@@ -130,11 +130,4 @@ model TenantSession {
   token     String
   createdAt DateTime   @default(now())
   user      TenantUser
-}
-
-model LandlordSession {
-  id        String       @default(cuid()) @id
-  token     String
-  createdAt DateTime     @default(now())
-  user      LandlordUser
 }

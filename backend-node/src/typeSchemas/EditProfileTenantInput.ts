@@ -1,7 +1,7 @@
 import { inputObjectType } from 'nexus';
 
-export let EditProfileInput = inputObjectType({
-  name: 'EditProfileInput',
+export let EditProfileTenantInput = inputObjectType({
+  name: 'EditProfileTenantInput',
   definition(t) {
     t.string('email');
     t.string('firstName');
