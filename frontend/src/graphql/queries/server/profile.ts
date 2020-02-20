@@ -1,23 +1,13 @@
 import gql from 'graphql-tag';
 
-<<<<<<< HEAD
-export const PROFILE_TENANT = gql`
-  query ProfileTenant {
-    profileTenant {
-      id
-      avatar
-      email
-      firstName
-      lastName
-=======
 export const GET_TENANT_PROFILE = gql`
   query GetTenantProfile {
     profileTenant {
+      id
       email
       firstName
       lastName
       avatar
->>>>>>> connect profile card
       company
       description
       title
@@ -27,7 +17,7 @@ export const GET_TENANT_PROFILE = gql`
 `;
 
 export const EDIT_TENANT_PROFILE = gql`
-  mutation EditTenantProfile($profile: EditProfileInput!) {
+  mutation EditTenantProfile($profile: EditProfileTenantInput!) {
     editProfileTenant(profile: $profile) {
       id
       email

@@ -1,37 +1,24 @@
 import React from 'react';
 import styled from 'styled-components';
-<<<<<<< HEAD
 import { useHistory } from 'react-router-dom';
-import { View, Card, Avatar, Text, Button } from '../../core-ui';
-import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
-import { THEME_COLOR, RED_TEXT, BACKGROUND_COLOR } from '../../constants/colors';
-import ProfileMenuList from './ProfileMenuList';
-import asyncStorage from '../../utils/asyncStorage';
-=======
-import { useQuery } from '@apollo/react-hooks';
-
 import { View, Card, Avatar, Text, Button, LoadingIndicator } from '../../core-ui';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
 import { THEME_COLOR, RED_TEXT, BACKGROUND_COLOR } from '../../constants/colors';
 import ProfileMenuList from './ProfileMenuList';
+import asyncStorage from '../../utils/asyncStorage';
+import { useQuery } from '@apollo/react-hooks';
 import { GetTenantProfile } from '../../generated/GetTenantProfile';
 import { GET_TENANT_PROFILE } from '../../graphql/queries/server/profile';
->>>>>>> connect profile card
 
 export default function ProfileCard() {
   let { loading, data } = useQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
     notifyOnNetworkStatusChange: true,
   });
+  let history = useHistory();
   let name = data?.profileTenant.firstName + ' ' + data?.profileTenant.lastName;
   let company = data?.profileTenant.company || '';
   let title = data?.profileTenant.title || '';
 
-<<<<<<< HEAD
-export default function ProfileCard(props: Props) {
-  let { name, company, position, avatar } = props;
-  let history = useHistory();
-=======
->>>>>>> connect profile card
   return (
     <Container>
       {loading ? (
