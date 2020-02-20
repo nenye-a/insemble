@@ -15,6 +15,12 @@ between the main application api, and our calls data_api calls.
 
 '''
 
+# TODO: place in database
+EQUIPMENT_LIST = [ "Walk-in fridge", "Reach-in fridge", "Walk-in freezer", "Grease trap", "Fumehood", "Frier ", "Grill ", "Stove ",
+                   "ADA Compliant Bathrooms", "Bathroom", "Oven", "Convection Oven", "Conveyor Oven", "Combination Oven", "Pizza Oven", 
+                   "Parking Lot",  "Street Parking", "Compartment Sink", "Hand Sink", "Underbar sink", "Alarm System", "240V Outlets",
+                   "120V Outlets", "Storage Space", "Concrete floor", "Wood Floor", "Tile floor", "Brick walls", "Wood walls",
+                   "Sheetrock", "Concrete",]
 
 # Return the location latitude and object details. Details are in the following form
 # {lat:float, lng:float, place_id:'place_id}

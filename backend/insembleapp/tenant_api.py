@@ -80,8 +80,10 @@ class FilterDetailAPI(generics.GenericAPIView):
             'brand_categories': matching.FOURSQUARE_CATEGORIES,
             'personas': matching.SPATIAL_CATEGORIES,
             'education': matching.EDUCATION_LIST,
+            'ethnicity': matching.RACE_LIST,
             'commute': matching.TRANSPORT_LIST,
-            'type': ["Retail", "Restaurant"]
+            'type': ["Retail", "Restaurant"],
+            'equipment': provider.EQUIPMENT_LIST
         }
         return Response(response, status=status.HTTP_200_OK)
 
@@ -163,19 +165,13 @@ class TenantMatchAPI(generics.GenericAPIView):
             categories = [string.strip() for string in ast.literal_eval(validated_params['categories'][0])]
             print(categories)
             location = provider.get_representative_location(categories, validated_params['income'])
-            if not location:
-                return Response({
-                    'status': 400,
-                    'status_detail': ['No Categories Found']
-                }, status=status.HTTP_400_BAD_REQUEST)
 
             matches = matching.generate_matches(
                 location['address'], name=location['name']
-            )
+            ) if location else []
 
         # ensure that the response is an object. May not be necessary
-        matches = json.loads(matches)
-
+        matches = json.loads(matches) if not matches == [] else []
         response = {
             'status': status.HTTP_200_OK,
             'status_detail': "Success",
@@ -396,11 +392,12 @@ class LocationDetailsAPI(AsynchronousAPI):
             income = validated_params['my_location']['income']
             print(categories)
             my_location = provider.get_representative_location(categories, income)
+            # TODO: fix to still execute even if no categories are found
             if not my_location:
                 return Response({
-                    'status': 400,
-                    'status_detail': ['No Categories Found']
-                }, status=status.HTTP_400_BAD_REQUEST)
+                    'status': 501,
+                    'status_detail': ['Matches for when no categories found unimplemented.']
+                }, status=status.HTTP_501_NOT_IMPLEMENTED)
 
             l_process, my_location = self._get_location_details.delay(my_location, False), []
             my_location_listener = self._celery_listener(l_process, my_location)
@@ -451,7 +448,7 @@ class LocationDetailsAPI(AsynchronousAPI):
         match_value_listener = self._celery_listener(m_process, match_values)
         match_value_listener.start()
 
-        # obtain the top personas asynchronously
+        # obtain the top personas asynchronously - TODO: fix to not rely on categories
         p_process, top_personas = self._get_personas.delay(target_location[0], my_location[0]), []
         personas_nearby_listener = self._celery_listener(p_process, top_personas)
         personas_nearby_listener.start()
