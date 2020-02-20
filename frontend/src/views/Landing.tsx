@@ -27,6 +27,13 @@ function Landing() {
   return (
     <Masthead>
       <RowView>
+        <FindTenantsButton
+          text="Find Tenants"
+          mode="transparent"
+          onPress={() => {
+            history.push('/landlord/signup');
+          }}
+        />
         <LogIn
           mode="secondary"
           text="Log In"
@@ -94,6 +101,15 @@ const RowView = styled(View)`
   top: 16px;
   right: 32px;
 `;
+
+const FindTenantsButton = styled(Button)`
+  margin: 0 12px 0 0;
+  align-self: center;
+  ${Text} {
+    color: ${WHITE};
+  }
+`;
+
 const LogIn = styled(Button)`
   margin: 0 12px 0 0;
   border-color: ${WHITE};
