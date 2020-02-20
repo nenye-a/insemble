@@ -15,6 +15,7 @@ export const EDIT_BRAND = gql`
 export const GET_BRANDS = gql`
   query GetBrands {
     brands {
+      id
       name
       categories
       matchingLocations {

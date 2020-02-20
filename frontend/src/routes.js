@@ -170,7 +170,7 @@ export default [
     exact: true,
   }, // TODO: change tenant matches to brand
   {
-    path: '/user/brands/:brandID',
+    path: '/user/brands/:brandId',
     layout: UserProfileLayout,
     component: BrandDetail,
   },

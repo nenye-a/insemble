@@ -11,23 +11,20 @@ import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
 import { WHITE, THEME_COLOR } from '../constants/colors';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import SvgPlus from '../components/icons/plus';
-import imgPlaceholder from '../assets/images/image-placeholder.jpg';
 import { GetBrands } from '../generated/GetBrands';
 import { MAP_DEFAULT_CENTER } from '../constants/googleMaps';
 
 export default () => {
-  let { data, loading, error } = useQuery<GetBrands>(GET_BRANDS);
+  let { data, loading } = useQuery<GetBrands>(GET_BRANDS);
   let history = useHistory();
   let { isLoading: googleLoading } = useGoogleMaps();
-  console.log(data, 'DATA');
-  console.log(googleLoading, 'GOOGLE ');
   return (
     <View flex>
       {loading || googleLoading ? (
         <LoadingIndicator />
       ) : (
         data &&
-        data.brands.map(({ name, categories, matchingLocations }, index) => {
+        data.brands.map(({ name, categories, matchingLocations, id }, index) => {
           let heatmapData: any = matchingLocations
             ? matchingLocations.map(({ lat, lng, match }) => {
                 return {
@@ -41,7 +38,7 @@ export default () => {
               key={index}
               style={{ marginBottom: 24 }}
               onPress={() => {
-                history.push(`/user/brands/${index}`); // TODO: change to brandID
+                history.push(`/user/brands/${id}`);
               }}
             >
               <HistoryContainer>
@@ -62,7 +59,13 @@ export default () => {
                     </PillContainer>
                   </RowedView>
                 </LeftContainer>
+                {/* <TouchableOpacity
+                  onPress={() => {
+                    history.push(`/maps/${id}`);
+                  }}
+                > */}
                 <HeatmapPlaceholder heatmapData={heatmapData} />
+                {/* </TouchableOpacity> */}
               </HistoryContainer>
             </TouchableOpacity>
           );

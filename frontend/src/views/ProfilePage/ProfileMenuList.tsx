@@ -95,7 +95,7 @@ const TENANT_PROFILE_MENU: Array<MenuObj> = [
   {
     menu: 'Your Brands',
     icon: <SvgBusiness />,
-    path: '/user/tenant-matches',
+    path: '/user/brands',
   },
   {
     menu: 'Messages',

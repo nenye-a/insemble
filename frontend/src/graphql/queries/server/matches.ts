@@ -10,6 +10,13 @@ export const GET_TENANT_MATCHES_DATA = gql`
         lat
       }
       userRelation
+      locationCount
+      nextLocations {
+        address
+        lng
+        lat
+      }
+      newLocationPlan
       minIncome
       maxIncome
       categories
