@@ -119,7 +119,7 @@ export default function TenantTargetCustomers(props: Props) {
         }}
         values={[minAge, maxAge]}
         minimum={0}
-        maximum={100}
+        maximum={65}
         onSliderChange={(values: Array<number>) => {
           setSelectedAgeRange(values);
         }}
@@ -137,7 +137,7 @@ export default function TenantTargetCustomers(props: Props) {
         }}
         values={[minIncome, maxIncome]}
         minimum={0}
-        maximum={500}
+        maximum={200}
         onSliderChange={(values: Array<number>) => setSelectedIncomeRange(values)}
         disabled={editCriteriaDisabled}
       />
