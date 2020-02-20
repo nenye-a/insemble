@@ -1,9 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 import { View, Card, Avatar, Text, Button } from '../../core-ui';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
 import { THEME_COLOR, RED_TEXT, BACKGROUND_COLOR } from '../../constants/colors';
 import ProfileMenuList from './ProfileMenuList';
+import asyncStorage from '../../utils/asyncStorage';
 
 type Props = {
   name: string;
@@ -14,6 +16,7 @@ type Props = {
 
 export default function ProfileCard(props: Props) {
   let { name, company, position, avatar } = props;
+  let history = useHistory();
   return (
     <Container>
       <ProfileWrapper>
@@ -25,7 +28,15 @@ export default function ProfileCard(props: Props) {
         <ProfileText>{position}</ProfileText>
       </ProfileWrapper>
       <ProfileMenuList />
-      <SignOutButton text="Sign Out" />
+      <SignOutButton
+        text="Sign Out"
+        onPress={async () => {
+          await asyncStorage.removeRole();
+          await asyncStorage.removeTenantToken();
+          await asyncStorage.removeBrandId();
+          history.push('/');
+        }}
+      />
     </Container>
   );
 }

@@ -15,13 +15,16 @@ let asyncStorage = {
     return window.localStorage.getItem('tenant-token');
   },
   getBrandId: () => {
-    window.localStorage.getItem('brand-id');
+    return window.localStorage.getItem('brand-id');
   },
   removeRole: () => {
     return window.localStorage.removeItem('role');
   },
   removeTenantToken: () => {
     return window.localStorage.removeItem('tenant-token');
+  },
+  removeBrandId: () => {
+    return window.localStorage.removeItem('brand-id');
   },
 };
 

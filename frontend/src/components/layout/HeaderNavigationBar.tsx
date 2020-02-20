@@ -16,7 +16,7 @@ type Props = {
 export default function HeaderNavigationBar(props: Props) {
   let history = useHistory();
   let { data } = useQuery(PROFILE_TENANT);
-  let avatar = data.avatar;
+  let avatar = data?.profileTenant.avatar;
   return (
     <Container>
       <TouchableOpacity
@@ -26,9 +26,14 @@ export default function HeaderNavigationBar(props: Props) {
       >
         <InsembleLogo color="purple" />
       </TouchableOpacity>
-
-      {avatar ? (
-        <Avatar size="medium" image={avatar} />
+      {data?.profileTenant.id ? (
+        <TouchableOpacity
+          onPress={() => {
+            history.push('/user/edit-profile');
+          }}
+        >
+          <Avatar size="small" image={avatar} />
+        </TouchableOpacity>
       ) : (
         <>
           {props.showButton ? (

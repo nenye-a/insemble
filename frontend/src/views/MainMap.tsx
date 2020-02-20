@@ -300,9 +300,9 @@ export default function MainMap() {
             </Text>
           </LoadingOverlay>
         )}
+        <Alert visible={!!tenantMatchesError} text={tenantMatchesError?.message || ''} />
+        <Alert visible={!!editBrandError} text={editBrandError?.message || ''} />
         <Container flex>
-          <Alert visible={!!tenantMatchesError} text={tenantMatchesError?.message || ''} />
-          <Alert visible={!!editBrandError} text={editBrandError?.message || ''} />
           <ShowPropertyButton
             mode="secondary"
             onPress={() => togglePropertyRecommendation(true)}
