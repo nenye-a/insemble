@@ -5,3 +5,5 @@ export const MAPS_URI = `https://maps.googleapis.com/maps/api/js?key=${MAPS_API_
 export const MAPS_IFRAME_URL_SEARCH = `https://www.google.com/maps/embed/v1/search?key=${MAPS_API_KEY}`;
 
 export const MAPS_IFRAME_URL_PLACE = `https://www.google.com/maps/embed/v1/place?key=${MAPS_API_KEY}`;
+
+export const MAP_DEFAULT_CENTER = { lat: 34.0522, lng: -118.2437 }; // LA lat lng

@@ -1,54 +1,114 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
+import { GoogleMap, withGoogleMap } from 'react-google-maps';
+import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
+import { useQuery } from '@apollo/react-hooks';
 
-import { View, Card, Text, PillButton, TouchableOpacity } from '../core-ui';
+import { View, Card, Text, PillButton, TouchableOpacity, LoadingIndicator } from '../core-ui';
+import { GET_BRANDS } from '../graphql/queries/server/brand';
 import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
 import { WHITE, THEME_COLOR } from '../constants/colors';
-import { SAVED_SEARCHES } from '../fixtures/dummyData';
+import useGoogleMaps from '../utils/useGoogleMaps';
 import SvgPlus from '../components/icons/plus';
 import imgPlaceholder from '../assets/images/image-placeholder.jpg';
+import { GetBrands } from '../generated/GetBrands';
+import { MAP_DEFAULT_CENTER } from '../constants/googleMaps';
 
-export default function TenantBrands() {
+export default () => {
+  let { data, loading, error } = useQuery<GetBrands>(GET_BRANDS);
   let history = useHistory();
+  let { isLoading: googleLoading } = useGoogleMaps();
+  console.log(data, 'DATA');
+  console.log(googleLoading, 'GOOGLE ');
   return (
     <View flex>
-      {SAVED_SEARCHES.map((item, index) => (
-        <TouchableOpacity
-          key={index}
-          style={{ marginBottom: 24 }}
-          onPress={() => {
-            history.push(`/user/brands/${index}`); // TODO: change to brandID
-          }}
-        >
-          <HistoryContainer>
-            <LeftContainer flex>
-              <RowedView>
-                <Text>Brand Name</Text>
-                <Text>{item.brandName}</Text>
-              </RowedView>
-              <RowedView>
-                <Text>Categories</Text>
-                <PillContainer>
-                  {item.categories &&
-                    item.categories.map((category, idx) => (
-                      <Pill disabled key={index + '_' + idx} primary>
-                        {category}
-                      </Pill>
-                    ))}
-                </PillContainer>
-              </RowedView>
-            </LeftContainer>
-            {/* TODO: change to heatmap image/map */}
-            <HeatMapImage src={imgPlaceholder} />
-          </HistoryContainer>
-        </TouchableOpacity>
-      ))}
+      {loading || googleLoading ? (
+        <LoadingIndicator />
+      ) : (
+        data &&
+        data.brands.map(({ name, categories, matchingLocations }, index) => {
+          let heatmapData: any = matchingLocations
+            ? matchingLocations.map(({ lat, lng, match }) => {
+                return {
+                  location: new google.maps.LatLng(lat, lng),
+                  weight: match,
+                };
+              })
+            : [];
+          return (
+            <TouchableOpacity
+              key={index}
+              style={{ marginBottom: 24 }}
+              onPress={() => {
+                history.push(`/user/brands/${index}`); // TODO: change to brandID
+              }}
+            >
+              <HistoryContainer>
+                <LeftContainer flex>
+                  <RowedView>
+                    <Text>Brand Name</Text>
+                    <Text>{name}</Text>
+                  </RowedView>
+                  <RowedView>
+                    <Text>Categories</Text>
+                    <PillContainer>
+                      {categories &&
+                        categories.map((category, idx) => (
+                          <Pill disabled key={index + '_' + idx} primary>
+                            {category}
+                          </Pill>
+                        ))}
+                    </PillContainer>
+                  </RowedView>
+                </LeftContainer>
+                <HeatmapPlaceholder heatmapData={heatmapData} />
+              </HistoryContainer>
+            </TouchableOpacity>
+          );
+        })
+      )}
       <AddButton>
         <SvgPlus style={{ marginRight: 8, color: THEME_COLOR }} />
         <Text color={THEME_COLOR}>New Retailer or Restaurant</Text>
       </AddButton>
     </View>
+  );
+};
+type HeatmapProps = {
+  heatmapData: google.maps.MVCArray<google.maps.visualization.WeightedLocation>;
+};
+
+let GoogleHeatmap = withGoogleMap((props: HeatmapProps) => {
+  return (
+    <GoogleMap
+      defaultZoom={9}
+      defaultCenter={MAP_DEFAULT_CENTER}
+      defaultClickableIcons={false}
+      defaultOptions={{
+        fullscreenControl: false,
+        streetViewControl: false,
+        zoomControl: false,
+        mapTypeControl: false,
+        draggable: false,
+      }}
+    >
+      <HeatMapLayer
+        data={props.heatmapData}
+        options={{ data: props.heatmapData, radius: 20, opacity: 1 }}
+      />
+    </GoogleMap>
+  );
+});
+
+function HeatmapPlaceholder(props: HeatmapProps) {
+  let { isLoading } = useGoogleMaps();
+  return isLoading ? null : (
+    <GoogleHeatmap
+      containerElement={<View style={{ width: 200 }} />}
+      mapElement={<View flex />}
+      heatmapData={props.heatmapData}
+    />
   );
 }
 
@@ -73,11 +133,6 @@ const Pill = styled(PillButton)`
 const LeftContainer = styled(View)`
   padding: 12px 24px;
   height: 150px;
-`;
-
-const HeatMapImage = styled.img`
-  width: 200px;
-  object-fit: contain;
 `;
 
 const AddButton = styled(TouchableOpacity)`
