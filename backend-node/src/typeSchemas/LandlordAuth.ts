@@ -7,6 +7,5 @@ export let LandlordAuth = objectType({
     t.field('landlord', {
       type: 'LandlordUser',
     });
-    t.string('brandId');
   },
 });

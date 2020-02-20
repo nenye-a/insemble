@@ -3,7 +3,10 @@ import getRandomBytes from './getRandomBytes';
 import { TenantUser, LandlordUser } from '@prisma/client';
 
 export async function authSession(authToken: string | undefined) {
-  let [sessionID, sessionToken, type] = authToken ? authToken.split(':') : [];
+  let [sessionID, sessionToken, base64Type] = authToken
+    ? authToken.split(':')
+    : [];
+  let type = base64Type ? Buffer.from(base64Type, 'base64').toString() : null;
   if (
     !sessionID ||
     !sessionToken ||
@@ -47,5 +50,11 @@ export async function createSession(
     type === 'TENANT'
       ? await prisma.tenantSession.create(sessionData)
       : await prisma.landlordSession.create(sessionData);
-  return session.id + ':' + session.token + ':' + btoa(type);
+  return (
+    session.id +
+    ':' +
+    session.token +
+    ':' +
+    Buffer.from(type).toString('base64')
+  );
 }

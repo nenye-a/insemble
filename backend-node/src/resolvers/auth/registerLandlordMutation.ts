@@ -29,6 +29,7 @@ export let registerLandlord = mutationField('registerLandlord', {
     });
     return {
       token: createSession(createdLandlord, 'LANDLORD'),
+      landlord: createdLandlord,
     };
   },
 });
