@@ -169,8 +169,14 @@ def generate_matches(location_address, name=None, my_place_type={}):
 
     print("** Matching: Matching complete, results immenent.")
     # Return only the top 1% of locations.
-    norm_df = norm_df[:-1]
-    best = norm_df.nsmallest(int(norm_df.shape[0] * 0.01), 'error_sum')
+
+    best = norm_df[norm_df['error_sum'] < .23]
+    # best = best.sample(frac=.25)
+    # best = norm_df.nsmallest(1000, 'error_sum')
+
+
+
+    # best = norm_df.nsmallest(int(norm_df.shape[0] * 0.01), 'error_sum')
 
     # Convert distance to match value, and convert any object ids to strings to allow JSON serialization
     best["match"] = best["error_sum"].apply(_map_difference_to_match)
@@ -400,6 +406,9 @@ def preprocess_match_df(dataframe):
 def postprocess_match_df(difference_dataframe):
 
     # POST PROCESS
+
+    difference_dataframe = difference_dataframe.abs()
+
     # group features that are evaluated & normalized together
     difference_dataframe["psycho"] = difference_dataframe[SPATIAL_LIST].sum(axis=1)
     difference_dataframe["income"] = difference_dataframe[INCOME_LIST].sum(axis=1)
@@ -446,18 +455,18 @@ def weight_and_evaluate(processed_difference_df):
         'race': 3.6,
         'gender': 3.6,
         # 3 mile weights
-        'DaytimePop13': 3.5,
-        'MedHouseholdIncome13': 3.3,
-        'income3': 3.1,
-        'TotalHouseholds13': 3,
-        'DaytimeResidentPop13': 3,
-        'psycho3': 3,
-        'age3': 3,
-        'transport3': 2.9,
-        'travel_time3': 2.7,
-        'education3': 2.7,
-        'race3': 2.6,
-        'gender3': 2.6,
+        'DaytimePop13': 2,
+        'MedHouseholdIncome13': 1.95,
+        'income3': 1.8,
+        'TotalHouseholds13': 1.75,
+        'DaytimeResidentPop13': 1.7,
+        'psycho3': 1.72,
+        'age3': 1.72,
+        'transport3': 1.7,
+        'travel_time3': 1.6,
+        'education3': 1.6,
+        'race3': 1.5,
+        'gender3': 1.5,
     }
     weight_df = pd.DataFrame([weight])
     normalized_dataframe["error_sum"] = normalized_dataframe[list(weight.keys())].dot(weight_df.transpose()) / \
@@ -469,7 +478,7 @@ def weight_and_evaluate(processed_difference_df):
 def _map_difference_to_match(difference):
     # map difference to a match rating between 0 and 100
     difference_max = 1
-    difference_min_est = 0.145
+    difference_min_est = 0
 
     # previous values
     # difference_max = 88
