@@ -8,6 +8,7 @@ export * from './LandlordRegisterInput';
 
 export * from './BusinessInput';
 export * from './FilterInput';
+export * from './autoPopulateFilter';
 
 export * from './LocationInput';
 export * from './RawFilter';
