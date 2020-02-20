@@ -4,7 +4,7 @@ import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';
 
-import { TextInput, Button, View, Form } from '../core-ui';
+import { TextInput, Button, View, Form, Alert } from '../core-ui';
 import { validateEmail } from '../utils/validation';
 import { LOGIN_TENANT } from '../graphql/queries/server/auth';
 import { LoginTenant, LoginTenantVariables } from '../generated/LoginTenant';
@@ -23,7 +23,7 @@ export default function Login(_props: Props) {
   let history = useHistory();
   let { register, handleSubmit, errors } = useForm();
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
-  let [tenantLogin, { data, loading }] = useMutation<LoginTenant, LoginTenantVariables>(
+  let [tenantLogin, { data, loading, error }] = useMutation<LoginTenant, LoginTenantVariables>(
     LOGIN_TENANT
   );
 
@@ -43,12 +43,13 @@ export default function Login(_props: Props) {
     let { loginTenant } = data;
     let { token, brandId } = loginTenant;
     saveUserData(token, Role.Tenant, brandId);
-    history.push('/map');
+    history.push(`/map/${brandId}`);
   }
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Content>
+        <Alert visible={!!error} text={error?.message || ''} />
         <TextInput
           name="email"
           ref={register({

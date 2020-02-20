@@ -40,7 +40,7 @@ const Icon = styled.img<IconProps>`
 `;
 
 const LoadingIndicatorContainer = styled(View)`
-  padding: 12px;
+  padding: 6px;
   align-items: center;
   justify-content: 'center';
 `;
