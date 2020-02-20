@@ -18,12 +18,13 @@ enum Role {
 }
 
 type Props = {
-  role: 'Tenant' | 'Landlord'; //change to constants
+  role: 'Tenant' | 'Landlord'; // change to constants
   onboardingState?: OnboardingState;
+  signUpFirst?: boolean; // whether the user sign up or fill the onboarding form first
 };
 
 export default function SignUpForm(props: Props) {
-  let { onboardingState } = props;
+  let { onboardingState, signUpFirst } = props;
   let { register, handleSubmit, errors, watch } = useForm();
   let history = useHistory();
   let [registerTenant, { data, loading, error }] = useMutation<
@@ -103,8 +104,11 @@ export default function SignUpForm(props: Props) {
     let { token, brandId } = registerTenant;
 
     saveUserData(token, Role.Tenant);
-    // add brandID returned by endpoint
-    history.push(`/map/${brandId}`);
+    if (!signUpFirst) {
+      history.push(`/map/${brandId}`);
+    } else {
+      history.push('/');
+    }
   }
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
