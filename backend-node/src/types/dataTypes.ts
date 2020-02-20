@@ -29,3 +29,13 @@ export type TenantMatchesType = {
   matching_locations?: Array<MatchingLocationType>;
   matching_properties?: Array<MatchingPropertyType>;
 };
+
+export type LocationPreviewType = {
+  status: number;
+  status_detail: string;
+  target_address: string;
+  target_neighborhood: string;
+  DaytimePop_3mile: number;
+  median_income: number;
+  'median_age ': number; // Remove space after fixed
+};
