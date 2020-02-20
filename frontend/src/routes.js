@@ -23,7 +23,7 @@ import MainMap from './views/MainMap';
 import Onboarding from './views/Onboarding';
 import TenantSavedProperties from './views/TenantSavedProperties';
 import EditBasicProfile from './views/EditBasicProfile';
-import TenantSearchHistory from './views/TenantSearchHistory';
+import TenantBrands from './views/TenantBrands';
 import Messages from './views/Messages';
 import MessageDetail from './views/MessageDetail';
 import BrandDetail from './views/BrandDetail';
@@ -164,13 +164,13 @@ export default [
   },
   { path: '/user/edit-profile', layout: UserProfileLayout, component: EditBasicProfile },
   {
-    path: '/user/tenant-matches',
+    path: '/user/brands',
     layout: UserProfileLayout,
-    component: TenantSearchHistory,
+    component: TenantBrands,
     exact: true,
   }, // TODO: change tenant matches to brand
   {
-    path: '/user/tenant-matches/:brandID',
+    path: '/user/brands/:brandID',
     layout: UserProfileLayout,
     component: BrandDetail,
   },

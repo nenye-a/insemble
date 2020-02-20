@@ -9,7 +9,7 @@ import { SAVED_SEARCHES } from '../fixtures/dummyData';
 import SvgPlus from '../components/icons/plus';
 import imgPlaceholder from '../assets/images/image-placeholder.jpg';
 
-export default function TenantSearchHistory() {
+export default function TenantBrands() {
   let history = useHistory();
   return (
     <View flex>
@@ -18,7 +18,7 @@ export default function TenantSearchHistory() {
           key={index}
           style={{ marginBottom: 24 }}
           onPress={() => {
-            history.push(`/user/tenant-matches/${index}`); // TODO: change to brandID
+            history.push(`/user/brands/${index}`); // TODO: change to brandID
           }}
         >
           <HistoryContainer>
