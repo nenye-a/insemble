@@ -25,10 +25,7 @@ export let Brand = objectType({
     t.field('commute', { type: 'RawFilter', list: true, nullable: true });
     t.field('ethnicity', { type: 'RawFilter', list: true, nullable: true });
     t.model.personas();
-<<<<<<< HEAD
     t.model.minDaytimePopulation();
-=======
->>>>>>> Connect Location Preview
     t.model.equipment();
     t.model.spaceType();
     t.field('matchingLocations', {
