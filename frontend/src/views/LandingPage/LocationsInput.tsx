@@ -1,21 +1,23 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, ComponentProps, RefObject } from 'react';
 import TextInput from '../../core-ui/ContainedTextInput';
 
 type PlaceResult = google.maps.places.PlaceResult;
+type InputProps = ComponentProps<'input'>;
 
-type Props = {
+type Props = Omit<InputProps, 'onSubmit' | 'ref'> & {
   placeholder: string;
-  buttonText: string;
-  onSubmit: (place: PlaceResult) => void;
+  buttonText?: string;
+  onSubmit?: (place: PlaceResult) => void;
+  ref?: RefObject<HTMLInputElement> | null;
 };
 
 function LocationsInput(props: Props) {
-  let { placeholder, buttonText, onSubmit } = props;
+  let { placeholder, buttonText, onSubmit, ...otherProps } = props;
   let inputRef = useRef<HTMLInputElement | null>(null);
   let selectedPlace = useRef<PlaceResult | null>(null);
   let submitHandler = useCallback(() => {
     if (selectedPlace.current) {
-      onSubmit(selectedPlace.current);
+      onSubmit && onSubmit(selectedPlace.current);
     }
   }, [onSubmit]);
   useEffect(() => {
@@ -36,6 +38,7 @@ function LocationsInput(props: Props) {
       placeholder={placeholder}
       buttonText={buttonText}
       onSubmit={submitHandler}
+      {...otherProps}
     />
   );
 }
