@@ -1,4 +1,11 @@
-import React, { useEffect, useRef, useCallback, ComponentProps, RefObject } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useCallback,
+  ComponentProps,
+  RefObject,
+  ChangeEvent,
+} from 'react';
 import TextInput from '../../core-ui/ContainedTextInput';
 
 type PlaceResult = google.maps.places.PlaceResult;
@@ -9,6 +16,7 @@ type Props = Omit<InputProps, 'onSubmit' | 'ref'> & {
   buttonText?: string;
   onSubmit?: (place: PlaceResult) => void;
   ref?: RefObject<HTMLInputElement> | null;
+  onChange?: (e: ChangeEvent<HTMLDivElement>) => void;
 };
 
 function LocationsInput(props: Props) {
