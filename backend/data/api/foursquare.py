@@ -17,7 +17,7 @@ FRSQ_SEARCH_ENDPOINT = 'https://api.foursquare.com/v2/venues/search'
 
 
 # find the foursquare details of the location at the specified latitude and longitude
-def find(name, lat, lng, address):
+def find(name, lat, lng, address, save=True):
 
     url = FRSQ_SEARCH_ENDPOINT
     payload = {}
@@ -33,7 +33,7 @@ def find(name, lat, lng, address):
     }
 
     response, _id = safe_request.request(
-        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='client_id,client_secret')
+        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='client_id,client_secret', safe=save)
 
     if response is None or 'errorType' in response['meta']:
         print("Foursquare Error")
