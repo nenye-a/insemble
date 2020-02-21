@@ -1,5 +1,6 @@
 from decouple import config
 import data.utils as utils
+import urllib.parse
 from . import safe_request
 
 '''
@@ -17,6 +18,7 @@ GOOG_NEARBY_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/nearbysearch/
 GOOG_DETAILS_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/details/json'
 GOOG_TEXTSEARCH_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/textsearch/json?'
 GOOG_GEOCODE_ENDPOINT = 'https://maps.googleapis.com/maps/api/geocode/json'
+GOOG_PLACE_PHOTOS_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/photo'
 
 # Provided a location address & name, method corrects address if available in google. Method
 # corrects address if available in google. Returns google place_id, geometry, address, & name
@@ -219,3 +221,16 @@ def search(lat, lng, query, radius=1, pagetoken=None, save=True):
         result['results'].extend(next_page)
 
     return result['results']
+
+
+# Get Photo URLS
+def get_photo_url(photo_reference):
+
+    params = {
+        'key': GOOG_KEY,
+        'photoreference': photo_reference,
+        'maxheight': 1000
+    }
+
+    url = GOOG_PLACE_PHOTOS_ENDPOINT + '?' + urllib.parse.urlencode(params)
+    return url

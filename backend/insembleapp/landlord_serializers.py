@@ -18,10 +18,9 @@ class PropertyTenantSerializer(serializers.Serializer):
     """
 
     address = serializers.CharField(required=True, max_length=300)
-    space_type = serializers.ListField(child=serializers.CharField())
-    tenant_type = serializers.ListField(child=serializers.CharField())
-    space_type = serializers.ListField(child=serializers.CharField())
     sqft = serializers.IntegerField()
-    asking_rent = serializers.IntegerField()
-    target_categories = serializers.ListField(child=serializers.CharField())
-    exclusives = serializers.ListField(child=serializers.CharField())
+    space_type = serializers.ListField(child=serializers.CharField(), required=False)
+    asking_rent = serializers.IntegerField(required=False)
+    tenant_type = serializers.ListField(child=serializers.CharField(), required=False)
+    target_categories = serializers.ListField(child=serializers.CharField(), required=False)
+    exclusives = serializers.ListField(child=serializers.CharField(), required=False)

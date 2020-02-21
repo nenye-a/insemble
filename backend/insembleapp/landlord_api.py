@@ -2,7 +2,8 @@ from rest_framework import status, generics, permissions
 from .tenant_api import AsynchronousAPI
 from rest_framework.response import Response
 from .landlord_serializers import PropertyTenantSerializer
-import data.matching as matching
+import data.landlord_matching as landlord_matching
+import data.landlord_provider as landlord_provider
 import json
 
 
@@ -16,7 +17,7 @@ file.
 
 
 # TODO: implement api functions for the landlord api
-# PropertyMatchApi - referenced by api/propertyTenants/
+# PropertyTenantApi - referenced by api/propertyTenants/
 class PropertyTenantAPI(AsynchronousAPI):
 
     """
@@ -37,10 +38,26 @@ class PropertyTenantAPI(AsynchronousAPI):
         sqft: int,
         asking_rent: int,
         target_categories: list[string],
-        exclusives: list[string] 
+        exclusives: list[string]
     }
 
     response: {
+        status: int (HTTP),
+        status_detail: string or list,
+        tenants: [
+            {
+                tenant_id: string,
+                picture_url: url,
+                name: string,
+                category: string,
+                num_existing_locations: int,
+                match_value: int,
+                interested: boolean,
+                on_platform: boolean,
+                matches_tenant_type: boolean
+            }
+            ... many more
+        ]
     }
 
     """
@@ -56,16 +73,29 @@ class PropertyTenantAPI(AsynchronousAPI):
         serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
 
-        # TODO: Create the database structure to host this information. Will return to this after learning
-        # more about how we are going to host this information.
+        # TODO: implement function that will grab all the interested tenants. Tenants can only indicate interest
+        # by reaching out to the landlord. This is pending storage of "connected" or messaging tenants. For these
+        # tenants we should have already pre-processed their match (from tenant side), and only need to display
+        # them.
+        interested_tenants = []
 
-        # Tier 1 tenants
-        # TODO: pull list of tenants that have indicated interest in this location (includes match values)
-        # Pending understanding of how tenants are stored in prisma
+        # TODO: Generate remaining matches (implement the landlord side generated matches)
+        matches = landlord_provider.get_matching_tenants(
+            validated_params['address'],
+            validated_params['sqft'],
+            # validated_params['rent'],
+            # validated_params['tenant_type'],
+            # validated_params['exclusives']
+        )
+        matches = json.loads(matches) if not matches == [] else []
 
-        # Tier 2 & Tier 3 tenants
-        # TODO: query the tenant database (or some preprocessed-list of tenants)
-        # TODO: generate list of tenants in the database + their match values
-        # Pending understanding of how tenants are stored in prisma (will likely just link through foreign key)
+        # TODO: either processed into desired form, or receive in desired form.
+        tenants = interested_tenants + matches
 
-        pass
+        response = {
+            'status': status.HTTP_200_OK,
+            'status_detail': "Success",
+            'tenants': tenants
+        }
+
+        return Response(response, status=status.HTTP_200_OK)

@@ -143,13 +143,15 @@ class TenantMatchAPI(AsynchronousAPI):
         ],
         matching_properties: [              (not provided if error occurs) - may be empty
             {                               (all fields provided if matching properties provided)
-                'address': string,
-                'rent':  int,
-                'sqft': int,
-                'type': string,
+                property_id: string
+                address: string,
+                rent:  int,
+                sqft: int,
+                type: string,
             }
+            ... many more
         ],
-        tenant_id: string                   (always provided)
+         tenant_id: string                   (always provided)
     }
 
     """
