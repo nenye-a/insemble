@@ -5,7 +5,7 @@ import { queryField } from 'nexus';
 import { FilterOptions } from 'dataTypes';
 
 let ethnicity = queryField('ethnicity', {
-  type: 'String',
+  type: 'RawFilter',
   list: true,
   resolve: ethnicityResolver,
 });
@@ -16,7 +16,15 @@ async function ethnicityResolver(_: Root, _args: {}, _context: Context) {
     await axios.get(`${LEGACY_API_URI}/api/filter/`)
   ).data;
 
-  return ethnicity ? ethnicity : [];
+  let ethnicityObjectList = ethnicity.map((rawValue) => {
+    let splitEthnicityValue = rawValue.split('Population, ');
+    return {
+      rawValue,
+      displayValue: splitEthnicityValue[1],
+    };
+  });
+
+  return ethnicityObjectList;
 }
 
 export { ethnicity };

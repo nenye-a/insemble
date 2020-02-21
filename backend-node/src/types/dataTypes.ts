@@ -4,8 +4,8 @@ export type FilterOptions = {
   education: Array<string>;
   commute: Array<string>;
   type: Array<string>;
-  equipment?: Array<string>;
-  ethnicity?: Array<string>;
+  equipment: Array<string>;
+  ethnicity: Array<string>;
 };
 
 export type AutoPopulateResponse = {
