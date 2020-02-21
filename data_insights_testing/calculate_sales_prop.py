@@ -6,8 +6,8 @@ num_stores = 0
 num_sales = 0
 for dic in inp:
     dic = eval(dic)
-    
-    poi_list = dic["poi"]     
+
+    poi_list = dic["poi"]
     for poi in poi_list:
         print(poi)
         num_stores += 1
@@ -17,7 +17,7 @@ for dic in inp:
             if sales != "0":
                 num_sales += 1
 
-        # csv stuff for plotting 
+        # csv stuff for plotting
         loc = poi["geometry"]["coordinates"]
         out.write(poi["name"] + "," + str(loc[0]) + "," + str(loc[1]))
         out.write("\n")
@@ -25,4 +25,4 @@ for dic in inp:
 out.close()
 
 print()
-print("%s stores and %s stores with sales data"  % (num_stores, num_sales))
+print("%s stores and %s stores with sales data" % (num_stores, num_sales))

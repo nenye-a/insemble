@@ -10,6 +10,7 @@ import os
 MONGO_USER = config("MONGO_USER")
 MONGO_PASS = config("MONGO_DB_PASS")
 
+
 class Connect(object):
     @staticmethod
     def get_connection():

@@ -1,6 +1,6 @@
-# get num of service + retail places in LA in pitney bowes data set 
+# get num of service + retail places in LA in pitney bowes data set
 
-import requests 
+import requests
 
 sics = open("pitney_sics.txt", "r")
 sics = sics.readlines()
@@ -19,14 +19,15 @@ for zipcode in zipcodes:
         page_num = 1
         max_cand = 1
 
-        url = "https://api.pitneybowes.com/location-intelligence/geoenrich/v1/poi/byarea?country=USA&areaName1=CA&areaName3=Los%20Angeles&postcode1={}&sicCode={}&maxCandidates={}&fuzzyOnName=N&page={}".format(zipcode, sic, max_cand, page_num)
+        url = "https://api.pitneybowes.com/location-intelligence/geoenrich/v1/poi/byarea?country=USA&areaName1=CA&areaName3=Los%20Angeles&postcode1={}&sicCode={}&maxCandidates={}&fuzzyOnName=N&page={}".format(
+            zipcode, sic, max_cand, page_num)
         payload = {}
         headers = {
             'Authorization': 'Bearer jrFtZOcvWAIRVCyMvhRkzHgA5ESY'
         }
 
-        response = requests.request("GET", url, headers=headers, data = payload)
-        #print(response.text.encode('utf8'))
+        response = requests.request("GET", url, headers=headers, data=payload)
+        # print(response.text.encode('utf8'))
         response = response.json()
         if response == {}:
             continue

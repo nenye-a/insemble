@@ -77,16 +77,17 @@ def build_data_set(length, price=False, ratings=False, existing_ids=None, classi
         data_row.update({"likes": db_item["likes"]})
         data_row.update({"photo_count": db_item["photo_count"]})
 
-
-
         if ratings:
             rate = db_item["ratings"]
             if np.isnan(rate):
                 continue
             if classification:
-                if rate < 7.8: rate = 0
-                elif rate >= 8.1: rate = 1
-                else: continue
+                if rate < 7.8:
+                    rate = 0
+                elif rate >= 8.1:
+                    rate = 1
+                else:
+                    continue
                 #rate = np.floor((rate - 5) / 5 * class_number)
 
             data_row.update({"ratings": rate})
@@ -115,6 +116,7 @@ def build_data_set(length, price=False, ratings=False, existing_ids=None, classi
 Meant to balance ratings in the middle layer to below
 '''
 
+
 def balance_ratings_set(data_set_x, data_set_y):
     df = data_set_x.copy()
     labels = data_set_y.copy()
@@ -122,7 +124,7 @@ def balance_ratings_set(data_set_x, data_set_y):
     df["label"] = labels
 
     removed = df[df["label"] < 8.5]
-    removed = removed[removed["label"]>5.5]
+    removed = removed[removed["label"] > 5.5]
     keptl = df[df["label"] <= 5.5]
     keptr = df[8.5 <= df["label"]]
 
@@ -137,9 +139,10 @@ def balance_ratings_set(data_set_x, data_set_y):
 
     df["label"].hist(bins=100)
     keptl["label"].hist(bins=100)
-    #plt.show()
+    # plt.show()
 
     return keptl.drop("label", axis=1), keptl["label"]
+
 
 def balance_ratings_set_classification1(data_set_x, data_set_y, class_number=3):
 
@@ -164,8 +167,8 @@ def balance_ratings_set_classification1(data_set_x, data_set_y, class_number=3):
         else:
             balanced_df = balanced_df.append(scale[x].head(min_num))
 
-
     return balanced_df.drop("label", axis=1), balanced_df["label"]
+
 
 def balance_ratings_set_classification2(data_set_x, data_set_y, class_number=3):
 
@@ -178,7 +181,7 @@ def balance_ratings_set_classification2(data_set_x, data_set_y, class_number=3):
     min_num = len(df)
 
     for x in range(class_number):
-        class_rows = df[df["label"] == x+1]
+        class_rows = df[df["label"] == x + 1]
         scale.append(class_rows)
         if len(class_rows) < min_num:
             min_num = len(class_rows)
@@ -188,6 +191,7 @@ def balance_ratings_set_classification2(data_set_x, data_set_y, class_number=3):
         balanced_df = balanced_df.append(scale[x].head(min_num))
 
     return balanced_df.drop("label", axis=1), balanced_df["label"]
+
 
 '''
 Saves a list of ids into the database
@@ -215,12 +219,13 @@ def save_data_set(name, ids):
 Get an existing data_set from the database 
 '''
 
+
 def get_data_set(name, price=False, ratings=False, classification=False, class_number=3):
 
     db_learn = client.learn
 
     try:
-        db_set = db_learn.savedSets.find_one({"name" : name})
+        db_set = db_learn.savedSets.find_one({"name": name})
         id_list = db_set["saved_ids"]
     except TypeError:
         print("Could not find value in database... check your spelling!")
@@ -252,7 +257,7 @@ def generate_label_series(data_set, desired_label):
 
 if __name__ == "__main__":
 
-    test, ids, cc  = get_data_set("sk-1")
+    test, ids, cc = get_data_set("sk-1")
 
     data, labels = generate_label_series(test, "photo_count")
 

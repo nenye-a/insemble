@@ -27,6 +27,7 @@ def rows_to_consider(df):
 # sales_rows = rows_to_consider(df)
 # print(sales_rows)
 
+
 def find_all_categories(df):
     categories = set()
     for cat_list in df.values[:, 6]:
@@ -43,5 +44,3 @@ def find_all_categories(df):
 
 # categories = find_all_categories(df)
 # print(categories)
-
-

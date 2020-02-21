@@ -244,8 +244,8 @@ def place_collector_google(start_lat, start_lng, type_, run_name, bounds, run_re
         if item:
             num_redundant_places += 1
 
-    weighted_lng = start_lng + lng_delta/num_places
-    weighted_lat = start_lat + lat_delta/num_places
+    weighted_lng = start_lng + lng_delta / num_places
+    weighted_lat = start_lat + lat_delta / num_places
 
     # density direction
     weighted_bearing = utils.bearing(
@@ -256,13 +256,13 @@ def place_collector_google(start_lat, start_lng, type_, run_name, bounds, run_re
         (start_lat, start_lng), (weighted_lat, weighted_lng))
 
     # calculate the similarity of this location to what we already have
-    similarity_ratio = float(num_redundant_places)/num_places
+    similarity_ratio = float(num_redundant_places) / num_places
 
     # calculate the distance of coverage for this search
     furthest_distance = utils.distance(
         (start_lat, start_lng),
-        (places[num_places-1]['geometry']['location']['lat'],
-         places[num_places-1]['geometry']['location']['lng'])
+        (places[num_places - 1]['geometry']['location']['lat'],
+         places[num_places - 1]['geometry']['location']['lng'])
     )
 
     search_weight = 1 + weighted_distance
@@ -404,7 +404,7 @@ def place_collector_google_brute(start_lat, start_lng, type_, run_name, bounds, 
             if item:
                 num_redundant_places += 1
         # calculate the similarity of this location to what we already have
-        similarity_ratio = float(num_redundant_places)/num_places
+        similarity_ratio = float(num_redundant_places) / num_places
 
         # Store all the locations
         try:
@@ -418,8 +418,8 @@ def place_collector_google_brute(start_lat, start_lng, type_, run_name, bounds, 
         # calculate the distance of coverage for this search
         furthest_distance = utils.distance(
             (start_lat, start_lng),
-            (places[num_places-1]['geometry']['location']['lat'],
-             places[num_places-1]['geometry']['location']['lng'])
+            (places[num_places - 1]['geometry']['location']['lat'],
+             places[num_places - 1]['geometry']['location']['lng'])
         )
 
         search_distance = furthest_distance
@@ -885,9 +885,12 @@ def demo_builder(radius=1):
                 print(
                     "(PS) ****** Total documents demo detailed in this run: {}".format(update_count))
 
-import pprint 
+
+import pprint
 
 # sales builder
+
+
 def sales_builder(radius=1):
     update_count = 0
     update_size = 15  # how many records to update prior to pinging console
@@ -906,17 +909,17 @@ def sales_builder(radius=1):
             print()
             place_id = space['place_id']
             # compute sales if possible
-            address = space["formatted_address"] 
+            address = space["formatted_address"]
             print("Original goog address", address)
-            name = space["name"] 
-            sales = pitney.get_sales(address, name) 
+            name = space["name"]
+            sales = pitney.get_sales(address, name)
             print(sales)
-            
+
             # space has been detailed and will be updated
             DB_PROCESSED_SPACE.update_one(
                 {'place_id': place_id}, {'$set': {
                     'sales': sales,
-                    #'sales_finished': True
+                    # 'sales_finished': True
                 }
                 })
 
@@ -946,7 +949,7 @@ if __name__ == "__main__":
     sales_builder()
 
     #spaces = DB_PROCESSED_SPACE.find()
-    #for count, space in enumerate(spaces):
+    # for count, space in enumerate(spaces):
     #    print(count, space)
     #    if count == 1:
     #        break

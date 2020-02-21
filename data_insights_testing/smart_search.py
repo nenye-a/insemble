@@ -9,14 +9,14 @@ client = Connect.get_connection()
 db = client.spaceData
 searches = db.searches
 
-#### TODO: migrate to insemble_data_tools
+# TODO: migrate to insemble_data_tools
 # TODO: figure out if can reduce index creation & reduce redundancy
-searches.create_index([("url",  1), ("params", 1), ("headers", 1)], unique=True)
+searches.create_index([("url", 1), ("params", 1), ("headers", 1)], unique=True)
 hosts = ['google', 'yelp', 'foursquare', 'justicemap']
 for host in hosts:
     searches[host].create_index([("url", 1), ("params", 1), ("headers", 1)], unique=True)
 dataset2 = db.dataset2
-dataset2.create_index([("name",  1), ("lat", 1), ("lng", 1)], unique=True)
+dataset2.create_index([("name", 1), ("lat", 1), ("lng", 1)], unique=True)
 
 '''
 This method processes get requests to each of the host APIs, referring to a cache of saved searches if the search has 
@@ -35,6 +35,8 @@ already been performed. Every new search is cached in database.
 :return result: requests.get result of search query
 :rtype result: dictionary
 '''
+
+
 def smart_search(URL, host, search_type, params=None, headers=None):
 
     # search in internal databases
@@ -77,6 +79,7 @@ def smart_search(URL, host, search_type, params=None, headers=None):
     searches[host].insert_one(search)
     return result
 
+
 '''
 This method processes repeat get requests to hosts that have multiple page results. Similar to smart search, this 
 method refers to a cache of saved searches if the search has already been performed. Every new search is cached in 
@@ -95,9 +98,11 @@ database.
 :return result: requests.get result of search query
 :rtype result: dictionary
 '''
+
+
 def repeat_search(URL, host, search_type, params=None, headers=None):
     ####
-    #### FIXME: consolidate funcitons with smart search (no redundant code)
+    # FIXME: consolidate funcitons with smart search (no redundant code)
     ####
     # search in internal database
     host_db_return = searches[host].find_one({"url": URL, "params": params, "headers": headers})
@@ -130,6 +135,7 @@ def repeat_search(URL, host, search_type, params=None, headers=None):
             invalid = False
     return result
 
+
 '''
 This method uploads Location and Retailer objects along with their performance metrics to a database
 
@@ -146,6 +152,8 @@ This method uploads Location and Retailer objects along with their performance m
 :return: boolean indicating whether a new entry was created in the database
 :rtype: boolean 
 '''
+
+
 def upload_dataset(location, retailer, age, likes, ratings, photo_count):
     entry = {
         "name": retailer.name,
@@ -171,6 +179,7 @@ def upload_dataset(location, retailer, age, likes, ratings, photo_count):
     # if entry does not exist in dataset, upload and return True
     dataset2.insert_one(entry)
     return True
+
 
 if __name__ == "__main__":
 
@@ -202,7 +211,7 @@ if __name__ == "__main__":
     searches.insert_one(search)
     '''
 
-    #find a result
+    # find a result
     cursor = searches.find_one({"url": URL, "params": params, "headers": headers})
     print(cursor["result"] == requests.get(URL).json())
 

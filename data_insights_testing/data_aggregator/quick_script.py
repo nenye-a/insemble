@@ -37,4 +37,3 @@ if __name__ == "__main__":
 
         print("{} updated to reflect nearby_complete".format(space['name']))
         DB_PROCESSED_SPACE.update_one({'_id': space['_id']}, {'$set': space})
-

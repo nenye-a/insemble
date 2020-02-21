@@ -82,18 +82,18 @@ def bearing(geo1, geo2):
 
     y = math.sin(lng2 - lng1) * math.cos(lat2)
     x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * \
-        math.cos(lat2)*math.cos(lng2 - lng1)
+        math.cos(lat2) * math.cos(lng2 - lng1)
     bearing = math.atan2(y, x)
 
     return math.degrees(bearing)
 
 
 def meters_to_miles(meters):
-    return meters/MILES_TO_METERS_FACTOR
+    return meters / MILES_TO_METERS_FACTOR
 
 
 def miles_to_meters(miles):
-    return miles*MILES_TO_METERS_FACTOR
+    return miles * MILES_TO_METERS_FACTOR
 
 
 # retrieves csv from file_system. If no file_system specified,
@@ -200,11 +200,11 @@ def location_at_distance(current_lat, current_lng, distance, degrees):
     current_lng = math.radians(current_lng)
     bearing = math.radians(degrees)
 
-    next_lat = math.asin(math.sin(current_lat)*math.cos(distance/EARTHS_RADIUS_MILES) +
-                         math.cos(current_lat)*math.sin(distance/EARTHS_RADIUS_MILES)*math.cos(bearing))
+    next_lat = math.asin(math.sin(current_lat) * math.cos(distance / EARTHS_RADIUS_MILES) +
+                         math.cos(current_lat) * math.sin(distance / EARTHS_RADIUS_MILES) * math.cos(bearing))
 
-    next_lng = current_lng + math.atan2(math.sin(bearing)*math.sin(distance/EARTHS_RADIUS_MILES)*math.cos(
-        current_lat), math.cos(distance/EARTHS_RADIUS_MILES)-math.sin(current_lat)*math.sin(next_lat))
+    next_lng = current_lng + math.atan2(math.sin(bearing) * math.sin(distance / EARTHS_RADIUS_MILES) * math.cos(
+        current_lat), math.cos(distance / EARTHS_RADIUS_MILES) - math.sin(current_lat) * math.sin(next_lat))
 
     next_lat = math.degrees(next_lat)
     next_lng = math.degrees(next_lng)
@@ -245,8 +245,8 @@ def intersecting_block_groups(lat, lng, radius, state=None):
         print("base case ret", list(set(block_groups)))
         return list(set(block_groups))
 
-    sub_circle_distance = float(radius)*2/3
-    sub_circle_radius = float(radius)/3
+    sub_circle_distance = float(radius) * 2 / 3
+    sub_circle_radius = float(radius) / 3
     sub_circle_points = [location_at_distance(
         lat, lng, sub_circle_distance, bearing) for bearing in bearings] + [(lat, lng)]
 

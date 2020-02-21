@@ -30,7 +30,7 @@ def get_psychographics(lat, lng, radius, spatial_df, block_grp_df, cats):
     # If the weighted total does not exist, the data is not valid. Return None
     if sums[-1] == 0:
         return None
-    data = [sums[i]/sums[-1] for i in range(0, len(sums)-1)]
+    data = [sums[i] / sums[-1] for i in range(0, len(sums) - 1)]
 
     return dict(zip(cats, data))
 
@@ -44,8 +44,8 @@ def create_spatial_cats_and_df():
         line = line.rstrip().split(",")
         if line[1] == "":
             continue
-        spatial_dict[int(line[0])] = [float(line[i])*float(line[-1])
-                                      for i in range(1, len(line)-1)] + [float(line[-1])]
+        spatial_dict[int(line[0])] = [float(line[i]) * float(line[-1])
+                                      for i in range(1, len(line) - 1)] + [float(line[-1])]
 
     # get categories
     cats = f[1].rstrip().split(",")[1:-1]

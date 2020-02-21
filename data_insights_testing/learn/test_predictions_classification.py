@@ -19,7 +19,7 @@ def test_predictions():
 
     c_number = 2
 
-    all_data, d, d = idt.get_data_set("test_data", ratings=True, price=True, classification=True, class_number= c_number)
+    all_data, d, d = idt.get_data_set("test_data", ratings=True, price=True, classification=True, class_number=c_number)
     # all_data, ids, d = idt.build_data_set(10000, price=True, price=True, classification=True, class_number= 3)
     # print(idt.save_data_set("test_data_photos_no_ratings", ids))
 
@@ -53,7 +53,7 @@ def test_predictions():
 
     # SVC but from Grid search
     svc = svm.SVC(gamma='scale')
-    parameters = {'kernel':('linear', 'rbf', 'poly', 'sigmoid'), 'C':[0.5, 1, 10], 'decision_function_shape': ('ovo', 'ovr')}
+    parameters = {'kernel': ('linear', 'rbf', 'poly', 'sigmoid'), 'C': [0.5, 1, 10], 'decision_function_shape': ('ovo', 'ovr')}
     # clf_rating = GridSearchCV(svc, param_grid=parameters)
     # print(clf_rating.get_params())
 
@@ -101,9 +101,11 @@ def test_predictions():
     print("confusion matrix is:")
     print(confusion_matrix)
 
+
 def iterative_accuracy_test():
 
     return
+
 
 if __name__ == "__main__":
 

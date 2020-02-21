@@ -66,7 +66,6 @@ if __name__ == "__main__":
     val_set.columns = df_numerical
     test_set.columns = df_numerical
 
-
     train_input_fn = make_input_fn(train_set, train_labels)
     eval_input_fn = make_input_fn(val_set, val_labels, num_epochs=1, shuffle=False)
     test_input_fun = make_input_fn(test_set, test_labels, num_epochs=1, shuffle=False)

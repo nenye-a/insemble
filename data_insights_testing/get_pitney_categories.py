@@ -10,10 +10,8 @@ for line in inp:
     line = line.rstrip()
     line = line.split(",")
 
-    #if line[0] == "Division I. - Services":
+    # if line[0] == "Division I. - Services":
     if line[0] == "Division G. - Retail Trade":
         out.write(line[-1])
         out.write("\n")
 out.close()
-
-

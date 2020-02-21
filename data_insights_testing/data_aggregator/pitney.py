@@ -128,7 +128,7 @@ def get_sales(address, name, country='USA'):
     page_num = 1
     max_can = 100
     while True:
-    
+
         params = {
             'country': country,
             'address': address,
@@ -168,17 +168,18 @@ def get_sales(address, name, country='USA'):
                 print("   poss google address", response["candidates"][0]['formatted_address'])
             except:
                 pass
-            
+
             if len(response["candidates"]) != 0 and response["candidates"][0]['formatted_address'] == address:
                 return poi.get('salesVolume', [{}])[0].get('value', None)
 
-        # page number shit 
+        # page number shit
         if page_num * max_can >= int(result["totalMatchingCandidates"]):
             break
         page_num += 1
 
-    # no sales volume found 
+    # no sales volume found
     return None
+
 
 if __name__ == "__main__":
 
@@ -188,6 +189,6 @@ if __name__ == "__main__":
         print(len(result[0]))
         print(result[1])
 
-    #test_poi_within_area()
+    # test_poi_within_area()
 
     get_sales("327 1/2 E 1st St, Los Angeles, CA 90012", "Little Tokyo Hotel")
