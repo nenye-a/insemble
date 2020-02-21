@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { View } from '../core-ui';
 import ProfileCard from '../views/ProfilePage/ProfileCard';
+import HeaderNavigationBar from '../components/layout/HeaderNavigationBar';
 
 type Props = {
   children: ReactNode;
@@ -10,11 +11,14 @@ type Props = {
 
 export default function UserProfileLayout(props: Props) {
   return (
-    <Container>
-      <ProfileCard name="Armand Jacobs" company="John Cooper Works" position="Manager" />
-      <Spacing />
-      {props.children}
-    </Container>
+    <View>
+      <HeaderNavigationBar />
+      <Container>
+        <ProfileCard />
+        <Spacing />
+        {props.children}
+      </Container>
+    </View>
   );
 }
 

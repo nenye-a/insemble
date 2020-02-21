@@ -7,7 +7,8 @@ import InsembleLogo from '../common/InsembleLogo';
 import { TouchableOpacity, Button, View, Avatar } from '../../core-ui';
 import { WHITE, HEADER_BORDER_COLOR, THEME_COLOR } from '../../constants/colors';
 import { NAVBAR_HEIGHT } from '../../constants/theme';
-import { PROFILE_TENANT } from '../../graphql/queries/server/profile';
+import { GET_TENANT_PROFILE } from '../../graphql/queries/server/profile';
+import { GetTenantProfile } from '../../generated/GetTenantProfile';
 
 type Props = {
   showButton?: boolean;
@@ -15,7 +16,7 @@ type Props = {
 
 export default function HeaderNavigationBar(props: Props) {
   let history = useHistory();
-  let { data } = useQuery(PROFILE_TENANT);
+  let { data } = useQuery<GetTenantProfile>(GET_TENANT_PROFILE);
   let avatar = data?.profileTenant.avatar;
   return (
     <Container>
