@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { useQuery } from '@apollo/react-hooks';
 
-import { Text, View, ContainedTextInput as TextInput } from '../core-ui';
+import { Text, View, ContainedTextInput as TextInput, TouchableOpacity, Avatar } from '../core-ui';
 import Title from './LandingPage/Title';
 import Masthead from './LandingPage/Masthead';
 import LocationsInput from './LandingPage/LocationsInput';
@@ -11,44 +12,51 @@ import { WHITE } from '../constants/colors';
 import { FONT_SIZE_LARGE } from '../constants/theme';
 import CategoriesInput from './LandingPage/CategoriesInput';
 import Button from '../core-ui/Button';
-import asyncStorage from '../utils/asyncStorage';
+import { GetTenantProfile } from '../generated/GetTenantProfile';
+import { GET_TENANT_PROFILE } from '../graphql/queries/server/profile';
 
 function Landing() {
   let { isLoading } = useGoogleMaps();
   let history = useHistory();
-  useEffect(() => {
-    let token = asyncStorage.getTenantToken();
-    let brandId = asyncStorage.getBrandId();
-    if (token && brandId) {
-      // NOTE: disabling this so user still can access the landing page.
-      // history.push('./map/' + brandId);
-    }
-  }, [history]);
+  let { data } = useQuery<GetTenantProfile>(GET_TENANT_PROFILE);
+  let avatar = data?.profileTenant.avatar;
 
   return (
     <Masthead>
       <RowView>
-        <FindTenantsButton
-          text="Find Tenants"
-          mode="transparent"
-          onPress={() => {
-            history.push('/landlord/signup');
-          }}
-        />
-        <LogIn
-          mode="secondary"
-          text="Log In"
-          textProps={{ style: { color: WHITE } }}
-          onPress={() => {
-            history.push('/login');
-          }}
-        />
-        <Button
-          text="Sign Up"
-          onPress={() => {
-            history.push('/signup');
-          }}
-        />
+        {data?.profileTenant.id ? (
+          <TouchableOpacity
+            onPress={() => {
+              history.push('/user/edit-profile');
+            }}
+          >
+            <Avatar size="small" image={avatar} />
+          </TouchableOpacity>
+        ) : (
+          <>
+            <FindTenantsButton
+              text="Find Tenants"
+              mode="transparent"
+              onPress={() => {
+                history.push('/landlord/signup');
+              }}
+            />
+            <LogIn
+              mode="secondary"
+              text="Log In"
+              textProps={{ style: { color: WHITE } }}
+              onPress={() => {
+                history.push('/login');
+              }}
+            />
+            <Button
+              text="Sign Up"
+              onPress={() => {
+                history.push('/signup');
+              }}
+            />
+          </>
+        )}
       </RowView>
       <Title style={{ maxWidth: 580 }}>Find the next best location for your business</Title>
       <Text color={WHITE} fontSize={FONT_SIZE_LARGE}>
