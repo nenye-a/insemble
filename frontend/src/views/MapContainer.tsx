@@ -116,8 +116,8 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         brandId,
         selectedLocation: {
           address: '',
-          lat: '33.849193',
-          lng: '-118.364243',
+          lat: lat(),
+          lng: lng(),
         },
       },
     });
@@ -180,7 +180,6 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
       placement: 'center',
     },
   ];
-  console.log(data);
 
   return (
     <div>
@@ -256,7 +255,6 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
                 onSeeMore={onMarkerClick}
               />
             </InfoBox>
-            }
           </Marker>
         )}
         {showGuide && <div className="marker-example heat-map-example empty-container" />}
