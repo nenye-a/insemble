@@ -6,6 +6,18 @@ export type FilterOptions = {
   type: Array<string>;
 };
 
+export type AutoPopulateResponse = {
+  categories: Array<string>;
+  personas: Array<string>;
+  income: {
+    min: number;
+    max: number;
+  };
+  age: {
+    min: number;
+    max: number;
+  };
+};
 type MatchingLocationType = {
   lat: number;
   lng: number;

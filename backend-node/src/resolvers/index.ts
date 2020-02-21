@@ -6,6 +6,7 @@ export * from './filter/commuteQuery';
 export * from './filter/educationQuery';
 export * from './filter/equipmentQuery';
 export * from './filter/spaceTypeQuery';
+export * from './filter/autoPopulateFilterQuery';
 export * from './matches/tenantMatchesQuery';
 export * from './tenant/profileTenantQuery';
 export * from './tenant/editProfileTenantMutation';
