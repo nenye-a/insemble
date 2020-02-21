@@ -66,6 +66,7 @@ export default function Onboarding() {
           nextLocations: tenantGoals.location,
         },
         filter: {
+<<<<<<< HEAD
           categories,
           personas: noPersonasPreference ? null : personas,
           education: noEducationsPreference ? null : educations,
@@ -80,6 +81,20 @@ export default function Onboarding() {
           maxFrontageWidth: Number(maxFrontageWidth),
           spaceType,
           equipment: equipments,
+=======
+          categories: confirmBusinessDetail.categories,
+          personas: targetCustomers.noPersonasPreference ? [] : targetCustomers.personas,
+          minAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.minAge),
+          maxAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.maxAge),
+          minIncome: targetCustomers.noIncomePreference ? null : Number(targetCustomers.minIncome),
+          maxIncome: targetCustomers.noIncomePreference ? null : Number(targetCustomers.maxIncome),
+          minSize: Number(physicalSiteCriteria.minSize),
+          maxSize: Number(physicalSiteCriteria.maxSize),
+          minFrontageWidth: Number(physicalSiteCriteria.minFrontageWidth),
+          maxFrontageWidth: Number(physicalSiteCriteria.maxFrontageWidth),
+          spaceType: physicalSiteCriteria.spaceType,
+          equipment: physicalSiteCriteria.equipments,
+>>>>>>> Connect Location Preview
         },
       },
     });

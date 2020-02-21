@@ -35,10 +35,13 @@ export const GET_TENANT_MATCHES_DATA = gql`
         displayValue
       }
       personas
+<<<<<<< HEAD
       ethnicity {
         rawValue
         displayValue
       }
+=======
+>>>>>>> Connect Location Preview
       equipment
       spaceType
       matchingProperties {

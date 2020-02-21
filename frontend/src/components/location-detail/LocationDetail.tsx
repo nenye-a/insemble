@@ -11,8 +11,6 @@ type Props = {
   population: string;
   income: string;
   age: number;
-  gender: string;
-  ethnicity: Array<string>;
   onSeeMore?: () => void;
 };
 

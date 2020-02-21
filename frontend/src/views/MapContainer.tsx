@@ -6,7 +6,9 @@ import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 import { useAlert } from 'react-alert';
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
+import { useParams } from 'react-router-dom';
 
+import { GET_LOCATION_PREVIEW } from '../graphql/queries/server/preview';
 import { View } from '../core-ui';
 import urlSafeLatLng from '../utils/urlSafeLatLng';
 import LocationDetail from '../components/location-detail/LocationDetail';
@@ -16,6 +18,7 @@ import {
   TenantMatches_tenantMatches_matchingLocations as TenantMatchesMatchingLocations,
   TenantMatches_tenantMatches_matchingProperties as TenantMatchesMatchingProperties,
 } from '../generated/TenantMatches';
+import { useLazyQuery } from '@apollo/react-hooks';
 
 type LatLngBounds = google.maps.LatLngBounds;
 type LatLng = google.maps.LatLng;
@@ -51,6 +54,10 @@ const defaultCenter = {
 const defaultZoom = 10;
 
 function MapContainer({ onMarkerClick, matchingLocations }: Props) {
+  let { brandId = '' } = useParams();
+
+  let [getLocation, { data, loading }] = useLazyQuery(GET_LOCATION_PREVIEW);
+
   let heatmapData =
     matchingLocations && matchingLocations
       ? matchingLocations.map(({ lat, lng, match }) => ({
@@ -70,7 +77,6 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
 
   let mapRef = useRef<GoogleMap | null>(null);
   let searchBoxRef = useRef<SearchBox | null>(null);
-
   useEffect(() => {
     let map = mapRef.current;
     if (map) {
@@ -107,16 +113,18 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
 
   let onMapClick = (latLng: LatLng) => {
     let { lat, lng } = urlSafeLatLng(latLng.toJSON());
-    fetch(`api/location/lat=${lat}&lng=${lng}&radius=1`)
-      .then((res) => res.json())
-      .then((data) => {
-        sessionStorage.setItem('temp_location', JSON.stringify(data));
-        setMarkerPosition(latLng);
-        setMarker(data);
-      })
-      .catch(() => {
-        alert.show('Marker is too far from known establishment');
-      });
+    getLocation({
+      variables: {
+        brandId,
+        selectedLocation: {
+          address: '',
+          lat: lat,
+          lng: lng,
+        },
+      },
+    });
+    setMarkerPosition(latLng);
+    setMarker(data);
   };
 
   let handleSearchClick = (marker: LatLngLiteral) => {
@@ -215,7 +223,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
       >
         {markerPosition && (
           <Marker position={markerPosition} onClick={onMarkerClick} icon={MapPin}>
-            {marker && (
+            {!loading && (
               <InfoBox
                 defaultPosition={markerPosition}
                 defaultVisible={true}
@@ -242,13 +250,11 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
                 {/* TODO Change Dummy Data */}
                 <LocationDetail
                   visible
-                  title={marker.address}
-                  subTitle={'Address Details'}
-                  income={marker.income}
-                  population={marker.pop}
-                  age={50}
-                  ethnicity={['White', 'Hispanic']}
-                  gender={'52% Female'}
+                  title={data.targetAddress}
+                  subTitle={data.targetNeighborhood}
+                  income={data.medianIncome}
+                  population={data.daytimePop3Mile}
+                  age={data.medianAge}
                   onSeeMore={onMarkerClick}
                 />
               </InfoBox>

@@ -6,7 +6,7 @@ type StringLatLng = {
 };
 
 function encodeFloat(value: number): string {
-  return value.toFixed(6).replace('.', '');
+  return value.toFixed(6);
 }
 
 export default function urlSafeLatLng(latLng: LatLngLiteral): StringLatLng {
