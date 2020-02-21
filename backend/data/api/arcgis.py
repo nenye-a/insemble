@@ -9,7 +9,7 @@ import json
 
 # TODO: get permanent token. This may fail eventually
 url = "https://geoenrich.arcgis.DELETED_BASE64_STRING"
-TOKEN = "8a_g1O93s8lDljS7yrzUqf_DELETED_BASE64_STRING_4Yx7LyS1-DELETED_BASE64_STRING-iVpsiVW97BX4mO5U4lT8w2PuG8i53Colok."
+TOKEN = "B5zwIZH_gQGg1DUeqbdubRni3E8O_4i8n7POC0iAIlEpjcSGBZWupNd-_DOmUQT5v1cV6nTMaUP7_ORbmVYZX9sY0NR2yO_DELETED_BASE64_STRING-78xZcfCYeFRh18ZqBSWxl6B3ULkxqWM5MF_sRbixdwJb2xIs-CgrZGWncAgw_3lIlSTkguD5M7XPT1ufFxZop1j3V-kfoBU."
 
 
 def details(lat, lng, radius):
