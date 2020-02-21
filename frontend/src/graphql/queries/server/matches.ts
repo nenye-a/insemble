@@ -35,7 +35,11 @@ export const GET_TENANT_MATCHES_DATA = gql`
         displayValue
       }
       personas
-      equipmentIds
+      ethnicity {
+        rawValue
+        displayValue
+      }
+      equipment
       spaceType
       matchingProperties {
         address
