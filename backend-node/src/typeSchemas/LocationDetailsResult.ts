@@ -28,12 +28,8 @@ export let KeyFactsDeepDive = objectType({
 export let CommuteDeepDive = objectType({
   name: 'CommuteDeepDive',
   definition(t) {
-    t.int('publicTransport');
-    t.int('bicycle');
-    t.int('carpooled');
-    t.int('droveAlone');
-    t.int('walked');
-    t.int('workAtHome');
+    t.string('name');
+    t.int('value');
   },
 });
 
@@ -93,12 +89,8 @@ export let NearbyDeepDive = objectType({
     t.float('numberRating');
     t.string('category');
     t.float('distance');
-    t.boolean('restaurant', { nullable: true });
-    t.boolean('retail', { nullable: true });
+    t.string('placeType', { list: true });
     t.boolean('similar');
-    t.boolean('hospital', { nullable: true });
-    t.boolean('apartment', { nullable: true });
-    t.boolean('metro', { nullable: true });
   },
 });
 
@@ -114,6 +106,7 @@ export let DeepDiveResultType = objectType({
     });
     t.field('commute', {
       type: 'CommuteDeepDive',
+      list: true,
     });
     t.field('topPersonas', {
       type: 'PersonaDeepDive',
