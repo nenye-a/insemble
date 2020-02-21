@@ -88,7 +88,7 @@ export default function MainMap() {
   let { isLoading } = useGoogleMaps();
 
   let params = useParams<BrandId>();
-  console.log(params, 'PARAMS');
+
   let { brandId } = params;
   let {
     data: tenantMatchesData,

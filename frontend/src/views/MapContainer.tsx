@@ -256,12 +256,10 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
           </Marker>
         )}
         {showGuide && <div className="marker-example heat-map-example empty-container" />}
-        {heatmapData && (
-          <HeatMapLayer
-            data={heatmapData}
-            options={{ data: heatmapData, radius: 0.006, opacity: 0.5, dissipating: false }}
-          />
-        )}
+        <HeatMapLayer
+          data={heatmapData}
+          options={{ data: heatmapData, radius: 0.006, opacity: 0.5, dissipating: false }}
+        />
 
         {markers.map((markerPosition, index) => (
           <Marker
