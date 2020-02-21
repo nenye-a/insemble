@@ -3,6 +3,7 @@ import { FilterObj } from '../../../reducers/sideBarFiltersReducer';
 import { Commute_commute as CommuteCommute } from '../../../generated/Commute';
 import { Education_education as EducationEducation } from '../../../generated/Education';
 import { DemographicsFilter, PropertyFilter } from '../../MainMap';
+import { Ethnicity_ethnicity as EthnicityEthnicity } from '../../../generated/Ethnicity';
 
 export function getDemographicsOptionsAndPrefilledValues(
   demographics: Array<FilterObj>,
@@ -11,6 +12,7 @@ export function getDemographicsOptionsAndPrefilledValues(
     personas: Array<string> | undefined;
     commute: Array<CommuteCommute> | undefined;
     education: Array<EducationEducation> | undefined;
+    ethnicity: Array<EthnicityEthnicity> | undefined;
     // option list
   }
 ): Array<FilterObj> {
@@ -24,8 +26,14 @@ export function getDemographicsOptionsAndPrefilledValues(
     personas,
     commute,
     education,
+    ethnicity,
   } = demographicsFilterValues;
-  let { personas: personasOptions, commute: commuteOptions, education: educationOptions } = filter;
+  let {
+    personas: personasOptions,
+    commute: commuteOptions,
+    education: educationOptions,
+    ethnicity: ethnicityOptions,
+  } = filter;
 
   return demographics.map((item) => {
     switch (item.name) {
@@ -50,6 +58,11 @@ export function getDemographicsOptionsAndPrefilledValues(
       case DEMOGRAPHICS_CATEGORIES.education: {
         selectedValues = education || [];
         allOptions = educationOptions ? educationOptions.map((item) => item.displayValue) : [];
+        break;
+      }
+      case DEMOGRAPHICS_CATEGORIES.ethnicity: {
+        selectedValues = ethnicity || [];
+        allOptions = ethnicityOptions ? ethnicityOptions.map((item) => item.displayValue) : [];
         break;
       }
     }

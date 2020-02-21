@@ -56,3 +56,11 @@ export const GET_AUTOPOPULATE_FILTER = gql`
     }
   }
 `;
+
+export const GET_ETHNICITY_LIST = gql`
+  query Ethnicity {
+    ethnicity {
+      displayValue
+    }
+  }
+`;
