@@ -11,7 +11,6 @@ import { REGISTER_TENANT } from '../../graphql/queries/server/auth';
 import { RegisterTenant, RegisterTenantVariables } from '../../generated/RegisterTenant';
 import { asyncStorage } from '../../utils';
 import { State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
-import formatFilterParams from '../../utils/formatFilterParams';
 
 enum Role {
   Tenant = 'Tenant',
