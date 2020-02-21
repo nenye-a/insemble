@@ -1,0 +1,31 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "ethnicity",
+      "type": "String",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "minDaytimePopulation",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Brand",
+      "field": "equipment",
+      "type": "String",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Brand",
+      "field": "equipmentIds"
+    }
+  ]
+}
