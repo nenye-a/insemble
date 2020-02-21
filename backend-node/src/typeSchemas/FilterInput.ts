@@ -15,7 +15,8 @@ export let FilterInput = inputObjectType({
     t.int('maxAge');
     t.int('minDaytimePopulation');
     t.string('personas', { list: true });
-    t.string('equipmentIds', { list: true });
+    t.string('equipment', { list: true });
+    t.string('ethnicity', { list: true });
     t.string('spaceType', { list: true });
     t.string('commute', { list: true });
     t.string('education', { list: true });
