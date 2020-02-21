@@ -135,7 +135,7 @@ export default function Onboarding() {
   let Content = segments[activeSegmentIndex].content;
   if (data && data.createBrand) {
     let brandId = data.createBrand;
-    return <Redirect to={`map/${brandId}`} />;
+    return <Redirect to={`/map/${brandId}`} />;
   } else if (!history.location.state) {
     return <Redirect to="/" />;
   }

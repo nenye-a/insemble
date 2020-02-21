@@ -39,3 +39,20 @@ export const GET_PROPERTY_TYPE_LIST = gql`
     spaceType
   }
 `;
+
+export const GET_AUTOPOPULATE_FILTER = gql`
+  query AutoPopulateFilter($address: String, $brandName: String) {
+    autoPopulateFilter(address: $address, brandName: $brandName) {
+      categories
+      personas
+      income {
+        min
+        max
+      }
+      age {
+        min
+        max
+      }
+    }
+  }
+`;

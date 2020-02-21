@@ -20,7 +20,8 @@ function Landing() {
     let token = asyncStorage.getTenantToken();
     let brandId = asyncStorage.getBrandId();
     if (token && brandId) {
-      history.push('./map/' + brandId);
+      // NOTE: disabling this so user still can access the landing page.
+      // history.push('./map/' + brandId);
     }
   }, [history]);
 
