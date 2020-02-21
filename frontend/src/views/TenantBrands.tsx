@@ -64,7 +64,11 @@ export default () => {
           );
         })
       )}
-      <AddButton>
+      <AddButton
+        onPress={() => {
+          history.push('/');
+        }}
+      >
         <SvgPlus style={{ marginRight: 8, color: THEME_COLOR }} />
         <Text color={THEME_COLOR}>New Retailer or Restaurant</Text>
       </AddButton>
