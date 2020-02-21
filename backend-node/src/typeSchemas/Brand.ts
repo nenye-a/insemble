@@ -23,8 +23,10 @@ export let Brand = objectType({
     t.model.maxFrontageWidth();
     t.field('education', { type: 'RawFilter', list: true, nullable: true });
     t.field('commute', { type: 'RawFilter', list: true, nullable: true });
+    t.field('ethnicity', { type: 'RawFilter', list: true, nullable: true });
     t.model.personas();
-    t.model.equipmentIds();
+    t.model.minDaytimePopulation();
+    t.model.equipment();
     t.model.spaceType();
     t.field('matchingLocations', {
       type: 'MatchingLocation',
