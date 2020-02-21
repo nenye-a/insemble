@@ -46,7 +46,7 @@ export default function ConfirmBusinessDetail(props: Props) {
   let name = nameOnLanding || confirmBusinessDetail.name || watch('businessName');
 
   let { data: categoriesData } = useQuery<Categories>(GET_CATEGORIES);
-  let { data: autopopulateData, loading: autopopulateLoading, error: autopopulateError } = useQuery<
+  let { data: autopopulateData, loading: autopopulateLoading } = useQuery<
     AutoPopulateFilter,
     AutoPopulateFilterVariables
   >(GET_AUTOPOPULATE_FILTER, {
@@ -76,7 +76,7 @@ export default function ConfirmBusinessDetail(props: Props) {
     if (autopopulateData?.autoPopulateFilter.categories) {
       setSelectedCategories(autopopulateData.autoPopulateFilter.categories);
     }
-  }, [autopopulateData?.autoPopulateFilter.categories]);
+  }, [autopopulateData]);
 
   useEffect(() => {
     if (allValid) {
