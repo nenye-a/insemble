@@ -243,7 +243,13 @@ export default function SideBarFilters() {
               name: openFilterName,
             });
           }}
-          loading={personasLoading || commuteLoading || educationLoading || spaceTypeLoading}
+          loading={
+            personasLoading ||
+            commuteLoading ||
+            educationLoading ||
+            spaceTypeLoading ||
+            ethnicityLoading
+          }
           {...filterProps}
         />
       </ClickAway>
