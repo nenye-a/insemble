@@ -55,9 +55,7 @@ const defaultZoom = 10;
 
 function MapContainer({ onMarkerClick, matchingLocations }: Props) {
   let { brandId = '' } = useParams();
-
   let [getLocation, { data, loading }] = useLazyQuery(GET_LOCATION_PREVIEW);
-
   let heatmapData =
     matchingLocations && matchingLocations
       ? matchingLocations.map(({ lat, lng, match }) => ({
@@ -112,14 +110,14 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
   };
 
   let onMapClick = (latLng: LatLng) => {
-    let { lat, lng } = urlSafeLatLng(latLng.toJSON());
+    let { lat, lng } = latLng;
     getLocation({
       variables: {
         brandId,
         selectedLocation: {
           address: '',
-          lat: lat,
-          lng: lng,
+          lat: '33.849193',
+          lng: '-118.364243',
         },
       },
     });
@@ -182,6 +180,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
       placement: 'center',
     },
   ];
+  console.log(data);
 
   return (
     <div>
@@ -221,44 +220,43 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         onClick={(event) => onMapClick(event.latLng)}
         onBoundsChanged={onBoundsChanged}
       >
-        {markerPosition && (
+        {markerPosition && !loading && (
           <Marker position={markerPosition} onClick={onMarkerClick} icon={MapPin}>
-            {!loading && (
-              <InfoBox
-                defaultPosition={markerPosition}
-                defaultVisible={true}
-                options={{
-                  disableAutoPan: false,
-                  pixelOffset: new google.maps.Size(-150, -45 - infoBoxHeight),
-                  infoBoxClearance: new google.maps.Size(1, 1),
-                  isHidden: false,
-                  pane: 'floatPane',
-                  enableEventPropagation: true,
-                  closeBoxMargin: '10px 0 2px 2px',
-                }}
-                onDomReady={() => {
-                  let infoBox = document.querySelector('.infoBox');
-                  if (infoBox) {
-                    let infoBoxHeight = infoBox.getClientRects()[0].height;
-                    setInfoBoxHeight(infoBoxHeight);
-                  }
-                }}
-                onCloseClick={() => {
-                  setMarker(null);
-                }}
-              >
-                {/* TODO Change Dummy Data */}
-                <LocationDetail
-                  visible
-                  title={data.targetAddress}
-                  subTitle={data.targetNeighborhood}
-                  income={data.medianIncome}
-                  population={data.daytimePop3Mile}
-                  age={data.medianAge}
-                  onSeeMore={onMarkerClick}
-                />
-              </InfoBox>
-            )}
+            <InfoBox
+              defaultPosition={markerPosition}
+              defaultVisible={true}
+              options={{
+                disableAutoPan: false,
+                pixelOffset: new google.maps.Size(-150, -45 - infoBoxHeight),
+                infoBoxClearance: new google.maps.Size(1, 1),
+                isHidden: false,
+                pane: 'floatPane',
+                enableEventPropagation: true,
+                closeBoxMargin: '10px 0 2px 2px',
+              }}
+              onDomReady={() => {
+                let infoBox = document.querySelector('.infoBox');
+                if (infoBox) {
+                  let infoBoxHeight = infoBox.getClientRects()[0].height;
+                  setInfoBoxHeight(infoBoxHeight);
+                }
+              }}
+              onCloseClick={() => {
+                setMarker(null);
+              }}
+            >
+              {/* TODO Change Dummy Data */}
+              <LocationDetail
+                visible
+                title={data.locationPreview.targetAddress}
+                subTitle={data.locationPreview.targetNeighborhood}
+                income={data.locationPreview.medianIncome}
+                population={data.locationPreview.daytimePop3Mile}
+                age={data.locationPreview.medianAge}
+                onSeeMore={onMarkerClick}
+              />
+            </InfoBox>
+            }
           </Marker>
         )}
         {showGuide && <div className="marker-example heat-map-example empty-container" />}
