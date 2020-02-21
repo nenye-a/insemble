@@ -34,15 +34,14 @@ export default () => {
               })
             : [];
           return (
-            <TouchableOpacity
-              key={index}
-              style={{ marginBottom: 24 }}
-              onPress={() => {
-                history.push(`/user/brands/${id}`);
-              }}
-            >
+            <TouchableOpacity key={index} style={{ marginBottom: 24 }}>
               <HistoryContainer>
-                <LeftContainer flex>
+                <LeftContainer
+                  flex
+                  onClick={() => {
+                    history.push(`/user/brands/${id}`);
+                  }}
+                >
                   <RowedView>
                     <Text>Brand Name</Text>
                     <Text>{name}</Text>
@@ -59,13 +58,7 @@ export default () => {
                     </PillContainer>
                   </RowedView>
                 </LeftContainer>
-                {/* <TouchableOpacity
-                  onPress={() => {
-                    history.push(`/maps/${id}`);
-                  }}
-                > */}
                 <HeatmapPlaceholder heatmapData={heatmapData} />
-                {/* </TouchableOpacity> */}
               </HistoryContainer>
             </TouchableOpacity>
           );
@@ -80,6 +73,7 @@ export default () => {
 };
 type HeatmapProps = {
   heatmapData: google.maps.MVCArray<google.maps.visualization.WeightedLocation>;
+  brandId?: string;
 };
 
 let GoogleHeatmap = withGoogleMap((props: HeatmapProps) => {
@@ -98,19 +92,28 @@ let GoogleHeatmap = withGoogleMap((props: HeatmapProps) => {
     >
       <HeatMapLayer
         data={props.heatmapData}
-        options={{ data: props.heatmapData, radius: 20, opacity: 1 }}
+        options={{ data: props.heatmapData, radius: 0.01, opacity: 1, dissipating: false }}
       />
     </GoogleMap>
   );
 });
 
 function HeatmapPlaceholder(props: HeatmapProps) {
+  let { heatmapData, brandId } = props;
   let { isLoading } = useGoogleMaps();
+  let history = useHistory();
   return isLoading ? null : (
     <GoogleHeatmap
-      containerElement={<View style={{ width: 200 }} />}
+      containerElement={
+        <TouchableOpacity
+          style={{ width: 200 }}
+          onPress={() => {
+            history.push(`/map/${brandId}`);
+          }}
+        />
+      }
       mapElement={<View flex />}
-      heatmapData={props.heatmapData}
+      heatmapData={heatmapData}
     />
   );
 }
