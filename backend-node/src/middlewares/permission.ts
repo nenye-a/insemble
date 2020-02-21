@@ -2,13 +2,26 @@ import { rule, shield } from 'graphql-shield';
 
 import { Context } from 'serverTypes';
 
-let isAuthenticated = rule()(async (_, __, ctx: Context) => {
+let isTenantAuthenticated = rule()(async (_, __, ctx: Context) => {
   return ctx.tenantUserId != null;
+});
+
+let isLandlordAuthenticated = rule()(async (_, __, ctx: Context) => {
+  return ctx.landlordUserId != null;
 });
 
 let permissions = shield({
   Query: {
-    profileTenant: isAuthenticated,
+    profileTenant: isTenantAuthenticated,
+    tenantMatches: isTenantAuthenticated,
+    brands: isTenantAuthenticated,
+    locationPreview: isTenantAuthenticated,
+    locationDetails: isTenantAuthenticated,
+  },
+  Mutation: {
+    editProfileTenant: isTenantAuthenticated,
+    createBrand: isTenantAuthenticated,
+    editBrand: isTenantAuthenticated,
   },
 });
 
