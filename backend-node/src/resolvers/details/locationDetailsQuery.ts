@@ -95,16 +95,7 @@ let locationDetails = queryField('locationDetails', {
         mile,
       } = keyFacts;
 
-      let {
-        'Public Transport': publicTransport,
-        'Drove Alone': droveAlone,
-        'Worked at Home': workAtHome,
-        Bicycle: bicycle,
-        Carpooled: carpooled,
-        Walked: walked,
-      } = commute;
-
-      let objectToArrayKeyObject = (
+      let objectToArrayKeyObjectDemographics = (
         object: Record<string, DemographicStat>,
       ) => {
         let objectKeyValue = Object.keys(object).map((key) => {
@@ -123,11 +114,37 @@ let locationDetails = queryField('locationDetails', {
         return objectKeyValue;
       };
 
+      let objectToArrayKeyObjectCommute = (object: Record<string, number>) => {
+        let objectKeyValue = Object.keys(object).map((key) => {
+          return {
+            name: key,
+            value: object[key],
+          };
+        });
+        return objectKeyValue;
+      };
+
       let tsNearby = nearby.map(
-        ({ number_rating: numberRating, category, ...theRestNearby }) => {
+        ({
+          number_rating: numberRating,
+          category,
+          apartment,
+          hospital,
+          retail,
+          restaurant,
+          metro,
+          ...theRestNearby
+        }) => {
+          let placeType = [];
+          apartment && placeType.push('Apartment');
+          hospital && placeType.push('Hospital');
+          retail && placeType.push('Retail');
+          restaurant && placeType.push('Restaurant');
+          metro && placeType.push('Metro');
           return {
             numberRating: numberRating ? numberRating : 0,
             category: category ? category : '',
+            placeType,
             ...theRestNearby,
           };
         },
@@ -148,35 +165,40 @@ let locationDetails = queryField('locationDetails', {
             totalHousehold,
             mediumHouseholdIncome,
           },
-          commute: {
-            publicTransport,
-            bicycle,
-            carpooled,
-            droveAlone,
-            walked,
-            workAtHome,
-          },
+          commute: objectToArrayKeyObjectCommute(commute),
           topPersonas,
           demographics1: {
-            age: objectToArrayKeyObject(demographics1.age),
-            income: objectToArrayKeyObject(demographics1.income),
-            ethnicity: objectToArrayKeyObject(demographics1.ethnicity),
-            education: objectToArrayKeyObject(demographics1.education),
-            gender: objectToArrayKeyObject(demographics1.gender),
+            age: objectToArrayKeyObjectDemographics(demographics1.age),
+            income: objectToArrayKeyObjectDemographics(demographics1.income),
+            ethnicity: objectToArrayKeyObjectDemographics(
+              demographics1.ethnicity,
+            ),
+            education: objectToArrayKeyObjectDemographics(
+              demographics1.education,
+            ),
+            gender: objectToArrayKeyObjectDemographics(demographics1.gender),
           },
           demographics3: {
-            age: objectToArrayKeyObject(demographics3.age),
-            income: objectToArrayKeyObject(demographics3.income),
-            ethnicity: objectToArrayKeyObject(demographics3.ethnicity),
-            education: objectToArrayKeyObject(demographics3.education),
-            gender: objectToArrayKeyObject(demographics3.gender),
+            age: objectToArrayKeyObjectDemographics(demographics3.age),
+            income: objectToArrayKeyObjectDemographics(demographics3.income),
+            ethnicity: objectToArrayKeyObjectDemographics(
+              demographics3.ethnicity,
+            ),
+            education: objectToArrayKeyObjectDemographics(
+              demographics3.education,
+            ),
+            gender: objectToArrayKeyObjectDemographics(demographics3.gender),
           },
           demographics5: {
-            age: objectToArrayKeyObject(demographics5.age),
-            income: objectToArrayKeyObject(demographics5.income),
-            ethnicity: objectToArrayKeyObject(demographics5.ethnicity),
-            education: objectToArrayKeyObject(demographics5.education),
-            gender: objectToArrayKeyObject(demographics5.gender),
+            age: objectToArrayKeyObjectDemographics(demographics5.age),
+            income: objectToArrayKeyObjectDemographics(demographics5.income),
+            ethnicity: objectToArrayKeyObjectDemographics(
+              demographics5.ethnicity,
+            ),
+            education: objectToArrayKeyObjectDemographics(
+              demographics5.education,
+            ),
+            gender: objectToArrayKeyObjectDemographics(demographics5.gender),
           },
           nearby: tsNearby,
         },
