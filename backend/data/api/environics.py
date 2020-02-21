@@ -21,7 +21,7 @@ def get_demographics(lat, lng, radius, demo_df, block_grp_df, cats):
     block_grps = [str(block) for block in list(df_trimmed["block_grp"])]
 
     try:
-        demo_trimmed = demo_df[block_grps]
+        demo_trimmed = demo_df[block_grps].copy()
     except:
         return None
 
