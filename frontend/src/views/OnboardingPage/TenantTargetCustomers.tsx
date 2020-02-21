@@ -1,14 +1,24 @@
 import React, { useState, Dispatch, useEffect } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
+import { useHistory } from 'react-router-dom';
 
 import { View, Alert, Label, Button, Text, TextInput } from '../../core-ui';
 import { Filter } from '../../components';
 import { MUTED_TEXT_COLOR } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_SIZE_MEDIUMSMALL } from '../../constants/theme';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
-import { GET_PERSONA_LIST, GET_EDUCATION_LIST } from '../../graphql/queries/server/filters';
+import {
+  GET_PERSONA_LIST,
+  GET_EDUCATION_LIST,
+  GET_AUTOPOPULATE_FILTER,
+} from '../../graphql/queries/server/filters';
 import { Education_education as EducationEducation } from '../../generated/Education';
+import {
+  AutoPopulateFilter,
+  AutoPopulateFilterVariables,
+} from '../../generated/AutoPopulateFilter';
+import { LocationState } from './types';
 
 // remove this when it's connected to endpoint that returns prefilled values
 const INITIAL_MIN_INCOME = 100;
@@ -24,8 +34,22 @@ type Props = {
 export default function TenantTargetCustomers(props: Props) {
   let { dispatch, state } = props;
   let { targetCustomers } = state;
+  let history = useHistory<LocationState>();
+  let { state: landingState } = history.location;
+  let { name: nameOnLanding, formattedAddress } = landingState;
+
   let { data: personaData, loading: personaLoading } = useQuery(GET_PERSONA_LIST);
   let { data: educationData, loading: educationLoading } = useQuery(GET_EDUCATION_LIST);
+  let { data: autoPopulateData, loading: autoPopulateLoading } = useQuery<
+    AutoPopulateFilter,
+    AutoPopulateFilterVariables
+  >(GET_AUTOPOPULATE_FILTER, {
+    variables: {
+      brandName: nameOnLanding,
+      address: formattedAddress,
+    },
+    skip: !nameOnLanding || !formattedAddress,
+  });
   let [editCriteriaDisabled, toggleEditCriteria] = useState(true);
   let [noAgePreference, setNoAgePreference] = useState(targetCustomers.noAgePreference);
   let [noIncomePreference, setNoIncomePreference] = useState(targetCustomers.noIncomePreference);
@@ -50,6 +74,23 @@ export default function TenantTargetCustomers(props: Props) {
     targetCustomers.minIncome || INITIAL_MIN_INCOME,
     targetCustomers.maxIncome || INITIAL_MAX_INCOME,
   ]);
+
+  useEffect(() => {
+    if (autoPopulateData?.autoPopulateFilter) {
+      let { personas, income, age } = autoPopulateData.autoPopulateFilter;
+      let { min: minIncome, max: maxIncome } = income;
+      let { min: minAge, max: maxAge } = age;
+      if (personas.length > 0) {
+        setSelectedPersonas(personas);
+      }
+      if (minIncome && maxIncome) {
+        setSelectedIncomeRange([minIncome / 1000, maxIncome / 1000]);
+      }
+      if (minAge && maxAge) {
+        setSelectedAgeRange([minAge, maxAge]);
+      }
+    }
+  }, [autoPopulateLoading, autoPopulateData]);
 
   useEffect(() => {
     dispatch({
@@ -127,6 +168,7 @@ export default function TenantTargetCustomers(props: Props) {
           setSelectedAgeRange(values);
         }}
         disabled={editCriteriaDisabled}
+        loading={autoPopulateLoading}
       />
       <FilterContainer
         title="Income"
@@ -143,6 +185,7 @@ export default function TenantTargetCustomers(props: Props) {
         maximum={200}
         onSliderChange={(values: Array<number>) => setSelectedIncomeRange(values)}
         disabled={editCriteriaDisabled}
+        loading={autoPopulateLoading}
       />
       {!educationLoading && educationData && (
         <FilterContainer
@@ -193,6 +236,7 @@ export default function TenantTargetCustomers(props: Props) {
           }}
           onClear={() => setSelectedPersonas([])}
           disabled={editCriteriaDisabled}
+          loading={autoPopulateLoading}
         />
       )}
       <MinDaytimePopulationInput
