@@ -13,7 +13,7 @@ let spaceType = queryField('spaceType', {
 // TODO: Add where args
 async function spaceTypeResolver(_: Root, _args: {}, _context: Context) {
   let { type }: FilterOptions = (
-    await axios.get(`${LEGACY_API_URI}/api/filter`)
+    await axios.get(`${LEGACY_API_URI}/api/filter/`)
   ).data;
 
   return type;

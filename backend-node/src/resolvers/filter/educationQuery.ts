@@ -13,7 +13,7 @@ let education = queryField('education', {
 // TODO: Add where args
 async function educationResolver(_: Root, _args: {}, _context: Context) {
   let { education }: FilterOptions = (
-    await axios.get(`${LEGACY_API_URI}/api/filter`)
+    await axios.get(`${LEGACY_API_URI}/api/filter/`)
   ).data;
   let educationObjectList = education.map((rawValue) => {
     let splitEducationValue = rawValue.split('+, ');

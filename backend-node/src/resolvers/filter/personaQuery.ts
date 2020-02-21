@@ -13,7 +13,7 @@ let personas = queryField('personas', {
 // TODO: Add where args
 async function personaResolver(_: Root, _args: {}, _context: Context) {
   let { personas }: FilterOptions = (
-    await axios.get(`${LEGACY_API_URI}/api/filter`)
+    await axios.get(`${LEGACY_API_URI}/api/filter/`)
   ).data;
 
   return personas;
