@@ -9,11 +9,12 @@ export let editBrandResolver: FieldResolver<'Mutation', 'editBrand'> = async (
 ) => {
   let {
     categories = [],
-    equipmentIds = [],
+    equipment = [],
     personas = [],
     spaceType = [],
     education = [],
     commute = [],
+    ethnicity = [],
     ...filterInput
   } = filter || {};
   let { location, nextLocations, ...businessInput } = business || {};
@@ -24,8 +25,8 @@ export let editBrandResolver: FieldResolver<'Mutation', 'editBrand'> = async (
       categories: {
         set: categories,
       },
-      equipmentIds: {
-        set: equipmentIds,
+      equipment: {
+        set: equipment,
       },
       personas: {
         set: personas,
@@ -38,6 +39,9 @@ export let editBrandResolver: FieldResolver<'Mutation', 'editBrand'> = async (
       },
       commute: {
         set: commute,
+      },
+      ethnicity: {
+        set: ethnicity,
       },
       location: {
         create: location,
