@@ -50,7 +50,7 @@ export let PersonaDeepDive = objectType({
 export let DemographicStat = objectType({
   name: 'DemographicStat',
   definition(t) {
-    t.float('myLoaction', { nullable: true });
+    t.float('myLocation', { nullable: true });
     t.float('targetLocation');
     t.float('growth', { nullable: true });
   },
