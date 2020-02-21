@@ -11,6 +11,7 @@ import { REGISTER_TENANT } from '../../graphql/queries/server/auth';
 import { RegisterTenant, RegisterTenantVariables } from '../../generated/RegisterTenant';
 import { asyncStorage } from '../../utils';
 import { State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
+import formatFilterParams from '../../utils/formatFilterParams';
 
 enum Role {
   Tenant = 'Tenant',
@@ -49,26 +50,25 @@ export default function SignUpForm(props: Props) {
               ? confirmBusinessDetail.otherUserRelation || ''
               : confirmBusinessDetail.userRelation,
           location: confirmBusinessDetail.location || { lat: '', lng: '', address: '' },
-          // location: {
-          //   lat: '',
-          //   lng: '',
-          //   address: '371 E 2nd Street, LA, CA',
-          // }, // This address works
           locationCount: tenantGoals.locationCount ? Number(tenantGoals.locationCount) : null,
           newLocationPlan: tenantGoals.newLocationPlan?.value,
           nextLocations: tenantGoals.location,
         },
         filter: {
           categories: confirmBusinessDetail.categories,
-          personas: targetCustomers.noPersonasPreference ? [] : targetCustomers.personas,
-          education: targetCustomers.noEducationsPreference ? [] : targetCustomers.educations,
+          personas: targetCustomers.noPersonasPreference ? null : targetCustomers.personas,
+          education: targetCustomers.noEducationsPreference ? null : targetCustomers.educations,
           minDaytimePopulation: targetCustomers.minDaytimePopulation
             ? null
             : Number(targetCustomers.minDaytimePopulation),
           minAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.minAge),
           maxAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.maxAge),
-          minIncome: targetCustomers.noIncomePreference ? null : Number(targetCustomers.minIncome),
-          maxIncome: targetCustomers.noIncomePreference ? null : Number(targetCustomers.maxIncome),
+          minIncome: targetCustomers.noIncomePreference
+            ? null
+            : Number(targetCustomers.minIncome) * 1000,
+          maxIncome: targetCustomers.noIncomePreference
+            ? null
+            : Number(targetCustomers.maxIncome) * 1000,
           minSize: Number(physicalSiteCriteria.minSize),
           maxSize: Number(physicalSiteCriteria.maxSize),
           minFrontageWidth: Number(physicalSiteCriteria.minFrontageWidth),
