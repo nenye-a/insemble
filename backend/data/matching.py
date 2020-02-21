@@ -1,7 +1,6 @@
 from . import utils
 from django.conf import settings
 import pandas as pd
-import math
 from s3fs import S3FileSystem
 import data.api.goog as google
 import data.api.spatial as spatial
