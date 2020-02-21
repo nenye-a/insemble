@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 
 import { View, Card, TouchableOpacity, Dropdown } from '../../core-ui';
@@ -6,18 +6,32 @@ import NearbyPlacesCard from './NearbyPlacesCard';
 import NearbyMap from './NearbyMap';
 import NearbyMapLegend from './NearbyMapLegend';
 import MiniNearbyPlacesCard from './MiniNearbyPlacesCard';
-import { NEARBY_PLACES } from '../../fixtures/dummyData';
 import { BACKGROUND_COLOR, GREY_ICON, THEME_COLOR } from '../../constants/colors';
 import SvgGrid from '../../components/icons/grid';
 import SvgList from '../../components/icons/list';
+import { DeepDiveContext } from './DeepDiveModal';
 
 type ViewMode = 'grid' | 'list';
+
+export type NearbyPlace = {
+  photo: string;
+  name: string;
+  category: string;
+  rating: number | undefined;
+  numberRating: number;
+  distance: number;
+  placeType: Array<string>;
+  lat: number;
+  lng: number;
+  similar: boolean;
+};
 
 export default function NearbyCard() {
   let [selectedView, setSelectedView] = useState<ViewMode>('grid');
   let [selectedDropdownVal, setSelectedDropdownVal] = useState('Relevant');
   let isGridViewMode = selectedView === 'grid';
-  let data = NEARBY_PLACES;
+  let data = useContext(DeepDiveContext);
+  let nearbyData = data?.result.nearby;
   let iconTab = (
     <RightTitleContainer>
       <IconContainer
@@ -45,7 +59,7 @@ export default function NearbyCard() {
       titleContainerProps={{ style: { height: 56 } }}
     >
       <RowedView flex>
-        <NearbyMap data={data} />
+        <NearbyMap data={nearbyData || []} />
         <View flex>
           <NearbyMapLegend />
           <RightContent flex>
@@ -60,8 +74,10 @@ export default function NearbyCard() {
 
             <NearbyPlacesCardContainer flex>
               {isGridViewMode
-                ? data.map((item, index) => <NearbyPlacesCard key={index} {...item} />)
-                : data.map((item, index) => <MiniNearbyPlacesCard key={index} {...item} />)}
+                ? nearbyData &&
+                  nearbyData.map((item, index) => <NearbyPlacesCard key={index} {...item} />)
+                : nearbyData &&
+                  nearbyData.map((item, index) => <MiniNearbyPlacesCard key={index} {...item} />)}
             </NearbyPlacesCardContainer>
           </RightContent>
         </View>

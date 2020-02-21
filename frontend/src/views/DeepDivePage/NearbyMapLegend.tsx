@@ -13,12 +13,10 @@ import parkIcon from '../../assets/images/park.svg';
 export const LEGEND = {
   Restaurant: orangeCircleIcon,
   Hospital: purpleCircleIcon,
-  Clothing: blueCircleIcon,
-  'Subway Station': subwayIcon,
-  Park: parkIcon,
+  Retail: blueCircleIcon,
+  Metro: subwayIcon,
+  Apartment: parkIcon,
 };
-
-export type PlaceType = keyof typeof LEGEND;
 
 export default function NearbyMapLegend() {
   let [isCollapsed, toggleCollapsible] = useState(true);

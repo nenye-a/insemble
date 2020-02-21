@@ -8,15 +8,15 @@ import { THEME_COLOR } from '../../constants/colors';
 type Props = {
   name: string;
   distance: number;
-  photo: string;
-  isSimilar: boolean;
+  photo?: string;
+  similar: boolean;
 };
 
 export default function MiniNearbyPlacesCard(props: Props) {
-  let { name, distance, photo, isSimilar } = props;
+  let { name, distance, photo, similar } = props;
   return (
     <Container>
-      {isSimilar && (
+      {similar && (
         <Badge
           text="Similar"
           textProps={{ style: { fontWeight: FONT_WEIGHT_MEDIUM, fontSize: FONT_SIZE_SMALL } }}

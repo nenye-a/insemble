@@ -5,8 +5,22 @@ import { View } from '../../core-ui';
 import { LEGEND } from './NearbyMapLegend';
 import { useGoogleMaps } from '../../utils';
 import { THEME_COLOR } from '../../constants/colors';
-import { NearbyPlace } from '../../fixtures/dummyData';
 import mapPin from '../../components/icons/map-pin.svg';
+
+type PlaceType = 'Restaurant' | 'Hospital' | 'Retail' | 'Metro' | 'Apartment';
+
+export type NearbyPlace = {
+  photo?: string;
+  name: string;
+  category: string;
+  rating: number | null;
+  numberRating: number;
+  distance: number;
+  placeType: Array<string>;
+  lat: number;
+  lng: number;
+  similar: boolean;
+};
 
 type Props = {
   data: Array<NearbyPlace>;
@@ -26,7 +40,13 @@ function Map(props: Props) {
   return (
     <GoogleMap defaultZoom={13} defaultCenter={DEFAULT_CENTER}>
       {data.map(({ lat, lng, placeType }, index) => {
-        return <Marker key={index} position={{ lat, lng }} icon={LEGEND[placeType]} />;
+        return (
+          <Marker
+            key={index}
+            position={{ lat, lng }}
+            icon={LEGEND[placeType[0] as keyof typeof LEGEND]}
+          />
+        );
       })}
       <Marker position={DEFAULT_CENTER} icon={mapPin} />
       {/* 1 miles & 3 miles radius */}

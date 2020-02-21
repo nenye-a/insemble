@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 
 import { View, FragmentedProgressBar, Text, TouchableOpacity } from '../../core-ui';
@@ -14,13 +14,11 @@ import {
 import { GREEN_ICON, GREY_ICON, DARK_TEXT_COLOR } from '../../constants/colors';
 import SvgTriangleUp from '../../components/icons/triangle-up';
 import SvgArrowDownShort from '../../components/icons/arrow-down-short';
+import { DeepDiveContext } from './DeepDiveModal';
 
-type Props = {
-  progress: number;
-};
-
-export default function MatchPercentageCard(props: Props) {
-  let { progress } = props;
+export default function MatchPercentageCard() {
+  let data = useContext(DeepDiveContext);
+  let progress = data?.result.matchValue;
   const ASPECTS = [
     {
       name: 'Growth',

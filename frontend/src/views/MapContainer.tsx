@@ -10,7 +10,6 @@ import { useParams } from 'react-router-dom';
 
 import { GET_LOCATION_PREVIEW } from '../graphql/queries/server/preview';
 import { View } from '../core-ui';
-import urlSafeLatLng from '../utils/urlSafeLatLng';
 import LocationDetail from '../components/location-detail/LocationDetail';
 import InfoBox from 'react-google-maps/lib/components/addons/InfoBox';
 import MapPin from '../components/icons/map-pin.svg';
@@ -116,8 +115,8 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         brandId,
         selectedLocation: {
           address: '',
-          lat: lat(),
-          lng: lng(),
+          lat: lat().toString(),
+          lng: lng().toString(),
         },
       },
     });

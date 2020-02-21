@@ -11,30 +11,31 @@ import {
   SECONDARY_BORDER_RADIUS,
   FONT_WEIGHT_LIGHT,
 } from '../../constants/theme';
+import ImagePlaceHolder from '../../assets/images/image-placeholder.jpg';
 
 type Props = {
-  photo: string;
-  percentage: number;
+  photo?: string;
+  percentile: number;
   description: string;
-  personaName: string;
+  name: string;
   tags: Array<string>;
 };
 
 export default function RelevantConsumerCard(props: Props) {
-  let { photo, percentage, personaName, description, tags } = props;
+  let { photo, percentile, name, description, tags } = props;
   return (
     <Container flex>
-      <Image src={photo} alt="consumer-persona-image" />
+      <Image src={photo ? photo : ImagePlaceHolder} alt="consumer-persona-image" />
       <RowedView>
         <PercentageContainer>
           <Text fontSize={FONT_SIZE_XXXLARGE} color={WHITE}>
-            {percentage}
+            {percentile}
             <Text fontSize={FONT_SIZE_LARGE} color={WHITE}>
               %
             </Text>
           </Text>
         </PercentageContainer>
-        <PersonaName>{personaName}</PersonaName>
+        <PersonaName>{name}</PersonaName>
       </RowedView>
       <DescriptionContainer>
         <Text color={DARK_TEXT_COLOR}>Description</Text>

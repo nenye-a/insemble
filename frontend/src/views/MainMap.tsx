@@ -328,6 +328,9 @@ export default function MainMap() {
     }
   }, [loading, tenantMatchesData]);
 
+  let lat = tenantMatchesData?.tenantMatches.location?.lat;
+  let lng = tenantMatchesData?.tenantMatches.location?.lng;
+
   return (
     <TenantMatchesContext.Provider
       value={{
@@ -339,6 +342,8 @@ export default function MainMap() {
     >
       <View flex>
         <DeepDiveModal
+          lat={lat}
+          lng={lng}
           visible={deepDiveModalVisible}
           onClose={() => toggleDeepDiveModal(!deepDiveModalVisible)}
         />
