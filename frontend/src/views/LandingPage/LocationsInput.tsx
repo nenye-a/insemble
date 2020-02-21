@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useCallback, ComponentProps, RefObject } from 'react';
-import { CSSProperties } from 'styled-components';
 import TextInput from '../../core-ui/ContainedTextInput';
 
 type PlaceResult = google.maps.places.PlaceResult;

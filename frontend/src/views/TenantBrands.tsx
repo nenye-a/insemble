@@ -25,14 +25,14 @@ export default () => {
       ) : (
         data &&
         data.brands.map(({ name, categories, matchingLocations, id }, index) => {
-          let heatmapData: any = matchingLocations
+          let heatmapData = ((matchingLocations
             ? matchingLocations.map(({ lat, lng, match }) => {
                 return {
                   location: new google.maps.LatLng(lat, lng),
                   weight: match,
                 };
               })
-            : [];
+            : []) as unknown) as google.maps.MVCArray<google.maps.visualization.WeightedLocation>;
           return (
             <TouchableOpacity key={index} style={{ marginBottom: 24 }}>
               <HistoryContainer>
@@ -58,7 +58,7 @@ export default () => {
                     </PillContainer>
                   </RowedView>
                 </LeftContainer>
-                <HeatmapPlaceholder heatmapData={heatmapData} />
+                <HeatmapPlaceholder heatmapData={heatmapData} brandId={id} />
               </HistoryContainer>
             </TouchableOpacity>
           );
