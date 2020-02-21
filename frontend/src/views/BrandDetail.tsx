@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory, useParams } from 'react-router-dom';
-import { useQuery } from '@apollo/react-hooks';
-import { useForm } from 'react-hook-form';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useForm, FieldValues, FieldError } from 'react-hook-form';
 
 import {
   View,
@@ -15,6 +15,7 @@ import {
   LoadingIndicator,
   Label,
   Form,
+  Alert,
 } from '../core-ui';
 import {
   FONT_SIZE_LARGE,
@@ -38,6 +39,9 @@ import { TenantMatches, TenantMatchesVariables } from '../generated/TenantMatche
 import { NEW_LOCATION_PLAN_OPTIONS } from '../constants/locationPlan';
 import { NewLocationPlanObj } from '../reducers/tenantOnboardingReducer';
 import LocationsInput from './LandingPage/LocationsInput';
+import { validateNumber } from '../utils/validation';
+import { EDIT_BRAND } from '../graphql/queries/server/brand';
+import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 
 export default function BrandDetail() {
   let { brandId = '' } = useParams();
@@ -46,27 +50,58 @@ export default function BrandDetail() {
       brandId,
     },
   });
+  let [
+    editBrand,
+    { data: editBrandData, loading: editBrandLoading, error: editBrandError },
+  ] = useMutation<EditBrand, EditBrandVariables>(EDIT_BRAND);
   let history = useHistory();
   let { isLoading } = useGoogleMaps();
   let { register, errors, handleSubmit } = useForm();
   let [matchesEditable, setMatchesEditable] = useState(false);
   let [goalsEditable, setGoalsEditable] = useState(false);
-  let [selectedIsLookingLocation, setSelectedIsLookingLocation] = useState<
-    NewLocationPlanObj | undefined
-  >();
-  let [, setSelectedLocations] = useState<Array<LocationInput>>([]);
+
+  let [newLocationPlan, setNewLocationPlan] = useState<NewLocationPlanObj | undefined>();
+  let [businessLocation, setBusinessLocation] = useState<LocationInput | undefined>();
+  let [selectedLocations, setSelectedLocations] = useState<Array<LocationInput>>([]);
+
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
 
-  let onSubmit = () => {};
+  let onSubmit = (formValues: FieldValues) => {
+    let { businessName, locationCount } = formValues;
+
+    if (Object.keys(errors).length === 0) {
+      editBrand({
+        variables: {
+          business: {
+            name: businessName,
+            location: businessLocation,
+            newLocationPlan: newLocationPlan && newLocationPlan.value,
+            locationCount: isNaN(locationCount) ? null : Number(locationCount),
+            nextLocations: selectedLocations,
+          },
+          brandId,
+        },
+      });
+    }
+  };
   useEffect(() => {
     if (data) {
       let foundLocationPlan = NEW_LOCATION_PLAN_OPTIONS.find(
         (item) => item.value === data?.tenantMatches.newLocationPlan
       );
       if (foundLocationPlan) {
-        setSelectedIsLookingLocation(foundLocationPlan);
+        setNewLocationPlan(foundLocationPlan);
+      }
+      if (data?.tenantMatches.location) {
+        let { lat, lng, address } = data?.tenantMatches.location;
+        setBusinessLocation({
+          lat,
+          lng,
+          address,
+        });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
   return (
@@ -84,6 +119,13 @@ export default function BrandDetail() {
         <LoadingIndicator />
       ) : (
         <Form onSubmit={handleSubmit(onSubmit)}>
+          {/* TODO: need to modify the BE so it returns statusMessage */}
+          <Alert visible={!!editBrandData} text="Your brand has been updated" />
+          <Alert
+            visible={!!editBrandError}
+            text={(editBrandError && editBrandError.message) || 'Something went wrong'}
+          />
+
           <RowedView>
             <Title>Matches</Title>
             <Button
@@ -100,6 +142,8 @@ export default function BrandDetail() {
             disabled={!matchesEditable}
             containerStyle={inputContainerStyle}
             defaultValue={data?.tenantMatches.name || ''}
+            name="businessName"
+            ref={register}
           />
           <Label id="representativeAddress" text="Representative Location Address" />
           <LocationsInput
@@ -123,28 +167,22 @@ export default function BrandDetail() {
               marginBottom: 8,
             }}
             onSubmit={(place: google.maps.places.PlaceResult) => {
-              let {
-                geometry,
-                formatted_address: formattedAddress,
-                name,
-                place_id: placeID,
-              } = place;
+              let { geometry, formatted_address: formattedAddress } = place;
               if (geometry) {
                 let { location } = geometry;
                 if (location) {
                   let { lat, lng } = location;
                   let latitude = lat();
                   let longitude = lng();
-                  history.push(`/verify/${placeID}`, {
-                    placeID,
-                    name,
-                    formattedAddress,
+                  setBusinessLocation({
                     lat: latitude.toString(),
                     lng: longitude.toString(),
+                    address: formattedAddress || '',
                   });
                 }
               }
             }}
+            name="representativeAddress"
           />
           <RowedView>
             <Title>Goals</Title>
@@ -159,9 +197,9 @@ export default function BrandDetail() {
           <RadioGroupWrapper
             label="Are you actively looking for new locations?"
             options={NEW_LOCATION_PLAN_OPTIONS}
-            selectedOption={selectedIsLookingLocation}
+            selectedOption={newLocationPlan}
             onSelect={(item: NewLocationPlanObj) => {
-              setSelectedIsLookingLocation(item);
+              setNewLocationPlan(item);
             }}
             disabled={!goalsEditable}
             radioItemProps={{ style: { marginTop: 8 } }}
@@ -180,12 +218,17 @@ export default function BrandDetail() {
 
           <LocationsNumberInput
             label="How many locations do you expect to open in the next 2 years?"
-            placeholder="1"
             disabled={!goalsEditable}
             containerStyle={inputContainerStyle}
-            defaultValue={data?.tenantMatches.locationCount || ''}
+            defaultValue={data?.tenantMatches.locationCount || undefined}
+            name="locationCount"
+            ref={register({
+              validate: (val) =>
+                (val && validateNumber(val)) || 'Number of locations should be number',
+            })}
+            errorMessage={(errors?.locationCount as FieldError)?.message || ''}
           />
-          <SaveButton text="Save Changes" type="submit" loading={false} />
+          <SaveButton text="Save Changes" type="submit" loading={editBrandLoading} />
           {/*
           <RowedView>
             <Title>Locations & Performance</Title>
