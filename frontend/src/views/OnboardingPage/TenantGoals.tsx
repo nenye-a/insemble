@@ -14,27 +14,12 @@ import { validateNumber } from '../../utils/validation';
 import { FONT_SIZE_SMALL } from '../../constants/theme';
 import { RED_TEXT } from '../../constants/colors';
 import { LocationInput } from '../../generated/globalTypes';
+import { NEW_LOCATION_PLAN_OPTIONS } from '../../constants/locationPlan';
 
 type Props = {
   dispatch: Dispatch<Action>;
   state: OnboardingState;
 };
-
-const NEW_LOCATION_PLAN_OPTIONS = [
-  {
-    label: 'Yes',
-    value: NewLocationPlan.YES,
-  },
-  {
-    label: 'Not actively, but willing to open new locations',
-    value: NewLocationPlan.NOT_ACTIVE,
-  },
-  {
-    label: 'Not planning to open any new locations within the year',
-
-    value: NewLocationPlan.NOT_PLANNING,
-  },
-];
 
 export default function TenantGoals(props: Props) {
   let { isLoading } = useGoogleMaps();

@@ -11,3 +11,18 @@ export const EDIT_BRAND = gql`
     editBrand(business: $business, filter: $filter, brandId: $brandId)
   }
 `;
+
+export const GET_BRANDS = gql`
+  query GetBrands {
+    brands {
+      id
+      name
+      categories
+      matchingLocations {
+        match
+        lat
+        lng
+      }
+    }
+  }
+`;
