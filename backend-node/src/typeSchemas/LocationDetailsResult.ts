@@ -50,123 +50,10 @@ export let PersonaDeepDive = objectType({
 export let DemographicStat = objectType({
   name: 'DemographicStat',
   definition(t) {
+    t.string('name');
     t.float('myLocation', { nullable: true });
     t.float('targetLocation');
     t.float('growth', { nullable: true });
-  },
-});
-
-export let AgeDemographic = objectType({
-  name: 'AgeDemographic',
-  definition(t) {
-    t.field('under18', {
-      type: 'DemographicStat',
-    });
-    t.field('between18To24', {
-      type: 'DemographicStat',
-    });
-    t.field('between25To34', {
-      type: 'DemographicStat',
-    });
-    t.field('between35To44', {
-      type: 'DemographicStat',
-    });
-    t.field('between45To54', {
-      type: 'DemographicStat',
-    });
-    t.field('between55To64', {
-      type: 'DemographicStat',
-    });
-    t.field('above65', {
-      type: 'DemographicStat',
-    });
-  },
-});
-
-export let IncomeDemographic = objectType({
-  name: 'IncomeDemographic',
-  definition(t) {
-    t.field('under50KUsd', {
-      type: 'DemographicStat',
-    });
-    t.field('between50to74KUsd', {
-      type: 'DemographicStat',
-    });
-    t.field('between75to124KUsd', {
-      type: 'DemographicStat',
-    });
-    t.field('between125to199KUsd', {
-      type: 'DemographicStat',
-    });
-    t.field('above200KUsd', {
-      type: 'DemographicStat',
-    });
-  },
-});
-
-export let EthnicityDemographic = objectType({
-  name: 'EthnicityDemographic',
-  definition(t) {
-    t.field('white', {
-      type: 'DemographicStat',
-    });
-    t.field('black', {
-      type: 'DemographicStat',
-    });
-    t.field('indian', {
-      type: 'DemographicStat',
-    });
-    t.field('asian', {
-      type: 'DemographicStat',
-    });
-    t.field('pacificIslander', {
-      type: 'DemographicStat',
-    });
-    t.field('other', {
-      type: 'DemographicStat',
-    });
-  },
-});
-
-export let EducationDemographic = objectType({
-  name: 'EducationDemographic',
-  definition(t) {
-    t.field('someHighschool', {
-      type: 'DemographicStat',
-    });
-    t.field('highschool', {
-      type: 'DemographicStat',
-    });
-    t.field('someCollege', {
-      type: 'DemographicStat',
-    });
-    t.field('associate', {
-      type: 'DemographicStat',
-    });
-    t.field('bachelor', {
-      type: 'DemographicStat',
-    });
-    t.field('masters', {
-      type: 'DemographicStat',
-    });
-    t.field('professional', {
-      type: 'DemographicStat',
-    });
-    t.field('doctorate', {
-      type: 'DemographicStat',
-    });
-  },
-});
-
-export let GenderDemographic = objectType({
-  name: 'GenderDemographic',
-  definition(t) {
-    t.field('male', {
-      type: 'DemographicStat',
-    });
-    t.field('female', {
-      type: 'DemographicStat',
-    });
   },
 });
 
@@ -174,19 +61,24 @@ export let DemographicDeepDive = objectType({
   name: 'DemographicDeepDive',
   definition(t) {
     t.field('age', {
-      type: 'AgeDemographic',
+      type: 'DemographicStat',
+      list: true,
     });
     t.field('income', {
-      type: 'IncomeDemographic',
+      type: 'DemographicStat',
+      list: true,
     });
     t.field('ethnicity', {
-      type: 'EthnicityDemographic',
+      type: 'DemographicStat',
+      list: true,
     });
     t.field('education', {
-      type: 'EducationDemographic',
+      type: 'DemographicStat',
+      list: true,
     });
     t.field('gender', {
-      type: 'GenderDemographic',
+      type: 'DemographicStat',
+      list: true,
     });
   },
 });

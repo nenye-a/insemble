@@ -90,149 +90,38 @@ let locationDetails = queryField('locationDetails', {
         num_universities: numUniversities,
         'HouseholdGrowth2017-2022': householdGrowth2017to2022,
         DaytimePop: daytimePop,
-        MediumHouseholdIncome: mediumHouseholdIncome,
+        MedHouseholdIncome: mediumHouseholdIncome,
         TotalHousholds: totalHousehold,
         mile,
       } = keyFacts;
 
       let {
         'Public Transport': publicTransport,
-        // 'Drove Alone': droveAlone,
-        // 'Worked at Home': workAtHome,
-        // Bicycle: bicycle,
-        // Carpooled: carpooled,
-        // Walked: walked,
-        'Current Year Workers, Transportation to Work: Bicycle': bicycle, // TODO: temporary
-        'Current Year Workers, Transportation to Work: Carpooled': carpooled,
-        'Current Year Workers, Transportation to Work: Drove Alone': droveAlone,
-        'Current Year Workers, Transportation to Work: Walked': walked,
-        'Current Year Workers, Transportation to Work: Worked at Home': workAtHome,
+        'Drove Alone': droveAlone,
+        'Worked at Home': workAtHome,
+        Bicycle: bicycle,
+        Carpooled: carpooled,
+        Walked: walked,
       } = commute;
 
-      let demographicsStatConvert = ({
-        growth,
-        target_location: targetLocation,
-        my_location: myLocation,
-      }: DemographicStat) => {
-        return {
-          growth,
-          myLocation,
-          targetLocation,
-        };
+      let objectToArrayKeyObject = (
+        object: Record<string, DemographicStat>,
+      ) => {
+        let objectKeyValue = Object.keys(object).map((key) => {
+          let {
+            growth,
+            my_location: myLocation,
+            target_location: targetLocation,
+          } = object[key];
+          return {
+            name: key,
+            growth,
+            myLocation,
+            targetLocation,
+          };
+        });
+        return objectKeyValue;
       };
-      let {
-        age: {
-          '<18': under18D1,
-          '18-24': between18To24D1,
-          '25-34': between25To34D1,
-          '35-44': between35To44D1,
-          '45-54': between45To54D1,
-          '55-64': between55To64D1,
-          '65+': above65D1,
-        },
-        income: {
-          '<50K': under50KUsdD1,
-          '$50K-$74K': between50to74KUsdD1,
-          '$75K-$124K': between75to124KUsdD1,
-          '$125K-$199K': between125to199KUsdD1,
-          '$200K+': above200KUsdD1,
-        },
-        ethnicity: {
-          white: whiteD1,
-          black: blackD1,
-          indian: indianD1,
-          asian: asianD1,
-          pacific_islander: pacificIslanderD1,
-          other: otherD1,
-        },
-        education: {
-          some_highschool: someHighschoolD1,
-          high_school: highschoolD1,
-          some_college: someCollegeD1,
-          associate: associateD1,
-          bachelor: bachelorD1,
-          doctorate: doctorateD1,
-          masters: mastersD1,
-          professional: professionalD1,
-        },
-        gender: { male: maleD1, female: femaleD1 },
-      } = demographics1;
-
-      let {
-        age: {
-          '<18': under18D3,
-          '18-24': between18To24D3,
-          '25-34': between25To34D3,
-          '35-44': between35To44D3,
-          '45-54': between45To54D3,
-          '55-64': between55To64D3,
-          '65+': above65D3,
-        },
-        income: {
-          '<50K': under50KUsdD3,
-          '$50K-$74K': between50to74KUsdD3,
-          '$75K-$124K': between75to124KUsdD3,
-          '$125K-$199K': between125to199KUsdD3,
-          '$200K+': above200KUsdD3,
-        },
-        ethnicity: {
-          white: whiteD3,
-          black: blackD3,
-          indian: indianD3,
-          asian: asianD3,
-          pacific_islander: pacificIslanderD3,
-          other: otherD3,
-        },
-        education: {
-          some_highschool: someHighschoolD3,
-          high_school: highschoolD3,
-          some_college: someCollegeD3,
-          associate: associateD3,
-          bachelor: bachelorD3,
-          doctorate: doctorateD3,
-          masters: mastersD3,
-          professional: professionalD3,
-        },
-        gender: { male: maleD3, female: femaleD3 },
-      } = demographics3;
-
-      let {
-        age: {
-          '<18': under18D5,
-          '18-24': between18To24D5,
-          '25-34': between25To34D5,
-          '35-44': between35To44D5,
-          '45-54': between45To54D5,
-          '55-64': between55To64D5,
-          '65+': above65D5,
-        },
-        income: {
-          '<50K': under50KUsdD5,
-          '$50K-$74K': between50to74KUsdD5,
-          '$75K-$124K': between75to124KUsdD5,
-          '$125K-$199K': between125to199KUsdD5,
-          '$200K+': above200KUsdD5,
-        },
-        ethnicity: {
-          white: whiteD5,
-          black: blackD5,
-          indian: indianD5,
-          asian: asianD5,
-          pacific_islander: pacificIslanderD5,
-          other: otherD5,
-        },
-        education: {
-          some_highschool: someHighschoolD5,
-          high_school: highschoolD5,
-          some_college: someCollegeD5,
-          associate: associateD5,
-          bachelor: bachelorD5,
-          doctorate: doctorateD5,
-          masters: mastersD5,
-          professional: professionalD5,
-        },
-        gender: { male: maleD5, female: femaleD5 },
-      } = demographics5;
 
       let tsNearby = nearby.map(
         ({ number_rating: numberRating, category, ...theRestNearby }) => {
@@ -269,130 +158,25 @@ let locationDetails = queryField('locationDetails', {
           },
           topPersonas,
           demographics1: {
-            age: {
-              under18: demographicsStatConvert(under18D1),
-              between18To24: demographicsStatConvert(between18To24D1),
-              between25To34: demographicsStatConvert(between25To34D1),
-              between35To44: demographicsStatConvert(between35To44D1),
-              between45To54: demographicsStatConvert(between45To54D1),
-              between55To64: demographicsStatConvert(between55To64D1),
-              above65: demographicsStatConvert(above65D1),
-            },
-            income: {
-              under50KUsd: demographicsStatConvert(under50KUsdD1),
-              between50to74KUsd: demographicsStatConvert(between50to74KUsdD1),
-              between75to124KUsd: demographicsStatConvert(between75to124KUsdD1),
-              between125to199KUsd: demographicsStatConvert(
-                between125to199KUsdD1,
-              ),
-              above200KUsd: demographicsStatConvert(above200KUsdD1),
-            },
-            ethnicity: {
-              white: demographicsStatConvert(whiteD1),
-              black: demographicsStatConvert(blackD1),
-              indian: demographicsStatConvert(indianD1),
-              asian: demographicsStatConvert(asianD1),
-              pacificIslander: demographicsStatConvert(pacificIslanderD1),
-              other: demographicsStatConvert(otherD1),
-            },
-            education: {
-              someHighschool: demographicsStatConvert(someHighschoolD1),
-              highschool: demographicsStatConvert(highschoolD1),
-              someCollege: demographicsStatConvert(someCollegeD1),
-              associate: demographicsStatConvert(associateD1),
-              bachelor: demographicsStatConvert(bachelorD1),
-              masters: demographicsStatConvert(mastersD1),
-              professional: demographicsStatConvert(professionalD1),
-              doctorate: demographicsStatConvert(doctorateD1),
-            },
-            gender: {
-              male: demographicsStatConvert(maleD1),
-              female: demographicsStatConvert(femaleD1),
-            },
+            age: objectToArrayKeyObject(demographics1.age),
+            income: objectToArrayKeyObject(demographics1.income),
+            ethnicity: objectToArrayKeyObject(demographics1.ethnicity),
+            education: objectToArrayKeyObject(demographics1.education),
+            gender: objectToArrayKeyObject(demographics1.gender),
           },
           demographics3: {
-            age: {
-              under18: demographicsStatConvert(under18D3),
-              between18To24: demographicsStatConvert(between18To24D3),
-              between25To34: demographicsStatConvert(between25To34D3),
-              between35To44: demographicsStatConvert(between35To44D3),
-              between45To54: demographicsStatConvert(between45To54D3),
-              between55To64: demographicsStatConvert(between55To64D3),
-              above65: demographicsStatConvert(above65D3),
-            },
-            income: {
-              under50KUsd: demographicsStatConvert(under50KUsdD3),
-              between50to74KUsd: demographicsStatConvert(between50to74KUsdD3),
-              between75to124KUsd: demographicsStatConvert(between75to124KUsdD3),
-              between125to199KUsd: demographicsStatConvert(
-                between125to199KUsdD3,
-              ),
-              above200KUsd: demographicsStatConvert(above200KUsdD3),
-            },
-            ethnicity: {
-              white: demographicsStatConvert(whiteD3),
-              black: demographicsStatConvert(blackD3),
-              indian: demographicsStatConvert(indianD3),
-              asian: demographicsStatConvert(asianD3),
-              pacificIslander: demographicsStatConvert(pacificIslanderD3),
-              other: demographicsStatConvert(otherD3),
-            },
-            education: {
-              someHighschool: demographicsStatConvert(someHighschoolD3),
-              highschool: demographicsStatConvert(highschoolD3),
-              someCollege: demographicsStatConvert(someCollegeD3),
-              associate: demographicsStatConvert(associateD3),
-              bachelor: demographicsStatConvert(bachelorD3),
-              masters: demographicsStatConvert(mastersD3),
-              professional: demographicsStatConvert(professionalD3),
-              doctorate: demographicsStatConvert(doctorateD3),
-            },
-            gender: {
-              male: demographicsStatConvert(maleD3),
-              female: demographicsStatConvert(femaleD3),
-            },
+            age: objectToArrayKeyObject(demographics3.age),
+            income: objectToArrayKeyObject(demographics3.income),
+            ethnicity: objectToArrayKeyObject(demographics3.ethnicity),
+            education: objectToArrayKeyObject(demographics3.education),
+            gender: objectToArrayKeyObject(demographics3.gender),
           },
           demographics5: {
-            age: {
-              under18: demographicsStatConvert(under18D5),
-              between18To24: demographicsStatConvert(between18To24D5),
-              between25To34: demographicsStatConvert(between25To34D5),
-              between35To44: demographicsStatConvert(between35To44D5),
-              between45To54: demographicsStatConvert(between45To54D5),
-              between55To64: demographicsStatConvert(between55To64D5),
-              above65: demographicsStatConvert(above65D5),
-            },
-            income: {
-              under50KUsd: demographicsStatConvert(under50KUsdD5),
-              between50to74KUsd: demographicsStatConvert(between50to74KUsdD5),
-              between75to124KUsd: demographicsStatConvert(between75to124KUsdD5),
-              between125to199KUsd: demographicsStatConvert(
-                between125to199KUsdD5,
-              ),
-              above200KUsd: demographicsStatConvert(above200KUsdD5),
-            },
-            ethnicity: {
-              white: demographicsStatConvert(whiteD5),
-              black: demographicsStatConvert(blackD5),
-              indian: demographicsStatConvert(indianD5),
-              asian: demographicsStatConvert(asianD5),
-              pacificIslander: demographicsStatConvert(pacificIslanderD5),
-              other: demographicsStatConvert(otherD5),
-            },
-            education: {
-              someHighschool: demographicsStatConvert(someHighschoolD5),
-              highschool: demographicsStatConvert(highschoolD5),
-              someCollege: demographicsStatConvert(someCollegeD5),
-              associate: demographicsStatConvert(associateD5),
-              bachelor: demographicsStatConvert(bachelorD5),
-              masters: demographicsStatConvert(mastersD5),
-              professional: demographicsStatConvert(professionalD5),
-              doctorate: demographicsStatConvert(doctorateD5),
-            },
-            gender: {
-              male: demographicsStatConvert(maleD5),
-              female: demographicsStatConvert(femaleD5),
-            },
+            age: objectToArrayKeyObject(demographics5.age),
+            income: objectToArrayKeyObject(demographics5.income),
+            ethnicity: objectToArrayKeyObject(demographics5.ethnicity),
+            education: objectToArrayKeyObject(demographics5.education),
+            gender: objectToArrayKeyObject(demographics5.gender),
           },
           nearby: tsNearby,
         },
