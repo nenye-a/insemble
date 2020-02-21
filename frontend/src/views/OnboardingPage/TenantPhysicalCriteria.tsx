@@ -11,7 +11,7 @@ import { validateNumber } from '../../utils/validation';
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
 import { Equipments } from '../../generated/Equipments';
 
-const SPACE_OPTIONS = ['Stand alone', 'Shopping center', 'Strip mall'];
+const SPACE_OPTIONS = ['Free standing', 'Shopping center', 'Inline', 'Endcap', 'Pedestrian'];
 
 type Props = {
   dispatch: Dispatch<Action>;

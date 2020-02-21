@@ -2,7 +2,13 @@ import React, { ComponentProps, useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { View, Text, PillButton, Card, Button, LoadingIndicator } from '../../core-ui';
-import { THEME_COLOR, BOTTOM_CARD_COLOR, TEXT_INPUT_BORDER_COLOR } from '../../constants/colors';
+import {
+  THEME_COLOR,
+  BOTTOM_CARD_COLOR,
+  TEXT_INPUT_BORDER_COLOR,
+  DARKER_GREY,
+  GREY,
+} from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_SIZE_NORMAL } from '../../constants/theme';
 import TextInput from '../../core-ui/ContainedTextInput';
 import SliderFilter from './SliderFilter';
@@ -157,14 +163,14 @@ export default function Filter(props: Props) {
                 {selectedOptions &&
                   selectedOptions.map((filter, index) => {
                     return (
-                      <SmallPillButton
+                      <SelectedPillButton
                         key={'selected' + index}
                         primary
                         onClick={() => onUnSelect && onUnSelect(filter)}
                         disabled={disabled}
                       >
                         {filter}
-                      </SmallPillButton>
+                      </SelectedPillButton>
                     );
                   })}
               </FlexRowWrap>
@@ -175,13 +181,13 @@ export default function Filter(props: Props) {
                 {filteredOptions &&
                   filteredOptions.map((filter, index) => {
                     return (
-                      <SmallPillButton
+                      <ResultsPillButton
                         key={'filtered' + index}
                         onClick={() => onSelect && onSelect(filter)}
                         disabled={disabled}
                       >
                         {filter}
-                      </SmallPillButton>
+                      </ResultsPillButton>
                     );
                   })}
               </FlexRowWrap>
@@ -237,6 +243,24 @@ const SmallPillButton = styled(PillButton)`
   font-size: ${FONT_SIZE_SMALL};
   margin: 4px 8px 4px 0px;
 `;
+
+const SelectedPillButton = styled(SmallPillButton)`
+  &:disabled {
+    color: ${GREY};
+    background-color: ${DARKER_GREY};
+    border: none;
+  }
+`;
+
+const ResultsPillButton = styled(SmallPillButton)`
+  &:disabled {
+    color: ${GREY};
+    &:hover {
+      border-color: transparent;
+    }
+  }
+`;
+
 const TextInputWithBorder = styled(TextInput)`
   border: solid;
   border-width: 0.5px;

@@ -34,6 +34,9 @@ export type TargetCustomers = {
   noIncomePreference?: boolean;
   personas?: Array<string>;
   noPersonasPreference?: boolean;
+  educations?: Array<string>;
+  noEducationsPreference?: boolean;
+  minDaytimePopulation?: string;
 };
 
 export type PhysicalSiteCriteria = {

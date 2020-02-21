@@ -13,6 +13,7 @@ export let FilterInput = inputObjectType({
     t.int('maxFrontageWidth');
     t.int('minAge');
     t.int('maxAge');
+    t.int('minDaytimePopulation');
     t.string('personas', { list: true });
     t.string('equipmentIds', { list: true });
     t.string('spaceType', { list: true });
