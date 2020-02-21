@@ -134,7 +134,7 @@ export type LocationDetailsType = {
     key_facts: {
       mile: number;
       DaytimePop: number;
-      MediumHouseholdIncome: number;
+      MedHouseholdIncome: number;
       TotalHousholds: number;
       'HouseholdGrowth2017-2022': number;
       num_metro: number;
@@ -144,16 +144,11 @@ export type LocationDetailsType = {
     };
     commute: {
       'Public Transport': number;
-      // Bicycle: number; // Intended
-      // Carpooled: number;
-      // 'Drove Alone': number;
-      // Walked: number;
-      // 'Worked at Home': number;
-      'Current Year Workers, Transportation to Work: Worked at Home': number; // Temporary
-      'Current Year Workers, Transportation to Work: Walked': number;
-      'Current Year Workers, Transportation to Work: Bicycle': number;
-      'Current Year Workers, Transportation to Work: Carpooled': number;
-      'Current Year Workers, Transportation to Work: Drove Alone': number;
+      Bicycle: number;
+      Carpooled: number;
+      'Drove Alone': number;
+      Walked: number;
+      'Worked at Home': number;
     };
     top_personas: Array<Personas>;
     demographics1: Demographics;
