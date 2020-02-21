@@ -68,6 +68,16 @@ def reverse_geocode(lat, lng, save=True):
 
     result, _id = safe_request.request(API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key', safe=save)
 
+    if 'status' in result:
+        status = result['status']
+        not_valid = status == "INVALID_REQUEST"
+        is_denied = status == "REQUEST_DENIED"
+
+        if not_valid or is_denied:
+            utils.DB_REQUESTS[API_NAME].delete_one({'_id': _id})
+            print("Request is Invalid")
+            return None
+
     if 'results' not in result:
         print('Zero results from google')
         return None
