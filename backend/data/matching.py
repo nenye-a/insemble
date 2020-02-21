@@ -469,7 +469,7 @@ def weight_and_evaluate(processed_difference_df):
     }
 
     weight_df = pd.DataFrame([weight])
-    normalized_dataframe["error_sum"] = normalized_dataframe[list(weight.keys())].dot(weight_df.transpose()) / \
+    normalized_dataframe["error_sum"] = normalized_dataframe[list(weight.keys())].copy().dot(weight_df.transpose()) / \
         sum(weight.values())
 
     return normalized_dataframe
