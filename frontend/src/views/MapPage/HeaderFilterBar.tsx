@@ -1,16 +1,11 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
 import { View, Dropdown, Button } from '../../core-ui';
 import { MultiSelectBox } from '../../components';
 
-import { session } from '../../utils/storage';
 import { WHITE, HEADER_BORDER_COLOR } from '../../constants/colors';
-import urlSafeLatLng from '../../utils/urlSafeLatLng';
-import { useDispatch, useSelector, useStore } from '../../redux/helpers';
-import { getLocation, loadMap } from '../../redux/actions/space';
 import Legend from '../MapPage/Legend';
 import TextInput from '../../core-ui/ContainedTextInput';
 import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
@@ -30,23 +25,10 @@ export default function HeaderFilterBar(props: Props) {
   let [selectedDropdownValue, setSelectedDropdownValue] = useState<string>('Recommended');
   let [selectedOptions, setSelectedOptions] = useState<Array<string>>(categories || []);
   let { data: categoryData, loading: categoryLoading } = useQuery<Categories>(GET_CATEGORIES);
-  let { onCategoryChange } = useContext(TenantMatchesContext);
-  let { getState } = useStore();
-  let history = useHistory();
-  let dispatch = useDispatch();
-  let locationLoaded = useSelector((state) => state.space.locationLoaded);
-  let [submittingPlace, setSubmittingPlace] = useState<string | null>(null);
+  let { onCategoryChange, onAddressChange } = useContext(TenantMatchesContext);
+
   let inputRef = useRef<HTMLInputElement | null>(null);
   let selectedPlace = useRef<PlaceResult | null>(null);
-
-  useEffect(() => {
-    if (locationLoaded === true) {
-      let placeID = submittingPlace;
-      // TODO: Using dispatch/getState like this is kinda messy.
-      loadMap(true)(dispatch, getState);
-      history.push(`/verify/${placeID}`);
-    }
-  }, [locationLoaded, dispatch, getState, history, submittingPlace]);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -61,26 +43,9 @@ export default function HeaderFilterBar(props: Props) {
     }
   }, []);
 
-  let onSubmit = (place: PlaceResult) => {
-    let placeID = place.place_id || '';
-    let address = place.formatted_address || '';
-    session.set(['place', placeID], place);
-    session.set('sessionStoreName', place.name);
-    session.set('sessionAddress', address);
-    session.remove('sessionIncome');
-    session.remove('sessionTags');
-    let location = place.geometry ? place.geometry.location.toJSON() : null;
-    if (location) {
-      let { lat, lng } = urlSafeLatLng(location);
-      // TODO: Using dispatch like this is kinda messy.
-      getLocation(`/api/location/lat=${lat}&lng=${lng}&radius=1/`)(dispatch);
-      setSubmittingPlace(placeID);
-    }
-  };
-
   let submitHandler = () => {
     if (selectedPlace.current) {
-      onSubmit(selectedPlace.current);
+      onAddressChange && onAddressChange(selectedPlace.current);
     }
   };
 

@@ -30,11 +30,32 @@ export default function Onboarding() {
 
   let onSubmit = () => {
     let { confirmBusinessDetail, tenantGoals, targetCustomers, physicalSiteCriteria } = state;
-
+    let { categories } = confirmBusinessDetail;
+    let {
+      noPersonasPreference,
+      noAgePreference,
+      noIncomePreference,
+      noEducationsPreference,
+      personas,
+      minAge,
+      maxAge,
+      minIncome,
+      maxIncome,
+      educations,
+      minDaytimePopulation,
+    } = targetCustomers;
+    let {
+      minSize,
+      maxSize,
+      minFrontageWidth,
+      maxFrontageWidth,
+      spaceType,
+      equipments,
+    } = physicalSiteCriteria;
     createBrand({
       variables: {
         business: {
-          name: confirmBusinessDetail.name,
+          name,
           userRelation:
             confirmBusinessDetail.userRelation === 'Other'
               ? confirmBusinessDetail.otherUserRelation || ''
@@ -45,18 +66,20 @@ export default function Onboarding() {
           nextLocations: tenantGoals.location,
         },
         filter: {
-          categories: confirmBusinessDetail.categories,
-          personas: targetCustomers.noPersonasPreference ? [] : targetCustomers.personas,
-          minAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.minAge),
-          maxAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.maxAge),
-          minIncome: targetCustomers.noIncomePreference ? null : Number(targetCustomers.minIncome),
-          maxIncome: targetCustomers.noIncomePreference ? null : Number(targetCustomers.maxIncome),
-          minSize: Number(physicalSiteCriteria.minSize),
-          maxSize: Number(physicalSiteCriteria.maxSize),
-          minFrontageWidth: Number(physicalSiteCriteria.minFrontageWidth),
-          maxFrontageWidth: Number(physicalSiteCriteria.maxFrontageWidth),
-          spaceType: physicalSiteCriteria.spaceType,
-          equipment: physicalSiteCriteria.equipments,
+          categories,
+          personas: noPersonasPreference ? null : personas,
+          education: noEducationsPreference ? null : educations,
+          minDaytimePopulation: minDaytimePopulation ? null : Number(minDaytimePopulation),
+          minAge: noAgePreference ? null : Number(minAge),
+          maxAge: noAgePreference ? null : Number(maxAge),
+          minIncome: noIncomePreference ? null : Number(minIncome) * 1000,
+          maxIncome: noIncomePreference ? null : Number(maxIncome) * 1000,
+          minSize: Number(minSize),
+          maxSize: Number(maxSize),
+          minFrontageWidth: Number(minFrontageWidth),
+          maxFrontageWidth: Number(maxFrontageWidth),
+          spaceType,
+          equipment: equipments,
         },
       },
     });

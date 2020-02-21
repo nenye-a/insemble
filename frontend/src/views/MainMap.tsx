@@ -23,6 +23,7 @@ import { useGoogleMaps } from '../utils';
 import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer';
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 import { isEqual } from '../utils/isEqual';
+import { LocationInput } from '../generated/globalTypes';
 
 type BrandId = {
   brandId: string;
@@ -51,12 +52,19 @@ type TenantMatchesContextFilter = {
   demographics: DemographicsFilter;
   property: PropertyFilter;
   categories?: Array<string>;
+  business?: {
+    location: LocationInput | null;
+    name: string | null;
+  };
 };
+
+type PlaceResult = google.maps.places.PlaceResult;
 
 export type TenantMatchesContextType = {
   filters: TenantMatchesContextFilter;
   onFilterChange?: (state: SideBarFiltersState) => void;
   onCategoryChange?: (state: Array<string>) => void;
+  onAddressChange?: (place: PlaceResult) => void;
 };
 
 let tenantMatchesInit = {
@@ -188,8 +196,31 @@ export default function MainMap() {
     });
   };
 
+  let onAddressChange = (place: PlaceResult) => {
+    let { geometry, formatted_address: formattedAddress, name } = place;
+    if (geometry) {
+      let { location } = geometry;
+      if (location) {
+        let { lat, lng } = location;
+        let latitude = lat();
+        let longitude = lng();
+        setFilters({
+          ...filters,
+          business: {
+            location: {
+              lat: latitude.toString(),
+              lng: longitude.toString(),
+              address: formattedAddress || '',
+            },
+            name,
+          },
+        });
+      }
+    }
+  };
+
   let onPublishChangesPress = async () => {
-    let { demographics, categories, property } = filters;
+    let { demographics, categories, property, business } = filters;
     let {
       minIncome,
       maxIncome,
@@ -208,8 +239,8 @@ export default function MainMap() {
           personas,
           minAge: Number(minAge),
           maxAge: Number(maxAge),
-          minIncome: Number(minIncome),
-          maxIncome: Number(maxIncome),
+          minIncome: Number(minIncome) * 1000,
+          maxIncome: Number(maxIncome) * 1000,
           minSize,
           maxSize,
           minRent,
@@ -219,6 +250,7 @@ export default function MainMap() {
           education,
           ethnicity,
         },
+        ...business,
         brandId,
       },
     });
@@ -247,6 +279,10 @@ export default function MainMap() {
         maxSize: tenantMatchesData?.tenantMatches.maxSize,
         spaceType: tenantMatchesData?.tenantMatches.spaceType,
       },
+      business: {
+        location: tenantMatchesData?.tenantMatches.location,
+        name: tenantMatchesData?.tenantMatches.name,
+      },
     },
     filters
   );
@@ -271,8 +307,8 @@ export default function MainMap() {
       } = tenantMatchesData.tenantMatches;
       setFilters({
         demographics: {
-          minIncome,
-          maxIncome,
+          minIncome: minIncome ? minIncome / 1000 : null,
+          maxIncome: maxIncome ? maxIncome / 1000 : null,
           maxAge,
           minAge,
           personas,
@@ -298,6 +334,7 @@ export default function MainMap() {
         filters,
         onFilterChange,
         onCategoryChange,
+        onAddressChange,
       }}
     >
       <View flex>

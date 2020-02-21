@@ -8,7 +8,6 @@ import { DEFAULT_BORDER_RADIUS } from '../../constants/theme';
 import SvgPerson from '../../components/icons/person';
 import SvgBusiness from '../../components/icons/business';
 import SvgMessage from '../../components/icons/message';
-import SvgFullHeart from '../../components/icons/full-heart';
 
 type Props = {
   role?: 'tenant' | 'landlord';
@@ -97,16 +96,17 @@ const TENANT_PROFILE_MENU: Array<MenuObj> = [
     icon: <SvgBusiness />,
     path: '/user/brands',
   },
-  {
-    menu: 'Messages',
-    icon: <SvgMessage />,
-    path: '/user/messages',
-  },
-  {
-    menu: 'Saved Properties',
-    icon: <SvgFullHeart />,
-    path: '/user/saved-properties',
-  },
+  // Disabling this for now until landlord is ready
+  // {
+  //   menu: 'Messages',
+  //   icon: <SvgMessage />,
+  //   path: '/user/messages',
+  // },
+  // {
+  //   menu: 'Saved Properties',
+  //   icon: <SvgFullHeart />,
+  //   path: '/user/saved-properties',
+  // },
 ];
 
 const LANDLORD_PROFILE_MENU: Array<MenuObj> = [
