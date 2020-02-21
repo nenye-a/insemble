@@ -36,6 +36,7 @@ export type DemographicsFilter = {
   personas: Array<string>;
   commute: Array<string> | null;
   education: Array<string> | null;
+  ethnicity: Array<string> | null;
 };
 
 export type PropertyFilter = {
@@ -68,6 +69,7 @@ let tenantMatchesInit = {
       personas: [],
       commute: [],
       education: [],
+      ethnicity: [],
     },
     property: {
       minRent: null,
@@ -127,6 +129,10 @@ export default function MainMap() {
           affectedDemographicsState = { education: selectedValues };
           break;
         }
+        case DEMOGRAPHICS_CATEGORIES.ethnicity: {
+          affectedDemographicsState = { ethnicity: selectedValues };
+          break;
+        }
         case DEMOGRAPHICS_CATEGORIES.income: {
           affectedDemographicsState = {
             minIncome: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[0]) : null,
@@ -184,7 +190,16 @@ export default function MainMap() {
 
   let onPublishChangesPress = async () => {
     let { demographics, categories, property } = filters;
-    let { minIncome, maxIncome, minAge, maxAge, personas, commute, education } = demographics;
+    let {
+      minIncome,
+      maxIncome,
+      minAge,
+      maxAge,
+      personas,
+      commute,
+      education,
+      ethnicity,
+    } = demographics;
     let { minSize, maxSize, minRent, maxRent, spaceType } = property;
     let result = await editBrand({
       variables: {
@@ -202,6 +217,7 @@ export default function MainMap() {
           spaceType,
           commute,
           education,
+          ethnicity,
         },
         brandId,
       },
@@ -222,6 +238,7 @@ export default function MainMap() {
         personas: tenantMatchesData?.tenantMatches.personas,
         commute: tenantMatchesData?.tenantMatches.commute,
         education: tenantMatchesData?.tenantMatches.education,
+        ethnicity: tenantMatchesData?.tenantMatches.ethnicity,
       },
       property: {
         minRent: tenantMatchesData?.tenantMatches.minRent,
@@ -250,6 +267,7 @@ export default function MainMap() {
         maxSize,
         spaceType,
         categories,
+        ethnicity,
       } = tenantMatchesData.tenantMatches;
       setFilters({
         demographics: {
@@ -260,6 +278,7 @@ export default function MainMap() {
           personas,
           commute: (commute && commute.map(({ displayValue }) => displayValue)) || [],
           education: (education && education.map(({ displayValue }) => displayValue)) || [],
+          ethnicity: (ethnicity && ethnicity.map(({ displayValue }) => displayValue)) || [],
         },
         property: {
           minRent,

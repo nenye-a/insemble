@@ -16,6 +16,7 @@ import {
   GET_COMMUTE_LIST,
   GET_EDUCATION_LIST,
   GET_PROPERTY_TYPE_LIST,
+  GET_ETHNICITY_LIST,
 } from '../../graphql/queries/server/filters';
 import { Personas } from '../../generated/Personas';
 import {
@@ -35,6 +36,8 @@ import SvgRent from '../../components/icons/rent';
 import SvgSqft from '../../components/icons/sqft';
 import SvgPropertyType from '../../components/icons/property-type';
 import { NAVBAR_HEIGHT } from '../../constants/theme';
+import SvgEthnicity from '../../components/icons/ethnicity';
+import { Ethnicity } from '../../generated/Ethnicity';
 
 export default function SideBarFilters() {
   let { filters, onFilterChange } = useContext(TenantMatchesContext);
@@ -43,6 +46,7 @@ export default function SideBarFilters() {
   let { data: commuteData, loading: commuteLoading } = useQuery<Commute>(GET_COMMUTE_LIST);
   let { data: educationData, loading: educationLoading } = useQuery<Education>(GET_EDUCATION_LIST);
   let { data: spaceTypeData, loading: spaceTypeLoading } = useQuery(GET_PROPERTY_TYPE_LIST);
+  let { data: ethnicityData, loading: ethnicityLoading } = useQuery<Ethnicity>(GET_ETHNICITY_LIST);
 
   let getInitialState = () => ({
     openFilterName: null,
@@ -68,6 +72,7 @@ export default function SideBarFilters() {
         personas: personasData?.personas,
         commute: commuteData?.commute,
         education: educationData?.education,
+        ethnicity: ethnicityData?.ethnicity,
       }
     );
     let propertiesWithOptions = getPropertyOptionsAndPrefilledValues(
@@ -89,6 +94,7 @@ export default function SideBarFilters() {
     spaceTypeData,
     educationData,
     personasData,
+    ethnicityData,
     demographicsInitialFilter,
     propertyInitialFilter,
   ]);
@@ -271,6 +277,7 @@ export const DEMOGRAPHICS_CATEGORIES = {
   personas: 'Personas',
   commute: 'Commute',
   education: 'Education',
+  ethnicity: 'Ethnicity',
 };
 
 export const PROPERTIES_CATEGORIES = {
@@ -309,6 +316,12 @@ const DEMOGRAPHIC_OPTIONS: Array<FilterObj> = [
     icon: SvgEducation,
     selectedValues: [],
     type: FilterType.SEARCH_SELECTION,
+  },
+  {
+    name: DEMOGRAPHICS_CATEGORIES.ethnicity,
+    icon: SvgEthnicity,
+    selectedValues: [],
+    type: FilterType.SELECTION,
   },
 ];
 
