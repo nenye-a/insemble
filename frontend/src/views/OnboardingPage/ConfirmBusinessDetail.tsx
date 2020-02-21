@@ -19,23 +19,18 @@ import { Filter } from '../../components';
 import { BUTTON_TRANSPARENT_TEXT_COLOR, RED_TEXT } from '../../constants/colors';
 import { MAPS_IFRAME_URL_PLACE } from '../../constants/googleMaps';
 import { FONT_SIZE_SMALL } from '../../constants/theme';
-import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
+import { GET_CATEGORIES, GET_AUTOPOPULATE_FILTER } from '../../graphql/queries/server/filters';
 import { Categories } from '../../generated/Categories';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
+import {
+  AutoPopulateFilter,
+  AutoPopulateFilterVariables,
+} from '../../generated/AutoPopulateFilter';
+import { LocationState } from './types';
 
 type Props = {
   dispatch: Dispatch<Action>;
   state: OnboardingState;
-};
-
-type LocationState = {
-  placeID?: string;
-  name?: string;
-  formattedAddress?: string;
-  lat?: number;
-  lng?: number;
-  income?: number;
-  categories?: Array<string>;
 };
 
 export default function ConfirmBusinessDetail(props: Props) {
@@ -51,7 +46,16 @@ export default function ConfirmBusinessDetail(props: Props) {
   let name = nameOnLanding || confirmBusinessDetail.name || watch('businessName');
 
   let { data: categoriesData } = useQuery<Categories>(GET_CATEGORIES);
-
+  let { data: autopopulateData, loading: autopopulateLoading, error: autopopulateError } = useQuery<
+    AutoPopulateFilter,
+    AutoPopulateFilterVariables
+  >(GET_AUTOPOPULATE_FILTER, {
+    variables: {
+      address: formattedAddress,
+      brandName: nameOnLanding,
+    },
+    skip: !formattedAddress || !nameOnLanding,
+  });
   let [selectedBusinessRelation, setBussinesRelation] = useState(
     confirmBusinessDetail.userRelation || ''
   );
@@ -67,6 +71,12 @@ export default function ConfirmBusinessDetail(props: Props) {
     (selectedBusinessRelation && selectedBusinessRelation !== 'Other') ||
     (selectedBusinessRelation === 'Other' && otherBusinessRelation);
   let allValid = businessRelationValid && selectedCategories.length > 0 && name;
+
+  useEffect(() => {
+    if (autopopulateData?.autoPopulateFilter.categories) {
+      setSelectedCategories(autopopulateData.autoPopulateFilter.categories);
+    }
+  }, [autopopulateData?.autoPopulateFilter.categories]);
 
   useEffect(() => {
     if (allValid) {
@@ -139,6 +149,7 @@ export default function ConfirmBusinessDetail(props: Props) {
                 setSelectedCategories(newSelectedCategories);
               }}
               onDone={() => toggleCategorySelection(false)}
+              loading={autopopulateLoading}
             />
           )}
         </ClickAway>
