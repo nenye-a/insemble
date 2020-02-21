@@ -119,7 +119,7 @@ export default function HeaderFilterBar(props: Props) {
           onSelect={(newValue: string) => setSelectedDropdownValue(newValue)}
         />
         <SaveButton
-          text="Publish Changes"
+          text="Update Map"
           onPress={onPublishChangesPress}
           disabled={publishButtonDisabled}
         />

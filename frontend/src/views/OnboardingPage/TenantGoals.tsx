@@ -99,7 +99,7 @@ export default function TenantGoals(props: Props) {
         <>
           {!isLoading && (
             <>
-              <Label text="Where will you open your locations?" />
+              <Label text="Where will you open your locations? (Cities, regions, or counties)" />
               <MultiSelectLocation
                 onSelected={(values: Array<LocationInput>) => {
                   setSelectedLocations(values);

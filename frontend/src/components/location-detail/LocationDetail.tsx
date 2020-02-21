@@ -17,15 +17,9 @@ type Props = {
 };
 
 export default function LocationDetail(props: Props) {
-  let { population, income, age, gender, ethnicity, title, onSeeMore, visible, subTitle } = props;
-  let leftText = [
-    '3 Mile Population:',
-    'Median Income:',
-    'Average Age:',
-    'Gender:',
-    'Top Ethnicity:',
-  ];
-  let rightText = [population, income, age + 'years', gender, ethnicity.join(', ')];
+  let { population, income, age, title, onSeeMore, visible, subTitle } = props;
+  let leftText = ['3 Mile Daytime Population:', 'Median Household Income:', 'Median Age:'];
+  let rightText = [population, income, age + ' years'];
   return visible ? (
     <Container
       titleBackground="purple"
@@ -43,11 +37,13 @@ export default function LocationDetail(props: Props) {
           {rightText.map((line, i) => (
             <RightColumnText key={i}>{line}</RightColumnText>
           ))}
-          <TouchableOpacity onPress={onSeeMore}>
-            <SeeMore>Click again to see more</SeeMore>
-          </TouchableOpacity>
         </RightColumn>
       </ContentContainer>
+      <SeeMoreContainer>
+        <TouchableOpacity onPress={onSeeMore}>
+          <SeeMore>click again to see more</SeeMore>
+        </TouchableOpacity>
+      </SeeMoreContainer>
     </Container>
   ) : null;
 }
@@ -61,8 +57,13 @@ const ContentContainer = styled(View)`
   flex-direction: row;
   padding: 0 10px 0 5px;
 `;
+
+const SeeMoreContainer = styled(View)`
+  padding: 0 10px 0 5px;
+  align-items: flex-end;
+`;
 const LeftColumn = styled(View)`
-  flex: 1;
+  flex: 2;
   align-items: flex-start;
 `;
 const RightColumn = styled(View)`

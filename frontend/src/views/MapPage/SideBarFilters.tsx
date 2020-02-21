@@ -103,8 +103,8 @@ export default function SideBarFilters() {
             income: true,
             rangeSlide: true,
             minimum: 0,
-            maximum: 800,
-            values: selectedValues.length > 1 ? selectedValues : [0, 800],
+            maximum: 200,
+            values: selectedValues.length > 1 ? selectedValues : [0, 200],
             onSliderChange: (values: Array<number>) => {
               dispatch({
                 type: 'SLIDE_CHANGE',
@@ -117,8 +117,8 @@ export default function SideBarFilters() {
           return {
             rangeSlide: true,
             minimum: 0,
-            maximum: 100,
-            values: selectedValues.length > 1 ? selectedValues : [1, 100],
+            maximum: 65,
+            values: selectedValues.length > 1 ? selectedValues : [1, 65],
             onSliderChange: (values: Array<number>) => {
               dispatch({
                 type: 'SLIDE_CHANGE',
