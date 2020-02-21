@@ -74,7 +74,7 @@ export default function SignUpForm(props: Props) {
           minFrontageWidth: Number(physicalSiteCriteria.minFrontageWidth),
           maxFrontageWidth: Number(physicalSiteCriteria.maxFrontageWidth),
           spaceType: physicalSiteCriteria.spaceType,
-          equipmentIds: physicalSiteCriteria.equipments,
+          equipment: physicalSiteCriteria.equipments,
         },
       };
     }

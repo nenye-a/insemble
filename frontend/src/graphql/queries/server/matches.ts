@@ -39,7 +39,7 @@ export const GET_TENANT_MATCHES_DATA = gql`
         rawValue
         displayValue
       }
-      equipmentIds
+      equipment
       spaceType
       matchingProperties {
         address
