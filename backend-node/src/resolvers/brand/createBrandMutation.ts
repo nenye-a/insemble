@@ -8,11 +8,12 @@ export let createBrandResolver: FieldResolver<
 > = async (_, { business, filter }, context: Context) => {
   let {
     categories = [],
-    equipmentIds = [],
+    equipment = [],
     personas = [],
     spaceType = [],
     education = [],
     commute = [],
+    ethnicity = [],
     ...filterInput
   } = filter || {};
   let { location, nextLocations, ...businessInput } = business || {};
@@ -23,8 +24,8 @@ export let createBrandResolver: FieldResolver<
       categories: {
         set: categories,
       },
-      equipmentIds: {
-        set: equipmentIds,
+      equipment: {
+        set: equipment,
       },
       personas: {
         set: personas,
@@ -37,6 +38,9 @@ export let createBrandResolver: FieldResolver<
       },
       commute: {
         set: commute,
+      },
+      ethnicity: {
+        set: ethnicity,
       },
       location: {
         create: location,

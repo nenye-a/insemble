@@ -43,8 +43,11 @@ let tenantMatches = queryField('tenantMatches', {
       maxRent,
       matchingLocations: matchingLocationsJSON,
       matchingProperties,
+
       // NOTE: Unused filter params, will use later!
-      equipmentIds,
+      equipment,
+      ethnicity,
+      minDaytimePopulation,
       locationCount,
       minSize,
       maxSize,
@@ -142,9 +145,17 @@ let tenantMatches = queryField('tenantMatches', {
           displayValue: splitEducationValue[1],
         };
       }),
+      ethnicity: ethnicity.map((rawValue) => {
+        let splitEthnicityValue = rawValue.split('Population, ');
+        return {
+          rawValue,
+          displayValue: splitEthnicityValue[1],
+        };
+      }),
       minRent,
       maxRent,
-      equipmentIds,
+      equipment,
+      minDaytimePopulation,
       locationCount,
       minSize,
       maxSize,
