@@ -31,6 +31,6 @@ def get_psychographics(lat, lng, radius, spatial_df, block_grp_df, cats):
     # If the weighted total does not exist, the data is not valid. Return None
     if sums[-1] == 0:
         return None
-    data = [sums[i]/sums[-1] for i in range(0, len(sums)-1)]
+    data = [sums[i] / sums[-1] for i in range(0, len(sums) - 1)]
 
     return dict(zip(cats, data))

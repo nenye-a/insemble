@@ -1,20 +1,21 @@
-# create vectors and store them in mongodb 
+# create vectors and store them in mongodb
 
 import sys
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(BASE_DIR,'data_aggregator'))  # include data_agregator in path
+sys.path.append(os.path.join(BASE_DIR, 'data_aggregator'))  # include data_agregator in path
 
 import pandas as pd
-from utils import DB_VECTORS 
+from utils import DB_VECTORS
+
 
 def create_vectors():
 
     df = pd.read_csv("/Users/austinhome/workplace_david/insemble/data_insights_testing/data_for_vectors.csv")
 
     #l = list(df)
-    #for i, e in enumerate(l):
-    #    print(i, e) 
+    # for i, e in enumerate(l):
+    #    print(i, e)
 
     # get each feature
     #psycho = df.iloc[:, [i for i in range(868, 1012)]]
@@ -28,7 +29,7 @@ def create_vectors():
     #travel_time = df.iloc[:, [678,679,680,823,824,825]]
     #transport_methods = df.iloc[:, [i for i in range(672, 678)] + [i for i in range(817, 823)]]
 
-    # normalize each feature 
+    # normalize each feature
     #psycho = normalize(psycho)
     #num_households = normalize(num_households)
     #daytime_pop = normalize(daytime_pop)
@@ -40,16 +41,20 @@ def create_vectors():
     #travel_time = normalize(travel_time)
     #transport_methods = normalize(transport_methods)
 
-    df_trimmed = df.iloc[:, [1, 2] + [i for i in range(293, 365)] + [440] + [437] + [438] + [442] + [i for i in range(3, 40)] + [i for i in range(97, 106)] + [-1]]
+    df_trimmed = df.iloc[:, [1, 2] + [i for i in range(293, 365)] + [440] + [437] + [438] +
+                         [442] + [i for i in range(3, 40)] + [i for i in range(97, 106)] + [-1]]
 
     data = df_trimmed.to_dict(orient='records')
 
     DB_VECTORS.remove()
-    DB_VECTORS.insert_many(data)     
+    DB_VECTORS.insert_many(data)
 
-# normalize df 
+# normalize df
+
+
 def normalize(df):
-    return (df-df.min())/(df.max()-df.min())
+    return (df - df.min()) / (df.max() - df.min())
+
 
 if __name__ == "__main__":
     create_vectors()

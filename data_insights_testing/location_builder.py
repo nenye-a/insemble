@@ -1,7 +1,7 @@
 import sys
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(BASE_DIR,'data_aggregator'))  # include data_agregator in path
+sys.path.append(os.path.join(BASE_DIR, 'data_aggregator'))  # include data_agregator in path
 import json
 import time
 import numpy as np
@@ -18,12 +18,12 @@ import environics
 
 #from django.conf import settings
 
-#### TODO: keep secret by using environment variables
-#### TODO: consolidate APIs (to use fewer if possible)
+# TODO: keep secret by using environment variables
+# TODO: consolidate APIs (to use fewer if possible)
 
-#please don't share
+# please don't share
 GOOG_KEY = config('GOOG_KEY')
-YELP_KEY= config('YELP_KEY')
+YELP_KEY = config('YELP_KEY')
 FRSQ_ID = config('FRSQ_ID')
 FRSQ_SECRET = config('FRSQ_SECRET')
 CRIME_KEY = config('CRIME_KEY')
@@ -46,9 +46,11 @@ This method takes in a text query, such as a retailer name, address, or city, an
 :return:  (latitude, longitude, result valid) for the queried location, along with boolean indicating a successful search
 :rtype: tuple (Float, Float, Boolean), ex: (33.5479999,-117.6711493, True)
 '''
+
+
 def get_loc_from_input(input):
     ####
-    #### TODO: error checking to find the right locations/retailer names
+    # TODO: error checking to find the right locations/retailer names
     ####
     result_valid = True
 
@@ -73,9 +75,10 @@ def get_loc_from_input(input):
 
     return lat, lng, result_valid
 
+
 def get_address_from_loc(lat, lng):
-    URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?&location={},{}&rankby=distance&type=establishment&key={}".format(lat,lng,
-        GOOG_KEY)
+    URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?&location={},{}&rankby=distance&type=establishment&key={}".format(lat, lng,
+                                                                                                                                          GOOG_KEY)
     result_valid = True
     data = smart_search(URL, 'google', 'nearbysearch')
 
@@ -104,15 +107,15 @@ def get_address_from_loc(lat, lng):
 def get_demographics(lat, lng, radius, count=0):
     result_valid = True
 
-    #### FIXME: move sGeo to constant at top of code
+    # FIXME: move sGeo to constant at top of code
     # search demographics from justice map
     sGeo = "tract"
-    URL = "http://www.spatialjusticetest.org/api.php?fLat={0}&fLon={1}&sGeo={2}&fRadius={3}".format(lat,lng,sGeo,radius)
+    URL = "http://www.spatialjusticetest.org/api.php?fLat={0}&fLon={1}&sGeo={2}&fRadius={3}".format(lat, lng, sGeo, radius)
     data = smart_search(URL, 'justicemap', 'normal')
 
     try:
-        census = {"asian":float(data["asian"]), "black":float(data["black"]), "hispanic":float(data["hispanic"]),
-              "indian":float(data["indian"]), "multi":float(data["multi"]), "white":float(data["white"])}
+        census = {"asian": float(data["asian"]), "black": float(data["black"]), "hispanic": float(data["hispanic"]),
+                  "indian": float(data["indian"]), "multi": float(data["multi"]), "white": float(data["white"])}
         pop = int(data["pop"])
         income = float(data["income"])
 
@@ -131,13 +134,14 @@ def get_demographics(lat, lng, radius, count=0):
 
     return census, pop, income, radius, result_valid
 
+
 def get_nearby_stores(lat, lng, radius):
     result_valid = True
     ####
-    #### TODO: need to incorporate proximity (closer stores... more influence)
+    # TODO: need to incorporate proximity (closer stores... more influence)
 
     nearby = {}
-    #### TODO: ensure right retailer
+    # TODO: ensure right retailer
 
     # search for nearby stores in radius
     url_search = 'https://api.foursquare.com/v2/venues/search'
@@ -147,7 +151,7 @@ def get_nearby_stores(lat, lng, radius):
         v='20191028',
         ll=str(lat) + "," + str(lng),
         intent='browse',
-        radius=radius*MILES_TO_M
+        radius=radius * MILES_TO_M
     )
     data = smart_search(url_search, 'foursquare', 'venues_search', params=params)
 
@@ -169,6 +173,7 @@ def get_nearby_stores(lat, lng, radius):
 
     return nearby, result_valid
 
+
 '''
 This method creates a location profile for a particular address. It pulls in information from various APIs to create Locations
 
@@ -179,22 +184,25 @@ This method creates a location profile for a particular address. It pulls in inf
 :return: Location object with demographic and local details. Boolean indicating whether the data is good
 :rtype: Tuple (Location, Boolean)
 '''
+
+
 def generate_location_profile(address, radius):
 
     def get_footraffic(address):
         ####
-        #### TODO: plug in with specific location and get foot traffic (geolocation data)
+        # TODO: plug in with specific location and get foot traffic (geolocation data)
         ####
 
         pass
 
-    def get_safety(lat,lng):
+    def get_safety(lat, lng):
         ####
-        #### TODO: find other crime API, or find incident correlations to store success, potentially analyze raw incidents by proximity still using Crimometer
+        # TODO: find other crime API, or find incident correlations to store success, potentially analyze raw incidents by proximity still using Crimometer
         ####
         "https://private-anon-79b1042c48-crimeometer.apiary-mock.com/v1/incidents/stats?lat=lat&lon=lon&distance=distance&datetime_ini=datetime_ini&datetime_end=datetime_end,&source=source"
 
-        URL = "https://api.crimeometer.com/v1/incidents/raw-data?lat={0}&lon={1}&distance={2}&datetime_ini={3}&datetime_end={4}".format(lat, lng, radius+"m", start, end)
+        URL = "https://api.crimeometer.com/v1/incidents/raw-data?lat={0}&lon={1}&distance={2}&datetime_ini={3}&datetime_end={4}".format(
+            lat, lng, radius + "m", start, end)
         headers = {
             'Content-Type': 'application/json',
             'x-api-key': CRIME_KEY
@@ -211,7 +219,7 @@ def generate_location_profile(address, radius):
     census, pop, income, census_radius, valid2 = get_demographics(lat, lng, radius)
     nearby, valid3 = get_nearby_stores(lat, lng, radius)
     ####
-    #### TODO: reorganize locations inputs without traffic & remove field from dataset. incorporate safety
+    # TODO: reorganize locations inputs without traffic & remove field from dataset. incorporate safety
     ####
 
     if valid and valid2 and valid3:
@@ -219,35 +227,37 @@ def generate_location_profile(address, radius):
     else:
         location_valid = False
 
-    #return Location object
+    # return Location object
     return Location(address, lat, lng, census, pop, income, None, None, nearby, census_radius), location_valid
 
 # 1/29/20 dl
+
+
 def generate_location_profile_new(address):
 
-    # get lat long 
+    # get lat long
     lat, lng, valid = get_loc_from_input(address)
 
     if not valid:
         return None, valid
 
-    # get data 
+    # get data
     cats, spatial_df = spatial.create_spatial_cats_and_df()
     block_df = spatial.create_block_grp_df()
     psycho_dict = spatial.get_psychographics(
-                lat, lng, 1, spatial_df, block_df, cats)
+        lat, lng, 1, spatial_df, block_df, cats)
 
     arcgis_dict = arcgis.details(lat, lng, 1)
 
     cats, demo_df = environics.create_demo_cats_and_df()
     demo_dict = environics.get_demographics(
-                lat, lng, 1, demo_df, block_df, cats)
+        lat, lng, 1, demo_df, block_df, cats)
 
-    # create arr as df 
+    # create arr as df
     # psycho
     psycho_df = pd.DataFrame([psycho_dict], columns=psycho_dict.keys())
 
-    # arcgis - num households, daytime pop, daytime working pop, income  
+    # arcgis - num households, daytime pop, daytime working pop, income
     arcgis_df = pd.DataFrame([arcgis_dict], columns=arcgis_dict.keys())
     arcgis_df = arcgis_df.drop(columns=["HouseholdGrowth2017-2022", "DaytimeResidentPop"])
     num_households_df = arcgis_df["TotalHouseholds"]
@@ -255,7 +265,7 @@ def generate_location_profile_new(address):
     daytime_working_pop_df = arcgis_df["DaytimeWorkingPop"]
     income_df = arcgis_df["MedHouseholdIncome"]
 
-    # demo - gender, race, age, travel time, transport methods 
+    # demo - gender, race, age, travel time, transport methods
     gender_dict = demo_dict["Current Year Population, Gender"]
     gender_df = pd.DataFrame([gender_dict], columns=gender_dict.keys())
     race_dict = demo_dict["Current Year Population, Race"]
@@ -268,16 +278,18 @@ def generate_location_profile_new(address):
     travel_time_df = pd.DataFrame([travel_time_dict], columns=travel_time_dict.keys())
 
     #demo_dict = {}
-    #demo_dict.update(gender_dict)
-    #demo_dict.update(race_dict)
-    #demo_dict.update(age_dict)
-    #demo_dict.update(transport_dict)
-    #demo_dict.update(travel_time_dict)
+    # demo_dict.update(gender_dict)
+    # demo_dict.update(race_dict)
+    # demo_dict.update(age_dict)
+    # demo_dict.update(transport_dict)
+    # demo_dict.update(travel_time_dict)
     #demo_df = pd.DataFrame([demo_dict], columns=demo_dict.keys())
 
-    # create final df 
-    df = pd.concat([psycho_df, num_households_df, daytime_pop_df, daytime_working_pop_df, income_df, gender_df, race_df, age_df, transport_df, travel_time_df], axis=1)
+    # create final df
+    df = pd.concat([psycho_df, num_households_df, daytime_pop_df, daytime_working_pop_df,
+                    income_df, gender_df, race_df, age_df, transport_df, travel_time_df], axis=1)
     return df
+
 
 '''
 This method creates a retailer profile for a particular retailer. It pulls in information from various APIs to create Retailers
@@ -289,15 +301,17 @@ This method creates a retailer profile for a particular retailer. It pulls in in
 :return Retailer: Retailer object with store details
 :rtype: Retailer
 '''
+
+
 def generate_retailer_profile(name, location):
     def get_locations(name, location):
         result_valid = True
 
         ####
-        #### TODO: make location param optional (for places with locations spanning multiple states)
-        #### TODO: check if all locations pulled are indeed that retailer
+        # TODO: make location param optional (for places with locations spanning multiple states)
+        # TODO: check if all locations pulled are indeed that retailer
         ####
-        input = name+" "+location
+        input = name + " " + location
 
         # parse string address for something readable by google. search
         format_input = urllib.parse.quote(input)
@@ -307,7 +321,7 @@ def generate_retailer_profile(name, location):
         # add all retailer locations from search return to set
         locations = set()
         ####
-        #### FIXME: adjust repetitive calls to the same blocks of code. merge to one function
+        # FIXME: adjust repetitive calls to the same blocks of code. merge to one function
         ####
         for result in data['results']:
             try:
@@ -322,7 +336,8 @@ def generate_retailer_profile(name, location):
         while more_pages:
             try:
                 page_token = data['next_page_token']
-                URL = "https://maps.googleapis.com/maps/api/place/textsearch/json?query={0}&key={1}&pagetoken={2}".format(input, GOOG_KEY, page_token)
+                URL = "https://maps.googleapis.com/maps/api/place/textsearch/json?query={0}&key={1}&pagetoken={2}".format(
+                    input, GOOG_KEY, page_token)
                 data = repeat_search(URL, "google", "textsearch")
 
                 for result in data['results']:
@@ -344,13 +359,13 @@ def generate_retailer_profile(name, location):
         result_valid = True
         input = name + " " + location
 
-        #### TODO: may want to aggregate types over all locations
+        # TODO: may want to aggregate types over all locations
         lat, lng, valid = get_loc_from_input(input)
         if not valid:
             return None, None, False
 
-        #### TODO: ensure right retailer
-        ####TODO: fix v and implement database updates
+        # TODO: ensure right retailer
+        # TODO: fix v and implement database updates
 
         # search for a particular retailer at location
         types = set()
@@ -410,8 +425,9 @@ def generate_retailer_profile(name, location):
     else:
         retailer_valid = False
 
-    #return Retailer object
+    # return Retailer object
     return Retailer(name, types, price, locations), retailer_valid
+
 
 '''
 This method gets the performance indicators for a retailer at a particular location
@@ -425,11 +441,13 @@ This method gets the performance indicators for a retailer at a particular locat
 :return: likes, ratings, photo count, result_valid
 :rtype: tuple(float, float, float, boolean)
 '''
+
+
 def get_performance(name, lat, lng):
     result_valid = True
     ####
-    #### TODO: handling if multiple results are returned. currently just factors for 1
-    #### TODO: currently only incorporates likes, ratings, and photo_count, but should expand to use geolocation data
+    # TODO: handling if multiple results are returned. currently just factors for 1
+    # TODO: currently only incorporates likes, ratings, and photo_count, but should expand to use geolocation data
     ####
 
     # search a retailer at location to get id
@@ -439,12 +457,12 @@ def get_performance(name, lat, lng):
         client_secret=FRSQ_SECRET,
         v='20191028',
         name=name,
-        ll=str(lat)+","+str(lng),
+        ll=str(lat) + "," + str(lng),
         intent='match',
     )
     data = smart_search(url_search, 'foursquare', 'venues_search', params=params)
 
-    #### TODO: run test to see whether search results return the right retailer
+    # TODO: run test to see whether search results return the right retailer
 
     # get id for retailer, return invalid if error
     try:
@@ -493,7 +511,7 @@ def get_performance(name, lat, lng):
         age = np.nan
         result_valid = False
 
-    #### FIXME: replace foursquare photos with google photos
+    # FIXME: replace foursquare photos with google photos
     try:
         photo_prefix = data['response']['venue']['bestPhoto']['prefix']
         photo_suffix = data['response']['venue']['bestPhoto']['suffix']
@@ -505,6 +523,7 @@ def get_performance(name, lat, lng):
 
     return likes, ratings, age, photo_count, photo_prefix, photo_suffix, result_valid
 
+
 if __name__ == "__main__":
     ###### DEBUG CODE #######
     retailer = 'Souvla'
@@ -514,12 +533,10 @@ if __name__ == "__main__":
     #print(get_performance(retailer, lat, lng))
     #businesses = generate_retailer_profile("Broken Yolk Cafe", "California")["businesses"]
 
-
     #print(generate_retailer_profile("Broken Yolk Cafe", "California"))
 
-    #URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input={0}&inputtype=textquery&fields=geometry&key={1}".format(
+    # URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input={0}&inputtype=textquery&fields=geometry&key={1}".format(
     #    "New+York", GOOG_KEY)
     #print(smart_search(URL, None))
 
     generate_location_profile_new("327 1/2 E 1st St, Los Angeles, CA 90012")
-

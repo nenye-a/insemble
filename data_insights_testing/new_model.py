@@ -41,6 +41,7 @@ from sklearn.cluster import KMeans
 
 '---------------------------------------------------------------------'
 
+
 def data_gen(inputs):
     '''
     select the data based on a predefined criterion
@@ -57,8 +58,10 @@ def data_gen(inputs):
         counter += 1
     return relevant_cols
 
+
 def mean_squared_error(y_true, y_pred):
     return K.mean(K.square(y_pred - y_true), axis=-1)
+
 
 def MLP(num_units, learning_rate, num_epochs, batch_sz, dim, trainX, trainY, testX, testY):
     print("RUNNING MLP...")
@@ -76,7 +79,8 @@ def MLP(num_units, learning_rate, num_epochs, batch_sz, dim, trainX, trainY, tes
     adam = Adam(lr=learning_rate, decay=decay_rate)
     model.compile(loss='mse', optimizer=adam, metrics=[mean_squared_error])
     model.summary()
-    history = model.fit(trainX, trainY, epochs=num_epochs, batch_size=batch_sz, shuffle=True, validation_split=0.1, verbose=1, callbacks=[es])
+    history = model.fit(trainX, trainY, epochs=num_epochs, batch_size=batch_sz,
+                        shuffle=True, validation_split=0.1, verbose=1, callbacks=[es])
     print('STARTING EVALUATION')
     scores = model.evaluate(testX, testY)
     print("SCORES:", scores)
@@ -105,13 +109,15 @@ def CNN_1D(num_units, learning_rate, num_epochs, batch_sz, dim, trainX, trainY, 
     # chk = ModelCheckpoint("/home/ubuntu/environment/RiskRadar/RealData/USA/best_model.hdf5", monitor='val_acc', save_best_only=True, mode='max', save_weights_only=False, verbose=1)
     model.summary()
     # plot_model(model, "/home/ubuntu/environment/RiskRadar/RealData/USA/RR_LSTM.png")
-    history = model.fit(trainX, trainY, epochs=num_epochs, batch_size=batch_sz, shuffle=True, validation_split=0.1, verbose=1, callbacks=[es])
+    history = model.fit(trainX, trainY, epochs=num_epochs, batch_size=batch_sz,
+                        shuffle=True, validation_split=0.1, verbose=1, callbacks=[es])
     print('STARTING EVALUATION')
     # model.load_weights('/home/ubuntu/environment/RiskRadar/best_model.hdf5')
     # evaluate
     scores = model.evaluate(testX, testY)
     print("SCORES:", scores)
     return (model, scores[1], history)
+
 
 def load_modelo(testX, testY):
     model = load_model('new_model.h5')
@@ -122,12 +128,14 @@ def load_modelo(testX, testY):
     print(scores[1])
     return model
 
+
 def Kmeans(num_of_clusters, features):
     km = KMeans(n_clusters=num_of_clusters).fit(features)
     cluster_map = pd.DataFrame()
     cluster_map['data_index'] = features.index.values
     cluster_map['cluster'] = km.labels_
     return cluster_map
+
 
 def prediction(x, y, model, cnn=False):
     if cnn:
@@ -138,6 +146,7 @@ def prediction(x, y, model, cnn=False):
     # show the inputs and predicted outputs
     for i in range(len(x)):
         print("y=%s, Predicted=%s" % (y[i], pred[i]))
+
 
 '---------------------------------------------------------------------'
 
@@ -237,4 +246,3 @@ plt.xlabel("epoch")
 plt.legend(["train", "val"], loc="upper left")
 plt.show()
 #
-

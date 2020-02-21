@@ -1,5 +1,6 @@
 from mongo_connect import Connect
 
+
 def organize_sort_categories():
     """
     Method sorts categories present in the database and organizes them in the database
@@ -25,14 +26,15 @@ def organize_sort_categories():
                 categories[category] = place_type[category]
 
     inserted = db_category.insert_many([{
-            "name": category,
-            "occurrence": categories[category]
-        } for category in categories]
+        "name": category,
+        "occurrence": categories[category]
+    } for category in categories]
     ).inserted_ids
 
     print("{} values inserted to database!".format(len(inserted)))
 
     return
+
 
 def pull_categories(number_length=None):
 
@@ -46,7 +48,6 @@ def pull_categories(number_length=None):
         db_category_cursor = db_category.find({}).sort("occurrence", -1)
 
     return [category["name"] for category in db_category_cursor]
-
 
 
 # if __name__ == '__main__':

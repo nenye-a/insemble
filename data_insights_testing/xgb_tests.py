@@ -12,27 +12,29 @@ import math
 import statistics
 import xgboost as xgb
 
-## Gradient boosting algorithm test 
+# Gradient boosting algorithm test
+
+
 def test_predictions():
-    # get data 
+    # get data
     all_data, d, d = idt.get_data_set("test_data", ratings=True, price=True)
 #    all_data, ids, d = idt.build_data_set(10000, price=True)
 #    print(idt.save_data_set("test_data_photos_no_ratings", ids))
 
     print(list(all_data))
 
-    # filter out columns that we don't want 
+    # filter out columns that we don't want
     all_data = all_data[all_data["price"] != -1]
 
     # only take data for restaurants
     all_data = all_data[all_data["Bar"] == 1]
-    
+
     #all_data = all_data[["pop", "income", "likes", "age"]]
 
-    # get a sample of the data 
-    sample = all_data.sample(frac = 1)
+    # get a sample of the data
+    sample = all_data.sample(frac=1)
 
-    # get train, test sets 
+    # get train, test sets
     train, test = train_test_split(sample, test_size=0.1)
     train, val = train_test_split(train, test_size=0.1)
     print("Length of train set: {}".format(len(train)))
@@ -57,7 +59,7 @@ def test_predictions():
     # balance ratings -- check this again
     # train_x, train_y = idt.balance_ratings_set(train_x, train_y)
 
-    # scaling x 
+    # scaling x
     #scaler_x = MinMaxScaler().fit(train_x)
     #scaled_train_x = scaler_x.transform(train_x)
     #scaled_test_x = scaler_x.transform(test_x)
@@ -124,7 +126,7 @@ def iterative_accuracy_test():
     test_photocount_x, test_photocount_y = idt.generate_label_series(test, "photo_count")
     test_likes_x, test_likes_y = idt.generate_label_series(test, "likes")
 
-    train_length = [x*10 for x in range(1, int(len(train)/10))]
+    train_length = [x * 10 for x in range(1, int(len(train) / 10))]
 
     rating_mse, rating_mae, rating_mae_std = [], [], []
     photo_mse, photo_mae, photo_mae_std = [], [], []
@@ -184,6 +186,7 @@ def iterative_accuracy_test():
             (photo_mae, photo_mae_std, photo_mse),
             (likes_mae, likes_mae_std, likes_mse)
             ]
+
 
 if __name__ == "__main__":
 

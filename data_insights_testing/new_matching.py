@@ -160,7 +160,6 @@ def generate_matches(location_address, name=None, my_place_type={}):
     print("** Matching: Pre-processing start.")
     df2 = preprocess_match_df(df2)
 
-
     # # subtract vector from remaining matches
     diff = df2.subtract(df2.iloc[-1])
     diff = diff.iloc[:-1]
@@ -176,7 +175,7 @@ def generate_matches(location_address, name=None, my_place_type={}):
 
     print("** Matching: Matching complete, results immenent.")
     # # Return only the top 1% of locations.
-    
+
     best = norm_df.nsmallest(int(norm_df.shape[0] * 0.01), 'error_sum')
 
     # # Convert distance to match value, and convert any object ids to strings to allow JSON serialization
@@ -491,6 +490,5 @@ def _map_difference_to_match(difference):
 if __name__ == "__main__":
     # print(_generate_location_vector("371 E 2nd Street, LA", name="Spitz"))
     print(generate_matches("371 E 2nd Street", name="Spitz"))
-    
-    
+
     # print(generate_matches_v1("371 E 2nd Street, LA"))

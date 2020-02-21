@@ -7,6 +7,8 @@ from .serializers import *
 from .models import Feedback
 
 # Submit Feedback API
+
+
 class FeedbackAPI(generics.GenericAPIView):
 
     authentication_classes = []
@@ -30,5 +32,3 @@ class FeedbackAPI(generics.GenericAPIView):
                 context=self.get_serializer_context()
             ).data
         })
-
-

@@ -4,7 +4,7 @@ File for spatial analytics data processing
 
 '''
 
-from utils import distance 
+from utils import distance
 import pandas as pd
 import time
 
@@ -28,5 +28,3 @@ for line in f2[1:]:
     line_split = line.rstrip().split(",")
     if int(line_split[0]) in la_blocks:
         out.write(line)
-
-

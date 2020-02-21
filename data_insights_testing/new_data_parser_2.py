@@ -2,8 +2,9 @@ import pandas as pd
 # from trains import Task
 from mongo_connect import Connect
 
+
 def process_data():
-    #pd.set_option('display.max_rows', None)  # or 1000
+    # pd.set_option('display.max_rows', None)  # or 1000
 
     client = Connect.get_connection()
     db = client.spaceData
@@ -13,16 +14,15 @@ def process_data():
     indf = pd.DataFrame(list(results))
     print(indf)
     print(list(indf))
-    #df.to_csv("Mega_DataFrame.csv")
+    # df.to_csv("Mega_DataFrame.csv")
     #df = pd.read_csv("Mega_DataFrame.csv")
-    #print(df.head())
+    # print(df.head())
 
     outdf = pd.DataFrame()
     #indf = pd.read_csv("Mega_DataFrame.csv",nrows=100)
 
-
-    # NEARBY POIS 
-    #for i, row in indf.iterrows():
+    # NEARBY POIS
+    # for i, row in indf.iterrows():
     #    lst = row.loc["nearby_store"]
     #    if type(lst) is not list:
     #        continue
@@ -31,8 +31,8 @@ def process_data():
     #        dis = place["distance"]
     #        if dis < 0.5:
 
-#    # CATEGORIES 
-#    # make cat set 
+#    # CATEGORIES
+#    # make cat set
 #    catset = set()
 #    for cats in indf["types"]:
 #        for cat in cats:
@@ -69,7 +69,7 @@ def process_data():
         outdf.set_value(i, "lat", lat)
         outdf.set_value(i, "lng", lng)
 
-    # DEMOGRAPHICS + PSYCHOGRAPHICS  
+    # DEMOGRAPHICS + PSYCHOGRAPHICS
     for i, row in indf.iterrows():
         print("Making demo and psycho features", i)
         big_dict = row.loc["demo1"]
@@ -139,15 +139,16 @@ def process_data():
     for i, row in indf.iterrows():
         outdf.set_value(i, "loc_id", row.loc["_id"])
 
-    # drop cols without info 
+    # drop cols without info
     outdf = outdf.dropna()
 
-    #print(outdf)
-    #print(list(outdf))
+    # print(outdf)
+    # print(list(outdf))
 
     outdf.to_csv("data_for_vectors.csv")
 
     return outdf
+
 
 def rows_to_consider(df):
     df = df.values
@@ -161,6 +162,7 @@ def rows_to_consider(df):
 
 # sales_rows = rows_to_consider(df)
 # print(sales_rows)
+
 
 def find_all_categories(df):
     categories = set()
@@ -184,7 +186,5 @@ if __name__ == "__main__":
     process_data()
 
     df = pd.read_csv("data_for_vectors.csv")
-    #for i, j in enumerate(list(df)):
+    # for i, j in enumerate(list(df)):
     #    print(i, j)
-
-

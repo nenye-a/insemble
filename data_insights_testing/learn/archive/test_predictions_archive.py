@@ -57,7 +57,6 @@ def test_predictions():
     scaled_test_likes_y = scaler_likes_y.transform(np.array(test_likes_y).reshape(-1, 1))
     scaled_test_photo_y = scaler_photo_y.transform(np.array(test_photo_y).reshape(-1, 1))
 
-
     # ridge regression
 
     # reg_rating = linear_model.Ridge(alpha=12)
@@ -71,7 +70,7 @@ def test_predictions():
 
     # XGB resgression
 
-    param = {'max_depth': 4, 'eta': 1, 'objective': 'binary:logistic', 'lambda':2, 'verbosity':2,  }
+    param = {'max_depth': 4, 'eta': 1, 'objective': 'binary:logistic', 'lambda': 2, 'verbosity': 2, }
     num_round = 2
     reg_rating = xgb.train(param, xgb.DMatrix(scaled_train_rating_x, label=scaled_train_rating_y), num_round)
     reg_photo = xgb.train(param, xgb.DMatrix(scaled_train_photo_x, label=scaled_train_photo_y), num_round)
@@ -94,14 +93,13 @@ def test_predictions():
     photo_p = reg_photo.predict(xgb.DMatrix(scaled_test_photo_x))
     likes_p = reg_likes.predict(xgb.DMatrix(scaled_test_likes_x))
 
-    rating_p = scaler_rating_y.inverse_transform(np.array(rating_p).reshape(-1,1)).reshape(1,-1)[0]
-    photo_p = scaler_photo_y.inverse_transform(np.array(photo_p).reshape(-1,1)).reshape(1,-1)[0]
-    likes_p = scaler_likes_y.inverse_transform(np.array(likes_p).reshape(-1,1)).reshape(1,-1)[0]
+    rating_p = scaler_rating_y.inverse_transform(np.array(rating_p).reshape(-1, 1)).reshape(1, -1)[0]
+    photo_p = scaler_photo_y.inverse_transform(np.array(photo_p).reshape(-1, 1)).reshape(1, -1)[0]
+    likes_p = scaler_likes_y.inverse_transform(np.array(likes_p).reshape(-1, 1)).reshape(1, -1)[0]
 
     t, rating = zip(*test_rating_y.items())
     t, photo = zip(*test_photo_y.items())
     t, likes = zip(*test_likes_y.items())
-
 
     likes_errors = []
     photo_errors = []
@@ -115,7 +113,6 @@ def test_predictions():
         likes_errors.append(math.fabs(float(likes_p[i]) - float(likes[i])))
         photo_errors.append(math.fabs(float(photo_p[i]) - float(photo[i])))
         rating_errors.append(math.fabs(float(rating_p[i]) - float(rating[i])))
-
 
     mae_likes = statistics.mean(likes_errors)
     maeStd_likes = statistics.stdev(likes_errors)
@@ -133,7 +130,6 @@ def test_predictions():
     print("Ratings -  MAE: {}  ;  stdMAE: {}  ;  MSE: {}\n".format(mae_rating, maeStd_rating, mse_rating))
 
 
-
 def iterative_accuracy_test():
 
     all_data, d, d = idt.get_data_set("test_data4", ratings=True)
@@ -143,7 +139,7 @@ def iterative_accuracy_test():
     test_photocount_x, test_photocount_y = idt.generate_label_series(test, "photo_count")
     test_likes_x, test_likes_y = idt.generate_label_series(test, "likes")
 
-    train_length = [x*10 for x in range(1, int(len(train)/10))]
+    train_length = [x * 10 for x in range(1, int(len(train) / 10))]
 
     rating_mse, rating_mae, rating_mae_std = [], [], []
     photo_mse, photo_mae, photo_mae_std = [], [], []
@@ -203,6 +199,7 @@ def iterative_accuracy_test():
             (photo_mae, photo_mae_std, photo_mse),
             (likes_mae, likes_mae_std, likes_mse)
             ]
+
 
 if __name__ == "__main__":
 

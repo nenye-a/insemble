@@ -18,12 +18,12 @@ if __name__ == "__main__":
                                     "type": ["mae" for x in rating_mae] + ["mse" for x in rating_mse] + ["mat_std" for x in rating_mae_std]})
 
     photo_error_df = pd.DataFrame({"train length": train_length + train_length + train_length,
-                                    "photo error": photo_mae + photo_mse + photo_mae_std,
-                                    "type": ["mae" for x in photo_mae] + ["mse" for x in photo_mse] + ["mat_std" for x in photo_mae_std]})
+                                   "photo error": photo_mae + photo_mse + photo_mae_std,
+                                   "type": ["mae" for x in photo_mae] + ["mse" for x in photo_mse] + ["mat_std" for x in photo_mae_std]})
 
     likes_error_df = pd.DataFrame({"train length": train_length + train_length + train_length,
-                                    "likes error": likes_mae + likes_mse + likes_mae_std,
-                                    "type": ["mae" for x in likes_mae] + ["mse" for x in likes_mse] + ["mat_std" for x in likes_mae_std]})
+                                   "likes error": likes_mae + likes_mse + likes_mae_std,
+                                   "type": ["mae" for x in likes_mae] + ["mse" for x in likes_mse] + ["mat_std" for x in likes_mae_std]})
 
     plt.figure(1)
     rating_g = sns.lineplot(x="train length", y="rating error", hue="type", data=rating_error_df)

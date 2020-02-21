@@ -175,7 +175,6 @@ def generate_matches(location_address, name=None, my_place_type={}):
     # best = best.sample(frac=.25)
     # best = norm_df.nsmallest(15000, 'error_sum')
 
-
     # best = norm_df.nsmallest(int(norm_df.shape[0] * 0.01), 'error_sum')
 
     # Convert distance to match value, and convert any object ids to strings to allow JSON serialization
@@ -497,4 +496,3 @@ def _map_difference_to_heatmap(difference):
     if value < 0.8:
         return 0.6
     return 4
-
