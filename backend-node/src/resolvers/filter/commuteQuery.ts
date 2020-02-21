@@ -13,7 +13,7 @@ let commute = queryField('commute', {
 // TODO: Add where args
 async function commuteResolver(_: Root, _args: {}, _context: Context) {
   let { commute }: FilterOptions = (
-    await axios.get(`${LEGACY_API_URI}/api/filter`)
+    await axios.get(`${LEGACY_API_URI}/api/filter/`)
   ).data;
   let commuteObjectList = commute.map((rawValue) => {
     let splitCommuteValue = rawValue.split(': ');
