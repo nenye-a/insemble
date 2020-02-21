@@ -30,7 +30,7 @@ export default function Onboarding() {
 
   let onSubmit = () => {
     let { confirmBusinessDetail, tenantGoals, targetCustomers, physicalSiteCriteria } = state;
-    let { categories } = confirmBusinessDetail;
+    let { categories, name, userRelation, otherUserRelation, location } = confirmBusinessDetail;
     let {
       noPersonasPreference,
       noAgePreference,
@@ -56,11 +56,8 @@ export default function Onboarding() {
       variables: {
         business: {
           name,
-          userRelation:
-            confirmBusinessDetail.userRelation === 'Other'
-              ? confirmBusinessDetail.otherUserRelation || ''
-              : confirmBusinessDetail.userRelation,
-          location: confirmBusinessDetail.location || { lat: '', lng: '', address: '' },
+          userRelation: userRelation === 'Other' ? otherUserRelation || '' : userRelation,
+          location: location || { lat: '', lng: '', address: '' },
           locationCount: tenantGoals.locationCount ? Number(tenantGoals.locationCount) : null,
           newLocationPlan: tenantGoals.newLocationPlan?.value,
           nextLocations: tenantGoals.location,
