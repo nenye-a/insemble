@@ -5,6 +5,7 @@ from location_builder import *
 import math
 import statistics as stat
 
+
 def update_database_age(dataset):
     # iterate through dataset 2
 
@@ -21,6 +22,7 @@ def update_database_age(dataset):
 
         retailers_checked.add(name)
 
+
 def update_database_photo(dataset):
     # iterate through dataset 2
 
@@ -36,7 +38,7 @@ def update_database_photo(dataset):
             entry['photo']
             entry['icon']
         except Exception:
-            format_input = urllib.parse.quote(entry['name']+', '+entry['Location']['address'])
+            format_input = urllib.parse.quote(entry['name'] + ', ' + entry['Location']['address'])
             URL = "https://maps.googleapis.DELETED_BASE64_STRING?input={0}&inputtype=textquery&fields=icon,photos&key={1}".format(
                 format_input, GOOG_KEY)
             data = smart_search(URL, 'google', 'findplacefromtext')
@@ -47,15 +49,16 @@ def update_database_photo(dataset):
                 print("Error getting icon from name {0}, lat {1} and lng {2}".format(entry['name'], entry['lat'], entry['lng']))
                 icon = np.nan
 
-            ##### FIXME: add alternate smart search for photo requests to pull url (regular tries to get .json objects)
+            # FIXME: add alternate smart search for photo requests to pull url (regular tries to get .json objects)
             try:
                 photo_ref = data['candidates'][0]['photos'][0]['photo_reference']
-                URL = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=500&maxheight=500&photoreference={}&key={}'.format(photo_ref, GOOG_KEY)
+                URL = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=500&maxheight=500&photoreference={}&key={}'.format(
+                    photo_ref, GOOG_KEY)
                 data2 = requests.get(URL)
                 photo = data2.url
             except Exception:
                 print("Error getting photo from name {0}, lat {1} and lng {2}".format(entry['name'], entry['lat'],
-                                                                                     entry['lng']))
+                                                                                      entry['lng']))
                 photo = np.nan
 
             dataset.update_one({'_id': entry['_id']}, {'$set': {"icon": icon}})
@@ -63,7 +66,6 @@ def update_database_photo(dataset):
 
         retailers_checked.add(name)
         count += 1
-
 
 
 if __name__ == "__main__":

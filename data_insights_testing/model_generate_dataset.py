@@ -36,9 +36,10 @@ region until the number of entries requested (length) is met.
     
 '''
 
+
 def build_data_set(focus_area, length):
 
-    ####TODO: fix magic number
+    # TODO: fix magic number
     # 50,000 establishment safety factor
     # 20 results per query
     # need to make 2500 queries
@@ -59,16 +60,16 @@ def build_data_set(focus_area, length):
         # search nearby restaurants and retailers for location
         lat, lng = location
         restaurant_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={0}&type={1}&radius={2}&key={3}".format(
-        str(lat)+","+str(lng), TYPE_R, RADIUS*MILES_TO_M, GOOG_KEY)
+            str(lat) + "," + str(lng), TYPE_R, RADIUS * MILES_TO_M, GOOG_KEY)
         retailer_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={0}&type={1}&radius={2}&key={3}".format(
-            str(lat) + "," + str(lng), TYPE_S, RADIUS*MILES_TO_M, GOOG_KEY)
+            str(lat) + "," + str(lng), TYPE_S, RADIUS * MILES_TO_M, GOOG_KEY)
 
         print("getting nearby restaurants and retailers for {0},{1}".format(lat, lng))
         restaurant_data = smart_search(restaurant_URL, 'google', 'nearbysearch')
         retailer_data = smart_search(retailer_URL, 'google', 'nearbysearch')
 
         #####
-        ##### FIXME: change exception errors to specific exceptions
+        # FIXME: change exception errors to specific exceptions
         #####
 
         # verify data yields results
@@ -81,7 +82,7 @@ def build_data_set(focus_area, length):
 
         # build profiles for restaurants and retailers returned in nearby search
         print("building profiles for {0} nearby retailers and {1} nearby restaurants".format(len(retailer_data["results"]),
-                                                                                                      len(restaurant_data["results"])))
+                                                                                             len(restaurant_data["results"])))
         for retailer in retailer_data["results"]:
             if len(dataset) >= length:
                 print("{0} businesses in dataset now. Finished".format(len(dataset)))
@@ -97,15 +98,15 @@ def build_data_set(focus_area, length):
             # time.sleep(.7)
             if not retailer_valid:
                 continue
-            rtlr_loc, location_valid  = lb.generate_location_profile(address, RADIUS)
-            #time.sleep(.7)
+            rtlr_loc, location_valid = lb.generate_location_profile(address, RADIUS)
+            # time.sleep(.7)
 
-            #get performance metrics for retailer at location
+            # get performance metrics for retailer at location
             if location_valid and retailer_valid:
                 rtlr_likes, rtlr_ratings, rtlr_age, rtlr_photo_count, rtlr_performance_valid = lb.get_performance(rtlr_rtlr.name,
-                                                                                                        rtlr_loc.lat,
-                                                                                                        rtlr_loc.lng)
-                #time.sleep(.7)
+                                                                                                                  rtlr_loc.lat,
+                                                                                                                  rtlr_loc.lng)
+                # time.sleep(.7)
                 # upload to dataset
                 if rtlr_performance_valid:
                     new_entry = upload_dataset(rtlr_loc, rtlr_rtlr, rtlr_age, rtlr_likes, rtlr_ratings, rtlr_photo_count)
@@ -135,9 +136,9 @@ def build_data_set(focus_area, length):
             # get performance metrics for restaurant at location
             if location_valid and retailer_valid:
                 rest_likes, rest_ratings, rest_age, rest_photo_count, rest_performance_valid = lb.get_performance(rest_rtlr.name,
-                                                                                                        rest_loc.lat,
-                                                                                                        rest_loc.lng)
-                #time.sleep(.7)
+                                                                                                                  rest_loc.lat,
+                                                                                                                  rest_loc.lng)
+                # time.sleep(.7)
                 # upload to dataset
                 if rest_performance_valid:
                     new_entry = upload_dataset(rest_loc, rest_rtlr, rest_age, rest_likes, rest_ratings, rest_photo_count)
@@ -153,6 +154,7 @@ def build_data_set(focus_area, length):
 
     return dataset
 
+
 '''
 This method generates coordinates evenly distributed across a desired focus area
 
@@ -164,10 +166,12 @@ This method generates coordinates evenly distributed across a desired focus area
 :return: locations and half-radius between locations
 :rtype: tuple (set (float, float), float)
 '''
+
+
 def segment_region(focus_area, num_queries):
 
     ####
-    #### FIXME: take in desired radius and ensure we're querying whole region
+    # FIXME: take in desired radius and ensure we're querying whole region
     ####
 
     format_input = urllib.parse.quote(focus_area)
@@ -183,25 +187,25 @@ def segment_region(focus_area, num_queries):
     y_max = data["candidates"][0]["geometry"]["viewport"]["northeast"]["lng"]
 
     axis_queries = math.sqrt(num_queries)
-    x_increment = (x_max-x_min)/axis_queries
-    y_increment = (y_max-y_min)/axis_queries
+    x_increment = (x_max - x_min) / axis_queries
+    y_increment = (y_max - y_min) / axis_queries
 
     locations = set()
     for i in range(int(axis_queries)):
         for j in range(int(axis_queries)):
-            locations.add((x_min + i*x_increment, y_min + j*y_increment))
+            locations.add((x_min + i * x_increment, y_min + j * y_increment))
 
     return locations
 
+
 if __name__ == "__main__":
     ####
-    #### FIXME: fix los angeles dataset to have correct retail locations (latitude, longitude)
-    #### TODO: add log file with timestamps on print statements.
+    # FIXME: fix los angeles dataset to have correct retail locations (latitude, longitude)
+    # TODO: add log file with timestamps on print statements.
     ####
     focus_area = "Los Angeles, California"
     length = 2000
     dataset = build_data_set(focus_area, length)
-
 
     #loc_list = list(segment_region(focus_area, 2500)[0])
     #df = pd.DataFrame(loc_list, columns=["lat", "lng"])

@@ -14,5 +14,3 @@ for line in inp:
         out.write(line[0])
         out.write("\n")
 out.close()
-
-

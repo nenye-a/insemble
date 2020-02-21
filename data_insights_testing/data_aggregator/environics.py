@@ -104,7 +104,7 @@ def create_demo_cats_and_df():
 
     # get categories
     cats = f[0].rstrip().split("\"")
-    for i in range(len(cats)-1, -1, -1):
+    for i in range(len(cats) - 1, -1, -1):
         if cats[i] == ",":
             del cats[i]
 

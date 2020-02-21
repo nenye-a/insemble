@@ -44,7 +44,7 @@ def test_predictions():
     # reg_rating = linear_model.Ridge(alpha=12)
 
     # SVR regression
-    reg_rating = svm.SVR(gamma='scale', C= 1.2, )
+    reg_rating = svm.SVR(gamma='scale', C=1.2, )
 
     # XGB regression
     # param = {'max_depth': 4, 'eta': 1, 'objective': 'binary:logistic','lambda': 2, 'verbosity': 2 }
@@ -59,7 +59,7 @@ def test_predictions():
 
     # xgb predict & check
     # rating_p = reg_rating.predict(xgb.DMatrix(scaled_test_rating_x))
-    rating_p = scaler_rating_y.inverse_transform(np.array(rating_p).reshape(-1,1)).reshape(1,-1)[0]
+    rating_p = scaler_rating_y.inverse_transform(np.array(rating_p).reshape(-1, 1)).reshape(1, -1)[0]
 
     t, rating = zip(*test_rating_y.items())
 
@@ -80,7 +80,7 @@ def test_predictions():
     mse_rating = math.sqrt(statistics.mean([math.pow(error, 2) for error in rating_errors]))
 
     print("\ntrain n = {}, test n = {}".format(len(train_rating_x), len(test_rating_x)))
-    print("Accuracy (within {}%) is {}%".format(accuracy_percentage*100, round(accuracy*100, 2)))
+    print("Accuracy (within {}%) is {}%".format(accuracy_percentage * 100, round(accuracy * 100, 2)))
     print("Ratings -  MAE: {}  ;  stdMAE: {}  ;  MSE: {}\n".format(mae_rating, maeStd_rating, mse_rating))
 
 
@@ -93,7 +93,7 @@ def iterative_accuracy_test():
     test_photocount_x, test_photocount_y = idt.generate_label_series(test, "photo_count")
     test_likes_x, test_likes_y = idt.generate_label_series(test, "likes")
 
-    train_length = [x*10 for x in range(1, int(len(train)/10))]
+    train_length = [x * 10 for x in range(1, int(len(train) / 10))]
 
     rating_mse, rating_mae, rating_mae_std = [], [], []
     photo_mse, photo_mae, photo_mae_std = [], [], []
@@ -153,6 +153,7 @@ def iterative_accuracy_test():
             (photo_mae, photo_mae_std, photo_mse),
             (likes_mae, likes_mae_std, likes_mse)
             ]
+
 
 if __name__ == "__main__":
 

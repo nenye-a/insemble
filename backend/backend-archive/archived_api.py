@@ -286,8 +286,8 @@ class LocationInfoViewSet(viewsets.ViewSet):
             lat_string = d["lat"]
             lng_string = d["lng"]
             radius = float(d["radius"])
-            lat = float(lat_string[:2]+'.'+lat_string[2:])
-            lng = float(lng_string[:4]+'.'+lng_string[4:])
+            lat = float(lat_string[:2] + '.' + lat_string[2:])
+            lng = float(lng_string[:4] + '.' + lng_string[4:])
             return Response(return_location(lat, lng, radius))
         elif "address" in d and "radius" in d:
             address = d["address"]

@@ -11,6 +11,7 @@ from location_builder import generate_location_profile_new
 
 # TODO: Implement these methods in application code base.
 
+
 def get_location_details(location_address):
     """
     Given an addresswill generate location profile, and provide the information for the space
@@ -19,7 +20,7 @@ def get_location_details(location_address):
     :return: location profile
     """
 
-    return generate_location_profile(location_address,0.5)
+    return generate_location_profile(location_address, 0.5)
 
 
 def get_location_details_new(location_address):
@@ -30,7 +31,7 @@ def get_location_details_new(location_address):
     :return: location profile
     """
 
-    return generate_location_profile_new(location_address,1)
+    return generate_location_profile_new(location_address, 1)
 
 
 def loc_to_vector(loc):
@@ -48,6 +49,7 @@ def loc_to_vector(loc):
     loc_dict.update(loc.nearby)
 
     return loc_dict
+
 
 def location_difference(loc1, loc2):
     """
@@ -79,6 +81,7 @@ def location_difference(loc1, loc2):
     distances = {"cen_diff": cen_diff, "pop_diff": pop_diff, "income_diff": income_diff, "cat_diff": cat_diff}
 
     return distances
+
 
 def generate_location_matches(location_address):
     """
@@ -114,7 +117,7 @@ def generate_location_matches(location_address):
         my_geo, item_geo = (my_location.lat, my_location.lng), (item["lat"], item["lng"])
         mile_distance = geopy.distance.distance(my_geo, item_geo).miles
 
-        if mile_distance < 0.5: # we don't want those that are less than half a mile
+        if mile_distance < 0.5:  # we don't want those that are less than half a mile
             in_area_retailers.add(item["name"])
             continue
 
@@ -169,6 +172,7 @@ def generate_location_matches(location_address):
 
     return return_list
 
+
 def generate_tenant_matches(location_address, my_place_type={}):
     """
     Given a location, this will generate all the matching retailers within our database that are a match for the profile.
@@ -205,7 +209,7 @@ def generate_tenant_matches(location_address, my_place_type={}):
         my_geo, item_geo = (my_location.lat, my_location.lng), (item["lat"], item["lng"])
         mile_distance = geopy.distance.distance(my_geo, item_geo).miles
 
-        if mile_distance < 0.5: # we don't want those that are less than half a mile
+        if mile_distance < 0.5:  # we don't want those that are less than half a mile
             in_area_retailers.add(item["name"])
             continue
 
@@ -283,7 +287,7 @@ def generate_tenant_matches(location_address, my_place_type={}):
             if category in location_data["Retailer"]["place_type"]:
                 penalty -= 0.05
 
-        location_data["map_rating"] = (location_data["ratings"]*penalty)*19/3 + (1-19/3*5)
+        location_data["map_rating"] = (location_data["ratings"] * penalty) * 19 / 3 + (1 - 19 / 3 * 5)
 
         if np.isnan(location_data["map_rating"]):
             location_data["map_rating"] = None
@@ -298,6 +302,8 @@ def generate_tenant_matches(location_address, my_place_type={}):
     return return_list
 
 # used by location_heat_map (new alg)
+
+
 def generate_tenant_matches_by_cat(location_address_list):
     """
     Given a location, this will generate all the matching retailers within our database that are a match for the profile.
@@ -317,7 +323,7 @@ def generate_tenant_matches_by_cat(location_address_list):
         vecs.append(my_location_vector_temp)
 
     df = pd.DataFrame(vecs)
-    my_location_vector = dict(df.mean()) # compute avg vector over all vectors 
+    my_location_vector = dict(df.mean())  # compute avg vector over all vectors
 
     client = Connect.get_connection()
     db_space = client.spaceData
@@ -412,19 +418,27 @@ def generate_tenant_matches_by_cat(location_address_list):
     ))
     return return_list
 
-spatial_lst = ['Bookish', 'Engine Enthusiasts', 'Green Thumb', 'Natural Beauty', 'Wanderlust', 'Handcrafted', 'Animal Advocates', 'Dog Lovers', 'Smoke Culture', 'Daily Grind', 'Nerd Culture', 'LGBTQ Culture', 'Wealth Signaling', 'Hipster', 'Student Life', 'Farm Culture', 'Love & Romance', 'Happily Ever After', 'Dating Life', 'Connected Motherhood', 'Family Time', 'My Crew', 'Girl Squad', 'Networking', 'Sweet Treats', 'Coffee Connoisseur', 'Trendy Eats', 'Whiskey Business', 'Asian Food & Culture', 'Ingredient Attentive', 'Fueling for Fitness', 'Wine Lovers', 'Hops & Brews', 'Film Lovers', 'Competitive Nature', 'Live Experiences', 'Late-Night Leisure', 'Party Life', 'Live & Local Music', 'Lighthearted Fun', 'Deep Emotions', 'Heartfelt Sharing', 'Awestruck', 'Happy Place', 'Gratitude', 'Memory Lane', 'Dance Devotion', 'Artistic Appreciation', 'Pieces of History', 'Sites to See', 'Hip Hop Culture', 'Mindfulness & Spirituality', 'Activism', 'Politically Engaged', 'Praise & Worship', 'Conservation', 'Civic Attentiveness', 'Trend Trackers', 'All About Hair', "Men's Style", 'Fitness Fashion', 'Body Art', 'Smart Chic', 'Home & Leisure', 'Past Reflections', 'Humanitarian', 'Deal Seekers', 'Organized Sports', 'Fitness Obsession', 'Outdoor Adventures', 'Yoga Advocates', 'Functional Fitness']
+
+spatial_lst = ['Bookish', 'Engine Enthusiasts', 'Green Thumb', 'Natural Beauty', 'Wanderlust', 'Handcrafted', 'Animal Advocates', 'Dog Lovers', 'Smoke Culture', 'Daily Grind', 'Nerd Culture', 'LGBTQ Culture', 'Wealth Signaling', 'Hipster', 'Student Life', 'Farm Culture', 'Love & Romance', 'Happily Ever After', 'Dating Life', 'Connected Motherhood', 'Family Time', 'My Crew', 'Girl Squad', 'Networking', 'Sweet Treats', 'Coffee Connoisseur', 'Trendy Eats', 'Whiskey Business', 'Asian Food & Culture', 'Ingredient Attentive', 'Fueling for Fitness', 'Wine Lovers', 'Hops & Brews', 'Film Lovers', 'Competitive Nature', 'Live Experiences', 'Late-Night Leisure',
+               'Party Life', 'Live & Local Music', 'Lighthearted Fun', 'Deep Emotions', 'Heartfelt Sharing', 'Awestruck', 'Happy Place', 'Gratitude', 'Memory Lane', 'Dance Devotion', 'Artistic Appreciation', 'Pieces of History', 'Sites to See', 'Hip Hop Culture', 'Mindfulness & Spirituality', 'Activism', 'Politically Engaged', 'Praise & Worship', 'Conservation', 'Civic Attentiveness', 'Trend Trackers', 'All About Hair', "Men's Style", 'Fitness Fashion', 'Body Art', 'Smart Chic', 'Home & Leisure', 'Past Reflections', 'Humanitarian', 'Deal Seekers', 'Organized Sports', 'Fitness Obsession', 'Outdoor Adventures', 'Yoga Advocates', 'Functional Fitness']
 
 gender_lst = ["Current Year Population, Female", "Current Year Population, Male"]
 
-age_lst = ["Current Year Population, Age 0 - 4","Current Year Population, Age 10 - 14","Current Year Population, Age 15 - 17","Current Year Population, Age 18 - 20","Current Year Population, Age 21 - 24","Current Year Population, Age 25 - 34","Current Year Population, Age 35 - 44","Current Year Population, Age 45 - 54","Current Year Population, Age 5 - 9","Current Year Population, Age 55 - 64","Current Year Population, Age 65+"]
+age_lst = ["Current Year Population, Age 0 - 4", "Current Year Population, Age 10 - 14", "Current Year Population, Age 15 - 17", "Current Year Population, Age 18 - 20", "Current Year Population, Age 21 - 24",
+           "Current Year Population, Age 25 - 34", "Current Year Population, Age 35 - 44", "Current Year Population, Age 45 - 54", "Current Year Population, Age 5 - 9", "Current Year Population, Age 55 - 64", "Current Year Population, Age 65+"]
 
-race_lst = ["Current Year Population, American Indian/Alaskan Native Alone","Current Year Population, American Indian/Alaskan Native Alone Or In Combination","Current Year Population, American Indian/Alaskan Native Alone, Female","Current Year Population, American Indian/Alaskan Native Alone, Male","Current Year Population, Asian Alone","Current Year Population, Asian Alone Or In Combination","Current Year Population, Asian Alone, Female","Current Year Population, Asian Alone, Male","Current Year Population, Black/African American Alone","Current Year Population, Black/African American Alone Or In Combination","Current Year Population, Black/African American Alone, Female","Current Year Population, Black/African American Alone, Male","Current Year Population, Female","Current Year Population, Male","Current Year Population, Native Hawaiian/Pacific Islander Alone","Current Year Population, Native Hawaiian/Pacific Islander Alone Or In Combination","Current Year Population, Native Hawaiian/Pacific Islander Alone, Female","Current Year Population, Native Hawaiian/Pacific Islander Alone, Male","Current Year Population, Some Other Race Alone","Current Year Population, Some Other Race Alone Or In Combination","Current Year Population, Some Other Race Alone, Female","Current Year Population, Some Other Race Alone, Male","Current Year Population, White Alone","Current Year Population, White Alone Or In Combination","Current Year Population, White Alone, Female","Current Year Population, White Alone, Male"]
+race_lst = ["Current Year Population, American Indian/Alaskan Native Alone", "Current Year Population, American Indian/Alaskan Native Alone Or In Combination", "Current Year Population, American Indian/Alaskan Native Alone, Female", "Current Year Population, American Indian/Alaskan Native Alone, Male", "Current Year Population, Asian Alone", "Current Year Population, Asian Alone Or In Combination", "Current Year Population, Asian Alone, Female", "Current Year Population, Asian Alone, Male", "Current Year Population, Black/African American Alone", "Current Year Population, Black/African American Alone Or In Combination", "Current Year Population, Black/African American Alone, Female", "Current Year Population, Black/African American Alone, Male", "Current Year Population, Female",
+            "Current Year Population, Male", "Current Year Population, Native Hawaiian/Pacific Islander Alone", "Current Year Population, Native Hawaiian/Pacific Islander Alone Or In Combination", "Current Year Population, Native Hawaiian/Pacific Islander Alone, Female", "Current Year Population, Native Hawaiian/Pacific Islander Alone, Male", "Current Year Population, Some Other Race Alone", "Current Year Population, Some Other Race Alone Or In Combination", "Current Year Population, Some Other Race Alone, Female", "Current Year Population, Some Other Race Alone, Male", "Current Year Population, White Alone", "Current Year Population, White Alone Or In Combination", "Current Year Population, White Alone, Female", "Current Year Population, White Alone, Male"]
 
-travel_time_lst = ["Current Year Workers, Travel Time To Work: 15 - 29 Minutes","Current Year Workers, Travel Time To Work: 30 - 44 Minutes","Current Year Workers, Travel Time To Work: < 15 Minutes"]
+travel_time_lst = ["Current Year Workers, Travel Time To Work: 15 - 29 Minutes",
+                   "Current Year Workers, Travel Time To Work: 30 - 44 Minutes", "Current Year Workers, Travel Time To Work: < 15 Minutes"]
 
-transport_lst = ["Current Year Workers, Transportation To Work: Public Transport","Current Year Workers, Transportation to Work: Bicycle","Current Year Workers, Transportation to Work: Carpooled","Current Year Workers, Transportation to Work: Drove Alone","Current Year Workers, Transportation to Work: Walked","Current Year Workers, Transportation to Work: Worked at Home"] 
+transport_lst = ["Current Year Workers, Transportation To Work: Public Transport", "Current Year Workers, Transportation to Work: Bicycle", "Current Year Workers, Transportation to Work: Carpooled",
+                 "Current Year Workers, Transportation to Work: Drove Alone", "Current Year Workers, Transportation to Work: Walked", "Current Year Workers, Transportation to Work: Worked at Home"]
 
 # 01/29/20 dl
+
+
 def generate_tenant_matches_new(location_address, my_place_type={}):
     """
     Given a location, this will generate all the matching retailers within our database that are a match for the profile.
@@ -436,10 +450,10 @@ def generate_tenant_matches_new(location_address, my_place_type={}):
     :return:
     """
 
-    # get my vector 
+    # get my vector
     my_location_df = generate_location_profile_new(location_address)
 
-    # get preprocessed vectors 
+    # get preprocessed vectors
     client = Connect.get_connection()
     db_space = client.spaceData
     df = pd.DataFrame(list(db_space.preprocessed_vectors.find()))
@@ -462,19 +476,21 @@ def generate_tenant_matches_new(location_address, my_place_type={}):
     # normalize between 0 and 1
     #diff_alt = diff.drop(columns=['lat', 'lng', 'loc_id'])
     diff_alt = diff
-    norm_df = (diff_alt - diff_alt.min()) / (diff_alt.max() - diff_alt.min())   
+    norm_df = (diff_alt - diff_alt.min()) / (diff_alt.max() - diff_alt.min())
     norm_df['lat'], norm_df['lng'], norm_df['loc_id'] = df['lat'], df['lng'], df['loc_id']
     print(norm_df)
 
     # find sum of diffs
-    norm_df["error_sum"] = norm_df[["psycho", "TotalHouseholds", "DaytimePop", "DaytimeWorkingPop", "MedHouseholdIncome", "gender", "race", "age", "travel_time", "transport"]].sum(axis=1)
+    norm_df["error_sum"] = norm_df[["psycho", "TotalHouseholds", "DaytimePop", "DaytimeWorkingPop",
+                                    "MedHouseholdIncome", "gender", "race", "age", "travel_time", "transport"]].sum(axis=1)
 
-    # return only locations that work 
-    norm_df = norm_df[:-1] 
+    # return only locations that work
+    norm_df = norm_df[:-1]
     best = norm_df.nsmallest(int(norm_df.shape[0] * 0.03), 'error_sum')
 
     print(best[['lat', 'lng', 'loc_id']])
     return best[['lat', 'lng', 'loc_id']]
+
 
 def generate_tenant_matches_by_cat(location_address_list):
     """
@@ -495,7 +511,7 @@ def generate_tenant_matches_by_cat(location_address_list):
         vecs.append(my_location_vector_temp)
 
     df = pd.DataFrame(vecs)
-    my_location_vector = dict(df.mean()) # compute avg vector over all vectors 
+    my_location_vector = dict(df.mean())  # compute avg vector over all vectors
 
     client = Connect.get_connection()
     db_space = client.spaceData
@@ -624,7 +640,7 @@ def location_heat_map(retail_data):
         data[category] = 1
 
     # query our database for samples to evaluate
-    db_space_cursor = db_space.dataset2.find({}) # grab the whole database
+    db_space_cursor = db_space.dataset2.find({})  # grab the whole database
 
     # samples_size = 200  # 200 points only for testing purposes
     # db_space_cursor = db_space.dataset2.aggregate([{"$sample": {"size": samples_size}}])
@@ -673,7 +689,7 @@ def location_heat_map(retail_data):
     return generate_tenant_matches(comparable_item.loc["address"], comparable_item.loc["place_type"])
 
 
-# location_heat_map function for new algorithm, which only considers first category of store (DL) 
+# location_heat_map function for new algorithm, which only considers first category of store (DL)
 def location_heat_map_by_cat(retail_data):
     """
     receives retailer object, and returns list of places that correspond to locations of interest
@@ -698,7 +714,7 @@ def location_heat_map_by_cat(retail_data):
         }]
     }
     """
-    # get whole data base 
+    # get whole data base
     client = Connect.get_connection()
     db_space = client.spaceData
 
@@ -712,7 +728,7 @@ def location_heat_map_by_cat(retail_data):
     for category in retail_data["categories"]:
         print(category)
 
-        # loop thru all existing stores to determine stores that fall into 1st category 
+        # loop thru all existing stores to determine stores that fall into 1st category
         similar_stores = []
         db_space_cursor.rewind()
         for item in db_space_cursor:
@@ -730,24 +746,21 @@ def location_heat_map_by_cat(retail_data):
         n = int(df.shape[0] * 0.1)
         df = df.nlargest(n, "ratings")
         df = df[["address"]]
-    
+
         address_list = df.to_numpy()
         new_matches = generate_tenant_matches_2(address_list)
         all_tenant_matches += new_matches
 
     return new_matches
 
+
 if __name__ == '__main__':
-#     generate_location_profile("Los Angeles")
-#    location_heat_map({
-#        "income": 100000,
-#        "categories": ["Restaurant", "Chinese Restaurant"],
-#    })
+    #     generate_location_profile("Los Angeles")
+    #    location_heat_map({
+    #        "income": 100000,
+    #        "categories": ["Restaurant", "Chinese Restaurant"],
+    #    })
 
     #df=generate_tenant_matches_new("3321 S La Cienega Blvd, Los Angeles, CA")
-    df=generate_tenant_matches_new("1004 W Slauson Ave, Los Angeles, CA 90044")
+    df = generate_tenant_matches_new("1004 W Slauson Ave, Los Angeles, CA 90044")
     df.to_csv("space1_matches.csv")
-
-
-
-

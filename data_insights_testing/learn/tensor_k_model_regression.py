@@ -30,6 +30,7 @@ def build_tensor_set(input_data_set):
 Function that builds and provides a very simple Keras model for training.
 '''
 
+
 def get_simple_k_model():
     model = keras.Sequential([
         keras.layers.Dense(16, activation="relu"),
@@ -44,6 +45,7 @@ def get_simple_k_model():
                   metrics=['mae', 'mse'])
 
     return model
+
 
 '''
 Function that uses tensorflow keras to provide a linear regression model for training & final execution 

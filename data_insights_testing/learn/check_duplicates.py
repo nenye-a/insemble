@@ -8,7 +8,7 @@ def encode_list(list):
     for i, item in enumerate(list):
 
         # encode our list
-        encoded_list += math.pow(item+i, 1.1)
+        encoded_list += math.pow(item + i, 1.1)
 
     return encoded_list
 
@@ -31,6 +31,7 @@ def check_duplicates(data_set):
             vectors[row] = [index]
 
     return no_duplicates, duplicate_count, vectors
+
 
 def is_in_df(r, data_set):
 

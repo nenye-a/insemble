@@ -92,7 +92,7 @@ def process(limit):
     # print(list(flattened_dataframe.columns))
 
     # TODO: factor in distance
-    count = 0 
+    count = 0
     for category in FOURSQUARE_CATEGORIES:
 
         def add_categories(nearby_list):
@@ -113,12 +113,11 @@ def process(limit):
         count += 1
         print("{} more category update out of {}".format(count, len(FOURSQUARE_CATEGORIES)))
 
-
     return result_dataframe
 
 
 if __name__ == "__main__":
-    
+
     data_frame = process(130000)
 
     # insert into database

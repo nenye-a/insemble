@@ -12,6 +12,7 @@ class Retailer(object):
     :type locations: set, set of string tuples. ex {(33.5479999,-117.6711493), (33.54924617989272,-117.6698170201073)}
 
     """
+
     def __init__(self, name, place_type, price, locations):
         self.name = name
         self.place_type = place_type

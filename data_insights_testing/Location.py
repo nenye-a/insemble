@@ -24,6 +24,7 @@ class Location(object):
     :param radius: radius (mi) in which other parameters are tracked
     :type radius: float
     """
+
     def __init__(self, address, lat, lng, census, pop, income, traffic, safety, nearby, radius):
         self.address = address
         self.lat = lat
@@ -42,4 +43,3 @@ class Location(object):
         return({"address": self.address, "lat": self.lat, "lng": self.lng, "census": self.census, "pop": self.pop,
                 "income": self.income, "traffic": self.traffic, "safety": self.safety, "nearby": self.nearby,
                 "radius": self.radius})
-
