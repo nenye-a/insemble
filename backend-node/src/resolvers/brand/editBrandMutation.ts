@@ -1,6 +1,9 @@
 import { mutationField, arg, FieldResolver, stringArg } from 'nexus';
+import axios from 'axios';
 
+import { LEGACY_API_URI } from '../../constants/host';
 import { Context } from 'serverTypes';
+import { FilterOptions } from 'dataTypes';
 
 export let editBrandResolver: FieldResolver<'Mutation', 'editBrand'> = async (
   _,
@@ -17,6 +20,24 @@ export let editBrandResolver: FieldResolver<'Mutation', 'editBrand'> = async (
     ethnicity = [],
     ...filterInput
   } = filter || {};
+  let {
+    ethnicity: ethnicityOpt,
+    commute: commuteOpt,
+    education: educationOpt,
+  }: FilterOptions = (await axios.get(`${LEGACY_API_URI}/api/filter/`)).data;
+
+  let ethnicityRaw = ethnicity?.map((str) => {
+    return ethnicityOpt.find((strOptRaw) => strOptRaw.includes(str)) || '';
+  });
+
+  let commuteRaw = commute?.map((str) => {
+    return commuteOpt.find((strOptRaw) => strOptRaw.includes(str)) || '';
+  });
+
+  let educationRaw = education?.map((str) => {
+    return educationOpt.find((strOptRaw) => strOptRaw.includes(str)) || '';
+  });
+
   let { location, nextLocations, ...businessInput } = business || {};
   let brand = await context.prisma.brand.update({
     data: {
@@ -35,13 +56,13 @@ export let editBrandResolver: FieldResolver<'Mutation', 'editBrand'> = async (
         set: spaceType,
       },
       education: {
-        set: education,
+        set: educationRaw,
       },
       commute: {
-        set: commute,
+        set: commuteRaw,
       },
       ethnicity: {
-        set: ethnicity,
+        set: ethnicityRaw,
       },
       location: {
         create: location,
