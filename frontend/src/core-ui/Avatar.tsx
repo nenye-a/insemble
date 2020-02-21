@@ -4,7 +4,7 @@ import avatarImg from '../assets/images/profile-picture-placeholder.png';
 
 type Props = ImageProps & {
   size?: Size;
-  image?: string;
+  image?: string | null;
 };
 
 const SIZES = {
