@@ -6,7 +6,7 @@ import { TAG_BACKGROUND, THEME_COLOR } from '../../constants/colors';
 import { DEFAULT_BORDER_RADIUS, FONT_WEIGHT_MEDIUM, FONT_SIZE_SMALL } from '../../constants/theme';
 
 type Props = ViewProps & {
-  content: string | number;
+  content: string | number | null;
   postfix: string;
 };
 

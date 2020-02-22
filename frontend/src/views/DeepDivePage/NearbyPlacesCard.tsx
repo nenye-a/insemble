@@ -5,42 +5,43 @@ import { View, Card, Text, Badge as BaseBadge } from '../../core-ui';
 import NearbyPlacesTag from './NearbyPlacesTag';
 import { DEFAULT_BORDER_RADIUS, FONT_SIZE_SMALL, FONT_WEIGHT_MEDIUM } from '../../constants/theme';
 import { MUTED_TEXT_COLOR, THEME_COLOR } from '../../constants/colors';
-import { LEGEND, PlaceType } from './NearbyMapLegend';
+import { LEGEND } from './NearbyMapLegend';
+import mapPin from '../../components/icons/map-pin.svg';
 
 type Props = {
   name: string;
-  categories: Array<string>;
-  rating: number;
-  salesEstimation: number;
+  category: string;
+  rating: number | null;
+  numberRating: number;
   distance: number;
-  photo: string;
-  placeType: PlaceType;
-  isSimilar: boolean;
+  photo?: string;
+  placeType: Array<string>;
+  similar: boolean;
 };
 
 export default function NearbyPlacesCard(props: Props) {
-  let { name, categories, rating, salesEstimation, distance, photo, placeType, isSimilar } = props;
+  let { name, category, rating, numberRating, distance, photo, placeType, similar } = props;
   return (
     <Container>
-      {isSimilar && (
+      {similar && (
         <Badge
           text="Similar"
           textProps={{ style: { fontWeight: FONT_WEIGHT_MEDIUM, fontSize: FONT_SIZE_SMALL } }}
         />
       )}
       <RowedView flex>
-        <Image src={photo} />
+        <Image src={photo || mapPin} />
         <Text style={{ flex: 1 }}>{name}</Text>
-        <LegendIcon src={LEGEND[placeType]} />
+        <LegendIcon src={LEGEND[placeType[0] as keyof typeof LEGEND]} />
       </RowedView>
       <RowedView>
         <Text fontSize={FONT_SIZE_SMALL} color={MUTED_TEXT_COLOR}>
-          {categories.join(' \u00B7 ')}
+          {category}
         </Text>
       </RowedView>
       <TagsContainer>
         <NearbyPlacesTag content={rating} postfix="Rating" />
-        <NearbyPlacesTag content={`${salesEstimation}M`} postfix="est Sales" />
+        <NearbyPlacesTag content={numberRating} postfix="Reviews" />
         <NearbyPlacesTag content={distance} postfix="Miles" />
       </TagsContainer>
     </Container>
@@ -68,7 +69,7 @@ const TagsContainer = styled(View)`
 const Image = styled.img`
   height: 27px;
   width: 27px;
-  object-fit: cover;
+  object-fit: contain;
   margin-right: 8px;
   border-radius: ${DEFAULT_BORDER_RADIUS};
 `;

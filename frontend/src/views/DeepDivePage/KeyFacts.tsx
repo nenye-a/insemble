@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Card, View, Text, TabBar } from '../../core-ui';
 import { PieChart, Pie, Cell } from 'recharts';
 import styled from 'styled-components';
@@ -6,10 +6,10 @@ import {
   FONT_WEIGHT_BOLD,
   FONT_WEIGHT_LIGHT,
   FONT_SIZE_MEDIUM,
-  FONT_SIZE_LARGE,
   FONT_SIZE_XXLARGE,
 } from '../../constants/theme';
 import { THEME_COLOR } from '../../constants/colors';
+import { DeepDiveContext } from './DeepDiveModal';
 
 type Data = {
   name: string;
@@ -17,16 +17,19 @@ type Data = {
 };
 
 type Props = {
-  time: number;
+  time?: number;
   chartData?: Array<Data>;
   economicData?: Array<string>;
 };
 
-export default function KeyFacts(props: Props) {
-  let { time } = props;
+export default function KeyFacts() {
+  let data = useContext(DeepDiveContext);
+  let commuteData = data?.result.commute;
+  let keyFactsData = data?.result.keyFacts;
+  // let { time } = props;
   let [selectedIndex, setSelectedIndex] = useState<number>(0);
   let [pieSize, setPieSize] = useState<Array<number>>([]);
-
+  let isEconomicDriversSelected = selectedIndex === 0;
   useEffect(() => {
     let size = () => {
       let target = document.getElementById('economic-view');
@@ -38,12 +41,6 @@ export default function KeyFacts(props: Props) {
     setPieSize(size());
   }, []);
 
-  let data = [
-    { name: 'Walk', value: 1000 },
-    { name: 'Drive', value: 2000 },
-    { name: 'Small Business', value: 3000 },
-    { name: 'Public Transit', value: 4000 },
-  ];
   const COLORS = ['#674EA7CC', '#674EA799', '#674EA766', '#674EA733'];
   const RADIAN = Math.PI / 180;
   const renderCustomizedLabel = ({
@@ -78,18 +75,28 @@ export default function KeyFacts(props: Props) {
     return (
       <>
         <Label x={x} y={y} textAnchor={'middle'} dominantBaseline="central">
-          {data[index].name}
+          {commuteData && commuteData[index].name}
         </Label>
         <Value x={x} y={y && y + 20} fill="black" textAnchor={'middle'} dominantBaseline="central">
-          {data[index].value.toString().slice(0, -3)}K
+          {commuteData && commuteData[index].value.toString().slice(0, -3)}K
         </Value>
       </>
     );
   };
 
-  let sortedData = data.sort((a, b) => (a.value > b.value ? -1 : 1));
-  let numbers1 = ['93K', '$107K', '22K', '39%'];
-  let numbers2 = ['2', '10', '5', '1'];
+  let sortedData = commuteData && commuteData.sort((a, b) => (a.value > b.value ? -1 : 1));
+  let numbers1 = [
+    keyFactsData?.daytimePop,
+    keyFactsData?.mediumHouseholdIncome,
+    keyFactsData?.totalHousehold,
+    keyFactsData?.householdGrowth2017to2022,
+  ];
+  let numbers2 = [
+    keyFactsData?.numMetro,
+    keyFactsData?.numUniversities,
+    keyFactsData?.numHospitals,
+    keyFactsData?.numApartements,
+  ];
   let categories1 = [
     'Daytime Population',
     'Medium Household Income',
@@ -101,7 +108,7 @@ export default function KeyFacts(props: Props) {
     <Container>
       <TextView>
         <Title>Key Facts & Growth</Title>
-        <Radius>within 1 mile</Radius>
+        {keyFactsData?.mile && <Radius>within {keyFactsData.mile} mile</Radius>}
       </TextView>
       <RowedView>
         <Tab
@@ -112,11 +119,11 @@ export default function KeyFacts(props: Props) {
             setSelectedIndex(index);
           }}
         />
-        {selectedIndex === 0 ? (
+        {isEconomicDriversSelected ? (
           <EconomicViews id="economic-view">
             <PieChart width={pieSize[0]} height={pieSize[1]}>
               <Pie
-                data={data}
+                data={commuteData && commuteData}
                 cx="50%"
                 cy="50%"
                 outerRadius={150}
@@ -126,15 +133,17 @@ export default function KeyFacts(props: Props) {
                 label={renderCustomizedLabel}
                 labelLine={false}
               >
-                {sortedData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
+                {sortedData &&
+                  sortedData.map((entry, index: number) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
               </Pie>
             </PieChart>
-            <TextView>
+            {/* hiding this until data is ready */}
+            {/* <TextView>
               <AverageTime>Average time to work: </AverageTime>
               <Time>{time}mins</Time>
-            </TextView>
+            </TextView> */}
           </EconomicViews>
         ) : (
           <CommuteView flex>
@@ -166,8 +175,10 @@ export default function KeyFacts(props: Props) {
 }
 
 const Container = styled(Card)`
-  flex: 1;
+  margin: 18px 36px;
+  min-height: 600px;
 `;
+
 const RowedView = styled(View)`
   flex: 1;
   flex-direction: row;
@@ -190,15 +201,15 @@ const Title = styled(Text)`
   font-size: ${FONT_SIZE_MEDIUM};
   font-weight: ${FONT_WEIGHT_BOLD};
 `;
-const AverageTime = styled(Text)`
-  color: ${THEME_COLOR};
-  font-size: ${FONT_SIZE_LARGE};
-`;
-const Time = styled(Text)`
-  margin: 0 0 0 11px;
-  font-size: ${FONT_SIZE_LARGE};
-  font-weight: ${FONT_WEIGHT_LIGHT};
-`;
+// const AverageTime = styled(Text)`
+//   color: ${THEME_COLOR};
+//   font-size: ${FONT_SIZE_LARGE};
+// `;
+// const Time = styled(Text)`
+//   margin: 0 0 0 11px;
+//   font-size: ${FONT_SIZE_LARGE};
+//   font-weight: ${FONT_WEIGHT_LIGHT};
+// `;
 const Label = styled.text`
   font-size: ${FONT_SIZE_MEDIUM};
   fill: ${THEME_COLOR};

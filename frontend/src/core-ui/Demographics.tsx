@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
+
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
 import SvgGreenArrow from '../components/icons/green-arrow';
 import SvgRedArrow from '../components/icons/red-arrow';
@@ -11,85 +12,86 @@ import {
   FONT_SIZE_MEDIUM,
   FONT_FAMILY_NORMAL,
   FONT_SIZE_NORMAL,
-  FONT_WEIGHT_MEDIUM,
 } from '../constants/theme';
 import SegmentedControl from './SegmentedControl';
 import { View, Text } from '../core-ui';
+import { CarouselFilter } from '../components';
+import { DeepDiveContext } from '../views/DeepDivePage/DeepDiveModal';
+import { roundDecimal } from '../utils';
 
 //TODO Improve Typing for data
-type Data = {
+type DemographicsStatus = {
   name: string;
-  values1: string;
-  values2: string;
-  populationUp: boolean;
+  curLocation?: number;
+  targetLocation: number;
+  growth?: number;
 };
-type Props = {
-  data?: Array<Data>;
-  population: number;
-};
-export default function Graphic(props: Props) {
-  let { population } = props;
-  let [activeIndex, setActiveIndex] = useState<number>(0);
 
-  let data = [
-    {
-      name: '<18',
-      values1: '10000',
-      values2: '20000',
-      populationUp: true,
-    },
-    {
-      name: '18-24',
-      values1: '20000',
-      values2: '11000',
-      populationUp: false,
-    },
-    {
-      name: '25-44',
-      values1: '10000',
-      values2: '30000',
-      populationUp: false,
-    },
-    {
-      name: '45-54',
-      values1: '22000',
-      values2: '10000',
-      populationUp: false,
-    },
-    {
-      name: '65+',
-      values1: '30000',
-      values2: '15000',
-      populationUp: true,
-    },
-  ];
+type Data = {
+  population: number;
+  age: Array<DemographicsStatus>;
+  income: Array<DemographicsStatus>;
+  ethnicity: Array<DemographicsStatus>;
+  education: Array<DemographicsStatus>;
+  gender: Array<DemographicsStatus>;
+};
+
+type DataKey = Exclude<keyof Data, 'population'>;
+
+export default function Graphic() {
+  let data = useContext(DeepDiveContext);
+  let [activeIndex, setActiveIndex] = useState<number>(0);
+  let [selectedFilter, setSelectedFilter] = useState<string>('Age');
+  let options = ['Age', 'Income', 'Ethnicity', 'Education', 'Gender'];
+  let datas = [data?.result.demographics1, data?.result.demographics3, data?.result.demographics5];
+  let dataActiveIndex = datas[activeIndex];
+
   const renderCustomBarLabel = ({
     x,
     y,
     width,
     value,
+    index,
   }: {
+    index: number;
     x: number;
     y: number;
     width: number;
     value: number;
   }) => {
+    let demographicData =
+      dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey][index];
     return (
       //TODO Fix Population Arrow Indicator And Percentage Based On BE data
       <>
-        {population ? (
+        {demographicData && demographicData.growth ? (
           <SvgGreenArrow x={x + width / 2 - 5} y={5} />
         ) : (
           <SvgRedArrow x={x + width / 2 - 5} y={5} />
         )}
-        <LabelText fill={population ? '#666' : 'red'} x={x + width / 2 + 16} y={25}>
-          {'9' + '%'}
+        <LabelText
+          fill={
+            demographicData &&
+            demographicData.growth &&
+            demographicData &&
+            demographicData.growth > 0
+              ? '#666'
+              : 'red'
+          }
+          x={x + width / 2 + 16}
+          y={25}
+        >
+          {demographicData && roundDecimal(demographicData.growth || '')}
         </LabelText>
         <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
-          {`${value
-            .toString()
-            .slice(0, -3)
-            .concat('k')}`}
+          {`${
+            value
+              ? value
+                  .toString()
+                  .slice(0, -3)
+                  .concat('k')
+              : ''
+          }`}
         </LabelText>
       </>
     );
@@ -107,10 +109,14 @@ export default function Graphic(props: Props) {
   }) => {
     return (
       <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
-        {`${value
-          .toString()
-          .slice(0, -3)
-          .concat('k')}`}
+        {`${
+          value
+            ? value
+                .toString()
+                .slice(0, -3)
+                .concat('k')
+            : ''
+        }`}
       </LabelText>
     );
   };
@@ -127,47 +133,61 @@ export default function Graphic(props: Props) {
       </RowedView>
       <RowedView>
         <Legend barGraph={true} />
-        <RowedView style={{ margin: 0 }}>
+        {/* hiding this until data is ready */}
+        {/* <RowedView style={{ margin: 0 }}>
           <Text>Population: </Text>
-          <PopulationText>{population}k</PopulationText>
-        </RowedView>
+          <PopulationText>k</PopulationText>
+        </RowedView> */}
       </RowedView>
-      <Chart width={600} height={400} data={data}>
-        <XAxis dataKey={'name'} />
-        <YAxis
-          tickFormatter={(value: number) =>
-            value
-              .toString()
-              .slice(0, -3)
-              .concat('k')
-          }
-          domain={[0, (dataMax) => dataMax * 1.3]}
-          padding={{ top: 50, bottom: 0 }}
-          scale="linear"
-          orientation="left"
-          label={{
-            value: 'population',
-            angle: -90,
-            x: -100,
-            position: 'insideLeft',
-          }}
-        />
-        <Bar
-          dataKey="values1"
-          barSize={24}
-          fill={THEME_COLOR}
-          label={renderCustomBarLabel}
-          radius={[5, 5, 0, 0]}
-        />
-        <Bar
-          dataKey="values2"
-          barSize={24}
-          fill={HOVERED_LIST_ITEM_BG}
-          label={renderCustomSecondBarLabel}
-          radius={[5, 5, 0, 0]}
-        />
-      </Chart>
-      {/**TODO Add Filter */}
+      <ChartContainer>
+        <Chart
+          width={700}
+          height={400}
+          data={dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey]}
+        >
+          <XAxis dataKey="name" />
+          <YAxis
+            tickFormatter={(value: number) =>
+              value
+                .toString()
+                .slice(0, -3)
+                .concat('k')
+            }
+            domain={[0, (dataMax) => dataMax * 1.3]}
+            padding={{ top: 50, bottom: 0 }}
+            scale="linear"
+            orientation="left"
+            label={{
+              value: 'population',
+              angle: -90,
+              x: -100,
+              position: 'insideLeft',
+            }}
+          />
+          <Bar
+            dataKey="myLocation"
+            barSize={24}
+            fill={THEME_COLOR}
+            label={renderCustomBarLabel}
+            radius={[5, 5, 0, 0]}
+          />
+          <Bar
+            dataKey="targetLocation"
+            barSize={24}
+            fill={HOVERED_LIST_ITEM_BG}
+            label={renderCustomSecondBarLabel}
+            radius={[5, 5, 0, 0]}
+          />
+        </Chart>
+      </ChartContainer>
+
+      <CarouselFilter
+        selectedOption={selectedFilter}
+        options={options}
+        onSelectionChange={(value) => {
+          setSelectedFilter(value);
+        }}
+      />
     </Container>
   );
 }
@@ -179,8 +199,13 @@ const RowedView = styled(View)`
 `;
 
 const Container = styled(Card)`
-  padding: 0 12px 0 12px;
-  margin: 24px;
+  padding: 0 12px 12px 12px;
+  margin: 18px 36px;
+`;
+
+const ChartContainer = styled(View)`
+  justify-content: center;
+  align-items: center;
 `;
 
 const Segmented = styled(SegmentedControl)`
@@ -202,6 +227,6 @@ const LabelText = styled.text`
   z-index: 10;
 `;
 
-const PopulationText = styled(Text)`
-  font-weight: ${FONT_WEIGHT_MEDIUM};
-`;
+// const PopulationText = styled(Text)`
+//   font-weight: ${FONT_WEIGHT_MEDIUM};
+// `;

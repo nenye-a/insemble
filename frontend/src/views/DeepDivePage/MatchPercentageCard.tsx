@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 
 import { View, FragmentedProgressBar, Text, TouchableOpacity } from '../../core-ui';
@@ -14,33 +14,34 @@ import {
 import { GREEN_ICON, GREY_ICON, DARK_TEXT_COLOR } from '../../constants/colors';
 import SvgTriangleUp from '../../components/icons/triangle-up';
 import SvgArrowDownShort from '../../components/icons/arrow-down-short';
+import { DeepDiveContext } from './DeepDiveModal';
+import { roundDecimal } from '../../utils';
 
-type Props = {
-  progress: number;
-};
+export default function MatchPercentageCard() {
+  let data = useContext(DeepDiveContext);
+  let progress = data?.result.matchValue;
+  let affinities = data?.result.affinities;
 
-export default function MatchPercentageCard(props: Props) {
-  let { progress } = props;
   const ASPECTS = [
     {
       name: 'Growth',
       description: 'Growth potential of this area',
-      growthIcon: true,
+      growthIcon: affinities?.growth,
     },
     {
       name: 'Personas',
       description: 'Growth potential of this area',
-      growthIcon: true,
+      growthIcon: affinities?.personas,
     },
     {
       name: 'Demographics',
       description: 'Who lives & frequents this area',
-      growthIcon: true,
+      growthIcon: affinities?.demographics,
     },
     {
       name: 'Ecosystem',
       description: 'The economic ecosystem nearby',
-      growthIcon: false,
+      growthIcon: affinities?.ecosystem,
     },
   ];
 
@@ -48,7 +49,7 @@ export default function MatchPercentageCard(props: Props) {
     <Container>
       <PercentageContainer>
         <PercentageText fontSize={FONT_SIZE_HUGE} fontWeight={FONT_WEIGHT_HEAVY}>
-          {progress}
+          {roundDecimal(progress || '')}
           <Text fontSize={FONT_SIZE_XXLARGE} fontWeight={FONT_WEIGHT_HEAVY}>
             %
           </Text>
