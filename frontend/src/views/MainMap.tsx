@@ -258,7 +258,8 @@ export default function MainMap() {
           education,
           ethnicity,
         },
-        ...business,
+        ...(business &&
+          business.name && { business: { name: business.name, location: business.location } }),
         brandId,
       },
     });

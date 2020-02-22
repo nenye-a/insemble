@@ -18,7 +18,9 @@ import { GET_TENANT_PROFILE } from '../graphql/queries/server/profile';
 function Landing() {
   let { isLoading } = useGoogleMaps();
   let history = useHistory();
-  let { data } = useQuery<GetTenantProfile>(GET_TENANT_PROFILE);
+  let { data } = useQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
+    fetchPolicy: 'network-only',
+  });
   let avatar = data?.profileTenant.avatar;
 
   return (
