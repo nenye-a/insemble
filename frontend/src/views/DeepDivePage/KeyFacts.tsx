@@ -181,8 +181,9 @@ export default function KeyFacts(props: Props) {
 }
 
 const Container = styled(Card)`
-  flex: 1;
+  margin: 18px 36px;
 `;
+
 const RowedView = styled(View)`
   flex: 1;
   flex-direction: row;

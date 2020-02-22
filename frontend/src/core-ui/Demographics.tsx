@@ -41,7 +41,7 @@ type DataKey = Exclude<keyof Data, 'population'>;
 export default function Graphic() {
   let data = useContext(DeepDiveContext);
   let [activeIndex, setActiveIndex] = useState<number>(0);
-  let [selectedFilter, setSelectedFilter] = useState<string>('');
+  let [selectedFilter, setSelectedFilter] = useState<string>('Age');
   let options = ['Age', 'Income', 'Ethnicity', 'Education', 'Gender'];
   let datas = [data?.result.demographics1, data?.result.demographics3, data?.result.demographics5];
   let dataActiveIndex = datas[activeIndex];
@@ -188,7 +188,7 @@ const RowedView = styled(View)`
 
 const Container = styled(Card)`
   padding: 0 12px 0 12px;
-  margin: 24px;
+  margin: 18px 36px;
 `;
 
 const Segmented = styled(SegmentedControl)`
