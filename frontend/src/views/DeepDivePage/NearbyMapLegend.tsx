@@ -7,6 +7,7 @@ import { WHITE } from '../../constants/colors';
 import orangeCircleIcon from '../../assets/images/orange-circle.svg';
 import purpleCircleIcon from '../../assets/images/purple-circle.svg';
 import blueCircleIcon from '../../assets/images/blue-circle.svg';
+import greenCircleIcon from '../../assets/images/green-circle.svg';
 import subwayIcon from '../../assets/images/subway.svg';
 import parkIcon from '../../assets/images/park.svg';
 
@@ -16,6 +17,7 @@ export const LEGEND = {
   Retail: blueCircleIcon,
   Metro: subwayIcon,
   Apartment: parkIcon,
+  Other: greenCircleIcon,
 };
 
 export default function NearbyMapLegend() {

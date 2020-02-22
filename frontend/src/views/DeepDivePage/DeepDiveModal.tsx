@@ -1,4 +1,4 @@
-import React, { useState, UIEvent } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { View, Modal, TabBar, LoadingIndicator } from '../../core-ui';
@@ -27,10 +27,10 @@ type Props = {
   targetNeighborhood: string;
 };
 
-const SHRINK_HEIGHT = 160;
+// const SHRINK_HEIGHT = 160;
 export default function LocationDeepDiveModal(props: Props) {
   let { brandId = '' } = useParams();
-  let { visible, onClose, lat, lng, address } = props;
+  let { visible, onClose, lat, lng, address, targetNeighborhood } = props;
   let [isLiked, toggleIsLiked] = useState(false); // get value from backend
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   // let [headerShrink, setHeaderShrink] = useState(false);
@@ -64,7 +64,7 @@ export default function LocationDeepDiveModal(props: Props) {
 
   return (
     <DeepDiveContext.Provider value={data?.locationDetails}>
-      <Modal onClose={onClose} visible={visible} svgCloseProps={{ color: THEME_COLOR }}>
+      <Modal onClose={onClose} visible={visible} svgCloseProps={{ fill: THEME_COLOR }}>
         {loading ? (
           <LoadingIndicator
             size="large"
@@ -92,13 +92,16 @@ export default function LocationDeepDiveModal(props: Props) {
                     setSelectedTabIndex(index);
                   }}
                 />
-                <ScrollView flex onScroll={handleOnScroll}>
+                <ScrollView
+                  flex
+                  // onScroll={handleOnScroll}
+                >
                   <PropertyDeepDiveHeader
                     isLiked={isLiked}
                     onLikePress={toggleIsLiked}
                     address={address}
+                    targetNeighborhood={targetNeighborhood}
                   />
-                  {noPropertyDetail && <Overview />}
 
                   {isOverviewSelected ? <Overview /> : <PropertyDetailView />}
                 </ScrollView>
