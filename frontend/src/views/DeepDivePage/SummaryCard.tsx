@@ -6,10 +6,10 @@ import { FONT_WEIGHT_MEDIUM } from '../../constants/theme';
 
 type CardProps = ComponentProps<typeof Card>;
 type Props = CardProps & {
-  priceSqft: number;
+  priceSqft: string;
   type: string;
   condition: string;
-  sqft: number;
+  sqft: string;
   tenacy: string;
 };
 

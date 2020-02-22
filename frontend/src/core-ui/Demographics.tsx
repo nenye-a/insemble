@@ -142,11 +142,11 @@ export default function Graphic() {
       </RowedView>
       <ChartContainer>
         <Chart
-          width={600}
+          width={700}
           height={400}
           data={dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey]}
         >
-          <XAxis dataKey={'name'} />
+          <XAxis dataKey="name" />
           <YAxis
             tickFormatter={(value: number) =>
               value
@@ -166,7 +166,7 @@ export default function Graphic() {
             }}
           />
           <Bar
-            dataKey="curLocation"
+            dataKey="myLocation"
             barSize={24}
             fill={THEME_COLOR}
             label={renderCustomBarLabel}

@@ -32,7 +32,7 @@ type MarkerData = {
 };
 type Props = {
   markers?: Array<LatLngLiteral>;
-  onMarkerClick?: (markerPosition: LatLng, address: string) => void;
+  onMarkerClick?: (markerPosition: LatLng, address: string, targetNeighborhood: string) => void;
   matchingLocations?: Array<TenantMatchesMatchingLocations> | null;
   matchingProperties?: Array<TenantMatchesMatchingProperties> | null;
 };
@@ -535,7 +535,11 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
             onClick={() => {
               markerPosition &&
                 onMarkerClick &&
-                onMarkerClick(markerPosition, data?.locationPreview.targetAddress || '');
+                onMarkerClick(
+                  markerPosition,
+                  data?.locationPreview.targetAddress || '',
+                  data?.locationPreview.targetNeighborhood || ''
+                );
             }}
             icon={MapPin}
           >
@@ -573,7 +577,11 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
                 onSeeMore={() =>
                   markerPosition &&
                   onMarkerClick &&
-                  onMarkerClick(markerPosition, data?.locationPreview.targetAddress || '')
+                  onMarkerClick(
+                    markerPosition,
+                    data?.locationPreview.targetAddress || '',
+                    data?.locationPreview.targetNeighborhood || ''
+                  )
                 }
               />
             </InfoBox>
