@@ -29,12 +29,11 @@ const SHRINK_HEIGHT = 160;
 export default function LocationDeepDiveModal(props: Props) {
   let { brandId = '' } = useParams();
   let { visible, onClose, lat, lng, address } = props;
-  console.log(props, 'DEEP PROPS');
   let [isLiked, toggleIsLiked] = useState(false); // get value from backend
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [headerShrink, setHeaderShrink] = useState(false);
   let isOverviewSelected = selectedTabIndex === 0;
-  let { data, loading, error } = useQuery<LocationDetails, LocationDetailsVariables>(
+  let { data, loading } = useQuery<LocationDetails, LocationDetailsVariables>(
     GET_LOCATION_DETAILS,
     {
       variables: {
@@ -47,7 +46,6 @@ export default function LocationDeepDiveModal(props: Props) {
       },
     }
   );
-  console.log(data, loading, error, 'DEEPDIVE');
 
   let handleOnScroll = (e: UIEvent<HTMLDivElement>) => {
     if (visible) {
@@ -63,7 +61,11 @@ export default function LocationDeepDiveModal(props: Props) {
     <DeepDiveContext.Provider value={data?.locationDetails}>
       <Modal onClose={onClose} visible={visible}>
         {loading ? (
-          <LoadingIndicator size="large" />
+          <LoadingIndicator
+            size="large"
+            flex
+            style={{ justifyContent: 'center', alignItems: 'center' }}
+          />
         ) : (
           <>
             <TourContainer isShrink={headerShrink}>
