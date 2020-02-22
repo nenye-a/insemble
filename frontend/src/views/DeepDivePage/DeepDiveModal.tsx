@@ -11,7 +11,7 @@ import {
   LocationDetails,
   LocationDetailsVariables,
   LocationDetails_locationDetails as LocationDetailsLocationDetails,
-} from '../../generated/locationDetails';
+} from '../../generated/LocationDetails';
 import { useParams } from 'react-router-dom';
 
 export const DeepDiveContext = React.createContext<LocationDetailsLocationDetails | undefined>(
