@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { View, Card, TouchableOpacity, Dropdown } from '../../core-ui';
@@ -6,18 +6,53 @@ import NearbyPlacesCard from './NearbyPlacesCard';
 import NearbyMap from './NearbyMap';
 import NearbyMapLegend from './NearbyMapLegend';
 import MiniNearbyPlacesCard from './MiniNearbyPlacesCard';
-import { NEARBY_PLACES } from '../../fixtures/dummyData';
 import { BACKGROUND_COLOR, GREY_ICON, THEME_COLOR } from '../../constants/colors';
 import SvgGrid from '../../components/icons/grid';
 import SvgList from '../../components/icons/list';
+import { DeepDiveContext } from './DeepDiveModal';
 
 type ViewMode = 'grid' | 'list';
 
+export type NearbyPlace = {
+  photo: string;
+  name: string;
+  category: string;
+  rating: number | null;
+  numberRating: number;
+  distance: number;
+  placeType: Array<string>;
+  lat: number;
+  lng: number;
+  similar: boolean;
+};
+
+//asr a-b
 export default function NearbyCard() {
   let [selectedView, setSelectedView] = useState<ViewMode>('grid');
   let [selectedDropdownVal, setSelectedDropdownVal] = useState('Relevant');
   let isGridViewMode = selectedView === 'grid';
-  let data = NEARBY_PLACES;
+  let data = useContext(DeepDiveContext);
+  let nearbyData = data?.result.nearby;
+  let filteredData = useMemo(() => {
+    switch (selectedDropdownVal) {
+      case 'Relevant': {
+        return nearbyData;
+      }
+      case 'Similar': {
+        return nearbyData?.filter((item) => item.similar);
+      }
+      case 'Distance': {
+        return nearbyData?.sort((a, b) => a.distance - b.distance);
+      }
+      case 'Rating': {
+        return nearbyData?.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      }
+      case 'Total Rating': {
+        return nearbyData?.sort((a, b) => b.numberRating - a.numberRating);
+      }
+    }
+  }, [selectedDropdownVal, nearbyData]);
+
   let iconTab = (
     <RightTitleContainer>
       <IconContainer
@@ -45,12 +80,12 @@ export default function NearbyCard() {
       titleContainerProps={{ style: { height: 56 } }}
     >
       <RowedView flex>
-        <NearbyMap data={data} />
+        <NearbyMap data={filteredData || []} />
         <View flex>
           <NearbyMapLegend />
           <RightContent flex>
             <Dropdown
-              options={['Relevant', 'Recommended']}
+              options={['Relevant', 'Similar', 'Distance', 'Rating', 'Total Rating']}
               onSelect={(newValue) => {
                 setSelectedDropdownVal(newValue);
               }}
@@ -60,8 +95,10 @@ export default function NearbyCard() {
 
             <NearbyPlacesCardContainer flex>
               {isGridViewMode
-                ? data.map((item, index) => <NearbyPlacesCard key={index} {...item} />)
-                : data.map((item, index) => <MiniNearbyPlacesCard key={index} {...item} />)}
+                ? filteredData &&
+                  filteredData.map((item, index) => <NearbyPlacesCard key={index} {...item} />)
+                : filteredData &&
+                  filteredData.map((item, index) => <MiniNearbyPlacesCard key={index} {...item} />)}
             </NearbyPlacesCardContainer>
           </RightContent>
         </View>

@@ -60,6 +60,13 @@ type TenantMatchesContextFilter = {
 
 type PlaceResult = google.maps.places.PlaceResult;
 
+type SelectedLatLng = {
+  lat: string;
+  lng: string;
+  address: string;
+  targetNeighborhood: string;
+};
+
 export type TenantMatchesContextType = {
   filters: TenantMatchesContextFilter;
   onFilterChange?: (state: SideBarFiltersState) => void;
@@ -116,6 +123,7 @@ export default function MainMap() {
     EditBrandVariables
   >(EDIT_BRAND);
 
+  let [selectedLatLng, setSelectedLatLng] = useState<SelectedLatLng | null>(null);
   let onFilterChange = (state: SideBarFiltersState) => {
     let { demographics, properties, openFilterName } = state;
     let foundObj = [...demographics, ...properties].find((item) => item.name === openFilterName);
@@ -338,10 +346,16 @@ export default function MainMap() {
       }}
     >
       <View flex>
-        <DeepDiveModal
-          visible={deepDiveModalVisible}
-          onClose={() => toggleDeepDiveModal(!deepDiveModalVisible)}
-        />
+        {selectedLatLng && (
+          <DeepDiveModal
+            lat={selectedLatLng.lat || ''}
+            lng={selectedLatLng.lng || ''}
+            address={selectedLatLng.address}
+            targetNeighborhood={selectedLatLng.targetNeighborhood}
+            visible={deepDiveModalVisible}
+            onClose={() => toggleDeepDiveModal(!deepDiveModalVisible)}
+          />
+        )}
         {!isLoading && tenantMatchesData && (
           <HeaderFilterBar
             categories={tenantMatchesData.tenantMatches.categories}
@@ -369,7 +383,20 @@ export default function MainMap() {
           <SideBarFilters />
           {!isLoading && (
             <MapContainer
-              onMarkerClick={() => toggleDeepDiveModal(true)}
+              onMarkerClick={(
+                latLng: google.maps.LatLng,
+                address: string,
+                targetNeighborhood: string
+              ) => {
+                let { lat, lng } = latLng;
+                setSelectedLatLng({
+                  lat: lat().toString(),
+                  lng: lng().toString(),
+                  address,
+                  targetNeighborhood,
+                });
+                toggleDeepDiveModal(true);
+              }}
               matchingLocations={tenantMatchesData?.tenantMatches.matchingLocations}
               matchingProperties={tenantMatchesData?.tenantMatches.matchingProperties}
             />

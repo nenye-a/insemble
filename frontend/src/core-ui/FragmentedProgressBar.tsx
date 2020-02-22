@@ -9,7 +9,7 @@ import {
 import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
 
 type Props = ViewProps & {
-  progress: number; // in percentage value
+  progress: number | undefined; // in percentage value
   width?: number;
 };
 
@@ -32,7 +32,7 @@ export default function FragmentedProgressBar(props: Props) {
   let barsWidth = width - spacesWidth;
   let leftBarWidth = (LEFT_BAR_VALUE * barsWidth) / 100;
   let rightBarWidth = (barsWidth - leftBarWidth) / NUMBER_OF_SMALL_RIGHT_BARS;
-  let remainingValuesForRightBars = progress - LEFT_BAR_VALUE;
+  let remainingValuesForRightBars = progress && progress - LEFT_BAR_VALUE;
 
   return (
     <RowedView {...otherProps}>
@@ -40,18 +40,21 @@ export default function FragmentedProgressBar(props: Props) {
         <Bar
           style={{
             width:
-              remainingValuesForRightBars > 0 ? '100%' : (progress * 100) / LEFT_BAR_VALUE + '%',
+              remainingValuesForRightBars && remainingValuesForRightBars > 0
+                ? '100%'
+                : ((progress as number) * 100) / LEFT_BAR_VALUE + '%',
           }}
         />
       </BarContainer>
       {Array.from({ length: NUMBER_OF_SMALL_RIGHT_BARS }, (_, idx) => {
-        let fullWidth = remainingValuesForRightBars - (idx + 1) * 10 >= 0;
-        let isEmpty = remainingValuesForRightBars - idx * 10 < 0;
+        let fullWidth =
+          remainingValuesForRightBars && remainingValuesForRightBars - (idx + 1) * 10 >= 0;
+        let isEmpty = remainingValuesForRightBars && remainingValuesForRightBars - idx * 10 < 0;
         let progressWidth = fullWidth
           ? '100%'
           : isEmpty
           ? '0%'
-          : (((remainingValuesForRightBars % 10) * 100) / 10).toString() + '%';
+          : ((((remainingValuesForRightBars as number) % 10) * 100) / 10).toString() + '%';
         return (
           <RowedView key={idx}>
             <Spacing />

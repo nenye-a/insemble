@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 
 import { View, Card } from '../../core-ui';
 import RelevantConsumerCard from './RelevantConsumerCard';
-import { CONSUMER_PERSONAS } from '../../fixtures/dummyData';
+import { DeepDiveContext } from './DeepDiveModal';
 
 export default function RelevantConsumerPersonas() {
+  let data = useContext(DeepDiveContext);
+  let personasData = data?.result.topPersonas;
   return (
     <Container titleBackground="white" title="Relevant Consumer Personas">
       <CardsContainer>
-        {CONSUMER_PERSONAS.map((item, index) => (
-          <RelevantConsumerCard key={index} {...item} />
-        ))}
+        {personasData &&
+          personasData.map((item, index) => <RelevantConsumerCard key={index} {...item} />)}
       </CardsContainer>
     </Container>
   );

@@ -5,7 +5,7 @@ import loadingWhite from '../assets/images/loading-white.gif';
 import loadingPurple from '../assets/images/loading-purple.gif';
 
 type IconSize = keyof typeof ICON_SIZES;
-type Props = {
+type Props = ViewProps & {
   color?: 'purple' | 'white';
   visible?: boolean;
   size?: IconSize;
