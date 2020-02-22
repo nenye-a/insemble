@@ -72,8 +72,6 @@ def get_address_neighborhood(lat, lng):
         if 'locality' in component['types']:
             locality = component['short_name']
 
-    neighborhood = neighborhood + ', ' + locality if locality else neighborhood
-
     # return both neighborhood and locality, but return None if neighther are present
     if neighborhood:
         neighborhood = neighborhood + ', ' + locality if locality else neighborhood
