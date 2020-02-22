@@ -27,7 +27,7 @@ EQUIPMENT_LIST = ["Walk-in fridge", "Reach-in fridge", "Walk-in freezer", "Greas
 
 
 def get_location(address, name=None):
-    google_location = google.find(address, name=name, allow_non_establishments=True)
+    google_location = google.find(address, name=name, allow_non_establishments=True, save=False)
     location = google_location['geometry']['location']
     location["place_id"] = google_location["place_id"]
     return location
@@ -61,8 +61,8 @@ def get_representative_location(categories, income_dict):
 
 
 def get_address_neighborhood(lat, lng):
-    google_location = google.reverse_geocode(lat, lng)
 
+    google_location = google.reverse_geocode(lat, lng, save=False)
     address = google_location['formatted_address']
     neighborhood = None
     locality = None
