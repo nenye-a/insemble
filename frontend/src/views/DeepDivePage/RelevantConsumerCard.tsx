@@ -11,6 +11,7 @@ import {
   SECONDARY_BORDER_RADIUS,
   FONT_WEIGHT_LIGHT,
 } from '../../constants/theme';
+import { roundDecimal } from '../../utils';
 import ImagePlaceHolder from '../../assets/images/image-placeholder.jpg';
 
 type Props = {
@@ -29,7 +30,7 @@ export default function RelevantConsumerCard(props: Props) {
       <RowedView>
         <PercentageContainer>
           <Text fontSize={FONT_SIZE_XXXLARGE} color={WHITE}>
-            {percentile}
+            {roundDecimal(percentile, 0)}
             <Text fontSize={FONT_SIZE_LARGE} color={WHITE}>
               %
             </Text>

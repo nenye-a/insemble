@@ -9,7 +9,7 @@ import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
 import { useParams } from 'react-router-dom';
 
 import { GET_LOCATION_PREVIEW } from '../graphql/queries/server/preview';
-import { View } from '../core-ui';
+import { View, Alert } from '../core-ui';
 import LocationDetail from '../components/location-detail/LocationDetail';
 import InfoBox from 'react-google-maps/lib/components/addons/InfoBox';
 import MapPin from '../components/icons/map-pin.svg';
@@ -18,30 +18,21 @@ import {
   TenantMatches_tenantMatches_matchingProperties as TenantMatchesMatchingProperties,
 } from '../generated/TenantMatches';
 import { useLazyQuery } from '@apollo/react-hooks';
+import { LocationPreview, LocationPreviewVariables } from '../generated/LocationPreview';
 
 type LatLngBounds = google.maps.LatLngBounds;
 type LatLng = google.maps.LatLng;
 type LatLngLiteral = google.maps.LatLngLiteral;
 type MarkerData = {
-  address: string;
-  income: string;
-  pop: string;
-  lat: number;
-  lng: number;
-  census: {
-    asian: number;
-    black: number;
-    hispanic: number;
-    indian: number;
-    multi: number;
-    white: number;
-  };
-  nearby: { [key: string]: number };
-  radius: number;
+  targetAddress: string;
+  targetNeighborhood: string;
+  daytimePop3Mile: number;
+  medianIncome: number;
+  medianAge: number;
 };
 type Props = {
   markers?: Array<LatLngLiteral>;
-  onMarkerClick?: () => void;
+  onMarkerClick?: (markerPosition: LatLng, address: string) => void;
   matchingLocations?: Array<TenantMatchesMatchingLocations> | null;
   matchingProperties?: Array<TenantMatchesMatchingProperties> | null;
 };
@@ -54,7 +45,10 @@ const defaultZoom = 10;
 
 function MapContainer({ onMarkerClick, matchingLocations }: Props) {
   let { brandId = '' } = useParams();
-  let [getLocation, { data, loading }] = useLazyQuery(GET_LOCATION_PREVIEW);
+  let [getLocation, { data, loading, error }] = useLazyQuery<
+    LocationPreview,
+    LocationPreviewVariables
+  >(GET_LOCATION_PREVIEW);
   let heatmapData =
     matchingLocations && matchingLocations
       ? matchingLocations.map(({ lat, lng, match }) => ({
@@ -108,8 +102,15 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
     }
   };
 
-  let onMapClick = (latLng: LatLng) => {
+  useEffect(() => {
+    if (data?.locationPreview) {
+      setMarker(data.locationPreview);
+    }
+  }, [loading, data]);
+
+  let onMapClick = async (latLng: LatLng) => {
     let { lat, lng } = latLng;
+
     getLocation({
       variables: {
         brandId,
@@ -121,7 +122,6 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
       },
     });
     setMarkerPosition(latLng);
-    setMarker(data);
   };
 
   let handleSearchClick = (marker: LatLngLiteral) => {
@@ -182,7 +182,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
 
   return (
     <div>
-      <Joyride
+      {/* <Joyride
         steps={steps}
         scrollToFirstStep={true}
         continuous={true}
@@ -204,8 +204,8 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         }}
         locale={{ last: 'Done' }}
         spotlightClicks={false}
-      />
-
+      /> */}
+      <Alert visible={!!error} text={error?.message || ''} />
       <GoogleMap
         ref={mapRef}
         defaultZoom={defaultZoom}
@@ -529,8 +529,16 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         onClick={(event) => onMapClick(event.latLng)}
         onBoundsChanged={onBoundsChanged}
       >
-        {markerPosition && !loading && (
-          <Marker position={markerPosition} onClick={onMarkerClick} icon={MapPin}>
+        {markerPosition && !loading && data && (
+          <Marker
+            position={markerPosition}
+            onClick={() => {
+              markerPosition &&
+                onMarkerClick &&
+                onMarkerClick(markerPosition, data?.locationPreview.targetAddress || '');
+            }}
+            icon={MapPin}
+          >
             <InfoBox
               defaultPosition={markerPosition}
               defaultVisible={true}
@@ -559,15 +567,19 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
                 visible
                 title={data.locationPreview.targetAddress}
                 subTitle={data.locationPreview.targetNeighborhood}
-                income={data.locationPreview.medianIncome}
-                population={data.locationPreview.daytimePop3Mile}
+                income={data.locationPreview.medianIncome.toString()}
+                population={data.locationPreview.daytimePop3Mile.toString()}
                 age={data.locationPreview.medianAge}
-                onSeeMore={onMarkerClick}
+                onSeeMore={() =>
+                  markerPosition &&
+                  onMarkerClick &&
+                  onMarkerClick(markerPosition, data?.locationPreview.targetAddress || '')
+                }
               />
             </InfoBox>
           </Marker>
         )}
-        {showGuide && <div className="marker-example heat-map-example empty-container" />}
+        {/* {showGuide && <div className="marker-example heat-map-example empty-container" />} */}
         {heatmapData && (
           <HeatMapLayer
             data={heatmapData}
