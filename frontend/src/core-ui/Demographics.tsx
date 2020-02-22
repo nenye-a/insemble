@@ -18,6 +18,7 @@ import SegmentedControl from './SegmentedControl';
 import { View, Text } from '../core-ui';
 import { CarouselFilter } from '../components';
 import { DeepDiveContext } from '../views/DeepDivePage/DeepDiveModal';
+import { roundDecimal } from '../utils';
 
 //TODO Improve Typing for data
 type DemographicsStatus = {
@@ -81,13 +82,17 @@ export default function Graphic() {
           x={x + width / 2 + 16}
           y={25}
         >
-          {demographicData && demographicData.growth}
+          {demographicData && roundDecimal(demographicData.growth || '')}
         </LabelText>
         <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
-          {`${value
-            .toString()
-            .slice(0, -3)
-            .concat('k')}`}
+          {`${
+            value
+              ? value
+                  .toString()
+                  .slice(0, -3)
+                  .concat('k')
+              : ''
+          }`}
         </LabelText>
       </>
     );
@@ -105,10 +110,14 @@ export default function Graphic() {
   }) => {
     return (
       <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
-        {`${value
-          .toString()
-          .slice(0, -3)
-          .concat('k')}`}
+        {`${
+          value
+            ? value
+                .toString()
+                .slice(0, -3)
+                .concat('k')
+            : ''
+        }`}
       </LabelText>
     );
   };
@@ -130,45 +139,48 @@ export default function Graphic() {
           <PopulationText>k</PopulationText>
         </RowedView>
       </RowedView>
-      <Chart
-        width={600}
-        height={400}
-        data={dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey]}
-      >
-        <XAxis dataKey={'name'} />
-        <YAxis
-          tickFormatter={(value: number) =>
-            value
-              .toString()
-              .slice(0, -3)
-              .concat('k')
-          }
-          domain={[0, (dataMax) => dataMax * 1.3]}
-          padding={{ top: 50, bottom: 0 }}
-          scale="linear"
-          orientation="left"
-          label={{
-            value: 'population',
-            angle: -90,
-            x: -100,
-            position: 'insideLeft',
-          }}
-        />
-        <Bar
-          dataKey="curLocation"
-          barSize={24}
-          fill={THEME_COLOR}
-          label={renderCustomBarLabel}
-          radius={[5, 5, 0, 0]}
-        />
-        <Bar
-          dataKey="targetLocation"
-          barSize={24}
-          fill={HOVERED_LIST_ITEM_BG}
-          label={renderCustomSecondBarLabel}
-          radius={[5, 5, 0, 0]}
-        />
-      </Chart>
+      <ChartContainer>
+        <Chart
+          width={600}
+          height={400}
+          data={dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey]}
+        >
+          <XAxis dataKey={'name'} />
+          <YAxis
+            tickFormatter={(value: number) =>
+              value
+                .toString()
+                .slice(0, -3)
+                .concat('k')
+            }
+            domain={[0, (dataMax) => dataMax * 1.3]}
+            padding={{ top: 50, bottom: 0 }}
+            scale="linear"
+            orientation="left"
+            label={{
+              value: 'population',
+              angle: -90,
+              x: -100,
+              position: 'insideLeft',
+            }}
+          />
+          <Bar
+            dataKey="curLocation"
+            barSize={24}
+            fill={THEME_COLOR}
+            label={renderCustomBarLabel}
+            radius={[5, 5, 0, 0]}
+          />
+          <Bar
+            dataKey="targetLocation"
+            barSize={24}
+            fill={HOVERED_LIST_ITEM_BG}
+            label={renderCustomSecondBarLabel}
+            radius={[5, 5, 0, 0]}
+          />
+        </Chart>
+      </ChartContainer>
+
       <CarouselFilter
         selectedOption={selectedFilter}
         options={options}
@@ -187,8 +199,13 @@ const RowedView = styled(View)`
 `;
 
 const Container = styled(Card)`
-  padding: 0 12px 0 12px;
+  padding: 0 12px 12px 12px;
   margin: 18px 36px;
+`;
+
+const ChartContainer = styled(View)`
+  justify-content: center;
+  align-items: center;
 `;
 
 const Segmented = styled(SegmentedControl)`

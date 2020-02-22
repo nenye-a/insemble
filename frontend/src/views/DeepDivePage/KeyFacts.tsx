@@ -30,7 +30,7 @@ export default function KeyFacts(props: Props) {
   let { time } = props;
   let [selectedIndex, setSelectedIndex] = useState<number>(0);
   let [pieSize, setPieSize] = useState<Array<number>>([]);
-
+  let isEconomicDriversSelected = selectedIndex === 0;
   useEffect(() => {
     let size = () => {
       let target = document.getElementById('economic-view');
@@ -115,7 +115,7 @@ export default function KeyFacts(props: Props) {
     <Container>
       <TextView>
         <Title>Key Facts & Growth</Title>
-        <Radius>within 1 mile</Radius>
+        {keyFactsData?.mile && <Radius>within {keyFactsData.mile} mile</Radius>}
       </TextView>
       <RowedView>
         <Tab
@@ -126,7 +126,7 @@ export default function KeyFacts(props: Props) {
             setSelectedIndex(index);
           }}
         />
-        {selectedIndex === 0 ? (
+        {isEconomicDriversSelected ? (
           <EconomicViews id="economic-view">
             <PieChart width={pieSize[0]} height={pieSize[1]}>
               <Pie
@@ -182,6 +182,7 @@ export default function KeyFacts(props: Props) {
 
 const Container = styled(Card)`
   margin: 18px 36px;
+  min-height: 600px;
 `;
 
 const RowedView = styled(View)`
