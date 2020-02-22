@@ -60,6 +60,12 @@ type TenantMatchesContextFilter = {
 
 type PlaceResult = google.maps.places.PlaceResult;
 
+type SelectedLatLng = {
+  lat: string;
+  lng: string;
+  address: string;
+};
+
 export type TenantMatchesContextType = {
   filters: TenantMatchesContextFilter;
   onFilterChange?: (state: SideBarFiltersState) => void;
@@ -116,6 +122,7 @@ export default function MainMap() {
     EditBrandVariables
   >(EDIT_BRAND);
 
+  let [selectedLatLng, setSelectedLatLng] = useState<SelectedLatLng | null>(null);
   let onFilterChange = (state: SideBarFiltersState) => {
     let { demographics, properties, openFilterName } = state;
     let foundObj = [...demographics, ...properties].find((item) => item.name === openFilterName);
@@ -328,9 +335,6 @@ export default function MainMap() {
     }
   }, [loading, tenantMatchesData]);
 
-  let lat = tenantMatchesData?.tenantMatches.location?.lat;
-  let lng = tenantMatchesData?.tenantMatches.location?.lng;
-
   return (
     <TenantMatchesContext.Provider
       value={{
@@ -341,12 +345,15 @@ export default function MainMap() {
       }}
     >
       <View flex>
-        <DeepDiveModal
-          lat={lat}
-          lng={lng}
-          visible={deepDiveModalVisible}
-          onClose={() => toggleDeepDiveModal(!deepDiveModalVisible)}
-        />
+        {selectedLatLng && (
+          <DeepDiveModal
+            lat={selectedLatLng.lat || ''}
+            lng={selectedLatLng.lng || ''}
+            address={selectedLatLng.address}
+            visible={deepDiveModalVisible}
+            onClose={() => toggleDeepDiveModal(!deepDiveModalVisible)}
+          />
+        )}
         {!isLoading && tenantMatchesData && (
           <HeaderFilterBar
             categories={tenantMatchesData.tenantMatches.categories}
@@ -374,7 +381,11 @@ export default function MainMap() {
           <SideBarFilters />
           {!isLoading && (
             <MapContainer
-              onMarkerClick={() => toggleDeepDiveModal(true)}
+              onMarkerClick={(latLng: google.maps.LatLng, address: string) => {
+                let { lat, lng } = latLng;
+                setSelectedLatLng({ lat: lat().toString(), lng: lng().toString(), address });
+                toggleDeepDiveModal(true);
+              }}
               matchingLocations={tenantMatchesData?.tenantMatches.matchingLocations}
               matchingProperties={tenantMatchesData?.tenantMatches.matchingProperties}
             />
