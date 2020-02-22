@@ -1,7 +1,10 @@
 from . import utils
 from django.conf import settings
 import pandas as pd
+<<<<<<< HEAD
 from bson import ObjectId
+=======
+>>>>>>> setup justice calls & update provider to use
 from s3fs import S3FileSystem
 import data.api.goog as google
 import data.api.spatial as spatial
