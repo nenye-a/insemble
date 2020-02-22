@@ -1,4 +1,4 @@
-from decouple import config
+from django.conf import settings
 import data.utils as utils
 import safe_request
 import time
@@ -12,7 +12,7 @@ Pitney Bose algorithms to get an index of all available locations within a regio
 API_NAME = 'Pitney_Bose'
 #PITNEY_KEY = config('PITNEY_KEY')
 PITNEY_KEY = "Bearer srYq7EJLLQXG0IgnvD9AsTVVc5cY"
-GOOG_KEY = config("GOOG_KEY")
+GOOG_KEY = settings.GOOG_KEY
 
 # Please note that poi == "Point Of Interest". To see the documentation for the pitney bowes
 # api, please refer here:

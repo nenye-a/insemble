@@ -1,4 +1,4 @@
-from decouple import config
+from django.conf import settings
 from . import safe_request
 
 '''
@@ -8,8 +8,8 @@ All Foursquare related methods:
 '''
 
 API_NAME = "Foursquare"
-FRSQ_ID = config("FRSQ_ID")
-FRSQ_SECRET = config("FRSQ_SECRET")
+FRSQ_ID = settings.FRSQ_ID
+FRSQ_SECRET = settings.FRSQ_SECRET
 
 # Foursquare endpoints, please refer to here:
 # https://developer.foursquare.com/docs/api/endpoints

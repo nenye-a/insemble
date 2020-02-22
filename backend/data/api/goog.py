@@ -1,4 +1,4 @@
-from decouple import config
+from django.conf import settings
 import data.utils as utils
 from . import safe_request
 
@@ -9,7 +9,7 @@ All google related methods to confirm a location, and build dataset of all infor
 '''
 
 API_NAME = 'Google'
-GOOG_KEY = config("GOOG_KEY")
+GOOG_KEY = settings.GOOG_KEY
 
 # Google endpoints. Refer to https://developers.google.com/places/web-service/intro for details.
 GOOG_FINDPLACE_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json'

@@ -19,6 +19,8 @@ MONGO_DB_PASS = config("MONGO_DB_PASS", cast=str)
 AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
 
+ANM_KEY = config('ANM_KEY')
+
 
 DATABASES = {
     'default': {

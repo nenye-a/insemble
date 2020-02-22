@@ -23,6 +23,8 @@ MONGO_DB_PASS = os.environ["MONGO_DB_PASS"]
 AWS_ACCESS_KEY_ID = os.environ["AWS_SECRET_KEY_ID"]
 AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
 
+ANM_KEY = os.environ['ANM_KEY']
+
 
 DATABASES = {
     'default': {

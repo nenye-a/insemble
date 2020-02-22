@@ -1,4 +1,4 @@
-from decouple import config
+from django.conf import settings
 import utils
 from . import safe_request
 
@@ -9,7 +9,7 @@ File for gecoding library provided by texas a&m
 
 '''
 API_NAME = 'Texas_ANM'
-ANM_KEY = config('ANM_KEY')
+ANM_KEY = settings.ANM_KEY
 
 # To see the documentation for the anm point in polygon api, please refer to the following:
 # https://geoservices.tamu.edu/Services/CensusIntersection/WebService/v04_01/Rest.aspx
