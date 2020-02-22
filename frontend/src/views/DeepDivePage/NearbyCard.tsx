@@ -51,7 +51,8 @@ export default function NearbyCard() {
         return nearbyData?.sort((a, b) => b.numberRating - a.numberRating);
       }
     }
-  }, [selectedDropdownVal]);
+  }, [selectedDropdownVal, nearbyData]);
+
   let iconTab = (
     <RightTitleContainer>
       <IconContainer

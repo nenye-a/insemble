@@ -12,7 +12,6 @@ import {
   FONT_SIZE_MEDIUM,
   FONT_FAMILY_NORMAL,
   FONT_SIZE_NORMAL,
-  FONT_WEIGHT_MEDIUM,
 } from '../constants/theme';
 import SegmentedControl from './SegmentedControl';
 import { View, Text } from '../core-ui';
@@ -228,6 +227,6 @@ const LabelText = styled.text`
   z-index: 10;
 `;
 
-const PopulationText = styled(Text)`
-  font-weight: ${FONT_WEIGHT_MEDIUM};
-`;
+// const PopulationText = styled(Text)`
+//   font-weight: ${FONT_WEIGHT_MEDIUM};
+// `;

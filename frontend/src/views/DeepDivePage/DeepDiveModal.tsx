@@ -118,13 +118,13 @@ type TourContainerProps = {
   isShrink: boolean;
 };
 
-const TourContainer = styled(View)<TourContainerProps>`
-  height: ${(props) => (props.isShrink ? '180px' : '320px')};
-  transition: 0.3s height linear;
-  justify-content: center;
-  align-items: center;
-  background-color: grey;
-`;
+// const TourContainer = styled(View)<TourContainerProps>`
+//   height: ${(props) => (props.isShrink ? '180px' : '320px')};
+//   transition: 0.3s height linear;
+//   justify-content: center;
+//   align-items: center;
+//   background-color: grey;
+// `;
 
 const ScrollView = styled(View)`
   overflow-y: scroll;

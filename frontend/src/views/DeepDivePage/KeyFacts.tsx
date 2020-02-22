@@ -6,7 +6,6 @@ import {
   FONT_WEIGHT_BOLD,
   FONT_WEIGHT_LIGHT,
   FONT_SIZE_MEDIUM,
-  FONT_SIZE_LARGE,
   FONT_SIZE_XXLARGE,
 } from '../../constants/theme';
 import { THEME_COLOR } from '../../constants/colors';
@@ -23,11 +22,11 @@ type Props = {
   economicData?: Array<string>;
 };
 
-export default function KeyFacts(props: Props) {
+export default function KeyFacts() {
   let data = useContext(DeepDiveContext);
   let commuteData = data?.result.commute;
   let keyFactsData = data?.result.keyFacts;
-  let { time } = props;
+  // let { time } = props;
   let [selectedIndex, setSelectedIndex] = useState<number>(0);
   let [pieSize, setPieSize] = useState<Array<number>>([]);
   let isEconomicDriversSelected = selectedIndex === 0;
@@ -42,12 +41,6 @@ export default function KeyFacts(props: Props) {
     setPieSize(size());
   }, []);
 
-  // let data = [
-  //   { name: 'Walk', value: 1000 },
-  //   { name: 'Drive', value: 2000 },
-  //   { name: 'Small Business', value: 3000 },
-  //   { name: 'Public Transit', value: 4000 },
-  // ];
   const COLORS = ['#674EA7CC', '#674EA799', '#674EA766', '#674EA733'];
   const RADIAN = Math.PI / 180;
   const renderCustomizedLabel = ({
@@ -208,15 +201,15 @@ const Title = styled(Text)`
   font-size: ${FONT_SIZE_MEDIUM};
   font-weight: ${FONT_WEIGHT_BOLD};
 `;
-const AverageTime = styled(Text)`
-  color: ${THEME_COLOR};
-  font-size: ${FONT_SIZE_LARGE};
-`;
-const Time = styled(Text)`
-  margin: 0 0 0 11px;
-  font-size: ${FONT_SIZE_LARGE};
-  font-weight: ${FONT_WEIGHT_LIGHT};
-`;
+// const AverageTime = styled(Text)`
+//   color: ${THEME_COLOR};
+//   font-size: ${FONT_SIZE_LARGE};
+// `;
+// const Time = styled(Text)`
+//   margin: 0 0 0 11px;
+//   font-size: ${FONT_SIZE_LARGE};
+//   font-weight: ${FONT_WEIGHT_LIGHT};
+// `;
 const Label = styled.text`
   font-size: ${FONT_SIZE_MEDIUM};
   fill: ${THEME_COLOR};
