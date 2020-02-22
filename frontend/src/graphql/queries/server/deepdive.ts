@@ -1,13 +1,13 @@
 import gql from 'graphql-tag';
 
 export const GET_LOCATION_DETAILS = gql`
-  query locationDetails(
+  query LocationDetails(
     $brandId: String!
     $selectedLocation: LocationInput
     $selectedPropertyId: String
   ) {
     locationDetails(
-      brandID: $brandId
+      brandId: $brandId
       selectedLocation: $selectedLocation
       selectedPropertyId: $selectedPropertyId
     ) {
