@@ -146,10 +146,11 @@ export default function KeyFacts(props: Props) {
                   ))}
               </Pie>
             </PieChart>
-            <TextView>
+            {/* hiding this until data is ready */}
+            {/* <TextView>
               <AverageTime>Average time to work: </AverageTime>
               <Time>{time}mins</Time>
-            </TextView>
+            </TextView> */}
           </EconomicViews>
         ) : (
           <CommuteView flex>

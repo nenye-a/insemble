@@ -134,10 +134,11 @@ export default function Graphic() {
       </RowedView>
       <RowedView>
         <Legend barGraph={true} />
-        <RowedView style={{ margin: 0 }}>
+        {/* hiding this until data is ready */}
+        {/* <RowedView style={{ margin: 0 }}>
           <Text>Population: </Text>
           <PopulationText>k</PopulationText>
-        </RowedView>
+        </RowedView> */}
       </RowedView>
       <ChartContainer>
         <Chart

@@ -6,6 +6,7 @@ import NearbyPlacesTag from './NearbyPlacesTag';
 import { DEFAULT_BORDER_RADIUS, FONT_SIZE_SMALL, FONT_WEIGHT_MEDIUM } from '../../constants/theme';
 import { MUTED_TEXT_COLOR, THEME_COLOR } from '../../constants/colors';
 import { LEGEND } from './NearbyMapLegend';
+import mapPin from '../../components/icons/map-pin.svg';
 
 type Props = {
   name: string;
@@ -29,7 +30,7 @@ export default function NearbyPlacesCard(props: Props) {
         />
       )}
       <RowedView flex>
-        <Image src={photo} />
+        <Image src={photo || mapPin} />
         <Text style={{ flex: 1 }}>{name}</Text>
         <LegendIcon src={LEGEND[placeType[0] as keyof typeof LEGEND]} />
       </RowedView>
@@ -68,7 +69,7 @@ const TagsContainer = styled(View)`
 const Image = styled.img`
   height: 27px;
   width: 27px;
-  object-fit: cover;
+  object-fit: contain;
   margin-right: 8px;
   border-radius: ${DEFAULT_BORDER_RADIUS};
 `;

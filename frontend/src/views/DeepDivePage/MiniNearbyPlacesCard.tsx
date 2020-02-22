@@ -4,6 +4,7 @@ import { View, Card, Text, Badge as BaseBadge } from '../../core-ui';
 import NearbyPlacesTag from './NearbyPlacesTag';
 import { DEFAULT_BORDER_RADIUS, FONT_WEIGHT_MEDIUM, FONT_SIZE_SMALL } from '../../constants/theme';
 import { THEME_COLOR } from '../../constants/colors';
+import mapPin from '../../components/icons/map-pin.svg';
 
 type Props = {
   name: string;
@@ -23,7 +24,7 @@ export default function MiniNearbyPlacesCard(props: Props) {
         />
       )}
       <RowedView>
-        <Image src={photo} />
+        <Image src={photo || mapPin} />
         <PlaceName>{name}</PlaceName>
       </RowedView>
       <NearbyPlacesTag content={distance} postfix="Miles" style={{ margin: 0, marginTop: 3 }} />
@@ -47,7 +48,7 @@ const RowedView = styled(View)`
 const Image = styled.img`
   height: 27px;
   width: 27px;
-  object-fit: cover;
+  object-fit: contain;
   margin-right: 8px;
   border-radius: ${DEFAULT_BORDER_RADIUS};
 `;
