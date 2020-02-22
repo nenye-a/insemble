@@ -10,14 +10,15 @@
     "jest": "jest",
     "test:watch": "npm test -- --watch",
     "start": "babel-node server.js",
-    "build": "NODE_ENV=production webpack -p --progress --colors --config webpack.prod.config.js --bail",
+    "build": "npm run apollo:generate && npm run build:webpack",
+    "build:webpack": "NODE_ENV=production webpack -p --progress --colors --config webpack.prod.config.js --bail",
     "lint": "eslint --max-warnings 0 \"frontend/src/**/*.{js,jsx,ts,tsx}\"",
     "typecheck": "tsc --noEmit -p .",
     "format": "prettier --write \"frontend/src/**/*.{js,jsx,ts,tsx}\"",
     "format:check": "prettier --check \"frontend/src/**/*.{js,jsx,ts,tsx}\"",
     "coverage": "jest --coverage",
-    "schema:generate": "cd backend-node && yarn && ts-node src/schema.ts && cd ..",
-    "apollo:generate": "npm run schema:generate && apollo codegen:generate --excludes=frontend/node_modules/* --includes=frontend/src/graphql/queries/server/*.ts --localSchemaFile=backend-node/src/generated/schema.graphql  --target typescript --tagName gql --outputFlat frontend/src/generated",
+    "backend:generate": "yarn --cwd backend-node install",
+    "apollo:generate": "npm run backend:generate && apollo codegen:generate --excludes=frontend/node_modules/* --includes=frontend/src/graphql/queries/server/*.ts --localSchemaFile=backend-node/src/generated/schema.graphql  --target typescript --tagName gql --outputFlat frontend/src/generated",
     "start:dev": "concurrently \"npm-watch:typegen-client\" \"npm-watch:typegen-server\""
   },
   "dependencies": {
