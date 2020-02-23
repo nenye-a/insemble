@@ -1,7 +1,7 @@
 node_modules/**/*
 npm-debug.*
 lib/
-# package-lock.json
+package-lock.json
 
 # prisma
 # generated
