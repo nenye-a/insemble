@@ -3,8 +3,8 @@ import bcrypt from 'bcrypt';
 import { Base64 } from 'js-base64';
 
 import { Context } from 'serverTypes';
-// import { sendEmail } from '../../helpers/sendEmail';
-import { NODE_ENV } from '../../constants/constants';
+import { sendTenantVerificationEmail } from '../../helpers/sendEmail';
+import { NODE_ENV, HOST } from '../../constants/constants';
 
 let registerTenantResolver: FieldResolver<
   'Mutation',
@@ -35,8 +35,15 @@ let registerTenantResolver: FieldResolver<
   });
 
   if (NODE_ENV === 'production') {
-    // TODO: send email here
-    // sendEmail('joshuasetiawan04@gmail.com');
+    sendTenantVerificationEmail(
+      {
+        email: `${tenant.email}`,
+        name: `${tenant.firstName} ${tenant.lastName}`,
+      },
+      `${HOST}/register-tenant-verification/${Base64.encodeURI(
+        tenantVerification.id,
+      )}`,
+    );
   } else {
     // console the verification id so we could still test it on dev environment
     // eslint-disable-next-line no-console
