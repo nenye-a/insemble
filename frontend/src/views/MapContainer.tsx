@@ -9,7 +9,7 @@ import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
 import { useParams } from 'react-router-dom';
 
 import { GET_LOCATION_PREVIEW } from '../graphql/queries/server/preview';
-import { View, Alert } from '../core-ui';
+import { View, Alert, LoadingIndicator } from '../core-ui';
 import LocationDetail from '../components/location-detail/LocationDetail';
 import InfoBox from 'react-google-maps/lib/components/addons/InfoBox';
 import MapPin from '../components/icons/map-pin.svg';
@@ -205,6 +205,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         locale={{ last: 'Done' }}
         spotlightClicks={false}
       /> */}
+      <LoadingIndicator visible={loading} />
       <Alert visible={!!error} text={error?.message || ''} />
       <GoogleMap
         ref={mapRef}

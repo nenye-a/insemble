@@ -26,13 +26,12 @@ export type NearbyPlace = {
   similar: boolean;
 };
 
-//asr a-b
 export default function NearbyCard() {
   let [selectedView, setSelectedView] = useState<ViewMode>('grid');
   let [selectedDropdownVal, setSelectedDropdownVal] = useState('Relevant');
   let isGridViewMode = selectedView === 'grid';
   let data = useContext(DeepDiveContext);
-  let nearbyData = data?.result.nearby;
+  let nearbyData = data?.result?.nearby;
   let filteredData = useMemo(() => {
     switch (selectedDropdownVal) {
       case 'Relevant': {

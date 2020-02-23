@@ -43,9 +43,12 @@ export default function Graphic() {
   let [activeIndex, setActiveIndex] = useState<number>(0);
   let [selectedFilter, setSelectedFilter] = useState<string>('Age');
   let options = ['Age', 'Income', 'Ethnicity', 'Education', 'Gender'];
-  let datas = [data?.result.demographics1, data?.result.demographics3, data?.result.demographics5];
+  let datas = [
+    data?.result?.demographics1,
+    data?.result?.demographics3,
+    data?.result?.demographics5,
+  ];
   let dataActiveIndex = datas[activeIndex];
-
   const renderCustomBarLabel = ({
     x,
     y,

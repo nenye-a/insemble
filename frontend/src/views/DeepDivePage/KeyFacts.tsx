@@ -19,11 +19,11 @@ type Data = {
 
 export default function KeyFacts() {
   let data = useContext(DeepDiveContext);
-  let commuteData = data?.result.commute;
-  let keyFactsData = data?.result.keyFacts;
+  let commuteData = data?.result?.commute;
+  let keyFactsData = data?.result?.keyFacts;
   let [selectedIndex, setSelectedIndex] = useState<number>(0);
   let [pieSize, setPieSize] = useState<Array<number>>([]);
-  let isCommuteSelected = selectedIndex === 0;
+  let isCommuteSelected = selectedIndex === 1;
 
   useEffect(() => {
     let size = () => {
