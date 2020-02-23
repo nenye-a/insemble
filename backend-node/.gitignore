@@ -1,13 +1,16 @@
 node_modules/**/*
 npm-debug.*
 lib/
-package-lock.json
+# package-lock.json
 
 # prisma
-generated
+# generated
 
 # macOS
 .DS_Store
 
 # Jest
 coverage/
+
+# Yarn
+yarn-error.log
