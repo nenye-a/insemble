@@ -69,7 +69,7 @@ function Landing() {
         <TextInput placeholder="Loading..." disabled={true} />
       ) : (
         <LocationsInput
-          placeholder="Enter the address of your top performing restaurant or store"
+          placeholder="Enter the address of your top performing location"
           buttonText="Find locations"
           onSubmit={(place: google.maps.places.PlaceResult) => {
             let { geometry, formatted_address: formattedAddress, name, place_id: placeID } = place;

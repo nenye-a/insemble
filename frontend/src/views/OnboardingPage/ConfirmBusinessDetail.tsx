@@ -166,7 +166,7 @@ export default function ConfirmBusinessDetail(props: Props) {
           name="business-relationship"
           options={[
             'I am the owner of this business',
-            'I operate this business location',
+            'I am a development manager',
             'I am an agent representing this business',
             'Other',
           ]}
