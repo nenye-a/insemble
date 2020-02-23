@@ -1,4 +1,5 @@
 import React, { Dispatch } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { View, Text, Button } from '../../core-ui';
@@ -7,7 +8,6 @@ import { FONT_SIZE_XLARGE, FONT_SIZE_SMALL, FONT_WEIGHT_BOLD } from '../../const
 import SignUpForm from '../SignUpPage/SignUpForm';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import InsembleLogo from '../../components/common/InsembleLogo';
-import { useHistory } from 'react-router-dom';
 
 type Props = {
   dispatch: Dispatch<Action>;
