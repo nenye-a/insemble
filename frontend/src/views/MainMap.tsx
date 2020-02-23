@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
 
-import { View, Button, Text, LoadingIndicator, Alert } from '../core-ui';
-import AvailableProperties from './MapPage/AvailableProperties';
+import { View, Text, LoadingIndicator, Alert } from '../core-ui';
 import SideBarFilters, {
   DEMOGRAPHICS_CATEGORIES,
   PROPERTIES_CATEGORIES,
@@ -14,11 +13,10 @@ import MapContainer from './MapContainer';
 import DeepDiveModal from './DeepDivePage/DeepDiveModal';
 import { GET_TENANT_MATCHES_DATA } from '../graphql/queries/server/matches';
 import { EDIT_BRAND } from '../graphql/queries/server/brand';
-import { WHITE, THEME_COLOR, HEADER_BORDER_COLOR } from '../constants/colors';
-import { FONT_WEIGHT_MEDIUM, FONT_SIZE_LARGE } from '../constants/theme';
+import { WHITE } from '../constants/colors';
+import { FONT_SIZE_LARGE } from '../constants/theme';
 import { TenantMatches, TenantMatchesVariables } from '../generated/TenantMatches';
 
-import SvgPropertyLocation from '../components/icons/property-location';
 import { useGoogleMaps } from '../utils';
 import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer';
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
@@ -100,7 +98,7 @@ export const TenantMatchesContext = createContext<TenantMatchesContextType>(tena
 
 export default function MainMap() {
   let [filters, setFilters] = useState<TenantMatchesContextFilter>(tenantMatchesInit.filters);
-  let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
+  // let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
   let [deepDiveModalVisible, toggleDeepDiveModal] = useState(false);
   let { isLoading } = useGoogleMaps();
   let params = useParams<BrandId>();
@@ -419,21 +417,21 @@ const Container = styled(View)`
   overflow: hidden;
 `;
 
-const ShowPropertyButton = styled(Button)`
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translate(-50%, 0);
-  z-index: 5;
-  background-color: ${WHITE};
-  border-radius: 18px;
-  border: none;
-  box-shadow: 0px 0px 6px 0px ${HEADER_BORDER_COLOR};
-  ${Text} {
-    color: ${THEME_COLOR};
-    font-weight: ${FONT_WEIGHT_MEDIUM};
-  }
-`;
+// const ShowPropertyButton = styled(Button)`
+//   position: fixed;
+//   bottom: 30px;
+//   left: 50%;
+//   transform: translate(-50%, 0);
+//   z-index: 5;
+//   background-color: ${WHITE};
+//   border-radius: 18px;
+//   border: none;
+//   box-shadow: 0px 0px 6px 0px ${HEADER_BORDER_COLOR};
+//   ${Text} {
+//     color: ${THEME_COLOR};
+//     font-weight: ${FONT_WEIGHT_MEDIUM};
+//   }
+// `;
 
 const LoadingOverlay = styled(View)`
   position: absolute;

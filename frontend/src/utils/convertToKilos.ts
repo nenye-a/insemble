@@ -1,4 +1,7 @@
 export default function convertToKilos(value: string | number) {
-  let valueString = value.toString();
-  return valueString.slice(0, -3);
+  let numberValue = Number(value);
+  if (!isNaN(numberValue)) {
+    return (numberValue / 1000).toString();
+  }
+  return '';
 }

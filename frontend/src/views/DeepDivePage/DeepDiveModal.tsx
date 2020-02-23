@@ -11,7 +11,6 @@ import { GET_LOCATION_DETAILS } from '../../graphql/queries/server/deepdive';
 import {
   LocationDetails,
   LocationDetailsVariables,
-  LocationDetails_locationDetails as LocationDetailsLocationDetails,
   LocationDetails_locationDetails_result as LocationDetailsLocationDetailsResult,
   LocationDetails_locationDetails_propertyDetails as LocationDetailsLocationDetailsPropertyDetails,
 } from '../../generated/LocationDetails';
