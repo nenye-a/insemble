@@ -16,6 +16,7 @@ import SignUp from './views/SignUp';
 import LandlordOnboarding from './views/LandlordOnboarding';
 import LandlordSignUp from './views/LandlordSignUp';
 import LandlordLogin from './views/LanlordLogin';
+import TenantEmailVerification from './views/TenantEmailVerification';
 
 import { tenantAuthorization } from './utils';
 
@@ -111,5 +112,10 @@ export default [
     layout: UserProfileLayout,
     component: TenantSavedProperties,
     authorization: tenantAuthorization,
+  },
+  {
+    path: '/email-verification/:verificationId',
+    layout: BasicLayout,
+    component: TenantEmailVerification,
   },
 ];

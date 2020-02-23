@@ -101,14 +101,10 @@ export default function SignUpForm(props: Props) {
   };
 
   if (data) {
-    let { registerTenant } = data;
-    let { token, brandId } = registerTenant;
-
-    saveUserData(token, Role.Tenant);
-    if (!signUpFirst) {
-      history.push(`/map/${brandId}`);
+    if (data.registerTenant.message === 'success') {
+      history.push(`/email-verification/${data.registerTenant.verificationId}`);
     } else {
-      history.push('/');
+      // TODO: error handling
     }
   }
   return (
