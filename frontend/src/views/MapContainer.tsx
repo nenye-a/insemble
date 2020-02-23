@@ -182,7 +182,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
 
   return (
     <div>
-      {/* <Joyride
+      <Joyride
         steps={steps}
         scrollToFirstStep={true}
         continuous={true}
@@ -204,7 +204,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         }}
         locale={{ last: 'Done' }}
         spotlightClicks={false}
-      /> */}
+      />
       <LoadingIndicator visible={loading} />
       <Alert visible={!!error} text={error?.message || ''} />
       <GoogleMap
@@ -588,7 +588,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
             </InfoBox>
           </Marker>
         )}
-        {/* {showGuide && <div className="marker-example heat-map-example empty-container" />} */}
+        {showGuide && <div className="marker-example heat-map-example empty-container" />}
         {heatmapData && (
           <HeatMapLayer
             data={heatmapData}

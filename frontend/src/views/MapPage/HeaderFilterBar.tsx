@@ -95,6 +95,7 @@ export default function HeaderFilterBar(props: Props) {
           ref={inputRef}
           placeholder={'Search an address or retailer'}
           onSubmit={submitHandler}
+          className="search-box"
         />
       </LocationInputContainer>
       {/* <Legend /> */}

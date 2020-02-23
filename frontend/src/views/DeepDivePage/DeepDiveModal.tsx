@@ -70,18 +70,7 @@ export default function LocationDeepDiveModal(props: Props) {
   // };
 
   let noPropertyDetail = !data?.locationDetails.propertyDetails;
-  console.log(
-    {
-      ...data?.locationDetails,
-      selectedLocation: {
-        lat,
-        lng,
-        address,
-        targetNeighborhood,
-      },
-    },
-    '<<<<'
-  );
+
   return (
     <DeepDiveContext.Provider
       value={{

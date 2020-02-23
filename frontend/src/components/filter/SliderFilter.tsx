@@ -23,7 +23,6 @@ export default function SliderFilter(props: Props) {
   let minSelectedRange = values && values.length > 0 ? prefix + values[0].toString() + postfix : '';
   let maxSelectedRange = values && values.length > 1 ? prefix + values[1].toString() + postfix : '';
   let selectedRange = `${minSelectedRange} - ${maxSelectedRange}`;
-  console.log(minimum, maximum, values, '<<<');
 
   return (
     <Slider>
