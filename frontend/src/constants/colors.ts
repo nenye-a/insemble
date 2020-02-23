@@ -57,3 +57,6 @@ export const LIGHT_GREY_ICON = LIGHT_GREY;
 
 // Filter carousel colors
 export const FILTER_CAROUSEL_INDICATOR = LIGHT_GREY;
+
+// Pie chart colors
+export const COMMUTE_CHART_COLORS = ['#674EA7CC', '#674EA799', '#674EA766', '#674EA733'];

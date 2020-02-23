@@ -8,7 +8,7 @@ import {
   FONT_SIZE_MEDIUM,
   FONT_SIZE_XXLARGE,
 } from '../../constants/theme';
-import { THEME_COLOR } from '../../constants/colors';
+import { THEME_COLOR, COMMUTE_CHART_COLORS } from '../../constants/colors';
 import { DeepDiveContext } from './DeepDiveModal';
 
 type Data = {
@@ -29,10 +29,10 @@ export default function KeyFacts() {
   // let { time } = props;
   let [selectedIndex, setSelectedIndex] = useState<number>(0);
   let [pieSize, setPieSize] = useState<Array<number>>([]);
-  let isEconomicDriversSelected = selectedIndex === 0;
+  let isCommuteSelected = selectedIndex === 0;
   useEffect(() => {
     let size = () => {
-      let target = document.getElementById('economic-view');
+      let target = document.getElementById('commute-view');
       if (target) {
         return [target.getBoundingClientRect().width, target.getBoundingClientRect().height];
       }
@@ -41,7 +41,6 @@ export default function KeyFacts() {
     setPieSize(size());
   }, []);
 
-  const COLORS = ['#674EA7CC', '#674EA799', '#674EA766', '#674EA733'];
   const RADIAN = Math.PI / 180;
   const renderCustomizedLabel = ({
     cx = 0,
@@ -119,8 +118,8 @@ export default function KeyFacts() {
             setSelectedIndex(index);
           }}
         />
-        {isEconomicDriversSelected ? (
-          <EconomicViews id="economic-view">
+        {isCommuteSelected ? (
+          <CommuteView flex id="commute-view">
             <PieChart width={pieSize[0]} height={pieSize[1]}>
               <Pie
                 data={commuteData && commuteData}
@@ -128,14 +127,16 @@ export default function KeyFacts() {
                 cy="50%"
                 outerRadius={150}
                 nameKey="name"
-                fill="#8884d8"
                 dataKey="value"
                 label={renderCustomizedLabel}
                 labelLine={false}
               >
                 {sortedData &&
                   sortedData.map((entry, index: number) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COMMUTE_CHART_COLORS[index % COMMUTE_CHART_COLORS.length]}
+                    />
                   ))}
               </Pie>
             </PieChart>
@@ -144,30 +145,30 @@ export default function KeyFacts() {
               <AverageTime>Average time to work: </AverageTime>
               <Time>{time}mins</Time>
             </TextView> */}
-          </EconomicViews>
+          </CommuteView>
         ) : (
-          <CommuteView flex>
-            <CommuteColumn>
+          <EconomicView flex>
+            <EconomicColumn>
               {numbers1.map((line, i) => (
                 <NumberText key={i}>{line}</NumberText>
               ))}
-            </CommuteColumn>
-            <CommuteColumn>
+            </EconomicColumn>
+            <EconomicColumn>
               {categories1.map((line, i) => (
                 <CategoriesText key={i}>{line}</CategoriesText>
               ))}
-            </CommuteColumn>
-            <CommuteColumn>
+            </EconomicColumn>
+            <EconomicColumn>
               {numbers2.map((line, i) => (
                 <NumberText key={i}>{line}</NumberText>
               ))}
-            </CommuteColumn>
-            <CommuteColumn>
+            </EconomicColumn>
+            <EconomicColumn>
               {categories2.map((line, i) => (
                 <CategoriesText key={i}>{line}</CategoriesText>
               ))}
-            </CommuteColumn>
-          </CommuteView>
+            </EconomicColumn>
+          </EconomicView>
         )}
       </RowedView>
     </Container>
@@ -220,8 +221,7 @@ const Value = styled.text`
   fill: black;
 `;
 
-const EconomicViews = styled(View)`
-  flex: 1;
+const CommuteView = styled(View)`
   justify-content: space-between;
 `;
 
@@ -238,11 +238,11 @@ const CategoriesText = styled(Text)`
   margin: 24px 0 24px 0;
 `;
 
-const CommuteView = styled(View)`
+const EconomicView = styled(View)`
   flex-direction: row;
   width: 600px;
 `;
-const CommuteColumn = styled(View)`
+const EconomicColumn = styled(View)`
   flex: 1;
   justify-content: space-around;
 `;
