@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useApolloClient } from '@apollo/react-hooks';
 
 import { View, Card, Avatar, Text, Button, LoadingIndicator } from '../../core-ui';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
@@ -16,6 +16,8 @@ export default function ProfileCard() {
     notifyOnNetworkStatusChange: true,
   });
   let history = useHistory();
+  let client = useApolloClient();
+
   let name = data?.profileTenant.firstName + ' ' + data?.profileTenant.lastName;
   let company = data?.profileTenant.company || '';
   let title = data?.profileTenant.title || '';
@@ -43,6 +45,7 @@ export default function ProfileCard() {
           await asyncStorage.removeTenantToken();
           await asyncStorage.removeBrandId();
           history.push('/');
+          await client.resetStore();
         }}
       />
     </Container>
