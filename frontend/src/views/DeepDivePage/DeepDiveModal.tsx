@@ -1,23 +1,32 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useQuery } from '@apollo/react-hooks';
+import { useParams } from 'react-router-dom';
 
 import { View, Modal, TabBar, LoadingIndicator } from '../../core-ui';
 import PropertyDeepDiveHeader from './PropertyDeepDiveHeader';
 import PropertyDetailView from './PropertyDetailView';
 import Overview from './Overview';
-import { useQuery } from '@apollo/react-hooks';
 import { GET_LOCATION_DETAILS } from '../../graphql/queries/server/deepdive';
 import {
   LocationDetails,
   LocationDetailsVariables,
-  LocationDetails_locationDetails as LocationDetailsLocationDetails,
+  LocationDetails_locationDetails_result as LocationDetailsLocationDetailsResult,
+  LocationDetails_locationDetails_propertyDetails as LocationDetailsLocationDetailsPropertyDetails,
 } from '../../generated/LocationDetails';
-import { useParams } from 'react-router-dom';
 import { THEME_COLOR } from '../../constants/colors';
 
-export const DeepDiveContext = React.createContext<LocationDetailsLocationDetails | undefined>(
-  undefined
-);
+type SelectedLocation = { lat: string; lng: string; address: string; targetNeighborhood: string };
+
+type DeepDiveContextType =
+  | {
+      result?: LocationDetailsLocationDetailsResult;
+      propertyDetails?: LocationDetailsLocationDetailsPropertyDetails | null;
+      selectedLocation?: SelectedLocation;
+    }
+  | undefined;
+
+export const DeepDiveContext = React.createContext<DeepDiveContextType>(undefined);
 type Props = {
   visible: boolean;
   onClose: () => void;
@@ -63,7 +72,17 @@ export default function LocationDeepDiveModal(props: Props) {
   let noPropertyDetail = !data?.locationDetails.propertyDetails;
 
   return (
-    <DeepDiveContext.Provider value={data?.locationDetails}>
+    <DeepDiveContext.Provider
+      value={{
+        ...data?.locationDetails,
+        selectedLocation: {
+          lat,
+          lng,
+          address,
+          targetNeighborhood,
+        },
+      }}
+    >
       <Modal onClose={onClose} visible={visible} svgCloseProps={{ fill: THEME_COLOR }}>
         {loading ? (
           <LoadingIndicator
@@ -81,6 +100,12 @@ export default function LocationDeepDiveModal(props: Props) {
                 flex
                 //  onScroll={handleOnScroll}
               >
+                <PropertyDeepDiveHeader
+                  isLiked={isLiked}
+                  onLikePress={toggleIsLiked}
+                  address={address}
+                  targetNeighborhood={targetNeighborhood}
+                />
                 <Overview />
               </ScrollView>
             ) : (

@@ -19,8 +19,8 @@ import { roundDecimal } from '../../utils';
 
 export default function MatchPercentageCard() {
   let data = useContext(DeepDiveContext);
-  let progress = data?.result.matchValue;
-  let affinities = data?.result.affinities;
+  let progress = data?.result?.matchValue;
+  let affinities = data?.result?.affinities;
 
   const ASPECTS = [
     {

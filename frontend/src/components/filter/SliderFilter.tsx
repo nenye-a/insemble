@@ -28,7 +28,7 @@ export default function SliderFilter(props: Props) {
     <Slider>
       <Range
         disabled={disabled}
-        defaultValue={values}
+        value={values}
         max={maximum}
         min={minimum}
         allowCross={false}

@@ -7,7 +7,7 @@ import { DeepDiveContext } from './DeepDiveModal';
 
 export default function RelevantConsumerPersonas() {
   let data = useContext(DeepDiveContext);
-  let personasData = data?.result.topPersonas;
+  let personasData = data?.result?.topPersonas;
   return (
     <Container titleBackground="white" title="Relevant Consumer Personas">
       <CardsContainer>

@@ -7,6 +7,7 @@ import { View, Alert, Label, Button, Text, TextInput } from '../../core-ui';
 import { Filter } from '../../components';
 import { MUTED_TEXT_COLOR } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_SIZE_MEDIUMSMALL } from '../../constants/theme';
+import { convertToKilos } from '../../utils';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import {
   GET_PERSONA_LIST,
@@ -78,19 +79,22 @@ export default function TenantTargetCustomers(props: Props) {
   useEffect(() => {
     if (autoPopulateData?.autoPopulateFilter) {
       let { personas, income, age } = autoPopulateData.autoPopulateFilter;
-      let { min: minIncome, max: maxIncome } = income;
-      let { min: minAge, max: maxAge } = age;
+      let { min: autoMinIncome, max: autoMaxIncome } = income;
+      let { min: autoMinAge, max: autoMaxAge } = age;
       if (personas.length > 0) {
         setSelectedPersonas(personas);
       }
       if (minIncome && maxIncome) {
-        setSelectedIncomeRange([minIncome / 1000, maxIncome / 1000]);
+        setSelectedIncomeRange([
+          Number(convertToKilos(autoMinIncome)),
+          Number(convertToKilos(autoMaxIncome)),
+        ]);
       }
       if (minAge && maxAge) {
-        setSelectedAgeRange([minAge, maxAge]);
+        setSelectedAgeRange([autoMinAge, autoMaxAge]);
       }
     }
-  }, [autoPopulateLoading, autoPopulateData]);
+  }, [autoPopulateLoading, autoPopulateData, minIncome, maxIncome, minAge, maxAge]);
 
   useEffect(() => {
     dispatch({

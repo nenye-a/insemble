@@ -21,7 +21,7 @@ export const LEGEND = {
 };
 
 export default function NearbyMapLegend() {
-  let [isCollapsed, toggleCollapsible] = useState(true);
+  let [isCollapsed, toggleCollapsible] = useState(false);
   let legends = Object.entries(LEGEND);
   let leftLegends = legends.slice(0, 3);
   let rightLegends = legends.slice(3);

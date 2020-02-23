@@ -2,7 +2,7 @@ import React, { ComponentProps, useState, useRef, CSSProperties, useEffect } fro
 import styled from 'styled-components';
 import PillButton from './PillButton';
 import View from './View';
-import TextInput from './ContainedTextInput';
+import TextInput from './TextInput';
 import {
   THEME_COLOR,
   WHITE,
@@ -22,10 +22,11 @@ type Props = {
   placeholder: string;
   onChange: (options: Array<string>) => void;
   containerStyle?: CSSProperties;
+  inputContainerStyle?: CSSProperties;
 };
 
 export default function MultiSelectInput(props: Props) {
-  let { options, placeholder, onChange, containerStyle } = props;
+  let { options, placeholder, onChange, containerStyle, inputContainerStyle } = props;
   let [selectedValues, setSelectedValues] = useState<Array<string>>([]);
   let [inputValue, setInputValue] = useState<string>('');
   let [isFocused, setFocus] = useState<boolean>(false);
@@ -52,7 +53,7 @@ export default function MultiSelectInput(props: Props) {
           </Selected>
         ))}
         <TextSearch
-          id={'search'}
+          id="search"
           ref={inputRef}
           value={inputValue}
           placeholder={placeholder}
@@ -66,7 +67,8 @@ export default function MultiSelectInput(props: Props) {
               }
             }
           }}
-          autoComplete={'on'}
+          autoComplete="on"
+          containerStyle={inputContainerStyle}
         />
       </SearchContainer>
       {inputValue ? (
@@ -99,6 +101,7 @@ type SearchContainerProps = ViewProps & {
 const Container = styled(View)`
   z-index: 2;
 `;
+
 const SearchContainer = styled(View)<SearchContainerProps>`
   flex-flow: row wrap;
   align-items: center;
@@ -107,6 +110,7 @@ const SearchContainer = styled(View)<SearchContainerProps>`
   border-width: 1px;
   border-color: ${(props) => (props.isFocused ? THEME_COLOR : TEXT_INPUT_BORDER_COLOR)};
   border-radius: 5px;
+  z-index: 2;
 `;
 
 const TextSearch = styled(TextInput)`
@@ -114,11 +118,11 @@ const TextSearch = styled(TextInput)`
   height: 36px;
   outline: none;
   background-color: transparent;
+  border: none;
 `;
 
 const Selected = styled(PillButton)`
-  margin: 0 0 0 8px;
-  outline: none;
+  margin: 4px 0px 4px 4px;
 `;
 const OptionContainer = styled(Card)`
   width: 100%;

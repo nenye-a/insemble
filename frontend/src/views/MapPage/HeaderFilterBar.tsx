@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 
-import { View, Dropdown, Button } from '../../core-ui';
+import { View, Button } from '../../core-ui';
 import { MultiSelectBox } from '../../components';
 
 import { WHITE, HEADER_BORDER_COLOR } from '../../constants/colors';
-import Legend from '../MapPage/Legend';
+// import Legend from '../MapPage/Legend';
 import TextInput from '../../core-ui/ContainedTextInput';
 import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
 import { Categories } from '../../generated/Categories';
@@ -22,7 +22,7 @@ type Props = {
 
 export default function HeaderFilterBar(props: Props) {
   let { categories, onPublishChangesPress, publishButtonDisabled } = props;
-  let [selectedDropdownValue, setSelectedDropdownValue] = useState<string>('Recommended');
+  // let [selectedDropdownValue, setSelectedDropdownValue] = useState<string>('Recommended');
   let [selectedOptions, setSelectedOptions] = useState<Array<string>>(categories || []);
   let { data: categoryData, loading: categoryLoading } = useQuery<Categories>(GET_CATEGORIES);
   let { onCategoryChange, onAddressChange } = useContext(TenantMatchesContext);
@@ -78,29 +78,32 @@ export default function HeaderFilterBar(props: Props) {
           }}
           loading={categoryLoading}
         />
-        <Dropdown
+        {/* <Dropdown
           options={PROPERTY_TYPES}
           selectedOption={selectedDropdownValue}
           onSelect={(newValue: string) => setSelectedDropdownValue(newValue)}
-        />
-        <SaveButton
+        /> */}
+        <UpdateMapButton
           text="Update Map"
           onPress={onPublishChangesPress}
           disabled={publishButtonDisabled}
         />
       </RowedView>
-      <LocationInputContainer
-        icon
-        ref={inputRef}
-        placeholder={'Search an address or retailer'}
-        onSubmit={submitHandler}
-      />
-      <Legend />
+      <LocationInputContainer flex>
+        <LocationInput
+          icon
+          ref={inputRef}
+          placeholder={'Search an address or retailer'}
+          onSubmit={submitHandler}
+          className="search-box"
+        />
+      </LocationInputContainer>
+      {/* <Legend /> */}
     </Container>
   );
 }
 
-const PROPERTY_TYPES = ['Available', 'Recommended'];
+// const PROPERTY_TYPES = ['Available', 'Recommended'];
 
 const RowedView = styled(View)`
   flex-direction: row;
@@ -112,21 +115,27 @@ const Container = styled(RowedView)`
   z-index: 1;
   background-color: ${WHITE};
   box-shadow: 0px 1px 1px 0px ${HEADER_BORDER_COLOR};
-  justify-content: space-between;
   position: sticky;
   top: 0px;
 `;
 
-const SaveButton = styled(Button)`
+const UpdateMapButton = styled(Button)`
   margin-left: 8px;
 `;
 
-const LocationInputContainer = styled(TextInput)`
+// we should remove this styling later when dropdown and legend are ready
+const LocationInputContainer = styled(View)`
+  align-items: center;
+  margin-left: -20%;
+`;
+
+const LocationInput = styled(TextInput)`
   width: 343px;
   height: 36px;
   border: solid;
   border-width: 1px;
   margin-left: 8px;
+  align-self: center;
 `;
 
 const CategorySelector = styled(MultiSelectBox)`
