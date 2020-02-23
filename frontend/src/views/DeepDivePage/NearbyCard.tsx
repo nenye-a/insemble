@@ -95,9 +95,9 @@ export default function NearbyCard() {
             <NearbyPlacesCardContainer flex>
               {isGridViewMode
                 ? filteredData &&
-                  filteredData.map((item, index) => <NearbyPlacesCard key={index} {...item} />)
+                  filteredData.map((item, index) => <MiniNearbyPlacesCard key={index} {...item} />)
                 : filteredData &&
-                  filteredData.map((item, index) => <MiniNearbyPlacesCard key={index} {...item} />)}
+                  filteredData.map((item, index) => <NearbyPlacesCard key={index} {...item} />)}
             </NearbyPlacesCardContainer>
           </RightContent>
         </View>
