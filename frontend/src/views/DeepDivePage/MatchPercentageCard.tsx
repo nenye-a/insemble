@@ -89,6 +89,7 @@ const Container = styled(View)`
 `;
 const PercentageContainer = styled(View)`
   align-items: center;
+  padding-top: 16px;
 `;
 
 const RowedView = styled(View)`
