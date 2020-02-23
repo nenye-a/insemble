@@ -1,7 +1,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://prisma:prisma@localhost:5432/insemble?schema=public"
+  url = "***"
 }
 
 
@@ -112,7 +112,9 @@ model Brand {
   ethnicity              String[]
   minDaytimePopulation   Int?
   minSize                Int?
+  maxSize                Int?
   minFrontageWidth       Int?
+  maxFrontageWidth       Int?
   equipment              String[]
   spaceType              String[]
   locationAndPerformance LocationAndPerformance[]
