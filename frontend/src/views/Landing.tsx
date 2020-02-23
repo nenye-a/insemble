@@ -36,13 +36,14 @@ function Landing() {
           </TouchableOpacity>
         ) : (
           <>
-            <FindTenantsButton
-              text="Find Tenants"
+            {/* Omitted until the landlord side is ready. */}
+            {/* <FindTenantsButton
+              text="Landlord Portal"
               mode="transparent"
               onPress={() => {
                 history.push('/landlord/signup');
               }}
-            />
+            /> */}
             <LogIn
               mode="secondary"
               text="Log In"
@@ -60,10 +61,10 @@ function Landing() {
           </>
         )}
       </RowView>
-      <Title style={{ maxWidth: 580 }}>Find the next best location for your business</Title>
-      <Text color={WHITE} fontSize={FONT_SIZE_LARGE}>
+      <Title style={{ maxWidth: 800 }}>Find the best locations for your retail or restaurant business</Title>
+      {/* <Text color={WHITE} fontSize={FONT_SIZE_LARGE}>
         I have an existing location
-      </Text>
+      </Text> */}
       {isLoading ? (
         <TextInput placeholder="Loading..." disabled={true} />
       ) : (
@@ -91,9 +92,9 @@ function Landing() {
         />
       )}
       <BottomContainer>
-        <Text color={WHITE} fontSize={FONT_SIZE_LARGE}>
+        {/* <Text color={WHITE} fontSize={FONT_SIZE_LARGE}>
           Exploring a new restaurant or retail concept
-        </Text>
+        </Text> */}
         <CategoriesInput />
       </BottomContainer>
     </Masthead>
