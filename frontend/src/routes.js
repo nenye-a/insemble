@@ -32,6 +32,8 @@ import LandlordOnboarding from './views/LandlordOnboarding';
 import LandlordSignUp from './views/LandlordSignUp';
 import LandlordLogin from './views/LanlordLogin';
 
+import { tenantAuthorization } from './utils';
+
 export default [
   {
     path: '/',
@@ -123,16 +125,19 @@ export default [
     path: '/change-password',
     layout: BasicLayout,
     component: ChangePassword,
+    authorization: tenantAuthorization,
   },
   {
     path: '/explore',
     layout: BasicLayout,
     component: Explore,
+    authorization: tenantAuthorization,
   },
   {
     path: '/location-deep-dive',
     layout: BasicLayout,
     component: LocationDeepDive,
+    authorization: tenantAuthorization,
   },
   {
     path: '/matches',
@@ -153,6 +158,7 @@ export default [
     path: '/tenant-deep-dive',
     layout: BasicLayout,
     component: TenantDeepDive,
+    authorization: tenantAuthorization,
   },
   {
     path: '/map/:brandId',
@@ -161,33 +167,44 @@ export default [
     props: {
       showButton: true,
     },
+    authorization: tenantAuthorization,
   },
-  { path: '/user/edit-profile', layout: UserProfileLayout, component: EditBasicProfile },
+  {
+    path: '/user/edit-profile',
+    layout: UserProfileLayout,
+    component: EditBasicProfile,
+    authorization: tenantAuthorization,
+  },
   {
     path: '/user/brands',
     layout: UserProfileLayout,
     component: TenantBrands,
     exact: true,
+    authorization: tenantAuthorization,
   }, // TODO: change tenant matches to brand
   {
     path: '/user/brands/:brandId',
     layout: UserProfileLayout,
     component: BrandDetail,
+    authorization: tenantAuthorization,
   },
   {
     path: '/user/messages',
     layout: UserProfileLayout,
     component: Messages,
     exact: true,
+    authorization: tenantAuthorization,
   },
   {
     path: '/user/messages/:messageID',
     layout: UserProfileLayout,
     component: MessageDetail,
+    authorization: tenantAuthorization,
   },
   {
     path: '/user/saved-properties',
     layout: UserProfileLayout,
     component: TenantSavedProperties,
+    authorization: tenantAuthorization,
   },
 ];
