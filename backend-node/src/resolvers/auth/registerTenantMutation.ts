@@ -50,11 +50,11 @@ let registerTenantResolver: FieldResolver<
     console.log(Base64.encodeURI(tenantVerification.id));
   }
 
-  return { message: 'success' };
+  return { message: 'success', verificationId: tenantVerification.id };
 };
 
 export let registerTenant = mutationField('registerTenant', {
-  type: 'Message',
+  type: 'TenantRegisterResult',
   args: {
     tenant: arg({ type: 'TenantRegisterInput', required: true }),
     business: arg({ type: 'BusinessInput' }),
