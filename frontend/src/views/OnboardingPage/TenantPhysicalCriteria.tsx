@@ -87,6 +87,7 @@ export default function TenantPhysicalCriteria(props: Props) {
           options={equipmentData.equipments}
           onChange={setSelectedEquipmentOptions}
           containerStyle={{ marginBottom: 24 }}
+          inputContainerStyle={{ flex: 1 }}
         />
       )}
       <LabelText text="Space type" />
