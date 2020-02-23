@@ -112,6 +112,12 @@ export default function LocationDeepDiveModal(props: Props) {
                 flex
                 //  onScroll={handleOnScroll}
               >
+                <PropertyDeepDiveHeader
+                  isLiked={isLiked}
+                  onLikePress={toggleIsLiked}
+                  address={address}
+                  targetNeighborhood={targetNeighborhood}
+                />
                 <Overview />
               </ScrollView>
             ) : (
