@@ -52,6 +52,8 @@ export default function NearbyCard() {
     }
   }, [selectedDropdownVal, nearbyData]);
 
+  let top15Data = filteredData?.slice(0, 15);
+
   let iconTab = (
     <RightTitleContainer>
       <IconContainer
@@ -94,10 +96,8 @@ export default function NearbyCard() {
 
             <NearbyPlacesCardContainer flex>
               {isGridViewMode
-                ? filteredData &&
-                  filteredData.map((item, index) => <MiniNearbyPlacesCard key={index} {...item} />)
-                : filteredData &&
-                  filteredData.map((item, index) => <NearbyPlacesCard key={index} {...item} />)}
+                ? top15Data?.map((item, index) => <MiniNearbyPlacesCard key={index} {...item} />)
+                : top15Data?.map((item, index) => <NearbyPlacesCard key={index} {...item} />)}
             </NearbyPlacesCardContainer>
           </RightContent>
         </View>
