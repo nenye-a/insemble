@@ -10,26 +10,21 @@ import {
 } from '../../constants/theme';
 import { THEME_COLOR, COMMUTE_CHART_COLORS } from '../../constants/colors';
 import { DeepDiveContext } from './DeepDiveModal';
+import { convertToKilos } from '../../utils';
 
 type Data = {
   name: string;
   value: number;
 };
 
-type Props = {
-  time?: number;
-  chartData?: Array<Data>;
-  economicData?: Array<string>;
-};
-
 export default function KeyFacts() {
   let data = useContext(DeepDiveContext);
   let commuteData = data?.result.commute;
   let keyFactsData = data?.result.keyFacts;
-  // let { time } = props;
   let [selectedIndex, setSelectedIndex] = useState<number>(0);
   let [pieSize, setPieSize] = useState<Array<number>>([]);
   let isCommuteSelected = selectedIndex === 0;
+
   useEffect(() => {
     let size = () => {
       let target = document.getElementById('commute-view');
@@ -73,12 +68,14 @@ export default function KeyFacts() {
 
     return (
       <>
-        <Label x={x} y={y} textAnchor={'middle'} dominantBaseline="central">
+        <Label x={x} y={y} textAnchor="middle" dominantBaseline="central">
           {commuteData && commuteData[index].name}
         </Label>
-        <Value x={x} y={y && y + 20} fill="black" textAnchor={'middle'} dominantBaseline="central">
-          {commuteData && commuteData[index].value.toString().slice(0, -3)}K
-        </Value>
+        {commuteData && (
+          <Value x={x} y={y && y + 20} fill="black" textAnchor="middle" dominantBaseline="central">
+            {convertToKilos(commuteData[index].value)}K
+          </Value>
+        )}
       </>
     );
   };
