@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 
 import { transitions, positions, Provider as AlertProvider } from 'react-alert';
 import { ClientContextProvider } from 'react-fetching-library';
@@ -60,6 +60,19 @@ class App extends React.Component {
                           path={route.path}
                           exact={route.exact}
                           component={withTracker((props) => {
+                            if (
+                              route.authorization &&
+                              route.authorization.isAuthorized &&
+                              !route.authorization.isAuthorized()
+                            ) {
+                              return (
+                                <Redirect
+                                  to={{
+                                    pathname: '/',
+                                  }}
+                                />
+                              );
+                            }
                             return (
                               <route.layout {...props} {...route.props}>
                                 <route.component {...props} />
