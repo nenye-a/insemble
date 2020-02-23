@@ -7,6 +7,7 @@ import { FONT_SIZE_XLARGE, FONT_SIZE_SMALL, FONT_WEIGHT_BOLD } from '../../const
 import SignUpForm from '../SignUpPage/SignUpForm';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import InsembleLogo from '../../components/common/InsembleLogo';
+import { useHistory } from 'react-router-dom';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -15,13 +16,20 @@ type Props = {
 
 export default function OnBoardingSignUp(props: Props) {
   let { state: onboardingState } = props;
+  let history = useHistory();
   return (
     <Container>
       <FormContainer flex>
         <SignUpForm role="Tenant" onboardingState={onboardingState} />
         <RowView style={{ marginBottom: 10 }}>
           <Text>Already have an account? </Text>
-          <Button mode="transparent" text="Log in here" />
+          <Button
+            mode="transparent"
+            text="Log in here"
+            onPress={() => {
+              history.push('/login');
+            }}
+          />
         </RowView>
       </FormContainer>
       <Description>
