@@ -34,7 +34,7 @@ export default function KeyFacts() {
       return [];
     };
     setPieSize(size());
-  }, []);
+  }, [selectedIndex]);
 
   const RADIAN = Math.PI / 180;
   const renderCustomizedLabel = ({
