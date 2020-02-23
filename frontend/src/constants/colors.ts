@@ -7,6 +7,7 @@ const DETAIL_GREY = '#727272';
 const DARK_DETAIL = '#4B4B4B';
 const BRIGHT_BLUE = '#0D7EFF';
 const RED = '#FF0000';
+const DARK_GREEN = '#549848';
 const GREEN = '#36DD93';
 const LIGHT_GREEN = '#CAF1DF';
 export const GREY = '#B2B2B2';
@@ -24,6 +25,7 @@ export const MUTED_TEXT_COLOR = LIGHT_GREY;
 export const RED_TEXT = RED;
 export const UNSELECTED_TEXT_COLOR = LIGHT_GREY;
 export const DARK_TEXT_COLOR = DETAIL_GREY;
+export const GREEN_TEXT = DARK_GREEN;
 
 export const HEADER_BORDER_COLOR = 'rgba(103,76,167,0.17)';
 export const BOTTOM_CARD_COLOR = LIGHTEST_GREY;
@@ -57,3 +59,6 @@ export const LIGHT_GREY_ICON = LIGHT_GREY;
 
 // Filter carousel colors
 export const FILTER_CAROUSEL_INDICATOR = LIGHT_GREY;
+
+// Pie chart colors
+export const COMMUTE_CHART_COLORS = ['#674EA7CC', '#674EA799', '#674EA766', '#674EA733'];

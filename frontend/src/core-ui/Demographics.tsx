@@ -6,7 +6,7 @@ import SvgGreenArrow from '../components/icons/green-arrow';
 import SvgRedArrow from '../components/icons/red-arrow';
 import Card from './Card';
 import Legend from '../views/MapPage/Legend';
-import { HOVERED_LIST_ITEM_BG, THEME_COLOR } from '../constants/colors';
+import { HOVERED_LIST_ITEM_BG, THEME_COLOR, RED_TEXT, GREEN_TEXT } from '../constants/colors';
 import {
   FONT_WEIGHT_BOLD,
   FONT_SIZE_MEDIUM,
@@ -17,7 +17,7 @@ import SegmentedControl from './SegmentedControl';
 import { View, Text } from '../core-ui';
 import { CarouselFilter } from '../components';
 import { DeepDiveContext } from '../views/DeepDivePage/DeepDiveModal';
-import { roundDecimal } from '../utils';
+import { roundDecimal, convertToKilos } from '../utils';
 
 //TODO Improve Typing for data
 type DemographicsStatus = {
@@ -43,9 +43,12 @@ export default function Graphic() {
   let [activeIndex, setActiveIndex] = useState<number>(0);
   let [selectedFilter, setSelectedFilter] = useState<string>('Age');
   let options = ['Age', 'Income', 'Ethnicity', 'Education', 'Gender'];
-  let datas = [data?.result.demographics1, data?.result.demographics3, data?.result.demographics5];
+  let datas = [
+    data?.result?.demographics1,
+    data?.result?.demographics3,
+    data?.result?.demographics5,
+  ];
   let dataActiveIndex = datas[activeIndex];
-
   const renderCustomBarLabel = ({
     x,
     y,
@@ -62,37 +65,31 @@ export default function Graphic() {
     let demographicData =
       dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey][index];
     return (
-      //TODO Fix Population Arrow Indicator And Percentage Based On BE data
       <>
-        {demographicData && demographicData.growth ? (
-          <SvgGreenArrow x={x + width / 2 - 5} y={5} />
-        ) : (
-          <SvgRedArrow x={x + width / 2 - 5} y={5} />
+        {demographicData?.growth && demographicData.growth !== 0 && (
+          <>
+            {demographicData.growth > 0 ? (
+              <>
+                <SvgGreenArrow x={x + width / 2 - 5} y={5} />
+                <LabelText fill={GREEN_TEXT} x={x + width / 2 + 16} y={25}>
+                  {roundDecimal(demographicData.growth, 2)}
+                </LabelText>
+              </>
+            ) : (
+              <>
+                <SvgRedArrow x={x + width / 2 - 5} y={5} />
+                <LabelText fill={RED_TEXT} x={x + width / 2 + 16} y={25}>
+                  {roundDecimal(demographicData.growth, 2)}
+                </LabelText>
+              </>
+            )}
+          </>
         )}
-        <LabelText
-          fill={
-            demographicData &&
-            demographicData.growth &&
-            demographicData &&
-            demographicData.growth > 0
-              ? '#666'
-              : 'red'
-          }
-          x={x + width / 2 + 16}
-          y={25}
-        >
-          {demographicData && roundDecimal(demographicData.growth || '')}
-        </LabelText>
-        <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
-          {`${
-            value
-              ? value
-                  .toString()
-                  .slice(0, -3)
-                  .concat('k')
-              : ''
-          }`}
-        </LabelText>
+        {value && (
+          <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
+            {roundDecimal(convertToKilos(value)) + 'k'}
+          </LabelText>
+        )}
       </>
     );
   };
@@ -109,14 +106,7 @@ export default function Graphic() {
   }) => {
     return (
       <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
-        {`${
-          value
-            ? value
-                .toString()
-                .slice(0, -3)
-                .concat('k')
-            : ''
-        }`}
+        {`${value ? roundDecimal(convertToKilos(value)) + 'k' : ''}`}
       </LabelText>
     );
   };

@@ -26,13 +26,12 @@ export type NearbyPlace = {
   similar: boolean;
 };
 
-//asr a-b
 export default function NearbyCard() {
   let [selectedView, setSelectedView] = useState<ViewMode>('grid');
   let [selectedDropdownVal, setSelectedDropdownVal] = useState('Relevant');
   let isGridViewMode = selectedView === 'grid';
   let data = useContext(DeepDiveContext);
-  let nearbyData = data?.result.nearby;
+  let nearbyData = data?.result?.nearby;
   let filteredData = useMemo(() => {
     switch (selectedDropdownVal) {
       case 'Relevant': {
@@ -52,6 +51,8 @@ export default function NearbyCard() {
       }
     }
   }, [selectedDropdownVal, nearbyData]);
+
+  let top15Data = filteredData?.slice(0, 15);
 
   let iconTab = (
     <RightTitleContainer>
@@ -95,10 +96,8 @@ export default function NearbyCard() {
 
             <NearbyPlacesCardContainer flex>
               {isGridViewMode
-                ? filteredData &&
-                  filteredData.map((item, index) => <NearbyPlacesCard key={index} {...item} />)
-                : filteredData &&
-                  filteredData.map((item, index) => <MiniNearbyPlacesCard key={index} {...item} />)}
+                ? top15Data?.map((item, index) => <MiniNearbyPlacesCard key={index} {...item} />)
+                : top15Data?.map((item, index) => <NearbyPlacesCard key={index} {...item} />)}
             </NearbyPlacesCardContainer>
           </RightContent>
         </View>
