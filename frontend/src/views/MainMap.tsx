@@ -375,12 +375,13 @@ export default function MainMap() {
         <Alert visible={!!tenantMatchesError} text={tenantMatchesError?.message || ''} />
         <Alert visible={!!editBrandError} text={editBrandError?.message || ''} />
         <Container flex>
-          <ShowPropertyButton
+          {/* hiding this until data is ready */}
+          {/* <ShowPropertyButton
             mode="secondary"
             onPress={() => togglePropertyRecommendation(true)}
             text="Show Property List"
             icon={<SvgPropertyLocation />}
-          />
+          /> */}
           <SideBarFilters />
           {!isLoading && (
             <MapContainer
@@ -402,10 +403,11 @@ export default function MainMap() {
               matchingProperties={tenantMatchesData?.tenantMatches.matchingProperties}
             />
           )}
-          <AvailableProperties
+          {/* hiding this until data is ready */}
+          {/* <AvailableProperties
             visible={propertyRecommendationVisible}
             onHideClick={() => togglePropertyRecommendation(false)}
-          />
+          /> */}
         </Container>
       </View>
     </TenantMatchesContext.Provider>
