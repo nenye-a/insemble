@@ -617,3 +617,8 @@ def get_personas(categories):
         personas += category['positive_personas']
 
     return personas
+
+
+# return all the categories that are used in the database, organized by occurrence
+def get_category_list():
+    return [category["name"] for category in list(utils.DB_CATEGORIES.find().sort([('occurrence', -1)]))]

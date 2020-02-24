@@ -77,7 +77,7 @@ class FilterDetailAPI(generics.GenericAPIView):
         response = {
             'status': 200,
             'status_detail': "Success",
-            'brand_categories': matching.FOURSQUARE_CATEGORIES,
+            'brand_categories': provider.get_category_list(),
             'personas': matching.SPATIAL_CATEGORIES,
             'education': matching.EDUCATION_LIST,
             'ethnicity': matching.RACE_LIST,
