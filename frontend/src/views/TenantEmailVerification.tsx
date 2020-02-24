@@ -29,6 +29,8 @@ export default function TenantEmailVerification() {
       let { brandId, token } = tenantAuth;
       asyncStorage.saveTenantToken(token);
       asyncStorage.saveRole('Tenant');
+      asyncStorage.saveBrandId(brandId);
+
       if (brandId) {
         history.push(`/map/${brandId}`);
       } else {
