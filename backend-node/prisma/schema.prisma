@@ -10,19 +10,28 @@ generator client {
 }
 
 enum TenantTier {
-  FREE EXPLORE SMART PROFESSIONAL
+  FREE
+  EXPLORE
+  SMART
+  PROFESSIONAL
 }
 
 enum LandlordTier {
-  FREE EXPLORE SMART PROFESSIONAL
+  FREE
+  EXPLORE
+  SMART
+  PROFESSIONAL
 }
 
 enum NewLocationPlan {
-  YES NOT_ACTIVE NOT_PLANNING
+  YES
+  NOT_ACTIVE
+  NOT_PLANNING
 }
 
 enum MarketingPreference {
-  PUBLIC PRIVATE
+  PUBLIC
+  PRIVATE
 }
 
 // model MatchingLocation {
