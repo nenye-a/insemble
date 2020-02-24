@@ -20,3 +20,4 @@
 20200222201300-add-tenant-verification
 20200224142701-remove-max-size-and-max-front-width
 20200224174425-add-tenant-email-verification
+20200224191120-make-business-and-filter-optional
