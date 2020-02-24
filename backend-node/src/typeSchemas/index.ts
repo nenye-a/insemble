@@ -1,6 +1,7 @@
 export * from './Tenant';
 export * from './TenantAuth';
 export * from './TenantRegisterInput';
+export * from './TenantVerification';
 
 export * from './Landlord';
 export * from './LandlordAuth';
@@ -21,3 +22,5 @@ export * from './BrandThumbnail';
 export * from './LocationPreviewResult';
 export * from './EditProfileTenantInput';
 export * from './LocationDetailsResult';
+
+export * from './TenantRegisterResult';
