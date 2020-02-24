@@ -3,13 +3,12 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 
-import { Text, View, ContainedTextInput as TextInput, TouchableOpacity, Avatar } from '../core-ui';
+import { View, ContainedTextInput as TextInput, TouchableOpacity, Avatar } from '../core-ui';
 import Title from './LandingPage/Title';
 import Masthead from './LandingPage/Masthead';
 import LocationsInput from './LandingPage/LocationsInput';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import { WHITE } from '../constants/colors';
-import { FONT_SIZE_LARGE } from '../constants/theme';
 import CategoriesInput from './LandingPage/CategoriesInput';
 import Button from '../core-ui/Button';
 import { GetTenantProfile } from '../generated/GetTenantProfile';
@@ -116,13 +115,13 @@ const RowView = styled(View)`
   right: 32px;
 `;
 
-const FindTenantsButton = styled(Button)`
-  margin: 0 12px 0 0;
-  align-self: center;
-  ${Text} {
-    color: ${WHITE};
-  }
-`;
+// const FindTenantsButton = styled(Button)`
+//   margin: 0 12px 0 0;
+//   align-self: center;
+//   ${Text} {
+//     color: ${WHITE};
+//   }
+// `;
 
 const LogIn = styled(Button)`
   margin: 0 12px 0 0;
