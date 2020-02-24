@@ -20,19 +20,21 @@ let registerTenantResolver: FieldResolver<
   if (existing.length) {
     throw new Error('User already exists');
   }
-  let tenantVerification = await context.prisma.tenantVerification.create({
-    data: {
-      businessInput: JSON.stringify(business),
-      filterInput: JSON.stringify(filter),
-      tenantInput: JSON.stringify({
-        ...tenant,
+  let tenantVerification = await context.prisma.tenantRegisterVerification.create(
+    {
+      data: {
+        businessInput: JSON.stringify(business),
+        filterInput: JSON.stringify(filter),
+        tenantInput: JSON.stringify({
+          ...tenant,
+          email: lowerCasedEmail,
+          password,
+          tier: 'FREE',
+        }),
         email: lowerCasedEmail,
-        password,
-        tier: 'FREE',
-      }),
-      email: lowerCasedEmail,
+      },
     },
-  });
+  );
 
   if (NODE_ENV === 'production') {
     sendTenantVerificationEmail(

@@ -2,12 +2,22 @@ import { FieldResolver, mutationField, arg } from 'nexus';
 import bcrypt from 'bcrypt';
 
 import { Root, Context } from 'serverTypes';
+import { sendTenantVerificationEmail } from '../../helpers/sendEmail';
+import { HOST, NODE_ENV } from '../../constants/constants';
 
 let editProfileResolver: FieldResolver<
   'Mutation',
   'editProfileTenant'
 > = async (_: Root, { profile }, context: Context) => {
-  if (profile.email) {
+  let currentUser = await context.prisma.tenantUser.findOne({
+    where: {
+      id: context.tenantUserId,
+    },
+  });
+  if (!currentUser) {
+    throw new Error('User not found');
+  }
+  if (profile.email && profile.email !== currentUser.email) {
     let lowercasedEmail = profile.email?.toLocaleLowerCase();
     let emailExist = await context.prisma.tenantUser.findOne({
       where: {
@@ -17,16 +27,41 @@ let editProfileResolver: FieldResolver<
     if (emailExist && emailExist.id !== context.tenantUserId) {
       throw new Error('Email already exist');
     }
-  }
-  if (profile.oldPassword && profile.newPassword) {
-    let currentUser = await context.prisma.tenantUser.findOne({
+    let tenantEmailVerification = await context.prisma.tenantEmailVerification.create(
+      {
+        data: {
+          email: lowercasedEmail,
+          user: {
+            connect: { id: context.tenantUserId },
+          },
+        },
+      },
+    );
+    await context.prisma.tenantUser.update({
+      data: {
+        pendingEmail: true,
+      },
       where: {
         id: context.tenantUserId,
       },
     });
-    if (!currentUser) {
-      throw new Error('User not found');
+    if (NODE_ENV === 'production') {
+      sendTenantVerificationEmail(
+        {
+          email: tenantEmailVerification.email,
+          name: `${currentUser.firstName} ${currentUser.lastName}`,
+        },
+        `${HOST}/email-tenant-verification/${Base64.encodeURI(
+          tenantEmailVerification.id,
+        )}`,
+      );
+    } else {
+      // console the verification id so we could still test it on dev environment
+      // eslint-disable-next-line no-console
+      console.log(Base64.encodeURI(tenantEmailVerification.id));
     }
+  }
+  if (profile.oldPassword && profile.newPassword) {
     if (!bcrypt.compareSync(profile.oldPassword, currentUser.password || '')) {
       throw new Error('Wrong current password');
     }

@@ -32,8 +32,8 @@ export const LOGIN_TENANT = gql`
 `;
 
 export const TENANT_VERIFICATION = gql`
-  query TenantVerification($id: String!) {
-    tenantVerification(verificationId: $id) {
+  query TenantRegisterVerification($id: String!) {
+    tenantRegisterVerification(verificationId: $id) {
       verified
       tenantAuth {
         token

@@ -12,6 +12,7 @@ export const GET_TENANT_PROFILE = gql`
       description
       title
       tier
+      pendingEmail
     }
   }
 `;
@@ -27,6 +28,7 @@ export const EDIT_TENANT_PROFILE = gql`
       company
       description
       title
+      pendingEmail
     }
   }
 `;

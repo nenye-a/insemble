@@ -1,7 +1,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://prisma:prisma@localhost:5432/insemble?schema=public"
+  url = "***"
 }
 
 
@@ -169,9 +169,9 @@ model LandlordSession {
 
 model TenantRegisterVerification {
   id            String  @default(cuid()) @id
-  businessInput String?
+  businessInput String
   tenantInput   String
-  filterInput   String?
+  filterInput   String
   email         String
   verified      Boolean @default(false)
 }
