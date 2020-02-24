@@ -97,7 +97,7 @@ class FilterDetailAPI(generics.GenericAPIView):
 # TenantMatchApi - referenced by api/tenantMatch/
 
 
-class TenantMatchAPI(generics.GenericAPIView):
+class TenantMatchAPI(AsynchronousAPI):
 
     """
 
@@ -119,6 +119,7 @@ class TenantMatchAPI(generics.GenericAPIView):
         personas: list[string],     (optional)
         commute: list[string],      (optional)
         education: list[string],    (optional)
+        ethnicity: list[string],    (optional)
         rent: {                     (optional)
             min: int,               (required if rent provided)
             max: int                (optional)
@@ -145,7 +146,8 @@ class TenantMatchAPI(generics.GenericAPIView):
                 'sqft': int,
                 'type': string,
             }
-        ]
+        ],
+        tenant_id: string                   (always provided)
     }
 
     """
@@ -156,6 +158,9 @@ class TenantMatchAPI(generics.GenericAPIView):
     serializer_class = TenantMatchSerializer
 
     def get(self, request, *args, **kwargs):
+
+        self._register_tasks()
+
         # validate the input parameters
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -163,7 +168,7 @@ class TenantMatchAPI(generics.GenericAPIView):
 
         # Execute match generation based on the parameters provided,
         if 'address' in validated_params:
-            matches = matching.generate_matches(
+            matches, tenant_id = matching.generate_matches(
                 validated_params['address'], name=validated_params['brand_name']
             )
         else:
@@ -173,7 +178,7 @@ class TenantMatchAPI(generics.GenericAPIView):
             print(categories)
             location = provider.get_representative_location(categories, validated_params['income'])
 
-            matches = matching.generate_matches(
+            matches, tenant_id = matching.generate_matches(
                 location['address'], name=location['name']
             ) if location else []
 
@@ -186,11 +191,25 @@ class TenantMatchAPI(generics.GenericAPIView):
             'matching_properties': []  # TODO: implement determination of matching properties
         }
 
+        # TODO: store the match data in the database (likely do in matches) - DONE
+
+        # TODO: store the request information in the database (necessary)
+        # TODO: store the actual tenant location details in the database (here)
+
         return Response(response, status=status.HTTP_200_OK)
         # TODO: utilize the other parameters in the matching algorithms
 
+    @staticmethod
+    @celery_app.task
+    def get_tenant_details(address, brand_name=None):
+        provider.build_location(address, brand_name)
+
+    def _register_tasks(self) -> None:
+        celery_app.register_task(self.get_tenant_details)
 
 # LocationDetailsApi - referenced by api/locationDetails/
+
+
 class LocationDetailsAPI(AsynchronousAPI):
 
     """
@@ -564,7 +583,7 @@ class FastLocationDetailsAPI(AsynchronousAPI):
     Refer to LocationDetailsAPI for the definition. (Temporary)
 
     parameters: {
-        tenant_id: string, (required)
+        tenant_id: string,                      (required)
         target_location: {                      (required, not used if property_id is provided)
             lat: int,
             lng: int,
@@ -597,6 +616,7 @@ class FastLocationDetailsAPI(AsynchronousAPI):
     def get(self, request, *args, **kwargs):
 
         self._register_tasks()
+        # TODO: us tenant_id to grab the matches from the database.
 
         # validate request
         serializer = self.get_serializer(data=request.query_params)
@@ -643,10 +663,6 @@ class FastLocationDetailsAPI(AsynchronousAPI):
         # GET THE PSYCHOGRAPHICS
         top_personas = provider.get_matching_personas(location['psycho1'], tenant['psycho1'])
 
-        # GET THE DEMOGRAPHIC DETAILS
-        # tenant_demographics = self.obtain_demographics(tenant)
-        # location_demographics = self.obtain_demographics(location)
-
         # grab the demographic details
         _, tenant_demographics = tenant_demo_listener.join(), tenant_demographics[0]
         _, location_demographics = location_demo_listener.join(), location_demographics[0]
@@ -656,9 +672,6 @@ class FastLocationDetailsAPI(AsynchronousAPI):
 
         # grab the nearby details
         _, nearby = nearby_listener.join(), nearby[0]
-
-        # GET THE NEARBY LOCATIONS
-        # nearby = self.obtain_nearby(tenant, location)
 
         response = {
             'status': 200,

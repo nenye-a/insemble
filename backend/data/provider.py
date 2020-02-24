@@ -775,3 +775,106 @@ def get_nearest_space(lat, lng, database='spaces'):
             closest_space = space
 
     return closest_space
+
+
+def build_location(address, brand_name=None):
+
+    # first check and return location if in database
+    location = google.find(address, name=brand_name)
+    place = utils.DB_PROCESSED_SPACE.find({'place_id': location['place_id']})
+    if place:
+        return place
+
+    # if not in database, go on the pilgramage and build out
+    location = google.details(location['place_id'])
+    if location:
+        name = location['name']
+        lat = location['geometry']['location']['lat']
+        lng = location['geometry']['location']['lng']
+        address = location['formatted_address']
+        place_id = location['place_id']
+
+        # grab foursquare details
+        foursquare_details = foursquare.find(name, lat, lng, address)
+        if foursquare_details:
+            foursquare_categories = [{
+                'category_name': category['name'],
+                'category_short_name': category['shortName'],
+                'primary': category['primary']
+            } for category in foursquare_details['categories']]
+            location['foursquare_categories'] = foursquare_categories
+
+        location['detailed'] = True
+
+        # grab proximity details
+        type_queries = [
+            'store', 'restaurant',  # general categories
+            'park',  # key entertainment
+            'subway_station',  # transportation
+            'hospital',  # key services
+            'church',  # key religion
+            'university',
+        ]
+
+        search_queries = ['apartments']
+
+        for query in type_queries:
+
+            nearby_tag = 'nearby_' + query
+            if nearby_tag in space:
+                continue
+
+            nearby_places = google.nearby(
+                lat, lng, query, radius=1)  # need to add categories
+            if not nearby_places:
+                continue
+
+            # update the dictionary with this search details
+            location[nearby_tag] = [{
+                'distance': utils.distance(
+                    (lat, lng),
+                    (place['geometry']['location']['lat'],
+                        place['geometry']['location']['lng'])
+                ),
+                'place_id': place['place_id'],
+                'name': place['name'],
+                'types': place['types']
+            } for place in nearby_places]
+
+            if 'nearby_complete' in location:
+                location['nearby_complete'].append(nearby_tag)
+            else:
+                location['nearby_complete'] = [nearby_tag]
+
+        for query in search_queries:
+
+            nearby_tag = 'nearby_' + query
+            if nearby_tag in location:
+                continue
+
+            nearby_places = google.search(
+                lat, lng, query, radius=1)  # need to add categories
+            if not nearby_places:
+                continue
+
+            # update the dictionary with this search details
+            location[nearby_tag] = [{
+                'distance': utils.distance(
+                    (lat, lng),
+                    (place['geometry']['location']['lat'],
+                        place['geometry']['location']['lng'])
+                ),
+                'place_id': place['place_id'],
+                'name': place['name'],
+                'types': place['types'],
+            } for place in nearby_places]
+
+            if 'nearby_complete' in location:
+                location['nearby_complete'].append(nearby_tag)
+            else:
+                location['nearby_complete'] = [nearby_tag]
+
+        # grab psychographics
+        # TODO:
+
+    pass
