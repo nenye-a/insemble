@@ -35,6 +35,10 @@ def blockify():
             lng = round(place['lng'], 6)
 
             block = anmspatial.point_to_block(lat, lng, state='CA', prune_leading_zero=False)
+
+            if not block:
+                continue
+
             blockgroup = block[:-3]
 
             update = {
