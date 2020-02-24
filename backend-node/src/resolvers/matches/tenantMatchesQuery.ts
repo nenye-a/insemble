@@ -50,12 +50,10 @@ let tenantMatches = queryField('tenantMatches', {
       minDaytimePopulation,
       locationCount,
       minSize,
-      maxSize,
       newLocationPlan,
       spaceType,
       userRelation,
       minFrontageWidth,
-      maxFrontageWidth,
       nextLocations,
     } = selectedBrand;
 
@@ -158,12 +156,10 @@ let tenantMatches = queryField('tenantMatches', {
       minDaytimePopulation,
       locationCount,
       minSize,
-      maxSize,
       newLocationPlan,
       spaceType,
       userRelation,
       minFrontageWidth,
-      maxFrontageWidth,
       nextLocations,
     };
   },

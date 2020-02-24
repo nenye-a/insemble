@@ -44,14 +44,7 @@ export default function Onboarding() {
       educations,
       minDaytimePopulation,
     } = targetCustomers;
-    let {
-      minSize,
-      maxSize,
-      minFrontageWidth,
-      maxFrontageWidth,
-      spaceType,
-      equipments,
-    } = physicalSiteCriteria;
+    let { minSize, minFrontageWidth, spaceType, equipments } = physicalSiteCriteria;
     createBrand({
       variables: {
         business: {
@@ -72,9 +65,7 @@ export default function Onboarding() {
           minIncome: noIncomePreference ? null : Number(minIncome) * 1000,
           maxIncome: noIncomePreference ? null : Number(maxIncome) * 1000,
           minSize: Number(minSize),
-          maxSize: Number(maxSize),
           minFrontageWidth: Number(minFrontageWidth),
-          maxFrontageWidth: Number(maxFrontageWidth),
           spaceType,
           equipment: equipments,
         },

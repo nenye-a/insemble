@@ -8,9 +8,7 @@ export let FilterInput = inputObjectType({
     t.int('minRent');
     t.int('maxRent');
     t.int('minSize');
-    t.int('maxSize');
     t.int('minFrontageWidth');
-    t.int('maxFrontageWidth');
     t.int('minAge');
     t.int('maxAge');
     t.int('minDaytimePopulation');
