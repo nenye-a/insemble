@@ -58,7 +58,6 @@ export default function MultiSelectInput(props: Props) {
           value={inputValue}
           placeholder={placeholder}
           onClick={() => setFocus(document.getElementById('search') === document.activeElement)}
-          onBlur={() => setFocus(document.getElementById('search') === document.activeElement)}
           onChange={(event) => setInputValue(event.target.value.toLocaleLowerCase())}
           onKeyDown={(event) => {
             if (event.which === 8 && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
@@ -71,8 +70,13 @@ export default function MultiSelectInput(props: Props) {
           containerStyle={inputContainerStyle}
         />
       </SearchContainer>
-      {inputValue ? (
-        <ClickAway onClickAway={() => setInputValue('')}>
+      {isFocused ? (
+        <ClickAway
+          onClickAway={() => {
+            setInputValue('');
+            setFocus(document.getElementById('search') === document.activeElement);
+          }}
+        >
           <OptionContainer>
             {newOptionList.map((item, i) => {
               return (
@@ -81,6 +85,7 @@ export default function MultiSelectInput(props: Props) {
                   onPress={() => {
                     setInputValue('');
                     setSelectedValues([...selectedValues, item]);
+                    setFocus(document.getElementById('search') === document.activeElement);
                   }}
                 >
                   <ListText>{item}</ListText>
