@@ -212,7 +212,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         defaultZoom={defaultZoom}
         defaultCenter={defaultCenter}
         defaultOptions={{
-          maxZoom: 15,
+          maxZoom: 17,
           minZoom: 7,
           mapTypeControl: false,
           styles: [
