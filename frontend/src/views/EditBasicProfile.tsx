@@ -89,6 +89,11 @@ export default function BasicProfile() {
             disabled={true}
             containerStyle={textInputContainerStyle}
             defaultValue={data?.profileTenant.email}
+            errorMessage={
+              data?.profileTenant.pendingEmail
+                ? 'Your account is pending for e-mail verification. Please check your e-mail'
+                : ''
+            }
           />
           <RowedView>
             <TextInput
