@@ -121,5 +121,31 @@ def run_category_update():
             get_nearby_categories(space['place_id'])
 
 
+def update_category_list():
+
+    space_categories = utils.DB_PROCESSED_SPACE.aggregate([
+        {'$match': {'foursquare_categories.category_name': {'$exists': 1}}},
+        {'$project': {'foursquare_categories': 1}}
+    ])
+
+    categories = {}
+    count = 0
+    for item in space_categories:
+        for category in item['foursquare_categories']:
+            category = category['category_name']
+            if category not in categories:
+                categories[category] = {'name': category}
+
+            categories[category]['occurrence'] = categories[category].get('occurrence', 0) + 1
+            count += 1
+            # print(category)
+            print('.', end="") if count % 500 == 0 else None
+
+    # print(categories)
+    for category in categories.values():
+        utils.DB_CATEGORIES.update_one({'name': category['name']}, {'$set': category}, upsert=True)
+
+
 if __name__ == "__main__":
-    run_category_update()
+    # run_category_update()
+    update_category_list()
