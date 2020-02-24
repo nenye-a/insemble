@@ -1,12 +1,14 @@
 import json
 import time
+import timeit
 import ast
 import threading
 import data.matching as matching
 import data.provider as provider
+import data.api.goog as google
 from rest_framework import status, generics, permissions, serializers
 from rest_framework.response import Response
-from .tenant_serializers import TenantMatchSerializer, LocationDetailSerializer, LocationSerializer
+from .tenant_serializers import TenantMatchSerializer, LocationDetailSerializer, LocationSerializer, FastLocationDetailSerializer
 from .celery import app as celery_app
 
 
@@ -23,6 +25,11 @@ class AsynchronousAPI(generics.GenericAPIView):
     """
     Can be inherited by any other views in order to enable asynchronous functions.
     """
+
+    # allows all access by default, overload in child class.
+    permission_classes = [
+        permissions.AllowAny
+    ]
 
     # Takes a celery process and returns a threading task that will update
     # result pool with the final items when the process completes.
@@ -547,6 +554,198 @@ class LocationDetailsAPI(AsynchronousAPI):
         celery_app.register_task(self._get_location_details)
         celery_app.register_task(self._get_personas)
         celery_app.register_task(self._get_key_facts)
+
+
+# FastLocationDetailsAPI (modified) = referenced by api/fastLocationDetails (temporary, to replace the locationDetail API)
+class FastLocationDetailsAPI(AsynchronousAPI):
+
+    """
+
+    Refer to LocationDetailsAPI for the definition. (Temporary)
+
+    parameters: {
+        tenant_id: string, (required)
+        target_location: {                      (required, not used if property_id is provided)
+            lat: int,
+            lng: int,
+        },
+        property_id: string (required)
+
+
+        my_location: {                          (required)
+            address: string,                    (required -> not required if categories are provided)
+            brand_name: string,                 (required -> not required if categories are provided)
+            categories: list[string],           (required)
+            income: {                           (required -> not required if brand_name and address provided)
+                min: int,                       (required if income provided)
+                max: int,
+            },
+            matches_id: string                   (required)
+        },
+        target_location: {                      (required, not used if property_id is provided)
+            lat: int,
+            lng: int,
+        },
+        property_id: string,                    (optional)
+    }
+
+
+    """
+
+    serializer_class = FastLocationDetailSerializer
+
+    def get(self, request, *args, **kwargs):
+
+        # validate request
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        validated_params = serializer.validated_data
+
+        start = time.time()
+        # GET THE TENANT DETAILS
+        tenant = provider.get_tenant_details(validated_params["tenant_id"])
+
+        # GET THE LOCATION OR PROPERTY DETAILS
+        if 'property_id' in validated_params:
+            location = provider.get_property(validated_params["property_id"])
+        else:
+            print(validated_params)
+            location = provider.get_location_details(validated_params["target_location"])
+
+        got_details = time.time()
+
+        # Obtain the keyfacts
+        key_facts_demo = self.obtain_key_demographics(location)
+        key_facts_nearby = self.obtain_key_nearby(location, key_facts_demo['mile'])
+        key_facts = key_facts_demo.update({
+            "num_metro": len(key_facts_nearby["nearby_metro"]),
+            "num_universities": len(key_facts_nearby["nearby_university"]),
+            "num_hospitals": len(key_facts_nearby["nearby_hospitals"])
+        })
+        location["nearby_metro"] = key_facts_nearby["nearby_metro"]
+
+        got_key_facts = time.time()
+        # Obtain the psycographics
+        top_personas = provider.get_matching_personas(location['psycho1'], tenant['psycho1'])
+
+        got_personas = time.time()
+
+        # GET THE DEMOGRAPHIC DETAILS
+        tenant_demographics = self.obtain_demographics(tenant)
+        location_demographics = self.obtain_demographics(location)
+        # get the commute details breifly
+        commute = location_demographics[str(key_facts_demo['mile']) + 'mile']['commute']
+        demographics = self.combine_demographics(tenant_demographics, location_demographics)
+
+        got_demo = time.time()
+        # GET THE NEARBY LOCATIONS
+        nearby = self.obtain_nearby(tenant, location)
+
+        got_nearby = time.time()
+
+        response = {
+            'status': 200,
+            'status_detail': 'Success',
+            'result': {
+                # 'match_value':,
+                # 'affinities':,
+                'key_facts': key_facts,
+                'commute': commute,
+                'top_personas': top_personas,
+                'demographics1': demographics["1mile"],
+                'demographics3': demographics["3mile"],
+                'demographics5': demographics["5mile"],
+                'nearby': nearby
+            }
+        }
+
+        # Timing sweet
+        print("\nRequest took total time of: {}".format(got_nearby - start))
+        print("Time to get the locations is {}".format(got_details - start))
+        print("Time to get the facts is {}".format(got_key_facts - got_details))
+        print("Time to get the psycho is {}".format(got_personas - got_key_facts))
+        print("Time to get the demographics is {}".format(got_demo - got_personas))
+        print("Time to get the nearby is {}".format(got_nearby - got_demo))
+
+        return Response(response, status=status.HTTP_200_OK)
+
+    def obtain_key_demographics(self, place):
+        """
+        Obtain the key facts from a location.
+        """
+        # Only doing 1 mile statistics for now.
+        # if place['arcgis_details1']['DaytimePop1'] > 100000:
+        #     radius_miles = 1
+        #     arcgis_details = place['arcgis_details1']
+        # else:
+        #     radius_miles = 3
+        #     arcgis_details = place['arcgis_details3']
+
+        radius_miles = 1
+        arcgis_details = place['arcgis_details1']
+
+        return {
+            'mile': radius_miles,
+            'DaytimePop': arcgis_details['DaytimePop' + str(radius_miles)],
+            'MedHouseholdIncome': arcgis_details['MedHouseholdIncome' + str(radius_miles)],
+            'TotalHousholds': arcgis_details['TotalHouseholds' + str(radius_miles)],
+            'HouseholdGrowth2017-2022': arcgis_details['HouseholdGrowth2017-2022-' + str(radius_miles)]
+        }
+
+    def obtain_key_nearby(self, place, radius):
+
+        lat = place['geometry']['location']['lat']
+        lng = place['geometry']['location']['lng']
+
+        nearby_metro = google.nearby(lat, lng, 'subway_station', radius=radius)
+        # if radius == 1:
+        nearby_university = place['nearby_university']
+        nearby_hospitals = place['nearby_hospital']
+        nearby_apartments = place['nearby_apartments']
+        # else:
+        #     nearby_university = google.nearby(lat, lng, 'university', radius=radius)
+        #     nearby_hospitals = google.nearby(lat, lng, 'hospital', radius=radius)
+        #     nearby_apartments = google.search(lat, lng, 'apartments', radius=radius)
+
+        return {
+            'nearby_metro': nearby_metro,
+            'nearby_university': nearby_university,
+            'nearby_hospitals': nearby_hospitals,
+            'nearby_aparments': nearby_apartments
+        }
+
+    def obtain_demographics(self, place):
+
+        lat = place['geometry']['location']['lat']
+        lng = place['geometry']['location']['lng']
+
+        # get demographics for 1, 3, and 5 mile
+        return {
+            "1mile": provider.get_demographics(lat, lng, 1, demographic_dict=place["demo1"]),
+            "3mile": provider.get_demographics(lat, lng, 3, demographic_dict=place["demo3"]),
+            "5mile": provider.get_demographics(lat, lng, 5)
+        }
+
+    def combine_demographics(self, tenant_demographics, landlord_demographics):
+
+        demographic_radius = ["1mile", "3mile", "5mile"]
+
+        for item in tenant_demographics:
+            if 'commute' in tenant_demographics[item]:
+                tenant_demographics[item].pop('commute')
+        for item in landlord_demographics:
+            if 'commute' in landlord_demographics[item]:
+                landlord_demographics[item].pop('commute')
+
+        return {
+            radius: provider.combine_demographics(
+                tenant_demographics[radius],
+                landlord_demographics[radius]) for radius in demographic_radius
+        }
+
+    def obtain_nearby(self, tenant, location):
+        categories = tenant['foursquare_categories']
+        return provider.obtain_nearby(location, categories)
 
 
 # LocationPreviewAPI - referenced by api/locationPreview/ | inherits from LocationDetailsAPI

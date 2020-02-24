@@ -1,4 +1,5 @@
 from . import utils, matching
+from bson import ObjectId
 import numpy as np
 import re
 import pandas as pd
@@ -6,6 +7,7 @@ import data.api.goog as google
 import data.api.foursquare as foursquare
 import data.api.arcgis as arcgis
 import data.api.environics as environics
+import data.api.anmspatial as anmspatial
 
 
 '''
@@ -117,22 +119,24 @@ def get_key_facts(lat, lng):
 
 # get demographics. If no existing demographic vector it will grab demographics. If a demographic
 # vector is provided, then lat, lng, and arius are ignored.
-def get_demographics(lat, lng, radius, demographic_vector=None):
+
+
+def get_demographics(lat, lng, radius, demographic_dict=None):
     """
     get demographics. If no existing demographic vector it will grab demographics. If a demographic
     vector is provided, then lat, lng, and arius are ignored.
     """
 
-    if demographic_vector:
-        demographics = demographic_vector
+    if demographic_dict:
+        demographics = demographic_dict
     else:
         demographics = environics.get_demographics(
             lat, lng, radius, matching.DEMO_DF, matching.BLOCK_DF, matching.DEMO_CATEGORIES)
 
     # parse age
     # all the data is referred to by index on the matching algorithm (refer to matching)
-    age_demographics = demographics if demographic_vector else demographics["Current Year Population, Age"]
-    age_demographics_fiveyear = demographics if demographic_vector else demographics["Five Year Population, Age"]
+    age_demographics = demographics["Current Year Population, Age"]
+    age_demographics_fiveyear = demographics["Five Year Population, Age"]
     five_year_age = [value.replace("Current", "Five") for value in matching.AGE_LIST]
 
     age = {
@@ -181,8 +185,8 @@ def get_demographics(lat, lng, radius, demographic_vector=None):
     }
 
     # parse income
-    income_demographics = demographics if demographic_vector else demographics["Current Year Households, Household Income"]
-    income_demographics_fiveyear = demographics if demographic_vector else demographics["Five Year Households, Household Income"]
+    income_demographics = demographics["Current Year Households, Household Income"]
+    income_demographics_fiveyear = demographics["Five Year Households, Household Income"]
     five_year_income = [value.replace("Current", "Five") for value in matching.INCOME_LIST]
 
     income = {
@@ -220,8 +224,8 @@ def get_demographics(lat, lng, radius, demographic_vector=None):
     }
 
     # parse ethnicity (future ethnicity growth not provided right now)
-    ethnicity_demographics = demographics if demographic_vector else demographics["Current Year Population, Race"]
-    # ethnicity_demographics_fiveyear = demographics if demographic_vector else demographics["Five Year Population, Race"]
+    ethnicity_demographics = demographics["Current Year Population, Race"]
+    # ethnicity_demographics_fiveyear = demographics["Five Year Population, Race"]
 
     ethnicity = {
         'white': {
@@ -264,8 +268,8 @@ def get_demographics(lat, lng, radius, demographic_vector=None):
     }
 
     # parse education (future education growth not present right now)
-    education_demographics = demographics if demographic_vector else demographics["Current Year Population 25+, Education"]
-    # education_demographics_fiveyear = demographics if demographic_vector else demographics["Five Year Population 25+, Education"]
+    education_demographics = demographics["Current Year Population 25+, Education"]
+    # education_demographics_fiveyear = demographics["Five Year Population 25+, Education"]
 
     education = {
         'some_highschool': {
@@ -319,8 +323,8 @@ def get_demographics(lat, lng, radius, demographic_vector=None):
     }
 
     # parse gender
-    gender_demographics = demographics if demographic_vector else demographics["Current Year Population, Gender"]
-    gender_demographics_fiveyear = demographics if demographic_vector else demographics["Five Year Population, Gender"]
+    gender_demographics = demographics["Current Year Population, Gender"]
+    gender_demographics_fiveyear = demographics["Five Year Population, Gender"]
 
     gender = {
         'female': {
@@ -338,7 +342,7 @@ def get_demographics(lat, lng, radius, demographic_vector=None):
     }
 
     # parse commute
-    commute_demographics = demographics if demographic_vector else demographics["Current Year Workers, Transportation to Work"]
+    commute_demographics = demographics["Current Year Workers, Transportation to Work"]
     strip_header = re.compile("Current year workers, transportation to work: ", re.IGNORECASE)
     commute = {
         strip_header.sub("", key): value for key, value in commute_demographics.items()
@@ -406,9 +410,134 @@ def get_nearby(lat, lng, categories):
     return list(nearby_dict.values())
 
 
+def obtain_nearby(target_location, categories):
+
+    lat = target_location['geometry']['location']['lat']
+    lng = target_location['geometry']['location']['lng']
+
+    # similar_places = []
+    # for category in categories:
+    #     similar_places += google.search(lat, lng, category, 1)
+
+    nearby_dict = {}
+    # for place in similar_places:
+    #     if place["place_id"] in nearby_dict:
+    #         continue
+    #     detailed_place = _update_place(place["place_id"], lat, lng, categories)
+    #     if not detailed_place:
+    #         # TODO: store the google ids of places we do not have to obtain later in the database
+    #         # in the short term, will just ignore them
+    #         continue
+    #     nearby_dict[place["place_id"]] = detailed_place
+
+    # TODO: add additional functions that better estimate if a store is similar to another
+    # for place in target_location['nearby_store']:
+    #     if place["place_id"] not in nearby_dict:
+    #         detailed_place = _update_place(place["place_id"], lat, lng, categories)
+    #         if not detailed_place:
+    #             continue
+    #         nearby_dict[place["place_id"]] = detailed_place
+    #     nearby_dict[place["place_id"]]["retail"] = True
+
+    # for place in target_location['nearby_restaurant']:
+    #     if place["place_id"] not in nearby_dict:
+    #         detailed_place = _update_place(place["place_id"], lat, lng, categories)
+    #         if not detailed_place:
+    #             continue
+    #         nearby_dict[place["place_id"]] = detailed_place
+    #     nearby_dict[place["place_id"]]["restaurant"] = True
+
+    # for place in target_location['nearby_apartments']:
+    #     if place["place_id"] not in nearby_dict:
+    #         detailed_place = _update_place(place["place_id"], lat, lng, categories)
+    #         if not detailed_place:
+    #             continue
+    #         nearby_dict[place["place_id"]] = detailed_place
+    #     nearby_dict[place["place_id"]]["apartment"] = True
+
+    # for place in target_location['nearby_hospital']:
+    #     if place["place_id"] not in nearby_dict:
+    #         detailed_place = _update_place(place["place_id"], lat, lng, categories)
+    #         if not detailed_place:
+    #             continue
+    #         nearby_dict[place["place_id"]] = detailed_place
+    #     nearby_dict[place["place_id"]]["hospital"] = True
+
+    # for place in target_location['nearby_metro']:
+    #     if place["place_id"] not in nearby_dict:
+    #         detailed_place = _update_place(place["place_id"], lat, lng, categories)
+    #         if not detailed_place:
+    #             continue
+    #         nearby_dict[place["place_id"]] = detailed_place
+    #     nearby_dict[place["place_id"]]["metro"] = True
+
+    for place in target_location['nearby_store']:
+        if place["place_id"] not in nearby_dict:
+            nearby_dict[place["place_id"]] = {'place_id': place['place_id'], 'distance': place['distance']}
+        nearby_dict[place["place_id"]]["retail"] = True
+
+    for place in target_location['nearby_restaurant']:
+        if place["place_id"] not in nearby_dict:
+            nearby_dict[place["place_id"]] = {'place_id': place['place_id'], 'distance': place['distance']}
+        nearby_dict[place["place_id"]]["restaurant"] = True
+
+    for place in target_location['nearby_apartments']:
+        if place["place_id"] not in nearby_dict:
+            nearby_dict[place["place_id"]] = {'place_id': place['place_id'], 'distance': place['distance']}
+        nearby_dict[place["place_id"]]["apartment"] = True
+
+    for place in target_location['nearby_hospital']:
+        if place["place_id"] not in nearby_dict:
+            nearby_dict[place["place_id"]] = {'place_id': place['place_id'], 'distance': place['distance']}
+        nearby_dict[place["place_id"]]["hospital"] = True
+
+    for place in target_location['nearby_metro']:
+        if place["place_id"] not in nearby_dict:
+            nearby_dict[place["place_id"]] = {'place_id': place['place_id'], 'distance': place['distance']}
+        nearby_dict[place["place_id"]]["metro"] = True
+
+    places = update_all_places(nearby_dict, categories)
+
+    return list(places.values())
+
+
+def update_all_places(nearby_dict, categories):
+
+    places = utils.DB_PROCESSED_SPACE.find({'place_id': {'$in': list(nearby_dict.keys())}})
+    for place in places:
+        this_location_lat = place["geometry"]["location"]["lat"]
+        this_location_lng = place["geometry"]["location"]["lng"]
+        name = place["name"]
+        rating = place["rating"] if "rating" in place else None
+        number_rating = place["user_ratings_total"] if "user_ratings_total" in place else None
+        category = None
+        similar = False
+
+        if "foursquare_categories" in place and len(place["foursquare_categories"]) > 0:
+            category = place["foursquare_categories"][0]["category_name"]
+            if category in categories:
+                similar = True
+
+        nearby_dict[place['place_id']].update({
+            'lat': this_location_lat,
+            'lng': this_location_lng,
+            'name': name,
+            'rating': rating,
+            'number_rating': number_rating,
+            'category': category,
+            'similar': similar
+        })
+
+    return nearby_dict
+
+
 # update place & provide distance to another place
+
+
 def _update_place(place_id, lat, lng, categories):
-    place = utils.DB_PROCESSED_SPACE.find_one({'place_id': place_id})
+    place = utils.DB_PROCESSED_SPACE.find_one({'place_id': place_id}, {
+        'name': 1, 'geometry': 1, 'rating': 1, 'user_ratings_total': 1, 'foursquare_categories': 1
+    })
     if not place:
         return None
 
@@ -622,3 +751,72 @@ def get_personas(categories):
 # return all the categories that are used in the database, organized by occurrence
 def get_category_list():
     return [category["name"] for category in list(utils.DB_CATEGORIES.find().sort([('occurrence', -1)]))]
+
+
+def get_tenant_details(tenant_id):
+    """
+
+    Get the details of the tenant and return the matches.
+
+    """
+
+    # # TODO: re-enable - look in the tenant database to get the tenant details.
+    # tenant = utils.DB_TENANT.find({'_id': tenant_id})
+    # if not tenant:
+    #     return None, "Tenant is not in the tenant databse."
+    # return tenant
+
+    # TODO: implement case the generates the details when we don't have tenant_id
+    tenant = utils.DB_PROCESSED_SPACE.find_one()
+    return tenant
+
+
+def get_location_details(location):
+    lat = location['lat']
+    lng = location['lng']
+
+    space = get_nearest_space(lat, lng, database='vectors')
+    if space:
+        space = utils.DB_PROCESSED_SPACE.find_one({'_id': space['loc_id']})
+        return space
+    else:
+        # TODO: get all the details any way and return if there is no space.
+        pass
+
+
+def get_nearest_space(lat, lng, database='spaces'):
+    """
+
+    Function that will return the item in the database that is nearest the provided latitude and lngitude.
+    Function will first search within block, then within blockgroup. If nothing found, will return None.
+
+    if database is 'spaces', will search the processed spaces. If 'vectors' will search the vectors.
+
+    """
+
+    block = anmspatial.point_to_block(lat, lng, state='CA', prune_leading_zero=False)
+    blockgroup = block[:-3]
+
+    query_db = utils.DB_PROCESSED_SPACE if database == 'spaces' else utils.DB_VECTORS_LA
+
+    nearest_spaces = query_db.find({'block': block})
+    if nearest_spaces.count() == 0:
+        nearest_spaces = query_db.find({'blockgroup': blockgroup})
+        if not nearest_spaces:
+            return None
+
+    closest_space = None
+    smallest_distance = 2000
+
+    for space in nearest_spaces:
+
+        eval_lat = space['geometry']['location']['lat'] if database == 'spaces' else space['lat']
+        eval_lng = space['geometry']['location']['lat'] if database == 'spaces' else space['lng']
+
+        distance = utils.distance((lat, lng), (eval_lat, eval_lng))
+
+        if distance < smallest_distance:
+            smallest_distance = distance
+            closest_space = space
+
+    return closest_space

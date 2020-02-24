@@ -19,8 +19,13 @@ MILES_TO_METERS_FACTOR = 1609.34
 EARTHS_RADIUS_MILES = 3958.8
 
 # Database connections
-DB_SPACE = Connect.get_connection().spaceData
-DB_REQUESTS = Connect.get_connection().requests
+client = Connect.get_connection()
+
+DB_SPACE = client.spaceData
+DB_REQUESTS = client.requests
+DB_APP = client.appMatchData
+DB_TENANT = DB_APP.tenant_details
+DB_PROPERTY = DB_APP.property_details
 DB_AGGREGATE = DB_SPACE.aggregate_records
 DB_COLLECT = DB_SPACE.collect_records
 DB_ZIP_CODES = DB_SPACE.zip_codes
