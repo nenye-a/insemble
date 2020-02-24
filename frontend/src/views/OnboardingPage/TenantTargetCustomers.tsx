@@ -135,7 +135,7 @@ export default function TenantTargetCustomers(props: Props) {
     <Container>
       <Alert
         visible
-        text="Insemble uses your location to automatically generate the best customer criteria for your business."
+        text="Your customer criteria has been pre-populated based on your store's location."
       />
       <DescriptionContainer>
         <RowedView>

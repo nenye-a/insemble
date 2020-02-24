@@ -212,7 +212,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         defaultZoom={defaultZoom}
         defaultCenter={defaultCenter}
         defaultOptions={{
-          maxZoom: 15,
+          maxZoom: 17,
           minZoom: 7,
           mapTypeControl: false,
           styles: [
@@ -286,7 +286,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
               featureType: 'landscape.natural',
               stylers: [
                 {
-                  color: '#ccf6cb',
+                  color: '#a19174',
                 },
               ],
             },
@@ -347,7 +347,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
               elementType: 'geometry',
               stylers: [
                 {
-                  color: '#c4f9cd',
+                  color: '#9da481',
                 },
               ],
             },

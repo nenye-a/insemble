@@ -145,7 +145,7 @@ export default function Onboarding() {
       ],
     },
     {
-      title: 'Almost Done. Signup to instantly see your matches.',
+      title: 'Almost Done. Sign up to instantly see your matches.',
       content: OnboardingSignUp,
       buttons: [],
     },

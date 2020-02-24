@@ -63,7 +63,7 @@ def get_representative_location(categories, income_dict):
 def get_address_neighborhood(lat, lng):
 
     google_location = google.reverse_geocode(lat, lng, save=False)
-    address = google_location['formatted_address']
+    address = google_location['formatted_address'].split(',')[0]
     neighborhood = None
     locality = None
     for component in google_location['address_components']:
@@ -475,7 +475,7 @@ def get_match_value(target, location):
     ecosystem = True if matching._map_difference_to_match(match_vector["nearby_categories"]) > 80 else False
 
     return {
-        'match': matching._map_difference_to_match(match_vector["error_sum"]),
+        'match': round(matching._map_difference_to_match(match_vector["error_sum"])),
         'affinities': {
             'growth': growth,
             'demographics': demographics,
@@ -540,7 +540,7 @@ def get_preview_demographics(lat, lng, radius):
         lat, lng, radius, matching.DEMO_DF, matching.BLOCK_DF, matching.DEMO_CATEGORIES)
 
     median_age = round(demographics["Current Year Median Age"])
-    median_income = round(demographics["Current Year Median Household Income"], 2)
+    median_income = round(demographics["Current Year Median Household Income"])
 
     return {
         'median_age': median_age,

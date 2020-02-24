@@ -366,7 +366,7 @@ export default function MainMap() {
           <LoadingOverlay>
             <LoadingIndicator visible={true} color="white" size="large" />
             <Text fontSize={FONT_SIZE_LARGE} color={WHITE}>
-              Evaluating thousands of locations to find your matches. May take a couple minutes...
+              Finding your matching locations. May take a few minutes.
             </Text>
           </LoadingOverlay>
         )}

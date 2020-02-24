@@ -92,7 +92,7 @@ export default function TenantGoals(props: Props) {
                 defaultSelected={onboardingState.tenantGoals?.location}
               />
               {selectedLocations.length === 0 && (
-                <ErrorMessage>Locations cannot be empty</ErrorMessage>
+                <ErrorMessage>Please provide a location</ErrorMessage>
               )}
             </>
           )}
@@ -102,8 +102,8 @@ export default function TenantGoals(props: Props) {
               name="locationCount"
               defaultValue={onboardingState.tenantGoals?.locationCount}
               ref={register({
-                required: 'Number of locations should not be empty',
-                validate: (val) => validateNumber(val) || 'Incorrect number of location',
+                required: 'Please indicate the number locations',
+                validate: (val) => validateNumber(val) || 'Invalid number of locations',
               })}
               errorMessage={(errors?.locationCount as FieldError)?.message || ''}
             />

@@ -17,7 +17,7 @@ type MenuListProps = ComponentProps<typeof TouchableOpacity> & {
   selected: boolean;
 };
 
-export type Menu = 'Profile' | 'Your Brands' | 'Messages' | 'Saved Properties' | 'Properties';
+export type Menu = 'Profile' | 'My Brands' | 'Messages' | 'Saved Properties' | 'Properties';
 
 export default function ProfileMenuList(props: Props) {
   let history = useHistory();
@@ -92,7 +92,7 @@ const TENANT_PROFILE_MENU: Array<MenuObj> = [
     path: '/user/edit-profile',
   },
   {
-    menu: 'Your Brands',
+    menu: 'My Brands',
     icon: <SvgBusiness />,
     path: '/user/brands',
   },
