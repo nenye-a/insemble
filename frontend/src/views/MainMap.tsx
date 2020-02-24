@@ -349,6 +349,7 @@ export default function MainMap() {
         )}
         {!isLoading && tenantMatchesData && (
           <HeaderFilterBar
+            address={tenantMatchesData.tenantMatches.location?.address}
             categories={tenantMatchesData.tenantMatches.categories}
             onPublishChangesPress={onPublishChangesPress}
             publishButtonDisabled={filtersAreEqual}

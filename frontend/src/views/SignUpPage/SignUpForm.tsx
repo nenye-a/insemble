@@ -51,7 +51,7 @@ export default function SignUpForm(props: Props) {
           categories: confirmBusinessDetail.categories,
           personas: targetCustomers.noPersonasPreference ? null : targetCustomers.personas,
           education: targetCustomers.noEducationsPreference ? null : targetCustomers.educations,
-          minDaytimePopulation: targetCustomers.minDaytimePopulation
+          minDaytimePopulation: targetCustomers.noMinDaytimePopulationPreference
             ? null
             : Number(targetCustomers.minDaytimePopulation),
           minAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.minAge),
