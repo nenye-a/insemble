@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 
-import { View, ContainedTextInput as TextInput, TouchableOpacity, Avatar } from '../core-ui';
+import { View, ContainedTextInput as TextInput, TouchableOpacity, Avatar, Text } from '../core-ui';
 import Title from './LandingPage/Title';
 import Masthead from './LandingPage/Masthead';
 import LocationsInput from './LandingPage/LocationsInput';
