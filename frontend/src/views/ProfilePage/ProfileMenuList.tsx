@@ -31,7 +31,7 @@ export default function ProfileMenuList(props: Props) {
           <MenuList
             key={index}
             selected={isSelected}
-            forwardedAs="button"
+            href={path}
             onPress={() => {
               history.push(path);
             }}
