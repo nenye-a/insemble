@@ -18,7 +18,6 @@ import { FONT_SIZE_LARGE } from '../constants/theme';
 import { TenantMatches, TenantMatchesVariables } from '../generated/TenantMatches';
 
 import { useGoogleMaps, isEqual } from '../utils';
-import SvgPropertyLocation from '../components/icons/property-location';
 import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer';
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 import { LocationInput } from '../generated/globalTypes';
