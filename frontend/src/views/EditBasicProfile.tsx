@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useQuery, useMutation } from '@apollo/react-hooks';
+// import { useHistory } from 'react-router-dom';
 
 import {
   Card,
@@ -21,6 +22,7 @@ import { EditTenantProfile, EditTenantProfileVariables } from '../generated/Edit
 import { validateUSPhoneNumber } from '../utils/validation';
 
 export default function BasicProfile() {
+  // let history = useHistory();
   let [profileEditable, setProfileEditable] = useState(false);
   let [passwordEditable, setPasswordEditable] = useState(false);
   let { data, loading } = useQuery(GET_TENANT_PROFILE);
@@ -30,6 +32,8 @@ export default function BasicProfile() {
     editTenantProfile,
     { data: editTenantData, loading: editTenantLoading, error: editTenantError },
   ] = useMutation<EditTenantProfile, EditTenantProfileVariables>(EDIT_TENANT_PROFILE);
+  // TODO: check role
+  // let {state: {role}} = history.location;
   let onSubmit = (fieldValues: FieldValues) => {
     let {
       email,

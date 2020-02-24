@@ -9,12 +9,12 @@ type Props = {
   children: ReactNode;
 };
 
-export default function UserProfileLayout(props: Props) {
+export default function LandlordProfileLayout(props: Props) {
   return (
     <View>
       <HeaderNavigationBar />
       <Container>
-        <ProfileCard role="tenant" />
+        <ProfileCard role="landlord" />
         <Spacing />
         {props.children}
       </Container>

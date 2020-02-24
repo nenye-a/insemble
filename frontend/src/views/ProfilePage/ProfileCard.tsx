@@ -11,16 +11,31 @@ import { GetTenantProfile } from '../../generated/GetTenantProfile';
 import { GET_TENANT_PROFILE } from '../../graphql/queries/server/profile';
 import asyncStorage from '../../utils/asyncStorage';
 
-export default function ProfileCard() {
+type Props = {
+  role: 'landlord' | 'tenant';
+};
+
+export default function ProfileCard({ role }: Props) {
+  let name = '';
+  let company = '';
+  let title = '';
+
   let { loading, data } = useQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
     notifyOnNetworkStatusChange: true,
   });
   let history = useHistory();
   let client = useApolloClient();
 
-  let name = data?.profileTenant.firstName + ' ' + data?.profileTenant.lastName;
-  let company = data?.profileTenant.company || '';
-  let title = data?.profileTenant.title || '';
+  if (role === 'tenant') {
+    name = data?.profileTenant.firstName + ' ' + data?.profileTenant.lastName;
+    company = data?.profileTenant.company || '';
+    title = data?.profileTenant.title || '';
+  } else {
+    // TODO
+    name = 'Armand Jacobs';
+    company = 'Landlord.com';
+    title = 'Landlord';
+  }
 
   return (
     <Container>
@@ -37,7 +52,7 @@ export default function ProfileCard() {
         </ProfileWrapper>
       )}
 
-      <ProfileMenuList />
+      <ProfileMenuList role={role} />
       <SignOutButton
         text="Sign Out"
         onPress={async () => {

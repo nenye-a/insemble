@@ -1,5 +1,5 @@
 // Layout Types
-import { BasicLayout, UserProfileLayout, BlankLayout } from './layouts';
+import { BasicLayout, UserProfileLayout, BlankLayout, LandlordProfileLayout } from './layouts';
 
 // Route Views
 import Login from './views/Login';
