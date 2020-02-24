@@ -10,9 +10,10 @@ import ProfileMenuList from './ProfileMenuList';
 import { GetTenantProfile } from '../../generated/GetTenantProfile';
 import { GET_TENANT_PROFILE } from '../../graphql/queries/server/profile';
 import asyncStorage from '../../utils/asyncStorage';
+import { RoleType } from '../../types/types';
 
 type Props = {
-  role: 'landlord' | 'tenant';
+  role: RoleType;
 };
 
 export default function ProfileCard({ role }: Props) {
