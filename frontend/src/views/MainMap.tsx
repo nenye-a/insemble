@@ -41,7 +41,6 @@ export type PropertyFilter = {
   minRent: number | null;
   maxRent: number | null;
   minSize: number | null;
-  maxSize: number | null;
   spaceType: Array<string>;
 };
 
@@ -87,7 +86,6 @@ let tenantMatchesInit = {
       minRent: null,
       maxRent: null,
       minSize: null,
-      maxSize: null,
       spaceType: [],
     },
   },
@@ -236,7 +234,7 @@ export default function MainMap() {
       education,
       ethnicity,
     } = demographics;
-    let { minSize, maxSize, minRent, maxRent, spaceType } = property;
+    let { minSize, minRent, maxRent, spaceType } = property;
     let result = await editBrand({
       variables: {
         filter: {
@@ -247,7 +245,6 @@ export default function MainMap() {
           minIncome: Number(minIncome) * 1000,
           maxIncome: Number(maxIncome) * 1000,
           minSize,
-          maxSize,
           minRent,
           maxRent,
           spaceType,
@@ -281,8 +278,6 @@ export default function MainMap() {
       property: {
         minRent: tenantMatchesData?.tenantMatches.minRent,
         maxRent: tenantMatchesData?.tenantMatches.maxRent,
-        minSize: tenantMatchesData?.tenantMatches.minSize,
-        maxSize: tenantMatchesData?.tenantMatches.maxSize,
         spaceType: tenantMatchesData?.tenantMatches.spaceType,
       },
       business: {
@@ -306,7 +301,6 @@ export default function MainMap() {
         minRent,
         maxRent,
         minSize,
-        maxSize,
         spaceType,
         categories,
         ethnicity,
@@ -326,7 +320,6 @@ export default function MainMap() {
           minRent,
           maxRent,
           minSize,
-          maxSize,
           spaceType,
         },
         categories,

@@ -69,9 +69,7 @@ export default function SignUpForm(props: Props) {
             ? null
             : Number(targetCustomers.maxIncome) * 1000,
           minSize: Number(physicalSiteCriteria.minSize),
-          maxSize: Number(physicalSiteCriteria.maxSize),
           minFrontageWidth: Number(physicalSiteCriteria.minFrontageWidth),
-          maxFrontageWidth: Number(physicalSiteCriteria.maxFrontageWidth),
           spaceType: physicalSiteCriteria.spaceType,
           equipment: physicalSiteCriteria.equipments,
         },
