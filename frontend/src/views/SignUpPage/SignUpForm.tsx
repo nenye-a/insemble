@@ -9,13 +9,7 @@ import { validateEmail } from '../../utils/validation';
 import { WHITE } from '../../constants/colors';
 import { REGISTER_TENANT } from '../../graphql/queries/server/auth';
 import { RegisterTenant, RegisterTenantVariables } from '../../generated/RegisterTenant';
-import { asyncStorage } from '../../utils';
 import { State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
-
-enum Role {
-  Tenant = 'Tenant',
-  Landlord = 'Landlord',
-}
 
 type Props = {
   role: 'Tenant' | 'Landlord'; // change to constants
@@ -24,7 +18,7 @@ type Props = {
 };
 
 export default function SignUpForm(props: Props) {
-  let { onboardingState, signUpFirst } = props;
+  let { onboardingState } = props;
   let { register, handleSubmit, errors, watch } = useForm();
   let history = useHistory();
   let [registerTenant, { data, loading, error }] = useMutation<
@@ -93,11 +87,6 @@ export default function SignUpForm(props: Props) {
         },
       });
     }
-  };
-
-  let saveUserData = async (token: string, role: Role) => {
-    await asyncStorage.saveTenantToken(token);
-    await asyncStorage.saveRole(role);
   };
 
   if (data) {
