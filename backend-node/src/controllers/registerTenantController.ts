@@ -13,11 +13,11 @@ export let registerTenantHandler = async (req: Request, res: Response) => {
     },
   });
   if (!tenantVerification) {
-    res.send('verification not found');
+    res.status(400).send('Invalid verification code');
     return;
   }
   if (tenantVerification.verified) {
-    res.send('verfication code already used or expired');
+    res.status(400).send('Verification code already used.');
     return;
   }
   let tenant = JSON.parse(tenantVerification.tenantInput);

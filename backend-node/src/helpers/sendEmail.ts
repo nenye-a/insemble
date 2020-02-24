@@ -21,7 +21,7 @@ async function sendTenantVerificationEmail(
   let msg = {
     to: receiver.email,
     from: 'Insemble <no-reply@insemble.co>',
-    subject: 'Email verification',
+    subject: 'Verify your email with Insemble',
     text: `Please verify your email by clicking this link ${link}`,
     html: htmlContent,
   };

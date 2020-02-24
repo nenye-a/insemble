@@ -13,7 +13,7 @@ let tenantVerificationResolver: FieldResolver<
     },
   });
   if (!tenantVerification) {
-    throw new Error('verification Id not found');
+    throw new Error('Invalid verification ID');
   }
   let tenantUser = await context.prisma.tenantUser.findOne({
     where: {

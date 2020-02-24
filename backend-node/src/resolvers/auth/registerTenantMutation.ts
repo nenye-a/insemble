@@ -12,13 +12,13 @@ let registerTenantResolver: FieldResolver<
 > = async (_, { tenant, business, filter }, context: Context) => {
   let password = bcrypt.hashSync(tenant.password, 10);
   let lowerCasedEmail = tenant.email.toLocaleLowerCase();
-  let exist = await context.prisma.tenantUser.findMany({
+  let existing = await context.prisma.tenantUser.findMany({
     where: {
       email: lowerCasedEmail,
     },
   });
-  if (exist.length) {
-    throw new Error('user already exist');
+  if (existing.length) {
+    throw new Error('User already exists');
   }
   let tenantVerification = await context.prisma.tenantVerification.create({
     data: {
