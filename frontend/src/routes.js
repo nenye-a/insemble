@@ -18,6 +18,11 @@ import LandlordSignUp from './views/LandlordSignUp';
 import LandlordLogin from './views/LanlordLogin';
 import TenantEmailVerification from './views/TenantEmailVerification';
 import VerificationSuccessful from './views/VerificationSuccessful';
+import LandlordProperties from './views/LandlordProperties';
+import LandlordPropertyDetails from './views/LandlordPropertyDetails';
+import LandlordProfileLayout from './layouts/LandlordProfileLayout';
+import LandlordMessages from './views/LandlordMessages';
+import LandlordMessageDetail from './views/LandlordMessageDetail';
 
 import { tenantAuthorization } from './utils';
 
@@ -44,6 +49,17 @@ export default [
     path: '/landlord/edit-profile',
     layout: LandlordProfileLayout,
     component: EditBasicProfile,
+  },
+  {
+    path: '/landlord/properties',
+    layout: LandlordProfileLayout,
+    exact: true,
+    component: LandlordProperties,
+  },
+  {
+    path: '/landlord/property-detail/:brandId',
+    layout: LandlordProfileLayout,
+    component: LandlordPropertyDetails,
   },
   {
     path: '/login',

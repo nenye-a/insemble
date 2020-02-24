@@ -17,7 +17,10 @@ type Data = {
   value: number;
 };
 
-export default function KeyFacts() {
+type Props = {
+  withMargin?: boolean;
+};
+export default function KeyFacts({ withMargin = true }: Props) {
   let data = useContext(DeepDiveContext);
   let commuteData = data?.result?.commute;
   let keyFactsData = data?.result?.keyFacts;
@@ -100,8 +103,9 @@ export default function KeyFacts() {
     'Total Household Growth',
   ];
   let categories2 = ['Metro stations', 'Universities', 'Hospitals', 'Apartments'];
-  return (
-    <Container>
+
+  let content = (
+    <>
       <TextView>
         <Title>Key Facts & Growth</Title>
         {keyFactsData?.mile && <Radius>within {keyFactsData.mile} miles</Radius>}
@@ -139,9 +143,9 @@ export default function KeyFacts() {
             </PieChart>
             {/* hiding this until data is ready */}
             {/* <TextView>
-              <AverageTime>Average time to work: </AverageTime>
-              <Time>{time}mins</Time>
-            </TextView> */}
+            <AverageTime>Average time to work: </AverageTime>
+            <Time>{time}mins</Time>
+          </TextView> */}
           </CommuteView>
         ) : (
           <EconomicView flex>
@@ -179,8 +183,9 @@ export default function KeyFacts() {
           </EconomicView>
         )}
       </RowedView>
-    </Container>
+    </>
   );
+  return withMargin ? <Container>{content}</Container> : <View>{content}</View>;
 }
 
 const Container = styled(Card)`

@@ -11,10 +11,11 @@ type Props = {
   verticalMode?: boolean;
   activeTab: number;
   onPress: (index: number) => void;
+  fullWidth?: boolean;
 };
 
 export default function TabBar(props: Props) {
-  let { options, verticalMode, activeTab, onPress } = props;
+  let { options, verticalMode, activeTab, onPress, fullWidth = true } = props;
 
   return verticalMode ? (
     <VerticalView>
@@ -29,13 +30,21 @@ export default function TabBar(props: Props) {
     </VerticalView>
   ) : (
     <HorizontalView>
-      {options.map((option, index) => {
-        return (
+      {options.map((option, index) =>
+        fullWidth ? (
+          <FullWidthTabSegment
+            isActive={activeTab === index}
+            key={index}
+            onPress={() => onPress(index)}
+          >
+            <SegmentText isActive={activeTab === index}>{option}</SegmentText>
+          </FullWidthTabSegment>
+        ) : (
           <TabSegment isActive={activeTab === index} key={index} onPress={() => onPress(index)}>
             <SegmentText isActive={activeTab === index}>{option}</SegmentText>
           </TabSegment>
-        );
-      })}
+        )
+      )}
     </HorizontalView>
   );
 }
@@ -45,7 +54,7 @@ type SegmentProps = ComponentProps<typeof TouchableOpacity> & {
 };
 
 const TabSegment = styled(TouchableOpacity)<SegmentProps>`
-  flex: 1;
+  padding: 20px;
   height: 36px;
   align-items: center;
   justify-content: center;
@@ -53,6 +62,10 @@ const TabSegment = styled(TouchableOpacity)<SegmentProps>`
     outline: none;
   }
   background-color: ${(props) => (props.isActive ? WHITE : BACKGROUND_COLOR)};
+`;
+
+const FullWidthTabSegment = styled(TabSegment)`
+  flex: 1;
 `;
 
 const VerticalSegment = styled(TouchableOpacity)`
@@ -67,6 +80,7 @@ const VerticalView = styled(View)`
   background-color: ${THEME_COLOR};
   border-top-right-radius: 30px;
   width: 210px;
+  height: 360px;
 `;
 const HorizontalView = styled(View)`
   flex-direction: row;
