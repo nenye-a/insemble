@@ -86,9 +86,18 @@ export default function BasicProfile() {
           <TextInput
             label="Email Address"
             placeholder="Email"
-            disabled={true}
+            disabled={!profileEditable}
             containerStyle={textInputContainerStyle}
             defaultValue={data?.profileTenant.email}
+            name="email"
+            errorMessage={
+              data?.profileTenant.pendingEmail
+                ? 'Your account is pending for e-mail verification. Please check your e-mail'
+                : ''
+            }
+            ref={register({
+              required: 'Email should not be empty',
+            })}
           />
           <RowedView>
             <TextInput
