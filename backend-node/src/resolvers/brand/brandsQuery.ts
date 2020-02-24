@@ -14,6 +14,10 @@ let brandsResolver: FieldResolver<'Query', 'brands'> = async (
       name: true,
       categories: true,
       matchingLocations: true,
+      nextLocations: true,
+      locationCount: true,
+      newLocationPlan: true,
+      location: true,
     },
     where: {
       tenantUser: {
