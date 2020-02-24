@@ -87,7 +87,7 @@ export default function Graphic() {
         )}
         {value && (
           <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
-            {roundDecimal(convertToKilos(value)) + 'k'}
+            {roundDecimal(convertToKilos(value)) + 'K'}
           </LabelText>
         )}
       </>
@@ -106,7 +106,7 @@ export default function Graphic() {
   }) => {
     return (
       <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
-        {`${value ? roundDecimal(convertToKilos(value)) + 'k' : ''}`}
+        {`${value ? roundDecimal(convertToKilos(value)) + 'K' : ''}`}
       </LabelText>
     );
   };
