@@ -104,7 +104,7 @@ export default function KeyFacts() {
     <Container>
       <TextView>
         <Title>Key Facts & Growth</Title>
-        {keyFactsData?.mile && <Radius>within {keyFactsData.mile} mile</Radius>}
+        {keyFactsData?.mile && <Radius>within {keyFactsData.mile} miles</Radius>}
       </TextView>
       <RowedView>
         <Tab

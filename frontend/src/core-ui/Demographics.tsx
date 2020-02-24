@@ -141,7 +141,7 @@ export default function Graphic() {
               value
                 .toString()
                 .slice(0, -3)
-                .concat('k')
+                .concat('K')
             }
             domain={[0, (dataMax) => dataMax * 1.3]}
             padding={{ top: 50, bottom: 0 }}

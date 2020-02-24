@@ -16,7 +16,7 @@ type Props = {
 
 export default function LocationDetail(props: Props) {
   let { population, income, age, title, onSeeMore, visible, subTitle } = props;
-  let leftText = ['3 Mile Daytime Population:', 'Median Household Income:', 'Median Age:'];
+  let leftText = ['3 Mile Daytime Population:', '3 Mile Median Household Income:', '3 Mile Median Age:'];
   let rightText = [population, income, age + ' years'];
   return visible ? (
     <Container
