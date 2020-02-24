@@ -4,6 +4,7 @@ import { Base64 } from 'js-base64';
 import { prisma } from '../prisma';
 import { createBrandResolver } from '../resolvers';
 import { GraphQLResolveInfo } from 'graphql';
+import { FRONTEND_HOST } from '../constants/constants';
 
 export let registerTenantHandler = async (req: Request, res: Response) => {
   let tenantVerificationId = Base64.decode(req.params.token);
@@ -46,5 +47,5 @@ export let registerTenantHandler = async (req: Request, res: Response) => {
       id: tenantVerificationId,
     },
   });
-  res.send('success');
+  res.redirect(`${FRONTEND_HOST}/verification-successful`);
 };

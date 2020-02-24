@@ -17,6 +17,7 @@ import LandlordOnboarding from './views/LandlordOnboarding';
 import LandlordSignUp from './views/LandlordSignUp';
 import LandlordLogin from './views/LanlordLogin';
 import TenantEmailVerification from './views/TenantEmailVerification';
+import VerificationSuccessful from './views/VerificationSuccessful';
 
 import { tenantAuthorization } from './utils';
 
@@ -117,5 +118,10 @@ export default [
     path: '/email-verification/:verificationId',
     layout: BasicLayout,
     component: TenantEmailVerification,
+  },
+  {
+    path: '/verification-successful',
+    layout: BasicLayout,
+    component: VerificationSuccessful,
   },
 ];
