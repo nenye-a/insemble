@@ -5,13 +5,15 @@ import { createSession } from '../../helpers/auth';
 
 let tenantVerificationResolver: FieldResolver<
   'Query',
-  'tenantVerification'
+  'tenantRegisterVerification'
 > = async (_: Root, { verificationId }, context: Context) => {
-  let tenantVerification = await context.prisma.tenantVerification.findOne({
-    where: {
-      id: verificationId,
+  let tenantVerification = await context.prisma.tenantRegisterVerification.findOne(
+    {
+      where: {
+        id: verificationId,
+      },
     },
-  });
+  );
   if (!tenantVerification) {
     throw new Error('Invalid verification ID');
   }
@@ -38,8 +40,8 @@ let tenantVerificationResolver: FieldResolver<
   };
 };
 
-let tenantVerification = queryField('tenantVerification', {
-  type: 'TenantVerification',
+let tenantVerification = queryField('tenantRegisterVerification', {
+  type: 'TenantRegisterVerification',
   args: {
     verificationId: stringArg({
       required: true,

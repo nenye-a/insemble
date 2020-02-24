@@ -1,7 +1,7 @@
 export * from './Tenant';
 export * from './TenantAuth';
 export * from './TenantRegisterInput';
-export * from './TenantVerification';
+export * from './TenantRegisterVerification';
 
 export * from './Landlord';
 export * from './LandlordAuth';

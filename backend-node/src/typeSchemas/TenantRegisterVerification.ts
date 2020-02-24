@@ -1,7 +1,7 @@
 import { objectType } from 'nexus';
 
 export let TenantVerification = objectType({
-  name: 'TenantVerification',
+  name: 'TenantRegisterVerification',
   definition(t) {
     t.model.id();
     t.model.verified();
