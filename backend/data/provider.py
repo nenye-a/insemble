@@ -1,6 +1,7 @@
 from . import utils, matching
 from bson import ObjectId
 import numpy as np
+import time
 import re
 import pandas as pd
 import data.api.goog as google
@@ -412,98 +413,51 @@ def get_nearby(lat, lng, categories):
 
 def obtain_nearby(target_location, categories):
 
+    nearby_dict = {}
+
     lat = target_location['geometry']['location']['lat']
     lng = target_location['geometry']['location']['lng']
 
-    # similar_places = []
-    # for category in categories:
-    #     similar_places += google.search(lat, lng, category, 1)
-
-    nearby_dict = {}
-    # for place in similar_places:
-    #     if place["place_id"] in nearby_dict:
-    #         continue
-    #     detailed_place = _update_place(place["place_id"], lat, lng, categories)
-    #     if not detailed_place:
-    #         # TODO: store the google ids of places we do not have to obtain later in the database
-    #         # in the short term, will just ignore them
-    #         continue
-    #     nearby_dict[place["place_id"]] = detailed_place
-
-    # TODO: add additional functions that better estimate if a store is similar to another
-    # for place in target_location['nearby_store']:
-    #     if place["place_id"] not in nearby_dict:
-    #         detailed_place = _update_place(place["place_id"], lat, lng, categories)
-    #         if not detailed_place:
-    #             continue
-    #         nearby_dict[place["place_id"]] = detailed_place
-    #     nearby_dict[place["place_id"]]["retail"] = True
-
-    # for place in target_location['nearby_restaurant']:
-    #     if place["place_id"] not in nearby_dict:
-    #         detailed_place = _update_place(place["place_id"], lat, lng, categories)
-    #         if not detailed_place:
-    #             continue
-    #         nearby_dict[place["place_id"]] = detailed_place
-    #     nearby_dict[place["place_id"]]["restaurant"] = True
-
-    # for place in target_location['nearby_apartments']:
-    #     if place["place_id"] not in nearby_dict:
-    #         detailed_place = _update_place(place["place_id"], lat, lng, categories)
-    #         if not detailed_place:
-    #             continue
-    #         nearby_dict[place["place_id"]] = detailed_place
-    #     nearby_dict[place["place_id"]]["apartment"] = True
-
-    # for place in target_location['nearby_hospital']:
-    #     if place["place_id"] not in nearby_dict:
-    #         detailed_place = _update_place(place["place_id"], lat, lng, categories)
-    #         if not detailed_place:
-    #             continue
-    #         nearby_dict[place["place_id"]] = detailed_place
-    #     nearby_dict[place["place_id"]]["hospital"] = True
-
-    # for place in target_location['nearby_metro']:
-    #     if place["place_id"] not in nearby_dict:
-    #         detailed_place = _update_place(place["place_id"], lat, lng, categories)
-    #         if not detailed_place:
-    #             continue
-    #         nearby_dict[place["place_id"]] = detailed_place
-    #     nearby_dict[place["place_id"]]["metro"] = True
-
     for place in target_location['nearby_store']:
         if place["place_id"] not in nearby_dict:
-            nearby_dict[place["place_id"]] = {'place_id': place['place_id'], 'distance': place['distance']}
+            nearby_dict[place["place_id"]] = {'place_id': place['place_id']}
+            nearby_dict[place["place_id"]]['distance'] = place['place_id'] if place['place_id'] else None
         nearby_dict[place["place_id"]]["retail"] = True
 
     for place in target_location['nearby_restaurant']:
         if place["place_id"] not in nearby_dict:
-            nearby_dict[place["place_id"]] = {'place_id': place['place_id'], 'distance': place['distance']}
+            nearby_dict[place["place_id"]] = {'place_id': place['place_id']}
+            nearby_dict[place["place_id"]]['distance'] = place['place_id'] if place['place_id'] else None
         nearby_dict[place["place_id"]]["restaurant"] = True
 
     for place in target_location['nearby_apartments']:
         if place["place_id"] not in nearby_dict:
-            nearby_dict[place["place_id"]] = {'place_id': place['place_id'], 'distance': place['distance']}
+            nearby_dict[place["place_id"]] = {'place_id': place['place_id']}
+            nearby_dict[place["place_id"]]['distance'] = place['place_id'] if place['place_id'] else None
         nearby_dict[place["place_id"]]["apartment"] = True
 
     for place in target_location['nearby_hospital']:
         if place["place_id"] not in nearby_dict:
-            nearby_dict[place["place_id"]] = {'place_id': place['place_id'], 'distance': place['distance']}
+            nearby_dict[place["place_id"]] = {'place_id': place['place_id']}
+            nearby_dict[place["place_id"]]['distance'] = place['place_id'] if place['place_id'] else None
         nearby_dict[place["place_id"]]["hospital"] = True
 
     for place in target_location['nearby_metro']:
         if place["place_id"] not in nearby_dict:
-            nearby_dict[place["place_id"]] = {'place_id': place['place_id'], 'distance': place['distance']}
+            nearby_dict[place["place_id"]] = {'place_id': place['place_id']}
+            nearby_dict[place["place_id"]]['distance'] = place['place_id'] if place['place_id'] else None
         nearby_dict[place["place_id"]]["metro"] = True
 
-    places = update_all_places(nearby_dict, categories)
+    places = update_all_places(lat, lng, nearby_dict, categories)
 
     return list(places.values())
 
 
-def update_all_places(nearby_dict, categories):
+def update_all_places(lat, lng, nearby_dict, categories):
 
-    places = utils.DB_PROCESSED_SPACE.find({'place_id': {'$in': list(nearby_dict.keys())}})
+    places = utils.DB_PROCESSED_SPACE.find({'place_id': {'$in': list(nearby_dict.keys())}}, {
+        'place_id': 1, 'name': 1, 'geometry': 1, 'rating': 1, 'user_ratings_total': 1, 'foursquare_categories': 1
+    })
     for place in places:
         this_location_lat = place["geometry"]["location"]["lat"]
         this_location_lng = place["geometry"]["location"]["lng"]
@@ -517,6 +471,9 @@ def update_all_places(nearby_dict, categories):
             category = place["foursquare_categories"][0]["category_name"]
             if category in categories:
                 similar = True
+
+        if nearby_dict[place['place_id']]['distance'] == None:
+            distance = utils.distance((lat, lng), (this_location_lat, this_location_lng))
 
         nearby_dict[place['place_id']].update({
             'lat': this_location_lat,
@@ -532,8 +489,6 @@ def update_all_places(nearby_dict, categories):
 
 
 # update place & provide distance to another place
-
-
 def _update_place(place_id, lat, lng, categories):
     place = utils.DB_PROCESSED_SPACE.find_one({'place_id': place_id}, {
         'name': 1, 'geometry': 1, 'rating': 1, 'user_ratings_total': 1, 'foursquare_categories': 1

@@ -596,12 +596,13 @@ class FastLocationDetailsAPI(AsynchronousAPI):
 
     def get(self, request, *args, **kwargs):
 
+        self._register_tasks()
+
         # validate request
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
 
-        start = time.time()
         # GET THE TENANT DETAILS
         tenant = provider.get_tenant_details(validated_params["tenant_id"])
 
@@ -612,7 +613,17 @@ class FastLocationDetailsAPI(AsynchronousAPI):
             print(validated_params)
             location = provider.get_location_details(validated_params["target_location"])
 
-        got_details = time.time()
+        # stringify the objectIDs
+        tenant["_id"] = str(tenant["_id"])
+        location["_id"] = str(location["_id"]) if "_id" in location else None
+
+        # GET THE DEMOGRAPHIC DETAILS (asyc)
+        d_process, tenant_demographics = self.obtain_demographics.delay(tenant), []
+        tenant_demo_listener = self._celery_listener(d_process, tenant_demographics)
+        tenant_demo_listener.start()
+        d_process, location_demographics = self.obtain_demographics.delay(location), []
+        location_demo_listener = self._celery_listener(d_process, location_demographics)
+        location_demo_listener.start()
 
         # Obtain the keyfacts
         key_facts_demo = self.obtain_key_demographics(location)
@@ -624,24 +635,30 @@ class FastLocationDetailsAPI(AsynchronousAPI):
         })
         location["nearby_metro"] = key_facts_nearby["nearby_metro"]
 
-        got_key_facts = time.time()
-        # Obtain the psycographics
+        # GET THE NEARBY LOCATIONS (async)
+        n_process, nearby = self.obtain_nearby.delay(tenant, location), []
+        nearby_listener = self._celery_listener(n_process, nearby)
+        nearby_listener.start()
+
+        # GET THE PSYCHOGRAPHICS
         top_personas = provider.get_matching_personas(location['psycho1'], tenant['psycho1'])
 
-        got_personas = time.time()
-
         # GET THE DEMOGRAPHIC DETAILS
-        tenant_demographics = self.obtain_demographics(tenant)
-        location_demographics = self.obtain_demographics(location)
+        # tenant_demographics = self.obtain_demographics(tenant)
+        # location_demographics = self.obtain_demographics(location)
+
+        # grab the demographic details
+        _, tenant_demographics = tenant_demo_listener.join(), tenant_demographics[0]
+        _, location_demographics = location_demo_listener.join(), location_demographics[0]
         # get the commute details breifly
         commute = location_demographics[str(key_facts_demo['mile']) + 'mile']['commute']
         demographics = self.combine_demographics(tenant_demographics, location_demographics)
 
-        got_demo = time.time()
-        # GET THE NEARBY LOCATIONS
-        nearby = self.obtain_nearby(tenant, location)
+        # grab the nearby details
+        _, nearby = nearby_listener.join(), nearby[0]
 
-        got_nearby = time.time()
+        # GET THE NEARBY LOCATIONS
+        # nearby = self.obtain_nearby(tenant, location)
 
         response = {
             'status': 200,
@@ -659,14 +676,6 @@ class FastLocationDetailsAPI(AsynchronousAPI):
             }
         }
 
-        # Timing sweet
-        print("\nRequest took total time of: {}".format(got_nearby - start))
-        print("Time to get the locations is {}".format(got_details - start))
-        print("Time to get the facts is {}".format(got_key_facts - got_details))
-        print("Time to get the psycho is {}".format(got_personas - got_key_facts))
-        print("Time to get the demographics is {}".format(got_demo - got_personas))
-        print("Time to get the nearby is {}".format(got_nearby - got_demo))
-
         return Response(response, status=status.HTTP_200_OK)
 
     def obtain_key_demographics(self, place):
@@ -674,6 +683,7 @@ class FastLocationDetailsAPI(AsynchronousAPI):
         Obtain the key facts from a location.
         """
         # Only doing 1 mile statistics for now.
+
         # if place['arcgis_details1']['DaytimePop1'] > 100000:
         #     radius_miles = 1
         #     arcgis_details = place['arcgis_details1']
@@ -714,7 +724,9 @@ class FastLocationDetailsAPI(AsynchronousAPI):
             'nearby_aparments': nearby_apartments
         }
 
-    def obtain_demographics(self, place):
+    @staticmethod
+    @celery_app.task
+    def obtain_demographics(place):
 
         lat = place['geometry']['location']['lat']
         lng = place['geometry']['location']['lng']
@@ -743,9 +755,15 @@ class FastLocationDetailsAPI(AsynchronousAPI):
                 landlord_demographics[radius]) for radius in demographic_radius
         }
 
-    def obtain_nearby(self, tenant, location):
+    @staticmethod
+    @celery_app.task
+    def obtain_nearby(tenant, location):
         categories = tenant['foursquare_categories']
         return provider.obtain_nearby(location, categories)
+
+    def _register_tasks(self) -> None:
+        celery_app.register_task(self.obtain_demographics)
+        celery_app.register_task(self.obtain_nearby)
 
 
 # LocationPreviewAPI - referenced by api/locationPreview/ | inherits from LocationDetailsAPI
