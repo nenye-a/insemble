@@ -16,11 +16,9 @@ export let Brand = objectType({
     t.model.minAge();
     t.model.maxAge();
     t.model.minSize();
-    t.model.maxSize();
     t.model.minRent();
     t.model.maxRent();
     t.model.minFrontageWidth();
-    t.model.maxFrontageWidth();
     t.field('education', { type: 'RawFilter', list: true, nullable: true });
     t.field('commute', { type: 'RawFilter', list: true, nullable: true });
     t.field('ethnicity', { type: 'RawFilter', list: true, nullable: true });

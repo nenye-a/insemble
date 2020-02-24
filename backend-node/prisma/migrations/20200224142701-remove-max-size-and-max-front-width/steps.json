@@ -1,0 +1,15 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "DeleteField",
+      "model": "Brand",
+      "field": "maxSize"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Brand",
+      "field": "maxFrontageWidth"
+    }
+  ]
+}
