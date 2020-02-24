@@ -1,4 +1,11 @@
-import React, { ComponentProps, useState, useRef, CSSProperties, useEffect } from 'react';
+import React, {
+  ComponentProps,
+  useState,
+  useRef,
+  CSSProperties,
+  useEffect,
+  ChangeEvent,
+} from 'react';
 import styled from 'styled-components';
 import PillButton from './PillButton';
 import View from './View';
@@ -58,7 +65,10 @@ export default function MultiSelectInput(props: Props) {
           value={inputValue}
           placeholder={placeholder}
           onClick={() => setFocus(document.getElementById('search') === document.activeElement)}
-          onChange={(event) => setInputValue(event.target.value.toLocaleLowerCase())}
+          onBlur={() => setFocus(document.getElementById('search') === document.activeElement)}
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            setInputValue(event.target.value.toLocaleLowerCase())
+          }
           onKeyDown={(event) => {
             if (event.which === 8 && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
               if (inputValue.length < 1) {
@@ -111,7 +121,6 @@ const SearchContainer = styled(View)<SearchContainerProps>`
   flex-flow: row wrap;
   align-items: center;
   width: 100%;
-  border: solid;
   border-width: 1px;
   border-color: ${(props) => (props.isFocused ? THEME_COLOR : TEXT_INPUT_BORDER_COLOR)};
   border-radius: 5px;
@@ -119,7 +128,6 @@ const SearchContainer = styled(View)<SearchContainerProps>`
 `;
 
 const TextSearch = styled(TextInput)`
-  width: 100%;
   height: 36px;
   outline: none;
   background-color: transparent;
