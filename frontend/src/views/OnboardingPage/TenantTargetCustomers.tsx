@@ -227,6 +227,8 @@ export default function TenantTargetCustomers(props: Props) {
           visible
           search
           noPreferenceButton
+          link="http://www.insemblegroup.com"
+          linkTitle="Psychographics"
           hasPreference={!noPersonasPreference}
           onNoPreferencePress={() => {
             setNoPersonasPreference(!noPersonasPreference);

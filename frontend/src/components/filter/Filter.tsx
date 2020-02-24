@@ -1,13 +1,22 @@
 import React, { ComponentProps, useState, useEffect } from 'react';
 import styled from 'styled-components';
 
-import { View, Text, PillButton, Card, Button, LoadingIndicator } from '../../core-ui';
+import {
+  View,
+  Text,
+  PillButton,
+  Card,
+  Button,
+  LoadingIndicator,
+  TouchableOpacity,
+} from '../../core-ui';
 import {
   THEME_COLOR,
   BOTTOM_CARD_COLOR,
   TEXT_INPUT_BORDER_COLOR,
   DARKER_GREY,
   GREY,
+  LINK_COLOR,
 } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_SIZE_NORMAL } from '../../constants/theme';
 import TextInput from '../../core-ui/ContainedTextInput';
@@ -42,6 +51,7 @@ type Props = ComponentProps<typeof View> & {
   onNoPreferencePress?: () => void;
   disabled?: boolean; // TODO: pass disabled to other filter components as well when necessary
   loading?: boolean;
+  link?: string;
 };
 
 export default function Filter(props: Props) {
@@ -73,6 +83,8 @@ export default function Filter(props: Props) {
     onNoPreferencePress,
     disabled,
     loading,
+    link,
+    linkTitle,
     ...otherProps
   } = props;
   let [filteredOptions, setFilteredOptions] = useState(allOptions);
@@ -94,7 +106,17 @@ export default function Filter(props: Props) {
   return visible ? (
     <Card {...otherProps}>
       <TitleWrapper>
-        <SmallText>{title}</SmallText>
+        <View style={{ flexDirection: 'row' }}>
+          <SmallText>{title}</SmallText>
+          {link && linkTitle ? (
+            <TouchableOpacity href={link}>
+              <SmallText>
+                {' '}
+                (<SmallText style={{ color: LINK_COLOR }}>{linkTitle}</SmallText>)
+              </SmallText>
+            </TouchableOpacity>
+          ) : null}
+        </View>
         {selection && selectedOptions && selectedOptions.length > 0 && (
           <SmallText style={{ fontStyle: 'italic' }}>
             {selectedOptions.length} of {allOptions.length} selected
@@ -263,7 +285,7 @@ const ResultsPillButton = styled(SmallPillButton)`
 
 const TextInputWithBorder = styled(TextInput)`
   border: solid;
-  border-width: 0.5px;
+  border-width: 0.8px;
   border-color: ${TEXT_INPUT_BORDER_COLOR};
   height: 36px;
   font-size: ${FONT_SIZE_NORMAL};
