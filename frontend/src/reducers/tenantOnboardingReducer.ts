@@ -41,9 +41,7 @@ export type TargetCustomers = {
 
 export type PhysicalSiteCriteria = {
   minSize?: number | string;
-  maxSize?: number | string;
   minFrontageWidth?: number | string;
-  maxFrontageWidth?: number | string;
   equipments?: Array<string>;
   spaceType?: Array<string>;
 };

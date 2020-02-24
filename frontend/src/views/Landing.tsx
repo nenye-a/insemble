@@ -9,7 +9,6 @@ import Masthead from './LandingPage/Masthead';
 import LocationsInput from './LandingPage/LocationsInput';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import { WHITE } from '../constants/colors';
-// import { FONT_SIZE_LARGE } from '../constants/theme';
 import CategoriesInput from './LandingPage/CategoriesInput';
 import Button from '../core-ui/Button';
 import { GetTenantProfile } from '../generated/GetTenantProfile';

@@ -1,13 +1,10 @@
-import React, { useState, useEffect, useMemo, Dispatch } from 'react';
+import React, { useState, useEffect, Dispatch } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 
-import { View, Alert, Label, Checkbox, MultiSelectInput, Text } from '../../core-ui';
+import { View, Alert, Label, Checkbox, MultiSelectInput } from '../../core-ui';
 import { RangeInput } from '../../components';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
-import { RED_TEXT } from '../../constants/colors';
-import { FONT_SIZE_SMALL } from '../../constants/theme';
-import { validateNumber } from '../../utils/validation';
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
 import { Equipments } from '../../generated/Equipments';
 
@@ -22,41 +19,24 @@ export default function TenantPhysicalCriteria(props: Props) {
   let { dispatch } = props;
   let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
   let [minSqft, setMinSqft] = useState('');
-  let [maxSqft, setMaxSqft] = useState('');
   let [minFrontageWidth, setMinFrontageWidth] = useState('');
-  let [maxFrontageWidth, setMaxFrontageWidth] = useState('');
   let [selectedSpaceOptions, setSelectedSpaceOptions] = useState<Array<string>>([]);
   let [selectedEquipmentOptions, setSelectedEquipmentOptions] = useState<Array<string>>([]);
-  let sqftError = useMemo(() => getRangeInputError(minSqft, maxSqft), [minSqft, maxSqft]);
-
-  let frontageWidthError = useMemo(() => getRangeInputError(minFrontageWidth, maxFrontageWidth), [
-    minFrontageWidth,
-    maxFrontageWidth,
-  ]);
-
-  let allFilled = minSqft && maxSqft && minFrontageWidth && maxFrontageWidth;
-  let allValid = allFilled && !sqftError && !frontageWidthError;
   useEffect(() => {
-    if (allValid) {
-      dispatch({ type: 'ENABLE_NEXT_BUTTON' });
-      dispatch({
-        type: 'SAVE_CHANGES_PHYSICAL_SITE_CRITERIA',
-        values: {
-          physicalSiteCriteria: {
-            minSize: minSqft,
-            maxSize: maxSqft,
-            minFrontageWidth: minFrontageWidth,
-            maxFrontageWidth: maxFrontageWidth,
-            equipments: selectedEquipmentOptions,
-            spaceType: selectedSpaceOptions,
-          },
+    dispatch({ type: 'ENABLE_NEXT_BUTTON' });
+    dispatch({
+      type: 'SAVE_CHANGES_PHYSICAL_SITE_CRITERIA',
+      values: {
+        physicalSiteCriteria: {
+          minSize: minSqft,
+          minFrontageWidth: minFrontageWidth,
+          equipments: selectedEquipmentOptions,
+          spaceType: selectedSpaceOptions,
         },
-      });
-    } else {
-      dispatch({ type: 'DISABLE_NEXT_BUTTON' });
-    }
+      },
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allValid, dispatch, selectedEquipmentOptions, selectedSpaceOptions]);
+  }, [dispatch, selectedEquipmentOptions, selectedSpaceOptions]);
 
   return (
     <Container>
@@ -65,21 +45,12 @@ export default function TenantPhysicalCriteria(props: Props) {
         text="Customer criteria has been pre-populated based on your store's location."
       />
       <LabelText text="Sqft" />
-      <RangeInputContainer
-        lowValue={minSqft}
-        highValue={maxSqft}
-        onLowRangeInputChange={setMinSqft}
-        onHighRangeInputChange={setMaxSqft}
-      />
-      <ErrorMessage>{sqftError}</ErrorMessage>
+      <RangeInputContainer lowValue={minSqft} onLowRangeInputChange={setMinSqft} />
       <LabelText text="Frontage Width" />
       <RangeInputContainer
         lowValue={minFrontageWidth}
-        highValue={maxFrontageWidth}
         onLowRangeInputChange={setMinFrontageWidth}
-        onHighRangeInputChange={setMaxFrontageWidth}
       />
-      <ErrorMessage>{frontageWidthError}</ErrorMessage>
       <LabelText text="Equipment Preference" />
       {!equipmentLoading && equipmentData && (
         <MultiSelectInput
@@ -117,24 +88,12 @@ export default function TenantPhysicalCriteria(props: Props) {
   );
 }
 
-function getRangeInputError(minValue: string, maxValue: string) {
-  if (minValue && maxValue) {
-    if (!validateNumber(minValue) || !validateNumber(maxValue)) {
-      return 'Input can only be number';
-    } else if (Number(minValue) >= Number(maxValue)) {
-      return 'Minimum value should be lower than maximum value';
-    }
-    return '';
-  }
-  return '';
-}
-
 const Container = styled(View)`
   padding: 24px 48px;
 `;
 
 const RangeInputContainer = styled(RangeInput)`
-  width: 216px;
+  width: 108px;
   margin: 0 0 6px 0;
 `;
 
@@ -144,10 +103,4 @@ const LabelText = styled(Label)`
 
 const Description = styled(Alert)`
   margin-bottom: 21px;
-`;
-
-const ErrorMessage = styled(Text)`
-  color: ${RED_TEXT};
-  font-size: ${FONT_SIZE_SMALL};
-  padding-bottom: 24px;
 `;
