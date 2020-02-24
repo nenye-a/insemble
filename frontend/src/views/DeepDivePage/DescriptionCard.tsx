@@ -10,7 +10,7 @@ type Props = CardProps & {
 
 export default function DescriptionCard({ content }: Props) {
   return (
-    <Card title="Description" titleBackground="purple">
+    <Card title="Description" titleBackground="grey">
       <Content>{content}</Content>
     </Card>
   );
