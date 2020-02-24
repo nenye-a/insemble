@@ -62,7 +62,7 @@ export default function TenantPhysicalCriteria(props: Props) {
     <Container>
       <Description
         visible
-        text="Insemble uses your location to automatically generate the best customer criteria for your business."
+        text="Customer criteria has been pre-populated based on your store's location."
       />
       <LabelText text="Sqft" />
       <RangeInputContainer
@@ -83,7 +83,7 @@ export default function TenantPhysicalCriteria(props: Props) {
       <LabelText text="Equipment Preference" />
       {!equipmentLoading && equipmentData && (
         <MultiSelectInput
-          placeholder="Set Equipment Preference"
+          placeholder="Buildout preference"
           options={equipmentData.equipments}
           onChange={setSelectedEquipmentOptions}
           containerStyle={{ marginBottom: 24 }}
