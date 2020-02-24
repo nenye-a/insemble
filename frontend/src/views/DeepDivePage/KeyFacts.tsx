@@ -10,7 +10,7 @@ import {
 } from '../../constants/theme';
 import { THEME_COLOR, COMMUTE_CHART_COLORS } from '../../constants/colors';
 import { DeepDiveContext } from './DeepDiveModal';
-import { convertToKilos } from '../../utils';
+import { convertToKilos, roundDecimal } from '../../utils';
 
 type Data = {
   name: string;
@@ -146,9 +146,18 @@ export default function KeyFacts() {
         ) : (
           <EconomicView flex>
             <EconomicColumn>
-              {numbers1.map((line, i) => (
-                <NumberText key={i}>{line}</NumberText>
-              ))}
+              {numbers1.map((line, i) => {
+                let lastIndex = numbers1.length - 1 === i;
+                let houseHoldIncomeIndex = i === 1;
+                let formattedValues = line
+                  ? lastIndex
+                    ? roundDecimal(line) + '%'
+                    : houseHoldIncomeIndex
+                    ? '$' + convertToKilos(line) + 'K'
+                    : convertToKilos(line) + 'K'
+                  : '';
+                return <NumberText key={i}>{formattedValues}</NumberText>;
+              })}
             </EconomicColumn>
             <EconomicColumn>
               {categories1.map((line, i) => (
