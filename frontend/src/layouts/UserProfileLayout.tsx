@@ -1,32 +1,11 @@
 import React, { ReactNode } from 'react';
-import styled from 'styled-components';
 
-import { View } from '../core-ui';
-import ProfileCard from '../views/ProfilePage/ProfileCard';
-import HeaderNavigationBar from '../components/layout/HeaderNavigationBar';
+import ProfileLayout from './ProfileLayout';
 
 type Props = {
   children: ReactNode;
 };
 
 export default function UserProfileLayout(props: Props) {
-  return (
-    <View>
-      <HeaderNavigationBar />
-      <Container>
-        <ProfileCard role="tenant" />
-        <Spacing />
-        {props.children}
-      </Container>
-    </View>
-  );
+  return <ProfileLayout role="tenant">{props.children}</ProfileLayout>;
 }
-
-const Container = styled(View)`
-  flex-direction: row;
-  padding: 24px 10vw;
-`;
-
-const Spacing = styled(View)`
-  width: 24px;
-`;

@@ -41,6 +41,11 @@ export default [
     component: LandlordLogin,
   },
   {
+    path: '/landlord/edit-profile',
+    layout: LandlordProfileLayout,
+    component: EditBasicProfile,
+  },
+  {
     path: '/login',
     layout: BasicLayout,
     component: Login,

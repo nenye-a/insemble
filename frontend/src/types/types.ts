@@ -6,3 +6,5 @@ export type IconProps = {
   x?: string | number;
   y?: string | number;
 };
+
+export type RoleType = 'landlord' | 'tenant';
