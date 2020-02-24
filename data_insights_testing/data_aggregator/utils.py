@@ -40,11 +40,11 @@ DB_CATEGORIES = DB_SPACE.categories
 
 
 # simple unique index of a pymongo database collection
-def unique_db_index(collection, *indices):
+def db_index(collection, *indices, unique=False):
     index_request = []
     for index in indices:
         index_request.append((index, 1))
-    collection.create_index(index_request, unique=True)
+    collection.create_index(index_request, unique=unique)
 
 
 # from a list of items in text form
