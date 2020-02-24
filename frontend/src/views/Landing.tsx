@@ -61,7 +61,9 @@ function Landing() {
           </>
         )}
       </RowView>
-      <Title style={{ maxWidth: 800 }}>Find the best locations for your retail or restaurant business</Title>
+      <Title style={{ maxWidth: 800 }}>
+        Find the best locations for your retail or restaurant business
+      </Title>
       {/* <Text color={WHITE} fontSize={FONT_SIZE_LARGE}>
         I have an existing location
       </Text> */}
