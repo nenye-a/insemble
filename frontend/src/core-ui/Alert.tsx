@@ -6,6 +6,7 @@ import Text from './Text';
 import { THEME_COLOR, ALERT_BACKGROUND_COLOR } from '../constants/colors';
 import { FONT_SIZE_SMALL, DEFAULT_BORDER_RADIUS } from '../constants/theme';
 import SvgInfo from '../components/icons/info';
+import { formatGraphQLError } from '../utils';
 
 type Props = ViewProps & {
   text: string;
@@ -14,12 +15,14 @@ type Props = ViewProps & {
 
 export default function Alert(props: Props) {
   let { visible, text, ...otherProps } = props;
+  // TODO: Discuss and change the fix regarding this issue https://github.com/apollographql/apollo-feature-requests/issues/46
+  let formattedText = formatGraphQLError(text);
   if (visible) {
     return (
       <Container {...otherProps}>
         <SvgInfo />
         <Message color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
-          {text}
+          {formattedText}
         </Message>
       </Container>
     );
