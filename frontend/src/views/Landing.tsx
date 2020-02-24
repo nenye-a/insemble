@@ -3,13 +3,14 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 
-import { View, ContainedTextInput as TextInput, TouchableOpacity, Avatar } from '../core-ui';
+import { View, ContainedTextInput as TextInput, TouchableOpacity, Avatar, Text } from '../core-ui';
 import Title from './LandingPage/Title';
 import Masthead from './LandingPage/Masthead';
 import LocationsInput from './LandingPage/LocationsInput';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import { WHITE } from '../constants/colors';
-import CategoriesInput from './LandingPage/CategoriesInput';
+// import { FONT_SIZE_LARGE } from '../constants/theme';
+// import CategoriesInput from './LandingPage/CategoriesInput';
 import Button from '../core-ui/Button';
 import { GetTenantProfile } from '../generated/GetTenantProfile';
 import { GET_TENANT_PROFILE } from '../graphql/queries/server/profile';
@@ -61,7 +62,7 @@ function Landing() {
         )}
       </RowView>
       <Title style={{ maxWidth: 800 }}>
-        Find the best locations for your retail or restaurant business
+        Find the next best locations for your retail or restaurant business
       </Title>
       {/* <Text color={WHITE} fontSize={FONT_SIZE_LARGE}>
         I have an existing location
@@ -92,11 +93,22 @@ function Landing() {
           }}
         />
       )}
+      <View>
+        <NoAddressButton
+          text="Don't have an address?"
+          mode="transparent"
+          onPress={() => {
+            history.push('/verify', {
+              categories: [],
+            });
+          }}
+        />
+      </View>
       <BottomContainer>
         {/* <Text color={WHITE} fontSize={FONT_SIZE_LARGE}>
           Exploring a new restaurant or retail concept
         </Text> */}
-        <CategoriesInput />
+        {/* <CategoriesInput /> */}
       </BottomContainer>
     </Masthead>
   );
@@ -113,6 +125,14 @@ const RowView = styled(View)`
   position: absolute;
   top: 16px;
   right: 32px;
+`;
+
+const NoAddressButton = styled(Button)`
+  margin: 0 12px 0 0;
+  align-self: flex-end;
+  ${Text} {
+    color: ${WHITE};
+  }
 `;
 
 // const FindTenantsButton = styled(Button)`

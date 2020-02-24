@@ -37,6 +37,7 @@ export type TargetCustomers = {
   educations?: Array<string>;
   noEducationsPreference?: boolean;
   minDaytimePopulation?: string;
+  noMinDaytimePopulationPreference?: boolean;
 };
 
 export type PhysicalSiteCriteria = {

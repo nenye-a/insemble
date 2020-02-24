@@ -1,7 +1,7 @@
 import React, { ComponentProps, CSSProperties } from 'react';
 import styled, { css } from 'styled-components';
 import { Card, Text, View, TouchableOpacity } from '../../core-ui';
-import { FONT_SIZE_XSMALL } from '../../constants/theme';
+import { FONT_SIZE_MEDIUMSMALL } from '../../constants/theme';
 import { SECONDARY_COLOR, WHITE, THEME_COLOR } from '../../constants/colors';
 import { FilterObj, FilterType } from '../../reducers/sideBarFiltersReducer';
 import { DEMOGRAPHICS_CATEGORIES } from './SideBarFilters';
@@ -57,7 +57,7 @@ export default function FilterCard(props: Props) {
               <View style={{ marginLeft: 5 }}>
                 <Text>{name}</Text>
                 {selectedValues.length > 0 && (
-                  <Text fontSize={FONT_SIZE_XSMALL}>{selectedText}</Text>
+                  <Text fontSize={FONT_SIZE_MEDIUMSMALL}>{selectedText}</Text>
                 )}
               </View>
             </OptionItem>

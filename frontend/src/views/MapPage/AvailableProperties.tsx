@@ -2,9 +2,9 @@ import React, { ComponentProps } from 'react';
 import styled from 'styled-components';
 import { Text, View, Button } from '../../core-ui';
 import { FONT_SIZE_SMALL, FONT_SIZE_MEDIUM } from '../../constants/theme';
-import AvailablePropertyCard from './AvailablePropertyCard';
+// import AvailablePropertyCard from './AvailablePropertyCard';
 import {
-  AVAILABLE_PROPERTIES,
+  // AVAILABLE_PROPERTIES,
   TOTAL_RECOMMENDED_PROPERTY,
   TOTAL_AVAILABLE_PROPERTY,
 } from '../../fixtures/dummyData';
@@ -43,7 +43,8 @@ export default function AvailableProperties(props: Props) {
           {` (${TOTAL_RECOMMENDED_PROPERTY} recommended)`}
         </ItalicText>
       </RowedFlex>
-      {AVAILABLE_PROPERTIES.map(({ photo, address, price, area, propertyType }, index) => (
+      {/* TODO: hidden until properties are ready */}
+      {/* {AVAILABLE_PROPERTIES.map(({ photo, address, price, area, propertyType }, index) => (
         <AvailablePropertyCard
           key={index}
           photo={photo}
@@ -54,6 +55,7 @@ export default function AvailableProperties(props: Props) {
           onPress={() => {}}
         />
       ))}
+      */}
     </Container>
   );
 }

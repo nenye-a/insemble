@@ -57,6 +57,9 @@ export default function TenantTargetCustomers(props: Props) {
   let [noPersonasPreference, setNoPersonasPreference] = useState(
     targetCustomers.noPersonasPreference
   );
+  let [noMinDaytimePopulationPreference, setNoMinDaytimePopulationPreference] = useState(
+    targetCustomers.noMinDaytimePopulationPreference
+  );
   let [noEducationsPreference, setNoEducationsPrefence] = useState(
     targetCustomers.noEducationsPreference
   );
@@ -224,6 +227,8 @@ export default function TenantTargetCustomers(props: Props) {
           visible
           search
           noPreferenceButton
+          link="http://www.insemblegroup.com"
+          linkTitle="Psychographics"
           hasPreference={!noPersonasPreference}
           onNoPreferencePress={() => {
             setNoPersonasPreference(!noPersonasPreference);
@@ -243,14 +248,24 @@ export default function TenantTargetCustomers(props: Props) {
           loading={autoPopulateLoading}
         />
       )}
-      <MinDaytimePopulationInput
-        onChange={(e) => {
-          setMinDaytimePopulation(e.target.value);
-        }}
-        label="Minimum Daytime Population"
-        placeholder="0"
-        errorMessage={!minDaytimePopulation ? 'Field should not be empty' : ''}
-      />
+      <DaytimeContainer>
+        <MinDaytimePopulationInput
+          disabled={editCriteriaDisabled}
+          onChange={(e) => {
+            setMinDaytimePopulation(e.target.value);
+          }}
+          label="Minimum Daytime Population"
+          placeholder="0"
+          errorMessage={!minDaytimePopulation ? 'Field should not be empty' : ''}
+        />
+        <Button
+          mode={!noMinDaytimePopulationPreference ? 'transparent' : 'primary'}
+          text="No Preference"
+          onPress={() => setNoMinDaytimePopulationPreference(!noMinDaytimePopulationPreference)}
+          style={!noMinDaytimePopulationPreference ? { fontStyle: 'italic' } : undefined}
+          disabled={editCriteriaDisabled}
+        />
+      </DaytimeContainer>
     </Container>
   );
 }
@@ -261,6 +276,12 @@ const Container = styled(View)`
 
 const MinDaytimePopulationInput = styled(TextInput)`
   width: 100px;
+`;
+
+const DaytimeContainer = styled(View)`
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
 `;
 
 const RowedView = styled(View)`
