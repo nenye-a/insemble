@@ -12,5 +12,6 @@ export let Tenant = objectType({
     t.model.description();
     t.model.title();
     t.model.tier();
+    t.model.pendingEmail();
   },
 });

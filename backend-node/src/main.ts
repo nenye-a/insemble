@@ -6,6 +6,7 @@ import { schema } from '../src/schema';
 import { authSession } from './helpers/auth';
 import { permissions } from './middlewares/permission';
 import { registerTenantHandler } from './controllers/registerTenantController';
+import { emailVerificationTenantHandler } from '.DELETED_BASE64_STRING';
 
 const server = new GraphQLServer({
   schema,
@@ -31,6 +32,11 @@ server.express.use((req, res, next) => {
 server.express.get(
   '/register-tenant-verification/:token',
   registerTenantHandler,
+);
+
+server.express.get(
+  '/email-tenant-verification/:token',
+  emailVerificationTenantHandler,
 );
 
 server.start({}, () => {

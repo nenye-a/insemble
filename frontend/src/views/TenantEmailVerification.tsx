@@ -9,21 +9,27 @@ import { FONT_SIZE_MEDIUM, FONT_WEIGHT_LIGHT } from '../constants/theme';
 import { DARK_TEXT_COLOR } from '../constants/colors';
 import OnboardingCard from './OnboardingPage/OnboardingCard';
 import { TENANT_VERIFICATION } from '../graphql/queries/server/auth';
-import { TenantVerification, TenantVerificationVariables } from '../generated/TenantVerification';
+import {
+  TenantRegisterVerification,
+  TenantRegisterVerificationVariables,
+} from '../generated/TenantRegisterVerification';
 import { asyncStorage } from '../utils';
 
 export default function TenantEmailVerification() {
   let history = useHistory();
   let { verificationId } = useParams();
-  let { data } = useQuery<TenantVerification, TenantVerificationVariables>(TENANT_VERIFICATION, {
-    pollInterval: 1000,
-    variables: {
-      id: verificationId || '',
-    },
-  });
+  let { data } = useQuery<TenantRegisterVerification, TenantRegisterVerificationVariables>(
+    TENANT_VERIFICATION,
+    {
+      pollInterval: 1000,
+      variables: {
+        id: verificationId || '',
+      },
+    }
+  );
   if (data) {
     let {
-      tenantVerification: { verified, tenantAuth },
+      tenantRegisterVerification: { verified, tenantAuth },
     } = data;
     if (verified && tenantAuth) {
       let { brandId, token } = tenantAuth;
