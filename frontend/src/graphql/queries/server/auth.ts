@@ -7,17 +7,8 @@ export const REGISTER_TENANT = gql`
     $filter: FilterInput
   ) {
     registerTenant(tenant: $tenant, business: $business, filter: $filter) {
-      token
-      tenant {
-        id
-        email
-        firstName
-        lastName
-        avatar
-        company
-        tier
-      }
-      brandId
+      message
+      verificationId
     }
   }
 `;
@@ -36,6 +27,27 @@ export const LOGIN_TENANT = gql`
         tier
       }
       brandId
+    }
+  }
+`;
+
+export const TENANT_VERIFICATION = gql`
+  query TenantVerification($id: String!) {
+    tenantVerification(verificationId: $id) {
+      verified
+      tenantAuth {
+        token
+        tenant {
+          id
+          email
+          firstName
+          lastName
+          avatar
+          company
+          tier
+        }
+        brandId
+      }
     }
   }
 `;

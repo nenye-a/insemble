@@ -1,7 +1,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://prisma:prisma@localhost:5432/insemble?schema=public"
+  url = "***"
 }
 
 
@@ -10,28 +10,19 @@ generator client {
 }
 
 enum TenantTier {
-  FREE
-  EXPLORE
-  SMART
-  PROFESSIONAL
+  FREE EXPLORE SMART PROFESSIONAL
 }
 
 enum LandlordTier {
-  FREE
-  EXPLORE
-  SMART
-  PROFESSIONAL
+  FREE EXPLORE SMART PROFESSIONAL
 }
 
 enum NewLocationPlan {
-  YES
-  NOT_ACTIVE
-  NOT_PLANNING
+  YES NOT_ACTIVE NOT_PLANNING
 }
 
 enum MarketingPreference {
-  PUBLIC
-  PRIVATE
+  PUBLIC PRIVATE
 }
 
 // model MatchingLocation {
@@ -121,7 +112,9 @@ model Brand {
   ethnicity              String[]
   minDaytimePopulation   Int?
   minSize                Int?
+  maxSize                Int?
   minFrontageWidth       Int?
+  maxFrontageWidth       Int?
   equipment              String[]
   spaceType              String[]
   locationAndPerformance LocationAndPerformance[]

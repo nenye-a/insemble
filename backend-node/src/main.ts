@@ -5,6 +5,7 @@ import { prisma } from './prisma';
 import { schema } from '../src/schema';
 import { authSession } from './helpers/auth';
 import { permissions } from './middlewares/permission';
+import { registerTenantHandler } from './controllers/registerTenantController';
 
 const server = new GraphQLServer({
   schema,
@@ -26,6 +27,13 @@ server.express.use((req, res, next) => {
   });
   next();
 });
+
+server.express.get(
+  '/register-tenant-verification/:token',
+  registerTenantHandler,
+);
+
 server.start({}, () => {
+  // eslint-disable-next-line no-console
   console.log(`Server is running on http://localhost:4000`);
 });

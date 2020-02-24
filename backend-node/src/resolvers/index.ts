@@ -18,3 +18,4 @@ export * from './preview/locationPreview';
 export * from './auth/registerLandlordMutation';
 export * from './auth/loginLandlordMutation';
 export * from './details/locationDetailsQuery';
+export * from './auth/tenantVerificationQuery';
