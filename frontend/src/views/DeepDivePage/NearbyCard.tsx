@@ -81,7 +81,7 @@ export default function NearbyCard() {
       titleContainerProps={{ style: { height: 56 } }}
     >
       <RowedView flex>
-        <NearbyMap data={filteredData || []} />
+        <NearbyMap data={top15Data || []} />
         <View flex>
           <NearbyMapLegend />
           <RightContent flex>
