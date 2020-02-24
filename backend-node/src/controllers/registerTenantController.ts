@@ -8,7 +8,7 @@ import { FRONTEND_HOST } from '../constants/constants';
 
 export let registerTenantHandler = async (req: Request, res: Response) => {
   let tenantVerificationId = Base64.decode(req.params.token);
-  let tenantVerification = await prisma.tenantVerification.findOne({
+  let tenantVerification = await prisma.tenantRegisterVerification.findOne({
     where: {
       id: tenantVerificationId,
     },
@@ -39,7 +39,7 @@ export let registerTenantHandler = async (req: Request, res: Response) => {
       {} as GraphQLResolveInfo,
     );
   }
-  await prisma.tenantVerification.update({
+  await prisma.tenantRegisterVerification.update({
     data: {
       verified: true,
     },
