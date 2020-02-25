@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import { LANDLORD_TENANT_MATCHES } from '../../fixtures/dummyData';
 import { View, Text, TouchableOpacity } from '../../core-ui';
 import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
@@ -58,16 +59,6 @@ const Image = styled.img`
   object-fit: cover;
 `;
 
-const InterestedContainer = styled(View)`
-  background-color: ${THEME_COLOR};
-  align-items: center;
-  justify-content: center;
-  padding: 2px 0;
-  display: none;
-  &:hover {
-    display: block;
-  }
-`;
 const RowedView = styled(View)`
   flex-direction: row;
   justify-content: space-between;
@@ -89,20 +80,27 @@ const TenantCard = styled(TouchableOpacity)`
   &:nth-child(3n) {
     margin-right: 0;
   }
+  min-height: 200px
   height: fit-content;
   &:hover {
-    border: 1px solid ${SECONDARY_COLOR};
-    box-shadow: 0px 0px 6px 0px ${SECONDARY_COLOR};
+    box-shadow: 0px 0px 10px 0px ${SECONDARY_COLOR};
   }
 `;
-// const TenantCard = styled(Card)`
-//   width: calc(33.33% - 11px);
-//   margin: 12px 16px 12px 0;
-//   &:nth-child(3n) {
-//     margin-right: 0;
-//   }
-//   height: fit-content;
-// `;
+
+const InterestedContainer = styled(View)`
+  flex: 1;
+  width: 100%;
+  position: absolute;
+  background-color: ${THEME_COLOR};
+  align-items: center;
+  justify-content: center;
+  padding: 2px 0;
+  display: none;
+  ${TenantCard}:hover & {
+    display: flex;
+  }
+`;
+
 const DescriptionContainer = styled(View)`
   padding: 12px;
 `;
