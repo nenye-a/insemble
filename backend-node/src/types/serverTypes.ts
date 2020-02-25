@@ -1,4 +1,4 @@
-import { PrismaClient, TenantSession } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 export type Root = object | undefined;
 
