@@ -5,7 +5,7 @@ import { View, Modal, TabBar } from '../../core-ui';
 import PropertyDeepDiveHeader from './PropertyDeepDiveHeader';
 import TenantPropertyDetailsView from './TenantPropertyDetailsView';
 import TenantOverview from './TenantOverview';
-import { MODAL_GREY, WHITE } from '../../constants/colors';
+import { WHITE, BACKGROUND_COLOR } from '../../constants/colors';
 
 type Props = {
   visible: boolean;
@@ -31,7 +31,7 @@ export default function TenantDeepDiveModal(props: Props) {
   };
 
   return (
-    <Modal backgroundColor={MODAL_GREY} onClose={onClose} visible={visible}>
+    <Modal backgroundColor={BACKGROUND_COLOR} onClose={onClose} visible={visible}>
       <TourContainer isShrink={headerShrink} />
       <TabBar
         fullWidth={false}

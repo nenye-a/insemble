@@ -1,65 +1,66 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { ReactNode } from 'react';
+import styled, { CSSProperties } from 'styled-components';
 
 import { View, Card, Text } from '../../core-ui';
-import PhotoGallery from './PhotoGallery';
-import DescriptionCard from './DescriptionCard';
-import SummaryCard from './SummaryCard';
-import { BACKGROUND_COLOR, THEME_COLOR } from '../../constants/colors';
-import { PHOTOS, PROPERTY_SUMMARY, PROPERTY_DESCRIPTION } from '../../fixtures/dummyData';
-import KeyFacts from './KeyFacts';
-import RelevantConsumerPersonas from './RelevantConsumerPersonas';
-import Graphic from '../../core-ui/Demographics';
+import { THEME_COLOR } from '../../constants/colors';
+import TenantKeyFacts from './TenantKeyFacts';
+
+type OverviewCardProps = {
+  title: string;
+  content?: string;
+  style?: CSSProperties;
+  children?: ReactNode;
+};
+
+function OverviewCard({ title, content, style, children }: OverviewCardProps) {
+  return (
+    <CardsContainer style={style} title={title} titleBackground="grey">
+      <ContentContainer>
+        <Text>{content}</Text>
+        {children}
+      </ContentContainer>
+    </CardsContainer>
+  );
+}
 
 export default function TenantOverview() {
   return (
     <View>
       <Container>
-        <KeyFacts withMargin={false} />
+        <TenantKeyFacts withMargin={false} />
       </Container>
       {/* <RelevantConsumerPersonas />
       <Container>
         <Graphic population={100} />
       </Container> */}
 
-      <Row flex>
-        <CardsContainer title="Overview" titleBackground="grey">
-          <ContentContainer>
-            <Text>
-              Actively looking for retail and restaurant space in Greater Los Angeles, San
-              Francisco, and Waco, TX.
-            </Text>
-          </ContentContainer>
-        </CardsContainer>
-
-        <CardsContainer title="Description" titleBackground="grey">
-          <ContentContainer>
-            <Text>
-              Spitz Diner is a fast casual Turkish diner with 2 existing locations (one in Los
-              Angeles’s very own Little Tokyo), looking to expand by 10 locations in the upcoming
-              year. We look for spaces about 3200 - 4000 square foot, and are happy exploring white
-              box and second generation locations.
-            </Text>
-          </ContentContainer>
-        </CardsContainer>
-      </Row>
       <View>
-        <CardsContainer title="Physical Space" titleBackground="grey">
-          <ContentContainer>
-            <RowedView>
+        <Row flex>
+          <OverviewCard
+            title="Overview"
+            content="Actively looking for retail and restaurant space in Greater Los Angeles, San Francisco, and Waco, TX."
+          />
+          <OverviewCard
+            title="Description"
+            content="Spitz Diner is a fast casual Turkish diner with 2 existing locations (one in Los Angeles’s very own Little Tokyo), looking to expand by 10 locations in the upcoming year. We look for spaces about 3200 - 4000 square foot, and are happy exploring white box and second generation locations."
+          />
+        </Row>
+        <SpaceContainer>
+          <OverviewCard title="Physical Space">
+            <TextRow>
               <Text>Target Sqft:</Text>
               <ContentText>4000 - 5200</ContentText>
-            </RowedView>
-            <RowedView>
+            </TextRow>
+            <TextRow>
               <Text>Target Ceiling Height:</Text>
               <ContentText>15ft</ContentText>
-            </RowedView>
-            <RowedView>
+            </TextRow>
+            <TextRow>
               <Text>Condition:</Text>
               <ContentText>White Box</ContentText>
-            </RowedView>
-          </ContentContainer>
-        </CardsContainer>
+            </TextRow>
+          </OverviewCard>
+        </SpaceContainer>
       </View>
     </View>
   );
@@ -68,21 +69,25 @@ export default function TenantOverview() {
 const ContentText = styled(Text)`
   color: ${THEME_COLOR};
 `;
-const Container = styled(View)`
-  padding: 16px;
-`;
-const CardsContainer = styled(Card)`
+
+const Container = styled(Card)`
   margin: 16px;
-  flex: 1;
-  height: fit-content;
 `;
 
-const Spacing = styled(View)`
-  height: 12px;
+const SpaceContainer = styled(View)`
+  width: 50%;
 `;
-const RowedView = styled(View)`
+
+const CardsContainer = styled(Card)`
+  margin: 16px;
+  height: 200px;
+  flex: 1;
+`;
+
+const TextRow = styled(View)`
   flex-direction: row;
   justify-content: space-between;
+  margin: 8px 0;
 `;
 
 const ContentContainer = styled(View)`

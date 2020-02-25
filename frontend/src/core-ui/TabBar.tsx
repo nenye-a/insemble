@@ -84,7 +84,7 @@ const VerticalView = styled(View)`
 `;
 const HorizontalView = styled(View)`
   flex-direction: row;
-  widht: 100%;
+  width: 100%;
   height: 36px;
 `;
 const SegmentText = styled(Text)<SegmentProps>`
