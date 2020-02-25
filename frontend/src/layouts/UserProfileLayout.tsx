@@ -1,11 +1,12 @@
 import React, { ReactNode } from 'react';
 
 import ProfileLayout from './ProfileLayout';
+import { Role } from '../types/types';
 
 type Props = {
   children: ReactNode;
 };
 
 export default function UserProfileLayout(props: Props) {
-  return <ProfileLayout role="tenant">{props.children}</ProfileLayout>;
+  return <ProfileLayout role={Role.TENANT}>{props.children}</ProfileLayout>;
 }

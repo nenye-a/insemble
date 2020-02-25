@@ -7,4 +7,7 @@ export type IconProps = {
   y?: string | number;
 };
 
-export type RoleType = 'landlord' | 'tenant';
+export enum Role {
+  TENANT = 'TENANT',
+  LANDLORD = 'LANDLORD',
+}

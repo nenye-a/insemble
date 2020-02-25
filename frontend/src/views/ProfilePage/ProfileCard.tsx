@@ -10,10 +10,10 @@ import ProfileMenuList from './ProfileMenuList';
 import { GetTenantProfile } from '../../generated/GetTenantProfile';
 import { GET_TENANT_PROFILE } from '../../graphql/queries/server/profile';
 import asyncStorage from '../../utils/asyncStorage';
-import { RoleType } from '../../types/types';
+import { Role } from '../../types/types';
 
 type Props = {
-  role: RoleType;
+  role: Role;
 };
 
 export default function ProfileCard({ role }: Props) {
@@ -27,7 +27,7 @@ export default function ProfileCard({ role }: Props) {
   let history = useHistory();
   let client = useApolloClient();
 
-  if (role === 'tenant') {
+  if (role === Role.TENANT) {
     name = data?.profileTenant.firstName + ' ' + data?.profileTenant.lastName;
     company = data?.profileTenant.company || '';
     title = data?.profileTenant.title || '';

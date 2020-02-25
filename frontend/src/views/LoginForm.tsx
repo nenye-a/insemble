@@ -9,14 +9,10 @@ import { validateEmail } from '../utils/validation';
 import { LOGIN_TENANT } from '../graphql/queries/server/auth';
 import { LoginTenant, LoginTenantVariables } from '../generated/LoginTenant';
 import { asyncStorage } from '../utils';
-
-enum Role {
-  Tenant = 'Tenant',
-  Landlord = 'Landlord',
-}
+import { Role } from '../types/types';
 
 type Props = {
-  role: 'Tenant' | 'Landlord'; //change to constants
+  role: Role;
 };
 
 export default function Login(_props: Props) {
@@ -42,7 +38,7 @@ export default function Login(_props: Props) {
   if (data) {
     let { loginTenant } = data;
     let { token, brandId } = loginTenant;
-    saveUserData(token, Role.Tenant, brandId);
+    saveUserData(token, Role.TENANT, brandId);
     history.push(`/map/${brandId}`);
   }
 

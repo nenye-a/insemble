@@ -9,9 +9,10 @@ import SvgPerson from '../../components/icons/person';
 import SvgBusiness from '../../components/icons/business';
 import SvgMessage from '../../components/icons/message';
 import SvgBilling from '../../components/icons/billing';
+import { Role } from '../../types/types';
 
 type Props = {
-  role?: 'tenant' | 'landlord';
+  role: Role;
 };
 
 type MenuListProps = ComponentProps<typeof TouchableOpacity> & {
@@ -28,8 +29,8 @@ export type Menu =
 
 export default function ProfileMenuList(props: Props) {
   let history = useHistory();
-  let { role = 'tenant' } = props;
-  let MENUS = role === 'tenant' ? TENANT_PROFILE_MENU : LANDLORD_PROFILE_MENU;
+  let { role } = props;
+  let MENUS = role === Role.TENANT ? TENANT_PROFILE_MENU : LANDLORD_PROFILE_MENU;
   return (
     <Container>
       {MENUS.map(({ menu, icon, path }, index) => {

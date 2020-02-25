@@ -4,10 +4,10 @@ import styled from 'styled-components';
 import { View } from '../core-ui';
 import ProfileCard from '../views/ProfilePage/ProfileCard';
 import HeaderNavigationBar from '../components/layout/HeaderNavigationBar';
-import { RoleType } from '../types/types';
+import { Role } from '../types/types';
 
 type Props = {
-  role: RoleType;
+  role: Role;
   children: ReactNode;
 };
 
