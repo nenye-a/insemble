@@ -1,10 +1,11 @@
 import React, { useState, UIEvent } from 'react';
 import styled from 'styled-components';
 
-import { View, Text, Modal, TabBar } from '../../core-ui';
+import { View, Modal, TabBar } from '../../core-ui';
 import PropertyDeepDiveHeader from './PropertyDeepDiveHeader';
 import TenantPropertyDetailsView from './TenantPropertyDetailsView';
 import TenantOverview from './TenantOverview';
+import { MODAL_GREY, WHITE } from '../../constants/colors';
 
 type Props = {
   visible: boolean;
@@ -30,10 +31,8 @@ export default function TenantDeepDiveModal(props: Props) {
   };
 
   return (
-    <Modal onClose={onClose} visible={visible}>
-      <TourContainer isShrink={headerShrink}>
-        <Text>3D Tour</Text>
-      </TourContainer>
+    <Modal backgroundColor={MODAL_GREY} onClose={onClose} visible={visible}>
+      <TourContainer isShrink={headerShrink} />
       <TabBar
         fullWidth={false}
         options={['Tenant View', 'Insights View']}
@@ -44,12 +43,14 @@ export default function TenantDeepDiveModal(props: Props) {
       />
 
       <ScrollView flex onScroll={handleOnScroll}>
-        <PropertyDeepDiveHeader
-          isLiked
-          onLikePress={() => {}}
-          address="address"
-          targetNeighborhood="targetneighborhood"
-        />
+        <View style={{ backgroundColor: WHITE }}>
+          <PropertyDeepDiveHeader
+            isLiked
+            onLikePress={() => {}}
+            address="California Cheeseburgers"
+            targetNeighborhood="Hamburger Restaurant"
+          />
+        </View>
         {isOverviewSelected ? <TenantOverview /> : <TenantPropertyDetailsView />}
       </ScrollView>
     </Modal>
