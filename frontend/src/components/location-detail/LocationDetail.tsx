@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, View, Text, TouchableOpacity } from '../../core-ui';
+import { Card, View, Text } from '../../core-ui';
 import styled from 'styled-components';
 import { THEME_COLOR } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_WEIGHT_MEDIUM } from '../../constants/theme';
@@ -22,30 +22,28 @@ export default function LocationDetail(props: Props) {
   ];
   let rightText = [population, income, age + ' years'];
   return visible ? (
-    <TouchableOpacity>
-      <Container
-        titleBackground="purple"
-        title={title}
-        subTitle={subTitle}
-        titleProps={{ fontWeight: FONT_WEIGHT_MEDIUM }}
-      >
-        <ContentContainer>
-          <LeftColumn>
-            {leftText.map((line, i) => (
-              <SmallText key={i}>{line}</SmallText>
-            ))}
-          </LeftColumn>
-          <RightColumn>
-            {rightText.map((line, i) => (
-              <RightColumnText key={i}>{line}</RightColumnText>
-            ))}
-          </RightColumn>
-        </ContentContainer>
-        <SeeMoreContainer>
-          <SeeMore>click again to see more</SeeMore>
-        </SeeMoreContainer>
-      </Container>
-    </TouchableOpacity>
+    <Container
+      titleBackground="purple"
+      title={title}
+      subTitle={subTitle}
+      titleProps={{ fontWeight: FONT_WEIGHT_MEDIUM }}
+    >
+      <ContentContainer>
+        <LeftColumn>
+          {leftText.map((line, i) => (
+            <SmallText key={i}>{line}</SmallText>
+          ))}
+        </LeftColumn>
+        <RightColumn>
+          {rightText.map((line, i) => (
+            <RightColumnText key={i}>{line}</RightColumnText>
+          ))}
+        </RightColumn>
+      </ContentContainer>
+      <SeeMoreContainer>
+        <SeeMore>click again to see more</SeeMore>
+      </SeeMoreContainer>
+    </Container>
   ) : null;
 }
 

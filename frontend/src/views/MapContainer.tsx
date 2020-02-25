@@ -18,16 +18,9 @@ import { LocationPreview, LocationPreviewVariables } from '../generated/Location
 import { GOOGLE_MAPS_STYLE } from '../constants/googleMaps';
 import MapTour from './MapPage/MapTour';
 
-type LatLngBounds = google.maps.LatLngBounds;
 type LatLng = google.maps.LatLng;
 type LatLngLiteral = google.maps.LatLngLiteral;
-type MarkerData = {
-  targetAddress: string;
-  targetNeighborhood: string;
-  daytimePop3Mile: number;
-  medianIncome: number;
-  medianAge: number;
-};
+
 type Props = {
   markers?: Array<LatLngLiteral>;
   onMarkerClick?: (markerPosition: LatLng, address: string, targetNeighborhood: string) => void;
@@ -160,11 +153,11 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
             >
               <LocationDetail
                 visible
-                title={data?.locationPreview.targetAddress || ''}
-                subTitle={data?.locationPreview.targetNeighborhood || ''}
-                income={data?.locationPreview.medianIncome.toString() || ''}
-                population={data?.locationPreview.daytimePop3Mile.toString() || ''}
-                age={data?.locationPreview.medianAge || 0}
+                title={data?.locationPreview.targetAddress}
+                subTitle={data?.locationPreview.targetNeighborhood}
+                income={data?.locationPreview.medianIncome.toString()}
+                population={data?.locationPreview.daytimePop3Mile.toString()}
+                age={data?.locationPreview.medianAge}
               />
             </InfoBox>
           </Marker>
