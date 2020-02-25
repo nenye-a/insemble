@@ -166,7 +166,7 @@ def generate_matches(location_address, name=None, my_place_type={}):
     norm_df = weight_and_evaluate(processed_diff)
 
     # re-assign the important tracking information (location id & positioning)
-    norm_df['lat'], norm_df['lng'], norm_df['loc_id'] = df['lat'], df['lng'], df['loc_id']
+    norm_df['lat'], norm_df['lng'], norm_df['loc_id'], norm_df['_id'] = df['lat'], df['lng'], df['loc_id'], df['_id']
 
     print("** Matching: Matching complete, results immenent.")
     # Return only the top 1% of locations.
@@ -186,8 +186,8 @@ def generate_matches(location_address, name=None, my_place_type={}):
     # "match_value" refers to the actual map value
     # all_dict = norm_df[['match_value', 'loc_id']].to_dict(orient='records')
     norm_df['match_value'] = norm_df['match_value'].round()
-    all_dict = norm_df.set_index('loc_id')['match_value'].to_dict()
-    best_dict = best[['lat', 'lng', 'match', 'loc_id']].to_dict(orient='records')
+    all_dict = norm_df.set_index('_id')['match_value'].to_dict()
+    best_dict = best[['lat', 'lng', 'match']].to_dict(orient='records')
 
     tenant_id = utils.DB_TENANT.insert({'match_values': all_dict})
 

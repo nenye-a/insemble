@@ -727,9 +727,18 @@ class FastLocationDetailsAPI(AsynchronousAPI):
             print(validated_params)
             location = provider.get_location_details(validated_params["target_location"])
 
-        # stringify the objectIDs
-        tenant["_id"] = str(tenant["_id"])
+            if not location:
+                # get_all_the_details anyway
+                # kick off our super slow function - ()
+                pass
+
+        # GET THE MATCH VALUE
+        match_value = provider.get_match_value_from_id(validated_params["tenant_id"], location['vector_id'])
+
+        # stringify the objectIds
+        tenant["_id"] = str(tenant["_id"]) if '_id' in tenant else None
         location["_id"] = str(location["_id"]) if "_id" in location else None
+        location["vector_id"] = str(location["vector_id"]) if "vector_id" in location else None
 
         # GET THE DEMOGRAPHIC DETAILS (asyc)
         d_process, tenant_demographics = self.obtain_demographics.delay(tenant), []
@@ -771,8 +780,14 @@ class FastLocationDetailsAPI(AsynchronousAPI):
             'status': 200,
             'status_detail': 'Success',
             'result': {
-                # 'match_value':,
-                # 'affinities':,
+                'match_value': match_value,
+                'affinities': {
+                    # hardcoded false for now, will be made into values soon
+                    'growth': False,
+                    'demographics': False,
+                    'personas': False,
+                    'ecosystem': False
+                },
                 'key_facts': key_facts,
                 'commute': commute,
                 'top_personas': top_personas,
@@ -866,7 +881,7 @@ class FastLocationDetailsAPI(AsynchronousAPI):
     @staticmethod
     @celery_app.task
     def obtain_nearby(tenant, location):
-        categories = tenant['foursquare_categories']
+        categories = tenant['foursquare_categories'] if 'foursquare_categories' in tenant else []
         return provider.obtain_nearby(location, categories)
 
     def _register_tasks(self) -> None:

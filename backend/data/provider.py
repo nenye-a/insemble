@@ -727,14 +727,20 @@ def get_tenant_details(tenant_id):
     """
 
     # # TODO: re-enable - look in the tenant database to get the tenant details.
-    # tenant = utils.DB_TENANT.find({'_id': tenant_id})
-    # if not tenant:
-    #     return None, "Tenant is not in the tenant databse."
-    # return tenant
+    tenant = utils.DB_TENANT.find_one({'_id': ObjectId(tenant_id)}, {'tenant_details': 1, 'rep_id': 1})
+    if not tenant:
+        return None
 
-    # TODO: implement case the generates the details when we don't have tenant_id
-    tenant = utils.DB_PROCESSED_SPACE.find_one()
-    return tenant
+    details = tenant['tenant_details']
+    if 'arcgis_details1' not in details:
+        # proxy to determining if we need to check the rep id.
+        details = utils.DB_PROCESSED_SPACE.find_one({'_id': tenant_id['rep_id']}, {'_id': 0})
+    else:
+        return tenant['tenant_details']
+
+    # # TODO: implement case the generates the details when we don't have tenant_id
+    # tenant = utils.DB_PROCESSED_SPACE.find_one()
+    # return tenant
 
 
 def get_location_details(location):
@@ -742,12 +748,21 @@ def get_location_details(location):
     lng = location['lng']
 
     space = get_nearest_space(lat, lng, database='vectors')
+    vector_id = space["_id"]
     if space:
         space = utils.DB_PROCESSED_SPACE.find_one({'_id': space['loc_id']})
+        space["vector_id"] = vector_id
         return space
     else:
         # TODO: get all the details any way and return if there is no space.
         pass
+
+
+def get_match_value_from_id(tenant_id, vector_id):
+    string_id = str(vector_id)
+    query = 'match_values.' + string_id
+    match_doc = utils.DB_TENANT.find_one({'_id': ObjectId(tenant_id)}, {query: 1})
+    return match_doc['match_values'][string_id]
 
 
 def get_nearest_space(lat, lng, database='spaces'):
@@ -761,14 +776,14 @@ def get_nearest_space(lat, lng, database='spaces'):
     """
 
     block = anmspatial.point_to_block(lat, lng, state='CA', prune_leading_zero=False)
-    blockgroup = block[:-3]
+    tract = block[:-4]
 
     query_db = utils.DB_PROCESSED_SPACE if database == 'spaces' else utils.DB_VECTORS_LA
 
     nearest_spaces = query_db.find({'block': block})
     if nearest_spaces.count() == 0:
-        nearest_spaces = query_db.find({'blockgroup': blockgroup})
-        if not nearest_spaces:
+        nearest_spaces = query_db.find({'tract': tract})
+        if nearest_spaces.count() == 0:
             return None
 
     closest_space = None
