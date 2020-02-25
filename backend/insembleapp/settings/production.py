@@ -4,24 +4,25 @@ import os
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from .base import *  # noqa
+from decouple import config
 import urllib
 
 
 DEBUG = False
 
+SECRET_KEY = config('SECRET_KEY')
 # SECRET_KEY = config('SECRET_KEY')
-SECRET_KEY = os.environ['SECRET_KEY']
 
-GOOG_KEY = os.environ['GOOG_KEY']
-YELP_KEY = os.environ['YELP_KEY']
-FRSQ_ID = os.environ['FRSQ_ID']
-FRSQ_SECRET = os.environ['FRSQ_SECRET']
-CRIME_KEY = os.environ['CRIME_KEY']
+GOOG_KEY = config('GOOG_KEY')
+YELP_KEY = config('YELP_KEY')
+FRSQ_ID = config('FRSQ_ID')
+FRSQ_SECRET = config('FRSQ_SECRET')
+CRIME_KEY = config('CRIME_KEY')
 
-MONGO_USER = os.environ['MONGO_USER']
-MONGO_DB_PASS = os.environ["MONGO_DB_PASS"]
-AWS_ACCESS_KEY_ID = os.environ["AWS_SECRET_KEY_ID"]
-AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
+MONGO_USER = config('MONGO_USER')
+MONGO_DB_PASS = config("MONGO_DB_PASS")
+AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
 
 
 DATABASES = {
@@ -35,7 +36,8 @@ DATABASES = {
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
-ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS')
+ALLOWED_HOST = config('ALLOWED_HOSTS')
 
 STATIC_ROOT = base_dir_join('staticfiles')
 STATIC_URL = '/static/'
@@ -46,8 +48,8 @@ MEDIA_URL = '/media/'
 SERVER_EMAIL = 'info@insemblegroup.com'
 
 EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
-EMAIL_HOST_PASSWORD = os.environ['SENDGRID_PASSWORD']
+EMAIL_HOST_USER = config('SENDGRID_USERNAME')
+EMAIL_HOST_PASSWORD = config('SENDGRID_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
@@ -66,8 +68,8 @@ X_FRAME_OPTIONS = 'DENY'
 # Webpack
 WEBPACK_LOADER['DEFAULT']['CACHE'] = True
 
-CELERY_BROKER_URL = os.environ['REDIS_URL']
-CELERY_RESULT_BACKEND = os.environ['REDIS_URL']
+CELERY_BROKER_URL = config('REDIS_URL')
+CELERY_RESULT_BACKEND = config('REDIS_URL')
 
 CELERY_SEND_TASK_ERROR_EMAILS = True
 
@@ -141,11 +143,12 @@ LOGGING = {
 JS_REVERSE_EXCLUDE_NAMESPACES = ['admin']
 
 # Sentry
-SENTRY_DSN = os.environ['SENTRY_DSN']
-COMMIT_SHA = os.environ['HEROKU_SLUG_COMMIT']
+SENTRY_DSN = config('SENTRY_DSN')
+COMMIT_SHA = ''
 
 sentry_sdk.init(
     dsn=SENTRY_DSN,
     integrations=[DjangoIntegration()],
     release=COMMIT_SHA
 )
+
