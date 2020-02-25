@@ -1,5 +1,5 @@
 // Layout Types
-import { BasicLayout, UserProfileLayout, BlankLayout } from './layouts';
+import { BasicLayout, UserProfileLayout, BlankLayout, LandlordProfileLayout } from './layouts';
 
 // Route Views
 import Login from './views/Login';
@@ -39,6 +39,11 @@ export default [
     exact: true,
     layout: BlankLayout,
     component: LandlordLogin,
+  },
+  {
+    path: '/landlord/edit-profile',
+    layout: LandlordProfileLayout,
+    component: EditBasicProfile,
   },
   {
     path: '/login',
