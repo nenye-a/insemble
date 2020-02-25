@@ -1,7 +1,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://prisma:prisma@localhost:5432/insemble?schema=public"
+  url = "***"
 }
 
 
@@ -21,9 +21,12 @@ enum NewLocationPlan {
   YES NOT_ACTIVE NOT_PLANNING
 }
 
-enum MarketingPreference {
-  PUBLIC PRIVATE
-}
+// model MatchingLocation {
+//   id    String @id
+//   lat   Float
+//   lng   Float
+//   match Float
+// }
 
 model MatchingProperty {
   id         String @id @default(cuid())
@@ -50,19 +53,18 @@ model LocationAndPerformance {
 }
 
 model TenantUser {
-  id           String     @id @default(cuid())
-  email        String     @unique
-  avatar       String?
-  password     String
-  firstName    String
-  lastName     String
-  company      String
-  phoneNumber  String?
-  title        String?
-  description  String?
-  brands       Brand[]
-  tier         TenantTier
-  pendingEmail Boolean    @default(false)
+  id          String     @id @default(cuid())
+  email       String     @unique
+  avatar      String?
+  password    String
+  firstName   String
+  lastName    String
+  company     String
+  phoneNumber String?
+  title       String?
+  description String?
+  brands      Brand[]
+  tier        TenantTier
 }
 
 model LandlordUser {
@@ -113,12 +115,12 @@ model Brand {
   locationAndPerformance LocationAndPerformance[]
   matchingLocations      String?
   matchingProperties     MatchingProperty[]
-  //Tenant Id from tenantMatches django api
-  tenantId               String
   createdAt              DateTime                 @default(now())
 }
 
-
+enum MarketingPreference {
+  PUBLIC PRIVATE
+}
 
 
 model Space {
@@ -161,27 +163,4 @@ model LandlordSession {
   token     String
   createdAt DateTime     @default(now())
   user      LandlordUser
-}
-
-model LandlordRegisterVerification {
-  id            String  @default(cuid()) @id
-  email         String
-  landlordInput String
-  verified      Boolean @default(false)
-}
-
-model TenantRegisterVerification {
-  id            String  @default(cuid()) @id
-  businessInput String?
-  tenantInput   String
-  filterInput   String?
-  email         String
-  verified      Boolean @default(false)
-}
-
-model TenantEmailVerification {
-  id       String     @default(cuid()) @id
-  email    String
-  user     TenantUser
-  verified Boolean    @default(false)
 }
