@@ -54,7 +54,7 @@ export default [
     component: LandlordProperties,
   },
   {
-    path: '/landlord/property-detail/:brandId',
+    path: '/landlord/properties/:brandId',
     layout: LandlordProfileLayout,
     component: LandlordPropertyDetails,
   },

@@ -18,7 +18,7 @@ export default function LandlordProperties() {
           key={index}
           style={{ marginBottom: 24 }}
           onPress={() => {
-            history.push(`/landlord/property-detail/${index}`); // TODO: change to brandID
+            history.push(`/landlord/properties/${index}`); // TODO: change to brandID
           }}
         >
           <HistoryContainer>
