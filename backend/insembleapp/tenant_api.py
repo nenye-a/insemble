@@ -682,24 +682,7 @@ class FastLocationDetailsAPI(AsynchronousAPI):
             lat: int,
             lng: int,
         },
-        property_id: string (required)
-
-
-        my_location: {                          (required)
-            address: string,                    (required -> not required if categories are provided)
-            brand_name: string,                 (required -> not required if categories are provided)
-            categories: list[string],           (required)
-            income: {                           (required -> not required if brand_name and address provided)
-                min: int,                       (required if income provided)
-                max: int,
-            },
-            matches_id: string                   (required)
-        },
-        target_location: {                      (required, not used if property_id is provided)
-            lat: int,
-            lng: int,
-        },
-        property_id: string,                    (optional)
+        property_id: string                     (optional)
     }
 
 
