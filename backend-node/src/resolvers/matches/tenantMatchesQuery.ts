@@ -1,8 +1,5 @@
-import axios from 'axios';
 import { Root, Context } from 'serverTypes';
-import { LEGACY_API_URI } from '../../constants/host';
 import { queryField, arg } from 'nexus';
-import { TenantMatchesType } from 'dataTypes';
 
 export type MatchingLocation = {
   loc_id: string;
@@ -70,51 +67,8 @@ let tenantMatches = queryField('tenantMatches', {
       );
       matchingLocations = existMatchingLocations;
     } else {
-      let {
-        matching_locations: newMatchingLocations,
-        matching_properties: rawMatchingProperties,
-      }: TenantMatchesType = (
-        await axios.get(`${LEGACY_API_URI}/api/tenantMatches`, {
-          params: {
-            address: location?.address,
-            brand_name: name,
-            categories:
-              categories.length > 0 ? JSON.stringify(categories) : undefined,
-            income: minIncome && {
-              min: maxIncome,
-              max: maxIncome,
-            },
-            age: minAge && {
-              min: minAge,
-              max: maxAge,
-            },
-            personas:
-              personas.length > 0 ? JSON.stringify(personas) : undefined,
-            commute: commute.length > 0 ? JSON.stringify(commute) : undefined,
-            education:
-              education.length > 0 ? JSON.stringify(education) : undefined,
-            rent: minRent && {
-              min: minRent,
-              max: maxRent,
-            },
-          },
-        })
-      ).data;
-      let newMatchingProperties = rawMatchingProperties?.map(
-        ({ property_id: propertyId, ...other }) => {
-          return { propertyId, ...other };
-        },
-      );
-      matchingLocations = newMatchingLocations;
-      matchingProperties = await context.prisma.brand
-        .update({
-          where: { id: brandId },
-          data: {
-            matchingLocations: JSON.stringify(newMatchingLocations),
-            matchingProperties: { create: newMatchingProperties },
-          },
-        })
-        .matchingProperties();
+      matchingLocations = null;
+      matchingProperties = [];
     }
 
     return {
