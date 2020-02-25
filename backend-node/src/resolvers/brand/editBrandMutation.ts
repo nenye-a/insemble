@@ -20,6 +20,8 @@ export let editBrandResolver: FieldResolver<'Mutation', 'editBrand'> = async (
     ethnicity = [],
     ...filterInput
   } = filter || {};
+
+  let { minIncome, maxIncome, minAge, maxAge, maxRent, minRent } = filter || {};
   let {
     ethnicity: ethnicityOpt,
     commute: commuteOpt,
@@ -91,6 +93,49 @@ export let editBrandResolver: FieldResolver<'Mutation', 'editBrand'> = async (
     },
     where: {
       id: brandId,
+    },
+  });
+
+  if (
+    !(name && location) &&
+    !(categories && categories.length > 0 && minIncome)
+  ) {
+    throw new Error(
+      'Please update your brand and provide either (address and brand_name) or (categories and income)',
+    );
+  }
+
+  axios.get(`${LEGACY_API_URI}/api/tenantMatches`, {
+    params: {
+      brand_id: brand.id,
+      address: location?.address,
+      brand_name: name,
+      categories:
+        categories && categories.length > 0
+          ? JSON.stringify(categories)
+          : undefined,
+      income: minIncome && {
+        min: minIncome,
+        max: maxIncome,
+      },
+      age: minAge && {
+        min: minAge,
+        max: maxAge,
+      },
+      personas:
+        personas && personas.length > 0 ? JSON.stringify(personas) : undefined,
+      commute:
+        commuteRaw && commuteRaw.length > 0
+          ? JSON.stringify(commute)
+          : undefined,
+      education:
+        educationRaw && educationRaw.length > 0
+          ? JSON.stringify(education)
+          : undefined,
+      rent: minRent && {
+        min: minRent,
+        max: maxRent,
+      },
     },
   });
 
