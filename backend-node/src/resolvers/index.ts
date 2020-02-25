@@ -30,3 +30,4 @@ export * from './brand/brandsQuery';
 
 export * from './property/propertiesQuery';
 export * from './matches/propertyMatchesQuery';
+export * from './property/createPropertyMutation';
