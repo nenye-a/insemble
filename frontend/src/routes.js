@@ -20,9 +20,6 @@ import TenantEmailVerification from './views/TenantEmailVerification';
 import VerificationSuccessful from './views/VerificationSuccessful';
 import LandlordProperties from './views/LandlordProperties';
 import LandlordPropertyDetails from './views/LandlordPropertyDetails';
-import LandlordProfileLayout from './layouts/LandlordProfileLayout';
-import LandlordMessages from './views/LandlordMessages';
-import LandlordMessageDetail from './views/LandlordMessageDetail';
 
 import { tenantAuthorization } from './utils';
 
