@@ -78,7 +78,7 @@ server.express.get(
   emailRegisterTenantInvitationHandler,
 );
 
-server.start({}, () => {
+server.start({ debug: false }, () => {
   // eslint-disable-next-line no-console
   console.log(`Server is running on http://localhost:4000`);
 });

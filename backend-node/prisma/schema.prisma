@@ -1,7 +1,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://prisma:prisma@localhost:5432/insemble?schema=public"
+  url      = "postgresql://postgres:J9EoqGHgmyD5@insemble-prisma-prod.ck1fgnj3ax3i.us-east-2.rds.amazonaws.com:5432/insemble?schema=public"
 }
 
 
