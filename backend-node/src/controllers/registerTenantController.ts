@@ -22,8 +22,12 @@ export let registerTenantHandler = async (req: Request, res: Response) => {
     return;
   }
   let tenant = JSON.parse(tenantVerification.tenantInput);
-  let business = JSON.parse(tenantVerification.businessInput);
-  let filter = JSON.parse(tenantVerification.filterInput);
+  let business = tenantVerification.businessInput
+    ? JSON.parse(tenantVerification.businessInput)
+    : undefined;
+  let filter = tenantVerification.filterInput
+    ? JSON.parse(tenantVerification.filterInput)
+    : undefined;
 
   let createdTenant = await prisma.tenantUser.create({
     data: {
