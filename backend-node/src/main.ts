@@ -7,6 +7,7 @@ import { authSession } from './helpers/auth';
 import { permissions } from './middlewares/permission';
 import { registerTenantHandler } from './controllers/registerTenantController';
 import { emailVerificationTenantHandler } from './controllers/emailVerificationTenantController';
+import { tenantMatchesDataHandler } from './controllers/tenantMatchesDataCatchController';
 
 const server = new GraphQLServer({
   schema,
@@ -28,6 +29,8 @@ server.express.use((req, res, next) => {
   });
   next();
 });
+
+server.express.post('/tenant-matches-data-catcher', tenantMatchesDataHandler);
 
 server.express.get(
   '/register-tenant-verification/:token',
