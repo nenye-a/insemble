@@ -132,3 +132,14 @@ class LocationDetailSerializer(serializers.Serializer):
             raise serializers.ValidationError(error_message)
 
         return data
+
+
+class FastLocationDetailSerializer(serializers.Serializer):
+
+    """
+
+    """
+
+    tenant_id = serializers.CharField(required=True, max_length=500)
+    target_location = serializers.JSONField(required=True)
+    property_id = serializers.CharField(required=False)

@@ -34,8 +34,8 @@ def request(api_name, req_type, url, headers={}, data={}, params={}, api_field=N
 
     # connect to api specific database
     api_db = utils.DB_REQUESTS[api_name]
-    utils.unique_db_index(api_db, 'req_type', 'url',
-                          'masked_params', 'masked_headers')
+    utils.db_index(api_db, 'req_type', 'url',
+                   'masked_params', 'masked_headers', unique=True)
 
     # mask api_field for all calls
     masked_headers = headers.copy()

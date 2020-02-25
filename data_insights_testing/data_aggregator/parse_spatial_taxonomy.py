@@ -9,7 +9,7 @@ File to parse and uplaod spatial data to database
 
 '''
 
-utils.unique_db_index(utils.DB_CATEGORIES, 'name')
+utils.db_index(utils.DB_CATEGORIES, 'name', unique=True)
 
 
 def parse_taxonomy():
@@ -17,7 +17,7 @@ def parse_taxonomy():
     with open('raw_data/Taxonomy Metadata.json') as f:
         spatial_taxonomy = json.load(f)
 
-    utils.unique_db_index(utils.DB_SPATIAL_TAXONOMY, "label")
+    utils.db_index(utils.DB_SPATIAL_TAXONOMY, "label", unique=True)
     utils.DB_SPATIAL_TAXONOMY.insert_many(list(spatial_taxonomy.values()))
 
 

@@ -7,7 +7,7 @@ import django_js_reverse.views
 
 from rest_framework import routers
 from .legacy_api import CategoryMapAPI, SearchAPI, MatchesAPI
-from .tenant_api import TenantMatchAPI, FilterDetailAPI, LocationDetailsAPI, LocationPreviewAPI, AutoPopulateAPI
+from .tenant_api import TenantMatchAPI, FilterDetailAPI, LocationDetailsAPI, LocationPreviewAPI, AutoPopulateAPI, FastLocationDetailsAPI
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'api/locationDetails/', LocationDetailsAPI.as_view(), name='locationDetails'),
     url(r'api/locationPreview/', LocationPreviewAPI.as_view(), name='locationPreview'),
     url(r'api/autoPopulate/', AutoPopulateAPI.as_view(), name="autoPopulate"),
+    url(r'api/fastLocationDetails/', FastLocationDetailsAPI.as_view(), name="fastLocationDetails"),
 
     # LANDLORD API ROUTES
 
