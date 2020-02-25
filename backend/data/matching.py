@@ -1,6 +1,7 @@
 from . import utils
 from django.conf import settings
 import pandas as pd
+from bson import ObjectId
 from s3fs import S3FileSystem
 import data.api.goog as google
 import data.api.spatial as spatial
@@ -165,22 +166,32 @@ def generate_matches(location_address, name=None, my_place_type={}):
     norm_df = weight_and_evaluate(processed_diff)
 
     # re-assign the important tracking information (location id & positioning)
-    norm_df['lat'], norm_df['lng'], norm_df['loc_id'] = df['lat'], df['lng'], df['loc_id']
+    norm_df['lat'], norm_df['lng'], norm_df['loc_id'], norm_df['_id'] = df['lat'], df['lng'], df['loc_id'], df['_id']
 
     print("** Matching: Matching complete, results immenent.")
     # Return only the top 1% of locations.
 
-    best = norm_df[norm_df['error_sum'] < .3]
-    # best = best.sample(frac=.25)
-    # best = norm_df.nsmallest(15000, 'error_sum')
+    # calculate matches for al vectors
+    norm_df["match_value"] = norm_df["error_sum"].apply(_map_difference_to_match)
 
+    best = norm_df[norm_df['error_sum'] < .3].copy()
     # best = norm_df.nsmallest(int(norm_df.shape[0] * 0.01), 'error_sum')
 
     # Convert distance to match value, and convert any object ids to strings to allow JSON serialization
     best["match"] = best["error_sum"].apply(_map_difference_to_heatmap)
-    best["loc_id"] = best["loc_id"].apply(str)
+    # best["loc_id"] = best["loc_id"].apply(str)
 
-    return best[['lat', 'lng', 'match', 'loc_id']].to_json(orient='records')
+    # upload norm_df to DB_TENANT & provide ID:
+    # "match" referes to the heatmap rating (hasn't been changed due to frontend dependency)
+    # "match_value" refers to the actual map value
+    # all_dict = norm_df[['match_value', 'loc_id']].to_dict(orient='records')
+    norm_df['match_value'] = norm_df['match_value'].round()
+    all_dict = norm_df.set_index('_id')['match_value'].to_dict()
+    best_dict = best[['lat', 'lng', 'match']].to_dict(orient='records')
+
+    tenant_id = utils.DB_TENANT.insert({'match_values': all_dict})
+
+    return best_dict, str(tenant_id)
 
 
 def generate_vector_address(address, name):
@@ -199,6 +210,8 @@ def _generate_location_vector(address, name=None, lat=None, lng=None):
     if not (lat and lng):
         if name:
             location = google.find(address, name=name, allow_non_establishments=True)
+            if not location:
+                location = google.find(address, allow_non_establishments=True)
         else:
             location = google.find(address, allow_non_establishments=True)
         lat = location["geometry"]["location"]["lat"]

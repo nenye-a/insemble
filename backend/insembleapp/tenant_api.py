@@ -1,12 +1,16 @@
 import json
 import time
+import timeit
 import ast
 import threading
 import data.matching as matching
 import data.provider as provider
+import data.api.goog as google
+import data.api.arcgis as arcgis
+from bson import ObjectId
 from rest_framework import status, generics, permissions, serializers
 from rest_framework.response import Response
-from .tenant_serializers import TenantMatchSerializer, LocationDetailSerializer, LocationSerializer
+from .tenant_serializers import TenantMatchSerializer, LocationDetailSerializer, LocationSerializer, FastLocationDetailSerializer
 from .celery import app as celery_app
 
 
@@ -23,6 +27,11 @@ class AsynchronousAPI(generics.GenericAPIView):
     """
     Can be inherited by any other views in order to enable asynchronous functions.
     """
+
+    # allows all access by default, overload in child class.
+    permission_classes = [
+        permissions.AllowAny
+    ]
 
     # Takes a celery process and returns a threading task that will update
     # result pool with the final items when the process completes.
@@ -90,7 +99,7 @@ class FilterDetailAPI(generics.GenericAPIView):
 # TenantMatchApi - referenced by api/tenantMatch/
 
 
-class TenantMatchAPI(generics.GenericAPIView):
+class TenantMatchAPI(AsynchronousAPI):
 
     """
 
@@ -112,6 +121,7 @@ class TenantMatchAPI(generics.GenericAPIView):
         personas: list[string],     (optional)
         commute: list[string],      (optional)
         education: list[string],    (optional)
+        ethnicity: list[string],    (optional)
         rent: {                     (optional)
             min: int,               (required if rent provided)
             max: int                (optional)
@@ -138,7 +148,8 @@ class TenantMatchAPI(generics.GenericAPIView):
                 'sqft': int,
                 'type': string,
             }
-        ]
+        ],
+        tenant_id: string                   (always provided)
     }
 
     """
@@ -149,41 +160,150 @@ class TenantMatchAPI(generics.GenericAPIView):
     serializer_class = TenantMatchSerializer
 
     def get(self, request, *args, **kwargs):
+
+        self._register_tasks()
+
         # validate the input parameters
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
 
-        # Execute match generation based on the parameters provided,
+        # STORE THE REQUEST INFORMATION IN THE DATABASE
+        database_update = {'search_details': validated_params}
+
+        # ASYNCHRONOUSLY GENERATE MATCH DETAILS & OBTAIN OBJECT ID
         if 'address' in validated_params:
-            matches = matching.generate_matches(
-                validated_params['address'], name=validated_params['brand_name']
-            )
+            address = validated_params['address']
+            name = validated_params['brand_name']
+
+            m_process, match_details = self.generate_matches.delay(address, name=name), []
+            match_listener = self._celery_listener(m_process, match_details)
+            match_listener.start()
+
+            # matches, tenant_id = matching.generate_matches(
+            #     address, name=name
+            # )
+
         else:
             print("Match categories", validated_params['categories'])
             # FIXME: change url parsing & parameters to better receive lists of information, current method is error prone
             categories = [string.strip() for string in ast.literal_eval(validated_params['categories'][0])]
             print(categories)
             location = provider.get_representative_location(categories, validated_params['income'])
+            if location:
+                address = location['address']
+                name = location['name']
 
-            matches = matching.generate_matches(
-                location['address'], name=location['name']
-            ) if location else []
+                m_process, match_details = self.generate_matches.delay(address, name=name), []
+                match_listener = self._celery_listener(m_process, match_details)
+                match_listener.start()
+            else:
+                match_listener = None
+                match_details = [([], None)]
+            #     matches, tenant_id = matching.generate_matches(
+            #         address, name=name
+            #     )
+            # else:
+            #     matches, tenant_id = [], None
 
-        # ensure that the response is an object. May not be necessary
-        matches = json.loads(matches) if not matches == [] else []
+        # TODO: GENERATE TENANT LOCATION DETAILS
+        tenant_details, rep_id = self.build_location(address, brand_name=name)
+        if rep_id:
+            database_update['rep_location'] = tenant_details
+            database_update['rep_id'] = rep_id
+        elif tenant_details:
+
+            lat = tenant_details['geometry']['location']['lat']
+            lng = tenant_details['geometry']['location']['lng']
+
+            # TODO: account for people that are outside our range of coverage (fail our calls)
+            # grab the 1 and 3 mile arcgis data
+            arcgis_details1 = provider.get_formatted_arcgisdetails(lat, lng, 1)
+            arcgis_details3 = provider.get_formatted_arcgisdetails(lat, lng, 3)
+
+            # grab the nearby locations
+            n_process, nearby = self.get_nearby_places.delay(lat, lng), []
+            nearby_listener = self._celery_listener(n_process, nearby)
+            nearby_listener.start()
+
+            # obtain the 1, 3 mile demographic details asynchronously
+            d_process, demo = self.get_environics_demographics.delay(lat, lng), []
+            demo_listener = self._celery_listener(d_process, demo)
+            demo_listener.start()
+
+            # grab the 1, 3 mile psychographic deatils asynchronously
+            p_process, psycho = self.get_spatial_personas.delay(lat, lng), []
+            psycho_listener = self._celery_listener(p_process, psycho)
+            psycho_listener.start()
+
+            _, nearby = nearby_listener.join(), nearby[0]
+            _, demo = demo_listener.join(), demo[0]
+            _, psycho = psycho_listener.join(), psycho[0]
+
+            tenant_details['arcgis_details1'] = arcgis_details1
+            tenant_details['arcgis_details3'] = arcgis_details3
+
+            tenant_details.update(nearby)
+            tenant_details.update(demo)
+            tenant_details.update(psycho)
+        else:
+            # no place found, return error.
+            pass
+
+        if match_listener:
+            match_listener.join()
+
+        match_details = match_details[0]
+        matches, tenant_id = match_details
+
+        database_update['tenant_details'] = tenant_details
+        database_update['rep_id'] = ObjectId(rep_id)
+
+        # UPDATE TENANT DATABASE AND RETURN RESULT
+        provider.update_tenant_details(tenant_id, database_update)
         response = {
             'status': status.HTTP_200_OK,
             'status_detail': "Success",
+            'tenant_id': tenant_id,
             'matching_locations': matches,
             'matching_properties': []  # TODO: implement determination of matching properties
         }
-
         return Response(response, status=status.HTTP_200_OK)
         # TODO: utilize the other parameters in the matching algorithms
 
+    def build_location(self, address, brand_name=None):
+        return provider.build_location(address, brand_name=brand_name)
+
+    @staticmethod
+    @celery_app.task
+    def generate_matches(address, name):
+        return matching.generate_matches(address, name=name)
+
+    @staticmethod
+    @celery_app.task
+    def get_spatial_personas(lat, lng):
+        return provider.get_spatial_personas(lat, lng)
+
+    @staticmethod
+    @celery_app.task
+    def get_environics_demographics(lat, lng):
+        return provider.get_environics_demographics(lat, lng)
+
+    @staticmethod
+    @celery_app.task
+    def get_nearby_places(lat, lng):
+        return provider.get_nearby_places(lat, lng)
+
+    def _register_tasks(self) -> None:
+        celery_app.register_task(self.generate_matches)
+        celery_app.register_task(self.get_spatial_personas)
+        celery_app.register_task(self.get_environics_demographics)
+        celery_app.register_task(self.get_nearby_places)
+
 
 # LocationDetailsApi - referenced by api/locationDetails/
+
+
 class LocationDetailsAPI(AsynchronousAPI):
 
     """
@@ -547,6 +667,209 @@ class LocationDetailsAPI(AsynchronousAPI):
         celery_app.register_task(self._get_location_details)
         celery_app.register_task(self._get_personas)
         celery_app.register_task(self._get_key_facts)
+
+
+# FastLocationDetailsAPI (modified) = referenced by api/fastLocationDetails (temporary, to replace the locationDetail API)
+class FastLocationDetailsAPI(AsynchronousAPI):
+
+    """
+
+    Refer to LocationDetailsAPI for the definition. (Temporary)
+
+    parameters: {
+        tenant_id: string,                      (required)
+        target_location: {                      (required, not used if property_id is provided)
+            lat: int,
+            lng: int,
+        },
+        property_id: string                     (optional)
+    }
+
+
+    """
+
+    serializer_class = FastLocationDetailSerializer
+
+    def get(self, request, *args, **kwargs):
+
+        self._register_tasks()
+        # TODO: us tenant_id to grab the matches from the database.
+
+        # validate request
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        validated_params = serializer.validated_data
+
+        # GET THE TENANT DETAILS
+        tenant = provider.get_tenant_details(validated_params["tenant_id"])
+
+        # GET THE LOCATION OR PROPERTY DETAILS
+        if 'property_id' in validated_params:
+            location = provider.get_property(validated_params["property_id"])
+        else:
+            print(validated_params)
+            location = provider.get_location_details(validated_params["target_location"])
+
+            if not location:
+                # get_all_the_details anyway
+                # kick off our super slow function - ()
+                pass
+
+        # GET THE MATCH VALUE
+        match_value = provider.get_match_value_from_id(validated_params["tenant_id"], location['vector_id'])
+
+        # stringify the objectIds
+        tenant["_id"] = str(tenant["_id"]) if '_id' in tenant else None
+        location["_id"] = str(location["_id"]) if "_id" in location else None
+        location["vector_id"] = str(location["vector_id"]) if "vector_id" in location else None
+
+        # GET THE DEMOGRAPHIC DETAILS (asyc)
+        d_process, tenant_demographics = self.obtain_demographics.delay(tenant), []
+        tenant_demo_listener = self._celery_listener(d_process, tenant_demographics)
+        tenant_demo_listener.start()
+        d_process, location_demographics = self.obtain_demographics.delay(location), []
+        location_demo_listener = self._celery_listener(d_process, location_demographics)
+        location_demo_listener.start()
+
+        # Obtain the keyfacts
+        key_facts_demo = self.obtain_key_demographics(location)
+        key_facts_nearby = self.obtain_key_nearby(location, key_facts_demo['mile'])
+        key_facts = key_facts_demo.update({
+            "num_metro": len(key_facts_nearby["nearby_metro"]),
+            "num_universities": len(key_facts_nearby["nearby_university"]),
+            "num_hospitals": len(key_facts_nearby["nearby_hospitals"])
+        })
+        location["nearby_metro"] = key_facts_nearby["nearby_metro"]
+
+        # GET THE NEARBY LOCATIONS (async)
+        n_process, nearby = self.obtain_nearby.delay(tenant, location), []
+        nearby_listener = self._celery_listener(n_process, nearby)
+        nearby_listener.start()
+
+        # GET THE PSYCHOGRAPHICS
+        top_personas = provider.get_matching_personas(location['psycho1'], tenant['psycho1'])
+
+        # grab the demographic details
+        _, tenant_demographics = tenant_demo_listener.join(), tenant_demographics[0]
+        _, location_demographics = location_demo_listener.join(), location_demographics[0]
+        # get the commute details breifly
+        commute = location_demographics[str(key_facts_demo['mile']) + 'mile']['commute']
+        demographics = self.combine_demographics(tenant_demographics, location_demographics)
+
+        # grab the nearby details
+        _, nearby = nearby_listener.join(), nearby[0]
+
+        response = {
+            'status': 200,
+            'status_detail': 'Success',
+            'result': {
+                'match_value': match_value,
+                'affinities': {
+                    # hardcoded false for now, will be made into values soon
+                    'growth': False,
+                    'demographics': False,
+                    'personas': False,
+                    'ecosystem': False
+                },
+                'key_facts': key_facts,
+                'commute': commute,
+                'top_personas': top_personas,
+                'demographics1': demographics["1mile"],
+                'demographics3': demographics["3mile"],
+                'demographics5': demographics["5mile"],
+                'nearby': nearby
+            }
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+
+    def obtain_key_demographics(self, place):
+        """
+        Obtain the key facts from a location.
+        """
+        # Only doing 1 mile statistics for now.
+
+        # if place['arcgis_details1']['DaytimePop1'] > 100000:
+        #     radius_miles = 1
+        #     arcgis_details = place['arcgis_details1']
+        # else:
+        #     radius_miles = 3
+        #     arcgis_details = place['arcgis_details3']
+
+        radius_miles = 1
+        arcgis_details = place['arcgis_details1']
+
+        return {
+            'mile': radius_miles,
+            'DaytimePop': arcgis_details['DaytimePop' + str(radius_miles)],
+            'MedHouseholdIncome': arcgis_details['MedHouseholdIncome' + str(radius_miles)],
+            'TotalHousholds': arcgis_details['TotalHouseholds' + str(radius_miles)],
+            'HouseholdGrowth2017-2022': arcgis_details['HouseholdGrowth2017-2022-' + str(radius_miles)]
+        }
+
+    def obtain_key_nearby(self, place, radius):
+
+        lat = place['geometry']['location']['lat']
+        lng = place['geometry']['location']['lng']
+
+        nearby_metro = place['nearby_subway_station'] if 'nearby_subway_station' in place else google.nearby(
+            lat, lng, 'subway_station', radius=radius)
+        # if radius == 1:
+        nearby_university = place['nearby_university']
+        nearby_hospitals = place['nearby_hospital']
+        nearby_apartments = place['nearby_apartments']
+        # else:
+        #     nearby_university = google.nearby(lat, lng, 'university', radius=radius)
+        #     nearby_hospitals = google.nearby(lat, lng, 'hospital', radius=radius)
+        #     nearby_apartments = google.search(lat, lng, 'apartments', radius=radius)
+
+        return {
+            'nearby_metro': nearby_metro,
+            'nearby_university': nearby_university,
+            'nearby_hospitals': nearby_hospitals,
+            'nearby_aparments': nearby_apartments
+        }
+
+    @staticmethod
+    @celery_app.task
+    def obtain_demographics(place):
+
+        lat = place['geometry']['location']['lat']
+        lng = place['geometry']['location']['lng']
+
+        # get demographics for 1, 3, and 5 mile
+        return {
+            "1mile": provider.get_demographics(lat, lng, 1, demographic_dict=place["demo1"]),
+            "3mile": provider.get_demographics(lat, lng, 3, demographic_dict=place["demo3"]),
+            "5mile": provider.get_demographics(lat, lng, 5)
+        }
+
+    def combine_demographics(self, tenant_demographics, landlord_demographics):
+
+        demographic_radius = ["1mile", "3mile", "5mile"]
+
+        for item in tenant_demographics:
+            if 'commute' in tenant_demographics[item]:
+                tenant_demographics[item].pop('commute')
+        for item in landlord_demographics:
+            if 'commute' in landlord_demographics[item]:
+                landlord_demographics[item].pop('commute')
+
+        return {
+            radius: provider.combine_demographics(
+                tenant_demographics[radius],
+                landlord_demographics[radius]) for radius in demographic_radius
+        }
+
+    @staticmethod
+    @celery_app.task
+    def obtain_nearby(tenant, location):
+        categories = tenant['foursquare_categories'] if 'foursquare_categories' in tenant else []
+        return provider.obtain_nearby(location, categories)
+
+    def _register_tasks(self) -> None:
+        celery_app.register_task(self.obtain_demographics)
+        celery_app.register_task(self.obtain_nearby)
 
 
 # LocationPreviewAPI - referenced by api/locationPreview/ | inherits from LocationDetailsAPI

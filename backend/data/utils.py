@@ -19,8 +19,13 @@ MILES_TO_METERS_FACTOR = 1609.34
 EARTHS_RADIUS_MILES = 3958.8
 
 # Database connections
-DB_SPACE = Connect.get_connection().spaceData
-DB_REQUESTS = Connect.get_connection().requests
+client = Connect.get_connection()
+
+DB_SPACE = client.spaceData
+DB_REQUESTS = client.requests
+DB_APP = client.appMatchData
+DB_TENANT = DB_APP.tenant_details
+DB_PROPERTY = DB_APP.property_details
 DB_AGGREGATE = DB_SPACE.aggregate_records
 DB_COLLECT = DB_SPACE.collect_records
 DB_ZIP_CODES = DB_SPACE.zip_codes
@@ -36,11 +41,11 @@ DB_CATEGORIES = DB_SPACE.categories
 
 
 # simple unique index of a pymongo database collection
-def unique_db_index(collection, *indices):
+def db_index(collection, *indices, unique=False):
     index_request = []
     for index in indices:
         index_request.append((index, 1))
-    collection.create_index(index_request, unique=True)
+    collection.create_index(index_request, unique=unique)
 
 
 # from a list of items in text form
@@ -257,6 +262,14 @@ def intersecting_block_groups(lat, lng, radius, state=None):
     ret = list(set(ret))
     print("ret", ret)
     return ret
+
+
+def is_number(num):
+    try:
+        float(num)
+        return True
+    except ValueError:
+        return False
 
 
 if __name__ == "__main__":

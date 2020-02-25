@@ -1,11 +1,15 @@
 from . import utils, matching
+from bson import ObjectId
 import numpy as np
+import time
 import re
 import pandas as pd
 import data.api.goog as google
 import data.api.foursquare as foursquare
 import data.api.arcgis as arcgis
 import data.api.environics as environics
+import data.api.anmspatial as anmspatial
+import data.api.spatial as spatial
 
 
 '''
@@ -117,22 +121,24 @@ def get_key_facts(lat, lng):
 
 # get demographics. If no existing demographic vector it will grab demographics. If a demographic
 # vector is provided, then lat, lng, and arius are ignored.
-def get_demographics(lat, lng, radius, demographic_vector=None):
+
+
+def get_demographics(lat, lng, radius, demographic_dict=None):
     """
     get demographics. If no existing demographic vector it will grab demographics. If a demographic
     vector is provided, then lat, lng, and arius are ignored.
     """
 
-    if demographic_vector:
-        demographics = demographic_vector
+    if demographic_dict:
+        demographics = demographic_dict
     else:
         demographics = environics.get_demographics(
             lat, lng, radius, matching.DEMO_DF, matching.BLOCK_DF, matching.DEMO_CATEGORIES)
 
     # parse age
     # all the data is referred to by index on the matching algorithm (refer to matching)
-    age_demographics = demographics if demographic_vector else demographics["Current Year Population, Age"]
-    age_demographics_fiveyear = demographics if demographic_vector else demographics["Five Year Population, Age"]
+    age_demographics = demographics["Current Year Population, Age"]
+    age_demographics_fiveyear = demographics["Five Year Population, Age"]
     five_year_age = [value.replace("Current", "Five") for value in matching.AGE_LIST]
 
     age = {
@@ -181,8 +187,8 @@ def get_demographics(lat, lng, radius, demographic_vector=None):
     }
 
     # parse income
-    income_demographics = demographics if demographic_vector else demographics["Current Year Households, Household Income"]
-    income_demographics_fiveyear = demographics if demographic_vector else demographics["Five Year Households, Household Income"]
+    income_demographics = demographics["Current Year Households, Household Income"]
+    income_demographics_fiveyear = demographics["Five Year Households, Household Income"]
     five_year_income = [value.replace("Current", "Five") for value in matching.INCOME_LIST]
 
     income = {
@@ -220,8 +226,8 @@ def get_demographics(lat, lng, radius, demographic_vector=None):
     }
 
     # parse ethnicity (future ethnicity growth not provided right now)
-    ethnicity_demographics = demographics if demographic_vector else demographics["Current Year Population, Race"]
-    # ethnicity_demographics_fiveyear = demographics if demographic_vector else demographics["Five Year Population, Race"]
+    ethnicity_demographics = demographics["Current Year Population, Race"]
+    # ethnicity_demographics_fiveyear = demographics["Five Year Population, Race"]
 
     ethnicity = {
         'white': {
@@ -264,8 +270,8 @@ def get_demographics(lat, lng, radius, demographic_vector=None):
     }
 
     # parse education (future education growth not present right now)
-    education_demographics = demographics if demographic_vector else demographics["Current Year Population 25+, Education"]
-    # education_demographics_fiveyear = demographics if demographic_vector else demographics["Five Year Population 25+, Education"]
+    education_demographics = demographics["Current Year Population 25+, Education"]
+    # education_demographics_fiveyear = demographics["Five Year Population 25+, Education"]
 
     education = {
         'some_highschool': {
@@ -319,8 +325,8 @@ def get_demographics(lat, lng, radius, demographic_vector=None):
     }
 
     # parse gender
-    gender_demographics = demographics if demographic_vector else demographics["Current Year Population, Gender"]
-    gender_demographics_fiveyear = demographics if demographic_vector else demographics["Five Year Population, Gender"]
+    gender_demographics = demographics["Current Year Population, Gender"]
+    gender_demographics_fiveyear = demographics["Five Year Population, Gender"]
 
     gender = {
         'female': {
@@ -338,7 +344,7 @@ def get_demographics(lat, lng, radius, demographic_vector=None):
     }
 
     # parse commute
-    commute_demographics = demographics if demographic_vector else demographics["Current Year Workers, Transportation to Work"]
+    commute_demographics = demographics["Current Year Workers, Transportation to Work"]
     strip_header = re.compile("Current year workers, transportation to work: ", re.IGNORECASE)
     commute = {
         strip_header.sub("", key): value for key, value in commute_demographics.items()
@@ -406,9 +412,88 @@ def get_nearby(lat, lng, categories):
     return list(nearby_dict.values())
 
 
+def obtain_nearby(target_location, categories):
+
+    nearby_dict = {}
+
+    lat = target_location['geometry']['location']['lat']
+    lng = target_location['geometry']['location']['lng']
+
+    for place in target_location['nearby_store']:
+        if place["place_id"] not in nearby_dict:
+            nearby_dict[place["place_id"]] = {'place_id': place['place_id']}
+            nearby_dict[place["place_id"]]['distance'] = place['place_id'] if place['place_id'] else None
+        nearby_dict[place["place_id"]]["retail"] = True
+
+    for place in target_location['nearby_restaurant']:
+        if place["place_id"] not in nearby_dict:
+            nearby_dict[place["place_id"]] = {'place_id': place['place_id']}
+            nearby_dict[place["place_id"]]['distance'] = place['place_id'] if place['place_id'] else None
+        nearby_dict[place["place_id"]]["restaurant"] = True
+
+    for place in target_location['nearby_apartments']:
+        if place["place_id"] not in nearby_dict:
+            nearby_dict[place["place_id"]] = {'place_id': place['place_id']}
+            nearby_dict[place["place_id"]]['distance'] = place['place_id'] if place['place_id'] else None
+        nearby_dict[place["place_id"]]["apartment"] = True
+
+    for place in target_location['nearby_hospital']:
+        if place["place_id"] not in nearby_dict:
+            nearby_dict[place["place_id"]] = {'place_id': place['place_id']}
+            nearby_dict[place["place_id"]]['distance'] = place['place_id'] if place['place_id'] else None
+        nearby_dict[place["place_id"]]["hospital"] = True
+
+    for place in target_location['nearby_metro']:
+        if place["place_id"] not in nearby_dict:
+            nearby_dict[place["place_id"]] = {'place_id': place['place_id']}
+            nearby_dict[place["place_id"]]['distance'] = place['place_id'] if place['place_id'] else None
+        nearby_dict[place["place_id"]]["metro"] = True
+
+    places = update_all_places(lat, lng, nearby_dict, categories)
+
+    return list(places.values())
+
+
+def update_all_places(lat, lng, nearby_dict, categories):
+
+    places = utils.DB_PROCESSED_SPACE.find({'place_id': {'$in': list(nearby_dict.keys())}}, {
+        'place_id': 1, 'name': 1, 'geometry': 1, 'rating': 1, 'user_ratings_total': 1, 'foursquare_categories': 1
+    })
+    for place in places:
+        this_location_lat = place["geometry"]["location"]["lat"]
+        this_location_lng = place["geometry"]["location"]["lng"]
+        name = place["name"]
+        rating = place["rating"] if "rating" in place else None
+        number_rating = place["user_ratings_total"] if "user_ratings_total" in place else None
+        category = None
+        similar = False
+
+        if "foursquare_categories" in place and len(place["foursquare_categories"]) > 0:
+            category = place["foursquare_categories"][0]["category_name"]
+            if category in categories:
+                similar = True
+
+        nearby_dict[place['place_id']].update({
+            'lat': this_location_lat,
+            'lng': this_location_lng,
+            'name': name,
+            'rating': rating,
+            'number_rating': number_rating,
+            'category': category,
+            'similar': similar
+        })
+
+        if nearby_dict[place['place_id']]['distance'] == None:
+            nearby_dict[place['place_id']]['distance'] = utils.distance((lat, lng), (this_location_lat, this_location_lng))
+
+    return nearby_dict
+
+
 # update place & provide distance to another place
 def _update_place(place_id, lat, lng, categories):
-    place = utils.DB_PROCESSED_SPACE.find_one({'place_id': place_id})
+    place = utils.DB_PROCESSED_SPACE.find_one({'place_id': place_id}, {
+        'name': 1, 'geometry': 1, 'rating': 1, 'user_ratings_total': 1, 'foursquare_categories': 1
+    })
     if not place:
         return None
 
@@ -553,6 +638,16 @@ def get_daytimepop(lat, lng, radius):
     return arcgis_details['DaytimePop']
 
 
+def get_formatted_arcgisdetails(lat, lng, radius):
+    details = arcgis.details(lat, lng, radius)
+
+    details["HouseholdGrowth2017-2022-"] = details.pop("HouseholdGrowth2017-2022")
+    details = {
+        key + str(radius): value for key, value in details.items()
+    }
+    return details
+
+
 def get_categories(place_id):
 
     space = utils.DB_PROCESSED_SPACE.find_one({'place_id': place_id})
@@ -622,3 +717,207 @@ def get_personas(categories):
 # return all the categories that are used in the database, organized by occurrence
 def get_category_list():
     return [category["name"] for category in list(utils.DB_CATEGORIES.find().sort([('occurrence', -1)]))]
+
+
+def get_tenant_details(tenant_id):
+    """
+
+    Get the details of the tenant and return the matches.
+
+    """
+
+    # # TODO: re-enable - look in the tenant database to get the tenant details.
+    tenant = utils.DB_TENANT.find_one({'_id': ObjectId(tenant_id)}, {'tenant_details': 1, 'rep_id': 1})
+    if not tenant:
+        return None
+
+    details = tenant['tenant_details']
+    if 'arcgis_details1' not in details:
+        # proxy to determining if we need to check the rep id.
+        details = utils.DB_PROCESSED_SPACE.find_one({'_id': tenant_id['rep_id']}, {'_id': 0})
+    else:
+        return tenant['tenant_details']
+
+    # # TODO: implement case the generates the details when we don't have tenant_id
+    # tenant = utils.DB_PROCESSED_SPACE.find_one()
+    # return tenant
+
+
+def get_location_details(location):
+    lat = location['lat']
+    lng = location['lng']
+
+    space = get_nearest_space(lat, lng, database='vectors')
+    vector_id = space["_id"]
+    if space:
+        space = utils.DB_PROCESSED_SPACE.find_one({'_id': space['loc_id']})
+        space["vector_id"] = vector_id
+        return space
+    else:
+        # TODO: get all the details any way and return if there is no space.
+        pass
+
+
+def get_match_value_from_id(tenant_id, vector_id):
+    string_id = str(vector_id)
+    query = 'match_values.' + string_id
+    match_doc = utils.DB_TENANT.find_one({'_id': ObjectId(tenant_id)}, {query: 1})
+    return match_doc['match_values'][string_id]
+
+
+def get_nearest_space(lat, lng, database='spaces'):
+    """
+
+    Function that will return the item in the database that is nearest the provided latitude and lngitude.
+    Function will first search within block, then within blockgroup. If nothing found, will return None.
+
+    if database is 'spaces', will search the processed spaces. If 'vectors' will search the vectors.
+
+    """
+
+    block = anmspatial.point_to_block(lat, lng, state='CA', prune_leading_zero=False)
+    tract = block[:-4]
+
+    query_db = utils.DB_PROCESSED_SPACE if database == 'spaces' else utils.DB_VECTORS_LA
+
+    nearest_spaces = query_db.find({'block': block})
+    if nearest_spaces.count() == 0:
+        nearest_spaces = query_db.find({'tract': tract})
+        if nearest_spaces.count() == 0:
+            return None
+
+    closest_space = None
+    smallest_distance = 2000
+
+    for space in nearest_spaces:
+
+        eval_lat = space['geometry']['location']['lat'] if database == 'spaces' else space['lat']
+        eval_lng = space['geometry']['location']['lat'] if database == 'spaces' else space['lng']
+
+        distance = utils.distance((lat, lng), (eval_lat, eval_lng))
+
+        if distance < smallest_distance:
+            smallest_distance = distance
+            closest_space = space
+
+    return closest_space
+
+
+def build_location(address, brand_name=None):
+
+    # first check and return location if in database
+    location = google.find(address, name=brand_name, allow_non_establishments=True, save=False)
+
+    if location:
+        place = utils.DB_PROCESSED_SPACE.find_one({'place_id': location['place_id']}, {'place_id': 1})
+        if place:
+            has_demo = 'demo1' in place
+            has_psycho = 'psycho1' in place
+            has_nearby = 'nearby_complete' in place
+            # check if this is a detailed location.
+            return (location, str(place['_id'])) if has_demo and has_psycho and has_nearby else (location, None)
+
+        location = google.details(location['place_id'])
+        # if not in database, grab the nearest item if it's close enough
+        lat = location['geometry']['location']['lat']
+        lng = location['geometry']['location']['lng']
+        nearest_location = get_nearest_space(lat, lng, database='vectors')
+        # if nearby location and it's less than .15 miles away, we should use that.
+        if nearest_location and utils.distance((lat, lng), (nearest_location['lat'], nearest_location['lng'])) < 0.15:
+            return location, str(nearest_location['loc_id'])
+
+        # if not in database, return location but no details in order for location to be built.
+        return location, None
+    else:
+        # No google location found return None for both options
+        return None, None
+
+
+def update_tenant_details(_id, update):
+    try:
+        utils.DB_TENANT.update_one({"_id": ObjectId(_id)}, {
+            '$set': update
+        })
+        return True
+    except Exception:
+        return False
+
+
+def get_nearby_places(lat, lng, radius=1):
+
+    queries = [
+        'store', 'restaurant',  # general categories
+        'subway_station',  # transportation
+        'hospital',  # key services
+        'university',
+        'apartments'
+    ]
+
+    nearby = {}
+
+    for query in queries:
+        nearby_tag = 'nearby_' + query
+        if nearby_tag in nearby:
+            continue
+        if query == 'apartments':
+            nearby_places = google.search(
+                lat, lng, query, radius=radius)
+        else:
+            nearby_places = google.nearby(
+                lat, lng, query, radius=radius)  # need to add categories
+        if not nearby_places:
+            continue
+
+        # update the dictionary with this search details
+        nearby[nearby_tag] = [{
+            'distance': utils.distance(
+                (lat, lng),
+                (place['geometry']['location']['lat'],
+                    place['geometry']['location']['lng'])
+            ),
+            'place_id': place['place_id'],
+            'name': place['name'],
+            'types': place['types']
+        } for place in nearby_places]
+
+        if query == 'restaurant' or query == 'store':
+            for nearby_place in nearby[nearby_tag]:
+                details = utils.DB_PROCESSED_SPACE.find_one({
+                    "place_id": nearby_place['place_id'],
+                    "foursquare_categories.category_name": {'$exists': True}
+                }, {
+                    "foursquare_categories.catagory_name": 1
+                })
+                if not details:
+                    continue
+                nearby_place['foursquare_categories'] = details['foursquare_categories']
+
+    return nearby
+
+
+def get_environics_demographics(lat, lng):
+
+    demo1 = environics.get_demographics(
+        lat, lng, 1, matching.DEMO_DF, matching.BLOCK_DF, matching.DEMO_CATEGORIES)
+
+    demo3 = environics.get_demographics(
+        lat, lng, 3, matching.DEMO_DF, matching.BLOCK_DF, matching.DEMO_CATEGORIES)
+
+    return {
+        "demo1": demo1,
+        "demo3": demo3
+    }
+
+
+def get_spatial_personas(lat, lng):
+
+    psycho1 = spatial.get_psychographics(
+        lat, lng, 1, matching.SPATIAL_DF, matching.BLOCK_DF, matching.SPATIAL_CATEGORIES)
+
+    psycho3 = spatial.get_psychographics(
+        lat, lng, 3, matching.SPATIAL_DF, matching.BLOCK_DF, matching.SPATIAL_CATEGORIES)
+
+    return {
+        "psycho1": psycho1,
+        "psycho3": psycho3
+    }

@@ -1,4 +1,4 @@
-from utils import DB_AGGREGATE, DB_COLLECT, DB_SICS, DB_TYPES, DB_RAW_SPACE, DB_PROCESSED_SPACE, unique_db_index
+from utils import DB_AGGREGATE, DB_COLLECT, DB_SICS, DB_TYPES, DB_RAW_SPACE, DB_PROCESSED_SPACE, db_index
 import utils
 import goog
 import pitney
@@ -18,10 +18,10 @@ FAIL_FLAG = 'FAIL'
 TYPE_S = 'sics'
 TYPE_T = 'type'
 
-unique_db_index(DB_RAW_SPACE, 'name', 'location')
-unique_db_index(DB_PROCESSED_SPACE, 'place_id')
-unique_db_index(DB_AGGREGATE, 'city', 'state', 'zip_code', 'aggregate_type')
-unique_db_index(DB_COLLECT, 'run_name', 'type')
+db_index(DB_RAW_SPACE, 'name', 'location', unique=True)
+db_index(DB_PROCESSED_SPACE, 'place_id', unique=True)
+db_index(DB_AGGREGATE, 'city', 'state', 'zip_code', 'aggregate_type', unique=True)
+db_index(DB_COLLECT, 'run_name', 'type', unique=True)
 
 
 # Aggregate all the potential addresses from Pitney_Bose API
