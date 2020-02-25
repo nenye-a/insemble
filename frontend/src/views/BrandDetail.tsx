@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory, useParams } from 'react-router-dom';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import { useForm, FieldValues, FieldError } from 'react-hook-form';
 
 import {
@@ -12,7 +12,6 @@ import {
   TextInput,
   RadioGroup,
   MultiSelectLocation,
-  LoadingIndicator,
   Label,
   Form,
   Alert,
@@ -39,7 +38,7 @@ import { NewLocationPlanObj } from '../reducers/tenantOnboardingReducer';
 import LocationsInput from './LandingPage/LocationsInput';
 import { validateNumber } from '../utils/validation';
 import omitTypename from '../utils/omitTypename';
-import { EDIT_BRAND } from '../graphql/queries/server/brand';
+import { EDIT_BRAND, GET_BRANDS } from '../graphql/queries/server/brand';
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 import { GetBrands_brands as GetBrandsBrands } from '../generated/GetBrands';
 
@@ -82,6 +81,7 @@ export default function BrandDetail() {
           },
           brandId,
         },
+        refetchQueries: [{ query: GET_BRANDS }],
       });
     }
   };
@@ -101,7 +101,7 @@ export default function BrandDetail() {
         address,
       });
     }
-  }, []);
+  }, [location, newLocationPlanParam]);
 
   return (
     <Container flex>
