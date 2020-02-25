@@ -9,6 +9,7 @@ import data.api.foursquare as foursquare
 import data.api.arcgis as arcgis
 import data.api.environics as environics
 import data.api.anmspatial as anmspatial
+import data.api.spatial as spatial
 
 
 '''
@@ -472,9 +473,6 @@ def update_all_places(lat, lng, nearby_dict, categories):
             if category in categories:
                 similar = True
 
-        if nearby_dict[place['place_id']]['distance'] == None:
-            distance = utils.distance((lat, lng), (this_location_lat, this_location_lng))
-
         nearby_dict[place['place_id']].update({
             'lat': this_location_lat,
             'lng': this_location_lng,
@@ -484,6 +482,9 @@ def update_all_places(lat, lng, nearby_dict, categories):
             'category': category,
             'similar': similar
         })
+
+        if nearby_dict[place['place_id']]['distance'] == None:
+            nearby_dict[place['place_id']]['distance'] = utils.distance((lat, lng), (this_location_lat, this_location_lng))
 
     return nearby_dict
 
@@ -637,6 +638,16 @@ def get_daytimepop(lat, lng, radius):
     return arcgis_details['DaytimePop']
 
 
+def get_formatted_arcgisdetails(lat, lng, radius):
+    details = arcgis.details(lat, lng, radius)
+
+    details["HouseholdGrowth2017-2022-"] = details.pop("HouseholdGrowth2017-2022")
+    details = {
+        key + str(radius): value for key, value in details.items()
+    }
+    return details
+
+
 def get_categories(place_id):
 
     space = utils.DB_PROCESSED_SPACE.find_one({'place_id': place_id})
@@ -780,101 +791,118 @@ def get_nearest_space(lat, lng, database='spaces'):
 def build_location(address, brand_name=None):
 
     # first check and return location if in database
-    location = google.find(address, name=brand_name)
-    place = utils.DB_PROCESSED_SPACE.find({'place_id': location['place_id']})
-    if place:
-        return place
+    location = google.find(address, name=brand_name, allow_non_establishments=True, save=False)
 
-    # if not in database, go on the pilgramage and build out
-    location = google.details(location['place_id'])
     if location:
-        name = location['name']
+        place = utils.DB_PROCESSED_SPACE.find_one({'place_id': location['place_id']}, {'place_id': 1})
+        if place:
+            has_demo = 'demo1' in place
+            has_psycho = 'psycho1' in place
+            has_nearby = 'nearby_complete' in place
+            # check if this is a detailed location.
+            return (location, str(place['_id'])) if has_demo and has_psycho and has_nearby else (location, None)
+
+        location = google.details(location['place_id'])
+        # if not in database, grab the nearest item if it's close enough
         lat = location['geometry']['location']['lat']
         lng = location['geometry']['location']['lng']
-        address = location['formatted_address']
-        place_id = location['place_id']
+        nearest_location = get_nearest_space(lat, lng, database='vectors')
+        # if nearby location and it's less than .15 miles away, we should use that.
+        if nearest_location and utils.distance((lat, lng), (nearest_location['lat'], nearest_location['lng'])) < 0.15:
+            return location, str(nearest_location['loc_id'])
 
-        # grab foursquare details
-        foursquare_details = foursquare.find(name, lat, lng, address)
-        if foursquare_details:
-            foursquare_categories = [{
-                'category_name': category['name'],
-                'category_short_name': category['shortName'],
-                'primary': category['primary']
-            } for category in foursquare_details['categories']]
-            location['foursquare_categories'] = foursquare_categories
+        # if not in database, return location but no details in order for location to be built.
+        return location, None
+    else:
+        # No google location found return None for both options
+        return None, None
 
-        location['detailed'] = True
 
-        # grab proximity details
-        type_queries = [
-            'store', 'restaurant',  # general categories
-            'park',  # key entertainment
-            'subway_station',  # transportation
-            'hospital',  # key services
-            'church',  # key religion
-            'university',
-        ]
+def update_tenant_details(_id, update):
+    try:
+        utils.DB_TENANT.update_one({"_id": ObjectId(_id)}, {
+            '$set': update
+        })
+        return True
+    except Exception:
+        return False
 
-        search_queries = ['apartments']
 
-        for query in type_queries:
+def get_nearby_places(lat, lng, radius=1):
 
-            nearby_tag = 'nearby_' + query
-            if nearby_tag in space:
-                continue
+    queries = [
+        'store', 'restaurant',  # general categories
+        'subway_station',  # transportation
+        'hospital',  # key services
+        'university',
+        'apartments'
+    ]
 
-            nearby_places = google.nearby(
-                lat, lng, query, radius=1)  # need to add categories
-            if not nearby_places:
-                continue
+    nearby = {}
 
-            # update the dictionary with this search details
-            location[nearby_tag] = [{
-                'distance': utils.distance(
-                    (lat, lng),
-                    (place['geometry']['location']['lat'],
-                        place['geometry']['location']['lng'])
-                ),
-                'place_id': place['place_id'],
-                'name': place['name'],
-                'types': place['types']
-            } for place in nearby_places]
-
-            if 'nearby_complete' in location:
-                location['nearby_complete'].append(nearby_tag)
-            else:
-                location['nearby_complete'] = [nearby_tag]
-
-        for query in search_queries:
-
-            nearby_tag = 'nearby_' + query
-            if nearby_tag in location:
-                continue
-
+    for query in queries:
+        nearby_tag = 'nearby_' + query
+        if nearby_tag in nearby:
+            continue
+        if query == 'apartments':
             nearby_places = google.search(
-                lat, lng, query, radius=1)  # need to add categories
-            if not nearby_places:
-                continue
+                lat, lng, query, radius=radius)
+        else:
+            nearby_places = google.nearby(
+                lat, lng, query, radius=radius)  # need to add categories
+        if not nearby_places:
+            continue
 
-            # update the dictionary with this search details
-            location[nearby_tag] = [{
-                'distance': utils.distance(
-                    (lat, lng),
-                    (place['geometry']['location']['lat'],
-                        place['geometry']['location']['lng'])
-                ),
-                'place_id': place['place_id'],
-                'name': place['name'],
-                'types': place['types'],
-            } for place in nearby_places]
+        # update the dictionary with this search details
+        nearby[nearby_tag] = [{
+            'distance': utils.distance(
+                (lat, lng),
+                (place['geometry']['location']['lat'],
+                    place['geometry']['location']['lng'])
+            ),
+            'place_id': place['place_id'],
+            'name': place['name'],
+            'types': place['types']
+        } for place in nearby_places]
 
-            if 'nearby_complete' in location:
-                location['nearby_complete'].append(nearby_tag)
-            else:
-                location['nearby_complete'] = [nearby_tag]
+        if query == 'restaurant' or query == 'store':
+            for nearby_place in nearby[nearby_tag]:
+                details = utils.DB_PROCESSED_SPACE.find_one({
+                    "place_id": nearby_place['place_id'],
+                    "foursquare_categories.category_name": {'$exists': True}
+                }, {
+                    "foursquare_categories.catagory_name": 1
+                })
+                if not details:
+                    continue
+                nearby_place['foursquare_categories'] = details['foursquare_categories']
 
-        # grab psychographics
-        # TODO:
+    return nearby
 
-    pass
+
+def get_environics_demographics(lat, lng):
+
+    demo1 = environics.get_demographics(
+        lat, lng, 1, matching.DEMO_DF, matching.BLOCK_DF, matching.DEMO_CATEGORIES)
+
+    demo3 = environics.get_demographics(
+        lat, lng, 3, matching.DEMO_DF, matching.BLOCK_DF, matching.DEMO_CATEGORIES)
+
+    return {
+        "demo1": demo1,
+        "demo3": demo3
+    }
+
+
+def get_spatial_personas(lat, lng):
+
+    psycho1 = spatial.get_psychographics(
+        lat, lng, 1, matching.SPATIAL_DF, matching.BLOCK_DF, matching.SPATIAL_CATEGORIES)
+
+    psycho3 = spatial.get_psychographics(
+        lat, lng, 3, matching.SPATIAL_DF, matching.BLOCK_DF, matching.SPATIAL_CATEGORIES)
+
+    return {
+        "psycho1": psycho1,
+        "psycho3": psycho3
+    }

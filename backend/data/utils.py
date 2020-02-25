@@ -264,6 +264,14 @@ def intersecting_block_groups(lat, lng, radius, state=None):
     return ret
 
 
+def is_number(num):
+    try:
+        float(num)
+        return True
+    except ValueError:
+        return False
+
+
 if __name__ == "__main__":
 
     def test_location_at_distance():
