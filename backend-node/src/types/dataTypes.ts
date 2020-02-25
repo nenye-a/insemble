@@ -110,6 +110,7 @@ export type TenantMatchesType = {
   status_detail: string;
   matching_locations?: Array<MatchingLocationType>;
   matching_properties?: Array<MatchingPropertyType>;
+  tenant_id: string;
 };
 
 export type LocationPreviewType = {
