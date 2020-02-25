@@ -24,6 +24,7 @@ let permissions = shield({
     editProfileTenant: isTenantAuthenticated,
     createBrand: isTenantAuthenticated,
     editBrand: isTenantAuthenticated,
+    createProperty: isLandlordAuthenticated,
   },
 });
 
