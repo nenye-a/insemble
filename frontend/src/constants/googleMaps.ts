@@ -9,7 +9,7 @@ export const MAPS_IFRAME_URL_PLACE = `https://www.google.com/maps/embed/v1/place
 export const MAP_DEFAULT_CENTER = { lat: 34.0522, lng: -118.2437 }; // LA lat lng
 
 type MapStyle = Array<google.maps.MapTypeStyle>;
-export const GOOGLE_MAPS_STYLE: any = [
+export const GOOGLE_MAPS_STYLE: MapStyle = [
   {
     elementType: 'geometry',
     stylers: [

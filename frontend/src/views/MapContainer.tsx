@@ -1,15 +1,11 @@
 // TODO: Remove this next line.
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useRef, useState, useEffect, useCallback } from 'react';
-import Joyride, { STATUS, Step } from 'react-joyride';
-import { GoogleMap, Marker, withGoogleMap, InfoWindow } from 'react-google-maps';
-import { useAlert } from 'react-alert';
+import React, { useRef, useState, useEffect } from 'react';
+import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
-import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
 import { useParams } from 'react-router-dom';
 
 import { GET_LOCATION_PREVIEW } from '../graphql/queries/server/preview';
-import { View, Alert, LoadingIndicator, TouchableOpacity } from '../core-ui';
+import { View, Alert, LoadingIndicator } from '../core-ui';
 import LocationDetail from '../components/location-detail/LocationDetail';
 import InfoBox from 'react-google-maps/lib/components/addons/InfoBox';
 import MapPin from '../components/icons/map-pin.svg';
@@ -46,7 +42,6 @@ const defaultCenter = {
 const defaultZoom = 10;
 
 function MapContainer({ onMarkerClick, matchingLocations }: Props) {
-  let infoRef = useRef<Element | undefined>();
   let { brandId = '' } = useParams();
   let [getLocation, { data, loading, error }] = useLazyQuery<
     LocationPreview,
@@ -60,30 +55,16 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         }))
       : [];
 
-  let [marker, setMarker] = useState<MarkerData | null>(null);
-  let [markers, setMarkers] = useState<Array<LatLngLiteral>>([]);
   let [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
-  let [bounds, setBounds] = useState<LatLngBounds | null>(null);
   let [showGuide, setShowGuide] = useState(true);
   let [infoBoxHeight, setInfoBoxHeight] = useState<number>(0);
   let [domReady, setDomReady] = useState(false);
 
+  let infoRef = useRef<Element | undefined>();
   let mapRef = useRef<GoogleMap | null>(null);
-  let searchBoxRef = useRef<SearchBox | null>(null);
-  useEffect(() => {
-    let map = mapRef.current;
-    if (map) {
-      setBounds(map.getBounds());
-    }
-  }, []);
 
-  let onBoundsChanged = () => {
-    let map = mapRef.current;
-    if (map) {
-      setBounds(map.getBounds());
-    }
-  };
-
+  // TODO: fix this. tried useCallback with all deps, still not working
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   let onPreviewClick = () => {
     markerPosition &&
       onMarkerClick &&
@@ -93,28 +74,6 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         data?.locationPreview.targetNeighborhood || ''
       );
   };
-
-  let handlePreviewClickListener = (e: any) => {
-    e.stopPropagation();
-    onPreviewClick();
-  };
-
-  useEffect(() => {
-    if (infoRef.current && domReady) {
-      infoRef.current.addEventListener('click', handlePreviewClickListener);
-      return () => {
-        if (infoRef.current) {
-          infoRef.current.removeEventListener('click', handlePreviewClickListener);
-        }
-      };
-    }
-  }, [domReady, handlePreviewClickListener]);
-
-  useEffect(() => {
-    if (data?.locationPreview) {
-      setMarker(data.locationPreview);
-    }
-  }, [loading, data]);
 
   let onMapClick = async (latLng: LatLng) => {
     let { lat, lng } = latLng;
@@ -132,6 +91,22 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
     setMarkerPosition(latLng);
     setDomReady(false);
   };
+
+  useEffect(() => {
+    let handlePreviewClickListener = (e: Event) => {
+      e.stopPropagation();
+      onPreviewClick();
+    };
+
+    if (infoRef.current && domReady) {
+      infoRef.current.addEventListener('click', handlePreviewClickListener);
+      return () => {
+        if (infoRef.current) {
+          infoRef.current.removeEventListener('click', handlePreviewClickListener);
+        }
+      };
+    }
+  }, [domReady, onPreviewClick]);
 
   return (
     <div>
@@ -154,7 +129,6 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
           styles: GOOGLE_MAPS_STYLE,
         }}
         onClick={(event) => onMapClick(event.latLng)}
-        onBoundsChanged={onBoundsChanged}
       >
         {markerPosition && !loading && data && (
           <Marker position={markerPosition} onClick={onPreviewClick} icon={MapPin}>
@@ -181,7 +155,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
                 }
               }}
               onCloseClick={() => {
-                setMarker(null);
+                setMarkerPosition(null);
               }}
             >
               <LocationDetail
