@@ -20,7 +20,6 @@ export const SECONDARY_COLOR = '#8E7BC4';
 export const PURPLE = '#6745AD';
 export const LIGHTEST_GREY = '#FBFBFB';
 export const LIGHT_GREY = '#C5C5C5';
-export const MODAL_GREY = '#F7F7F7';
 
 // Text colors
 export const TEXT_COLOR = DARK_DETAIL;

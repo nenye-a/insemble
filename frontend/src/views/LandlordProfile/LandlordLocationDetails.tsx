@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import { CONSUMER_PERSONAS } from '../../fixtures/dummyData';
 import { View, Text } from '../../core-ui';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD } from '../../constants/theme';

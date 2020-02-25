@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
-import { View, Card, Text, PillButton, TouchableOpacity } from '../core-ui';
+import { View, Card, Text, TouchableOpacity } from '../core-ui';
 import { DEFAULT_BORDER_RADIUS, FONT_WEIGHT_BOLD } from '../constants/theme';
 import { WHITE, THEME_COLOR, SECONDARY_COLOR } from '../constants/colors';
-import { SAVED_SEARCHES, LANDLORD_PROPERTIES } from '../fixtures/dummyData';
+import { LANDLORD_PROPERTIES } from '../fixtures/dummyData';
 import SvgPlus from '../components/icons/plus';
 import imgPlaceholder from '../assets/images/image-placeholder.jpg';
 

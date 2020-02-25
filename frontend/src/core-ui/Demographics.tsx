@@ -189,6 +189,7 @@ export default function Graphic({ withMargin = true }: Props) {
 const ViewContainer = styled(View)`
   padding: 0 12px 12px 12px;
 `;
+
 const RowedView = styled(View)`
   flex-direction: row;
   justify-content: space-between;

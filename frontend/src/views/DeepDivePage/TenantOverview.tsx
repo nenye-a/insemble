@@ -29,11 +29,6 @@ export default function TenantOverview() {
       <Container>
         <TenantKeyFacts withMargin={false} />
       </Container>
-      {/* <RelevantConsumerPersonas />
-      <Container>
-        <Graphic population={100} />
-      </Container> */}
-
       <View>
         <Row flex>
           <OverviewCard
