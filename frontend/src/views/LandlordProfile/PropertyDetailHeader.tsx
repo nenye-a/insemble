@@ -31,8 +31,8 @@ export default function PropertyDetailHeader({
     <View style={{ marginBottom: 30 }}>
       <Card>
         <SpaceContainer flex>
-          <Text style={{ fontSize: FONT_SIZE_MEDIUM }}>{address}</Text>
-          <Text style={{ color: SECONDARY_COLOR }}>{request} new request</Text>
+          <AddressText>{address}</AddressText>
+          <NewRequestText>{request} new request</NewRequestText>
         </SpaceContainer>
         <RowedView>
           <Row>
@@ -60,6 +60,14 @@ export default function PropertyDetailHeader({
 type SegmentProps = ComponentProps<typeof TouchableOpacity> & {
   isActive: boolean;
 };
+
+const AddressText = styled(Text)`
+  font-size: ${FONT_SIZE_MEDIUM};
+`;
+
+const NewRequestText = styled(Text)`
+  color: ${SECONDARY_COLOR};
+`;
 
 const Row = styled(View)`
   flex-direction: row;

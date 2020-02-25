@@ -7,7 +7,7 @@ import {
   FONT_SIZE_MEDIUM,
   FONT_SIZE_XXLARGE,
 } from '../../constants/theme';
-import { THEME_COLOR } from '../../constants/colors';
+import { SECONDARY_COLOR } from '../../constants/colors';
 
 type Props = {
   withMargin?: boolean;
@@ -92,8 +92,9 @@ const Title = styled(Text)`
 const NumberText = styled(Text)`
   font-size: ${FONT_SIZE_XXLARGE};
   font-weight: ${FONT_WEIGHT_BOLD};
-  color: ${THEME_COLOR};
+  color: ${SECONDARY_COLOR};
   margin: 24px 0 24px 24px;
+  align-self: center;
 `;
 
 const CategoriesText = styled(Text)`

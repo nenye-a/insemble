@@ -21,7 +21,7 @@ export default function LandlordProperties() {
             history.push(`/landlord/properties/${index}`); // TODO: change to brandID
           }}
         >
-          <HistoryContainer>
+          <Row>
             <LeftContainer flex>
               <RowedView>
                 <Text>Property</Text>
@@ -42,7 +42,7 @@ export default function LandlordProperties() {
             </LeftContainer>
             {/* TODO: change to heatmap image/map */}
             <HeatMapImage src={imgPlaceholder} />
-          </HistoryContainer>
+          </Row>
         </TouchableOpacity>
       ))}
       <AddButton>
@@ -58,7 +58,7 @@ const TenantRequestText = styled(Text)`
   font-weight: ${FONT_WEIGHT_BOLD};
 `;
 
-const HistoryContainer = styled(Card)`
+const Row = styled(Card)`
   flex-direction: row;
 `;
 

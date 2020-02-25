@@ -11,7 +11,7 @@ import Graphic from '../../core-ui/Demographics';
 
 export default function LandlordLocationDetails() {
   return (
-    <Container>
+    <View>
       {/* TODO: change to map */}
       <Placeholder />
       <KeyFacts withMargin={false} />
@@ -24,13 +24,13 @@ export default function LandlordLocationDetails() {
       <GraphicContainer>
         <Graphic withMargin={false} />
       </GraphicContainer>
-    </Container>
+    </View>
   );
 }
 
 const Placeholder = styled(View)`
   background-color: ${GREY};
-  width: '100%';
+  width: 100%;
   height: 200px;
 `;
 const ConsumerPersonaText = styled(Text)`
@@ -47,4 +47,3 @@ const CardsContainer = styled(View)`
 const GraphicContainer = styled(View)`
   margin: 0 14px;
 `;
-const Container = styled(View)``;

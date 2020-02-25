@@ -8,7 +8,7 @@ import {
   FONT_SIZE_MEDIUM,
   FONT_SIZE_XXLARGE,
 } from '../../constants/theme';
-import { THEME_COLOR, COMMUTE_CHART_COLORS } from '../../constants/colors';
+import { THEME_COLOR, COMMUTE_CHART_COLORS, SECONDARY_COLOR } from '../../constants/colors';
 import { DeepDiveContext } from './DeepDiveModal';
 import { convertToKilos, roundDecimal } from '../../utils';
 
@@ -241,7 +241,7 @@ const CommuteView = styled(View)`
 const NumberText = styled(Text)`
   font-size: ${FONT_SIZE_XXLARGE};
   font-weight: ${FONT_WEIGHT_BOLD};
-  color: ${THEME_COLOR};
+  color: ${SECONDARY_COLOR};
   margin: 24px 0 24px 24px;
 `;
 

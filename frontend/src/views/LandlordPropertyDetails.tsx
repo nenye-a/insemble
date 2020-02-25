@@ -1,7 +1,7 @@
-import React, { useState, ComponentProps } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { View, Card, TouchableOpacity } from '../core-ui';
+import { View, Card } from '../core-ui';
 import TenantDeepDiveModal from './DeepDivePage/TenantDeepDiveModal';
 import {
   PropertyDetailHeader,
@@ -51,10 +51,6 @@ export default function LandlordPropertyDetails() {
     </View>
   );
 }
-
-type SegmentProps = ComponentProps<typeof TouchableOpacity> & {
-  isActive: boolean;
-};
 
 const ContentWrapper = styled(View)`
   padding: 0 20px;

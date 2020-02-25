@@ -1,5 +1,6 @@
 import React, { ComponentProps } from 'react';
 import styled from 'styled-components';
+
 import { View, TouchableOpacity, Text } from '../../core-ui';
 import { THEME_COLOR, BACKGROUND_COLOR, WHITE, TEXT_COLOR } from '../../constants/colors';
 
