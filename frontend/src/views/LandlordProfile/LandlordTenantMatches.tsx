@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
 import { LANDLORD_TENANT_MATCHES } from '../../fixtures/dummyData';
-import { View, Text, Card, TouchableOpacity } from '../../core-ui';
+import { View, Text, TouchableOpacity } from '../../core-ui';
 import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
 import {
   FONT_WEIGHT_MEDIUM,
