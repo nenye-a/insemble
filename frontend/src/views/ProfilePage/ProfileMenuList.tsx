@@ -8,21 +8,29 @@ import { DEFAULT_BORDER_RADIUS } from '../../constants/theme';
 import SvgPerson from '../../components/icons/person';
 import SvgBusiness from '../../components/icons/business';
 import SvgMessage from '../../components/icons/message';
+import SvgBilling from '../../components/icons/billing';
+import { Role } from '../../types/types';
 
 type Props = {
-  role?: 'tenant' | 'landlord';
+  role: Role;
 };
 
 type MenuListProps = ComponentProps<typeof TouchableOpacity> & {
   selected: boolean;
 };
 
-export type Menu = 'Profile' | 'My Brands' | 'Messages' | 'Saved Properties' | 'Properties';
+export type Menu =
+  | 'Profile'
+  | 'My Brands'
+  | 'Messages'
+  | 'Saved Properties'
+  | 'Properties'
+  | 'Billing & Plans';
 
 export default function ProfileMenuList(props: Props) {
   let history = useHistory();
-  let { role = 'tenant' } = props;
-  let MENUS = role === 'tenant' ? TENANT_PROFILE_MENU : LANDLORD_PROFILE_MENU;
+  let { role } = props;
+  let MENUS = role === Role.TENANT ? TENANT_PROFILE_MENU : LANDLORD_PROFILE_MENU;
   return (
     <Container>
       {MENUS.map(({ menu, icon, path }, index) => {
@@ -33,7 +41,9 @@ export default function ProfileMenuList(props: Props) {
             selected={isSelected}
             href={path}
             onPress={() => {
-              history.push(path);
+              history.push(path, {
+                role,
+              });
             }}
           >
             {icon}
@@ -113,16 +123,21 @@ const LANDLORD_PROFILE_MENU: Array<MenuObj> = [
   {
     menu: 'Profile',
     icon: <SvgPerson />,
-    path: '/',
+    path: '/landlord/edit-profile',
   },
   {
     menu: 'Properties',
     icon: <SvgBusiness />,
-    path: '/',
+    path: '/landlord/properties',
   },
   {
     menu: 'Messages',
     icon: <SvgMessage />,
-    path: '/',
+    path: '/landlord/messages',
+  },
+  {
+    menu: 'Billing & Plans',
+    icon: <SvgBilling />,
+    path: '/landlord/billing',
   },
 ];

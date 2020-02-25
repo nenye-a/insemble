@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { Card, Text, View, Button } from '../core-ui';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
 import LoginForm from './LoginForm';
+import { Role } from '../types/types';
 
 export default function Login() {
   let history = useHistory();
@@ -18,7 +19,7 @@ export default function Login() {
         titleProps={{ style: { fontSize: FONT_SIZE_MEDIUM, fontWeight: FONT_WEIGHT_NORMAL } }}
         titleBackground="purple"
       >
-        <LoginForm role="Tenant" />
+        <LoginForm role={Role.TENANT} />
       </LoginCard>
       <RowView>
         <Text>{noAccount} </Text>

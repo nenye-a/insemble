@@ -7,6 +7,6 @@ type Props = {
   children: ReactNode;
 };
 
-export default function UserProfileLayout(props: Props) {
-  return <ProfileLayout role={Role.TENANT}>{props.children}</ProfileLayout>;
+export default function LandlordProfileLayout(props: Props) {
+  return <ProfileLayout role={Role.LANDLORD}>{props.children}</ProfileLayout>;
 }

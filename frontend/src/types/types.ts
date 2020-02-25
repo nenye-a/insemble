@@ -6,3 +6,8 @@ export type IconProps = {
   x?: string | number;
   y?: string | number;
 };
+
+export enum Role {
+  TENANT = 'TENANT',
+  LANDLORD = 'LANDLORD',
+}
