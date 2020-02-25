@@ -36,9 +36,9 @@ let locationDetails = queryField('locationDetails', {
         property_details: rawPropertyDetails,
         result,
       }: LocationDetailsType = (
-        await axios.get(`${LEGACY_API_URI}/api/locationDetails/`, {
+        await axios.get(`${LEGACY_API_URI}/api/fastLocationDetails/`, {
           params: {
-            tenant_id: selectedBrand.id,
+            tenant_id: selectedBrand.tenantId,
             target_location: selectedLocation && {
               lat: selectedLocation.lat,
               lng: selectedLocation.lng,
@@ -63,7 +63,7 @@ let locationDetails = queryField('locationDetails', {
         demographics5,
         nearby,
       } = result;
-
+      console.log(nearby[0]);
       let {
         num_apartments: numApartements,
         num_hospitals: numHospitals,
@@ -75,7 +75,6 @@ let locationDetails = queryField('locationDetails', {
         TotalHousholds: totalHousehold,
         mile,
       } = keyFacts;
-
       let objectToArrayKeyObjectDemographics = (
         object: Record<string, DemographicStat>,
       ) => {
