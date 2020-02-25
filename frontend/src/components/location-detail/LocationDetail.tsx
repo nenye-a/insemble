@@ -11,11 +11,10 @@ type Props = {
   population: string;
   income: string;
   age: number;
-  onSeeMore?: () => void;
 };
 
 export default function LocationDetail(props: Props) {
-  let { population, income, age, title, onSeeMore, visible, subTitle } = props;
+  let { population, income, age, title, visible, subTitle } = props;
   let leftText = [
     '3 Mile Daytime Population:',
     '3 Mile Median Household Income:',
@@ -23,30 +22,30 @@ export default function LocationDetail(props: Props) {
   ];
   let rightText = [population, income, age + ' years'];
   return visible ? (
-    <Container
-      titleBackground="purple"
-      title={title}
-      subTitle={subTitle}
-      titleProps={{ fontWeight: FONT_WEIGHT_MEDIUM }}
-    >
-      <ContentContainer>
-        <LeftColumn>
-          {leftText.map((line, i) => (
-            <SmallText key={i}>{line}</SmallText>
-          ))}
-        </LeftColumn>
-        <RightColumn>
-          {rightText.map((line, i) => (
-            <RightColumnText key={i}>{line}</RightColumnText>
-          ))}
-        </RightColumn>
-      </ContentContainer>
-      <SeeMoreContainer>
-        <TouchableOpacity onPress={onSeeMore}>
+    <TouchableOpacity>
+      <Container
+        titleBackground="purple"
+        title={title}
+        subTitle={subTitle}
+        titleProps={{ fontWeight: FONT_WEIGHT_MEDIUM }}
+      >
+        <ContentContainer>
+          <LeftColumn>
+            {leftText.map((line, i) => (
+              <SmallText key={i}>{line}</SmallText>
+            ))}
+          </LeftColumn>
+          <RightColumn>
+            {rightText.map((line, i) => (
+              <RightColumnText key={i}>{line}</RightColumnText>
+            ))}
+          </RightColumn>
+        </ContentContainer>
+        <SeeMoreContainer>
           <SeeMore>click again to see more</SeeMore>
-        </TouchableOpacity>
-      </SeeMoreContainer>
-    </Container>
+        </SeeMoreContainer>
+      </Container>
+    </TouchableOpacity>
   ) : null;
 }
 
