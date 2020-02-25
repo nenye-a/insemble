@@ -38,12 +38,14 @@ export let createBrandResolver: FieldResolver<
     return educationOpt.find((strOptRaw) => strOptRaw.includes(str)) || '';
   });
 
-
   let { location, nextLocations, ...businessInput } = business || {};
   let brand = await context.prisma.brand.create({
     data: {
       ...businessInput,
       ...filterInput,
+      nextLocations: {
+        create: nextLocations,
+      },
       categories: {
         set: categories,
       },

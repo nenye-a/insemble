@@ -43,6 +43,9 @@ export let editBrandResolver: FieldResolver<'Mutation', 'editBrand'> = async (
     data: {
       ...businessInput,
       ...filterInput,
+      nextLocations: {
+        create: nextLocations,
+      },
       categories: {
         set: categories,
       },
