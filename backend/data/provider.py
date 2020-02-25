@@ -422,31 +422,31 @@ def obtain_nearby(target_location, categories):
     for place in target_location['nearby_store']:
         if place["place_id"] not in nearby_dict:
             nearby_dict[place["place_id"]] = {'place_id': place['place_id']}
-            nearby_dict[place["place_id"]]['distance'] = place['place_id'] if place['place_id'] else None
+            nearby_dict[place["place_id"]]['distance'] = place['distance'] if place['distance'] else None
         nearby_dict[place["place_id"]]["retail"] = True
 
     for place in target_location['nearby_restaurant']:
         if place["place_id"] not in nearby_dict:
             nearby_dict[place["place_id"]] = {'place_id': place['place_id']}
-            nearby_dict[place["place_id"]]['distance'] = place['place_id'] if place['place_id'] else None
+            nearby_dict[place["place_id"]]['distance'] = place['distance'] if place['distance'] else None
         nearby_dict[place["place_id"]]["restaurant"] = True
 
     for place in target_location['nearby_apartments']:
         if place["place_id"] not in nearby_dict:
             nearby_dict[place["place_id"]] = {'place_id': place['place_id']}
-            nearby_dict[place["place_id"]]['distance'] = place['place_id'] if place['place_id'] else None
+            nearby_dict[place["place_id"]]['distance'] = place['distance'] if place['distance'] else None
         nearby_dict[place["place_id"]]["apartment"] = True
 
     for place in target_location['nearby_hospital']:
         if place["place_id"] not in nearby_dict:
             nearby_dict[place["place_id"]] = {'place_id': place['place_id']}
-            nearby_dict[place["place_id"]]['distance'] = place['place_id'] if place['place_id'] else None
+            nearby_dict[place["place_id"]]['distance'] = place['distance'] if place['distance'] else None
         nearby_dict[place["place_id"]]["hospital"] = True
 
     for place in target_location['nearby_metro']:
         if place["place_id"] not in nearby_dict:
             nearby_dict[place["place_id"]] = {'place_id': place['place_id']}
-            nearby_dict[place["place_id"]]['distance'] = place['place_id'] if place['place_id'] else None
+            nearby_dict[place["place_id"]]['distance'] = place['distance'] if place['distance'] else None
         nearby_dict[place["place_id"]]["metro"] = True
 
     places = update_all_places(lat, lng, nearby_dict, categories)
