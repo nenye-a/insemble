@@ -734,11 +734,13 @@ class FastLocationDetailsAPI(AsynchronousAPI):
         # Obtain the keyfacts
         key_facts_demo = self.obtain_key_demographics(location)
         key_facts_nearby = self.obtain_key_nearby(location, key_facts_demo['mile'])
-        key_facts = key_facts_demo.update({
+        key_facts_demo.update({
             "num_metro": len(key_facts_nearby["nearby_metro"]),
             "num_universities": len(key_facts_nearby["nearby_university"]),
-            "num_hospitals": len(key_facts_nearby["nearby_hospitals"])
+            "num_hospitals": len(key_facts_nearby["nearby_hospitals"]),
+            "num_apartments": len(key_facts_nearby["nearby_apartments"])
         })
+        key_facts = key_facts_demo
         location["nearby_metro"] = key_facts_nearby["nearby_metro"]
 
         # GET THE NEARBY LOCATIONS (async)
@@ -827,7 +829,7 @@ class FastLocationDetailsAPI(AsynchronousAPI):
             'nearby_metro': nearby_metro,
             'nearby_university': nearby_university,
             'nearby_hospitals': nearby_hospitals,
-            'nearby_aparments': nearby_apartments
+            'nearby_apartments': nearby_apartments
         }
 
     @staticmethod
