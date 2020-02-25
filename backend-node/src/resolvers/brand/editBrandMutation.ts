@@ -39,6 +39,20 @@ export let editBrandResolver: FieldResolver<'Mutation', 'editBrand'> = async (
   });
 
   let { location, nextLocations, ...businessInput } = business || {};
+
+  if (nextLocations) {
+    await context.prisma.brand.update({
+      data: {
+        nextLocations: {
+          deleteMany: { NOT: { id: '0' } },
+        },
+      },
+      where: {
+        id: brandId,
+      },
+    });
+  }
+
   let brand = await context.prisma.brand.update({
     data: {
       ...businessInput,
@@ -68,7 +82,7 @@ export let editBrandResolver: FieldResolver<'Mutation', 'editBrand'> = async (
         set: ethnicityRaw,
       },
       location: {
-        create: location,
+        update: location,
       },
       matchingLocations: null,
       matchingProperties: {
