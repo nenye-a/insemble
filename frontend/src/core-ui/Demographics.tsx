@@ -75,17 +75,17 @@ export default function Graphic({ withMargin = true }: Props) {
               <>
                 <SvgGreenArrow x={x + width / 2 - 5} y={5} />
                 <LabelText fill={GREEN_TEXT} x={x + width / 2 + 16} y={25}>
-                  {roundDecimal(demographicData.growth, 2)}
+                  {roundDecimal(demographicData.growth, 2) + '%'}
                 </LabelText>
               </>
             ) : (
-              <>
-                <SvgRedArrow x={x + width / 2 - 5} y={5} />
-                <LabelText fill={RED_TEXT} x={x + width / 2 + 16} y={25}>
-                  {roundDecimal(demographicData.growth, 2)}
-                </LabelText>
-              </>
-            )}
+                <>
+                  <SvgRedArrow x={x + width / 2 - 5} y={5} />
+                  <LabelText fill={RED_TEXT} x={x + width / 2 + 16} y={25}>
+                    {roundDecimal(demographicData.growth, 2) + '%'}
+                  </LabelText>
+                </>
+              )}
           </>
         )}
         {value && (

@@ -41,7 +41,7 @@ export default function LocationDetail(props: Props) {
         </RightColumn>
       </ContentContainer>
       <SeeMoreContainer>
-        <SeeMore>click again to see more</SeeMore>
+        <SeeMore>click location pin to see more</SeeMore>
       </SeeMoreContainer>
     </Container>
   ) : null;
