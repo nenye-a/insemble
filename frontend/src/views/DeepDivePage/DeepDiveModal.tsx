@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
 
-import { View, Modal, TabBar, LoadingIndicator } from '../../core-ui';
+import { View, Modal, TabBar, LoadingIndicator, Text, Button } from '../../core-ui';
 import PropertyDeepDiveHeader from './PropertyDeepDiveHeader';
 import PropertyDetailView from './PropertyDetailView';
 import Overview from './Overview';
@@ -15,6 +15,7 @@ import {
   LocationDetails_locationDetails_propertyDetails as DELETED_BASE64_STRING,
 } from '../../generated/LocationDetails';
 import { THEME_COLOR } from '../../constants/colors';
+import { FONT_SIZE_LARGE } from '../../constants/theme';
 
 type SelectedLocation = { lat: string; lng: string; address: string; targetNeighborhood: string };
 
@@ -44,7 +45,7 @@ export default function LocationDeepDiveModal(props: Props) {
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   // let [headerShrink, setHeaderShrink] = useState(false);
   let isOverviewSelected = selectedTabIndex === 0;
-  let { data, loading } = useQuery<LocationDetails, LocationDetailsVariables>(
+  let { data, loading, error, refetch } = useQuery<LocationDetails, LocationDetailsVariables>(
     GET_LOCATION_DETAILS,
     {
       variables: {
@@ -90,6 +91,12 @@ export default function LocationDeepDiveModal(props: Props) {
             flex
             style={{ justifyContent: 'center', alignItems: 'center' }}
           />
+        ) : error ? (
+          // TODO: add a more proper ErrorComponent
+          <CenteredView flex>
+            <Text fontSize={FONT_SIZE_LARGE}>{error.message || ''}</Text>
+            <Button text="Try Again" onPress={refetch} />
+          </CenteredView>
         ) : (
           <>
             {/* <TourContainer isShrink={headerShrink}>
@@ -153,4 +160,9 @@ type TourContainerProps = {
 
 const ScrollView = styled(View)`
   overflow-y: scroll;
+`;
+
+const CenteredView = styled(View)`
+  justify-content: center;
+  align-items: center;
 `;

@@ -99,7 +99,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         }
       };
     }
-  }, [domReady, onPreviewClick, loading, data]);
+  }, [domReady, onPreviewClick, loading, data, heatmapData, markerPosition]);
 
   return (
     <div>
