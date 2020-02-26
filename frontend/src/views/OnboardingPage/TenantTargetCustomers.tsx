@@ -97,7 +97,8 @@ export default function TenantTargetCustomers(props: Props) {
         setSelectedAgeRange([autoMinAge, autoMaxAge]);
       }
     }
-  }, [autoPopulateLoading, autoPopulateData, minIncome, maxIncome, minAge, maxAge]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoPopulateLoading, autoPopulateData]);
 
   useEffect(() => {
     dispatch({
