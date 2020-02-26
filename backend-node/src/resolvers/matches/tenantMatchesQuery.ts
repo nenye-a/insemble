@@ -71,6 +71,7 @@ let tenantMatches = queryField('tenantMatches', {
       matchingLocations = existMatchingLocations;
     } else {
       let {
+        tenant_id: tenantId,
         matching_locations: newMatchingLocations,
         matching_properties: rawMatchingProperties,
       }: TenantMatchesType = (
@@ -112,6 +113,7 @@ let tenantMatches = queryField('tenantMatches', {
           data: {
             matchingLocations: JSON.stringify(newMatchingLocations),
             matchingProperties: { create: newMatchingProperties },
+            tenantId,
           },
         })
         .matchingProperties();

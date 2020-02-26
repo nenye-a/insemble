@@ -4,6 +4,7 @@ import { View, Card, Text, Badge as BaseBadge } from '../../core-ui';
 import NearbyPlacesTag from './NearbyPlacesTag';
 import { DEFAULT_BORDER_RADIUS, FONT_WEIGHT_MEDIUM, FONT_SIZE_SMALL } from '../../constants/theme';
 import { THEME_COLOR } from '../../constants/colors';
+import { roundDecimal } from '../../utils';
 import mapPin from '../../components/icons/map-pin.svg';
 
 type Props = {
@@ -27,7 +28,11 @@ export default function MiniNearbyPlacesCard(props: Props) {
         <Image src={photo || mapPin} />
         <PlaceName>{name}</PlaceName>
       </RowedView>
-      <NearbyPlacesTag content={distance} postfix="Miles" style={{ margin: 0, marginTop: 3 }} />
+      <NearbyPlacesTag
+        content={roundDecimal(distance)}
+        postfix="Miles"
+        style={{ margin: 0, marginTop: 3 }}
+      />
     </Container>
   );
 }
