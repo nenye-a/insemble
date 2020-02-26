@@ -2,14 +2,16 @@ import React from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
-import { Card, Text, View, Button } from '../core-ui';
+import { Card, Text, View, Button, TouchableOpacity } from '../core-ui';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
 import LoginForm from './LoginForm';
 import { Role } from '../types/types';
+import { THEME_COLOR } from '../constants/colors';
 
 export default function Login() {
   let history = useHistory();
   let noAccount = "Don't have an account?";
+  let noPassword = 'Forgot your password?';
 
   return (
     <Container>
@@ -21,7 +23,7 @@ export default function Login() {
       >
         <LoginForm role={Role.TENANT} />
       </LoginCard>
-      <RowView>
+      <NoAccountContainer>
         <Text>{noAccount} </Text>
         <Button
           mode="transparent"
@@ -30,15 +32,28 @@ export default function Login() {
             history.push('/signup');
           }}
         />
+      </NoAccountContainer>
+      <RowView>
+        <Text>{noPassword} </Text>
+        <TouchableOpacity href="mailto:support@insemblegroup.com">
+          <Contact>Contact us</Contact>
+        </TouchableOpacity>
       </RowView>
     </Container>
   );
 }
 
+const Contact = styled(Text)`
+  color: ${THEME_COLOR};
+`;
+
 const RowView = styled(View)`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+`;
+
+const NoAccountContainer = styled(RowView)`
   margin: 16px 0 0 0;
 `;
 
