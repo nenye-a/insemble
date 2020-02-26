@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node ./lib/main.js",
-    "start:dev": "ts-node ./src/main.ts",
+    "start:dev": "ts-node --transpile-only ./src/main.ts",
     "start:watch": "yarn generate && ts-node-dev --no-notify --respawn --transpile-only ./src/main.ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
