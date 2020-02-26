@@ -37,7 +37,9 @@ let linkStyles = css`
   text-align: inherit;
   font: inherit;
   list-style: none;
-  text-decoration: none;
+  &:hover {
+    text-decoration: none;
+  }
 `;
 
 export default styled(Touchable)`
