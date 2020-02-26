@@ -6,9 +6,9 @@ let isTenantAuthenticated = rule()(async (_, __, ctx: Context) => {
   return ctx.tenantUserId != null;
 });
 
-// let isLandlordAuthenticated = rule()(async (_, __, ctx: Context) => {
-//   return ctx.landlordUserId != null;
-// });
+let isLandlordAuthenticated = rule()(async (_, __, ctx: Context) => {
+  return ctx.landlordUserId != null;
+});
 
 let permissions = shield({
   Query: {
