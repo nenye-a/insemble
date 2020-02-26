@@ -1,11 +1,7 @@
 // TODO: Remove this next line.
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useRef, useState, useEffect } from 'react';
-import Joyride, { STATUS, Step } from 'react-joyride';
 import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
-import { useAlert } from 'react-alert';
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
-import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
 import { useParams } from 'react-router-dom';
 
 import { GET_LOCATION_PREVIEW } from '../graphql/queries/server/preview';
@@ -19,17 +15,12 @@ import {
 } from '../generated/TenantMatches';
 import { useLazyQuery } from '@apollo/react-hooks';
 import { LocationPreview, LocationPreviewVariables } from '../generated/LocationPreview';
+import { GOOGLE_MAPS_STYLE } from '../constants/googleMaps';
+import MapTour from './MapPage/MapTour';
 
-type LatLngBounds = google.maps.LatLngBounds;
 type LatLng = google.maps.LatLng;
 type LatLngLiteral = google.maps.LatLngLiteral;
-type MarkerData = {
-  targetAddress: string;
-  targetNeighborhood: string;
-  daytimePop3Mile: number;
-  medianIncome: number;
-  medianAge: number;
-};
+
 type Props = {
   markers?: Array<LatLngLiteral>;
   onMarkerClick?: (markerPosition: LatLng, address: string, targetNeighborhood: string) => void;
@@ -57,56 +48,25 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         }))
       : [];
 
-  let alert = useAlert();
-
-  let [marker, setMarker] = useState<MarkerData | null>(null);
-  let [markers, setMarkers] = useState<Array<LatLngLiteral>>([]);
   let [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
-  let [bounds, setBounds] = useState<LatLngBounds | null>(null);
   let [showGuide, setShowGuide] = useState(true);
   let [infoBoxHeight, setInfoBoxHeight] = useState<number>(0);
+  let [domReady, setDomReady] = useState(false);
 
+  let infoRef = useRef<Element | undefined>();
   let mapRef = useRef<GoogleMap | null>(null);
-  let searchBoxRef = useRef<SearchBox | null>(null);
-  useEffect(() => {
-    let map = mapRef.current;
-    if (map) {
-      setBounds(map.getBounds());
-    }
-  }, []);
 
-  let onBoundsChanged = () => {
-    let map = mapRef.current;
-    if (map) {
-      setBounds(map.getBounds());
-    }
+  // TODO: fix this. tried useCallback with all deps, still not working
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  let onPreviewClick = () => {
+    markerPosition &&
+      onMarkerClick &&
+      onMarkerClick(
+        markerPosition,
+        data?.locationPreview.targetAddress || '',
+        data?.locationPreview.targetNeighborhood || ''
+      );
   };
-
-  let onPlacesChanged = () => {
-    let searchBox = searchBoxRef.current;
-    let map = mapRef.current;
-    let places = searchBox ? searchBox.getPlaces() : [];
-    let bounds = new google.maps.LatLngBounds();
-    let nextMarkers: Array<LatLngLiteral> = [];
-    for (let place of places) {
-      if (place.geometry) {
-        // bounds.union(place.geometry.viewport);
-        bounds.extend(place.geometry.location);
-        nextMarkers.push(place.geometry.location.toJSON());
-      }
-    }
-    // setCenter(bounds.getCenter().toJSON());
-    setMarkers(nextMarkers);
-    if (map) {
-      map.fitBounds(bounds);
-    }
-  };
-
-  useEffect(() => {
-    if (data?.locationPreview) {
-      setMarker(data.locationPreview);
-    }
-  }, [loading, data]);
 
   let onMapClick = async (latLng: LatLng) => {
     let { lat, lng } = latLng;
@@ -122,88 +82,32 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
       },
     });
     setMarkerPosition(latLng);
+    setDomReady(false);
   };
 
-  let handleSearchClick = (marker: LatLngLiteral) => {
-    // fetch('api/location/lat=34.0522795&lng=-118.3089333')
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     console.log(data);
-    //     console.log('going to marker page actually');
-    //     setRedirect(true);
-    //     setMarker(data);
-    //   });
-  };
+  useEffect(() => {
+    let handlePreviewClickListener = (e: Event) => {
+      e.stopPropagation();
+      onPreviewClick();
+    };
 
-  let steps: Array<Step> = [
-    {
-      target: '.heat-map-example',
-      content: (
-        <div className="pt-2">
-          <img
-            className="mb-2 full-width-image"
-            src="https://d3v63q50apccnu.cloudfront.net/instructional+photos/heat-map-tour.png"
-            alt=""
-          />
-          <p className="text-center m-0">
-            Insemble generates a heatmap of recommended locations based on your search.
-          </p>
-        </div>
-      ),
-      placement: 'center',
-    },
-    {
-      target: '.search-box',
-      content: (
-        <p className="text-center m-0">
-          Search existing locations, brands, or brand types of interest.
-        </p>
-      ),
-      placement: 'top',
-    },
-    {
-      target: '.marker-example',
-      content: (
-        <div className="pt-2">
-          <img
-            className="mb-2 full-width-image"
-            src="https://d3v63q50apccnu.cloudfront.net/instructional+photos/marker-tour.png"
-            alt=""
-          />
-          <p className="text-center m-0">
-            Click to see important information about interesting locations. Click again to dive
-            deeper.
-          </p>
-        </div>
-      ),
-      placement: 'center',
-    },
-  ];
+    if (infoRef.current && domReady) {
+      infoRef.current.addEventListener('click', handlePreviewClickListener);
+      return () => {
+        if (infoRef.current) {
+          infoRef.current.removeEventListener('click', handlePreviewClickListener);
+        }
+      };
+    }
+  }, [domReady, onPreviewClick]);
 
   return (
     <div>
-      <Joyride
-        steps={steps}
-        scrollToFirstStep={true}
-        continuous={true}
-        run={showGuide}
-        showSkipButton={true}
-        styles={{
-          options: {
-            zIndex: 10000,
-            primaryColor: '#634FA2', // TODO: get from color constants
-          },
-          tooltipContent: {
-            paddingBottom: 0,
-          },
+      <MapTour
+        showGuide={showGuide}
+        onTourFinishedOrSkipped={(show) => {
+          setShowGuide(show);
         }}
-        callback={({ status }) => {
-          if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
-            setShowGuide(false);
-          }
-        }}
-        locale={{ last: 'Done' }}
-        spotlightClicks={false}
       />
       <LoadingIndicator visible={loading} />
       <Alert visible={!!error} text={error?.message || ''} />
@@ -215,335 +119,12 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
           maxZoom: 17,
           minZoom: 7,
           mapTypeControl: false,
-          styles: [
-            {
-              elementType: 'geometry',
-              stylers: [
-                {
-                  color: '#f5f5f5',
-                },
-              ],
-            },
-            {
-              elementType: 'labels',
-              stylers: [
-                {
-                  visibility: 'off',
-                },
-              ],
-            },
-            {
-              elementType: 'labels.icon',
-              stylers: [
-                {
-                  visibility: 'off',
-                },
-              ],
-            },
-            {
-              elementType: 'labels.text.fill',
-              stylers: [
-                {
-                  color: '#616161',
-                },
-              ],
-            },
-            {
-              elementType: 'labels.text.stroke',
-              stylers: [
-                {
-                  color: '#f5f5f5',
-                },
-              ],
-            },
-            {
-              featureType: 'administrative',
-              elementType: 'labels',
-              stylers: [
-                {
-                  visibility: 'on',
-                },
-              ],
-            },
-            {
-              featureType: 'administrative.land_parcel',
-              elementType: 'labels.text.fill',
-              stylers: [
-                {
-                  color: '#bdbdbd',
-                },
-              ],
-            },
-            {
-              featureType: 'administrative.neighborhood',
-              stylers: [
-                {
-                  visibility: 'off',
-                },
-              ],
-            },
-            {
-              featureType: 'landscape.natural',
-              stylers: [
-                {
-                  color: '#a19174',
-                },
-              ],
-            },
-            {
-              featureType: 'poi',
-              stylers: [
-                {
-                  visibility: 'on',
-                },
-              ],
-            },
-            {
-              featureType: 'poi',
-              elementType: 'geometry',
-              stylers: [
-                {
-                  color: '#eeeeee',
-                },
-              ],
-            },
-            {
-              featureType: 'poi',
-              elementType: 'labels',
-              stylers: [
-                {
-                  visibility: 'on',
-                },
-              ],
-            },
-            {
-              featureType: 'poi',
-              elementType: 'labels.text.fill',
-              stylers: [
-                {
-                  color: '#757575',
-                },
-              ],
-            },
-            {
-              featureType: 'poi.business',
-              stylers: [
-                {
-                  visibility: 'simplified',
-                },
-              ],
-            },
-            {
-              featureType: 'poi.business',
-              elementType: 'labels.text',
-              stylers: [
-                {
-                  color: '#a9a9a9',
-                },
-              ],
-            },
-            {
-              featureType: 'poi.park',
-              elementType: 'geometry',
-              stylers: [
-                {
-                  color: '#9da481',
-                },
-              ],
-            },
-            {
-              featureType: 'poi.park',
-              elementType: 'labels.text',
-              stylers: [
-                {
-                  visibility: 'off',
-                },
-              ],
-            },
-            {
-              featureType: 'poi.park',
-              elementType: 'labels.text.fill',
-              stylers: [
-                {
-                  color: '#9e9e9e',
-                },
-              ],
-            },
-            {
-              featureType: 'road',
-              elementType: 'geometry',
-              stylers: [
-                {
-                  color: '#ffffff',
-                },
-              ],
-            },
-            {
-              featureType: 'road',
-              elementType: 'labels',
-              stylers: [
-                {
-                  visibility: 'on',
-                },
-                {
-                  weight: 1.5,
-                },
-              ],
-            },
-            {
-              featureType: 'road.arterial',
-              elementType: 'labels.text.fill',
-              stylers: [
-                {
-                  color: '#757575',
-                },
-              ],
-            },
-            {
-              featureType: 'road.highway',
-              elementType: 'geometry',
-              stylers: [
-                {
-                  color: '#000000',
-                },
-                {
-                  lightness: 80,
-                },
-                {
-                  weight: 1,
-                },
-              ],
-            },
-            {
-              featureType: 'road.highway',
-              elementType: 'labels',
-              stylers: [
-                {
-                  visibility: 'simplified',
-                },
-              ],
-            },
-            {
-              featureType: 'road.highway',
-              elementType: 'labels.text.fill',
-              stylers: [
-                {
-                  color: '#616161',
-                },
-              ],
-            },
-            {
-              featureType: 'road.local',
-              elementType: 'labels.text.fill',
-              stylers: [
-                {
-                  color: '#9e9e9e',
-                },
-              ],
-            },
-            {
-              featureType: 'transit.line',
-              elementType: 'geometry',
-              stylers: [
-                {
-                  color: '#f0dee1',
-                },
-                {
-                  visibility: 'off',
-                },
-                {
-                  weight: 1,
-                },
-              ],
-            },
-            {
-              featureType: 'transit.line',
-              elementType: 'labels',
-              stylers: [
-                {
-                  visibility: 'on',
-                },
-              ],
-            },
-            {
-              featureType: 'transit.station',
-              elementType: 'geometry',
-              stylers: [
-                {
-                  color: '#eeeeee',
-                },
-              ],
-            },
-            {
-              featureType: 'transit.station.airport',
-              stylers: [
-                {
-                  visibility: 'on',
-                },
-              ],
-            },
-            {
-              featureType: 'transit.station.bus',
-              stylers: [
-                {
-                  visibility: 'on',
-                },
-              ],
-            },
-            {
-              featureType: 'transit.station.bus',
-              elementType: 'labels.icon',
-              stylers: [
-                {
-                  visibility: 'on',
-                },
-              ],
-            },
-            {
-              featureType: 'transit.station.rail',
-              stylers: [
-                {
-                  visibility: 'on',
-                },
-              ],
-            },
-            {
-              featureType: 'water',
-              elementType: 'geometry',
-              stylers: [
-                {
-                  color: '#c9d5f1',
-                },
-              ],
-            },
-            {
-              featureType: 'water',
-              elementType: 'labels.text.fill',
-              stylers: [
-                {
-                  color: '#9e9e9e',
-                },
-              ],
-            },
-          ],
+          styles: GOOGLE_MAPS_STYLE,
         }}
         onClick={(event) => onMapClick(event.latLng)}
-        onBoundsChanged={onBoundsChanged}
       >
         {markerPosition && !loading && data && (
-          <Marker
-            position={markerPosition}
-            onClick={() => {
-              markerPosition &&
-                onMarkerClick &&
-                onMarkerClick(
-                  markerPosition,
-                  data?.locationPreview.targetAddress || '',
-                  data?.locationPreview.targetNeighborhood || ''
-                );
-            }}
-            icon={MapPin}
-          >
+          <Marker position={markerPosition} onClick={onPreviewClick} icon={MapPin}>
             <InfoBox
               defaultPosition={markerPosition}
               defaultVisible={true}
@@ -555,35 +136,28 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
                 pane: 'floatPane',
                 enableEventPropagation: true,
                 closeBoxMargin: '10px 0 2px 2px',
+                maxWidth: 400,
               }}
               onDomReady={() => {
                 let infoBox = document.querySelector('.infoBox');
                 if (infoBox) {
+                  setDomReady(true);
+                  infoRef.current = infoBox;
                   let infoBoxHeight = infoBox.getClientRects()[0].height;
                   setInfoBoxHeight(infoBoxHeight);
                 }
               }}
               onCloseClick={() => {
-                setMarker(null);
+                setMarkerPosition(null);
               }}
             >
-              {/* TODO Change Dummy Data */}
               <LocationDetail
                 visible
-                title={data.locationPreview.targetAddress}
-                subTitle={data.locationPreview.targetNeighborhood}
-                income={data.locationPreview.medianIncome.toString()}
-                population={data.locationPreview.daytimePop3Mile.toString()}
-                age={data.locationPreview.medianAge}
-                onSeeMore={() =>
-                  markerPosition &&
-                  onMarkerClick &&
-                  onMarkerClick(
-                    markerPosition,
-                    data?.locationPreview.targetAddress || '',
-                    data?.locationPreview.targetNeighborhood || ''
-                  )
-                }
+                title={data?.locationPreview.targetAddress}
+                subTitle={data?.locationPreview.targetNeighborhood}
+                income={data?.locationPreview.medianIncome.toString()}
+                population={data?.locationPreview.daytimePop3Mile.toString()}
+                age={data?.locationPreview.medianAge}
               />
             </InfoBox>
           </Marker>
@@ -595,14 +169,6 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
             options={{ data: heatmapData, radius: 0.006, opacity: 0.5, dissipating: false }}
           />
         )}
-
-        {markers.map((markerPosition, index) => (
-          <Marker
-            onClick={() => handleSearchClick(markerPosition)}
-            key={index}
-            position={markerPosition}
-          />
-        ))}
       </GoogleMap>
     </div>
   );
