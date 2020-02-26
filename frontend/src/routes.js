@@ -21,6 +21,7 @@ import VerificationSuccessful from './views/VerificationSuccessful';
 import LandlordEmailVerification from './views/LandlordEmailVerification';
 import LandlordProperties from './views/LandlordProperties';
 import LandlordPropertyDetails from './views/LandlordPropertyDetails';
+import LandlordEmailVerification from './view/LandlordEmailVerification';
 
 import { tenantAuthorization } from './utils';
 
@@ -101,12 +102,6 @@ const TENANT_ROUTES = [
     path: '/verify/:placeID',
     layout: BasicLayout,
     component: Onboarding,
-  },
-  {
-    path: '/landlord/new-property',
-    exact: true,
-    layout: BasicLayout,
-    component: LandlordOnboarding,
   },
   {
     path: '/map/:brandId',
