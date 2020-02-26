@@ -186,8 +186,8 @@ class TenantMatchAPI(AsynchronousAPI):
 
         else:
             print("Match categories", validated_params['categories'])
-            # FIXME: change url parsing & parameters to better receive lists of information, current method is error prone
-            categories = [string.strip() for string in ast.literal_eval(validated_params['categories'][0])]
+
+            categories = validated_params['categories']
             print(categories)
             location = provider.get_representative_location(categories, validated_params['income'])
             if location:
