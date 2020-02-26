@@ -1,50 +1,84 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-import { useQuery, useApolloClient } from '@apollo/react-hooks';
+import { useApolloClient, useLazyQuery } from '@apollo/react-hooks';
 
 import { View, Card, Avatar, Text, Button, LoadingIndicator } from '../../core-ui';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
 import { THEME_COLOR, RED_TEXT, BACKGROUND_COLOR } from '../../constants/colors';
 import ProfileMenuList from './ProfileMenuList';
 import { GetTenantProfile } from '../../generated/GetTenantProfile';
-import { GET_TENANT_PROFILE } from '../../graphql/queries/server/profile';
+import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../../graphql/queries/server/profile';
 import asyncStorage from '../../utils/asyncStorage';
 import { Role } from '../../types/types';
+import { GetLandlordProfile } from '../../generated/GetLandlordProfile';
 
 type Props = {
   role: Role;
 };
 
-export default function ProfileCard({ role }: Props) {
-  let name = '';
-  let company = '';
-  let title = '';
+type Profile = {
+  name: string;
+  company: string;
+  title: string | null;
+  avatar: string | null;
+};
 
-  let { loading, data } = useQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
-    notifyOnNetworkStatusChange: true,
+export default function ProfileCard({ role }: Props) {
+  let [{ name, company, title, avatar }, setProfileInfo] = useState<Profile>({
+    name: '',
+    company: '',
+    title: '',
+    avatar: null,
   });
+
+  let onTenantCompleted = (tenantResult: GetTenantProfile) => {
+    setProfileInfo({
+      name: tenantResult?.profileTenant.firstName + ' ' + tenantResult?.profileTenant.lastName,
+      company: tenantResult?.profileTenant.company,
+      title: tenantResult?.profileTenant.title,
+      avatar: tenantResult?.profileTenant.avatar,
+    });
+  };
+
+  let onLandlordCompleted = (landlordResult: GetLandlordProfile) => {
+    name =
+      landlordResult?.profileLandlord.firstName + ' ' + landlordResult?.profileLandlord.lastName;
+    company = landlordResult?.profileLandlord.company;
+    title = landlordResult?.profileLandlord.title;
+    avatar = landlordResult?.profileLandlord.avatar;
+  };
+
+  let [getTenant, { loading: tenantLoading }] = useLazyQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
+    onCompleted: onTenantCompleted,
+  });
+
+  let [getLandlord, { loading: landlordLoading }] = useLazyQuery<GetLandlordProfile>(
+    GET_LANDLORD_PROFILE,
+    {
+      onCompleted: onLandlordCompleted,
+    }
+  );
+
+  useEffect(() => {
+    if (role === Role.TENANT) {
+      getTenant();
+    }
+    if (role === Role.LANDLORD) {
+      getLandlord();
+    }
+  }, [getLandlord, getTenant, role]);
+
   let history = useHistory();
   let client = useApolloClient();
 
-  if (role === Role.TENANT) {
-    name = data?.profileTenant.firstName + ' ' + data?.profileTenant.lastName;
-    company = data?.profileTenant.company || '';
-    title = data?.profileTenant.title || '';
-  } else {
-    // TODO
-    name = 'Armand Jacobs';
-    company = 'Landlord.com';
-    title = 'Landlord';
-  }
-
   return (
     <Container>
-      {loading ? (
+      {tenantLoading || landlordLoading ? (
         <LoadingIndicator />
       ) : (
         <ProfileWrapper>
-          <ProfilePicture size="large" image={data?.profileTenant.avatar} />
+          <ProfilePicture size="large" image={avatar} />
           <ProfileText fontSize={FONT_SIZE_LARGE} fontWeight={FONT_WEIGHT_BOLD} color={THEME_COLOR}>
             {name}
           </ProfileText>
