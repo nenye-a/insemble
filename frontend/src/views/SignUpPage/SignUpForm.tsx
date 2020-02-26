@@ -10,9 +10,10 @@ import { WHITE } from '../../constants/colors';
 import { REGISTER_TENANT } from '../../graphql/queries/server/auth';
 import { RegisterTenant, RegisterTenantVariables } from '../../generated/RegisterTenant';
 import { State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
+import { Role } from '../../types/types';
 
 type Props = {
-  role: 'Tenant' | 'Landlord'; // change to constants
+  role: Role;
   onboardingState?: OnboardingState;
   signUpFirst?: boolean; // whether the user sign up or fill the onboarding form first
 };
