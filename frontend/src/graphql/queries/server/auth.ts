@@ -51,3 +51,13 @@ export const TENANT_VERIFICATION = gql`
     }
   }
 `;
+
+// need to change this soon as BE's email verification ready
+export const REGISTER_LANDLORD = gql`
+  mutation RegisterLandlord($landlord: LandlordRegisterInput!) {
+    registerLandlord(landlord: $landlord) {
+      token
+      landlord
+    }
+  }
+`;
