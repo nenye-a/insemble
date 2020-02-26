@@ -12,15 +12,17 @@ import {
 
 const SPACES = ['Space 1', 'Space 2'];
 
+enum Tab {
+  TENANT_MATCH_INDEX,
+  LOCATION_DETAIL_INDEX,
+}
+
 export default function LandlordPropertyDetails() {
-  let TENANT_MATCH_INDEX = 0;
-  let LOCATION_DETAIL_INDEX = 1;
-
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
-  let isTenantMatchSelected = selectedTabIndex === TENANT_MATCH_INDEX;
-  let isLocationDetailSelected = selectedTabIndex === LOCATION_DETAIL_INDEX;
-
   let [selectedSpaceIndex, setSelectedSpaceIndex] = useState(0);
+
+  let isTenantMatchSelected = selectedTabIndex === Tab.TENANT_MATCH_INDEX;
+  let isLocationDetailSelected = selectedTabIndex === Tab.LOCATION_DETAIL_INDEX;
 
   let [modalVisible, setModalVisible] = useState(false);
   return (
