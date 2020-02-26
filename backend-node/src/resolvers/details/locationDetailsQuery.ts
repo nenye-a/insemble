@@ -63,7 +63,7 @@ let locationDetails = queryField('locationDetails', {
         demographics5,
         nearby,
       } = result;
-      console.log(nearby[0]);
+
       let {
         num_apartments: numApartements,
         num_hospitals: numHospitals,
