@@ -20,7 +20,7 @@ export * from './Brand';
 export * from './LocationType';
 export * from './BrandThumbnail';
 export * from './LocationPreviewResult';
-export * from './EditProfileTenantInput';
+export * from './EditProfileInput';
 export * from './LocationDetailsResult';
 
 export * from './TenantRegisterResult';
