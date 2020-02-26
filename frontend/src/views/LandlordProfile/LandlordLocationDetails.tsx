@@ -16,17 +16,24 @@ export default function LandlordLocationDetails() {
       <Placeholder />
       <KeyFacts withMargin={false} />
       <ConsumerPersonaText>All Consumer Personas</ConsumerPersonaText>
-      <CardsContainer>
-        {CONSUMER_PERSONAS.map((item, index) => (
-          <RelevantConsumerCard percentile={100} name="name" key={index} {...item} />
-        ))}
-      </CardsContainer>
+      <Container flex>
+        <CardsContainer>
+          {CONSUMER_PERSONAS.map((item, index) => (
+            <RelevantConsumerCard percentile={100} name="name" key={index} {...item} />
+          ))}
+        </CardsContainer>
+      </Container>
       <GraphicContainer>
         <DemographicCard withMargin={false} />
       </GraphicContainer>
     </View>
   );
 }
+
+const Container = styled(View)`
+  flex-wrap: wrap;
+  overflow-x: scroll;
+`;
 
 const Placeholder = styled(View)`
   background-color: ${GREY};
