@@ -1,0 +1,124 @@
+import React from 'react';
+import styled from 'styled-components';
+
+import { LANDLORD_TENANT_MATCHES } from '../../fixtures/dummyData';
+import { View, Text, TouchableOpacity } from '../../core-ui';
+import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
+import {
+  FONT_WEIGHT_MEDIUM,
+  FONT_SIZE_LARGE,
+  FONT_WEIGHT_HEAVY,
+  FONT_SIZE_SMALL,
+  DEFAULT_BORDER_RADIUS,
+} from '../../constants/theme';
+import { DARK_TEXT_COLOR, WHITE, SECONDARY_COLOR, THEME_COLOR } from '../../constants/colors';
+
+type Props = {
+  onPress: () => void;
+};
+export default function LandlordTenantMatches({ onPress }: Props) {
+  return (
+    <Container flex>
+      {LANDLORD_TENANT_MATCHES.map((item, index) => {
+        return (
+          <TenantCard key={index} onPress={onPress}>
+            <InterestedContainer>
+              <InterestedText>Interested</InterestedText>
+            </InterestedContainer>
+            <Image src={imgPlaceholder} />
+            <DescriptionContainer>
+              <RowedView flex>
+                <View>
+                  <CardTitle>{item.tenantName}</CardTitle>
+                  <CardCategoryText>{item.tenantCategory}</CardCategoryText>
+                </View>
+                <View>
+                  <CardPercentage>{item.percentageMatch}%</CardPercentage>
+                  <Text>Match</Text>
+                </View>
+              </RowedView>
+              <CardExistingLocationText>
+                {item.existingLocation} existing locations
+              </CardExistingLocationText>
+            </DescriptionContainer>
+          </TenantCard>
+        );
+      })}
+    </Container>
+  );
+}
+
+const Image = styled.img`
+  height: 120px;
+  object-fit: cover;
+`;
+
+const RowedView = styled(View)`
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 6px 0;
+`;
+
+const Container = styled(RowedView)`
+  flex-wrap: wrap;
+`;
+
+const InterestedText = styled(Text)`
+  color: ${WHITE};
+  align-self: center;
+`;
+const TenantCard = styled(TouchableOpacity)`
+  border-radius: ${DEFAULT_BORDER_RADIUS};
+  box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.1);
+  background-color: ${WHITE};
+  overflow: hidden;
+  background-color: ${WHITE};
+  width: calc(33.33% - 11px);
+  margin: 12px 16px 12px 0;
+  &:nth-child(3n) {
+    margin-right: 0;
+  }
+  min-height: 200px
+  height: fit-content;
+  &:hover {
+    box-shadow: 0px 0px 10px 0px ${SECONDARY_COLOR};
+  }
+`;
+
+const InterestedContainer = styled(View)`
+  flex: 1;
+  width: 100%;
+  position: absolute;
+  background-color: ${THEME_COLOR};
+  align-items: center;
+  justify-content: center;
+  padding: 2px 0;
+  display: none;
+  ${TenantCard}:hover & {
+    display: flex;
+  }
+`;
+
+const DescriptionContainer = styled(View)`
+  padding: 12px;
+`;
+
+const CardTitle = styled(Text)`
+  color: ${THEME_COLOR};
+  font-weight: ${FONT_WEIGHT_MEDIUM};
+`;
+
+const CardPercentage = styled(Text)`
+  color: ${THEME_COLOR};
+  font-size: ${FONT_SIZE_LARGE};
+  font-weight: ${FONT_WEIGHT_HEAVY};
+`;
+
+const CardCategoryText = styled(Text)`
+  color: ${DARK_TEXT_COLOR};
+  font-size: ${FONT_SIZE_SMALL};
+`;
+
+const CardExistingLocationText = styled(Text)`
+  font-size: ${FONT_SIZE_SMALL};
+`;

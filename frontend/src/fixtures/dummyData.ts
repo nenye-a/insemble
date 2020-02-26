@@ -93,6 +93,60 @@ export const SAVED_SEARCHES = [
   },
 ];
 
+export const LANDLORD_PROPERTIES = [
+  {
+    propertyName: '1004 West Slauson Avenue, Los Angeles',
+    listingSpaces: 1,
+    proSpaces: 0,
+    tenantRequests: 1,
+  },
+  {
+    propertyName: '1005 California',
+    listingSpaces: 3,
+    proSpaces: 2,
+    tenantRequests: 2,
+  },
+];
+
+export const LANDLORD_TENANT_MATCHES = [
+  {
+    tenantName: 'California Cheeseburgers',
+    percentageMatch: 95,
+    tenantCategory: 'Hamburger Restaurant',
+    existingLocation: '1',
+  },
+  {
+    tenantName: 'Lake LA Bakery',
+    percentageMatch: 95,
+    tenantCategory: 'Bakery',
+    existingLocation: '1',
+  },
+  {
+    tenantName: 'Family Dollar',
+    percentageMatch: 93,
+    tenantCategory: 'Dollar store',
+    existingLocation: '60+',
+  },
+  {
+    tenantName: 'California Cheeseburgers',
+    percentageMatch: 95,
+    tenantCategory: 'Hamburger Restaurant',
+    existingLocation: '1',
+  },
+  {
+    tenantName: 'Lake LA Bakery',
+    percentageMatch: 95,
+    tenantCategory: 'Bakery',
+    existingLocation: '1',
+  },
+  {
+    tenantName: 'Family Dollar',
+    percentageMatch: 93,
+    tenantCategory: 'Dollar store',
+    existingLocation: '60+',
+  },
+];
+
 export const MESSAGE_LIST = [
   {
     subject: "I'm very interested in this property for immediate lease",
@@ -125,6 +179,74 @@ export const MESSAGE_DETAIL = {
 };
 
 export const CONSUMER_PERSONAS = [
+  {
+    photo: 'https://cdn.pixabay.com/photo/2016/03/09/15/25/beach-1246646_1280.jpg',
+    personaName: 'Trendy Eats',
+    percentage: 60,
+    description:
+      'Meals are a social experience, and these foodies take it to the next level. This segment can’t wait to snap a pic of their plate and share it before chowing down.',
+    tags: [
+      'Yum',
+      'Lunchtime',
+      '#goodeats',
+      'Tuna',
+      'Sushi',
+      'Burritos',
+      'Kale',
+      'Brisket',
+      '#getinmybelly',
+      'Steak',
+      'Feasts',
+      'Sausage',
+      'Tofu',
+      'Ribs',
+    ],
+  },
+  {
+    photo: 'https://cdn.pixabay.com/photo/2017/11/23/14/54/food-2972974_1280.jpg',
+
+    personaName: 'Ingredient Attentive',
+    percentage: 53,
+    description:
+      'These folks are conscious about what they eat. They’re looking for ingredients that not only taste great, but also have great nutritional benefits.',
+    tags: [
+      'Ingredients',
+      'Recipes',
+      'Produce',
+      '#healthyfats',
+      'Turmeric',
+      'Flanksteak',
+      'Pimento',
+      'Spices',
+      'Nuts',
+      'Superfoods',
+      'Organicfoods',
+    ],
+  },
+  {
+    photo: 'https://cdn.pixabay.com/photo/2018/01/31/09/57/coffee-3120750_1280.jpg',
+
+    personaName: 'Hops & Brews',
+    percentage: 53,
+    description:
+      'Thirst isn’t the only reason this segment looks for a good brew. From beer drinkers on a budget to the millennial craft beer enthusiast , these men and women are passionate about different kinds of beer and how it’s made.',
+    tags: [
+      'Yum',
+      'Lunchtime',
+      '#goodeats',
+      'Tuna',
+      'Sushi',
+      'Burritos',
+      'Kale',
+      'Brisket',
+      '#getinmybelly',
+      'Steak',
+      'Feasts',
+      'Sausage',
+      'Tofu',
+      'Ribs',
+    ],
+  },
   {
     photo: 'https://cdn.pixabay.com/photo/2016/03/09/15/25/beach-1246646_1280.jpg',
     personaName: 'Trendy Eats',
