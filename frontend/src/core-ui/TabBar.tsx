@@ -78,7 +78,6 @@ const VerticalView = styled(View)`
   background-color: ${THEME_COLOR};
   border-top-right-radius: 30px;
   width: 210px;
-  height: 360px;
 `;
 const HorizontalView = styled(View)`
   flex-direction: row;
