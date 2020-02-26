@@ -8,34 +8,37 @@ type Props = {
   selectedTabIndex: number;
   onPress: (index: number) => void;
 };
-export default function PropertyDetailSegment({ selectedTabIndex, onPress }: Props) {
-  let TENANT_MATCH_INDEX = 0;
-  let LOCATION_DETAIL_INDEX = 1;
-  let MANAGE_INDEX = 2;
 
+enum Tab {
+  TENANT_MATCH_INDEX,
+  LOCATION_DETAIL_INDEX,
+  MANAGE_INDEX,
+}
+
+export default function PropertyDetailSegment({ selectedTabIndex, onPress }: Props) {
   return (
     <HorizontalView>
       <TenantMatchSegment
-        isActive={selectedTabIndex === TENANT_MATCH_INDEX}
-        onPress={() => onPress(TENANT_MATCH_INDEX)}
+        isActive={selectedTabIndex === Tab.TENANT_MATCH_INDEX}
+        onPress={() => onPress(Tab.TENANT_MATCH_INDEX)}
       >
-        <TenantMatchText isActive={selectedTabIndex === TENANT_MATCH_INDEX}>
+        <TenantMatchText isActive={selectedTabIndex === Tab.TENANT_MATCH_INDEX}>
           Tenant Matches
         </TenantMatchText>
       </TenantMatchSegment>
       <TabSegment
-        isActive={selectedTabIndex === LOCATION_DETAIL_INDEX}
-        onPress={() => onPress(LOCATION_DETAIL_INDEX)}
+        isActive={selectedTabIndex === Tab.LOCATION_DETAIL_INDEX}
+        onPress={() => onPress(Tab.LOCATION_DETAIL_INDEX)}
       >
-        <SegmentText isActive={selectedTabIndex === LOCATION_DETAIL_INDEX}>
+        <SegmentText isActive={selectedTabIndex === Tab.LOCATION_DETAIL_INDEX}>
           Location Details
         </SegmentText>
       </TabSegment>
       <TabSegment
-        isActive={selectedTabIndex === MANAGE_INDEX}
-        onPress={() => onPress(MANAGE_INDEX)}
+        isActive={selectedTabIndex === Tab.MANAGE_INDEX}
+        onPress={() => onPress(Tab.MANAGE_INDEX)}
       >
-        <SegmentText isActive={selectedTabIndex === MANAGE_INDEX}>Manage</SegmentText>
+        <SegmentText isActive={selectedTabIndex === Tab.MANAGE_INDEX}>Manage</SegmentText>
       </TabSegment>
     </HorizontalView>
   );
