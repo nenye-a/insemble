@@ -495,6 +495,7 @@ def update_all_places(lat, lng, nearby_dict, categories):
             nearby_dict[place_id].update({
                 'lat': place['geometry']['location']['lat'],
                 'lng': place['geometry']['location']['lng'],
+                'name': place['name'],
                 'rating': place['rating'] if 'rating' in place else None,
                 'number_rating': place['user_ratings_total'] if 'user_ratings_total' in place else None
             })
