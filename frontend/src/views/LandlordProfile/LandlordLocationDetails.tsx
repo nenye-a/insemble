@@ -7,7 +7,7 @@ import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD } from '../../constants/theme';
 import { LIGHTEST_GREY, GREY } from '../../constants/colors';
 import KeyFacts from '../DeepDivePage/KeyFacts';
 import RelevantConsumerCard from '../DeepDivePage/RelevantConsumerCard';
-import Graphic from '../../core-ui/Demographics';
+import DemographicCard from '../../core-ui/Demographics';
 
 export default function LandlordLocationDetails() {
   return (
@@ -22,7 +22,7 @@ export default function LandlordLocationDetails() {
         ))}
       </CardsContainer>
       <GraphicContainer>
-        <Graphic withMargin={false} />
+        <DemographicCard withMargin={false} />
       </GraphicContainer>
     </View>
   );

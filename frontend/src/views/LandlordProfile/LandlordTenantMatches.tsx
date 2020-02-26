@@ -18,7 +18,7 @@ type Props = {
 };
 export default function LandlordTenantMatches({ onPress }: Props) {
   return (
-    <RowedView flex>
+    <Container flex>
       {LANDLORD_TENANT_MATCHES.map((item, index) => {
         return (
           <TenantCard key={index} onPress={onPress}>
@@ -44,7 +44,7 @@ export default function LandlordTenantMatches({ onPress }: Props) {
           </TenantCard>
         );
       })}
-    </RowedView>
+    </Container>
   );
 }
 
@@ -57,6 +57,10 @@ const RowedView = styled(View)`
   flex-direction: row;
   justify-content: space-between;
   margin: 6px 0;
+`;
+
+const Container = styled(RowedView)`
+  flex-wrap: wrap;
 `;
 
 const InterestedText = styled(Text)`

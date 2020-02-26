@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { View, Card, Text } from '../../core-ui';
-import Graphic from '../../core-ui/Demographics';
+import DemographicCard from '../../core-ui/Demographics';
 import { CONSUMER_PERSONAS } from '../../fixtures/dummyData';
 import RelevantConsumerCard from './RelevantConsumerCard';
 import { LIGHTEST_GREY } from '../../constants/colors';
@@ -25,7 +25,7 @@ export default function TenantPropertyDetailsView() {
       </Container>
 
       <Container>
-        <Graphic withMargin={false} />
+        <DemographicCard withMargin={false} />
       </Container>
     </View>
   );

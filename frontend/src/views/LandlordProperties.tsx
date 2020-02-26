@@ -40,7 +40,7 @@ export default function LandlordProperties() {
                 <TenantRequestText>{item.tenantRequests} new request</TenantRequestText>
               </RowedView>
             </LeftContainer>
-            {/* TODO: change to heatmap image/map */}
+            {/* TODO: change to iframe */}
             <HeatMapImage src={imgPlaceholder} />
           </Row>
         </TouchableOpacity>
