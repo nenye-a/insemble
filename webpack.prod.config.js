@@ -16,7 +16,7 @@ baseConfig[1].entry = ['whatwg-fetch', '@babel/polyfill', './frontend/src/index.
 
 baseConfig[1].output = {
   path: path.resolve('./frontend/webpack_bundles/'),
-  publicPath: '',
+  publicPath: '/static/webpack_bundles/',
   filename: '[name]-[hash].js',
 };
 

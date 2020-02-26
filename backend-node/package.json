@@ -9,7 +9,8 @@
     "format:check": "prettier --check \"src/**/*.ts\"",
     "lint": "eslint --max-warnings 0 \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit -p .",
-    "generate": "prisma2 generate && ts-node --transpile-only src/schema.ts",
+    "generate:schema": "ts-node --transpile-only src/schema.ts",
+    "generate": "prisma2 generate && yarn generate:schema",
     "postinstall": "yarn generate",
     "jest": "jest --coverage --passWithNoTests",
     "test": "yarn lint && yarn typecheck && yarn format:check && yarn jest"

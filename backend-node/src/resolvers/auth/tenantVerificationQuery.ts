@@ -28,7 +28,7 @@ let tenantVerificationResolver: FieldResolver<
   if (!tenantUser) {
     throw new Error('User not found');
   }
-  let brandId = tenantUser.brands[0].id;
+  let brandId = tenantUser.brands.length ? tenantUser.brands[0].id : '';
 
   return {
     ...tenantVerification,

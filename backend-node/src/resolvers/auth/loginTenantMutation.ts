@@ -23,7 +23,7 @@ let loginTenant = mutationField('loginTenant', {
     if (!tenantUser) {
       throw new Error('Email not found or wrong password');
     }
-    let brandId = tenantUser.brands[0].id;
+    let brandId = tenantUser.brands.length ? tenantUser.brands[0].id : '';
     let validPassword = bcrypt.compareSync(password, tenantUser.password);
     if (!validPassword) {
       throw new Error('Email not found or wrong password');
