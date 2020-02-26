@@ -27,7 +27,7 @@ export default function TenantOverview() {
   return (
     <View>
       <Container>
-        <TenantKeyFacts withMargin={false} />
+        <TenantKeyFacts />
       </Container>
       <View>
         <Row flex>

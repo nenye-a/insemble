@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, View, Text, TabBar } from '../../core-ui';
+import { View, Text, TabBar } from '../../core-ui';
 import styled from 'styled-components';
 import {
   FONT_WEIGHT_BOLD,
@@ -9,10 +9,7 @@ import {
 } from '../../constants/theme';
 import { SECONDARY_COLOR } from '../../constants/colors';
 
-type Props = {
-  withMargin?: boolean;
-};
-export default function TenantKeyFacts({ withMargin = true }: Props) {
+export default function TenantKeyFacts() {
   let [selectedIndex, setSelectedIndex] = useState<number>(0);
 
   let numbers1 = ['1', '7'];
@@ -62,13 +59,8 @@ export default function TenantKeyFacts({ withMargin = true }: Props) {
       </RowedView>
     </>
   );
-  return withMargin ? <Container>{content}</Container> : <View>{content}</View>;
+  return <View>{content}</View>;
 }
-
-const Container = styled(Card)`
-  margin: 18px 36px;
-  min-height: 400px;
-`;
 
 const RowedView = styled(View)`
   flex: 1;

@@ -16,11 +16,11 @@ type Props = {
 
 export default function TabBar(props: Props) {
   let { options, verticalMode, activeTab, onPress, fullWidth = true } = props;
-  let isTabActive = activeTab === index;
 
   return verticalMode ? (
     <VerticalView>
       {options.map((option, index) => {
+        let isTabActive = activeTab === index;
         return (
           <VerticalSegment key={index} onPress={() => onPress(index)}>
             <VerticalSegmentText isActive={isTabActive}>{option}</VerticalSegmentText>
@@ -31,8 +31,9 @@ export default function TabBar(props: Props) {
     </VerticalView>
   ) : (
     <HorizontalView>
-      {options.map((option, index) =>
-        fullWidth ? (
+      {options.map((option, index) => {
+        let isTabActive = activeTab === index;
+        return fullWidth ? (
           <FullWidthTabSegment isActive={isTabActive} key={index} onPress={() => onPress(index)}>
             <SegmentText isActive={isTabActive}>{option}</SegmentText>
           </FullWidthTabSegment>
@@ -40,8 +41,8 @@ export default function TabBar(props: Props) {
           <TabSegment isActive={isTabActive} key={index} onPress={() => onPress(index)}>
             <SegmentText isActive={isTabActive}>{option}</SegmentText>
           </TabSegment>
-        )
-      )}
+        );
+      })}
     </HorizontalView>
   );
 }

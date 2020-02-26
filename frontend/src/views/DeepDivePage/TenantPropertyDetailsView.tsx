@@ -13,7 +13,7 @@ export default function TenantPropertyDetailsView() {
   return (
     <View>
       <Container>
-        <TenantKeyFacts withMargin={false} />
+        <TenantKeyFacts />
       </Container>
       <Container>
         <ConsumerPersonaText>Relevant Consumer Personas</ConsumerPersonaText>
