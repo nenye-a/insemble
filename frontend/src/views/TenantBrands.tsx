@@ -24,7 +24,8 @@ export default () => {
         <LoadingIndicator />
       ) : (
         data &&
-        data.brands.map(({ name, categories, matchingLocations, id }, index) => {
+        data.brands.map((brandData, index) => {
+          let { name, categories, matchingLocations, id } = brandData;
           let heatmapData = ((matchingLocations
             ? matchingLocations.map(({ lat, lng, match }) => {
                 return {
@@ -39,7 +40,9 @@ export default () => {
                 <LeftContainer
                   flex
                   onClick={() => {
-                    history.push(`/user/brands/${id}`);
+                    history.push(`/user/brands/${id}`, {
+                      ...brandData,
+                    });
                   }}
                 >
                   <RowedView>

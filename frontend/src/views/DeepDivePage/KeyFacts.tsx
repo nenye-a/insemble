@@ -165,9 +165,11 @@ export default function KeyFacts() {
               ))}
             </EconomicColumn>
             <EconomicColumn>
-              {numbers2.map((line, i) => (
-                <NumberText key={i}>{line}</NumberText>
-              ))}
+              {numbers2.map((line, i) => {
+                // currently system can only show up to 60 results. so we need to add '+' for values === 60
+                let formattedValues = line === 60 ? line.toString() + '+' : line;
+                return <NumberText key={i}>{formattedValues}</NumberText>;
+              })}
             </EconomicColumn>
             <EconomicColumn>
               {categories2.map((line, i) => (
