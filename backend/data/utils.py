@@ -272,6 +272,23 @@ def is_number(num):
         return False
 
 
+def add_dictionary_values(dictionary, values):
+    """
+    Helper function to add up all the values in a dictionary given the dictionary and
+    all the index of the values that we would want to sum up.
+    """
+
+    sum_items = [dictionary[value] for value in values]
+    return sum(sum_items)
+
+
+def growth(current, future):
+    """
+    Calculate growth value in percentage between one number and an other.
+    """
+    return 100 * float(future - current) / current
+
+
 if __name__ == "__main__":
 
     def test_location_at_distance():

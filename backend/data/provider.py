@@ -31,6 +31,13 @@ EQUIPMENT_LIST = ["Walk-in fridge", "Reach-in fridge", "Walk-in freezer", "Greas
 
 
 def get_location(address, name=None):
+    """
+
+    Return the location latitude and object details. Details are in the following form
+    {lat:float, lng:float, place_id:'place_id}
+
+    """
+
     google_location = google.find(address, name=name, allow_non_establishments=True, save=False)
     location = google_location['geometry']['location']
     location["place_id"] = google_location["place_id"]
@@ -38,6 +45,12 @@ def get_location(address, name=None):
 
 
 def get_representative_location(categories, income_dict):
+    """
+
+    Uses geospatial indexing to find the nearest location within our database for
+    detail matching. This heavily references the anmspatial blocking activities
+
+    """
 
     income_query = {'$gte': income_dict["min"]}
     income_query.update({'$lte': income_dict["max"]}) if 'max' in income_dict else None
@@ -61,10 +74,14 @@ def get_representative_location(categories, income_dict):
         'name': place['name']
     }
 
-# Returns the address and neighborhood of a specific latitude and longitude
-
 
 def get_address_neighborhood(lat, lng):
+    """
+
+    Returns the address and neighborhood of a specific latitude and longitude. If running into issues
+    make sure that you have an authorized API_KEY. 
+
+    """
 
     google_location = google.reverse_geocode(lat, lng, save=False)
     address = google_location['formatted_address'].split(',')[0]
@@ -88,7 +105,13 @@ def get_address_neighborhood(lat, lng):
     }
 
 
-def get_key_facts(lat, lng):
+def get_key_facts_deprecated(lat, lng):
+    """
+
+    (Deprecated) This function grabs all the key facts for a location. This is used primarily for the old
+    tenant location details function
+
+    """
 
     radius_miles = 1
     population_threshold = 100000
@@ -119,14 +142,12 @@ def get_key_facts(lat, lng):
     }
 
 
-# get demographics. If no existing demographic vector it will grab demographics. If a demographic
-# vector is provided, then lat, lng, and arius are ignored.
-
-
 def get_demographics(lat, lng, radius, demographic_dict=None):
     """
-    get demographics. If no existing demographic vector it will grab demographics. If a demographic
+
+    Get demographics of a location. If no existing demographic vector it will grab demographics. If a demographic
     vector is provided, then lat, lng, and arius are ignored.
+
     """
 
     if demographic_dict:
@@ -143,44 +164,44 @@ def get_demographics(lat, lng, radius, demographic_dict=None):
 
     age = {
         '<18': {
-            'value': add_dictionary_values(age_demographics, matching.AGE_LIST[0:4]),
-            'growth': growth(
-                add_dictionary_values(age_demographics, matching.AGE_LIST[0:4]),
-                add_dictionary_values(age_demographics_fiveyear, five_year_age[0:4]))
+            'value': utils.add_dictionary_values(age_demographics, matching.AGE_LIST[0:4]),
+            'growth': utils.growth(
+                utils.add_dictionary_values(age_demographics, matching.AGE_LIST[0:4]),
+                utils.add_dictionary_values(age_demographics_fiveyear, five_year_age[0:4]))
         },
         '18-24': {
-            'value': add_dictionary_values(age_demographics, matching.AGE_LIST[4:5]),
-            'growth': growth(
-                add_dictionary_values(age_demographics, matching.AGE_LIST[4:5]),
-                add_dictionary_values(age_demographics_fiveyear, five_year_age[4:5]))
+            'value': utils.add_dictionary_values(age_demographics, matching.AGE_LIST[4:5]),
+            'growth': utils.growth(
+                utils.add_dictionary_values(age_demographics, matching.AGE_LIST[4:5]),
+                utils.add_dictionary_values(age_demographics_fiveyear, five_year_age[4:5]))
         },
         '25-34': {
             'value': age_demographics["Current Year Population, Age 25 - 34"],
-            'growth': growth(
+            'growth': utils.growth(
                 age_demographics["Current Year Population, Age 25 - 34"],
                 age_demographics_fiveyear["Five Year Population, Age 25 - 34"])
         },
         '35-44': {
             'value': age_demographics["Current Year Population, Age 35 - 44"],
-            'growth': growth(
+            'growth': utils.growth(
                 age_demographics["Current Year Population, Age 35 - 44"],
                 age_demographics_fiveyear["Five Year Population, Age 35 - 44"])
         },
         '45-54': {
             'value': age_demographics["Current Year Population, Age 45 - 54"],
-            'growth': growth(
+            'growth': utils.growth(
                 age_demographics["Current Year Population, Age 45 - 54"],
                 age_demographics_fiveyear["Five Year Population, Age 45 - 54"])
         },
         '55-64': {
             'value': age_demographics["Current Year Population, Age 55 - 64"],
-            'growth': growth(
+            'growth': utils.growth(
                 age_demographics["Current Year Population, Age 55 - 64"],
                 age_demographics_fiveyear["Five Year Population, Age 55 - 64"])
         },
         '65+': {
             'value': age_demographics["Current Year Population, Age 65+"],
-            'growth': growth(
+            'growth': utils.growth(
                 age_demographics["Current Year Population, Age 65+"],
                 age_demographics_fiveyear["Five Year Population, Age 65+"])
         }
@@ -193,34 +214,34 @@ def get_demographics(lat, lng, radius, demographic_dict=None):
 
     income = {
         '<50K': {
-            'value': add_dictionary_values(income_demographics, matching.INCOME_LIST[0:4]),
-            'growth': growth(
-                add_dictionary_values(income_demographics, matching.INCOME_LIST[0:4]),
-                add_dictionary_values(income_demographics_fiveyear, five_year_income[0:4]))
+            'value': utils.add_dictionary_values(income_demographics, matching.INCOME_LIST[0:4]),
+            'growth': utils.growth(
+                utils.add_dictionary_values(income_demographics, matching.INCOME_LIST[0:4]),
+                utils.add_dictionary_values(income_demographics_fiveyear, five_year_income[0:4]))
         },
         '$50K-$74K': {
             'value': income_demographics["Current Year Households, Household Income $50,000 - $74,999"],
-            'growth': growth(
+            'growth': utils.growth(
                 income_demographics["Current Year Households, Household Income $50,000 - $74,999"],
                 income_demographics_fiveyear["Five Year Households, Household Income $50,000 - $74,999"])
         },
         '$75K-$124K': {
-            'value': add_dictionary_values(income_demographics, matching.INCOME_LIST[5:7]),
-            'growth': growth(
-                add_dictionary_values(income_demographics, matching.INCOME_LIST[5:7]),
-                add_dictionary_values(income_demographics_fiveyear, five_year_income[5:7]))
+            'value': utils.add_dictionary_values(income_demographics, matching.INCOME_LIST[5:7]),
+            'growth': utils.growth(
+                utils.add_dictionary_values(income_demographics, matching.INCOME_LIST[5:7]),
+                utils.add_dictionary_values(income_demographics_fiveyear, five_year_income[5:7]))
         },
         '$125K-$199K': {
-            'value': add_dictionary_values(income_demographics, matching.INCOME_LIST[7:9]),
-            'growth': growth(
-                add_dictionary_values(income_demographics, matching.INCOME_LIST[7:9]),
-                add_dictionary_values(income_demographics_fiveyear, five_year_income[7:9]))
+            'value': utils.add_dictionary_values(income_demographics, matching.INCOME_LIST[7:9]),
+            'growth': utils.growth(
+                utils.add_dictionary_values(income_demographics, matching.INCOME_LIST[7:9]),
+                utils.add_dictionary_values(income_demographics_fiveyear, five_year_income[7:9]))
         },
         '$200K+': {
-            'value': add_dictionary_values(income_demographics, matching.INCOME_LIST[9:]),
-            'growth': growth(
-                add_dictionary_values(income_demographics, matching.INCOME_LIST[9:]),
-                add_dictionary_values(income_demographics_fiveyear, five_year_income[9:])
+            'value': utils.add_dictionary_values(income_demographics, matching.INCOME_LIST[9:]),
+            'growth': utils.growth(
+                utils.add_dictionary_values(income_demographics, matching.INCOME_LIST[9:]),
+                utils.add_dictionary_values(income_demographics_fiveyear, five_year_income[9:])
             )
         }
     }
@@ -232,38 +253,38 @@ def get_demographics(lat, lng, radius, demographic_dict=None):
     ethnicity = {
         'white': {
             'value': ethnicity_demographics["Current Year Population, White Alone"],
-            # 'growth': growth(
+            # 'growth': utils.growth(
             #     ethnicity_demographics["Current Year Population, White Alone"],
             #     ethnicity_demographics_fiveyear["Five Year Population, White Alone"])
         },
         'black': {
             'value': ethnicity_demographics["Current Year Population, Black/African American Alone"],
-            # 'growth': growth(
+            # 'growth': utils.growth(
             #     ethnicity_demographics["Current Year Population, Black/African American Alone"],
             #     ethnicity_demographics_fiveyear["Five Year Population, Black/African American Alone"])
         },
         'indian': {
             'value': ethnicity_demographics["Current Year Population, American Indian/Alaskan Native Alone"],
-            # 'growth': growth(
+            # 'growth': utils.growth(
             #     ethnicity_demographics["Current Year Population, American Indian/Alaskan Native Alone"],
             #     ethnicity_demographics_fiveyear["Five Year Population, American Indian/Alaskan Native Alone"]
             # )
         },
         'asian': {
             'value': ethnicity_demographics["Current Year Population, Asian Alone"],
-            # 'growth': growth(
+            # 'growth': utils.growth(
             #     ethnicity_demographics["Current Year Population, Asian Alone"],
             #     ethnicity_demographics_fiveyear["Five Year Population, Asian Alone"])
         },
         'pacific_islander': {
             'value': ethnicity_demographics["Current Year Population, Native Hawaiian/Pacific Islander Alone"],
-            # 'growth': growth(
+            # 'growth': utils.growth(
             #     ethnicity_demographics["Current Year Population, Native Hawaiian/Pacific Islander Alone"],
             #     ethnicity_demographics_fiveyear["Five Year Population, Native Hawaiian/Pacific Islander Alone"])
         },
         'other': {
             'value': ethnicity_demographics["Current Year Population, Some Other Race Alone"],
-            # 'growth': growth(
+            # 'growth': utils.growth(
             #     ethnicity_demographics["Current Year Population, Some Other Race Alone"],
             #     ethnicity_demographics_fiveyear["Five Year Population, Some Other Race Alone"])
         }
@@ -276,49 +297,49 @@ def get_demographics(lat, lng, radius, demographic_dict=None):
     education = {
         'some_highschool': {
             'value': education_demographics["Current Year Population 25+, Some High School, No Diploma"],
-            # 'growth': growth(
+            # 'growth': utils.growth(
             #     education_demographics["Current Year Population 25+, Some High School, No Diploma"],
             #     education_demographics_fiveyear["Five Year Population 25+, Some High School, No Diploma"])
         },
         'high_school': {
             'value': education_demographics["Current Year Population 25+, High School Graduate (Including Equivalent)"],
-            # 'growth': growth(
+            # 'growth': utils.growth(
             #     education_demographics["Current Year Population 25+, High School Graduate (Including Equivalent)"],
             #     education_demographics_fiveyear["Five Year Population 25+, High School Graduate (Including Equivalent)"])
         },
         'some_college': {
             'value': education_demographics["Current Year Population 25+, Some College, No Degree"],
-            # 'growth': growth(
+            # 'growth': utils.growth(
             #     education_demographics["Current Year Population 25+, Some College, No Degree"],
             #     education_demographics_fiveyear["Five Year Population 25+, Some College, No Degree"])
         },
         'associate': {
             'value': education_demographics["Current Year Population 25+, Associate's Degree"],
-            # 'growth': growth(
+            # 'growth': utils.growth(
             #     education_demographics["Current Year Population 25+, Associate's Degree"],
             #     education_demographics_fiveyear["Five Year Population 25+, Associate's Degree"])
         },
         'bachelor': {
             'value': education_demographics["Current Year Population 25+, Bachelor's Degree"],
-            # 'growth': growth(
+            # 'growth': utils.growth(
             #     education_demographics["Current Year Population 25+, Bachelor's Degree"],
             #     education_demographics_fiveyear["Five Year Population 25+, Bachelor's Degree"])
         },
         'masters': {
             'value': education_demographics["Current Year Population 25+, Master's Degree"],
-            # 'growth': growth(
+            # 'growth': utils.growth(
             #     education_demographics["Current Year Population 25+, Master's Degree"],
             #     education_demographics_fiveyear["Five Year Population 25+, Master's Degree"])
         },
         'professional': {
             'value': education_demographics["Current Year Population 25+, Professional Degree"],
-            # 'growth': growth(
+            # 'growth': utils.growth(
             #     education_demographics["Current Year Population 25+, Professional Degree"],
             #     education_demographics_fiveyear["Five Year Population 25+, Professional Degree"])
         },
         'doctorate': {
             'value': education_demographics["Current Year Population 25+, Doctorate Degree"],
-            # 'growth': growth(
+            # 'growth': utils.growth(
             #     education_demographics["Current Year Population 25+, Doctorate Degree"],
             #     education_demographics_fiveyear["Five Year Population 25+, Doctorate Degree"])
         }
@@ -331,13 +352,13 @@ def get_demographics(lat, lng, radius, demographic_dict=None):
     gender = {
         'female': {
             'value': gender_demographics["Current Year Population, Female"],
-            'growth': growth(
+            'growth': utils.growth(
                 gender_demographics["Current Year Population, Female"],
                 gender_demographics_fiveyear["Five Year Population, Female"])
         },
         'male': {
             'value': gender_demographics["Current Year Population, Male"],
-            'growth': growth(
+            'growth': utils.growth(
                 gender_demographics["Current Year Population, Male"],
                 gender_demographics_fiveyear["Five Year Population, Male"])
         }
@@ -360,22 +381,14 @@ def get_demographics(lat, lng, radius, demographic_dict=None):
     }
 
 
-# Helper function to add up all the values in a dictionary given the dictionary and
-# all the values that we would want to add. Should be moved to utils at some point
-# dictionary + list of all the keys of the items that should be added
-def add_dictionary_values(dictionary, values):
-    sum_items = [dictionary[value] for value in values]
-    return sum(sum_items)
-
-# calculate the growth from one number to the next
-# will likely be moved to utils
-
-
-def growth(current, future):
-    return 100 * float(future - current) / current
-
-
 def get_nearby(lat, lng, categories):
+    """
+    (Deprecated) Function to get all the nearby locations. This function is primarily used by the
+    location details endpoint which is deprecated in favor of the FastLocationDetails methodology.
+
+    Location indicated by the latitude (lat) and the longitude (lng). Algorithm will look for places
+    that are similar to yours to determine fit.
+    """
 
     similar_places = []
     for category in categories:
@@ -412,7 +425,52 @@ def get_nearby(lat, lng, categories):
     return list(nearby_dict.values())
 
 
+def _update_place(place_id, lat, lng, categories):
+    """
+    Function to update all the nearby places generated from the get_nearby function.
+    """
+
+    place = utils.DB_PROCESSED_SPACE.find_one({'place_id': place_id}, {
+        'name': 1, 'geometry': 1, 'rating': 1, 'user_ratings_total': 1, 'foursquare_categories': 1
+    })
+    if not place:
+        return None
+
+    this_location_lat = place["geometry"]["location"]["lat"]
+    this_location_lng = place["geometry"]["location"]["lng"]
+    name = place["name"]
+    rating = place["rating"] if "rating" in place else None
+    number_rating = place["user_ratings_total"] if "user_ratings_total" in place else None
+
+    distance = round(utils.distance((lat, lng), (this_location_lat, this_location_lng)), 2)
+
+    category = None
+    similar = False
+
+    if "foursquare_categories" in place and len(place["foursquare_categories"]) > 0:
+        category = place["foursquare_categories"][0]["category_name"]
+        if category in categories:
+            similar = True
+
+    return {
+        'lat': this_location_lat,
+        'lng': this_location_lng,
+        'name': name,
+        'rating': rating,
+        'number_rating': number_rating,
+        'category': category,
+        'distance': distance,
+        'similar': similar
+    }
+
+
 def obtain_nearby(target_location, categories):
+    """
+
+    Grab the details of all the nearby locations that are present within a target_location. The target_location
+    must be a dictionary that contains sub lists containing the following details.
+
+    """
 
     nearby_dict = {}
 
@@ -450,12 +508,15 @@ def obtain_nearby(target_location, categories):
             item_into_dict(nearby_dict, place)
         nearby_dict[place["place_id"]]["metro"] = True
 
-    places = update_all_places(lat, lng, nearby_dict, categories)
+    places = _update_all_places(lat, lng, nearby_dict, categories)
 
     return list(places.values())
 
 
-def update_all_places(lat, lng, nearby_dict, categories):
+def _update_all_places(lat, lng, nearby_dict, categories):
+    """
+    Function to update all nearby places that are generated from the obtain_nearby() function.
+    """
 
     places = utils.DB_PROCESSED_SPACE.find({'place_id': {'$in': list(nearby_dict.keys())}}, {
         'place_id': 1, 'name': 1, 'geometry': 1, 'rating': 1, 'user_ratings_total': 1, 'foursquare_categories': 1
@@ -502,45 +563,13 @@ def update_all_places(lat, lng, nearby_dict, categories):
     return nearby_dict
 
 
-# update place & provide distance to another place
-def _update_place(place_id, lat, lng, categories):
-    place = utils.DB_PROCESSED_SPACE.find_one({'place_id': place_id}, {
-        'name': 1, 'geometry': 1, 'rating': 1, 'user_ratings_total': 1, 'foursquare_categories': 1
-    })
-    if not place:
-        return None
-
-    this_location_lat = place["geometry"]["location"]["lat"]
-    this_location_lng = place["geometry"]["location"]["lng"]
-    name = place["name"]
-    rating = place["rating"] if "rating" in place else None
-    number_rating = place["user_ratings_total"] if "user_ratings_total" in place else None
-
-    distance = round(utils.distance((lat, lng), (this_location_lat, this_location_lng)), 2)
-
-    category = None
-    similar = False
-
-    if "foursquare_categories" in place and len(place["foursquare_categories"]) > 0:
-        category = place["foursquare_categories"][0]["category_name"]
-        if category in categories:
-            similar = True
-
-    return {
-        'lat': this_location_lat,
-        'lng': this_location_lng,
-        'name': name,
-        'rating': rating,
-        'number_rating': number_rating,
-        'category': category,
-        'distance': distance,
-        'similar': similar
-    }
-
-
 # Receives un-processed vectors and generates the match value between them.
 # It uses the location as the reference & finds a match with the target
 def get_match_value(target, location):
+    """
+    Given two vectors of locations from the matching.generate_location_vector() [as of 2/08/20] method,
+    generates the match value that can be used.
+    """
 
     match_df = pd.DataFrame([target, location]).fillna(0)
 
@@ -583,10 +612,12 @@ def get_match_value(target, location):
     }
 
 
-# Receiving un-processed vectors, generates the top 3 matching psychogrpahics
-# Top 3 matching psychographics are currently the highest rated of the most
-# similar psychographics
 def get_matching_personas(target, location):
+    """
+    Receiving un-processed vectors geneated during the matching.generate_matches() process [as of 2/5/20],
+    generates the top 3 matching psychogrpahics. Top 3 matching psychographics are currently the highest 
+    rated of the most similar psychographics.
+    """
 
     personas_list = matching.SPATIAL_LIST
     target_df = pd.DataFrame([target])
@@ -616,9 +647,11 @@ def get_matching_personas(target, location):
     } for persona in detailed_personas]
 
 
-# combine two dictionaries generated from the "get_demographics" method in order to
-# return a dictionary in the form expected from location details
 def combine_demographics(my_location, target_location):
+    """
+    combine two dictionaries generated from the "get_demographics" method in order to
+    return a dictionary in the form expected from location details
+    """
 
     for demographic_category in target_location:
         for sub_category in target_location[demographic_category]:
@@ -633,6 +666,9 @@ def combine_demographics(my_location, target_location):
 
 
 def get_preview_demographics(lat, lng, radius):
+    """
+    Grab the previous medium age and income
+    """
 
     demographics = environics.get_demographics(
         lat, lng, radius, matching.DEMO_DF, matching.BLOCK_DF, matching.DEMO_CATEGORIES)
