@@ -550,16 +550,26 @@ def _update_all_places(lat, lng, nearby_dict, categories):
         if nearby_dict[place['place_id']]['distance'] == None:
             nearby_dict[place['place_id']]['distance'] = utils.distance((lat, lng), (this_location_lat, this_location_lng))
 
-    for place_id in nearby_dict.keys():
+    # # Remove getting extra details that aren't here because it's slow
+    # # TODO:Should move nearby details to seperate api endpoint due to speed.
+    for place_id in list(nearby_dict.keys()):
         if place_id not in seen_ids:
-            place = google.details(place_id)
-            nearby_dict[place_id].update({
-                'lat': place['geometry']['location']['lat'],
-                'lng': place['geometry']['location']['lng'],
-                'name': place['name'],
-                'rating': place['rating'] if 'rating' in place else None,
-                'number_rating': place['user_ratings_total'] if 'user_ratings_total' in place else None
-            })
+            # Instead of getting the details if not present, we remove right now.
+            nearby_dict.pop(place_id)
+
+            # TODO: Re-enable
+            # place = google.details(place_id)
+            # if not place:
+            #     # remove any place that we don't have from google
+            #     nearby_dict.pop(place_id)
+            #     continue
+            # nearby_dict[place_id].update({
+            #     'lat': place['geometry']['location']['lat'],
+            #     'lng': place['geometry']['location']['lng'],
+            #     'name': place['name'],
+            #     'rating': place['rating'] if 'rating' in place else None,
+            #     'number_rating': place['user_ratings_total'] if 'user_ratings_total' in place else None
+            # })
 
     return nearby_dict
 
@@ -798,14 +808,14 @@ def get_location_details(location):
     lng = location['lng']
 
     space = get_nearest_space(lat, lng, database='vectors')
-    vector_id = space["_id"]
     if space:
+        vector_id = space["_id"]
         space = utils.DB_PROCESSED_SPACE.find_one({'_id': space['loc_id']})
         space["vector_id"] = vector_id
         return space
     else:
-        # TODO: get all the details any way and return if there is no space.
-        pass
+        # if nothing, get the details the old way.
+        return None
 
 
 def get_match_value_from_id(tenant_id, vector_id):

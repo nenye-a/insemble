@@ -44,14 +44,14 @@ export default function TenantPhysicalCriteria(props: Props) {
         visible
         text="Customer criteria has been pre-populated based on your store's location."
       />
-      <LabelText text="Sqft" />
+      <LabelText text="Minimum Sqft" />
       <RangeInputContainer lowValue={minSqft} onLowRangeInputChange={setMinSqft} />
-      <LabelText text="Frontage Width" />
+      <LabelText text="Minimum Frontage Width (ft)" />
       <RangeInputContainer
         lowValue={minFrontageWidth}
         onLowRangeInputChange={setMinFrontageWidth}
       />
-      <LabelText text="Equipment Preference" />
+      <LabelText text="Buildout Preference" />
       {!equipmentLoading && equipmentData && (
         <MultiSelectInput
           placeholder="Buildout preference"

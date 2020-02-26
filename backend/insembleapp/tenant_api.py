@@ -185,10 +185,7 @@ class TenantMatchAPI(AsynchronousAPI):
             # )
 
         else:
-            print("Match categories", validated_params['categories'])
-
             categories = validated_params['categories']
-            print(categories)
             location = provider.get_representative_location(categories, validated_params['income'])
             if location:
                 address = location['address']
@@ -360,6 +357,7 @@ class LocationDetailsAPI(AsynchronousAPI):
             top_personas: [
                 {
                     percentile: float,
+                    photo: url,
                     name: string,
                     description: string,
                     tags: List[string]
@@ -711,7 +709,7 @@ class FastLocationDetailsAPI(AsynchronousAPI):
             location = provider.get_location_details(validated_params["target_location"])
 
             if not location:
-                # get_all_the_details anyway
+                # TODO: get_all_the_details anyway
                 # kick off our super slow function - ()
                 pass
 
@@ -816,14 +814,12 @@ class FastLocationDetailsAPI(AsynchronousAPI):
 
         nearby_metro = place['nearby_subway_station'] if 'nearby_subway_station' in place else google.nearby(
             lat, lng, 'subway_station', radius=radius)
-        # if radius == 1:
-        nearby_university = place['nearby_university']
-        nearby_hospitals = place['nearby_hospital']
-        nearby_apartments = place['nearby_apartments']
-        # else:
-        #     nearby_university = google.nearby(lat, lng, 'university', radius=radius)
-        #     nearby_hospitals = google.nearby(lat, lng, 'hospital', radius=radius)
-        #     nearby_apartments = google.search(lat, lng, 'apartments', radius=radius)
+        nearby_university = place['nearby_university'] if 'nearby_university' in place else google.nearby(
+            lat, lng, 'university', radius=radius)
+        nearby_hospitals = place['nearby_hospital'] if 'nearby_hospital' in place else google.nearby(
+            lat, lng, 'hospital', radius=radius)
+        nearby_apartments = place['nearby_apartments'] if 'nearby_apartments' in place else googl.search(
+            lat, lng, 'apartments', radius=radius)
 
         return {
             'nearby_metro': nearby_metro,
