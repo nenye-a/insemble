@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, View, Text, TouchableOpacity } from '../../core-ui';
+import { Card, View, Text } from '../../core-ui';
 import styled from 'styled-components';
 import { THEME_COLOR } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_WEIGHT_MEDIUM } from '../../constants/theme';
@@ -11,11 +11,10 @@ type Props = {
   population: string;
   income: string;
   age: number;
-  onSeeMore?: () => void;
 };
 
 export default function LocationDetail(props: Props) {
-  let { population, income, age, title, onSeeMore, visible, subTitle } = props;
+  let { population, income, age, title, visible, subTitle } = props;
   let leftText = [
     '3 Mile Daytime Population:',
     '3 Mile Median Household Income:',
@@ -42,9 +41,7 @@ export default function LocationDetail(props: Props) {
         </RightColumn>
       </ContentContainer>
       <SeeMoreContainer>
-        <TouchableOpacity onPress={onSeeMore}>
-          <SeeMore>click again to see more</SeeMore>
-        </TouchableOpacity>
+        <SeeMore>click again to see more</SeeMore>
       </SeeMoreContainer>
     </Container>
   ) : null;
