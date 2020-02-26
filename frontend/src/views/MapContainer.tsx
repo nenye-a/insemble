@@ -1,4 +1,3 @@
-// TODO: Remove this next line.
 import React, { useRef, useState, useEffect } from 'react';
 import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
@@ -57,7 +56,6 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
   let mapRef = useRef<GoogleMap | null>(null);
 
   // TODO: fix this. tried useCallback with all deps, still not working
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   let onPreviewClick = () => {
     markerPosition &&
       onMarkerClick &&
@@ -99,7 +97,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         }
       };
     }
-  }, [domReady, onPreviewClick, loading, data, heatmapData, markerPosition]);
+  });
 
   return (
     <div>
