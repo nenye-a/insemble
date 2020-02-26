@@ -37,6 +37,9 @@ let linkStyles = css`
   text-align: inherit;
   font: inherit;
   list-style: none;
+  &:hover {
+    text-decoration: none;
+  }
 `;
 
 export default styled(Touchable)`
@@ -48,9 +51,6 @@ export default styled(Touchable)`
   ${(props) => (props.href == null ? undefined : linkStyles)}
   &:active {
     opacity: 0.5;
-  }
-  &:hover {
-    text-decoration: none;
   }
 `;
 
