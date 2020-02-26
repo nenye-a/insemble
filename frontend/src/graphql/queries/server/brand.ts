@@ -18,10 +18,22 @@ export const GET_BRANDS = gql`
       id
       name
       categories
+      nextLocations {
+        address
+        lng
+        lat
+      }
       matchingLocations {
         match
         lat
         lng
+      }
+      newLocationPlan
+      locationCount
+      location {
+        address
+        lng
+        lat
       }
     }
   }
