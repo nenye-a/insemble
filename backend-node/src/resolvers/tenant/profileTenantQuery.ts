@@ -2,7 +2,7 @@ import { queryField, FieldResolver } from 'nexus';
 
 import { Root, Context } from 'serverTypes';
 
-let profileResolver: FieldResolver<'Query', 'profileTenant'> = async (
+let profileTenantResolver: FieldResolver<'Query', 'profileTenant'> = async (
   _: Root,
   _args,
   context: Context,
@@ -18,9 +18,9 @@ let profileResolver: FieldResolver<'Query', 'profileTenant'> = async (
   return tenant;
 };
 
-let profile = queryField('profileTenant', {
+let profileTenant = queryField('profileTenant', {
   type: 'TenantUser',
-  resolve: profileResolver,
+  resolve: profileTenantResolver,
 });
 
-export { profile };
+export { profileTenant };
