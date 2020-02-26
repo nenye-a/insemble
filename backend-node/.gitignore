@@ -2,6 +2,7 @@ node_modules/**/*
 npm-debug.*
 lib/
 package-lock.json
+yarn-error.log
 
 # prisma
 generated
