@@ -16,9 +16,10 @@
     "format": "prettier --write \"frontend/src/**/*.{js,jsx,ts,tsx}\"",
     "format:check": "prettier --check \"frontend/src/**/*.{js,jsx,ts,tsx}\"",
     "coverage": "jest --coverage",
-    "schema:generate": "cd backend-node && yarn && ts-node src/schema.ts && cd ..",
+    "schema:generate": "yarn --cwd backend-node generate:schema",
     "apollo:generate": "npm run schema:generate && apollo codegen:generate --excludes=frontend/node_modules/* --includes=frontend/src/graphql/queries/server/*.ts --localSchemaFile=backend-node/src/generated/schema.graphql  --target typescript --tagName gql --outputFlat frontend/src/generated",
-    "start:dev": "concurrently \"npm-watch:typegen-client\" \"npm-watch:typegen-server\""
+    "start:dev": "concurrently \"npm-watch:typegen-client\" \"npm-watch:typegen-server\"",
+    "postinstall": "yarn --cwd backend-node install"
   },
   "dependencies": {
     "@apollo/react-hooks": "^3.1.3",
