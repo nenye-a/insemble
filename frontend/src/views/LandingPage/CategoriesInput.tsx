@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
-import { TouchableOpacity, ContainedTextInput, ClickAway } from '../../core-ui';
+import { ContainedTextInput, ClickAway } from '../../core-ui';
 import { Filter } from '../../components';
 import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
 import { Categories } from '../../generated/Categories';
@@ -16,18 +16,17 @@ function CategoriesInput() {
 
   return (
     <>
-      <TouchableOpacity onPress={() => toggleCategoryList(!categoryListOpen)}>
-        <ContainedTextInput
-          placeholder={loading ? 'Loading' : 'Enter store categories'}
-          buttonText="Find Locations"
-          value={selectedCategories.join(', ')}
-          onSubmit={() => {
-            history.push('/verify', {
-              categories: selectedCategories,
-            });
-          }}
-        />
-      </TouchableOpacity>
+      <ContainedTextInput
+        placeholder={loading ? 'Loading' : 'Enter store categories'}
+        buttonText="Find Locations"
+        value={selectedCategories.join(', ')}
+        onFocus={() => toggleCategoryList(true)}
+        onSubmit={() => {
+          history.push('/verify', {
+            categories: selectedCategories,
+          });
+        }}
+      />
       {categoryListOpen && data && (
         <ClickAway onClickAway={() => toggleCategoryList(false)}>
           <FilterContainer
