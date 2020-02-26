@@ -81,10 +81,10 @@ let editProfileResolver: FieldResolver<
   return tenant;
 };
 
-let editProfile = mutationField('editProfileTenant', {
+let editProfileTenant = mutationField('editProfileTenant', {
   type: 'TenantUser',
-  args: { profile: arg({ type: 'EditProfileTenantInput', required: true }) },
+  args: { profile: arg({ type: 'EditProfileInput', required: true }) },
   resolve: editProfileResolver,
 });
 
-export { editProfile };
+export { editProfileTenant };

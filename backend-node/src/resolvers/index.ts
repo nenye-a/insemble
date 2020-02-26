@@ -11,6 +11,7 @@ export * from './filter/ethnicityQuery';
 export * from './matches/tenantMatchesQuery';
 export * from './tenant/profileTenantQuery';
 export * from './tenant/editProfileTenantMutation';
+export * from './landlord/editProfileLandlordMutation';
 export * from './brand/createBrandMutation';
 export * from './brand/editBrandMutation';
 export * from './brand/brandsQuery';
