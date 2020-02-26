@@ -99,7 +99,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         }
       };
     }
-  }, [domReady, onPreviewClick]);
+  }, [domReady, onPreviewClick, loading, data]);
 
   return (
     <div>

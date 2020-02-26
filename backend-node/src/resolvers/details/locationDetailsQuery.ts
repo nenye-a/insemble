@@ -30,34 +30,15 @@ let locationDetails = queryField('locationDetails', {
     if (!selectedBrand) {
       throw new Error('Brand not found!');
     }
-    let { categories, location, name, maxIncome, minIncome } = selectedBrand;
-
-    if (
-      !(name && location && categories.length > 0) &&
-      !(categories.length > 0 && minIncome)
-    ) {
-      throw new Error(
-        'Please update your brand and provide either (address, brand_name and categories) or (categories and income)',
-      );
-    }
 
     try {
       let {
         property_details: rawPropertyDetails,
         result,
       }: LocationDetailsType = (
-        await axios.get(`${LEGACY_API_URI}/api/locationDetails/`, {
+        await axios.get(`${LEGACY_API_URI}/api/fastLocationDetails/`, {
           params: {
-            my_location: {
-              address: location?.address,
-              brand_name: name,
-              categories:
-                categories.length > 0 ? JSON.stringify(categories) : undefined,
-              income: minIncome && {
-                min: maxIncome,
-                max: maxIncome,
-              },
-            },
+            tenant_id: selectedBrand.tenantId,
             target_location: selectedLocation && {
               lat: selectedLocation.lat,
               lng: selectedLocation.lng,
@@ -94,7 +75,6 @@ let locationDetails = queryField('locationDetails', {
         TotalHousholds: totalHousehold,
         mile,
       } = keyFacts;
-
       let objectToArrayKeyObjectDemographics = (
         object: Record<string, DemographicStat>,
       ) => {
@@ -133,6 +113,8 @@ let locationDetails = queryField('locationDetails', {
           retail,
           restaurant,
           metro,
+          name = 'Unknown place',
+          similar = false,
           ...theRestNearby
         }) => {
           let placeType = [];
@@ -145,6 +127,8 @@ let locationDetails = queryField('locationDetails', {
             numberRating: numberRating ? numberRating : 0,
             category: category ? category : '',
             placeType,
+            name,
+            similar,
             ...theRestNearby,
           };
         },
