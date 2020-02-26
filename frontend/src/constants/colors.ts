@@ -17,7 +17,6 @@ export const WHITE = '#FFFFFF';
 export const THEME_COLOR = INSEMBLE_PURPLE;
 export const SECONDARY_COLOR = '#8E7BC4';
 
-export const PURPLE = '#6745AD';
 export const LIGHTEST_GREY = '#FBFBFB';
 export const LIGHT_GREY = '#C5C5C5';
 

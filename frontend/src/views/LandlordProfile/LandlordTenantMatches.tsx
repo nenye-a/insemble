@@ -11,13 +11,7 @@ import {
   FONT_SIZE_SMALL,
   DEFAULT_BORDER_RADIUS,
 } from '../../constants/theme';
-import {
-  PURPLE,
-  DARK_TEXT_COLOR,
-  WHITE,
-  SECONDARY_COLOR,
-  THEME_COLOR,
-} from '../../constants/colors';
+import { DARK_TEXT_COLOR, WHITE, SECONDARY_COLOR, THEME_COLOR } from '../../constants/colors';
 
 type Props = {
   onPress: () => void;
@@ -106,12 +100,12 @@ const DescriptionContainer = styled(View)`
 `;
 
 const CardTitle = styled(Text)`
-  color: ${PURPLE};
+  color: ${THEME_COLOR};
   font-weight: ${FONT_WEIGHT_MEDIUM};
 `;
 
 const CardPercentage = styled(Text)`
-  color: ${PURPLE};
+  color: ${THEME_COLOR};
   font-size: ${FONT_SIZE_LARGE};
   font-weight: ${FONT_WEIGHT_HEAVY};
 `;
