@@ -113,6 +113,8 @@ let locationDetails = queryField('locationDetails', {
           retail,
           restaurant,
           metro,
+          name = 'Unknown place',
+          similar = false,
           ...theRestNearby
         }) => {
           let placeType = [];
@@ -125,6 +127,8 @@ let locationDetails = queryField('locationDetails', {
             numberRating: numberRating ? numberRating : 0,
             category: category ? category : '',
             placeType,
+            name,
+            similar,
             ...theRestNearby,
           };
         },
