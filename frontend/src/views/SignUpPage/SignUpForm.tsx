@@ -7,25 +7,31 @@ import { useHistory } from 'react-router-dom';
 import { View, TextInput, Form, Button, Alert } from '../../core-ui';
 import { validateEmail } from '../../utils/validation';
 import { WHITE } from '../../constants/colors';
-import { REGISTER_TENANT } from '../../graphql/queries/server/auth';
+import { REGISTER_TENANT, REGISTER_LANDLORD } from '../../graphql/queries/server/auth';
 import { RegisterTenant, RegisterTenantVariables } from '../../generated/RegisterTenant';
 import { State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import { Role } from '../../types/types';
+import { formatGraphQLError } from '../../utils';
 
 type Props = {
   role: Role;
   onboardingState?: OnboardingState;
-  signUpFirst?: boolean; // whether the user sign up or fill the onboarding form first
 };
 
 export default function SignUpForm(props: Props) {
-  let { onboardingState } = props;
+  let { onboardingState, role } = props;
   let { register, handleSubmit, errors, watch } = useForm();
   let history = useHistory();
   let [registerTenant, { data, loading, error }] = useMutation<
     RegisterTenant,
     RegisterTenantVariables
   >(REGISTER_TENANT);
+  let [
+    registerLandlord,
+    { data: registerLandlordData, loading: registerLandlordLoading, error: registerLandlordError },
+  ] = useMutation(REGISTER_LANDLORD);
+  let errorMessage = error?.message || registerLandlordError?.message || '';
+
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
 
   let getBussinessAndFilterParams = () => {
@@ -72,34 +78,64 @@ export default function SignUpForm(props: Props) {
     }
   };
 
-  let onSubmit = (data: FieldValues) => {
+  let submitRegisterLandlord = (data: FieldValues) => {
     let { email, firstName, lastName, company, password } = data;
-    if (Object.keys(errors).length === 0) {
-      registerTenant({
-        variables: {
-          tenant: {
-            email,
-            firstName,
-            lastName,
-            company,
-            password,
-          },
-          ...getBussinessAndFilterParams(),
+    registerLandlord({
+      variables: {
+        landlord: {
+          email,
+          firstName,
+          lastName,
+          company,
+          password,
         },
-      });
+      },
+    });
+    // call be
+  };
+
+  let submitRegisterTenant = (data: FieldValues) => {
+    let { email, firstName, lastName, company, password } = data;
+
+    registerTenant({
+      variables: {
+        tenant: {
+          email,
+          firstName,
+          lastName,
+          company,
+          password,
+        },
+        ...getBussinessAndFilterParams(),
+      },
+    });
+  };
+
+  let onSubmit = (data: FieldValues) => {
+    if (Object.keys(errors).length === 0) {
+      if (role === Role.LANDLORD) {
+        submitRegisterLandlord(data);
+      } else {
+        submitRegisterTenant(data);
+      }
     }
   };
 
   if (data) {
     if (data.registerTenant.message === 'success') {
       history.push(`/email-verification/${data.registerTenant.verificationId}`);
-    } else {
-      // TODO: error handling
     }
   }
+
+  if (registerLandlordData) {
+    if (registerLandlordData.registerLandlord.message === 'success') {
+      // history.push(`/email-verification/${data.registerLandlord.verificationId}`);
+    }
+  }
+
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
-      {!!error && <Alert visible={true} text={error.toString()} />}
+      {errorMessage && <Alert visible={true} text={formatGraphQLError(errorMessage)} />}
       <FormContent>
         <TextInput
           name="email"
@@ -175,7 +211,11 @@ export default function SignUpForm(props: Props) {
           errorMessage={(errors?.confirmPassword as FieldError)?.message || ''}
           containerStyle={inputContainerStyle}
         />
-        <SubmitButton text="Create and Submit" type="submit" loading={loading} />
+        <SubmitButton
+          text="Create and Submit"
+          type="submit"
+          loading={loading || registerLandlordLoading}
+        />
       </FormContent>
     </Form>
   );
