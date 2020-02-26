@@ -20,7 +20,7 @@ type Props = {
 };
 
 export default function NearbyPlacesCard(props: Props) {
-  let { name, category, rating, numberRating, distance, photo, placeType, similar } = props;
+  let { name, category, rating, numberRating, distance, placeType, similar } = props;
   return (
     <Container>
       {similar && (
@@ -63,14 +63,6 @@ const RowedView = styled(View)`
 const TagsContainer = styled(View)`
   flex-direction: row;
   flex-wrap: wrap;
-`;
-
-const Image = styled.img`
-  height: 27px;
-  width: 27px;
-  object-fit: contain;
-  margin-right: 8px;
-  border-radius: ${DEFAULT_BORDER_RADIUS};
 `;
 
 const LegendIcon = styled.img`
