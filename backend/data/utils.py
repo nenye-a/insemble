@@ -289,6 +289,26 @@ def growth(current, future):
     return 100 * float(future - current) / current
 
 
+def in_range(num, target_range):
+    """
+    Provided a number and a list indicating a range, returns if the number is in the range
+    """
+    if num >= target_range[0] and num <= target_range[1]:
+        return True
+    return False
+
+
+def list_matches_condition(bool_func, eval_list):
+    """
+    Provided a function and a list, will return True if atleast one of the items in the list meets the
+    condition specified by the function
+    """
+    for item in eval_list:
+        if bool_func(item):
+            return True
+    return False
+
+
 if __name__ == "__main__":
 
     def test_location_at_distance():

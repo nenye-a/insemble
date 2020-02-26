@@ -39,9 +39,9 @@ class TenantMatchSerializer(serializers.Serializer):
     categories = serializers.ListField(required=False, child=serializers.CharField())
     income = serializers.JSONField(required=False)
     age = serializers.JSONField(required=False)
-    personas = serializers.ListField(required=False)
-    commute = serializers.ListField(required=False)
-    education = serializers.ListField(required=False)
+    personas = serializers.JSONField(required=False)
+    commute = serializers.JSONField(required=False)
+    education = serializers.JSONField(required=False)
     rent = serializers.JSONField(required=False)
 
     # Validatator to ensure the rules mentioned above

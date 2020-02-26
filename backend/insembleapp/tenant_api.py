@@ -176,7 +176,7 @@ class TenantMatchAPI(AsynchronousAPI):
             address = validated_params['address']
             name = validated_params['brand_name']
 
-            m_process, match_details = self.generate_matches.delay(address, name=name), []
+            m_process, match_details = self.generate_matches.delay(address, name=name, options=validated_params), []
             match_listener = self._celery_listener(m_process, match_details)
             match_listener.start()
 
@@ -194,7 +194,7 @@ class TenantMatchAPI(AsynchronousAPI):
                 address = location['address']
                 name = location['name']
 
-                m_process, match_details = self.generate_matches.delay(address, name=name), []
+                m_process, match_details = self.generate_matches.delay(address, name=name, options=database_update), []
                 match_listener = self._celery_listener(m_process, match_details)
                 match_listener.start()
             else:
@@ -276,8 +276,8 @@ class TenantMatchAPI(AsynchronousAPI):
 
     @staticmethod
     @celery_app.task
-    def generate_matches(address, name):
-        return matching.generate_matches(address, name=name)
+    def generate_matches(address, name, options):
+        return matching.generate_matches(address, name=name, options=options)
 
     @staticmethod
     @celery_app.task
@@ -643,7 +643,7 @@ class LocationDetailsAPI(AsynchronousAPI):
     @staticmethod
     @celery_app.task
     def _get_key_facts(lat, lng):
-        return provider.get_key_facts(lat, lng)
+        return provider.get_key_facts_deprecated(lat, lng)
 
     @staticmethod
     @celery_app.task
@@ -816,13 +816,14 @@ class FastLocationDetailsAPI(AsynchronousAPI):
 
         nearby_metro = place['nearby_subway_station'] if 'nearby_subway_station' in place else google.nearby(
             lat, lng, 'subway_station', radius=radius)
-
-        nearby_university = place['nearby_university'] if 'nearby_university' in place else google.nearby(
-            lat, lng, 'university', radius=radius)
-        nearby_hospitals = place['nearby_hospital'] if 'nearby_hospital' in place else google.nearby(
-            lat, lng, 'hospital', radius=radius)
-        nearby_apartments = place['nearby_apartments'] if 'nearby_apartments' in place else google.search(
-            lat, lng, 'apartments', radius=radius)
+        # if radius == 1:
+        nearby_university = place['nearby_university']
+        nearby_hospitals = place['nearby_hospital']
+        nearby_apartments = place['nearby_apartments']
+        # else:
+        #     nearby_university = google.nearby(lat, lng, 'university', radius=radius)
+        #     nearby_hospitals = google.nearby(lat, lng, 'hospital', radius=radius)
+        #     nearby_apartments = google.search(lat, lng, 'apartments', radius=radius)
 
         return {
             'nearby_metro': nearby_metro,
