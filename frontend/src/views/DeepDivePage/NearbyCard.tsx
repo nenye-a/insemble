@@ -27,7 +27,7 @@ export type NearbyPlace = {
 };
 
 export default function NearbyCard() {
-  let [selectedView, setSelectedView] = useState<ViewMode>('grid');
+  let [selectedView, setSelectedView] = useState<ViewMode>('list');
   let [selectedDropdownVal, setSelectedDropdownVal] = useState('Relevant');
   let isGridViewMode = selectedView === 'grid';
   let data = useContext(DeepDiveContext);
@@ -46,7 +46,7 @@ export default function NearbyCard() {
       case 'Rating': {
         return nearbyData?.sort((a, b) => (b.rating || 0) - (a.rating || 0));
       }
-      case 'Total Rating': {
+      case 'Review Count': {
         return nearbyData?.sort((a, b) => b.numberRating - a.numberRating);
       }
     }
@@ -86,7 +86,7 @@ export default function NearbyCard() {
           <NearbyMapLegend />
           <RightContent flex>
             <Dropdown
-              options={['Relevant', 'Similar', 'Distance', 'Rating', 'Total Rating']}
+              options={['Relevant', 'Similar', 'Distance', 'Rating', 'Review Count']}
               onSelect={(newValue) => {
                 setSelectedDropdownVal(newValue);
               }}
