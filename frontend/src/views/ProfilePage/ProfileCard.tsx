@@ -42,11 +42,13 @@ export default function ProfileCard({ role }: Props) {
   };
 
   let onLandlordCompleted = (landlordResult: GetLandlordProfile) => {
-    name =
-      landlordResult?.profileLandlord.firstName + ' ' + landlordResult?.profileLandlord.lastName;
-    company = landlordResult?.profileLandlord.company;
-    title = landlordResult?.profileLandlord.title;
-    avatar = landlordResult?.profileLandlord.avatar;
+    setProfileInfo({
+      name:
+        landlordResult?.profileLandlord.firstName + ' ' + landlordResult?.profileLandlord.lastName,
+      company: landlordResult?.profileLandlord.company,
+      title: landlordResult?.profileLandlord.title,
+      avatar: landlordResult?.profileLandlord.avatar,
+    });
   };
 
   let [getTenant, { loading: tenantLoading }] = useLazyQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
