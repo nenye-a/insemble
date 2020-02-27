@@ -41,9 +41,9 @@ export default function LandlordListing() {
     let newPhotos = photos.splice(index, 1, null);
     setPhotos(newPhotos);
   };
-  let handleFiles = (files: string, index: number) => {
-    //TODO: Upload Photo when connect BE
-  };
+  // let handleFiles = (files: string, index: number) => {
+  //   //TODO: Upload Photo when connect BE
+  // };
   return (
     <Container>
       <RowView>
@@ -59,21 +59,21 @@ export default function LandlordListing() {
         <TouchableOpacity onPress={() => onRemovePhoto(0)}>
           <CloseButton />
         </TouchableOpacity>
-        <ReactFileReader handleFiles={handleFiles}>
-          <Photo src={photos[0] === null ? Placeholder : photos[0]} />
+        <ReactFileReader handleFiles={() => {}}>
+          <Photo src={photos[0] == null ? Placeholder : photos[0]} />
         </ReactFileReader>
       </View>
       <LabelText text="Additional Property Photos" />
       <PhotosContainer flex>
         {photos.slice(1).map((item, index) => (
-          <PhotoWrapper key={index} disabled={item !== null} forwardedAs="button" type="button">
+          <PhotoWrapper key={index} disabled={item != null} forwardedAs="button" type="button">
             {item !== '' && (
               <TouchableOpacity onPress={() => onRemovePhoto(index + 1)}>
                 <CloseButton />
               </TouchableOpacity>
             )}
-            <ReactFileReader handleFiles={handleFiles}>
-              <Photos key={index} src={item === null ? Placeholder : item} alt={item || ''} />
+            <ReactFileReader handleFiles={() => {}}>
+              <Photos key={index} src={item == null ? Placeholder : item} alt={item || ''} />
             </ReactFileReader>
           </PhotoWrapper>
         ))}
