@@ -12,6 +12,7 @@ let isLandlordAuthenticated = rule()(async (_, __, ctx: Context) => {
 
 let permissions = shield({
   Query: {
+    properties: isLandlordAuthenticated,
     profileLandlord: isLandlordAuthenticated,
     profileTenant: isTenantAuthenticated,
     tenantMatches: isTenantAuthenticated,
