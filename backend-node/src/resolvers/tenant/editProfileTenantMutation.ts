@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { Root, Context } from 'serverTypes';
 import { sendTenantVerificationEmail } from '../../helpers/sendEmail';
 import { HOST, NODE_ENV } from '../../constants/constants';
+import { uploadS3 } from '../../helpers/uploadUtils';
 
 let editProfileResolver: FieldResolver<
   'Mutation',
@@ -66,12 +67,14 @@ let editProfileResolver: FieldResolver<
       throw new Error('Wrong current password');
     }
   }
-  let { oldPassword, newPassword, email, ...updateData } = profile;
+  let { oldPassword, newPassword, email, avatar, ...updateData } = profile;
   let password = newPassword ? bcrypt.hashSync(newPassword, 10) : undefined;
+  let { Location: avatarUrl } = avatar && (await uploadS3(avatar, 'TENANT'));
   let tenant = await context.prisma.tenantUser.update({
     data: {
       ...updateData,
       email: profile.email?.toLocaleLowerCase(),
+      avatar: avatar ? avatarUrl : undefined,
       password,
     },
     where: {
@@ -83,7 +86,9 @@ let editProfileResolver: FieldResolver<
 
 let editProfileTenant = mutationField('editProfileTenant', {
   type: 'TenantUser',
-  args: { profile: arg({ type: 'EditProfileInput', required: true }) },
+  args: {
+    profile: arg({ type: 'EditProfileInput', required: true }),
+  },
   resolve: editProfileResolver,
 });
 
