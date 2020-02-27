@@ -1,14 +1,10 @@
-import { LocationInput } from '../generated/globalTypes';
-
-type ConfirmProperty = {
-  physicalAddress: LocationInput;
-  userRelation: string;
-  propertyType: Array<string>;
-};
+import { SelectedLocation } from '../components/LocationInput';
 
 type ConfirmLocation = {
-  physicalAddress: LocationInput;
-  marketingPreference: string; // This should be enum
+  userRelation?: string;
+  propertyType?: Array<string>;
+  physicalAddress?: SelectedLocation;
+  marketingPreference?: string; // This should be enum
 };
 
 type ConfirmTenant = {
@@ -19,7 +15,6 @@ type ConfirmTenant = {
 
 export type State = {
   canPressNext: boolean;
-  confirmProperty?: ConfirmProperty;
   confirmLocation?: ConfirmLocation;
   confirmTenant?: ConfirmTenant;
 };
@@ -32,12 +27,10 @@ export type Action =
       type: 'ENABLE_NEXT_BUTTON';
     }
   | {
-      type: 'SAVE_CHANGES_CONFIRM_PROPERTY';
-      values: { confirmProperty: ConfirmProperty };
-    }
-  | {
       type: 'SAVE_CHANGES_CONFIRM_LOCATION';
-      values: { confirmLocation: ConfirmLocation };
+      values: {
+        confirmLocation: ConfirmLocation;
+      };
     }
   | {
       type: 'SAVE_CHANGES_CONFIRM_TENANT';
@@ -59,7 +52,6 @@ export default function landlordOnboardingReducer(state: State, action: Action):
     case 'ENABLE_NEXT_BUTTON': {
       return { ...state, canPressNext: true };
     }
-    case 'SAVE_CHANGES_CONFIRM_PROPERTY':
     case 'SAVE_CHANGES_CONFIRM_LOCATION':
     case 'SAVE_CHANGES_CONFIRM_TENANT': {
       return { ...state, ...action.values };

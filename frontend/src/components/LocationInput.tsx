@@ -7,18 +7,25 @@ import React, {
   CSSProperties,
 } from 'react';
 
-import { TextInput, View } from '../core-ui';
+import { TextInput } from '../core-ui';
 import { useGoogleMaps } from '../utils';
-import { LocationInput as LocationInputType } from '../generated/globalTypes';
 
 type PlaceResult = google.maps.places.PlaceResult;
 type InputProps = ComponentProps<'input'>;
+
+export type SelectedLocation = {
+  id: string;
+  name: string;
+  address: string;
+  lat: string;
+  lng: string;
+};
 
 type Props = Omit<InputProps, 'onSubmit' | 'ref'> & {
   label?: string;
   placeholder?: string;
   ref?: RefObject<HTMLInputElement> | null;
-  onPlaceSelected?: (place: LocationInputType) => void;
+  onPlaceSelected?: (place: SelectedLocation) => void;
   containerStyle?: CSSProperties;
 };
 
@@ -29,12 +36,18 @@ export default function LocationInput(props: Props) {
   let selectedPlace = useRef<PlaceResult | null>(null);
   let submitHandler = useCallback(() => {
     if (selectedPlace.current) {
-      onPlaceSelected &&
-        onPlaceSelected({
-          address: selectedPlace.current.formatted_address || '',
-          lat: selectedPlace.current.geometry?.location.lat().toString() || '',
-          lng: selectedPlace.current.geometry?.location.lng().toString() || '',
-        });
+      let { formatted_address: formattedAddress, geometry, name, id } = selectedPlace.current;
+      if (geometry) {
+        let { lat, lng } = geometry.location;
+        onPlaceSelected &&
+          onPlaceSelected({
+            id: id || '',
+            name,
+            address: formattedAddress || '',
+            lat: lat().toString() || '',
+            lng: lng().toString() || '',
+          });
+      }
     }
   }, [onPlaceSelected]);
 
@@ -52,18 +65,18 @@ export default function LocationInput(props: Props) {
     }
   }, [isLoading, submitHandler]);
 
+  if (isLoading) {
+    return null;
+  }
+
   return (
-    <View>
-      {!isLoading && (
-        <TextInput
-          ref={inputRef}
-          placeholder={placeholder}
-          onSubmit={submitHandler}
-          label={label}
-          style={containerStyle}
-          {...otherProps}
-        />
-      )}
-    </View>
+    <TextInput
+      ref={inputRef}
+      placeholder={placeholder}
+      onSubmit={submitHandler}
+      label={label}
+      style={containerStyle}
+      {...otherProps}
+    />
   );
 }
