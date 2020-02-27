@@ -12,5 +12,6 @@ export let EditProfileInput = inputObjectType({
     t.string('description');
     t.string('oldPassword');
     t.string('newPassword');
+    t.field('avatar', { type: 'Upload' });
   },
 });
