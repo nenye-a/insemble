@@ -4,12 +4,12 @@ import { useHistory } from 'react-router-dom';
 
 import View from '../core-ui/View';
 import OnboardingCard from './OnboardingPage/OnboardingCard';
-import LocationConfirm from './LandlordOnboarding/LocationConfirm';
-import PropertyConfirm from './LandlordOnboarding/PropertyConfirm';
-import TenantConfirm from './LandlordOnboarding/TenantConfirm';
-import ThankYou from './LandlordOnboarding/ThankYou';
 import PreviewListing from './LandlordOnboarding/PreviewListing';
 import LandlordListing from './LandlordOnboarding/LandlordListing';
+import LocationConfirm from './LandlordOnboardingPage/LocationConfirm';
+import PropertyConfirm from './LandlordOnboardingPage/PropertyConfirm';
+import TenantConfirm from './LandlordOnboardingPage/TenantConfirm';
+import ThankYou from './LandlordOnboardingPage/ThankYou';
 
 export default function LandlordOnboarding() {
   let [activeSegmentIndex, setActiveSegmentIndex] = useState(0);

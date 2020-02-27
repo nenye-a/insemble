@@ -3,12 +3,12 @@ import styled from 'styled-components';
 
 import { TextInput, View, RadioGroup, Label, Checkbox } from '../../core-ui';
 import { FONT_SIZE_NORMAL } from '../../constants/theme';
+import { SPACES_TYPE } from '../../constants/spaces';
 
 export default function LocationConfirm() {
   let [selectedRelation, setSelectedRelation] = useState('');
   let [address, setAddress] = useState('');
   let [selectedType, setSelectedType] = useState<Array<string>>([]);
-  let TYPE_OPTIONS = ['Free standing', 'Shopping center', 'Inline', 'Endcap', 'Pedestrian'];
   return (
     <>
       <FormContainer>
@@ -30,7 +30,7 @@ export default function LocationConfirm() {
           radioItemProps={{ style: { marginBottom: 9 } }}
         />
         <LabelText text="What type of property is this?" />
-        {TYPE_OPTIONS.map((option, index) => {
+        {SPACES_TYPE.map((option, index) => {
           let isChecked = selectedType.includes(option);
           return (
             <Checkbox
