@@ -28,3 +28,8 @@ class PropertyTenantSerializer(serializers.Serializer):
     space_type = serializers.JSONField(required=False)
     target_categories = serializers.JSONField(required=False)
     exclusives = serializers.JSONField(required=False)
+
+
+class PropertyDetailsSerializer(serializers.Serializer):
+
+    property_id = serializers.CharField(max_length=300)

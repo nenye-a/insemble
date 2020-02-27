@@ -82,7 +82,7 @@ def get_address_neighborhood(lat, lng):
     """
 
     Returns the address and neighborhood of a specific latitude and longitude. If running into issues
-    make sure that you have an authorized API_KEY. 
+    make sure that you have an authorized API_KEY.
 
     """
 
@@ -629,7 +629,7 @@ def get_match_value(target, location):
 def get_matching_personas(target, location):
     """
     Receiving un-processed vectors geneated during the matching.generate_matches() process [as of 2/5/20],
-    generates the top 3 matching psychogrpahics. Top 3 matching psychographics are currently the highest 
+    generates the top 3 matching psychogrpahics. Top 3 matching psychographics are currently the highest
     rated of the most similar psychographics.
     """
 
@@ -649,15 +649,24 @@ def get_matching_personas(target, location):
     top_3_largest_similar_personas = list(top_10_similar.columns[largest_similar_3_columns])
     print(top_3_largest_similar_personas)
 
-    detailed_personas = utils.DB_SPATIAL_TAXONOMY.find({'label': {'$in': top_3_largest_similar_personas}})
-
     persona_values = dict(target_df.iloc[0][top_3_largest_similar_personas])
+
+    return fill_personas(persona_values)
+
+
+def fill_personas(personas_dict):
+    """
+    Given a list of personas, as well as their values, will find all the details for the personas.
+    """
+
+    detailed_personas = utils.DB_SPATIAL_TAXONOMY.find({'label': {'$in': list(personas_dict.keys())}})
 
     return [{
         "name": persona["label"],
-        "percentile": persona_values[persona["label"]],
+        "percentile": personas_dict[persona["label"]],
         "description": persona["sections"]["overview"]["description"],
         "tags": persona["sections"]["topics"]["list"],
+        "photo": persona["photo"]
     } for persona in detailed_personas]
 
 

@@ -1,7 +1,7 @@
 from rest_framework import status, generics, permissions
 from .tenant_api import AsynchronousAPI, FastLocationDetailsAPI
 from rest_framework.response import Response
-from .landlord_serializers import PropertyTenantSerializer
+from .landlord_serializers import PropertyTenantSerializer, PropertyDetailsSerializer
 from bson import ObjectId
 import data.api.goog as google
 import data.landlord_matching as landlord_matching
@@ -172,8 +172,12 @@ class PropertyTenantAPI(AsynchronousAPI):
 
                 key_facts = key_facts_demo
                 location["nearby_metro"] = key_facts_nearby["nearby_metro"]
+                location_details["key_facts"] = key_facts
 
-                for item in ['name', 'rating', 'google_user_rating', 'reviews']:
+                for item in ['name', 'rating', 'user_ratings_total', 'reviews', 'international_phone_number',
+                             'foursquare_categories', 'formatted_address', 'detailed', 'types', 'reference',
+                             'price_level', 'plus_code', 'place_id', 'photos', 'icon', '_id', 'formatted_phone_number',
+                             'url', 'opening_hours']:
                     if item in location_details:
                         location_details.pop(item)
 
@@ -224,6 +228,46 @@ class PropertyTenantAPI(AsynchronousAPI):
         celery_app.register_task(self.get_spatial_personas)
         celery_app.register_task(self.get_environics_demographics)
         celery_app.register_task(self.get_nearby_places)
+
+# PropertyDetailsAPI - api/propertyDetails/
+
+
+class PropertyDetailsAPI(AsynchronousAPI):
+
+    serializer_class = PropertyDetailsSerializer
+
+    def get(self, request, *args, **kwargs):
+
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        validated_params = serializer.validated_data
+
+        property_id = validated_params['property_id']
+        place = landlord_provider.property_details(property_id)
+
+        if not place:
+            return Response({
+                'status': 200,
+                'status_detail': 'Successful Call, but No Details Found',
+                'result': {}
+            })
+
+        demographics = FastLocationDetailsAPI.obtain_demographics(place)
+        personas = provider.fill_personas(place["psycho1"])
+
+        response = {
+            'status': 200,
+            'status_detail': 'Success',
+            'result': {
+                'key_facts': place['key_facts'],
+                'personas': personas,
+                'demographics1': demographics["1mile"],
+                'demographics2': demographics["3mile"],
+                'demographics3': demographics["5mile"]
+            }
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
 
 
 class UpdateSpaceBrandsAPI(AsynchronousAPI):
