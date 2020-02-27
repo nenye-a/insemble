@@ -33,14 +33,27 @@ def generate_matches(location_address, name=None, my_place_type={}):
     """
 
     landlord_vector_df = matching.generate_vector_address(location_address, None)
-    info_df = matching.MATCHING_DF.copy().sample(1000)  # TODO: remove temporary sample when using real data
+    info_df = matching.MATCHING_DF.copy().sample(300)  # TODO: remove temporary sample when using real data
     matching_df = info_df.drop(columns=["_id", "lat", "lng", "loc_id"])  # TODO: remove any tenant specific contextual columns
     matching_df = matching_df.append(landlord_vector_df)
 
+    # fake options to get past options required on tenant matching
+    options = {
+        'desired_min_income': None,
+        'desired_max_income': None,
+        'desired_min_age': None,
+        'desired_max_age': None,
+        'desired_personas': [],
+        'desired_commute': [],
+        'desired_education': [],
+        'desired_ethnicity': []
+    }
+
     # Matching (currently leveraging the tenant matching algorithms heavily)
+    print("Matching starting")
     matching_df = matching.preprocess_match_df(matching_df)
     matching_diff = matching_df.subtract(matching_df.iloc[-1]).iloc[:-1]
-    matching_diff = matching.postprocess_match_df(matching_diff)
+    matching_diff = matching.postprocess_match_df(matching_diff, options)  # TODO remove matching
     weighted_diff = matching.weight_and_evaluate(matching_diff)
 
     # Re-assign the tracking information. TODO: re-add any other removed contextual information
@@ -51,10 +64,12 @@ def generate_matches(location_address, name=None, my_place_type={}):
     # Generate match values
     best = weighted_diff[weighted_diff['error_sum'] < .3].copy()
     best['match_value'] = best['error_sum'].apply(matching._map_difference_to_match)
-    best['tenant_id'] = best['loc_id'].apply(str)
+    best['brand_id'] = best['loc_id'].apply(str)
+
+    print("Returning Landlord Matches")
 
     # Return raw dataframe to be further processed in other methods
-    return best[['match_value', 'tenant_id']]
+    return best[['match_value', 'brand_id']]
 
 
 def generate_vector_address(address, name):

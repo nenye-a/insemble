@@ -798,8 +798,7 @@ def get_tenant_details(tenant_id):
     if 'arcgis_details1' not in details:
         # proxy to determining if we need to check the rep id.
         details = utils.DB_PROCESSED_SPACE.find_one({'_id': tenant_id['rep_id']}, {'_id': 0})
-    else:
-        return tenant['tenant_details']
+    return details
 
     # # TODO: implement case the generates the details when we don't have tenant_id
     # tenant = utils.DB_PROCESSED_SPACE.find_one()

@@ -6,21 +6,25 @@ class PropertyTenantSerializer(serializers.Serializer):
     """
 
     parameters: {
-        address: string,                   (required)
-        space_type: list[string],          
-        tenant_type: list[string],
+        address: string,                    (required)
+        property_type: list[string],        (required)        
+        space_type: list[string],           (required)
+        tenant_type: list[string],          
         sqft: int,
         asking_rent: int,
         target_categories: list[string],
-        exclusives: list[string]  
+        exclusives: list[string]
     }
 
     """
 
-    address = serializers.CharField(required=True, max_length=300)
-    sqft = serializers.IntegerField()
-    space_type = serializers.ListField(child=serializers.CharField(), required=False)
+    property_id = serializers.CharField(max_length=12, required=False)
+    address = serializers.CharField(max_length=300, required=False)
+    property_type = serializers.JSONField(required=False)
+    space_type = serializers.JSONField(required=False)
+    tenant_type = serializers.JSONField(required=False)
+    sqft = serializers.IntegerField(required=False)
     asking_rent = serializers.IntegerField(required=False)
-    tenant_type = serializers.ListField(child=serializers.CharField(), required=False)
-    target_categories = serializers.ListField(child=serializers.CharField(), required=False)
-    exclusives = serializers.ListField(child=serializers.CharField(), required=False)
+    space_type = serializers.JSONField(required=False)
+    target_categories = serializers.JSONField(required=False)
+    exclusives = serializers.JSONField(required=False)

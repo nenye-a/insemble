@@ -1,12 +1,14 @@
 from . import utils, landlord_matching
 from bson import ObjectId
 import numpy as np
+import pprint
 import re
 import pandas as pd
 import data.api.goog as google
 import data.api.foursquare as foursquare
 import data.api.arcgis as arcgis
 import data.api.environics as environics
+from bson import ObjectId
 
 
 '''
@@ -19,7 +21,7 @@ between the actual api, and the actual underlying data infrastructure.
 '''
 
 
-def get_matching_tenants(address, sqft, rent=None, tenant_type=None, exclusives=None):
+def get_matching_tenants(address):  # , sqft, rent=None, tenant_type=None, exclusives=None):
     """
 
     Return the matching tenants for a landlord factoring all aspects of the match, including a
@@ -40,11 +42,12 @@ def get_matching_tenants(address, sqft, rent=None, tenant_type=None, exclusives=
     best_matches["num_existing_locations"] = 10
     best_matches["on_platform"] = True
     best_matches["interested"] = False
-    best_matches["interested"][0] = True
+    best_matches["verified"] = False
+    best_matches["claimed"] = False
     best_matches["matches_tenant_type"] = False
-    best_matches["photo_url"] = best_matches["tenant_id"].apply(get_photos)
+    best_matches["photo_url"] = best_matches["brand_id"].apply(get_photos)
 
-    return best_matches.to_json(orient='records')
+    return best_matches.to_dict(orient='records')
 
 
 def get_photos(location_id):
@@ -55,3 +58,23 @@ def get_photos(location_id):
 
     photo_reference = space['photos'][0]['photo_reference']
     return google.get_photo_url(photo_reference)
+
+
+def add_property(property_params, space_params):
+
+    property_params['spaces'] = []
+    space_id = ObjectId()
+    space_params['id'] = space_id
+    property_params['spaces'].append(space_params)
+
+    return str(utils.DB_PROPERTY.insert(property_params)), str(space_id)
+
+
+def update_property_with_id(property_id, space_params):
+
+    space_id = ObjectId()
+    space_params['id'] = space_id
+    this_property = utils.DB_PROPERTY.find_one({'_id': property_id}, {'spaces': 1})
+    this_property['spaces'].append(space_params)
+    utils.DB_PROPERTY.update_one({'_id': property_id}, {'$set': this_property})
+    return str(space_id)
