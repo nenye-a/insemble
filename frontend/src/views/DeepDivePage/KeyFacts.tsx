@@ -10,7 +10,7 @@ import {
 } from '../../constants/theme';
 import { THEME_COLOR, COMMUTE_CHART_COLORS, SECONDARY_COLOR } from '../../constants/colors';
 import { DeepDiveContext } from './DeepDiveModal';
-import { convertToKilos, roundDecimal } from '../../utils';
+import { convertToKilos, roundDecimal, getKeyfactsValue } from '../../utils';
 
 type Data = {
   name: string;
@@ -84,17 +84,18 @@ export default function KeyFacts({ withMargin = true }: Props) {
   };
 
   let sortedData = commuteData && commuteData.sort((a, b) => (a.value > b.value ? -1 : 1));
+
   let numbers1 = [
-    keyFactsData?.daytimePop,
-    keyFactsData?.mediumHouseholdIncome,
-    keyFactsData?.totalHousehold,
-    keyFactsData?.householdGrowth2017to2022,
+    getKeyfactsValue(keyFactsData?.daytimePop),
+    getKeyfactsValue(keyFactsData?.mediumHouseholdIncome),
+    getKeyfactsValue(keyFactsData?.totalHousehold),
+    getKeyfactsValue(keyFactsData?.householdGrowth2017to2022),
   ];
   let numbers2 = [
-    keyFactsData?.numMetro,
-    keyFactsData?.numUniversities,
-    keyFactsData?.numHospitals,
-    keyFactsData?.numApartements,
+    getKeyfactsValue(keyFactsData?.numMetro),
+    getKeyfactsValue(keyFactsData?.numUniversities),
+    getKeyfactsValue(keyFactsData?.numHospitals),
+    getKeyfactsValue(keyFactsData?.numApartements),
   ];
   let categories1 = [
     'Daytime Population',
