@@ -1,6 +1,6 @@
 import getKeyfactsValue from '../getKeyfactsValue';
 
-describe('convertToKilos', () => {
+describe('getKeyfactsValue', () => {
   it('should return the correct value', () => {
     let a = 7939;
     let b = 193820;
