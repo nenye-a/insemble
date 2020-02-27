@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
-import { View } from '../core-ui';
+import View from '../core-ui/View';
 import OnboardingCard from './OnboardingPage/OnboardingCard';
 import LocationConfirm from './LandlordOnboarding/LocationConfirm';
 import PropertyConfirm from './LandlordOnboarding/PropertyConfirm';
 import TenantConfirm from './LandlordOnboarding/TenantConfirm';
 import ThankYou from './LandlordOnboarding/ThankYou';
+import LandlordListing from './LandlordOnboarding/LandlordListing';
 
 export default function LandlordOnboarding() {
   let [activeSegmentIndex, setActiveSegmentIndex] = useState(0);
@@ -39,6 +40,20 @@ export default function LandlordOnboarding() {
         {
           text: 'Back',
           onPress: onBackPress,
+        },
+        {
+          text: 'Next',
+          onPress: onNextPress,
+        },
+      ],
+    },
+    {
+      title: 'Let’s build your listings!',
+      content: <LandlordListing />,
+      buttons: [
+        {
+          text: 'Back',
+          onPress: onNextPress,
         },
         {
           text: 'Next',

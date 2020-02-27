@@ -15,7 +15,7 @@ import BrandDetail from './views/BrandDetail';
 import SignUp from './views/SignUp';
 import LandlordOnboarding from './views/LandlordOnboarding';
 import LandlordSignUp from './views/LandlordSignUp';
-import LandlordLogin from './views/LanlordLogin';
+import LandlordLogin from './views/LandlordLogin';
 import TenantEmailVerification from './views/TenantEmailVerification';
 import VerificationSuccessful from './views/VerificationSuccessful';
 import LandlordProperties from './views/LandlordProperties';
