@@ -1,57 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, Dispatch } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 
 import { TextInput, View, RadioGroup, Text, Label, Button } from '../../core-ui';
-import { session } from '../../utils/storage';
-import urlEncode from '../../utils/urlEncode';
-import { useSelector } from '../../redux/helpers';
+import { LocationInput } from '../../components';
 import { THEME_COLOR } from '../../constants/colors';
 import { MAPS_IFRAME_URL_SEARCH, MAPS_IFRAME_URL_PLACE } from '../../constants/googleMaps';
 import { FONT_SIZE_NORMAL } from '../../constants/theme';
+import { Action, State as LandlordOnboardingState } from '../../reducers/landlordOnboardingReducer';
+import { urlEncode } from '../../utils';
+import { SelectedLocation } from '../../components/LocationInput';
 
-export default function LocationConfirm() {
+type Props = {
+  dispatch: Dispatch<Action>;
+  state: LandlordOnboardingState;
+};
+
+export default function LocationConfirm(props: Props) {
+  let { state: landlordOnboardingState, dispatch } = props;
+  let { confirmLocation } = landlordOnboardingState;
   let [selectedStatus, setSelectedStatus] = useState('');
+  let [selectedLocation, setSelectedLocation] = useState<SelectedLocation | undefined>(
+    confirmLocation?.physicalAddress
+  );
   let [isDisabled, setIsDisabled] = useState(true);
   let [location, setLocation] = useState('');
-  let { placeID } = useParams();
-  let fallbackAddress = useSelector((state) =>
-    state.space.location && typeof state.space.location.address === 'string'
-      ? state.space.location.address
-      : ''
-  );
+  let propertyName = selectedLocation?.name || confirmLocation?.physicalAddress?.name || '';
+  let propertyAddress =
+    selectedLocation?.address || confirmLocation?.physicalAddress?.address || '';
 
-  let place;
-  if (placeID != null) {
-    place = session.get('place', placeID);
-  }
-  let name = '';
-  let address = '';
-  if (place != null) {
-    name = place.name;
-    address = place.formatted_address || '';
-  } else {
-    name = session.get('sessionStoreName') || '';
-    address = fallbackAddress;
-  }
+  let mapURL = confirmLocation
+    ? MAPS_IFRAME_URL_SEARCH + '&q=' + urlEncode(propertyName + ', ' + propertyAddress)
+    : '';
 
-  let mapURL = place
-    ? MAPS_IFRAME_URL_PLACE + '&q=place_id:' + place.place_id
-    : MAPS_IFRAME_URL_SEARCH + '&q=' + urlEncode(name + ', ' + address);
+  let allValid = selectedStatus && selectedLocation;
+
+  useEffect(() => {
+    if (allValid) {
+      dispatch({ type: 'ENABLE_NEXT_BUTTON' });
+      dispatch({
+        type: 'SAVE_CHANGES_CONFIRM_LOCATION',
+        values: {
+          confirmLocation: {
+            ...landlordOnboardingState.confirmLocation,
+            physicalAddress: selectedLocation || {
+              lat: '',
+              lng: '',
+              address: '',
+              name: '',
+              id: '',
+            },
+            marketingPreference: selectedStatus,
+          },
+        },
+      });
+    } else {
+      dispatch({ type: 'DISABLE_NEXT_BUTTON' });
+    }
+  }, [allValid]);
 
   return (
     <>
       <Iframe src={mapURL} />
       <FormContainer>
-        <RowedView>
-          <TextInput
+        <RowedView flex>
+          <LocationInput
             label="Property Name"
-            defaultValue={name}
-            value={location}
+            defaultValue={confirmLocation?.physicalAddress?.address || ''}
+            onPlaceSelected={(location) => setSelectedLocation(location)}
             disabled={isDisabled}
-            onChange={(event) => {
-              setLocation(event.target.value);
-            }}
           />
           <EditButton
             text="Edit"
@@ -60,7 +77,7 @@ export default function LocationConfirm() {
             }}
           />
         </RowedView>
-        <Label text="What is your relationship to this business?" />
+        <Label text="Marketing Preference" />
         <RadioGroup
           name="Marketing Preference"
           options={[
