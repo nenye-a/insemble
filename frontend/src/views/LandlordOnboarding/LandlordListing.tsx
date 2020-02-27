@@ -1,6 +1,8 @@
 import React, { useState, ChangeEvent } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
+import { useForm, FieldError } from 'react-hook-form';
+import ReactFileReader from 'react-file-reader';
 
 import {
   View,
@@ -11,6 +13,7 @@ import {
   MultiSelectInput,
   Alert,
   TouchableOpacity,
+  Form,
   Text,
 } from '../../core-ui';
 import { THEME_COLOR, DARK_TEXT_COLOR } from '../../constants/colors';
@@ -23,23 +26,24 @@ import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD, FONT_SIZE_SMALL } from '../../const
 
 export default function LandlordListing() {
   let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
-  let [message, setMessage] = useState('');
+  let [description, setDescription] = useState<string>('');
   let [selectedCondition, setSelectedCondition] = useState('Whitebox');
-  let [sqft, setSqft] = useState('');
-  let [sqftPrice, setSqftPrice] = useState('');
   let [, setSelectedEquipment] = useState<Array<string>>([]);
-  let [photos, setPhotos] = useState<Array<string>>([]);
+  let { register, errors } = useForm();
+  let [photos, setPhotos] = useState<Array<string | null>>(PHOTOS);
   photos = PHOTOS;
   if (photos.length < 5) {
-    photos.push('');
+    photos.push(null);
     setPhotos(photos);
   }
   let today = new Date().toISOString().slice(0, 10);
   let onRemovePhoto = (index: number) => {
-    let newPhotos = photos.splice(index, 1, '');
+    let newPhotos = photos.splice(index, 1, null);
     setPhotos(newPhotos);
   };
-
+  let handleFiles = (files: string, index: number) => {
+    //TODO: Upload Photo when connect BE
+  };
   return (
     <Container>
       <RowView>
@@ -51,77 +55,93 @@ export default function LandlordListing() {
         text="We provide complementary virtual tours & comprehensive photos to every listing."
       />
       <LabelText text="Temporary Main Photo" />
-      <TouchableOpacity disabled={true} flex forwardedAs="button" type="button">
+      <View flex>
         <TouchableOpacity onPress={() => onRemovePhoto(0)}>
           <CloseButton />
         </TouchableOpacity>
-        <Photo src={photos[0] === '' ? Placeholder : photos[0]} />
-      </TouchableOpacity>
+        <ReactFileReader handleFiles={handleFiles}>
+          <Photo src={photos[0] === null ? Placeholder : photos[0]} />
+        </ReactFileReader>
+      </View>
       <LabelText text="Additional Property Photos" />
       <PhotosContainer flex>
         {photos.slice(1).map((item, index) => (
-          <PhotoWrapper key={index} disabled={item !== ''} forwardedAs="button" type="button">
+          <PhotoWrapper key={index} disabled={item !== null} forwardedAs="button" type="button">
             {item !== '' && (
               <TouchableOpacity onPress={() => onRemovePhoto(index + 1)}>
                 <CloseButton />
               </TouchableOpacity>
             )}
-            <Photos key={index} src={item === '' ? Placeholder : item} alt={item} />
+            <ReactFileReader handleFiles={handleFiles}>
+              <Photos key={index} src={item === null ? Placeholder : item} alt={item || ''} />
+            </ReactFileReader>
           </PhotoWrapper>
         ))}
       </PhotosContainer>
-      <TextArea
-        label="Description"
-        placeholder="Enter Description"
-        values={message}
-        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-          setMessage(e.target.value);
-        }}
-        showCharacterLimit
-        containerStyle={{ marginTop: 24 }}
-      />
-      <RadioGroupContainer
-        label="Condition"
-        options={['Whitebox', 'Second Generation Restaurant']}
-        selectedOption={selectedCondition}
-        onSelect={(value: string) => {
-          setSelectedCondition(value);
-        }}
-        radioItemProps={{ style: { marginTop: 8 } }}
-      />
-      <TextInput
-        label="Sqft"
-        placeholder="0"
-        value={sqft}
-        onChange={(event) => {
-          setSqft(event.target.value);
-        }}
-        containerStyle={{ marginTop: 24, width: 100 }}
-      />
-
-      <TextInput
-        label="Price/Sqft"
-        placeholder="$0"
-        value={sqftPrice}
-        onChange={(event) => {
-          setSqftPrice(event.target.value);
-        }}
-        containerStyle={{ marginTop: 24, width: 100 }}
-      />
-      <LabelText text="Features & Amenities" />
-      {!equipmentLoading && equipmentData && (
-        <MultiSelectInput
-          placeholder="Set Equipment Preference"
-          options={equipmentData.equipments}
-          onChange={setSelectedEquipment}
-          containerStyle={{ marginTop: 8 }}
+      <Form>
+        <TextArea
+          label="Description"
+          placeholder="Enter Description"
+          values={description}
+          onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+            setDescription(e.target.value);
+          }}
+          showCharacterLimit
+          containerStyle={{ marginTop: 24 }}
         />
-      )}
-      <LabelText text="Availability" />
-      <RowView style={{ margin: 0 }}>
-        <TextInput type="date" min={today} value={today} />
-        <SpaceAlert visible text="You will be able to add more spaces later" />
-      </RowView>
+        <RadioGroupContainer
+          label="Condition"
+          options={['Whitebox', 'Second Generation Restaurant']}
+          selectedOption={selectedCondition}
+          onSelect={(value: string) => {
+            setSelectedCondition(value);
+          }}
+          radioItemProps={{ style: { marginTop: 8 } }}
+        />
+        <TextInput
+          label="Sqft"
+          name="sqft"
+          placeholder="0"
+          ref={register({
+            required: 'Sqft should not be empty',
+          })}
+          containerStyle={{ marginTop: 24, width: 100 }}
+          errorMessage={(errors?.sqft as FieldError)?.message || ''}
+        />
+        <TextInput
+          label="Price/Sqft"
+          name="price"
+          placeholder="$0"
+          ref={register({
+            required: 'Price/Sqft should not be empty',
+          })}
+          containerStyle={{ marginTop: 24, width: 100 }}
+          errorMessage={(errors?.price as FieldError)?.message || ''}
+        />
+        <LabelText text="Features & Amenities" />
+        {!equipmentLoading && equipmentData && (
+          <MultiSelectInput
+            placeholder="Set Equipment Preference"
+            options={equipmentData.equipments}
+            onChange={setSelectedEquipment}
+            containerStyle={{ marginTop: 8 }}
+          />
+        )}
+        <LabelText text="Availability" />
+        <RowView style={{ margin: 0 }}>
+          <TextInput
+            type="date"
+            name="date"
+            min={today}
+            defaultValue={today}
+            ref={register({
+              required: 'Date should not be empty',
+            })}
+            errorMessage={(errors?.date as FieldError)?.message || ''}
+          />
+          <SpaceAlert visible text="You will be able to add more spaces later" />
+        </RowView>
+      </Form>
     </Container>
   );
 }
@@ -140,12 +160,14 @@ const Photos = styled.img`
   object-fit: cover;
   border: 0.5px solid white;
   border-radius: 5px;
+  width: 100%;
 `;
 const Photo = styled.img`
   height: 300px;
   object-fit: cover;
   border: 0.5px solid white;
   border-radius: 5px;
+  width: 100%;
 `;
 
 const RowView = styled(View)`

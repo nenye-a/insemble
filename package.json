@@ -66,6 +66,7 @@
     "react-dom": "~16.9.0",
     "react-dropzone": "^8.0.1",
     "react-fetching-library": "^1.5.14",
+    "react-file-reader": "^1.1.4",
     "react-ga": "^2.5.6",
     "react-google-maps": "^9.4.5",
     "react-hook-form": "^4.9.3",
