@@ -3,20 +3,20 @@ import styled from 'styled-components';
 
 import { View } from '../../core-ui';
 import { BORDER_COLOR } from '../../constants/colors';
-import Placeholder from '../../assets/images/image-placeholder.jpg';
+import placeholder from '../../assets/images/image-placeholder.jpg';
 type Props = {
   images: Array<string | null>;
 };
 
 export default function PhotoGallery(props: Props) {
   let { images } = props;
-  if (images.length < 5) {
+  while (images.length < 5) {
     images.push(null);
   }
   return (
     <Container flex>
       {images.map((item, index) => (
-        <Photo key={index} src={item == null ? Placeholder : item} alt={item || ''} />
+        <Photo key={index} src={!item ? placeholder : item} alt={item || ''} />
       ))}
     </Container>
   );
