@@ -86,16 +86,16 @@ export default function KeyFacts({ withMargin = true }: Props) {
   let sortedData = commuteData && commuteData.sort((a, b) => (a.value > b.value ? -1 : 1));
 
   let numbers1 = [
-    getKeyfactsValue(keyFactsData?.daytimePop),
-    getKeyfactsValue(keyFactsData?.mediumHouseholdIncome),
-    getKeyfactsValue(keyFactsData?.totalHousehold),
-    getKeyfactsValue(keyFactsData?.householdGrowth2017to2022),
+    keyFactsData?.daytimePop,
+    keyFactsData?.mediumHouseholdIncome,
+    keyFactsData?.totalHousehold,
+    keyFactsData?.householdGrowth2017to2022,
   ];
   let numbers2 = [
-    getKeyfactsValue(keyFactsData?.numMetro),
-    getKeyfactsValue(keyFactsData?.numUniversities),
-    getKeyfactsValue(keyFactsData?.numHospitals),
-    getKeyfactsValue(keyFactsData?.numApartements),
+    keyFactsData?.numMetro,
+    keyFactsData?.numUniversities,
+    keyFactsData?.numHospitals,
+    keyFactsData?.numApartements,
   ];
   let categories1 = [
     'Daytime Population',
@@ -159,7 +159,7 @@ export default function KeyFacts({ withMargin = true }: Props) {
                     ? roundDecimal(line) + '%'
                     : houseHoldIncomeIndex
                     ? '$' + convertToKilos(line) + 'K'
-                    : convertToKilos(line) + 'K'
+                    : getKeyfactsValue(line)
                   : '';
                 return <NumberText key={i}>{formattedValues}</NumberText>;
               })}
@@ -173,7 +173,7 @@ export default function KeyFacts({ withMargin = true }: Props) {
               {numbers2.map((line, i) => {
                 // currently system can only show up to 60 results. so we need to add '+' for values === 60
                 let formattedValues = line === 60 ? line.toString() + '+' : line;
-                return <NumberText key={i}>{formattedValues}</NumberText>;
+                return <NumberText key={i}>{getKeyfactsValue(Number(formattedValues))}</NumberText>;
               })}
             </EconomicColumn>
             <EconomicColumn>
