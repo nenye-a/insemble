@@ -52,6 +52,10 @@ export default styled(Touchable)`
   &:active {
     opacity: 0.5;
   }
+  &:disabled {
+    opacity: 1;
+    cursor: default;
+  }
 `;
 
 function isLocalURL(link: string) {
