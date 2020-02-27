@@ -80,7 +80,7 @@ export default [
     component: Onboarding,
   },
   {
-    path: '/landlord/verify',
+    path: '/landlord/new-property',
     exact: true,
     layout: BasicLayout,
     component: LandlordOnboarding,
