@@ -6,6 +6,7 @@ export * from './TenantRegisterVerification';
 export * from './Landlord';
 export * from './LandlordAuth';
 export * from './LandlordRegisterInput';
+export * from './PropertyMatchesThumbnail';
 
 export * from './BusinessInput';
 export * from './FilterInput';
