@@ -2,6 +2,7 @@ import { FieldResolver, mutationField, arg } from 'nexus';
 import bcrypt from 'bcrypt';
 
 import { Root, Context } from 'serverTypes';
+import { uploadS3 } from '../../helpers/uploadUtils';
 
 let editProfileResolver: FieldResolver<
   'Mutation',
@@ -32,11 +33,13 @@ let editProfileResolver: FieldResolver<
       throw new Error('Wrong current password');
     }
   }
-  let { oldPassword, newPassword, email, ...updateData } = profile;
+  let { oldPassword, newPassword, email, avatar, ...updateData } = profile;
   let password = newPassword ? bcrypt.hashSync(newPassword, 10) : undefined;
+  let { Location: avatarUrl } = avatar && (await uploadS3(avatar, 'LANDLORD'));
   let landlord = await context.prisma.landlordUser.update({
     data: {
       ...updateData,
+      avatar: avatar ? avatarUrl : undefined,
       email: profile.email?.toLocaleLowerCase(),
       password,
     },
