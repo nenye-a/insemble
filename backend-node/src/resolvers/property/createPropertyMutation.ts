@@ -1,6 +1,7 @@
 import { mutationField, arg, FieldResolver } from 'nexus';
 
 import { Context } from 'serverTypes';
+import { uploadS3 } from '../../helpers/uploadUtils';
 
 export let createPropertyResolver: FieldResolver<
   'Mutation',
@@ -14,7 +15,26 @@ export let createPropertyResolver: FieldResolver<
     location,
     ...propertyInput
   } = property;
-  let { equipment = [], photos = [], available, ...spaceInput } = space || {};
+  let {
+    equipment = [],
+    photosUpload,
+    available,
+    mainPhoto,
+    photosUrl = [],
+    ...spaceInput
+  } = space || {};
+  if (!photosUrl) {
+    photosUrl = [];
+  }
+
+  if (photosUpload) {
+    for (let photoFile of photosUpload) {
+      let { Location: photoUrl } = await uploadS3(photoFile, 'MAIN_SPACE');
+      photosUrl.push(photoUrl);
+    }
+  }
+
+  let { Location: mainPhotoUrl } = await uploadS3(mainPhoto, 'MAIN_SPACE');
   let newProperty = await context.prisma.property.create({
     data: {
       ...propertyInput,
@@ -36,11 +56,12 @@ export let createPropertyResolver: FieldResolver<
       space: {
         create: {
           ...spaceInput,
+          mainPhoto: mainPhotoUrl,
           equipment: {
             set: equipment,
           },
           photos: {
-            set: photos,
+            set: photosUrl,
           },
           available: new Date(available),
         },
