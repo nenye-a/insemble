@@ -6,9 +6,9 @@ import {
   BACKGROUND_COLOR,
   WHITE,
   TEXT_COLOR,
-  SECONDARY_COLOR,
+  // SECONDARY_COLOR,
 } from '../../constants/colors';
-import SvgPlus from '../../components/icons/plus';
+// import SvgPlus from '../../components/icons/plus';
 import { FONT_SIZE_MEDIUM } from '../../constants/theme';
 
 type Props = {
@@ -22,17 +22,18 @@ type Props = {
 export default function PropertyDetailHeader({
   spaces,
   address,
-  request,
+  // request,
   selectedSpaceIndex,
   onPressSpace,
-  onPressAdd,
-}: Props) {
+}: // onPressAdd,
+Props) {
   return (
     <View style={{ marginBottom: 30 }}>
       <Card>
         <SpaceContainer flex>
           <AddressText>{address}</AddressText>
-          <NewRequestText>{request} new request</NewRequestText>
+          {/* TODO */}
+          {/* <NewRequestText>{request} new request</NewRequestText> */}
         </SpaceContainer>
         <RowedView>
           <Row>
@@ -48,9 +49,11 @@ export default function PropertyDetailHeader({
               );
             })}
           </Row>
+          {/*
+          TODO:
           <AddButton onPress={onPressAdd}>
             <SvgPlus style={{ color: THEME_COLOR }} />
-          </AddButton>
+          </AddButton> */}
         </RowedView>
       </Card>
     </View>
@@ -65,9 +68,9 @@ const AddressText = styled(Text)`
   font-size: ${FONT_SIZE_MEDIUM};
 `;
 
-const NewRequestText = styled(Text)`
-  color: ${SECONDARY_COLOR};
-`;
+// const NewRequestText = styled(Text)`
+//   color: ${SECONDARY_COLOR};
+// `;
 
 const Row = styled(View)`
   flex-direction: row;
@@ -85,10 +88,11 @@ const SpaceContainer = styled(RowedView)`
   background-color: ${WHITE};
 `;
 
-const AddButton = styled(TouchableOpacity)`
-  justify-content: center;
-  margin: 0 5px;
-`;
+// const AddButton = styled(TouchableOpacity)`
+//   justify-content: center;
+//   margin: 0 5px;
+// `;
+
 const SegmentText = styled(Text)<SegmentProps>`
   color: ${(props) => (props.isActive ? THEME_COLOR : TEXT_COLOR)};
 `;

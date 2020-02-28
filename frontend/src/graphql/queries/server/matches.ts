@@ -1,5 +1,23 @@
 import gql from 'graphql-tag';
 
+export const GET_PROPERTY_MATCHES_DATA = gql`
+  query PropertyMatches($propertyId: String!) {
+    propertyMatches(propertyId: $propertyId) {
+      brandId
+      pictureUrl
+      name
+      category
+      numExistingLocations
+      matchValue
+      interested
+      verified
+      claimed
+      matchesTenantType
+      exclusivityRisk
+    }
+  }
+`;
+
 export const GET_TENANT_MATCHES_DATA = gql`
   query TenantMatches($brandId: String!) {
     tenantMatches(brandId: $brandId) {
