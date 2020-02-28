@@ -129,7 +129,9 @@ export default function SignUpForm(props: Props) {
 
   if (registerLandlordData) {
     if (registerLandlordData.registerLandlord.message === 'success') {
-      // history.push(`/email-verification/${data.registerLandlord.verificationId}`);
+      history.push(
+        `/landlord/email-verification/${registerLandlordData.registerLandlord.verificationId}`
+      );
     }
   }
 
