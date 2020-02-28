@@ -172,8 +172,10 @@ export default function KeyFacts({ withMargin = true }: Props) {
             <EconomicColumn>
               {numbers2.map((line, i) => {
                 // currently system can only show up to 60 results. so we need to add '+' for values === 60
-                let formattedValues = line === 60 ? line.toString() + '+' : line;
-                return <NumberText key={i}>{getKeyfactsValue(Number(formattedValues))}</NumberText>;
+                let value = getKeyfactsValue(line);
+                let formattedValues =
+                  value === 60 || value === '60' ? value.toString() + '+' : line;
+                return <NumberText key={i}>{formattedValues}</NumberText>;
               })}
             </EconomicColumn>
             <EconomicColumn>
