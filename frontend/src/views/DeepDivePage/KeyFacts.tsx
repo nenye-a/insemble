@@ -158,7 +158,7 @@ export default function KeyFacts({ withMargin = true }: Props) {
                   ? lastIndex
                     ? roundDecimal(line) + '%'
                     : houseHoldIncomeIndex
-                    ? '$' + convertToKilos(line) + 'K'
+                    ? '$' + getKeyfactsValue(line)
                     : getKeyfactsValue(line)
                   : '';
                 return <NumberText key={i}>{formattedValues}</NumberText>;
