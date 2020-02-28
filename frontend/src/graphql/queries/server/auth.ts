@@ -83,3 +83,22 @@ export const REGISTER_LANDLORD = gql`
     }
   }
 `;
+
+export const LOGIN_LANDLORD = gql`
+  mutation LoginLandlord($email: String!, $password: String!) {
+    loginLandlord(email: $email, password: $password) {
+      token
+      landlord {
+        id
+        email
+        firstName
+        lastName
+        avatar
+        company
+        tier
+        title
+        description
+      }
+    }
+  }
+`;
