@@ -1,9 +1,9 @@
-import { mutationField, stringArg } from 'nexus';
+import { queryField, stringArg } from 'nexus';
 import { createSession } from '../../helpers/auth';
 import { Context } from 'serverTypes';
 
-export let landlordVerification = mutationField('landlordVerification', {
-  type: 'LandlordAuth',
+export let landlordVerification = queryField('landlordRegisterVerification', {
+  type: 'LandlordRegisterVerification',
   args: {
     verificationId: stringArg({
       required: true,
@@ -29,8 +29,11 @@ export let landlordVerification = mutationField('landlordVerification', {
       throw new Error('User not found');
     }
     return {
-      token: createSession(landlordUser, 'LANDLORD'),
-      landlord: landlordUser,
+      ...landlordVerification,
+      landlordAuth: {
+        token: createSession(landlordUser, 'LANDLORD'),
+        landlord: landlordUser,
+      },
     };
   },
 });

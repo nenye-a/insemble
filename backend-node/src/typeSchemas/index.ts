@@ -7,6 +7,7 @@ export * from './TenantRegisterResult';
 export * from './Landlord';
 export * from './LandlordAuth';
 export * from './LandlordRegisterInput';
+export * from './LandlordRegisterVerification';
 export * from './LandlordRegisterResult';
 
 export * from './BusinessInput';

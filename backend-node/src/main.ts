@@ -36,7 +36,7 @@ server.express.get(
 );
 
 server.express.get(
-  '/register-tenant-verification/:token',
+  '/register-landlord-verification/:token',
   registerLandlordHandler,
 );
 
