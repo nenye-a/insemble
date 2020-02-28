@@ -6,15 +6,15 @@ import { SENDGRID_API_KEY } from '../constants/constants';
 
 sgMail.setApiKey(SENDGRID_API_KEY);
 
-let tenantVerificationTemplate = fs
-  .readFileSync('src/emailTemplates/tenantVerification.html')
+let emailVerificationTemplate = fs
+  .readFileSync('src/emailTemplates/emailVerification.html')
   .toString();
 
-async function sendTenantVerificationEmail(
+async function sendVerificationEmail(
   receiver: { email: string; name: string },
   link: string,
 ) {
-  let htmlContent = ejs.render(tenantVerificationTemplate, {
+  let htmlContent = ejs.render(emailVerificationTemplate, {
     name: receiver.name,
     url: link,
   });
@@ -28,4 +28,4 @@ async function sendTenantVerificationEmail(
   await sgMail.send(msg);
 }
 
-export { sendTenantVerificationEmail };
+export { sendVerificationEmail };
