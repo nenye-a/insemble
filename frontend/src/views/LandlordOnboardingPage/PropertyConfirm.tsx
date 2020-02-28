@@ -14,14 +14,20 @@ type Props = {
 };
 
 export default function LocationConfirm(props: Props) {
-  let { dispatch } = props;
-  let [selectedRelation, setSelectedRelation] = useState('');
-  let [location, setLocation] = useState<SelectedLocation>();
-  let [selectedType, setSelectedType] = useState<Array<string>>([]);
+  let { state: landlordOnboardingState, dispatch } = props;
+  let { confirmLocation } = landlordOnboardingState;
+  let [selectedRelation, setSelectedRelation] = useState(confirmLocation?.userRelation || '');
+  let [location, setLocation] = useState<SelectedLocation>(
+    confirmLocation?.physicalAddress || { lat: '', lng: '', address: '', id: '', name: '' }
+  );
+  let [selectedType, setSelectedType] = useState<Array<string>>(
+    confirmLocation?.propertyType || []
+  );
   let containerStyle = { marginBottom: 24 };
 
+  let allValid = location && selectedRelation;
+
   useEffect(() => {
-    let allValid = location && selectedRelation;
     if (allValid) {
       dispatch({
         type: 'ENABLE_NEXT_BUTTON',
@@ -30,7 +36,8 @@ export default function LocationConfirm(props: Props) {
         type: 'SAVE_CHANGES_CONFIRM_LOCATION',
         values: {
           confirmLocation: {
-            physicalAddress: location || { lat: '', lng: '', address: '', id: '', name: '' },
+            ...landlordOnboardingState.confirmLocation,
+            physicalAddress: location,
             userRelation: selectedRelation,
             propertyType: selectedType,
           },
@@ -41,12 +48,12 @@ export default function LocationConfirm(props: Props) {
         type: 'DISABLE_NEXT_BUTTON',
       });
     }
-  }, [location, selectedRelation, dispatch, selectedType]);
+  }, [location, selectedRelation, selectedType, allValid, dispatch]);
 
   return (
     <Container>
       <LocationInput
-        defaultValue={location?.address || ''}
+        defaultValue={location.address}
         label="Physical Address"
         placeholder="Property Address"
         onPlaceSelected={(location) => {

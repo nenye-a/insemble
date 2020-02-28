@@ -1,11 +1,10 @@
 import React, { useState, useEffect, Dispatch } from 'react';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
 
-import { TextInput, View, RadioGroup, Text, Label, Button } from '../../core-ui';
+import { View, RadioGroup, Text, Label, Button } from '../../core-ui';
 import { LocationInput } from '../../components';
 import { THEME_COLOR } from '../../constants/colors';
-import { MAPS_IFRAME_URL_SEARCH, MAPS_IFRAME_URL_PLACE } from '../../constants/googleMaps';
+import { MAPS_IFRAME_URL_SEARCH } from '../../constants/googleMaps';
 import { FONT_SIZE_NORMAL } from '../../constants/theme';
 import { Action, State as LandlordOnboardingState } from '../../reducers/landlordOnboardingReducer';
 import { urlEncode } from '../../utils';
@@ -19,12 +18,13 @@ type Props = {
 export default function LocationConfirm(props: Props) {
   let { state: landlordOnboardingState, dispatch } = props;
   let { confirmLocation } = landlordOnboardingState;
-  let [selectedStatus, setSelectedStatus] = useState('');
+  let [selectedMarketingPreference, setSelectedMarketingPreference] = useState(
+    confirmLocation?.marketingPreference || ''
+  );
   let [selectedLocation, setSelectedLocation] = useState<SelectedLocation | undefined>(
     confirmLocation?.physicalAddress
   );
   let [isDisabled, setIsDisabled] = useState(true);
-  let [location, setLocation] = useState('');
   let propertyName = selectedLocation?.name || confirmLocation?.physicalAddress?.name || '';
   let propertyAddress =
     selectedLocation?.address || confirmLocation?.physicalAddress?.address || '';
@@ -33,7 +33,7 @@ export default function LocationConfirm(props: Props) {
     ? MAPS_IFRAME_URL_SEARCH + '&q=' + urlEncode(propertyName + ', ' + propertyAddress)
     : '';
 
-  let allValid = selectedStatus && selectedLocation;
+  let allValid = selectedMarketingPreference && selectedLocation;
 
   useEffect(() => {
     if (allValid) {
@@ -50,14 +50,15 @@ export default function LocationConfirm(props: Props) {
               name: '',
               id: '',
             },
-            marketingPreference: selectedStatus,
+            marketingPreference: selectedMarketingPreference,
           },
         },
       });
     } else {
       dispatch({ type: 'DISABLE_NEXT_BUTTON' });
     }
-  }, [allValid]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allValid, dispatch, selectedLocation, selectedMarketingPreference]);
 
   return (
     <>
@@ -66,7 +67,7 @@ export default function LocationConfirm(props: Props) {
         <RowedView flex>
           <LocationInput
             label="Property Name"
-            defaultValue={confirmLocation?.physicalAddress?.address || ''}
+            defaultValue={selectedLocation?.address || ''}
             onPlaceSelected={(location) => setSelectedLocation(location)}
             disabled={isDisabled}
           />
@@ -84,9 +85,9 @@ export default function LocationConfirm(props: Props) {
             'Public — I want to publicly advertise my property to matching tenants.',
             'Private — I want to connect with matching tenants without publicly listing my property.',
           ]}
-          selectedOption={selectedStatus}
+          selectedOption={selectedMarketingPreference}
           onSelect={(item) => {
-            setSelectedStatus(item);
+            setSelectedMarketingPreference(item);
           }}
           radioItemProps={{ style: { marginTop: 9 } }}
         />

@@ -65,7 +65,6 @@ export default function MultiSelectInput(props: Props) {
           value={inputValue}
           placeholder={placeholder}
           onClick={() => setFocus(document.getElementById('search') === document.activeElement)}
-          onBlur={() => setFocus(document.getElementById('search') === document.activeElement)}
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
             setInputValue(event.target.value.toLocaleLowerCase())
           }
@@ -95,6 +94,7 @@ export default function MultiSelectInput(props: Props) {
                   onPress={() => {
                     setInputValue('');
                     setSelectedValues([...selectedValues, item]);
+                    console.log(item, selectedValues, 'HAHA');
                     setFocus(document.getElementById('search') === document.activeElement);
                   }}
                 >

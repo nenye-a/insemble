@@ -14,10 +14,22 @@ type ConfirmTenant = {
   existingExclusives: Array<string>;
 };
 
+type SpaceListing = {
+  mainPhoto: Blob;
+  propertyPhotos: Array<Blob>;
+  description: string;
+  condition: string;
+  sqft: string;
+  pricePerSqft: string;
+  equipments: Array<string>;
+  availability: string;
+};
+
 export type State = {
   canPressNext: boolean;
   confirmLocation?: ConfirmLocation;
   confirmTenant?: ConfirmTenant;
+  spaceListing?: SpaceListing;
 };
 
 export type Action =
@@ -36,6 +48,10 @@ export type Action =
   | {
       type: 'SAVE_CHANGES_CONFIRM_TENANT';
       values: { confirmTenant: ConfirmTenant };
+    }
+  | {
+      type: 'SAVE_CHANGES_NEW_LISTING';
+      values: { spaceListing: SpaceListing };
     };
 
 export let landlordOnboardingInitialState = {
@@ -54,7 +70,8 @@ export default function landlordOnboardingReducer(state: State, action: Action):
       return { ...state, canPressNext: true };
     }
     case 'SAVE_CHANGES_CONFIRM_LOCATION':
-    case 'SAVE_CHANGES_CONFIRM_TENANT': {
+    case 'SAVE_CHANGES_CONFIRM_TENANT':
+    case 'SAVE_CHANGES_NEW_LISTING': {
       return { ...state, ...action.values };
     }
     default:
