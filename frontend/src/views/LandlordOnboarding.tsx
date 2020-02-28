@@ -7,12 +7,11 @@ import landlordOnboardingReducer, {
   landlordOnboardingInitialState,
 } from '../reducers/landlordOnboardingReducer';
 import OnboardingCard from './OnboardingPage/OnboardingCard';
-import PreviewListing from './LandlordOnboarding/PreviewListing';
-import LandlordListing from './LandlordOnboarding/LandlordListing';
 import LocationConfirm from './LandlordOnboardingPage/LocationConfirm';
 import PropertyConfirm from './LandlordOnboardingPage/PropertyConfirm';
 import TenantConfirm from './LandlordOnboardingPage/TenantConfirm';
 import LandlordListing from './LandlordOnboardingPage/LandlordListing';
+import PreviewListing from './LandlordOnboardingPage/PreviewListing';
 import ThankYou from './LandlordOnboardingPage/ThankYou';
 
 export default function LandlordOnboarding() {
@@ -54,20 +53,7 @@ export default function LandlordOnboarding() {
         },
       ],
     },
-    {
-      title: 'Let’s build your listings!',
-      content: LandlordListing,
-      buttons: [
-        {
-          text: 'Back',
-          onPress: onNextPress,
-        },
-        {
-          text: 'Next',
-          onPress: onNextPress,
-        },
-      ],
-    },
+
     {
       title: 'What types of tenants are you looking for?',
       content: TenantConfirm,
@@ -83,8 +69,22 @@ export default function LandlordOnboarding() {
       ],
     },
     {
+      title: 'Let’s build your listings!',
+      content: LandlordListing,
+      buttons: [
+        {
+          text: 'Back',
+          onPress: onNextPress,
+        },
+        {
+          text: 'Next',
+          onPress: onNextPress,
+        },
+      ],
+    },
+    {
       title: 'Preview your listing',
-      content: <PreviewListing />,
+      content: PreviewListing,
       buttons: [
         {
           text: 'Back',

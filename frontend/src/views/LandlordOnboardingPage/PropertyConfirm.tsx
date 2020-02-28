@@ -13,7 +13,7 @@ type Props = {
   state: LandlordOnboardingState;
 };
 
-export default function LocationConfirm(props: Props) {
+export default function PropertyConfirm(props: Props) {
   let { state: landlordOnboardingState, dispatch } = props;
   let { confirmLocation } = landlordOnboardingState;
   let [selectedRelation, setSelectedRelation] = useState(confirmLocation?.userRelation || '');
