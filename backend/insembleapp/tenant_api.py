@@ -91,7 +91,7 @@ class FilterDetailAPI(generics.GenericAPIView):
             'education': matching.EDUCATION_LIST,
             'ethnicity': matching.RACE_LIST,
             'commute': matching.TRANSPORT_LIST,
-            'type': ["Free standing, Shopping Center, Inline, Endcap, and Pedestrian"],
+            'type': ["Free standing", "Shopping Center", "Inline", "Endcap", "Pedestrian"],
             'equipment': provider.EQUIPMENT_LIST
         }
         return Response(response, status=status.HTTP_200_OK)
@@ -143,13 +143,15 @@ class TenantMatchAPI(AsynchronousAPI):
         ],
         matching_properties: [              (not provided if error occurs) - may be empty
             {                               (all fields provided if matching properties provided)
-                'address': string,
-                'rent':  int,
-                'sqft': int,
-                'type': string,
+                property_id: string
+                address: string,
+                rent:  int,
+                sqft: int,
+                type: string,
             }
+            ... many more
         ],
-        tenant_id: string                   (always provided)
+         tenant_id: string                   (always provided)
     }
 
     """
@@ -168,7 +170,7 @@ class TenantMatchAPI(AsynchronousAPI):
         serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
 
-        # STORE THE REQUEST INFORMATION IN THE DATABASE
+        # PREPARE TO STORE THE REQUEST INFORMATION IN THE DATABASE
         database_update = {'search_details': validated_params}
 
         # ASYNCHRONOUSLY GENERATE MATCH DETAILS & OBTAIN OBJECT ID
@@ -179,10 +181,6 @@ class TenantMatchAPI(AsynchronousAPI):
             m_process, match_details = self.generate_matches.delay(address, name=name, options=validated_params), []
             match_listener = self._celery_listener(m_process, match_details)
             match_listener.start()
-
-            # matches, tenant_id = matching.generate_matches(
-            #     address, name=name
-            # )
 
         else:
             categories = validated_params['categories']
@@ -197,11 +195,6 @@ class TenantMatchAPI(AsynchronousAPI):
             else:
                 match_listener = None
                 match_details = [([], None)]
-            #     matches, tenant_id = matching.generate_matches(
-            #         address, name=name
-            #     )
-            # else:
-            #     matches, tenant_id = [], None
 
         # TODO: GENERATE TENANT LOCATION DETAILS
         tenant_details, rep_id = self.build_location(address, brand_name=name)
@@ -244,7 +237,7 @@ class TenantMatchAPI(AsynchronousAPI):
             tenant_details.update(demo)
             tenant_details.update(psycho)
         else:
-            # no place found, return error.
+            # TODO: no place found (return error more smartly)
             pass
 
         if match_listener:
@@ -818,7 +811,7 @@ class FastLocationDetailsAPI(AsynchronousAPI):
             lat, lng, 'university', radius=radius)
         nearby_hospitals = place['nearby_hospital'] if 'nearby_hospital' in place else google.nearby(
             lat, lng, 'hospital', radius=radius)
-        nearby_apartments = place['nearby_apartments'] if 'nearby_apartments' in place else googl.search(
+        nearby_apartments = place['nearby_apartments'] if 'nearby_apartments' in place else google.search(
             lat, lng, 'apartments', radius=radius)
 
         return {

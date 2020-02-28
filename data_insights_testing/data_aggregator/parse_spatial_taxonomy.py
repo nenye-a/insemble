@@ -1,3 +1,4 @@
+import pandas
 import json
 import utils
 from fuzzywuzzy import fuzz
@@ -19,6 +20,17 @@ def parse_taxonomy():
 
     utils.db_index(utils.DB_SPATIAL_TAXONOMY, "label", unique=True)
     utils.DB_SPATIAL_TAXONOMY.insert_many(list(spatial_taxonomy.values()))
+
+
+def parse_taxonomy_csv():
+
+    # with open('raw_data/Taxonomy Metadata.csv') as f:
+    taxonomy = utils.read_dataframe_csv('raw_data/Taxonomy Metadata.csv', is_zipped=False)
+    taxonomy_dict = taxonomy.to_dict(orient='records')
+    for item in taxonomy_dict:
+        utils.DB_SPATIAL_TAXONOMY.update_one({"label": item["label"]}, {'$set': {
+            "photo": item["image_link"]
+        }})
 
 
 def orient_categories_to_personas_exact():
@@ -90,5 +102,5 @@ def orient_categories_to_personas_fuzzy():
 
 
 if __name__ == "__main__":
-    # parse_taxonomy()
+    parse_taxonomy_csv()
     # orient_categories_to_personas_fuzzy()
