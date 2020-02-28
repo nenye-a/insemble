@@ -8,6 +8,7 @@ import TouchableOpacity from './TouchableOpacity';
 import placeholder from '../assets/images/image-placeholder.jpg';
 import SvgCircleClose from '../components/icons/circle-close';
 import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
+import { BORDER_COLOR } from '../constants/colors';
 
 export type FileWithPreview = { file: File; preview: string };
 
@@ -51,7 +52,7 @@ export default function Dropzone(props: Props) {
           } else if (source) {
             content = <Image src={source} />;
           } else {
-            content = <Placeholder src={placeholder} />;
+            content = <Image src={placeholder} />;
           }
           return (
             <View {...getRootProps()}>
@@ -70,19 +71,11 @@ export default function Dropzone(props: Props) {
   );
 }
 
-const Placeholder = styled.img`
-  height: 160px;
-  object-fit: cover;
-  border: 1px solid white;
-  border-radius: ${DEFAULT_BORDER_RADIUS};
-  width: 100%;
-`;
-
 const Image = styled.img`
-  object-fit: cover;
-  border: 1px solid white;
-  border-radius: ${DEFAULT_BORDER_RADIUS};
   height: 160px;
+  object-fit: cover;
+  border: 1px solid ${BORDER_COLOR};
+  border-radius: ${DEFAULT_BORDER_RADIUS};
 `;
 
 const CloseButtonWrapper = styled(TouchableOpacity)`

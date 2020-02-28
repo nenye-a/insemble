@@ -48,6 +48,7 @@ export default function LocationConfirm(props: Props) {
         type: 'DISABLE_NEXT_BUTTON',
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location, selectedRelation, selectedType, allValid, dispatch]);
 
   return (

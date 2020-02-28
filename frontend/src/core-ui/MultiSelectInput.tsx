@@ -94,7 +94,6 @@ export default function MultiSelectInput(props: Props) {
                   onPress={() => {
                     setInputValue('');
                     setSelectedValues([...selectedValues, item]);
-                    console.log(item, selectedValues, 'HAHA');
                     setFocus(document.getElementById('search') === document.activeElement);
                   }}
                 >

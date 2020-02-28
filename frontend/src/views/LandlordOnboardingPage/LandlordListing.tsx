@@ -11,7 +11,6 @@ import {
   Label,
   MultiSelectInput,
   Alert,
-  Form,
   Text,
 } from '../../core-ui';
 import PhotosPicker from './PhotosPicker';
@@ -78,7 +77,6 @@ export default function LandlordListing(props: Props) {
           setAdditionalPhotos(files);
         }}
       />
-      {/* <Form> */}
       <TextArea
         label="Description"
         placeholder="Enter Description"
@@ -148,7 +146,6 @@ export default function LandlordListing(props: Props) {
           text="You will be able to add more spaces later"
         />
       </DatePickerContainer>
-      {/* </Form> */}
     </Container>
   );
 }
