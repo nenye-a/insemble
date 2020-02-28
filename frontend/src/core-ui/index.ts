@@ -8,6 +8,7 @@ export { default as ClickAway } from './ClickAway';
 export { default as Collapsible } from './Collapsible';
 export { default as ContainedTextInput } from './ContainedTextInput';
 export { default as Dropdown } from './Dropdown';
+export { default as Dropzone } from './Dropzone';
 export { default as Form } from './Form';
 export { default as FragmentedProgressBar } from './FragmentedProgressBar';
 export { default as Label } from './Label';
