@@ -10,7 +10,7 @@ import {
 } from '../../constants/theme';
 import { THEME_COLOR, COMMUTE_CHART_COLORS, SECONDARY_COLOR } from '../../constants/colors';
 import { DeepDiveContext } from './DeepDiveModal';
-import { convertToKilos, roundDecimal } from '../../utils';
+import { convertToKilos, roundDecimal, getKeyfactsValue } from '../../utils';
 
 type Data = {
   name: string;
@@ -84,6 +84,7 @@ export default function KeyFacts({ withMargin = true }: Props) {
   };
 
   let sortedData = commuteData && commuteData.sort((a, b) => (a.value > b.value ? -1 : 1));
+
   let numbers1 = [
     keyFactsData?.daytimePop,
     keyFactsData?.mediumHouseholdIncome,
@@ -157,8 +158,8 @@ export default function KeyFacts({ withMargin = true }: Props) {
                   ? lastIndex
                     ? roundDecimal(line) + '%'
                     : houseHoldIncomeIndex
-                    ? '$' + convertToKilos(line) + 'K'
-                    : convertToKilos(line) + 'K'
+                    ? '$' + getKeyfactsValue(line)
+                    : getKeyfactsValue(line)
                   : '';
                 return <NumberText key={i}>{formattedValues}</NumberText>;
               })}
@@ -171,7 +172,9 @@ export default function KeyFacts({ withMargin = true }: Props) {
             <EconomicColumn>
               {numbers2.map((line, i) => {
                 // currently system can only show up to 60 results. so we need to add '+' for values === 60
-                let formattedValues = line === 60 ? line.toString() + '+' : line;
+                let value = getKeyfactsValue(line);
+                let formattedValues =
+                  value === 60 || value === '60' ? value.toString() + '+' : line;
                 return <NumberText key={i}>{formattedValues}</NumberText>;
               })}
             </EconomicColumn>
