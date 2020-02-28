@@ -26,6 +26,7 @@ DB_REQUESTS = client.requests
 DB_APP = client.appMatchData
 DB_TENANT = DB_APP.tenant_details
 DB_PROPERTY = DB_APP.property_details
+DB_BRANDS = DB_APP.validated_brand_details
 DB_AGGREGATE = DB_SPACE.aggregate_records
 DB_COLLECT = DB_SPACE.collect_records
 DB_ZIP_CODES = DB_SPACE.zip_codes
