@@ -5,8 +5,8 @@ import ContactModal from './ContactModal';
 import { FONT_SIZE_LARGE } from '../../constants/theme';
 
 type Props = {
-  isLiked: boolean;
-  onLikePress: (isLiked: boolean) => void;
+  isLiked?: boolean;
+  onLikePress?: (isLiked: boolean) => void;
   address: string;
   targetNeighborhood: string;
 };

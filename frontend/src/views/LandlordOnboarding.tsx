@@ -8,6 +8,7 @@ import LocationConfirm from './LandlordOnboarding/LocationConfirm';
 import PropertyConfirm from './LandlordOnboarding/PropertyConfirm';
 import TenantConfirm from './LandlordOnboarding/TenantConfirm';
 import ThankYou from './LandlordOnboarding/ThankYou';
+import PreviewListing from './LandlordOnboarding/PreviewListing';
 import LandlordListing from './LandlordOnboarding/LandlordListing';
 
 export default function LandlordOnboarding() {
@@ -64,6 +65,20 @@ export default function LandlordOnboarding() {
     {
       title: 'What types of tenants are you looking for?',
       content: <TenantConfirm />,
+      buttons: [
+        {
+          text: 'Back',
+          onPress: onBackPress,
+        },
+        {
+          text: 'Next',
+          onPress: onNextPress,
+        },
+      ],
+    },
+    {
+      title: 'Preview your listing',
+      content: <PreviewListing />,
       buttons: [
         {
           text: 'Back',

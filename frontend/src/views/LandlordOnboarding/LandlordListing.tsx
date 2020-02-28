@@ -32,7 +32,8 @@ export default function LandlordListing() {
   let { register, errors } = useForm();
   let [photos, setPhotos] = useState<Array<string | null>>(PHOTOS);
   photos = PHOTOS;
-  if (photos.length < 5) {
+
+  while (photos.length < 5) {
     photos.push(null);
     setPhotos(photos);
   }

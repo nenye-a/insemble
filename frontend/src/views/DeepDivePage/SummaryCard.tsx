@@ -22,7 +22,7 @@ export default function SummaryCard({
   ...otherProps
 }: Props) {
   return (
-    <Card title="Summary" titleBackground="grey" {...otherProps}>
+    <Card title="Summary" titleBackground="purple" {...otherProps}>
       <ContentContainer>
         <RowedView>
           <View flex>
