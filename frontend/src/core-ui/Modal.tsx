@@ -12,6 +12,7 @@ type Props = ComponentProps<typeof View> & {
   onClose?: () => void;
   overlayStyle?: CSSProperties;
   svgCloseProps?: SVGProps<typeof SvgClose>;
+  backgroundColor?: string;
 };
 
 export default function Modal({
@@ -20,12 +21,13 @@ export default function Modal({
   visible,
   overlayStyle,
   svgCloseProps,
+  backgroundColor = WHITE,
   ...otherProps
 }: Props) {
   if (visible) {
     return ReactDOM.createPortal(
       <Overlay style={overlayStyle}>
-        <ModalDialog aria-modal role="dialog" {...otherProps}>
+        <ModalDialog backgroundColor={backgroundColor} aria-modal role="dialog" {...otherProps}>
           <CloseIcon onPress={onClose}>
             <SvgClose {...svgCloseProps} />
           </CloseIcon>
@@ -50,8 +52,8 @@ const Overlay = styled(View)`
   justify-content: center;
 `;
 
-const ModalDialog = styled(View)`
-  background-color: ${WHITE};
+const ModalDialog = styled(View)<Props>`
+  background-color: ${({ backgroundColor }) => backgroundColor};
   width: 960px;
   height: 100%;
 `;

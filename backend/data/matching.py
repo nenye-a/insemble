@@ -9,7 +9,9 @@ import data.api.arcgis as arcgis
 import data.api.environics as environics
 
 '''
-Test file for matching algorithms.
+
+Retailer focused matching algorithms, in addition to some general Insemble matching utility functions.
+
 '''
 
 AWS_ACCESS_KEY_ID = settings.AWS_ACCESS_KEY_ID

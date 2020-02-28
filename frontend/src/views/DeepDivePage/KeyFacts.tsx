@@ -8,16 +8,19 @@ import {
   FONT_SIZE_MEDIUM,
   FONT_SIZE_XXLARGE,
 } from '../../constants/theme';
-import { THEME_COLOR, COMMUTE_CHART_COLORS } from '../../constants/colors';
+import { THEME_COLOR, COMMUTE_CHART_COLORS, SECONDARY_COLOR } from '../../constants/colors';
 import { DeepDiveContext } from './DeepDiveModal';
-import { convertToKilos, roundDecimal } from '../../utils';
+import { convertToKilos, roundDecimal, getKeyfactsValue } from '../../utils';
 
 type Data = {
   name: string;
   value: number;
 };
 
-export default function KeyFacts() {
+type Props = {
+  withMargin?: boolean;
+};
+export default function KeyFacts({ withMargin = true }: Props) {
   let data = useContext(DeepDiveContext);
   let commuteData = data?.result?.commute;
   let keyFactsData = data?.result?.keyFacts;
@@ -81,6 +84,7 @@ export default function KeyFacts() {
   };
 
   let sortedData = commuteData && commuteData.sort((a, b) => (a.value > b.value ? -1 : 1));
+
   let numbers1 = [
     keyFactsData?.daytimePop,
     keyFactsData?.mediumHouseholdIncome,
@@ -100,8 +104,9 @@ export default function KeyFacts() {
     'Total Household Growth',
   ];
   let categories2 = ['Metro stations', 'Universities', 'Hospitals', 'Apartments'];
-  return (
-    <Container>
+
+  let content = (
+    <>
       <TextView>
         <Title>Key Facts & Growth</Title>
         {keyFactsData?.mile && <Radius>within {keyFactsData.mile} miles</Radius>}
@@ -139,9 +144,9 @@ export default function KeyFacts() {
             </PieChart>
             {/* hiding this until data is ready */}
             {/* <TextView>
-              <AverageTime>Average time to work: </AverageTime>
-              <Time>{time}mins</Time>
-            </TextView> */}
+            <AverageTime>Average time to work: </AverageTime>
+            <Time>{time}mins</Time>
+          </TextView> */}
           </CommuteView>
         ) : (
           <EconomicView flex>
@@ -153,8 +158,8 @@ export default function KeyFacts() {
                   ? lastIndex
                     ? roundDecimal(line) + '%'
                     : houseHoldIncomeIndex
-                    ? '$' + convertToKilos(line) + 'K'
-                    : convertToKilos(line) + 'K'
+                    ? '$' + getKeyfactsValue(line)
+                    : getKeyfactsValue(line)
                   : '';
                 return <NumberText key={i}>{formattedValues}</NumberText>;
               })}
@@ -167,7 +172,9 @@ export default function KeyFacts() {
             <EconomicColumn>
               {numbers2.map((line, i) => {
                 // currently system can only show up to 60 results. so we need to add '+' for values === 60
-                let formattedValues = line === 60 ? line.toString() + '+' : line;
+                let value = getKeyfactsValue(line);
+                let formattedValues =
+                  value === 60 || value === '60' ? value.toString() + '+' : line;
                 return <NumberText key={i}>{formattedValues}</NumberText>;
               })}
             </EconomicColumn>
@@ -179,8 +186,9 @@ export default function KeyFacts() {
           </EconomicView>
         )}
       </RowedView>
-    </Container>
+    </>
   );
+  return withMargin ? <Container>{content}</Container> : <View>{content}</View>;
 }
 
 const Container = styled(Card)`
@@ -236,7 +244,7 @@ const CommuteView = styled(View)`
 const NumberText = styled(Text)`
   font-size: ${FONT_SIZE_XXLARGE};
   font-weight: ${FONT_WEIGHT_BOLD};
-  color: ${THEME_COLOR};
+  color: ${SECONDARY_COLOR};
   margin: 24px 0 24px 24px;
 `;
 

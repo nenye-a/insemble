@@ -228,7 +228,7 @@ export default function TenantTargetCustomers(props: Props) {
           visible
           search
           noPreferenceButton
-          link="http://www.insemblegroup.com"
+          link="https://taxonomy.spatial.ai/"
           linkTitle="Psychographics"
           hasPreference={!noPersonasPreference}
           onNoPreferencePress={() => {

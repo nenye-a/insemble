@@ -10,6 +10,7 @@ import { BACKGROUND_COLOR, GREY_ICON, THEME_COLOR } from '../../constants/colors
 import SvgGrid from '../../components/icons/grid';
 import SvgList from '../../components/icons/list';
 import { DeepDiveContext } from './DeepDiveModal';
+import { EmptyDataComponent } from '../../components';
 
 type ViewMode = 'grid' | 'list';
 
@@ -27,32 +28,27 @@ export type NearbyPlace = {
 };
 
 export default function NearbyCard() {
-  let [selectedView, setSelectedView] = useState<ViewMode>('grid');
-  let [selectedDropdownVal, setSelectedDropdownVal] = useState('Relevant');
+  let [selectedView, setSelectedView] = useState<ViewMode>('list');
+  let [selectedDropdownVal, setSelectedDropdownVal] = useState('Most Popular');
   let isGridViewMode = selectedView === 'grid';
   let data = useContext(DeepDiveContext);
   let nearbyData = data?.result?.nearby;
   let filteredData = useMemo(() => {
     switch (selectedDropdownVal) {
-      case 'Relevant': {
-        return nearbyData;
-      }
       case 'Similar': {
-        return nearbyData?.filter((item) => item.similar);
+        return nearbyData?.filter((item) => item.similar).slice(0, 20);
       }
       case 'Distance': {
-        return nearbyData?.sort((a, b) => a.distance - b.distance);
+        return nearbyData?.sort((a, b) => a.distance - b.distance).slice(0, 30);
       }
       case 'Rating': {
-        return nearbyData?.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        return nearbyData?.sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 20);
       }
-      case 'Total Rating': {
-        return nearbyData?.sort((a, b) => b.numberRating - a.numberRating);
+      case 'Most Popular': {
+        return nearbyData?.sort((a, b) => b.numberRating - a.numberRating).slice(0, 20);
       }
     }
   }, [selectedDropdownVal, nearbyData]);
-
-  let top15Data = filteredData?.slice(0, 15);
 
   let iconTab = (
     <RightTitleContainer>
@@ -81,12 +77,12 @@ export default function NearbyCard() {
       titleContainerProps={{ style: { height: 56 } }}
     >
       <RowedView flex>
-        <NearbyMap data={top15Data || []} />
+        <NearbyMap data={filteredData || []} />
         <View flex>
           <NearbyMapLegend />
           <RightContent flex>
             <Dropdown
-              options={['Relevant', 'Similar', 'Distance', 'Rating', 'Total Rating']}
+              options={['Most Popular', 'Distance', 'Rating', 'Similar']}
               onSelect={(newValue) => {
                 setSelectedDropdownVal(newValue);
               }}
@@ -95,9 +91,13 @@ export default function NearbyCard() {
             />
 
             <NearbyPlacesCardContainer flex>
-              {isGridViewMode
-                ? top15Data?.map((item, index) => <MiniNearbyPlacesCard key={index} {...item} />)
-                : top15Data?.map((item, index) => <NearbyPlacesCard key={index} {...item} />)}
+              {filteredData?.length === 0 ? (
+                <EmptyDataComponent />
+              ) : isGridViewMode ? (
+                filteredData?.map((item, index) => <MiniNearbyPlacesCard key={index} {...item} />)
+              ) : (
+                filteredData?.map((item, index) => <NearbyPlacesCard key={index} {...item} />)
+              )}
             </NearbyPlacesCardContainer>
           </RightContent>
         </View>

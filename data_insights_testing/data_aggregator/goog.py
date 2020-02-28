@@ -207,6 +207,57 @@ def search(lat, lng, query, radius=1, pagetoken=None):
 
     return result['results']
 
+# Provided a retailer name and landlords location, method finds all of the local locations of that retailer
+
+
+def portfolio(lat, lng, name, pagetoken=None):
+
+    url = GOOG_NEARBY_ENDPOINT
+
+    payload = {}
+    headers = {}
+
+    params = {
+        'key': GOOG_KEY
+    }
+
+    # get next page from previous request, or initiate new request
+    if pagetoken:
+        params.update({
+            'pagetoken': pagetoken
+        })
+    else:
+        location = str(lat) + ',' + str(lng)
+        params.update({
+            'location': location,
+            'name': name,
+            'language': 'en',
+            'rankby': 'distance'
+        })
+
+    result, _id = safe_request.request(
+        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
+
+    # evaluate if call failed due to unstaged google next page. If so, try again
+    # otherwise, return None. Proceed to check if there's a new page. Paths should
+    # never be possible to occur at the same time but elif for extra safety
+    next_page = None
+    if not result:
+        return None
+    if result['status'] == 'INVALID_REQUEST':
+        utils.DB_REQUESTS[API_NAME].delete_one({'_id': _id})
+        if not pagetoken:
+            return None
+        next_page = portfolio(lat, lng, name, pagetoken=pagetoken)
+    elif "next_page_token" in result:
+        next_page_token = result["next_page_token"]
+        next_page = portfolio(lat, lng, name, pagetoken=next_page_token)
+
+    if next_page:
+        result['results'].extend(next_page)
+
+    return result['results']
+
 
 if __name__ == "__main__":
 
@@ -233,6 +284,14 @@ if __name__ == "__main__":
         lng = -118.404085
         location = reverse_geocode(lat, lng)
         pprint.pprint(location)
+
+    def test_portfolio():
+        item = portfolio(34.0482327, -118.239857, 'Le Pain Quotidien')
+        print(item)
+        print(len(item))
+        print("rating", item[0]['rating'])
+
+    test_portfolio()
 
     # test_find()
     # print(find("5011 S Western Ave, Los Angeles, CA 90062", name='Sonsonate Grill', allow_non_establishments=True))

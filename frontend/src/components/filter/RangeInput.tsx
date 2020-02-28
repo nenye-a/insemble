@@ -12,7 +12,7 @@ export default function RangeInput(props: Props) {
   return (
     <Container {...otherProps}>
       <TextInput
-        placeholder="Low"
+        placeholder="" // not that previous placeholder is "Low". In the short term, removing due to use for minumum.
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           onLowRangeInputChange && onLowRangeInputChange(e.target.value);
         }}

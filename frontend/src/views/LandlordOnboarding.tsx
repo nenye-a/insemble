@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
-import { View } from '../core-ui';
+import View from '../core-ui/View';
 import OnboardingCard from './OnboardingPage/OnboardingCard';
 import LocationConfirm from './LandlordOnboarding/LocationConfirm';
 import PropertyConfirm from './LandlordOnboarding/PropertyConfirm';
 import TenantConfirm from './LandlordOnboarding/TenantConfirm';
 import ThankYou from './LandlordOnboarding/ThankYou';
+import PreviewListing from './LandlordOnboarding/PreviewListing';
+import LandlordListing from './LandlordOnboarding/LandlordListing';
 
 export default function LandlordOnboarding() {
   let [activeSegmentIndex, setActiveSegmentIndex] = useState(0);
@@ -47,8 +49,36 @@ export default function LandlordOnboarding() {
       ],
     },
     {
+      title: 'Let’s build your listings!',
+      content: <LandlordListing />,
+      buttons: [
+        {
+          text: 'Back',
+          onPress: onNextPress,
+        },
+        {
+          text: 'Next',
+          onPress: onNextPress,
+        },
+      ],
+    },
+    {
       title: 'What types of tenants are you looking for?',
       content: <TenantConfirm />,
+      buttons: [
+        {
+          text: 'Back',
+          onPress: onBackPress,
+        },
+        {
+          text: 'Next',
+          onPress: onNextPress,
+        },
+      ],
+    },
+    {
+      title: 'Preview your listing',
+      content: <PreviewListing />,
       buttons: [
         {
           text: 'Back',

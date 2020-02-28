@@ -10,12 +10,15 @@ import data.api.arcgis as arcgis
 import data.api.environics as environics
 import data.api.anmspatial as anmspatial
 import data.api.spatial as spatial
+import data.api.justice as justice
 
 
 '''
 
-This file will the main provider of key details that need to leverage the api. This will be the interface
-between the main application api, and our calls data_api calls.
+Tenant provider
+
+This file will be the main provider of data and functions to the retailer api. This will be the main interface
+between the actual api, and the actual underlying data infrastructure.
 
 '''
 
@@ -79,7 +82,7 @@ def get_address_neighborhood(lat, lng):
     """
 
     Returns the address and neighborhood of a specific latitude and longitude. If running into issues
-    make sure that you have an authorized API_KEY. 
+    make sure that you have an authorized API_KEY.
 
     """
 
@@ -550,16 +553,26 @@ def _update_all_places(lat, lng, nearby_dict, categories):
         if nearby_dict[place['place_id']]['distance'] == None:
             nearby_dict[place['place_id']]['distance'] = utils.distance((lat, lng), (this_location_lat, this_location_lng))
 
-    for place_id in nearby_dict.keys():
+    # # Remove getting extra details that aren't here because it's slow
+    # # TODO:Should move nearby details to seperate api endpoint due to speed.
+    for place_id in list(nearby_dict.keys()):
         if place_id not in seen_ids:
-            place = google.details(place_id)
-            nearby_dict[place_id].update({
-                'lat': place['geometry']['location']['lat'],
-                'lng': place['geometry']['location']['lng'],
-                'name': place['name'],
-                'rating': place['rating'] if 'rating' in place else None,
-                'number_rating': place['user_ratings_total'] if 'user_ratings_total' in place else None
-            })
+            # Instead of getting the details if not present, we remove right now.
+            nearby_dict.pop(place_id)
+
+            # TODO: Re-enable
+            # place = google.details(place_id)
+            # if not place:
+            #     # remove any place that we don't have from google
+            #     nearby_dict.pop(place_id)
+            #     continue
+            # nearby_dict[place_id].update({
+            #     'lat': place['geometry']['location']['lat'],
+            #     'lng': place['geometry']['location']['lng'],
+            #     'name': place['name'],
+            #     'rating': place['rating'] if 'rating' in place else None,
+            #     'number_rating': place['user_ratings_total'] if 'user_ratings_total' in place else None
+            # })
 
     return nearby_dict
 
@@ -616,7 +629,7 @@ def get_match_value(target, location):
 def get_matching_personas(target, location):
     """
     Receiving un-processed vectors geneated during the matching.generate_matches() process [as of 2/5/20],
-    generates the top 3 matching psychogrpahics. Top 3 matching psychographics are currently the highest 
+    generates the top 3 matching psychogrpahics. Top 3 matching psychographics are currently the highest
     rated of the most similar psychographics.
     """
 
@@ -636,15 +649,24 @@ def get_matching_personas(target, location):
     top_3_largest_similar_personas = list(top_10_similar.columns[largest_similar_3_columns])
     print(top_3_largest_similar_personas)
 
-    detailed_personas = utils.DB_SPATIAL_TAXONOMY.find({'label': {'$in': top_3_largest_similar_personas}})
-
     persona_values = dict(target_df.iloc[0][top_3_largest_similar_personas])
+
+    return fill_personas(persona_values)
+
+
+def fill_personas(personas_dict):
+    """
+    Given a list of personas, as well as their values, will find all the details for the personas.
+    """
+
+    detailed_personas = utils.DB_SPATIAL_TAXONOMY.find({'label': {'$in': list(personas_dict.keys())}})
 
     return [{
         "name": persona["label"],
-        "percentile": persona_values[persona["label"]],
+        "percentile": personas_dict[persona["label"]],
         "description": persona["sections"]["overview"]["description"],
         "tags": persona["sections"]["topics"]["list"],
+        "photo": persona["photo"]
     } for persona in detailed_personas]
 
 
@@ -785,8 +807,7 @@ def get_tenant_details(tenant_id):
     if 'arcgis_details1' not in details:
         # proxy to determining if we need to check the rep id.
         details = utils.DB_PROCESSED_SPACE.find_one({'_id': tenant_id['rep_id']}, {'_id': 0})
-    else:
-        return tenant['tenant_details']
+    return details
 
     # # TODO: implement case the generates the details when we don't have tenant_id
     # tenant = utils.DB_PROCESSED_SPACE.find_one()
@@ -798,14 +819,14 @@ def get_location_details(location):
     lng = location['lng']
 
     space = get_nearest_space(lat, lng, database='vectors')
-    vector_id = space["_id"]
     if space:
+        vector_id = space["_id"]
         space = utils.DB_PROCESSED_SPACE.find_one({'_id': space['loc_id']})
         space["vector_id"] = vector_id
         return space
     else:
-        # TODO: get all the details any way and return if there is no space.
-        pass
+        # if nothing, get the details the old way.
+        return None
 
 
 def get_match_value_from_id(tenant_id, vector_id):

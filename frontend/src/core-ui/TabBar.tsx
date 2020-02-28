@@ -11,17 +11,19 @@ type Props = {
   verticalMode?: boolean;
   activeTab: number;
   onPress: (index: number) => void;
+  fullWidth?: boolean;
 };
 
 export default function TabBar(props: Props) {
-  let { options, verticalMode, activeTab, onPress } = props;
+  let { options, verticalMode, activeTab, onPress, fullWidth = true } = props;
 
   return verticalMode ? (
     <VerticalView>
       {options.map((option, index) => {
+        let isTabActive = activeTab === index;
         return (
           <VerticalSegment key={index} onPress={() => onPress(index)}>
-            <VerticalSegmentText isActive={activeTab === index}>{option}</VerticalSegmentText>
+            <VerticalSegmentText isActive={isTabActive}>{option}</VerticalSegmentText>
           </VerticalSegment>
         );
       })}
@@ -30,9 +32,14 @@ export default function TabBar(props: Props) {
   ) : (
     <HorizontalView>
       {options.map((option, index) => {
-        return (
-          <TabSegment isActive={activeTab === index} key={index} onPress={() => onPress(index)}>
-            <SegmentText isActive={activeTab === index}>{option}</SegmentText>
+        let isTabActive = activeTab === index;
+        return fullWidth ? (
+          <FullWidthTabSegment isActive={isTabActive} key={index} onPress={() => onPress(index)}>
+            <SegmentText isActive={isTabActive}>{option}</SegmentText>
+          </FullWidthTabSegment>
+        ) : (
+          <TabSegment isActive={isTabActive} key={index} onPress={() => onPress(index)}>
+            <SegmentText isActive={isTabActive}>{option}</SegmentText>
           </TabSegment>
         );
       })}
@@ -45,7 +52,7 @@ type SegmentProps = ComponentProps<typeof TouchableOpacity> & {
 };
 
 const TabSegment = styled(TouchableOpacity)<SegmentProps>`
-  flex: 1;
+  padding: 20px;
   height: 36px;
   align-items: center;
   justify-content: center;
@@ -53,6 +60,10 @@ const TabSegment = styled(TouchableOpacity)<SegmentProps>`
     outline: none;
   }
   background-color: ${(props) => (props.isActive ? WHITE : BACKGROUND_COLOR)};
+`;
+
+const FullWidthTabSegment = styled(TabSegment)`
+  flex: 1;
 `;
 
 const VerticalSegment = styled(TouchableOpacity)`
@@ -70,7 +81,7 @@ const VerticalView = styled(View)`
 `;
 const HorizontalView = styled(View)`
   flex-direction: row;
-  widht: 100%;
+  width: 100%;
   height: 36px;
 `;
 const SegmentText = styled(Text)<SegmentProps>`

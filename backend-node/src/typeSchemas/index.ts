@@ -6,6 +6,7 @@ export * from './TenantRegisterVerification';
 export * from './Landlord';
 export * from './LandlordAuth';
 export * from './LandlordRegisterInput';
+export * from './PropertyMatchesThumbnail';
 
 export * from './BusinessInput';
 export * from './FilterInput';
@@ -20,7 +21,7 @@ export * from './Brand';
 export * from './LocationType';
 export * from './BrandThumbnail';
 export * from './LocationPreviewResult';
-export * from './EditProfileTenantInput';
+export * from './EditProfileInput';
 export * from './LocationDetailsResult';
 export * from './SpaceType';
 export * from './PropertyThumbnail';

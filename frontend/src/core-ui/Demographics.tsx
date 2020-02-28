@@ -38,7 +38,10 @@ type Data = {
 
 type DataKey = Exclude<keyof Data, 'population'>;
 
-export default function Graphic() {
+type Props = {
+  withMargin?: boolean;
+};
+export default function Graphic({ withMargin = true }: Props) {
   let data = useContext(DeepDiveContext);
   let [activeIndex, setActiveIndex] = useState<number>(0);
   let [selectedFilter, setSelectedFilter] = useState<string>('Age');
@@ -72,14 +75,14 @@ export default function Graphic() {
               <>
                 <SvgGreenArrow x={x + width / 2 - 5} y={5} />
                 <LabelText fill={GREEN_TEXT} x={x + width / 2 + 16} y={25}>
-                  {roundDecimal(demographicData.growth, 2)}
+                  {roundDecimal(demographicData.growth, 2) + '%'}
                 </LabelText>
               </>
             ) : (
               <>
                 <SvgRedArrow x={x + width / 2 - 5} y={5} />
                 <LabelText fill={RED_TEXT} x={x + width / 2 + 16} y={25}>
-                  {roundDecimal(demographicData.growth, 2)}
+                  {roundDecimal(demographicData.growth, 2) + '%'}
                 </LabelText>
               </>
             )}
@@ -111,8 +114,8 @@ export default function Graphic() {
     );
   };
 
-  return (
-    <Container>
+  let content = (
+    <>
       <RowedView>
         <Title>Demographics</Title>
         <Segmented
@@ -125,9 +128,9 @@ export default function Graphic() {
         <Legend barGraph={true} />
         {/* hiding this until data is ready */}
         {/* <RowedView style={{ margin: 0 }}>
-          <Text>Population: </Text>
-          <PopulationText>k</PopulationText>
-        </RowedView> */}
+        <Text>Population: </Text>
+        <PopulationText>k</PopulationText>
+      </RowedView> */}
       </RowedView>
       <ChartContainer>
         <Chart
@@ -178,9 +181,14 @@ export default function Graphic() {
           setSelectedFilter(value);
         }}
       />
-    </Container>
+    </>
   );
+  return withMargin ? <Container>{content}</Container> : <ViewContainer>{content}</ViewContainer>;
 }
+
+const ViewContainer = styled(View)`
+  padding: 0 12px 12px 12px;
+`;
 
 const RowedView = styled(View)`
   flex-direction: row;

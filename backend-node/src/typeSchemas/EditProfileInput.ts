@@ -1,7 +1,7 @@
 import { inputObjectType } from 'nexus';
 
-export let EditProfileTenantInput = inputObjectType({
-  name: 'EditProfileTenantInput',
+export let EditProfileInput = inputObjectType({
+  name: 'EditProfileInput',
   definition(t) {
     t.string('email');
     t.string('firstName');
@@ -12,5 +12,6 @@ export let EditProfileTenantInput = inputObjectType({
     t.string('description');
     t.string('oldPassword');
     t.string('newPassword');
+    t.field('avatar', { type: 'Upload' });
   },
 });
