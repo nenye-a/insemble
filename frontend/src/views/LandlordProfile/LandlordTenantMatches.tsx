@@ -1,5 +1,6 @@
 import React, { ComponentProps } from 'react';
 import styled from 'styled-components';
+import { useQuery } from '@apollo/react-hooks';
 
 import { View, Text, TouchableOpacity, LoadingIndicator } from '../../core-ui';
 import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
@@ -12,7 +13,6 @@ import {
 } from '../../constants/theme';
 import { DARK_TEXT_COLOR, WHITE, SECONDARY_COLOR, THEME_COLOR } from '../../constants/colors';
 import { GET_PROPERTY_MATCHES_DATA } from '../../graphql/queries/server/matches';
-import { useQuery } from '@apollo/react-hooks';
 import { PropertyMatches, PropertyMatchesVariables } from '../../generated/PropertyMatches';
 
 type Props = {
@@ -77,6 +77,7 @@ const RowedView = styled(View)`
 
 const Container = styled(RowedView)`
   flex-wrap: wrap;
+  justify-content: center;
 `;
 
 const InterestedText = styled(Text)`
