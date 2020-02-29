@@ -23,5 +23,7 @@ export * from './BrandThumbnail';
 export * from './LocationPreviewResult';
 export * from './EditProfileInput';
 export * from './LocationDetailsResult';
+export * from './SpaceType';
+export * from './PropertyThumbnail';
 
 export * from './TenantRegisterResult';
