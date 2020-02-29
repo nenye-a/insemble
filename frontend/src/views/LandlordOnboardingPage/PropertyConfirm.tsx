@@ -1,4 +1,4 @@
-import React, { useState, Dispatch } from 'react';
+import React, { useState, Dispatch, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
@@ -28,31 +28,31 @@ export default function PropertyConfirm(props: Props) {
   );
   let containerStyle = { marginBottom: 24 };
 
-  let allValid = location && selectedRelation;
+  let allValid = location.id && selectedRelation;
 
   let handleSubmit = () => {
     if (allValid) {
-      dispatch({
-        type: 'SAVE_CHANGES_CONFIRM_LOCATION',
-        values: {
-          confirmLocation: {
-            ...landlordOnboardingState.confirmLocation,
-            physicalAddress: location,
-            userRelation: selectedRelation,
-            propertyType: selectedType,
-          },
-        },
-      });
+      saveFormState();
       history.push('/landlord/new-property/step-2');
     }
   };
 
+  let saveFormState = () => {
+    dispatch({
+      type: 'SAVE_CHANGES_CONFIRM_LOCATION',
+      values: {
+        confirmLocation: {
+          ...landlordOnboardingState.confirmLocation,
+          physicalAddress: location,
+          userRelation: selectedRelation,
+          propertyType: selectedType,
+        },
+      },
+    });
+  };
+
   return (
-    <Container
-      onSubmit={() => {
-        handleSubmit();
-      }}
-    >
+    <Container onSubmit={handleSubmit}>
       <ContentContainer flex>
         <LocationInput
           defaultValue={location.address}
@@ -63,6 +63,7 @@ export default function PropertyConfirm(props: Props) {
           }}
           containerStyle={containerStyle}
         />
+
         <RadioGroup
           label="What is your relation to this property?"
           name="Marketing Preference"
@@ -97,7 +98,7 @@ export default function PropertyConfirm(props: Props) {
         })}
       </ContentContainer>
       <OnboardingFooter>
-        <Button text="Next" type="submit" disabled={!allValid} onPress={handleSubmit} />
+        <Button text="Next" type="submit" disabled={!allValid} />
       </OnboardingFooter>
     </Container>
   );
@@ -109,6 +110,7 @@ const Container = styled(Form)`
 
 const ContentContainer = styled(View)`
   padding: 24px 48px;
+  z-index: 3;
 `;
 
 const LabelText = styled(Label)`

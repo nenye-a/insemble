@@ -13,6 +13,7 @@ export default function Form(props: Props) {
     <Container
       onSubmit={(e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        onSubmit && onSubmit();
       }}
       {...otherProps}
     >

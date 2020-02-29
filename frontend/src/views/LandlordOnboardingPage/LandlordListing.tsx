@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, Dispatch, useEffect } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
-import { useForm, FieldError } from 'react-hook-form';
+import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 
 import {
@@ -46,23 +46,30 @@ export default function LandlordListing(props: Props) {
   let [description, setDescription] = useState<string>('');
   let [selectedCondition, setSelectedCondition] = useState('Whitebox');
   let [, setSelectedEquipment] = useState<Array<string>>([]);
-  let { register, errors, triggerValidation } = useForm();
-
+  let { register, errors, handleSubmit } = useForm();
   let today = new Date().toISOString().slice(0, 10);
 
-  let allValid = mainPhoto && selectedCondition;
+  let allValid = mainPhoto && selectedCondition && Object.keys(errors).length === 0;
 
-  useEffect(() => {
+  useEffect(() => {});
+  let saveFormState = () => {
+    // dispatch({
+    //   type: 'SAVE_CHANGES_NEW_LISTING',
+    //   values: {
+    //     spaces: {},
+    //   },
+    // });
+  };
+
+  let onSubmit = (fieldValues: FieldValues) => {
     if (allValid) {
-      dispatch({ type: 'ENABLE_NEXT_BUTTON' });
-      // TODO: save listing state
-    } else {
-      dispatch({ type: 'DISABLE_NEXT_BUTTON' });
+      saveFormState();
+      history.push('/landlord/new-property/step-5');
     }
-  }, [dispatch, allValid, triggerValidation]);
+  };
 
   return (
-    <Form>
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <Container>
         <TitleContainer>
           {/* Check number of space when connecting to BE */}
@@ -124,13 +131,14 @@ export default function LandlordListing(props: Props) {
           containerStyle={{ marginTop: 12, marginBottom: 12 }}
           errorMessage={(errors?.price as FieldError)?.message || ''}
         />
-        <View style={{ paddingTop: 12, paddingBottom: 12 }}>
+        <View style={{ paddingTop: 12, paddingBottom: 12, zIndex: 2 }}>
           <LabelText text="Features & Amenities" />
           {!equipmentLoading && equipmentData && (
             <MultiSelectInput
               placeholder="Set Equipment Preference"
               options={equipmentData.equipments}
               onChange={setSelectedEquipment}
+              inputContainerStyle={{ flex: 1 }}
             />
           )}
         </View>
@@ -154,13 +162,16 @@ export default function LandlordListing(props: Props) {
         </DatePickerContainer>
       </Container>
       <OnboardingFooter>
-        <TransparentButton mode="transparent" text="Back" onPress={() => history.goBack()} />
-        <Button
-          text="Next"
+        <TransparentButton
+          mode="transparent"
+          text="Back"
           onPress={() => {
-            history.push('/landlord/new-property/step-5');
+            saveFormState();
+            history.goBack();
           }}
+          disabled={!allValid}
         />
+        <Button text="Next" disabled={!allValid} type="submit" />
       </OnboardingFooter>
     </Form>
   );
@@ -168,6 +179,7 @@ export default function LandlordListing(props: Props) {
 
 const Container = styled(View)`
   padding: 12px 48px;
+  z-index: 2;
 `;
 
 const RowView = styled(View)`

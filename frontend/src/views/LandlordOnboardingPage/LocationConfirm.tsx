@@ -40,7 +40,6 @@ export default function LocationConfirm(props: Props) {
 
   useEffect(() => {
     if (allValid) {
-      dispatch({ type: 'ENABLE_NEXT_BUTTON' });
       dispatch({
         type: 'SAVE_CHANGES_CONFIRM_LOCATION',
         values: {
@@ -57,30 +56,30 @@ export default function LocationConfirm(props: Props) {
           },
         },
       });
-    } else {
-      dispatch({ type: 'DISABLE_NEXT_BUTTON' });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allValid, dispatch, selectedLocation, selectedMarketingPreference]);
 
+  let saveFormState = () => {
+    dispatch({
+      type: 'SAVE_CHANGES_CONFIRM_LOCATION',
+      values: {
+        confirmLocation: {
+          ...landlordOnboardingState.confirmLocation,
+          physicalAddress: selectedLocation || {
+            lat: '',
+            lng: '',
+            address: '',
+            name: '',
+            id: '',
+          },
+          marketingPreference: selectedMarketingPreference,
+        },
+      },
+    });
+  };
   let handleSubmit = () => {
     if (allValid) {
-      dispatch({
-        type: 'SAVE_CHANGES_CONFIRM_LOCATION',
-        values: {
-          confirmLocation: {
-            ...landlordOnboardingState.confirmLocation,
-            physicalAddress: selectedLocation || {
-              lat: '',
-              lng: '',
-              address: '',
-              name: '',
-              id: '',
-            },
-            marketingPreference: selectedMarketingPreference,
-          },
-        },
-      });
       history.push('/landlord/new-property-step-3');
     }
   };
@@ -127,16 +126,12 @@ export default function LocationConfirm(props: Props) {
           mode="transparent"
           text="Back"
           onPress={() => {
+            saveFormState();
             history.goBack();
           }}
+          disabled={!allValid}
         />
-        <Button
-          type="submit"
-          text="Next"
-          onPress={() => {
-            history.push('/landlord/new-property/step-3');
-          }}
-        />
+        <Button type="submit" text="Next" disabled={!allValid} />
       </OnboardingFooter>
     </Form>
   );
