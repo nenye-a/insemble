@@ -172,3 +172,25 @@ export type LocationDetailsType = {
     description: string;
   };
 };
+
+type PropertyMatchesBrand = {
+  match_value: number;
+  brand_id: string;
+  name: string;
+  category: string;
+  num_existing_locations: number;
+  on_platform: boolean;
+  interested: boolean;
+  verified: boolean;
+  claimed: boolean;
+  matches_tenant_type: boolean;
+  photo_url: string;
+};
+
+export type PropertyMatchesType = {
+  status: number;
+  status_detail: string;
+  property_id?: string;
+  space_id?: string;
+  brands?: Array<PropertyMatchesBrand>;
+};
