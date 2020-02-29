@@ -7,8 +7,7 @@ import { RangeInput } from '../../components';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
 import { Equipments } from '../../generated/Equipments';
-
-const SPACE_OPTIONS = ['Free standing', 'Shopping center', 'Inline', 'Endcap', 'Pedestrian'];
+import { SPACES_TYPE } from '../../constants/spaces';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -62,7 +61,7 @@ export default function TenantPhysicalCriteria(props: Props) {
         />
       )}
       <LabelText text="Space type" />
-      {SPACE_OPTIONS.map((option, index) => {
+      {SPACES_TYPE.map((option, index) => {
         let isChecked = selectedSpaceOptions.includes(option);
         return (
           <Checkbox

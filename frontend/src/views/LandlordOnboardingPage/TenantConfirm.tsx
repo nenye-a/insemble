@@ -1,39 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, Dispatch, useEffect } from 'react';
 import styled from 'styled-components';
 
-import {
-  TextInput,
-  View,
-  Label,
-  Checkbox,
-  ClickAway,
-  ContainedTextInput,
-  TouchableOpacity,
-} from '../../core-ui';
+import { TextInput, View, Label, Checkbox, ClickAway, TouchableOpacity } from '../../core-ui';
 import { FONT_SIZE_NORMAL } from '../../constants/theme';
 import { useQuery } from '@apollo/react-hooks';
 import { Categories } from '../../generated/Categories';
 import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
 import { Filter } from '../../components';
-import { TEXT_INPUT_BORDER_COLOR, MUTED_TEXT_COLOR } from '../../constants/colors';
+import { Action, State as LandlordOnboardingState } from '../../reducers/landlordOnboardingReducer';
 
-export default function TenantConfirm() {
-  let [selectedService, setSelectedService] = useState<Array<string>>([]);
-  let [otherService, setOtherService] = useState('');
+type Props = {
+  dispatch: Dispatch<Action>;
+  state: LandlordOnboardingState;
+};
+
+const SERVICE_OPTIONS = ['Retail', 'Restaurant', 'Fitness', 'Entertainment', 'Others'];
+
+export default function TenantConfirm(props: Props) {
+  let { dispatch, state } = props;
+  let { confirmTenant } = state;
   let { data: categoriesData } = useQuery<Categories>(GET_CATEGORIES);
-  let SERVICE_OPTIONS = ['Retail', 'Restaurant', 'Fitness', 'Entertainment', 'Others'];
+  let [selectedBusinessService, setSelectedBusinessService] = useState<Array<string>>(
+    confirmTenant?.businessType || []
+  );
+  let [otherService, setOtherService] = useState(confirmTenant?.otherBussinessType || '');
+
   let [categorySelectionVisible, toggleCategorySelection] = useState(false);
-  let [selectedCategories, setSelectedCategories] = useState<Array<string>>([]);
+  let [selectedCategories, setSelectedCategories] = useState<Array<string>>(
+    confirmTenant?.selectedRetailCategories || []
+  );
 
   let [existingCategorySelectionVisible, toggleExistingCategorySelectionVisible] = useState(false);
-  let [selectedExistingCategories, setExistingSelectedCategories] = useState<Array<string>>([]);
+  let [selectedExistingCategories, setExistingSelectedCategories] = useState<Array<string>>(
+    confirmTenant?.existingExclusives || []
+  );
 
+  let isValid = selectedBusinessService?.includes('Others') && otherService !== '';
+  useEffect(() => {
+    if (isValid) {
+      dispatch({ type: 'ENABLE_NEXT_BUTTON' });
+      dispatch({
+        type: 'SAVE_CHANGES_CONFIRM_TENANT',
+        values: {
+          confirmTenant: {
+            businessType: selectedBusinessService,
+            selectedRetailCategories: selectedCategories,
+            existingExclusives: selectedExistingCategories,
+            otherBussinessType: otherService,
+          },
+        },
+      });
+    }
+  }, [
+    isValid,
+    selectedBusinessService,
+    otherService,
+    selectedExistingCategories,
+    selectedCategories,
+    dispatch,
+  ]);
   return (
     <>
       <FormContainer>
         <LabelText text="What type of business can your property serve?" />
         {SERVICE_OPTIONS.map((option, index) => {
-          let isChecked = selectedService.includes(option);
+          let isChecked = selectedBusinessService.includes(option);
           return (
             <Checkbox
               key={index}
@@ -43,12 +74,12 @@ export default function TenantConfirm() {
               isChecked={isChecked}
               onPress={() => {
                 if (isChecked) {
-                  let newSelectedService = selectedService.filter(
+                  let newSelectedService = selectedBusinessService.filter(
                     (item: string) => item !== option
                   );
-                  setSelectedService(newSelectedService);
+                  setSelectedBusinessService(newSelectedService);
                 } else {
-                  setSelectedService([...selectedService, option]);
+                  setSelectedBusinessService([...selectedBusinessService, option]);
                 }
               }}
               style={{ lineHeight: 2 }}
@@ -57,7 +88,7 @@ export default function TenantConfirm() {
         })}
         <OtherTextInput
           placeholder="Coffee"
-          disabled={!selectedService.includes(SERVICE_OPTIONS[SERVICE_OPTIONS.length - 1])}
+          disabled={!selectedBusinessService.includes(SERVICE_OPTIONS[SERVICE_OPTIONS.length - 1])}
           value={otherService}
           onChange={(event) => {
             setOtherService(event.target.value);
@@ -146,12 +177,8 @@ const OtherTextInput = styled(TextInput)`
   width: 130px;
 `;
 
-const SelectCategories = styled(ContainedTextInput)`
-  height: 42px;
-  border: solid 1px ${TEXT_INPUT_BORDER_COLOR};
-  font-size: ${FONT_SIZE_NORMAL}
+const SelectCategories = styled(TextInput)`
   &::placeholder {
-    color: ${MUTED_TEXT_COLOR};
     font-style: italic;
   }
 `;
