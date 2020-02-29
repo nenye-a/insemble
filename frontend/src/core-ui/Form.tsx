@@ -1,11 +1,27 @@
-import React, { ReactNode, DetailedHTMLProps, FormHTMLAttributes } from 'react';
+import React, { ReactNode, DetailedHTMLProps, FormHTMLAttributes, FormEvent } from 'react';
+import styled from 'styled-components';
 
 type Props = ViewProps &
-  DetailedHTMLProps<FormHTMLAttributes<HTMLFormElement>, HTMLFormElement> & {
+  Omit<DetailedHTMLProps<FormHTMLAttributes<HTMLFormElement>, HTMLFormElement>, 'onSubmit'> & {
     children: ReactNode;
+    onSubmit?: () => void;
   };
 
 export default function Form(props: Props) {
-  let { children, ...otherProps } = props;
-  return <form {...otherProps}>{children}</form>;
+  let { children, onSubmit, ...otherProps } = props;
+  return (
+    <Container
+      onSubmit={(e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+      }}
+      {...otherProps}
+    >
+      {children}
+    </Container>
+  );
 }
+
+const Container = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
