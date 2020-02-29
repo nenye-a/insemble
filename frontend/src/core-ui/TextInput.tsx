@@ -44,7 +44,7 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) =>
 
   let id = providedID || fallbackID;
   return (
-    <View flex style={containerStyle}>
+    <View style={containerStyle}>
       {label && <LabelWrapper id={id} text={label} />}
       <InputBox
         id={id}
