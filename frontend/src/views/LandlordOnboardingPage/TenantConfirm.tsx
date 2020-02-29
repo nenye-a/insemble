@@ -1,13 +1,24 @@
 import React, { useState, Dispatch, useEffect } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
-import { TextInput, View, Label, Checkbox, ClickAway, TouchableOpacity } from '../../core-ui';
+import {
+  TextInput,
+  View,
+  Label,
+  Checkbox,
+  ClickAway,
+  TouchableOpacity,
+  Form,
+  Button,
+} from '../../core-ui';
 import { FONT_SIZE_NORMAL } from '../../constants/theme';
 import { useQuery } from '@apollo/react-hooks';
 import { Categories } from '../../generated/Categories';
 import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
 import { Filter } from '../../components';
 import { Action, State as LandlordOnboardingState } from '../../reducers/landlordOnboardingReducer';
+import OnboardingFooter from '../../components/layout/OnboardingFooter';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -17,6 +28,7 @@ type Props = {
 const SERVICE_OPTIONS = ['Retail', 'Restaurant', 'Fitness', 'Entertainment', 'Others'];
 
 export default function TenantConfirm(props: Props) {
+  let history = useHistory();
   let { dispatch, state } = props;
   let { confirmTenant } = state;
   let { data: categoriesData } = useQuery<Categories>(GET_CATEGORIES);
@@ -60,8 +72,8 @@ export default function TenantConfirm(props: Props) {
     dispatch,
   ]);
   return (
-    <>
-      <FormContainer>
+    <Form style={{ flex: 1 }}>
+      <FormContainer flex>
         <LabelText text="What type of business can your property serve?" />
         {SERVICE_OPTIONS.map((option, index) => {
           let isChecked = selectedBusinessService.includes(option);
@@ -157,7 +169,23 @@ export default function TenantConfirm(props: Props) {
           </>
         )}
       </FormContainer>
-    </>
+      <OnboardingFooter>
+        <TransparentButton
+          mode="transparent"
+          text="Back"
+          onPress={() => {
+            history.goBack();
+          }}
+        />
+        <Button
+          type="submit"
+          onPress={() => {
+            history.push('/landlord/new-property/step-4');
+          }}
+          text="Next"
+        />
+      </OnboardingFooter>
+    </Form>
   );
 }
 
@@ -181,4 +209,9 @@ const SelectCategories = styled(TextInput)`
   &::placeholder {
     font-style: italic;
   }
+`;
+
+const TransparentButton = styled(Button)`
+  margin-right: 8px;
+  padding: 0 12px;
 `;

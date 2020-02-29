@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
-import { View, Text, Alert } from '../../core-ui';
+import { View, Text, Alert, Form, Button } from '../../core-ui';
 import PhotoGallery from '../DeepDivePage/PhotoGallery';
 import DescriptionCard from '../DeepDivePage/DescriptionCard';
 import SummaryCard from '../DeepDivePage/SummaryCard';
@@ -9,11 +10,13 @@ import PropertyDeepDiveHeader from '../DeepDivePage/PropertyDeepDiveHeader';
 import { BACKGROUND_COLOR, THEME_COLOR } from '../../constants/colors';
 import { PHOTOS } from '../../fixtures/dummyData';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
+import OnboardingFooter from '../../components/layout/OnboardingFooter';
 
 export default function PreviewListing() {
+  let history = useHistory();
   /* TODO: replace dummy data */
   return (
-    <>
+    <Form>
       <RowView>
         <Title>Space 1</Title>
         <Alert visible text="This is how the Retailer will see your listing." />
@@ -44,7 +47,11 @@ export default function PreviewListing() {
           />
         </CardsContainer>
       </RowedView>
-    </>
+      <OnboardingFooter>
+        <TransparentButton mode="transparent" text="Back" onPress={() => history.goBack()} />
+        <Button type="submit" text="Next" onPress={() => {}} />
+      </OnboardingFooter>
+    </Form>
   );
 }
 
@@ -89,4 +96,8 @@ const PendingAlert = styled(Alert)`
   position: absolute;
   top: 12px;
   left: 12px;
+`;
+const TransparentButton = styled(Button)`
+  margin-right: 8px;
+  padding: 0 12px;
 `;

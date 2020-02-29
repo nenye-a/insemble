@@ -1,7 +1,8 @@
 import React, { useState, useEffect, Dispatch } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
-import { View, RadioGroup, Text, Label, Button } from '../../core-ui';
+import { View, RadioGroup, Text, Label, Button, Form } from '../../core-ui';
 import { LocationInput } from '../../components';
 import { THEME_COLOR } from '../../constants/colors';
 import { MAPS_IFRAME_URL_SEARCH } from '../../constants/googleMaps';
@@ -9,6 +10,7 @@ import { FONT_SIZE_NORMAL } from '../../constants/theme';
 import { Action, State as LandlordOnboardingState } from '../../reducers/landlordOnboardingReducer';
 import { urlEncode } from '../../utils';
 import { SelectedLocation } from '../../components/LocationInput';
+import OnboardingFooter from '../../components/layout/OnboardingFooter';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -16,6 +18,7 @@ type Props = {
 };
 
 export default function LocationConfirm(props: Props) {
+  let history = useHistory();
   let { state: landlordOnboardingState, dispatch } = props;
   let { confirmLocation } = landlordOnboardingState;
   let [selectedMarketingPreference, setSelectedMarketingPreference] = useState(
@@ -60,16 +63,43 @@ export default function LocationConfirm(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allValid, dispatch, selectedLocation, selectedMarketingPreference]);
 
+  let handleSubmit = () => {
+    if (allValid) {
+      dispatch({
+        type: 'SAVE_CHANGES_CONFIRM_LOCATION',
+        values: {
+          confirmLocation: {
+            ...landlordOnboardingState.confirmLocation,
+            physicalAddress: selectedLocation || {
+              lat: '',
+              lng: '',
+              address: '',
+              name: '',
+              id: '',
+            },
+            marketingPreference: selectedMarketingPreference,
+          },
+        },
+      });
+      history.push('/landlord/new-property-step-3');
+    }
+  };
   return (
-    <>
+    <Form
+      onSubmit={() => {
+        handleSubmit();
+      }}
+      style={{ flex: 1 }}
+    >
       <Iframe src={mapURL} />
-      <FormContainer>
-        <RowedView flex>
+      <FormContainer flex>
+        <RowedView>
           <LocationInput
             label="Property Name"
             defaultValue={selectedLocation?.address || ''}
             onPlaceSelected={(location) => setSelectedLocation(location)}
             disabled={isDisabled}
+            containerStyle={{ flex: 1 }}
           />
           <EditButton
             text="Edit"
@@ -92,7 +122,23 @@ export default function LocationConfirm(props: Props) {
           radioItemProps={{ style: { marginTop: 9 } }}
         />
       </FormContainer>
-    </>
+      <OnboardingFooter>
+        <TransparentButton
+          mode="transparent"
+          text="Back"
+          onPress={() => {
+            history.goBack();
+          }}
+        />
+        <Button
+          type="submit"
+          text="Next"
+          onPress={() => {
+            history.push('/landlord/new-property/step-3');
+          }}
+        />
+      </OnboardingFooter>
+    </Form>
   );
 }
 
@@ -121,4 +167,9 @@ const EditButton = styled(Button)`
     color: ${THEME_COLOR};
     font-size: ${FONT_SIZE_NORMAL};
   }
+`;
+
+const TransparentButton = styled(Button)`
+  margin-right: 8px;
+  padding: 0 12px;
 `;

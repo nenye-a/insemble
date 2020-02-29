@@ -75,7 +75,7 @@ export default function LocationInput(props: Props) {
       placeholder={placeholder}
       onSubmit={submitHandler}
       label={label}
-      style={containerStyle}
+      containerStyle={containerStyle}
       {...otherProps}
     />
   );
