@@ -9,6 +9,7 @@ import PropertyDeepDiveHeader from '../DeepDivePage/PropertyDeepDiveHeader';
 import { BACKGROUND_COLOR, THEME_COLOR } from '../../constants/colors';
 import { PHOTOS } from '../../fixtures/dummyData';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
+
 export default function PreviewListing() {
   /* TODO: replace dummy data */
   return (

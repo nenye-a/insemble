@@ -103,7 +103,7 @@ const Row = styled(View)`
 `;
 
 const TextLabel = styled(Text)`
-  padding-left: 6px;
+  padding-left: 12px;
   /* Adding padding-top to make it look more centered */
   padding-top: 1px;
   cursor: pointer;

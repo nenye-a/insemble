@@ -88,7 +88,7 @@ const NativeCheckbox = styled.input.attrs(() => ({ type: 'checkbox' }))`
 `;
 
 const LabelText = styled(Label)`
-  margin-left: 13px;
+  margin-left: 12px;
   font-size: ${FONT_SIZE_SMALL};
   color: ${TEXT_COLOR};
 `;
