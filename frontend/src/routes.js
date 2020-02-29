@@ -78,6 +78,12 @@ const LANDLORD_ROUTES = [
     layout: BasicLayout,
     component: LandlordEmailVerification,
   },
+  {
+    path: '/landlord/new-property/:formStep',
+    exact: true,
+    layout: BasicLayout,
+    component: LandlordOnboarding,
+  },
 ];
 
 const TENANT_ROUTES = [
