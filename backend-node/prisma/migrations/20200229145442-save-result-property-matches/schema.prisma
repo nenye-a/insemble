@@ -1,7 +1,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://prisma:prisma@localhost:5432/insemble?schema=public"
+  url = "***"
 }
 
 
@@ -10,29 +10,27 @@ generator client {
 }
 
 enum TenantTier {
-  FREE
-  EXPLORE
-  SMART
-  PROFESSIONAL
+  FREE EXPLORE SMART PROFESSIONAL
 }
 
 enum LandlordTier {
-  FREE
-  EXPLORE
-  SMART
-  PROFESSIONAL
+  FREE EXPLORE SMART PROFESSIONAL
 }
 
 enum NewLocationPlan {
-  YES
-  NOT_ACTIVE
-  NOT_PLANNING
+  YES NOT_ACTIVE NOT_PLANNING
 }
 
 enum MarketingPreference {
-  PUBLIC
-  PRIVATE
+  PUBLIC PRIVATE
 }
+
+// model MatchingLocation {
+//   id    String @id
+//   lat   Float
+//   lng   Float
+//   match Float
+// }
 
 model MatchingProperty {
   id         String @id @default(cuid())
@@ -59,38 +57,33 @@ model LocationAndPerformance {
 }
 
 model TenantUser {
-  id                   String     @id @default(cuid())
-  email                String     @unique
-  avatar               String?
-  password             String
-  firstName            String
-  lastName             String
-  company              String
-  phoneNumber          String?
-  title                String?
-  description          String?
-  brands               Brand[]
-  tier                 TenantTier
-  pendingEmail         Boolean    @default(false)
-  stripeCustomerId     String?    @unique
-  stripeSubscriptionId String?    @unique
+  id           String     @id @default(cuid())
+  email        String     @unique
+  avatar       String?
+  password     String
+  firstName    String
+  lastName     String
+  company      String
+  phoneNumber  String?
+  title        String?
+  description  String?
+  brands       Brand[]
+  tier         TenantTier
+  pendingEmail Boolean    @default(false)
 }
 
 model LandlordUser {
-  id                   String       @id @default(cuid())
-  email                String       @unique
-  avatar               String?
-  password             String
-  firstName            String
-  lastName             String
-  company              String
-  phoneNumber          String?
-  title                String?
-  description          String?
-  properties           Property[]
-  tier                 LandlordTier
-  stripeCustomerId     String?      @unique
-  stripeSubscriptionId String?      @unique
+  id          String       @id @default(cuid())
+  email       String       @unique
+  avatar      String?
+  password    String
+  firstName   String
+  lastName    String
+  company     String
+  phoneNumber String?
+  title       String?
+  description String?
+  tier        LandlordTier
 }
 
 model Brand {
@@ -174,20 +167,6 @@ model LandlordSession {
   token     String
   createdAt DateTime     @default(now())
   user      LandlordUser
-}
-
-model LandlordRegisterVerification {
-  id            String  @default(cuid()) @id
-  email         String
-  landlordInput String
-  verified      Boolean @default(false)
-}
-
-model SubscriptionTenantHistory {
-  id             String     @default(cuid()) @id
-  subscriptionId String
-  tenantUser     TenantUser
-  createdAt      DateTime   @default(now())
 }
 
 model TenantRegisterVerification {
