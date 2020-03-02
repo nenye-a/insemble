@@ -8,7 +8,6 @@ import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
 import { WHITE, THEME_COLOR } from '../constants/colors';
 
 import SvgPlus from '../components/icons/plus';
-import imgPlaceholder from '../assets/images/image-placeholder.jpg';
 import { GET_PROPERTIES } from '../graphql/queries/server/properties';
 import { GetProperties } from '../generated/GetProperties';
 
@@ -23,30 +22,34 @@ export default function LandlordProperties() {
         <LoadingIndicator />
       ) : (
         properties &&
-        properties.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            style={{ marginBottom: 24 }}
-            onPress={() => {
-              history.push(`/landlord/properties/${item.propertyId}`);
-            }}
-          >
-            <Row>
-              <LeftContainer flex>
-                <RowedView>
-                  <Text>Property</Text>
-                  <Text>{item.name}</Text>
-                </RowedView>
-                <RowedView>
-                  <Text>Number of Spaces</Text>
-                  <Text>{item.space.length}</Text>
-                </RowedView>
-              </LeftContainer>
-              {/* TODO: change to iframe */}
-              <HeatMapImage src={imgPlaceholder} />
-            </Row>
-          </TouchableOpacity>
-        ))
+        properties.map((item, index) => {
+          let iframeSource = `https://maps.google.com/maps?q=${item.location.lat},${item.location.lng}&hl=es;z=14&amp;output=embed`;
+          return (
+            <TouchableOpacity
+              key={index}
+              style={{ marginBottom: 24 }}
+              onPress={() => {
+                history.push(`/landlord/properties/${item.propertyId}`, {
+                  iframeSource,
+                });
+              }}
+            >
+              <Row>
+                <LeftContainer flex>
+                  <RowedView>
+                    <Text>Property</Text>
+                    <Text>{item.name}</Text>
+                  </RowedView>
+                  <RowedView>
+                    <Text>Number of Spaces</Text>
+                    <Text>{item.space.length}</Text>
+                  </RowedView>
+                </LeftContainer>
+                <Iframe src={iframeSource} />
+              </Row>
+            </TouchableOpacity>
+          );
+        })
       )}
 
       <AddButton>
@@ -61,6 +64,11 @@ const Row = styled(Card)`
   flex-direction: row;
 `;
 
+const Iframe = styled.iframe`
+  width: 280px;
+  border: none;
+`;
+
 const RowedView = styled(View)`
   flex-direction: row;
   justify-content: space-between;
@@ -70,11 +78,6 @@ const RowedView = styled(View)`
 const LeftContainer = styled(View)`
   padding: 12px 24px;
   height: 150px;
-`;
-
-const HeatMapImage = styled.img`
-  width: 200px;
-  object-fit: contain;
 `;
 
 const AddButton = styled(TouchableOpacity)`
