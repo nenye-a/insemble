@@ -9,7 +9,7 @@ export let registerLandlord = mutationField('registerLandlord', {
   args: {
     landlord: arg({ type: 'LandlordRegisterInput', required: true }),
   },
-  resolve: async (_, { landlord }, context: Context, info) => {
+  resolve: async (_, { landlord }, context: Context) => {
     let password = bcrypt.hashSync(landlord.password, 10);
     let lowerCasedEmail = landlord.email.toLocaleLowerCase();
     let exist = await context.prisma.landlordUser.findMany({
