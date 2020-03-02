@@ -17,20 +17,20 @@ export let createPropertyResolver: FieldResolver<
   } = property;
   let {
     equipment = [],
-    photosUpload,
+    photoUploads,
     available,
     mainPhoto,
-    photosUrl = [],
+    photoUrls = [],
     ...spaceInput
   } = space || {};
-  if (!photosUrl) {
-    photosUrl = [];
+  if (!photoUrls) {
+    photoUrls = [];
   }
 
-  if (photosUpload) {
-    for (let photoFile of photosUpload) {
+  if (photoUploads) {
+    for (let photoFile of photoUploads) {
       let { Location: photoUrl } = await uploadS3(photoFile, 'MAIN_SPACE');
-      photosUrl.push(photoUrl);
+      photoUrls.push(photoUrl);
     }
   }
 
@@ -61,7 +61,7 @@ export let createPropertyResolver: FieldResolver<
             set: equipment,
           },
           photos: {
-            set: photosUrl,
+            set: photoUrls,
           },
           available: new Date(available),
         },
