@@ -65,25 +65,33 @@ export default function BasicProfile() {
   });
 
   let onTenantCompleted = (tenantResult: GetTenantProfile) => {
-    setProfileInfo({
-      email: tenantResult?.profileTenant.email,
-      firstName: tenantResult?.profileTenant.firstName,
-      lastName: tenantResult?.profileTenant.lastName,
-      company: tenantResult?.profileTenant.company,
-      title: tenantResult?.profileTenant.title,
-      pendingEmail: tenantResult?.profileTenant.pendingEmail,
-    });
+    let { profileTenant } = tenantResult;
+    if (profileTenant) {
+      let { firstName, lastName, company, title, email } = profileTenant;
+      setProfileInfo({
+        email,
+        firstName,
+        lastName,
+        company,
+        title,
+        pendingEmail,
+      });
+    }
   };
 
   let onLandlordCompleted = (landlordResult: GetLandlordProfile) => {
-    setProfileInfo({
-      email: landlordResult?.profileLandlord.email,
-      firstName: landlordResult?.profileLandlord.firstName,
-      lastName: landlordResult?.profileLandlord.lastName,
-      company: landlordResult?.profileLandlord.company,
-      title: landlordResult?.profileLandlord.title,
-      pendingEmail: false, // TODO
-    });
+    let { profileLandlord } = landlordResult;
+    if (profileLandlord) {
+      let { firstName, lastName, company, title } = profileLandlord;
+      setProfileInfo({
+        email,
+        firstName,
+        lastName,
+        company,
+        title,
+        pendingEmail: false, // TODO
+      });
+    }
   };
 
   let [getTenant, { loading: tenantLoading }] = useLazyQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
