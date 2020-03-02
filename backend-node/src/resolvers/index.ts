@@ -14,6 +14,7 @@ export * from './filter/spaceTypeQuery';
 export * from './filter/autoPopulateFilterQuery';
 export * from './filter/ethnicityQuery';
 
+export * from './matches/propertyMatchesQuery';
 export * from './matches/tenantMatchesQuery';
 export * from './preview/locationPreview';
 export * from './details/locationDetailsQuery';
@@ -36,7 +37,6 @@ export * from './property/editPropertyMutation';
 export * from './property/editSpaceMutation';
 export * from './property/spacesQuery';
 export * from './property/deletePropertyMutation';
-export * from './matches/propertyMatchesQuery';
 export * from './details/propertyDetailsQuery';
 
 export * from './auth/forgotPasswordTenantMutation';
@@ -46,3 +46,8 @@ export * from './auth/resetPasswordTenantVerificationQuery';
 export * from './auth/forgotPasswordLandlordMutation';
 export * from './auth/resetPasswordLandlordMutation';
 export * from './auth/resetPasswordLandlordVerificationQuery';
+
+export * from './billing/billingQuery';
+export * from './billing/paymentMethodMutation';
+export * from './billing/paymentMethodQuery';
+export * from './billing/subscriptionMutation';
