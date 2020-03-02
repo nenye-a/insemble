@@ -10,7 +10,7 @@ import {
   LandlordLocationDetails,
 } from './LandlordProfile';
 
-const SPACES = ['Space 1', 'Space 2'];
+const SPACES = ['Space 1'];
 
 enum Tab {
   TENANT_MATCH_INDEX,
