@@ -16,9 +16,9 @@ type Props = {
   role: Role;
 };
 
-export default function Login(_props: Props) {
+export default function Login(props: Props) {
   let history = useHistory();
-  let { role } = _props;
+  let { role } = props;
   let { register, handleSubmit, errors } = useForm();
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
   let [tenantLogin, { data, loading, error }] = useMutation<LoginTenant, LoginTenantVariables>(
@@ -69,7 +69,9 @@ export default function Login(_props: Props) {
 
   return (
     <Content>
-      <Form onSubmit={role === 'TENANT' ? handleSubmit(onSubmit) : handleSubmit(onSubmitLandlord)}>
+      <Form
+        onSubmit={role === Role.TENANT ? handleSubmit(onSubmit) : handleSubmit(onSubmitLandlord)}
+      >
         <Alert
           visible={!!error || !!landlordError}
           text={error?.message || landlordError?.message || ''}
