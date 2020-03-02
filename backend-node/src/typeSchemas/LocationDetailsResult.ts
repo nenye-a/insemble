@@ -48,8 +48,42 @@ export let DemographicStat = objectType({
   definition(t) {
     t.string('name');
     t.float('myLocation', { nullable: true });
-    t.float('targetLocation');
+    t.float('targetLocation', { nullable: true });
     t.float('growth', { nullable: true });
+  },
+});
+
+export let DemographicPropertyStat = objectType({
+  name: 'DemographicPropertyStat',
+  definition(t) {
+    t.string('name');
+    t.float('myLocation');
+  },
+});
+
+export let DemographicProperty = objectType({
+  name: 'DemographicProperty',
+  definition(t) {
+    t.field('age', {
+      type: 'DemographicPropertyStat',
+      list: true,
+    });
+    t.field('income', {
+      type: 'DemographicPropertyStat',
+      list: true,
+    });
+    t.field('ethnicity', {
+      type: 'DemographicPropertyStat',
+      list: true,
+    });
+    t.field('education', {
+      type: 'DemographicPropertyStat',
+      list: true,
+    });
+    t.field('gender', {
+      type: 'DemographicPropertyStat',
+      list: true,
+    });
   },
 });
 
