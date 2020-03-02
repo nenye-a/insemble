@@ -24,9 +24,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'appbackend',
-        'HOST': "mongodb+srv://" + urllib.parse.quote(MONGO_USER) + ":" + urllib.parse.quote(MONGO_DB_PASS) + "@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE",
-        'USER': MONGO_USER,
-        'PASSWORD': MONGO_DB_PASS,
+        'CLIENT': {
+            'host': "mongodb+srv://" + urllib.parse.quote(MONGO_USER) + ":" + urllib.parse.quote(MONGO_DB_PASS) + "@cluster0-c2jyp.mongodb.net/test?retryWrites=true&ssl_cert_reqs=CERT_NONE",
+            'username': MONGO_USER,
+            'password': MONGO_DB_PASS,
+        }
     }
 }
 
