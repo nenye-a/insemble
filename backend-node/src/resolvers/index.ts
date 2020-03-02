@@ -23,7 +23,7 @@ export * from './tenant/editProfileTenantMutation';
 
 export * from './landlord/profileLandlordQuery';
 export * from './landlord/editProfileLandlordMutation';
-export * from './landlord/tenantDetailsMutation';
+export * from './landlord/tenantDetailsQuery';
 
 export * from './brand/createBrandMutation';
 export * from './brand/editBrandMutation';

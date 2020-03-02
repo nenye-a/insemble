@@ -1,11 +1,12 @@
-import { FieldResolver, mutationField, stringArg } from 'nexus';
+import { FieldResolver, queryField, stringArg } from 'nexus';
 
 import { Root, Context } from 'serverTypes';
 
-let tenantDetailResolver: FieldResolver<
-  'Mutation',
-  'tenantDetailMutation'
-> = async (_: Root, __, ___: Context) => {
+let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
+  _: Root,
+  __,
+  ___: Context,
+) => {
   return {
     name: 'California Cheeseburgers',
     category: 'Hamburger Restaurant',
@@ -512,10 +513,10 @@ let tenantDetailResolver: FieldResolver<
   };
 };
 
-let tenantDetailMutation = mutationField('tenantDetailMutation', {
+let tenantDetailQuery = queryField('tenantDetail', {
   type: 'TenantDetailsResult',
   args: { brandId: stringArg({ required: true }) },
   resolve: tenantDetailResolver,
 });
 
-export { tenantDetailMutation };
+export { tenantDetailQuery };
