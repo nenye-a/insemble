@@ -32,3 +32,19 @@ export const EDIT_TENANT_PROFILE = gql`
     }
   }
 `;
+
+export const GET_LANDLORD_PROFILE = gql`
+  query GetLandlordProfile {
+    profileLandlord {
+      id
+      email
+      firstName
+      lastName
+      avatar
+      company
+      description
+      title
+      tier
+    }
+  }
+`;
