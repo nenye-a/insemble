@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, View, Text, TabBar } from '../../core-ui';
 import { PieChart, Pie, Cell } from 'recharts';
 import styled from 'styled-components';
@@ -9,21 +9,19 @@ import {
   FONT_SIZE_XXLARGE,
 } from '../../constants/theme';
 import { THEME_COLOR, COMMUTE_CHART_COLORS, SECONDARY_COLOR } from '../../constants/colors';
-import { DeepDiveContext } from './DeepDiveModal';
 import { convertToKilos, roundDecimal, getKeyfactsValue } from '../../utils';
-
-type Data = {
-  name: string;
-  value: number;
-};
+import {
+  LocationDetails_locationDetails_result_commute as locationDetailsCommute,
+  LocationDetails_locationDetails_result_keyFacts as locationDetailsKeyFacts,
+} from '../../generated/LocationDetails';
 
 type Props = {
   withMargin?: boolean;
+  keyFactsData?: locationDetailsKeyFacts;
+  commuteData?: Array<locationDetailsCommute>;
 };
-export default function KeyFacts({ withMargin = true }: Props) {
-  let data = useContext(DeepDiveContext);
-  let commuteData = data?.result?.commute;
-  let keyFactsData = data?.result?.keyFacts;
+export default function KeyFacts(props: Props) {
+  let { withMargin, keyFactsData, commuteData } = props;
   let [selectedIndex, setSelectedIndex] = useState<number>(0);
   let [pieSize, setPieSize] = useState<Array<number>>([]);
   let isCommuteSelected = selectedIndex === 1;

@@ -1,13 +1,16 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import { View, Card } from '../../core-ui';
 import RelevantConsumerCard from './RelevantConsumerCard';
-import { DeepDiveContext } from './DeepDiveModal';
+import { LocationDetails_locationDetails_result_topPersonas as locationPersonas } from '../../generated/LocationDetails';
 
-export default function RelevantConsumerPersonas() {
-  let data = useContext(DeepDiveContext);
-  let personasData = data?.result?.topPersonas;
+type Props = {
+  personasData?: Array<locationPersonas>;
+};
+
+export default function RelevantConsumerPersonas(props: Props) {
+  let { personasData } = props;
   return (
     <Container titleBackground="white" title="Relevant Consumer Personas">
       <CardsContainer>
