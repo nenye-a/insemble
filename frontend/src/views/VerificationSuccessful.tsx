@@ -10,7 +10,7 @@ import OnboardingCard from './OnboardingPage/OnboardingCard';
 export default function VerificationSucessful() {
   return (
     <Container flex>
-      <OnboardingCard title="Verify your email" progress={1} buttons={[]}>
+      <OnboardingCard title="Verification success" progress={1} buttons={[]}>
         <ContentContainer flex={true}>
           <InsembleLogo color="purple" />
           <Description> You have successfully verified your account</Description>
@@ -32,7 +32,7 @@ const ContentContainer = styled(View)`
 
 const Description = styled(Text)`
   font-size: ${FONT_SIZE_MEDIUM};
-  font-weight: ${FONT_WEIGHT_LIGHT}
+  font-weight: ${FONT_WEIGHT_LIGHT};
   margin: 16px 0 0 0;
-  color:${DARK_TEXT_COLOR}
+  color: ${DARK_TEXT_COLOR};
 `;
