@@ -158,14 +158,14 @@ export default function Graphic({ withMargin = true }: Props) {
             }}
           />
           <Bar
-            dataKey="myLocation"
+            dataKey="targetLocation"
             barSize={24}
             fill={THEME_COLOR}
             label={renderCustomBarLabel}
             radius={[5, 5, 0, 0]}
           />
           <Bar
-            dataKey="targetLocation"
+            dataKey="myLocation"
             barSize={24}
             fill={HOVERED_LIST_ITEM_BG}
             label={renderCustomSecondBarLabel}
