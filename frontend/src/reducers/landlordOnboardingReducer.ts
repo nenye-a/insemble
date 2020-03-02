@@ -1,10 +1,12 @@
 import { SelectedLocation } from '../components/LocationInput';
+import { FileWithPreview } from '../core-ui/Dropzone';
+import { MarketingPreference } from '../generated/globalTypes';
 
 type ConfirmLocation = {
-  userRelation?: string;
+  userRelation: string;
   propertyType?: Array<string>;
   physicalAddress?: SelectedLocation;
-  marketingPreference?: string; // This should be enum
+  marketingPreference: MarketingPreference;
 };
 
 type ConfirmTenant = {
@@ -15,8 +17,8 @@ type ConfirmTenant = {
 };
 
 type SpaceListing = {
-  mainPhoto: Blob;
-  propertyPhotos: Array<Blob>;
+  mainPhoto: FileWithPreview | null;
+  propertyPhotos: Array<FileWithPreview | null>;
   description: string;
   condition: string;
   sqft: string;
@@ -27,9 +29,9 @@ type SpaceListing = {
 
 export type State = {
   canPressNext: boolean;
-  confirmLocation?: ConfirmLocation;
-  confirmTenant?: ConfirmTenant;
-  spaceListing?: SpaceListing;
+  confirmLocation: ConfirmLocation;
+  confirmTenant: ConfirmTenant;
+  spaceListing: SpaceListing;
 };
 
 export type Action =
@@ -56,6 +58,25 @@ export type Action =
 
 export let landlordOnboardingInitialState = {
   canPressNext: false,
+  confirmLocation: {
+    userRelation: '',
+    marketingPreference: MarketingPreference.PUBLIC,
+  },
+  confirmTenant: {
+    businessType: [],
+    selectedRetailCategories: [],
+    existingExclusives: [],
+  },
+  spaceListing: {
+    mainPhoto: null,
+    propertyPhotos: [null, null, null, null],
+    description: '',
+    condition: '',
+    sqft: '',
+    pricePerSqft: '',
+    equipments: [],
+    availability: '',
+  },
 };
 
 export default function landlordOnboardingReducer(state: State, action: Action): State {
