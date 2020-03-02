@@ -108,45 +108,6 @@ export const LANDLORD_PROPERTIES = [
   },
 ];
 
-export const LANDLORD_TENANT_MATCHES = [
-  {
-    tenantName: 'California Cheeseburgers',
-    percentageMatch: 95,
-    tenantCategory: 'Hamburger Restaurant',
-    existingLocation: '1',
-  },
-  {
-    tenantName: 'Lake LA Bakery',
-    percentageMatch: 95,
-    tenantCategory: 'Bakery',
-    existingLocation: '1',
-  },
-  {
-    tenantName: 'Family Dollar',
-    percentageMatch: 93,
-    tenantCategory: 'Dollar store',
-    existingLocation: '60+',
-  },
-  {
-    tenantName: 'California Cheeseburgers',
-    percentageMatch: 95,
-    tenantCategory: 'Hamburger Restaurant',
-    existingLocation: '1',
-  },
-  {
-    tenantName: 'Lake LA Bakery',
-    percentageMatch: 95,
-    tenantCategory: 'Bakery',
-    existingLocation: '1',
-  },
-  {
-    tenantName: 'Family Dollar',
-    percentageMatch: 93,
-    tenantCategory: 'Dollar store',
-    existingLocation: '60+',
-  },
-];
-
 export const MESSAGE_LIST = [
   {
     subject: "I'm very interested in this property for immediate lease",
