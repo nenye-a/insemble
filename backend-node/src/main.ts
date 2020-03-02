@@ -1,10 +1,13 @@
 import { GraphQLServer } from 'graphql-yoga';
+import express from 'express';
+import { IncomingMessage } from 'http';
 import { ContextParameters } from 'graphql-yoga/dist/types';
 
 import { prisma } from './prisma';
 import { schema } from '../src/schema';
 import { authSession } from './helpers/auth';
 import { permissions } from './middlewares/permission';
+import { paymentHandler } from './controllers/paymentHandler';
 import { registerTenantHandler } from './controllers/registerTenantController';
 import { emailVerificationTenantHandler } from '.DELETED_BASE64_STRING';
 import { registerLandlordHandler } from './controllers/registerLandlordController';
@@ -30,6 +33,18 @@ server.express.use((_, res, next) => {
   next();
 });
 
+server.express.use(
+  express.json({
+    verify: function(req: IncomingMessage, _res, buf) {
+      let url = req.url;
+      if (url?.startsWith('/stripe-notify')) {
+        req.rawBody = buf;
+      }
+    },
+  }),
+);
+// This endpoint is used to receive notifications from Stripe
+server.express.post('/stripe-notify', paymentHandler);
 server.express.get(
   '/register-tenant-verification/:token',
   registerTenantHandler,
