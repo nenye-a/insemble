@@ -75,15 +75,6 @@ export const LANDLORD_VERIFICATION = gql`
   }
 `;
 
-export const REGISTER_LANDLORD = gql`
-  mutation RegisterLandlord($landlord: LandlordRegisterInput!) {
-    registerLandlord(landlord: $landlord) {
-      message
-      verificationId
-    }
-  }
-`;
-
 export const LOGIN_LANDLORD = gql`
   mutation LoginLandlord($email: String!, $password: String!) {
     loginLandlord(email: $email, password: $password) {
@@ -99,6 +90,15 @@ export const LOGIN_LANDLORD = gql`
         title
         description
       }
+    }
+  }
+`;
+
+export const REGISTER_LANDLORD = gql`
+  mutation RegisterLandlord($landlord: LandlordRegisterInput!) {
+    registerLandlord(landlord: $landlord) {
+      message
+      verificationId
     }
   }
 `;
