@@ -13,7 +13,6 @@ export const GET_PROPERTY_MATCHES_DATA = gql`
       verified
       claimed
       matchesTenantType
-      exclusivityRisk
     }
   }
 `;
