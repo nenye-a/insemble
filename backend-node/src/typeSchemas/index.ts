@@ -28,3 +28,7 @@ export * from './LocationDetailsResult';
 export * from './SpaceType';
 export * from './PropertyThumbnail';
 export * from './PropertyMatchesThumbnail';
+
+export * from './TenantRegisterResult';
+export * from './PropertyInput';
+export * from './SpaceInput';
