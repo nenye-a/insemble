@@ -31,6 +31,7 @@ export default function LandlordProperties() {
               onPress={() => {
                 history.push(`/landlord/properties/${item.propertyId}`, {
                   iframeSource,
+                  address: item.address,
                 });
               }}
             >
