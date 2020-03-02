@@ -2,6 +2,7 @@ export * from './authorization';
 export { default as asyncStorage } from './asyncStorage';
 export { default as convertToKilos } from './convertToKilos';
 export * from './isEqual';
+export { default as getImageBlob } from './getImageBlob';
 export { default as getKeyfactsValue } from './getKeyfactsValue';
 export { default as urlEncode } from './urlEncode';
 export { default as useID } from './useID';
