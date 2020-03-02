@@ -8,6 +8,6 @@ export type IconProps = {
 };
 
 export enum Role {
-  TENANT = 'TENANT',
-  LANDLORD = 'LANDLORD',
+  TENANT = 'Tenant',
+  LANDLORD = 'Landlord',
 }

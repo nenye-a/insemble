@@ -34,14 +34,13 @@ function Landing() {
           </TouchableOpacity>
         ) : (
           <>
-            {/* Omitted until the landlord side is ready. */}
-            {/* <FindTenantsButton
+            <FindTenantsButton
               text="Landlord Portal"
               mode="transparent"
               onPress={() => {
                 history.push('/landlord/signup');
               }}
-            /> */}
+            />
             <LogIn
               mode="secondary"
               text="Log In"
@@ -133,13 +132,13 @@ const NoAddressButton = styled(Button)`
   }
 `;
 
-// const FindTenantsButton = styled(Button)`
-//   margin: 0 12px 0 0;
-//   align-self: center;
-//   ${Text} {
-//     color: ${WHITE};
-//   }
-// `;
+const FindTenantsButton = styled(Button)`
+  margin: 0 12px 0 0;
+  align-self: center;
+  ${Text} {
+    color: ${WHITE};
+  }
+`;
 
 const LogIn = styled(Button)`
   margin: 0 12px 0 0;

@@ -21,7 +21,6 @@ import VerificationSuccessful from './views/VerificationSuccessful';
 import LandlordEmailVerification from './views/LandlordEmailVerification';
 import LandlordProperties from './views/LandlordProperties';
 import LandlordPropertyDetails from './views/LandlordPropertyDetails';
-import LandlordEmailVerification from './view/LandlordEmailVerification';
 
 import { tenantAuthorization } from './utils';
 

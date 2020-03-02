@@ -14,6 +14,7 @@ import {
   LandlordRegisterVerification,
   LandlordRegisterVerificationVariables,
 } from '../generated/LandlordRegisterVerification';
+import { Role } from '../types/types';
 
 export default function TenantEmailVerification() {
   // TODO: polling & redirect to login when verification successful
@@ -35,7 +36,7 @@ export default function TenantEmailVerification() {
     if (verified && landlordAuth) {
       let { token } = landlordAuth;
       asyncStorage.saveTenantToken(token);
-      asyncStorage.saveRole('landlord');
+      asyncStorage.saveRole(Role.LANDLORD);
       history.push('/landlord/verify');
     }
   }
