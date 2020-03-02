@@ -13,6 +13,7 @@ type Props = ComponentProps<typeof View> & {
   onClose?: () => void;
   overlayStyle?: CSSProperties;
   svgCloseProps?: SVGProps<typeof SvgClose>;
+  hideCloseButton?: boolean;
   backgroundColor?: string;
   iconContainerStyle?: CSSProperties;
 };
@@ -23,18 +24,31 @@ export default function Modal({
   visible,
   overlayStyle,
   svgCloseProps,
+  hideCloseButton,
   backgroundColor = WHITE,
   iconContainerStyle,
   ...otherProps
 }: Props) {
   if (visible) {
+    let onModalDialogClick = (e: Event) => {
+      e.stopPropagation();
+      otherProps?.onClick();
+    };
     return ReactDOM.createPortal(
-      <Overlay style={overlayStyle}>
-        <ModalDialog backgroundColor={backgroundColor} aria-modal role="dialog" {...otherProps}>
+      <Overlay style={overlayStyle} onClick={onClose}>
+        <ModalDialog
+          backgroundColor={backgroundColor}
+          aria-modal
+          role="dialog"
+          {...otherProps}
+          onClick={onModalDialogClick}
+        >
           <ClickAway onClickAway={onClose ? onClose : () => {}} flex>
-            <CloseIcon onPress={onClose} style={iconContainerStyle}>
-              <SvgClose {...svgCloseProps} />
-            </CloseIcon>
+            {!hideCloseButton && (
+              <CloseIcon onPress={onClose} style={iconContainerStyle}>
+                <SvgClose {...svgCloseProps} />
+              </CloseIcon>
+            )}
             {children}
           </ClickAway>
         </ModalDialog>

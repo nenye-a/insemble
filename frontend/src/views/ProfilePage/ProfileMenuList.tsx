@@ -9,6 +9,7 @@ import SvgPerson from '../../components/icons/person';
 import SvgBusiness from '../../components/icons/business';
 import SvgMessage from '../../components/icons/message';
 import SvgFullHeart from '../../components/icons/full-heart';
+import SvgBilling from '../../components/icons/bill';
 import { Role } from '../../types/types';
 
 type Props = {
@@ -134,9 +135,9 @@ const LANDLORD_PROFILE_MENU: Array<MenuObj> = [
     icon: <SvgMessage />,
     path: '/landlord/messages',
   },
-  // {
-  //   menu: 'Billing & Plans',
-  //   icon: <SvgBilling />,
-  //   path: '/landlord/billing',
-  // },
+  {
+    menu: 'Billing & Plans',
+    icon: <SvgBilling />,
+    path: '/user/billing',
+  },
 ];
