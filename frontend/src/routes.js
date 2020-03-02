@@ -18,18 +18,27 @@ import LandlordSignUp from './views/LandlordSignUp';
 import LandlordLogin from './views/LandlordLogin';
 import TenantEmailVerification from './views/TenantEmailVerification';
 import VerificationSuccessful from './views/VerificationSuccessful';
+import LandlordEmailVerification from './views/LandlordEmailVerification';
 import LandlordProperties from './views/LandlordProperties';
 import LandlordPropertyDetails from './views/LandlordPropertyDetails';
 
 import { tenantAuthorization } from './utils';
 
-export default [
+const COMMON_ROUTES = [
   {
     path: '/',
     exact: true,
     layout: BlankLayout,
     component: Landing,
   },
+  {
+    path: '/verification-successful',
+    layout: BasicLayout,
+    component: VerificationSuccessful,
+  },
+];
+
+const LANDLORD_ROUTES = [
   {
     path: '/landlord/signup',
     exact: true,
@@ -59,6 +68,20 @@ export default [
     component: LandlordPropertyDetails,
   },
   {
+    path: '/landlord/verify',
+    exact: true,
+    layout: BasicLayout,
+    component: LandlordOnboarding,
+  },
+  {
+    path: '/landlord/email-verification/:verificationId',
+    layout: BasicLayout,
+    component: LandlordEmailVerification,
+  },
+];
+
+const TENANT_ROUTES = [
+  {
     path: '/login',
     layout: BasicLayout,
     component: Login,
@@ -78,12 +101,6 @@ export default [
     path: '/verify/:placeID',
     layout: BasicLayout,
     component: Onboarding,
-  },
-  {
-    path: '/landlord/new-property',
-    exact: true,
-    layout: BasicLayout,
-    component: LandlordOnboarding,
   },
   {
     path: '/map/:brandId',
@@ -137,9 +154,8 @@ export default [
     layout: BasicLayout,
     component: TenantEmailVerification,
   },
-  {
-    path: '/verification-successful',
-    layout: BasicLayout,
-    component: VerificationSuccessful,
-  },
 ];
+
+const ROUTES = [...COMMON_ROUTES, ...LANDLORD_ROUTES, ...TENANT_ROUTES];
+
+export default ROUTES;

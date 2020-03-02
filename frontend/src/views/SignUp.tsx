@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { View, Text, Button, Card } from '../core-ui';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
 import SignUpForm from './SignUpPage/SignUpForm';
+import { Role } from '../types/types';
 
 export default function OnBoardingSignUp() {
   let history = useHistory();
@@ -20,7 +21,7 @@ export default function OnBoardingSignUp() {
         titleBackground="purple"
       >
         <FormContainer>
-          <SignUpForm role="Tenant" signUpFirst={true} />
+          <SignUpForm role={Role.TENANT} />
         </FormContainer>
       </Card>
       <RowView style={{ marginTop: 16 }}>

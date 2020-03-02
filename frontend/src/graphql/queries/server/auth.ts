@@ -51,3 +51,35 @@ export const TENANT_VERIFICATION = gql`
     }
   }
 `;
+
+export const LANDLORD_VERIFICATION = gql`
+  query LandlordRegisterVerification($id: String!) {
+    landlordRegisterVerification(verificationId: $id) {
+      id
+      verified
+      landlordAuth {
+        token
+        landlord {
+          id
+          email
+          firstName
+          lastName
+          avatar
+          company
+          tier
+          title
+          description
+        }
+      }
+    }
+  }
+`;
+
+export const REGISTER_LANDLORD = gql`
+  mutation RegisterLandlord($landlord: LandlordRegisterInput!) {
+    registerLandlord(landlord: $landlord) {
+      message
+      verificationId
+    }
+  }
+`;
