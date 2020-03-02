@@ -5,6 +5,9 @@ let asyncStorage = {
   saveTenantToken: (token: string) => {
     window.localStorage.setItem('tenant-token', token);
   },
+  saveLandlordToken: (token: string) => {
+    window.localStorage.setItem('landlord-token', token);
+  },
   saveBrandId: (brandId: string) => {
     window.localStorage.setItem('brand-id', brandId);
   },
@@ -14,6 +17,9 @@ let asyncStorage = {
   getTenantToken: () => {
     return window.localStorage.getItem('tenant-token');
   },
+  getLandlordToken: () => {
+    return window.localStorage.getItem('landlord-token');
+  },
   getBrandId: () => {
     return window.localStorage.getItem('brand-id');
   },
@@ -22,6 +28,9 @@ let asyncStorage = {
   },
   removeTenantToken: () => {
     return window.localStorage.removeItem('tenant-token');
+  },
+  removeLandlordToken: () => {
+    return window.localStorage.removeItem('landlord-token');
   },
   removeBrandId: () => {
     return window.localStorage.removeItem('brand-id');
