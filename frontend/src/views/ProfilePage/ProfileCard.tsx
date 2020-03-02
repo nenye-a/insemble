@@ -33,32 +33,41 @@ export default function ProfileCard({ role }: Props) {
   });
 
   let onTenantCompleted = (tenantResult: GetTenantProfile) => {
-    setProfileInfo({
-      name: tenantResult?.profileTenant.firstName + ' ' + tenantResult?.profileTenant.lastName,
-      company: tenantResult?.profileTenant.company,
-      title: tenantResult?.profileTenant.title,
-      avatar: tenantResult?.profileTenant.avatar,
-    });
+    let { profileTenant } = tenantResult;
+    if (profileTenant) {
+      let { firstName, lastName, company, title, avatar } = profileTenant;
+      setProfileInfo({
+        name: firstName + ' ' + lastName,
+        company,
+        title,
+        avatar,
+      });
+    }
   };
 
   let onLandlordCompleted = (landlordResult: GetLandlordProfile) => {
-    setProfileInfo({
-      name:
-        landlordResult?.profileLandlord.firstName + ' ' + landlordResult?.profileLandlord.lastName,
-      company: landlordResult?.profileLandlord.company,
-      title: landlordResult?.profileLandlord.title,
-      avatar: landlordResult?.profileLandlord.avatar,
-    });
+    let { profileLandlord } = landlordResult;
+    if (profileLandlord) {
+      let { firstName, lastName, company, title, avatar } = profileLandlord;
+      setProfileInfo({
+        name: firstName + ' ' + lastName,
+        company,
+        title,
+        avatar,
+      });
+    }
   };
 
   let [getTenant, { loading: tenantLoading }] = useLazyQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
     onCompleted: onTenantCompleted,
+    fetchPolicy: 'network-only',
   });
 
   let [getLandlord, { loading: landlordLoading }] = useLazyQuery<GetLandlordProfile>(
     GET_LANDLORD_PROFILE,
     {
       onCompleted: onLandlordCompleted,
+      fetchPolicy: 'network-only',
     }
   );
 
