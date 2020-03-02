@@ -29,6 +29,7 @@ export * from './SpaceType';
 export * from './PropertyThumbnail';
 export * from './PropertyMatchesThumbnail';
 export * from './PropertyDetailsResult';
+export * from './TenantDetailsResult';
 
 export * from './PropertyInput';
 export * from './SpaceInput';
