@@ -9,15 +9,22 @@ import { API_URI } from '../constants/uris';
 import { defaultState } from './localState';
 import { loginSuccess } from './resolvers';
 import asyncStorage from '../utils/asyncStorage';
+import { Role } from '../types/types';
 
 const cache = new InMemoryCache();
 
 const authLink = setContext(async (_, { headers }) => {
-  let token = await asyncStorage.getTenantToken();
+  let role = await asyncStorage.getRole();
+  let token = null;
+  if (role === Role.TENANT) {
+    token = await asyncStorage.getTenantToken();
+  } else if (role === Role.LANDLORD) {
+    token = await asyncStorage.getLandlordToken();
+  }
   return {
     headers: {
       ...headers,
-      Authorization: `Bearer ${token}`,
+      Authorization: token ? `Bearer ${token}` : undefined,
     },
   };
 });

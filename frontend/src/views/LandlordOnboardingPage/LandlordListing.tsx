@@ -1,7 +1,7 @@
-import React, { useState, ChangeEvent, Dispatch, useEffect } from 'react';
+import React, { useState, ChangeEvent, Dispatch, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
-import { useForm, FieldError, FieldValues } from 'react-hook-form';
+import { useForm, FieldError } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 
 import {
@@ -34,39 +34,76 @@ type Props = {
 export default function LandlordListing(props: Props) {
   let history = useHistory();
   let { state, dispatch } = props;
-  let { confirmLocation } = state;
+  let { confirmLocation, spaceListing } = state;
+  let { register, errors, handleSubmit, watch } = useForm();
+  let sqft = watch('sqft', spaceListing.sqft);
+  let price = watch('price', spaceListing.pricePerSqft);
+  let date = watch('date', spaceListing.availability);
   let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
-  let [mainPhoto, setMainPhoto] = useState<FileWithPreview | null>(null);
-  let [additionalPhotos, setAdditionalPhotos] = useState<Array<FileWithPreview | null>>([
-    null,
-    null,
-    null,
-    null,
-  ]);
-  let [description, setDescription] = useState<string>('');
-  let [selectedCondition, setSelectedCondition] = useState('Whitebox');
-  let [, setSelectedEquipment] = useState<Array<string>>([]);
-  let { register, errors, handleSubmit } = useForm();
+  let [mainPhoto, setMainPhoto] = useState<FileWithPreview | null>(spaceListing?.mainPhoto || null);
+  let [additionalPhotos, setAdditionalPhotos] = useState<Array<FileWithPreview | null>>(
+    spaceListing?.propertyPhotos || [null, null, null, null]
+  );
+  let [description, setDescription] = useState<string>(spaceListing?.description || '');
+  let [selectedCondition, setSelectedCondition] = useState(spaceListing?.condition || 'Whitebox');
+  let [selectedEquipments, setSelectedEquipment] = useState<Array<string>>(
+    spaceListing?.equipments || []
+  );
   let today = new Date().toISOString().slice(0, 10);
 
   let allValid = mainPhoto && selectedCondition && Object.keys(errors).length === 0;
 
-  useEffect(() => {});
-  let saveFormState = () => {
-    // dispatch({
-    //   type: 'SAVE_CHANGES_NEW_LISTING',
-    //   values: {
-    //     spaces: {},
-    //   },
-    // });
-  };
+  let saveFormState = useCallback(() => {
+    if (allValid && mainPhoto) {
+      dispatch({
+        type: 'SAVE_CHANGES_NEW_LISTING',
+        values: {
+          spaceListing: {
+            mainPhoto,
+            propertyPhotos: additionalPhotos,
+            description,
+            condition: selectedCondition,
+            sqft,
+            pricePerSqft: price,
+            equipments: selectedEquipments,
+            availability: date,
+          },
+        },
+      });
+    }
+  }, [
+    dispatch,
+    allValid,
+    mainPhoto,
+    additionalPhotos,
+    description,
+    selectedCondition,
+    sqft,
+    price,
+    selectedEquipments,
+    date,
+  ]);
 
-  let onSubmit = (fieldValues: FieldValues) => {
+  let onSubmit = async () => {
     if (allValid) {
       saveFormState();
       history.push('/landlord/new-property/step-5');
     }
   };
+
+  useEffect(() => {
+    saveFormState();
+  }, [
+    saveFormState,
+    mainPhoto,
+    additionalPhotos,
+    description,
+    selectedCondition,
+    sqft,
+    price,
+    selectedEquipments,
+    date,
+  ]);
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -117,6 +154,7 @@ export default function LandlordListing(props: Props) {
             required: 'Sqft should not be empty',
             validate: (val) => validateNumber(val) || 'Input should be number',
           })}
+          defaultValue={spaceListing.sqft}
           containerStyle={{ marginTop: 12, marginBottom: 12 }}
           errorMessage={(errors?.sqft as FieldError)?.message || ''}
         />
@@ -128,6 +166,7 @@ export default function LandlordListing(props: Props) {
             required: 'Price/Sqft should not be empty',
             validate: (val) => validateNumber(val) || 'Input should be number',
           })}
+          defaultValue={spaceListing.pricePerSqft}
           containerStyle={{ marginTop: 12, marginBottom: 12 }}
           errorMessage={(errors?.price as FieldError)?.message || ''}
         />
@@ -175,6 +214,17 @@ export default function LandlordListing(props: Props) {
       </OnboardingFooter>
     </Form>
   );
+}
+
+function getBase64(file: File): Promise<string | null | ArrayBuffer> {
+  return new Promise((resolve, reject) => {
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.onerror = (error) => reject(error);
+  });
 }
 
 const Container = styled(View)`

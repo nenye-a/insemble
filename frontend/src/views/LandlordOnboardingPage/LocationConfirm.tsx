@@ -11,6 +11,7 @@ import { Action, State as LandlordOnboardingState } from '../../reducers/landlor
 import { urlEncode } from '../../utils';
 import { SelectedLocation } from '../../components/LocationInput';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
+import { MarketingPreference } from '../../generated/globalTypes';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -22,17 +23,15 @@ type MarketingPreferenceRadio = {
   value: MarketingPreference;
 };
 
-type MarketingPreference = 'Public' | 'Private';
-
 const MARKETING_PREFERENCE_OPTIONS: Array<MarketingPreferenceRadio> = [
   {
     label: 'Public — I want to publicly advertise my property to matching tenants.',
-    value: 'Public',
+    value: MarketingPreference.PUBLIC,
   },
   {
     label:
       'Private — I want to connect with matching tenants without publicly listing my property.',
-    value: 'Private',
+    value: MarketingPreference.PRIVATE,
   },
 ];
 
@@ -99,7 +98,7 @@ export default function LocationConfirm(props: Props) {
   };
   let handleSubmit = () => {
     if (allValid) {
-      history.push('/landlord/new-property-step-3');
+      history.push('/landlord/new-property/step-3');
     }
   };
   return (
