@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, useEffect } from 'react';
+import React, { useState, Dispatch } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 

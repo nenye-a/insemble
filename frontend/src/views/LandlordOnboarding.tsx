@@ -19,8 +19,6 @@ type Params = {
 };
 export default function LandlordOnboarding() {
   let params = useParams<Params>();
-  let [activeSegmentIndex, setActiveSegmentIndex] = useState(0);
-
   let [selectedStep, setSelectedStep] = useState(params.formStep || 'step-1');
   let history = useHistory();
   let [state, dispatch] = useReducer(landlordOnboardingReducer, landlordOnboardingInitialState);
@@ -61,49 +59,18 @@ export default function LandlordOnboarding() {
       content: ThankYou,
     },
   ];
-  let activeSegment = SEGMENTS[activeSegmentIndex];
-  let selectedPage;
-  switch (selectedStep) {
-    case 'step-1': {
-      selectedPage = SEGMENTS[0];
-      break;
-    }
-    case 'step-2': {
-      selectedPage = SEGMENTS[1];
-      break;
-    }
-    case 'step-3': {
-      selectedPage = SEGMENTS[2];
-      break;
-    }
-    case 'step-4': {
-      selectedPage = SEGMENTS[3];
-      break;
-    }
-    case 'step-5': {
-      selectedPage = SEGMENTS[4];
-      break;
-    }
-    default: {
-      selectedPage = SEGMENTS[0];
-      break;
-    }
-  }
+  let selectedPage = SEGMENTS.find((item) => item.path === selectedStep) || SEGMENTS[0];
+
   let Content = selectedPage.content;
-  console.log(selectedPage, 'CON');
-  // if (
-  //   (!params?.formStep || params.formStep !== 'step-1') &&
-  //   (!history.location.state || !history.location.state)
-  // ) {
-  //   // TODO: check form state. if empty then should redirect to step-1, else can skip to next step
-  //   return <Redirect to="/landlord/new-property/step-1" />;
-  // }
+  if (!params?.formStep || history.action === 'POP') {
+    return <Redirect to="/landlord/new-property/step-1" />;
+  }
 
   return (
     <Container flex>
       <OnboardingCard
-        title={activeSegment.title}
-        progress={activeSegmentIndex / SEGMENTS.length}
+        title={selectedPage.title}
+        progress={SEGMENTS.indexOf(selectedPage) / SEGMENTS.length}
         canPressNext={state.canPressNext}
       >
         <Content dispatch={dispatch} state={state} />

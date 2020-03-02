@@ -216,17 +216,6 @@ export default function LandlordListing(props: Props) {
   );
 }
 
-function getBase64(file: File): Promise<string | null | ArrayBuffer> {
-  return new Promise((resolve, reject) => {
-    let reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      resolve(reader.result);
-    };
-    reader.onerror = (error) => reject(error);
-  });
-}
-
 const Container = styled(View)`
   padding: 12px 48px;
   z-index: 2;

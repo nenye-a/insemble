@@ -7,8 +7,7 @@ import PhotoGallery from '../DeepDivePage/PhotoGallery';
 import DescriptionCard from '../DeepDivePage/DescriptionCard';
 import SummaryCard from '../DeepDivePage/SummaryCard';
 import PropertyDeepDiveHeader from '../DeepDivePage/PropertyDeepDiveHeader';
-import { BACKGROUND_COLOR, THEME_COLOR } from '../../constants/colors';
-import { PHOTOS } from '../../fixtures/dummyData';
+import { THEME_COLOR, WHITE } from '../../constants/colors';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
 import { State, Action } from '../../reducers/landlordOnboardingReducer';
@@ -34,7 +33,7 @@ export default function PreviewListing(props: Props) {
     let { userRelation, propertyType, physicalAddress, marketingPreference } = confirmLocation;
     let {
       businessType,
-      otherBussinessType, // ask be
+      // otherBussinessType,  ask be
       selectedRetailCategories,
       existingExclusives,
     } = confirmTenant;
@@ -95,6 +94,7 @@ export default function PreviewListing(props: Props) {
   }
   return (
     <Form onSubmit={onSubmit}>
+      <Alert visible={!!createPropertyError} text={createPropertyError?.message || ''} />
       <RowView>
         <Title>Space 1</Title>
         <Alert visible text="This is how the Retailer will see your listing." />
@@ -139,7 +139,7 @@ const Spacing = styled(View)`
 const RowedView = styled(View)`
   flex-direction: row;
   align-items: flex-start;
-  background-color: ${BACKGROUND_COLOR};
+  background-color: ${WHITE};
 `;
 
 type TourContainerProps = {
