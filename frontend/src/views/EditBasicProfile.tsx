@@ -205,7 +205,7 @@ export default function BasicProfile() {
           <TextInput
             label="Email Address"
             placeholder="Email"
-            disabled={!profileEditable && role === Role.TENANT} // TODO: handle edit email for landlord
+            disabled={!profileEditable}
             containerStyle={textInputContainerStyle}
             defaultValue={email}
             name="email"
