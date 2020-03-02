@@ -10,20 +10,20 @@ export let editSpaceResolver: FieldResolver<'Mutation', 'editSpace'> = async (
 ) => {
   let {
     equipment = [],
-    photosUrl = [],
+    photoUrls = [],
     available,
     mainPhoto,
-    photosUpload,
+    photoUploads,
     ...spaceInput
   } = space || {};
-  if (!photosUrl) {
-    photosUrl = [];
+  if (!photoUrls) {
+    photoUrls = [];
   }
 
-  if (photosUpload) {
-    for (let photoFile of photosUpload) {
+  if (photoUploads) {
+    for (let photoFile of photoUploads) {
       let { Location: photoUrl } = await uploadS3(photoFile, 'MAIN_SPACE');
-      photosUrl.push(photoUrl);
+      photoUrls.push(photoUrl);
     }
   }
 
@@ -36,7 +36,7 @@ export let editSpaceResolver: FieldResolver<'Mutation', 'editSpace'> = async (
         set: equipment,
       },
       photos: {
-        set: photosUrl,
+        set: photoUrls,
       },
       available: new Date(available),
     },
