@@ -3,6 +3,8 @@ npm-debug.*
 lib/
 package-lock.json
 yarn-error.log
+.env
+!.env.example
 
 # prisma
 generated

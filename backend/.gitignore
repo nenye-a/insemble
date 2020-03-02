@@ -2,6 +2,7 @@
 /db.sqlite3
 .DS_Store
 .env
+!.env.example
 */settings/local.py
 /staticfiles/*
 /mediafiles/*
