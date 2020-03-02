@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 import { View, Card } from '../core-ui';
 import TenantDeepDiveModal from './DeepDivePage/TenantDeepDiveModal';
@@ -18,8 +19,10 @@ enum Tab {
 }
 
 export default function LandlordPropertyDetails() {
+  let history = useHistory();
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [selectedSpaceIndex, setSelectedSpaceIndex] = useState(0);
+  let { address } = history.location.state;
 
   let isTenantMatchSelected = selectedTabIndex === Tab.TENANT_MATCH_INDEX;
   let isLocationDetailSelected = selectedTabIndex === Tab.LOCATION_DETAIL_INDEX;
@@ -29,7 +32,7 @@ export default function LandlordPropertyDetails() {
     <View flex>
       <PropertyDetailHeader
         spaces={SPACES}
-        address="1004 West Slauson Avenue, Los Angeles"
+        address={address}
         request="1"
         selectedSpaceIndex={selectedSpaceIndex}
         onPressSpace={(index: number) => setSelectedSpaceIndex(index)}
