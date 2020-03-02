@@ -64,5 +64,6 @@ const Container = styled(View)`
 `;
 
 const LoginCard = styled(Card)`
-  width: 360px;
+  width: 400px;
+  // padding: 20px;
 `;

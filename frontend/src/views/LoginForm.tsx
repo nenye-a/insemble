@@ -6,22 +6,28 @@ import { useMutation } from '@apollo/react-hooks';
 
 import { TextInput, Button, View, Form, Alert } from '../core-ui';
 import { validateEmail } from '../utils/validation';
-import { LOGIN_TENANT } from '../graphql/queries/server/auth';
+import { LOGIN_TENANT, LOGIN_LANDLORD } from '../graphql/queries/server/auth';
 import { LoginTenant, LoginTenantVariables } from '../generated/LoginTenant';
 import { asyncStorage } from '../utils';
 import { Role } from '../types/types';
+import { LoginLandlord, LoginLandlordVariables } from '../generated/LoginLandlord';
 
 type Props = {
   role: Role;
 };
 
-export default function Login(_props: Props) {
+export default function Login(props: Props) {
   let history = useHistory();
+  let { role } = props;
   let { register, handleSubmit, errors } = useForm();
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
   let [tenantLogin, { data, loading, error }] = useMutation<LoginTenant, LoginTenantVariables>(
     LOGIN_TENANT
   );
+  let [
+    landlordLogin,
+    { data: landlordData, loading: landlordLoading, error: landlordError },
+  ] = useMutation<LoginLandlord, LoginLandlordVariables>(LOGIN_LANDLORD);
 
   let onSubmit = (data: FieldValues) => {
     let { email, password } = data;
@@ -42,10 +48,34 @@ export default function Login(_props: Props) {
     history.push(`/map/${brandId}`);
   }
 
+  //TODO: Check did landlord have property (for which page we should redirect)
+  let onSubmitLandlord = (landlordData: FieldValues) => {
+    let { email, password } = landlordData;
+    landlordLogin({
+      variables: { email, password },
+    });
+  };
+
+  let saveLandlordData = async (token: string, role: Role) => {
+    await asyncStorage.saveTenantToken(token);
+    await asyncStorage.saveRole(role);
+  };
+  if (landlordData) {
+    let { loginLandlord } = landlordData;
+    let { token } = loginLandlord;
+    saveLandlordData(token, Role.LANDLORD);
+    history.push(`/landlord/properties`);
+  }
+
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <Content>
-        <Alert visible={!!error} text={error?.message || ''} />
+    <Content>
+      <Form
+        onSubmit={role === Role.TENANT ? handleSubmit(onSubmit) : handleSubmit(onSubmitLandlord)}
+      >
+        <Alert
+          visible={!!error || !!landlordError}
+          text={error?.message || landlordError?.message || ''}
+        />
         <TextInput
           name="email"
           ref={register({
@@ -72,17 +102,17 @@ export default function Login(_props: Props) {
           errorMessage={(errors?.password as FieldError)?.message || ''}
           containerStyle={inputContainerStyle}
         />
-        <SubmitButton text="Submit" type="submit" loading={loading} />
-      </Content>
-    </Form>
+        <SubmitButton text="Submit" type="submit" loading={loading || landlordLoading} />
+      </Form>
+    </Content>
   );
 }
 
 const Content = styled(View)`
-  flex: 1;
-  justify-content: space-around;
-  margin: 24px;
+  padding: 24px;
+  width: 100%;
 `;
 const SubmitButton = styled(Button)`
   margin: 15px 0 10px 0;
+  width: 100%;
 `;
