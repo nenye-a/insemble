@@ -2,7 +2,7 @@ import { FieldResolver, mutationField, arg } from 'nexus';
 import bcrypt from 'bcrypt';
 
 import { Root, Context } from 'serverTypes';
-import { sendTenantVerificationEmail } from '../../helpers/sendEmail';
+import { sendVerificationEmail } from '../../helpers/sendEmail';
 import { HOST, NODE_ENV } from '../../constants/constants';
 import { uploadS3 } from '../../helpers/uploadUtils';
 
@@ -47,7 +47,7 @@ let editProfileResolver: FieldResolver<
       },
     });
     if (NODE_ENV === 'production') {
-      sendTenantVerificationEmail(
+      sendVerificationEmail(
         {
           email: tenantEmailVerification.email,
           name: `${currentUser.firstName} ${currentUser.lastName}`,
