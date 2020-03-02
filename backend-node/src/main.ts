@@ -7,6 +7,7 @@ import { authSession } from './helpers/auth';
 import { permissions } from './middlewares/permission';
 import { registerTenantHandler } from './controllers/registerTenantController';
 import { emailVerificationTenantHandler } from './controllers/emailVerificationTenantController';
+import { registerLandlordHandler } from './controllers/registerLandlordController';
 
 const server = new GraphQLServer({
   schema,
@@ -22,7 +23,7 @@ const server = new GraphQLServer({
   middlewares: [permissions],
 });
 
-server.express.use((req, res, next) => {
+server.express.use((_, res, next) => {
   res.setTimeout(500000, () => {
     // call back function is called when request timed out.
   });
@@ -32,6 +33,11 @@ server.express.use((req, res, next) => {
 server.express.get(
   '/register-tenant-verification/:token',
   registerTenantHandler,
+);
+
+server.express.get(
+  '/register-landlord-verification/:token',
+  registerLandlordHandler,
 );
 
 server.express.get(

@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { Base64 } from 'js-base64';
 
 import { Context } from 'serverTypes';
-import { sendTenantVerificationEmail } from '../../helpers/sendEmail';
+import { sendVerificationEmail } from '../../helpers/sendEmail';
 import { NODE_ENV, HOST } from '../../constants/constants';
 
 let registerTenantResolver: FieldResolver<
@@ -37,7 +37,7 @@ let registerTenantResolver: FieldResolver<
   );
 
   if (NODE_ENV === 'production') {
-    sendTenantVerificationEmail(
+    sendVerificationEmail(
       {
         email: `${tenant.email}`,
         name: `${tenant.firstName} ${tenant.lastName}`,
