@@ -17,13 +17,32 @@ type Props = {
   state: LandlordOnboardingState;
 };
 
+type MarketingPreferenceRadio = {
+  label: string;
+  value: MarketingPreference;
+};
+
+type MarketingPreference = 'Public' | 'Private';
+
+const MARKETING_PREFERENCE_OPTIONS: Array<MarketingPreferenceRadio> = [
+  {
+    label: 'Public — I want to publicly advertise my property to matching tenants.',
+    value: 'Public',
+  },
+  {
+    label:
+      'Private — I want to connect with matching tenants without publicly listing my property.',
+    value: 'Private',
+  },
+];
+
 export default function LocationConfirm(props: Props) {
   let history = useHistory();
   let { state: landlordOnboardingState, dispatch } = props;
   let { confirmLocation } = landlordOnboardingState;
-  let [selectedMarketingPreference, setSelectedMarketingPreference] = useState(
-    confirmLocation?.marketingPreference || ''
-  );
+  let [selectedMarketingPreference, setSelectedMarketingPreference] = useState<
+    MarketingPreferenceRadio
+  >(MARKETING_PREFERENCE_OPTIONS[0]);
   let [selectedLocation, setSelectedLocation] = useState<SelectedLocation | undefined>(
     confirmLocation?.physicalAddress
   );
@@ -52,7 +71,7 @@ export default function LocationConfirm(props: Props) {
               name: '',
               id: '',
             },
-            marketingPreference: selectedMarketingPreference,
+            marketingPreference: selectedMarketingPreference.value,
           },
         },
       });
@@ -73,7 +92,7 @@ export default function LocationConfirm(props: Props) {
             name: '',
             id: '',
           },
-          marketingPreference: selectedMarketingPreference,
+          marketingPreference: selectedMarketingPreference.value,
         },
       },
     });
@@ -108,17 +127,15 @@ export default function LocationConfirm(props: Props) {
           />
         </RowedView>
         <Label text="Marketing Preference" />
-        <RadioGroup
+        <RadioGroup<MarketingPreferenceRadio>
           name="Marketing Preference"
-          options={[
-            'Public — I want to publicly advertise my property to matching tenants.',
-            'Private — I want to connect with matching tenants without publicly listing my property.',
-          ]}
+          options={MARKETING_PREFERENCE_OPTIONS}
           selectedOption={selectedMarketingPreference}
           onSelect={(item) => {
             setSelectedMarketingPreference(item);
           }}
           radioItemProps={{ style: { marginTop: 9 } }}
+          titleExtractor={(item: MarketingPreferenceRadio) => item.label}
         />
       </FormContainer>
       <OnboardingFooter>

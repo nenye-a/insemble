@@ -1,10 +1,10 @@
 import { ApolloClient } from 'apollo-client';
 import { withClientState } from 'apollo-link-state';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import { HttpLink } from 'apollo-link-http';
 import { onError } from 'apollo-link-error';
 import { setContext } from 'apollo-link-context';
 import { ApolloLink } from 'apollo-link';
+import { createUploadLink } from 'apollo-upload-client';
 import { API_URI } from '../constants/uris';
 import { defaultState } from './localState';
 import { loginSuccess } from './resolvers';
@@ -37,7 +37,7 @@ const stateLink = withClientState({
   cache,
 });
 
-const httpLink = new HttpLink({
+const httpLink = createUploadLink({
   uri: API_URI,
 });
 
