@@ -6,3 +6,10 @@ export let tenantAuthorization = {
     return !!asyncStorage.getTenantToken();
   },
 };
+
+export let landlordAuthorization = {
+  redirectPath: '/landlord/login',
+  isAuthorized: () => {
+    return !!asyncStorage.getLandlordToken();
+  },
+};
