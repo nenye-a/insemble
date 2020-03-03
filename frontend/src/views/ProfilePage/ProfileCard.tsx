@@ -103,6 +103,7 @@ export default function ProfileCard({ role }: Props) {
         text="Sign Out"
         onPress={async () => {
           await asyncStorage.removeRole();
+          await asyncStorage.removeLandlordToken();
           await asyncStorage.removeTenantToken();
           await asyncStorage.removeBrandId();
           history.push('/');
