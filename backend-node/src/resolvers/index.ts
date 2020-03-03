@@ -30,8 +30,9 @@ export * from './brand/editBrandMutation';
 export * from './brand/brandsQuery';
 
 export * from './property/propertiesQuery';
-export * from './matches/propertyMatchesQuery';
 export * from './property/createPropertyMutation';
 export * from './property/editPropertyMutation';
 export * from './property/editSpaceMutation';
-export * from './details/propertyDetailsQuery'
+export * from './property/spacesQuery';
+export * from './matches/propertyMatchesQuery';
+export * from './details/propertyDetailsQuery';
