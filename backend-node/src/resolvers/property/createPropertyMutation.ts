@@ -29,7 +29,7 @@ export let createPropertyResolver: FieldResolver<
 
   if (photoUploads) {
     for (let photoFile of photoUploads) {
-      let { Location: photoUrl } = await uploadS3(photoFile, 'MAIN_SPACE');
+      let { Location: photoUrl } = await uploadS3(photoFile, 'SPACE');
       photoUrls.push(photoUrl);
     }
   }

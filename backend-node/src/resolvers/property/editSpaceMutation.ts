@@ -22,7 +22,7 @@ export let editSpaceResolver: FieldResolver<'Mutation', 'editSpace'> = async (
 
   if (photoUploads) {
     for (let photoFile of photoUploads) {
-      let { Location: photoUrl } = await uploadS3(photoFile, 'MAIN_SPACE');
+      let { Location: photoUrl } = await uploadS3(photoFile, 'SPACE');
       photoUrls.push(photoUrl);
     }
   }
@@ -39,6 +39,7 @@ export let editSpaceResolver: FieldResolver<'Mutation', 'editSpace'> = async (
         set: photoUrls,
       },
       available: new Date(available),
+      matchingBrand: null,
     },
     where: {
       id: spaceId,
