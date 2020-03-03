@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useMutation } from '@apollo/react-hooks';
-import { useHistory, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 
 import { View, TextInput, Form, Button, Alert } from '../../core-ui';
 import { validateEmail } from '../../utils/validation';
@@ -21,7 +21,6 @@ type Props = {
 export default function SignUpForm(props: Props) {
   let { onboardingState, role } = props;
   let { register, handleSubmit, errors, watch } = useForm();
-  let history = useHistory();
   let [registerTenant, { data, loading, error }] = useMutation<
     RegisterTenant,
     RegisterTenantVariables
