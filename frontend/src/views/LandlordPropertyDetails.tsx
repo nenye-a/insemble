@@ -9,6 +9,7 @@ import {
   PropertyDetailSegment,
   LandlordTenantMatches,
   LandlordLocationDetails,
+  LandlordManageSpace,
 } from './LandlordProfile';
 
 const SPACES = ['Space 1'];
@@ -16,6 +17,7 @@ const SPACES = ['Space 1'];
 enum Tab {
   TENANT_MATCH_INDEX,
   LOCATION_DETAIL_INDEX,
+  MANAGE_SPACE_INDEX,
 }
 
 export default function LandlordPropertyDetails() {
@@ -26,6 +28,7 @@ export default function LandlordPropertyDetails() {
 
   let isTenantMatchSelected = selectedTabIndex === Tab.TENANT_MATCH_INDEX;
   let isLocationDetailSelected = selectedTabIndex === Tab.LOCATION_DETAIL_INDEX;
+  let isManageSpaceSelected = selectedTabIndex === Tab.MANAGE_SPACE_INDEX;
 
   let [modalVisible, setModalVisible] = useState(false);
   return (
@@ -50,6 +53,8 @@ export default function LandlordPropertyDetails() {
           </ContentWrapper>
         ) : isLocationDetailSelected ? (
           <LandlordLocationDetails />
+        ) : isManageSpaceSelected ? (
+          <LandlordManageSpace />
         ) : null}
       </Card>
       <TenantDeepDiveModal visible={modalVisible} onClose={() => setModalVisible(false)} />
