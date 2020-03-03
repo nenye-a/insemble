@@ -99,7 +99,10 @@ class PropertyTenantAPI(AsynchronousAPI):
 
         # KO TENANT MATCHING FOR THE SPACE:
         # TODO: do this asynchronously and actually obtain real data. (should take in space_params)
-        m_process, match_details = self.generate_matches.delay(validated_params['address']), []
+
+        address = landlord_provider.property_address(
+            validated_params['property_id']) if 'property_id' in validated_params else validated_params['address']
+        m_process, match_details = self.generate_matches.delay(address), []
         match_listener = self._celery_listener(m_process, match_details)
         match_listener.start()
 
@@ -254,15 +257,23 @@ class PropertyDetailsAPI(AsynchronousAPI):
         demographics = FastLocationDetailsAPI.obtain_demographics(place)
         personas = provider.fill_personas(place["psycho1"])
 
+        try:
+            commute = demographics["1mile"].pop("commute")
+            demographics["3mile"].pop("commute")
+            demographics["5mile"].pop("commute")
+        except Exception:
+            commute = None
+
         response = {
             'status': 200,
             'status_detail': 'Success',
             'result': {
                 'key_facts': place['key_facts'],
+                'commute': commute,
                 'personas': personas,
                 'demographics1': demographics["1mile"],
-                'demographics2': demographics["3mile"],
-                'demographics3': demographics["5mile"]
+                'demographics3': demographics["3mile"],
+                'demographics5': demographics["5mile"]
             }
         }
 
