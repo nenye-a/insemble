@@ -22,6 +22,7 @@ Brands:
     logo: string (url),                                 -> url that paths to the logo of this brand
     places: list[ObjectId()],                           -> list of all the places/sites that this brand has
     address: string,
+    website_domain: string (url),                       -> domain name of the brand that is present
     average_rating: float,
     total_number_ratings: int,
     years_operation: int,
