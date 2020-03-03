@@ -13,6 +13,7 @@ export let editSpaceResolver: FieldResolver<'Mutation', 'editSpace'> = async (
     photoUrls = [],
     available,
     mainPhoto,
+    mainPhotoUrl,
     photoUploads,
     ...spaceInput
   } = space || {};
@@ -26,12 +27,15 @@ export let editSpaceResolver: FieldResolver<'Mutation', 'editSpace'> = async (
       photoUrls.push(photoUrl);
     }
   }
-
-  let { Location: mainPhotoUrl } = await uploadS3(mainPhoto, 'MAIN_SPACE');
+  let uploadedMainPhotoUrl = '';
+  if (mainPhoto) {
+    let { Location: mainPhotoUrl } = await uploadS3(mainPhoto, 'MAIN_SPACE');
+    uploadedMainPhotoUrl = mainPhotoUrl;
+  }
   let updatedSpace = await context.prisma.space.update({
     data: {
       ...spaceInput,
-      mainPhoto: mainPhotoUrl,
+      mainPhoto: mainPhotoUrl || uploadedMainPhotoUrl,
       equipment: {
         set: equipment,
       },

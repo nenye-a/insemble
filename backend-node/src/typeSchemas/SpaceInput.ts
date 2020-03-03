@@ -3,7 +3,8 @@ import { inputObjectType } from 'nexus';
 export let SpaceInput = inputObjectType({
   name: 'SpaceInput',
   definition(t) {
-    t.field('mainPhoto', { type: 'Upload', required: true });
+    t.field('mainPhoto', { type: 'Upload' });
+    t.string('mainPhotoUrl');
     t.field('photoUploads', { type: 'Upload', list: true });
     t.string('photoUrls', { list: true });
     t.string('description', { required: true });
