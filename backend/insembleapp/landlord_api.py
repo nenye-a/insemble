@@ -229,9 +229,8 @@ class PropertyTenantAPI(AsynchronousAPI):
         celery_app.register_task(self.get_environics_demographics)
         celery_app.register_task(self.get_nearby_places)
 
+
 # PropertyDetailsAPI - api/propertyDetails/
-
-
 class PropertyDetailsAPI(AsynchronousAPI):
 
     serializer_class = PropertyDetailsSerializer
