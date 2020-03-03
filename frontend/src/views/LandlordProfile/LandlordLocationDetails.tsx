@@ -45,9 +45,7 @@ export default function LandlordLocationDetails() {
       <Container flex>
         <CardsContainer>
           {personasData &&
-            personasData.map((item, index) => (
-              <RelevantConsumerCard percentile={100} name="name" key={index} {...item} />
-            ))}
+            personasData.map((item, index) => <RelevantConsumerCard key={index} {...item} />)}
         </CardsContainer>
       </Container>
       <GraphicContainer>
