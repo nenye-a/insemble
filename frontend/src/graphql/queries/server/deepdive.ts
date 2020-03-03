@@ -164,3 +164,97 @@ export const GET_LOCATION_DETAILS = gql`
     }
   }
 `;
+
+export const GET_PROPERTY_LOCATION_DETAILS = gql`
+  query PropertyLocationDetails($propertyId: String!) {
+    propertyDetails(propertyId: $propertyId) {
+      keyFacts {
+        mile
+        daytimePop
+        mediumHouseholdIncome
+        totalHousehold
+        householdGrowth2017to2022
+        numMetro
+        numUniversities
+        numHospitals
+        numApartements
+      }
+      commute {
+        name
+        value
+      }
+      topPersonas {
+        percentile
+        name
+        description
+        tags
+      }
+      demographics1 {
+        age {
+          name
+          myLocation
+        }
+        income {
+          name
+          myLocation
+        }
+        ethnicity {
+          name
+          myLocation
+        }
+        education {
+          name
+          myLocation
+        }
+        gender {
+          name
+          myLocation
+        }
+      }
+      demographics3 {
+        age {
+          name
+          myLocation
+        }
+        income {
+          name
+          myLocation
+        }
+        ethnicity {
+          name
+          myLocation
+        }
+        education {
+          name
+          myLocation
+        }
+        gender {
+          name
+          myLocation
+        }
+      }
+      demographics5 {
+        age {
+          name
+          myLocation
+        }
+        income {
+          name
+          myLocation
+        }
+        ethnicity {
+          name
+          myLocation
+        }
+        education {
+          name
+          myLocation
+        }
+        gender {
+          name
+          myLocation
+        }
+      }
+    }
+  }
+`;
