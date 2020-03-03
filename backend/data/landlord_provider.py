@@ -74,12 +74,17 @@ def update_property_with_id(property_id, space_params):
 
     space_id = ObjectId()
     space_params['id'] = space_id
-    this_property = utils.DB_PROPERTY.find_one({'_id': property_id}, {'spaces': 1})
+    this_property = utils.DB_PROPERTY.find_one({'_id': ObjectId(property_id)}, {'spaces': 1})
     this_property['spaces'].append(space_params)
-    utils.DB_PROPERTY.update_one({'_id': property_id}, {'$set': this_property})
+    utils.DB_PROPERTY.update_one({'_id': ObjectId(property_id)}, {'$set': this_property})
     return str(space_id)
 
 
 def property_details(property_id):
 
     return utils.DB_PROPERTY.find_one({"_id": ObjectId(property_id)})["location_details"]
+
+
+def property_address(property_id):
+
+    return utils.DB_PROPERTY.find_one({"_id": ObjectId(property_id)})["address"]
