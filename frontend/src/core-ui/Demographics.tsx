@@ -17,8 +17,8 @@ import SegmentedControl from './SegmentedControl';
 import { View, Text } from '../core-ui';
 import { CarouselFilter } from '../components';
 import { roundDecimal, convertToKilos } from '../utils';
-import { LocationDetails_locationDetails_result_demographics1 as locationDetailsDemographics } from '../generated/LocationDetails';
-import { PropertyLocationDetails_propertyDetails_demographics1 as propertyDetailsDemographics } from '../generated/PropertyLocationDetails';
+import { LocationDetails_locationDetails_result_demographics1 as LocationDetailsDemographics } from '../generated/LocationDetails';
+import { PropertyLocationDetails_propertyDetails_demographics1 as PropertyDetailsDemographics } from '../generated/PropertyLocationDetails';
 
 //TODO Improve Typing for data
 type DemographicsStatus = {
@@ -41,13 +41,13 @@ type DataKey = Exclude<keyof Data, 'population'>;
 
 type Props = {
   withMargin?: boolean;
-  demographicsData?: Array<locationDetailsDemographics | propertyDetailsDemographics | undefined>;
+  demographicsData?: Array<LocationDetailsDemographics | PropertyDetailsDemographics | undefined>;
 };
 
 function hasGrowth(
-  data: locationDetailsDemographics | propertyDetailsDemographics
-): data is locationDetailsDemographics {
-  return (data as locationDetailsDemographics).age[0].growth !== undefined;
+  data: LocationDetailsDemographics | PropertyDetailsDemographics
+): data is LocationDetailsDemographics {
+  return (data as LocationDetailsDemographics).age[0].growth !== undefined;
 }
 
 export default function Graphic(props: Props) {

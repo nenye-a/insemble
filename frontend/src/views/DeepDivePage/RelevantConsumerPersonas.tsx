@@ -3,10 +3,10 @@ import styled from 'styled-components';
 
 import { View, Card } from '../../core-ui';
 import RelevantConsumerCard from './RelevantConsumerCard';
-import { LocationDetails_locationDetails_result_topPersonas as locationPersonas } from '../../generated/LocationDetails';
+import { LocationDetails_locationDetails_result_topPersonas as LocationPersonas } from '../../generated/LocationDetails';
 
 type Props = {
-  personasData?: Array<locationPersonas>;
+  personasData?: Array<LocationPersonas>;
 };
 
 export default function RelevantConsumerPersonas(props: Props) {

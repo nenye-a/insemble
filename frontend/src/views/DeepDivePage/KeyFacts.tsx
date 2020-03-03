@@ -11,14 +11,14 @@ import {
 import { THEME_COLOR, COMMUTE_CHART_COLORS, SECONDARY_COLOR } from '../../constants/colors';
 import { convertToKilos, roundDecimal, getKeyfactsValue } from '../../utils';
 import {
-  LocationDetails_locationDetails_result_commute as locationDetailsCommute,
-  LocationDetails_locationDetails_result_keyFacts as locationDetailsKeyFacts,
+  LocationDetails_locationDetails_result_commute as LocationDetailsCommute,
+  LocationDetails_locationDetails_result_keyFacts as LocationDetailsKeyFacts,
 } from '../../generated/LocationDetails';
 
 type Props = {
   withMargin?: boolean;
-  keyFactsData?: locationDetailsKeyFacts;
-  commuteData?: Array<locationDetailsCommute>;
+  keyFactsData?: LocationDetailsKeyFacts;
+  commuteData?: Array<LocationDetailsCommute>;
 };
 export default function KeyFacts(props: Props) {
   let { withMargin, keyFactsData, commuteData } = props;
