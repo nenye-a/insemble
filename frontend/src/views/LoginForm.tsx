@@ -57,7 +57,7 @@ export default function Login(props: Props) {
   };
 
   let saveLandlordData = async (token: string, role: Role) => {
-    await asyncStorage.saveTenantToken(token);
+    await asyncStorage.saveLandlordToken(token);
     await asyncStorage.saveRole(role);
   };
   if (landlordData) {
