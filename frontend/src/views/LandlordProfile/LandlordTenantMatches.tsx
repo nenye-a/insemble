@@ -1,8 +1,7 @@
 import React, { ComponentProps } from 'react';
 import styled from 'styled-components';
-import { useQuery } from '@apollo/react-hooks';
 
-import { View, Text, TouchableOpacity, LoadingIndicator } from '../../core-ui';
+import { View, Text, TouchableOpacity } from '../../core-ui';
 import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
 import {
   FONT_WEIGHT_MEDIUM,
@@ -12,29 +11,28 @@ import {
   DEFAULT_BORDER_RADIUS,
 } from '../../constants/theme';
 import { DARK_TEXT_COLOR, WHITE, SECONDARY_COLOR, THEME_COLOR } from '../../constants/colors';
-import { GET_PROPERTY_MATCHES_DATA } from '../../graphql/queries/server/matches';
-import { PropertyMatches, PropertyMatchesVariables } from '../../generated/PropertyMatches';
+import { PropertyMatches_propertyMatches as PropertyMatchesProps } from '../../generated/PropertyMatches';
+import { EmptyDataComponent } from '../../components';
 
 type Props = {
-  onPress: () => void;
+  onPress: (selectedBrandId: string) => void;
+  matchResult?: Array<PropertyMatchesProps>;
 };
 
-export default function LandlordTenantMatches({ onPress }: Props) {
-  let { data, loading } = useQuery<PropertyMatches, PropertyMatchesVariables>(
-    GET_PROPERTY_MATCHES_DATA,
-    { variables: { propertyId: 'MOCK ID' } }
-  );
-  let matchResult = data?.propertyMatches;
-
+export default function LandlordTenantMatches({ onPress, matchResult }: Props) {
   return (
     <Container flex>
-      {loading && !data ? (
-        <LoadingIndicator />
+      {!matchResult ? (
+        <EmptyDataComponent />
       ) : (
         matchResult &&
         matchResult.map((item, index) => {
           return (
-            <TenantCard key={index} isInterested={item.interested} onPress={onPress}>
+            <TenantCard
+              key={index}
+              isInterested={item.interested}
+              onPress={() => onPress(item.brandId)}
+            >
               {item.interested ? (
                 <InterestedContainer>
                   <InterestedText>Interested</InterestedText>
