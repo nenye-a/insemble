@@ -258,3 +258,117 @@ export const GET_PROPERTY_LOCATION_DETAILS = gql`
     }
   }
 `;
+
+export const GET_TENANT_DETAILS = gql`
+  query TenantDetail($brandId: String!) {
+    tenantDetail(brandId: $brandId) {
+      name
+      category
+      keyFacts {
+        tenantPerformance {
+          storeCount
+          rating
+          operationYears
+          averageReviews
+        }
+      }
+      tenantView {
+        overview
+        description
+        minSqft
+        maxSqft
+        ceilingHeight
+        condition
+      }
+      insightView {
+        topPersonas {
+          percentile
+          name
+          description
+          tags
+        }
+        demographics1 {
+          age {
+            name
+            myLocation
+            targetLocation
+          }
+          income {
+            name
+            myLocation
+            targetLocation
+          }
+          ethnicity {
+            name
+            myLocation
+            targetLocation
+          }
+          education {
+            name
+            myLocation
+            targetLocation
+          }
+          gender {
+            name
+            myLocation
+            targetLocation
+          }
+        }
+        demographics3 {
+          age {
+            name
+            myLocation
+            targetLocation
+          }
+          income {
+            name
+            myLocation
+            targetLocation
+          }
+          ethnicity {
+            name
+            myLocation
+            targetLocation
+          }
+          education {
+            name
+            myLocation
+            targetLocation
+          }
+          gender {
+            name
+            myLocation
+            targetLocation
+          }
+        }
+        demographics5 {
+          age {
+            name
+            myLocation
+            targetLocation
+          }
+          income {
+            name
+            myLocation
+            targetLocation
+          }
+          ethnicity {
+            name
+            myLocation
+            targetLocation
+          }
+          education {
+            name
+            myLocation
+            targetLocation
+          }
+          gender {
+            name
+            myLocation
+            targetLocation
+          }
+        }
+      }
+    }
+  }
+`;

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
 
-import { View, Card } from '../core-ui';
+import { View, Card, LoadingIndicator } from '../core-ui';
 import TenantDeepDiveModal from './DeepDivePage/TenantDeepDiveModal';
 import {
   PropertyDetailHeader,
@@ -11,6 +12,8 @@ import {
   LandlordLocationDetails,
   LandlordManageSpace,
 } from './LandlordProfile';
+import { PropertyMatches, PropertyMatchesVariables } from '../generated/PropertyMatches';
+import { GET_PROPERTY_MATCHES_DATA } from '../graphql/queries/server/matches';
 
 const SPACES = ['Space 1'];
 
@@ -20,10 +23,16 @@ enum Tab {
   MANAGE_SPACE_INDEX,
 }
 
+type Params = {
+  propertyId: string;
+};
+
 export default function LandlordPropertyDetails() {
   let history = useHistory();
+  let params = useParams<Params>();
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [selectedSpaceIndex, setSelectedSpaceIndex] = useState(0);
+  let [selectedBrandId, setSelectedBrandId] = useState('');
   let { address } = history.location.state;
 
   let isTenantMatchSelected = selectedTabIndex === Tab.TENANT_MATCH_INDEX;
@@ -31,33 +40,54 @@ export default function LandlordPropertyDetails() {
   let isManageSpaceSelected = selectedTabIndex === Tab.MANAGE_SPACE_INDEX;
 
   let [modalVisible, setModalVisible] = useState(false);
+
+  let { data, loading } = useQuery<PropertyMatches, PropertyMatchesVariables>(
+    GET_PROPERTY_MATCHES_DATA,
+    { variables: { propertyId: params.propertyId } }
+  );
+
   return (
     <View flex>
-      <PropertyDetailHeader
-        spaces={SPACES}
-        address={address}
-        request="1"
-        selectedSpaceIndex={selectedSpaceIndex}
-        onPressSpace={(index: number) => setSelectedSpaceIndex(index)}
-        onPressAdd={() => {}} // TODO
+      {loading ? (
+        <LoadingIndicator />
+      ) : (
+        <>
+          <PropertyDetailHeader
+            spaces={SPACES}
+            address={address}
+            request="1" // TODO
+            selectedSpaceIndex={selectedSpaceIndex}
+            onPressSpace={(index: number) => setSelectedSpaceIndex(index)}
+            onPressAdd={() => {}} // TODO
+          />
+          <Card>
+            <PropertyDetailSegment
+              selectedTabIndex={selectedTabIndex}
+              onPress={(index: number) => setSelectedTabIndex(index)}
+            />
+            {isTenantMatchSelected ? (
+              <ContentWrapper>
+                <LandlordTenantMatches
+                  matchResult={data?.propertyMatches}
+                  onPress={(selectedBrandId) => {
+                    setModalVisible(true), setSelectedBrandId(selectedBrandId);
+                  }}
+                />
+              </ContentWrapper>
+            ) : isLocationDetailSelected ? (
+              <LandlordLocationDetails />
+            ) : isManageSpaceSelected ? (
+              <LandlordManageSpace />
+            ) : null}
+          </Card>
+        </>
+      )}
+
+      <TenantDeepDiveModal
+        brandId={selectedBrandId}
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
       />
-      <Card>
-        <PropertyDetailSegment
-          selectedTabIndex={selectedTabIndex}
-          onPress={(index: number) => setSelectedTabIndex(index)}
-        />
-        {isTenantMatchSelected ? (
-          <ContentWrapper>
-            {/* TODO: pass id */}
-            <LandlordTenantMatches onPress={() => setModalVisible(true)} />
-          </ContentWrapper>
-        ) : isLocationDetailSelected ? (
-          <LandlordLocationDetails />
-        ) : isManageSpaceSelected ? (
-          <LandlordManageSpace />
-        ) : null}
-      </Card>
-      <TenantDeepDiveModal visible={modalVisible} onClose={() => setModalVisible(false)} />
     </View>
   );
 }

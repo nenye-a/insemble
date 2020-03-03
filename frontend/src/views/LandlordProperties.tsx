@@ -32,7 +32,7 @@ export default function LandlordProperties() {
               key={index}
               style={{ marginBottom: 24 }}
               onPress={() => {
-                history.push(`/landlord/properties/${item.propertyId}`, {
+                history.push(`/landlord/properties/${item.id}`, {
                   iframeSource,
                   address: item.location.address,
                 });

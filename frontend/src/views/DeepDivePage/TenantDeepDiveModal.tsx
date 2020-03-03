@@ -1,23 +1,33 @@
 import React, { useState, UIEvent } from 'react';
 import styled from 'styled-components';
 
-import { View, Modal, TabBar } from '../../core-ui';
+import { View, Modal, TabBar, LoadingIndicator } from '../../core-ui';
 import PropertyDeepDiveHeader from './PropertyDeepDiveHeader';
 import TenantPropertyDetailsView from './TenantPropertyDetailsView';
 import TenantOverview from './TenantOverview';
 import { WHITE, BACKGROUND_COLOR } from '../../constants/colors';
+import { GET_TENANT_DETAILS } from '../../graphql/queries/server/deepdive';
+import { useQuery } from '@apollo/react-hooks';
+import { TenantDetail, TenantDetailVariables } from '../../generated/TenantDetail';
 
 type Props = {
   visible: boolean;
   onClose: () => void;
+  brandId: string;
 };
 
 const SHRINK_HEIGHT = 160;
+
 export default function TenantDeepDiveModal(props: Props) {
-  let { visible, onClose } = props;
+  let { visible, onClose, brandId } = props;
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [headerShrink, setHeaderShrink] = useState(false);
   let isOverviewSelected = selectedTabIndex === 0;
+  let { data, loading } = useQuery<TenantDetail, TenantDetailVariables>(GET_TENANT_DETAILS, {
+    variables: {
+      brandId,
+    },
+  });
 
   let handleOnScroll = (e: UIEvent<HTMLDivElement>) => {
     if (visible) {
@@ -32,27 +42,43 @@ export default function TenantDeepDiveModal(props: Props) {
 
   return (
     <Modal backgroundColor={BACKGROUND_COLOR} onClose={onClose} visible={visible}>
-      <TourContainer isShrink={headerShrink} />
-      <TabBar
-        fullWidth={false}
-        options={['Tenant View', 'Insights View']}
-        activeTab={selectedTabIndex}
-        onPress={(index: number) => {
-          setSelectedTabIndex(index);
-        }}
-      />
-
-      <ScrollView flex onScroll={handleOnScroll}>
-        <View style={{ backgroundColor: WHITE }}>
-          <PropertyDeepDiveHeader
-            isLiked
-            onLikePress={() => {}}
-            address="California Cheeseburgers"
-            targetNeighborhood="Hamburger Restaurant"
+      {loading && !data ? (
+        <LoadingIndicator />
+      ) : (
+        <>
+          <TourContainer isShrink={headerShrink} />
+          <TabBar
+            fullWidth={false}
+            options={['Tenant View', 'Insights View']}
+            activeTab={selectedTabIndex}
+            onPress={(index: number) => {
+              setSelectedTabIndex(index);
+            }}
           />
-        </View>
-        {isOverviewSelected ? <TenantOverview /> : <TenantPropertyDetailsView />}
-      </ScrollView>
+
+          <ScrollView flex onScroll={handleOnScroll}>
+            <View style={{ backgroundColor: WHITE }}>
+              <PropertyDeepDiveHeader
+                isLiked
+                onLikePress={() => {}}
+                address={data?.tenantDetail.name || ''}
+                targetNeighborhood={data?.tenantDetail.category || ''}
+              />
+            </View>
+            {isOverviewSelected ? (
+              <TenantOverview
+                keyFacts={data?.tenantDetail.keyFacts}
+                tenantView={data?.tenantDetail.tenantView}
+              />
+            ) : (
+              <TenantPropertyDetailsView
+                keyFacts={data?.tenantDetail.keyFacts}
+                insightsView={data?.tenantDetail.insightView}
+              />
+            )}
+          </ScrollView>
+        </>
+      )}
     </Modal>
   );
 }

@@ -63,7 +63,7 @@ const LANDLORD_ROUTES = [
     component: LandlordProperties,
   },
   {
-    path: '/landlord/properties/:brandId',
+    path: '/landlord/properties/:propertyId',
     layout: LandlordProfileLayout,
     component: LandlordPropertyDetails,
   },
