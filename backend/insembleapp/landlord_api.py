@@ -1,7 +1,7 @@
 from rest_framework import status, generics, permissions
 from .tenant_api import AsynchronousAPI, FastLocationDetailsAPI
 from rest_framework.response import Response
-from .landlord_serializers import PropertyTenantSerializer, PropertyDetailsSerializer
+from .landlord_serializers import PropertyTenantSerializer, PropertyDetailsSerializer, TenantDetailsSerializer
 from bson import ObjectId
 import data.api.goog as google
 import data.landlord_matching as landlord_matching
@@ -274,6 +274,77 @@ class PropertyDetailsAPI(AsynchronousAPI):
                 'demographics1': demographics["1mile"],
                 'demographics3': demographics["3mile"],
                 'demographics5': demographics["5mile"]
+            }
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+
+
+# TenantDetailsAPI - api/tenantDetails/
+class TenantDetailsAPI(AsynchronousAPI):
+    """
+
+    params: {
+        tenant_id: string
+    }
+
+    """
+
+    serializer_class = TenantDetailsSerializer
+
+    def get(self, request, *args, **kwargs):
+
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        validated_params = serializer.validated_data
+
+        tenant_id = validated_params['tenant_id']
+        place = landlord_provider.tenant_details(tenant_id)
+
+        if not place:
+            return Response({
+                'status': 200,
+                'status_detail': 'Successful Call, but No Details Found',
+                'result': {}
+            })
+
+        demographics = FastLocationDetailsAPI.obtain_demographics(place)
+        personas = provider.fill_personas({
+            key: value for key, value in list(place["psycho1"].items())[:3]
+        })
+
+        # TODO: algorithmically generate overview and requirement details:
+        overview = "Actively looking for a space in the Greater Los Angeles Area"
+        description = place["name"] + " is an awesome new restailer/restaurant in town"
+        physical_requirements = {
+            'minimum sqft': 4000,
+            'frontage width': 40,
+            'condition': "White Box"
+        }
+
+        key_facts = {
+            'num_stores': 10,
+            'years_operating': 7,
+            'rating': place["rating"] if 'rating' in place else 4.3,
+            'num_reviews': place["user_ratings_total"] if 'user_ratings_total' in place else 203
+        }
+
+        response = {
+            'status': 200,
+            'status_detail': 'Success',
+            'result': {
+                'key_facts': key_facts,
+                'tenant': {
+                    'overview': overview,
+                    'description': description,
+                    'physical requirements': physical_requirements
+                },
+                'insights': {
+                    'personas': personas,
+                    'demographics1': demographics["1mile"],
+                    'demographics2': demographics["3mile"],
+                    'demographics3': demographics["5mile"],
+                }
             }
         }
 
