@@ -59,7 +59,7 @@ export default function TenantConfirm(props: Props) {
           businessType: selectedBusinessService,
           selectedRetailCategories: selectedCategories,
           existingExclusives: selectedExistingCategories,
-          otherBussinessType: otherService,
+          otherBusinessType: otherService,
         },
       },
     });

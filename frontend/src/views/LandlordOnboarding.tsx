@@ -1,6 +1,6 @@
 import React, { useState, useReducer, useEffect } from 'react';
 import styled from 'styled-components';
-import { useHistory, useParams, Redirect } from 'react-router-dom';
+import { useParams, Redirect } from 'react-router-dom';
 
 import { View } from '../core-ui';
 import landlordOnboardingReducer, {
@@ -20,7 +20,6 @@ type Params = {
 export default function LandlordOnboarding() {
   let params = useParams<Params>();
   let [selectedStep, setSelectedStep] = useState(params.formStep || 'step-1');
-  let history = useHistory();
   let [state, dispatch] = useReducer(landlordOnboardingReducer, landlordOnboardingInitialState);
 
   useEffect(() => {
@@ -62,7 +61,8 @@ export default function LandlordOnboarding() {
   let selectedPage = SEGMENTS.find((item) => item.path === selectedStep) || SEGMENTS[0];
 
   let Content = selectedPage.content;
-  if (!params?.formStep || history.action === 'POP') {
+  if (!params?.formStep) {
+    // TODO: check if user directly hit next step before filling previous form
     return <Redirect to="/landlord/new-property/step-1" />;
   }
 

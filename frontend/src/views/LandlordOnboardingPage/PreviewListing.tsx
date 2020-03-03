@@ -14,7 +14,7 @@ import OnboardingFooter from '../../components/layout/OnboardingFooter';
 import { State, Action } from '../../reducers/landlordOnboardingReducer';
 import { CREATE_PROPERTY } from '../../graphql/queries/server/property';
 import { CreateProperty, CreatePropertyVariables } from '../../generated/CreateProperty';
-import { getImageBlob } from '../../utils';
+import { getImageBlob, dateFormatter } from '../../utils';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -59,7 +59,6 @@ export default function PreviewListing(props: Props) {
       }
 
       let filteredBusinessType = businessType.filter((item) => item !== 'Other');
-
       createProperty({
         variables: {
           property: {
@@ -79,7 +78,7 @@ export default function PreviewListing(props: Props) {
             userRelation,
           },
           space: {
-            available: availability, // convert date
+            available: dateFormatter(availability),
             condition,
             description,
             equipment: equipments,
