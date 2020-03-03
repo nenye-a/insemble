@@ -67,27 +67,27 @@ def add_property(property_params, space_params):
     space_params['id'] = space_id
     property_params['spaces'].append(space_params)
 
-    return str(utils.DB_PROPERTY.insert(property_params)), str(space_id)
+    return str(utils.DB_PROPERTY_LEGACY.insert(property_params)), str(space_id)
 
 
 def update_property_with_id(property_id, space_params):
 
     space_id = ObjectId()
     space_params['id'] = space_id
-    this_property = utils.DB_PROPERTY.find_one({'_id': ObjectId(property_id)}, {'spaces': 1})
+    this_property = utils.DB_PROPERTY_LEGACY.find_one({'_id': ObjectId(property_id)}, {'spaces': 1})
     this_property['spaces'].append(space_params)
-    utils.DB_PROPERTY.update_one({'_id': ObjectId(property_id)}, {'$set': this_property})
+    utils.DB_PROPERTY_LEGACY.update_one({'_id': ObjectId(property_id)}, {'$set': this_property})
     return str(space_id)
 
 
 def property_details(property_id):
 
-    return utils.DB_PROPERTY.find_one({"_id": ObjectId(property_id)})["location_details"]
+    return utils.DB_PROPERTY_LEGACY.find_one({"_id": ObjectId(property_id)})["location_details"]
 
 
 def property_address(property_id):
 
-    return utils.DB_PROPERTY.find_one({"_id": ObjectId(property_id)})["address"]
+    return utils.DB_PROPERTY_LEGACY.find_one({"_id": ObjectId(property_id)})["address"]
 
 
 def tenant_details(tenant_id):

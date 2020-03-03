@@ -15,28 +15,49 @@ Utility methods & fields that are used to make the overall dataset building more
 efficient & powerful
 '''
 
-# regular statics
+# IMPORTANT FIELDS
 MILES_TO_METERS_FACTOR = 1609.34
 EARTHS_RADIUS_MILES = 3958.8
 
-# Database connections
-DB_SPACE = Connect.get_connection().spaceData
-DB_REQUESTS = Connect.get_connection().requests
-DB_AGGREGATE = DB_SPACE.aggregate_records
-DB_COLLECT = DB_SPACE.collect_records
-DB_SICS = DB_SPACE.sics
-DB_TYPES = DB_SPACE.types
-DB_ZIP_CODES = DB_SPACE.zip_codes
-DB_RAW_SPACE = DB_SPACE.raw_spaces
-DB_PROCESSED_SPACE = DB_SPACE.spaces
-DB_OLD_SPACES = DB_SPACE.dataset2
-DB_VECTORS = DB_SPACE.preprocessed_vectors
-DB_VECTORS_LA = DB_SPACE.LA_space_vectors
-DB_SPATIAL_CATS = DB_SPACE.spatial_categories
-DB_DEMOGRAPHIC_CATS = DB_SPACE.demographic_categories
+# DATABASE CONNECTIONS
+client = Connect.get_connection()  # client, MongoDB connection
+
+# top level database connections
+DB_SPACE = client.spaceData  # database for all spatial information
+DB_APP_LEGACY = client.appMatchData  # legacy app database
+DB_APP = client.appData  # hosts the main data for the application
+DB_REQUESTS = client.requests  # database the hosts requests saved by safe_request
+
+# collection connections - categories
 DB_FOURSQUARE = DB_SPACE.foursquare_categories
 DB_SPATIAL_TAXONOMY = DB_SPACE.spatial_taxonomy
 DB_CATEGORIES = DB_SPACE.categories
+
+# collection connections - scraping
+DB_AGGREGATE = DB_SPACE.aggregate_records
+DB_COLLECT = DB_SPACE.collect_records
+
+# collection connections - application support
+DB_BRANDS = DB_APP.brands
+DB_PLACES = DB_APP.places
+DB_LOCATIONS = DB_SPACE.locations
+DB_LOCATION_MATCHES = DB_APP.location_matches
+DB_PROPERTY = DB_APP.properties
+DB_BRAND_SPACE = DB_APP.brand_space_matches
+DB_REGIONS = DB_APP.regions
+
+# collection connections - matching
+DB_VECTORS = DB_SPACE.preprocessed_vectors
+DB_VECTORS_LA = DB_SPACE.LA_space_vectors
+
+# legacy databaces - pending deletion
+DB_TENANT = DB_APP_LEGACY.tenant_details
+DB_PROPERTY_LEGACY = DB_APP_LEGACY.property_details
+DB_ZIP_CODES = DB_SPACE.zip_codes
+DB_PROCESSED_SPACE = DB_SPACE.spaces
+DB_OLD_SPACES = DB_SPACE.dataset2
+DB_SPATIAL_CATS = DB_SPACE.spatial_categories
+DB_DEMOGRAPHIC_CATS = DB_SPACE.demographic_categories
 
 
 # simple unique index of a pymongo database collection
@@ -98,20 +119,6 @@ def meters_to_miles(meters):
 
 def miles_to_meters(miles):
     return miles * MILES_TO_METERS_FACTOR
-
-
-def test_raw_spaces(file_name, query={}):
-    spaces = DB_RAW_SPACE.find(query)
-    items = []
-    for space in spaces:
-        items.append((
-            space['name'],
-            space['location']['lat'],
-            space['location']['lng']
-        ))
-
-    items_df = pd.DataFrame(items)
-    items_df.to_csv(file_name)
 
 
 # retrieves csv from file_system. If no file_system specified,
@@ -275,6 +282,51 @@ def intersecting_block_groups(lat, lng, radius, state=None):
     ret = list(set(ret))
     print("ret", ret)
     return ret
+
+
+def is_number(num):
+    try:
+        float(num)
+        return True
+    except ValueError:
+        return False
+
+
+def add_dictionary_values(dictionary, values):
+    """
+    Helper function to add up all the values in a dictionary given the dictionary and
+    all the index of the values that we would want to sum up.
+    """
+
+    sum_items = [dictionary[value] for value in values]
+    return sum(sum_items)
+
+
+def growth(current, future):
+    """
+    Calculate growth value in percentage between one number and an other.
+    """
+    return 100 * float(future - current) / current
+
+
+def in_range(num, target_range):
+    """
+    Provided a number and a list indicating a range, returns if the number is in the range
+    """
+    if num >= target_range[0] and num <= target_range[1]:
+        return True
+    return False
+
+
+def list_matches_condition(bool_func, eval_list):
+    """
+    Provided a function and a list, will return True if atleast one of the items in the list meets the
+    condition specified by the function
+    """
+    for item in eval_list:
+        if bool_func(item):
+            return True
+    return False
 
 
 if __name__ == "__main__":
