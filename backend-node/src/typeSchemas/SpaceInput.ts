@@ -12,6 +12,6 @@ export let SpaceInput = inputObjectType({
     t.int('sqft', { required: true });
     t.int('pricePerSqft', { required: true });
     t.string('equipment', { list: true });
-    t.string('available', { required: true });
+    t.field('available', { type: 'DateTime', required: true });
   },
 });
