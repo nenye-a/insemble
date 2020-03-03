@@ -36,19 +36,17 @@ export default function LandlordListing(props: Props) {
   let { state, dispatch } = props;
   let { confirmLocation, spaceListing } = state;
   let { register, errors, handleSubmit, watch } = useForm();
-  let sqft = watch('sqft', spaceListing.sqft);
-  let price = watch('price', spaceListing.pricePerSqft);
-  let date = watch('date', spaceListing.availability);
+  let sqft = watch('sqft');
+  let price = watch('price');
+  let date = watch('date');
   let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
-  let [mainPhoto, setMainPhoto] = useState<FileWithPreview | null>(spaceListing?.mainPhoto || null);
+  let [mainPhoto, setMainPhoto] = useState<FileWithPreview | null>(spaceListing.mainPhoto);
   let [additionalPhotos, setAdditionalPhotos] = useState<Array<FileWithPreview | null>>(
-    spaceListing?.propertyPhotos || [null, null, null, null]
+    spaceListing.propertyPhotos
   );
-  let [description, setDescription] = useState<string>(spaceListing?.description || '');
-  let [selectedCondition, setSelectedCondition] = useState(spaceListing?.condition || 'Whitebox');
-  let [selectedEquipments, setSelectedEquipment] = useState<Array<string>>(
-    spaceListing?.equipments || []
-  );
+  let [description, setDescription] = useState<string>(spaceListing.description);
+  let [selectedCondition, setSelectedCondition] = useState(spaceListing.condition || 'Whitebox');
+  let [selectedEquipments, setSelectedEquipment] = useState<Array<string>>(spaceListing.equipments);
   let today = new Date().toISOString().slice(0, 10);
 
   let allValid = mainPhoto && selectedCondition && Object.keys(errors).length === 0;
@@ -187,7 +185,7 @@ export default function LandlordListing(props: Props) {
             name="date"
             label="Availability"
             min={today}
-            defaultValue={today}
+            defaultValue={spaceListing.availability || today}
             ref={register({
               required: 'Date should not be empty',
             })}

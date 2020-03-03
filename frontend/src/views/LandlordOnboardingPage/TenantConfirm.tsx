@@ -35,7 +35,7 @@ export default function TenantConfirm(props: Props) {
   let [selectedBusinessService, setSelectedBusinessService] = useState<Array<string>>(
     confirmTenant?.businessType || []
   );
-  let [otherService, setOtherService] = useState(confirmTenant?.otherBussinessType || '');
+  let [otherService, setOtherService] = useState(confirmTenant?.otherBusinessType || '');
 
   let [categorySelectionVisible, toggleCategorySelection] = useState(false);
   let [selectedCategories, setSelectedCategories] = useState<Array<string>>(

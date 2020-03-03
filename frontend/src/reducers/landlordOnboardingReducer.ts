@@ -11,7 +11,7 @@ type ConfirmLocation = {
 
 type ConfirmTenant = {
   businessType: Array<string>;
-  otherBussinessType?: string;
+  otherBusinessType?: string;
   selectedRetailCategories: Array<string>;
   existingExclusives: Array<string>;
 };

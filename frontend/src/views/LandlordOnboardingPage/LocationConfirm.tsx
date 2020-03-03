@@ -49,7 +49,6 @@ export default function LocationConfirm(props: Props) {
   let propertyName = selectedLocation?.name || confirmLocation?.physicalAddress?.name || '';
   let propertyAddress =
     selectedLocation?.address || confirmLocation?.physicalAddress?.address || '';
-
   let mapURL = confirmLocation
     ? MAPS_IFRAME_URL_SEARCH + '&q=' + urlEncode(propertyName + ', ' + propertyAddress)
     : '';

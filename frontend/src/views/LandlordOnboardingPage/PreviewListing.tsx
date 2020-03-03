@@ -1,6 +1,7 @@
 import React, { Dispatch } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
+import { useMutation } from '@apollo/react-hooks';
 
 import { View, Text, Alert, Form, Button } from '../../core-ui';
 import PhotoGallery from '../DeepDivePage/PhotoGallery';
@@ -11,7 +12,6 @@ import { THEME_COLOR, WHITE } from '../../constants/colors';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
 import { State, Action } from '../../reducers/landlordOnboardingReducer';
-import { useMutation } from '@apollo/react-hooks';
 import { CREATE_PROPERTY } from '../../graphql/queries/server/property';
 import { CreateProperty, CreatePropertyVariables } from '../../generated/CreateProperty';
 import { getImageBlob } from '../../utils';
@@ -33,7 +33,7 @@ export default function PreviewListing(props: Props) {
     let { userRelation, propertyType, physicalAddress, marketingPreference } = confirmLocation;
     let {
       businessType,
-      // otherBussinessType,  ask be
+      otherBusinessType,
       selectedRetailCategories,
       existingExclusives,
     } = confirmTenant;
@@ -58,10 +58,14 @@ export default function PreviewListing(props: Props) {
         }
       }
 
+      let filteredBusinessType = businessType.filter((item) => item !== 'Other');
+
       createProperty({
         variables: {
           property: {
-            businessType,
+            businessType: otherBusinessType
+              ? [...filteredBusinessType, otherBusinessType]
+              : filteredBusinessType,
             categories: selectedRetailCategories,
             exclusive: existingExclusives,
             location: {
@@ -112,11 +116,11 @@ export default function PreviewListing(props: Props) {
         <PhotoGallery images={[spaceListing?.mainPhoto?.preview || '', ...propertyPhotos]} />
         <CardsContainer flex>
           <SummaryCard
-            priceSqft={`$${spaceListing?.pricePerSqft.toString()}` || ''}
-            sqft={spaceListing?.sqft || ''}
-            tenacy={'Multiple'}
-            type={confirmLocation?.propertyType?.join(', ') || ''}
-            condition={spaceListing?.condition || ''}
+            priceSqft={`$${spaceListing.pricePerSqft.toString()}`}
+            sqft={spaceListing.sqft}
+            tenacy="Multiple"
+            type={confirmLocation.propertyType?.join(', ') || ''}
+            condition={spaceListing.condition}
           />
           <Spacing />
           <DescriptionCard content={spaceListing?.description || ''} />
