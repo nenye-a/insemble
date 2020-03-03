@@ -52,7 +52,9 @@ function Landing() {
         {id ? (
           <TouchableOpacity
             onPress={() => {
-              history.push('/user/edit-profile');
+              role === Role.TENANT
+                ? history.push('/user/edit-profile')
+                : history.push('/landlord/edit-profile');
             }}
           >
             <Avatar size="small" image={avatar} />
