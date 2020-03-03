@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useMutation } from '@apollo/react-hooks';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Redirect } from 'react-router-dom';
 
 import { View, TextInput, Form, Button, Alert } from '../../core-ui';
 import { validateEmail } from '../../utils/validation';
@@ -123,14 +123,16 @@ export default function SignUpForm(props: Props) {
 
   if (data) {
     if (data.registerTenant.message === 'success') {
-      history.push(`/email-verification/${data.registerTenant.verificationId}`);
+      return <Redirect to={`/email-verification/${data.registerTenant.verificationId}`} />;
     }
   }
 
   if (registerLandlordData) {
     if (registerLandlordData.registerLandlord.message === 'success') {
-      history.push(
-        `/landlord/email-verification/${registerLandlordData.registerLandlord.verificationId}`
+      return (
+        <Redirect
+          to={`/landlord/email-verification/${registerLandlordData.registerLandlord.verificationId}`}
+        />
       );
     }
   }
