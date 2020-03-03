@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useMutation, useLazyQuery } from '@apollo/react-hooks';
-import { useHistory } from 'react-router-dom';
 
 import {
   Card,
@@ -32,6 +31,7 @@ import {
 } from '../generated/EditLandlordProfile';
 import { GetTenantProfile } from '../generated/GetTenantProfile';
 import { GetLandlordProfile } from '../generated/GetLandlordProfile';
+import { asyncStorage } from '../utils';
 
 type Profile = {
   email: string;
@@ -43,15 +43,11 @@ type Profile = {
 };
 
 export default function BasicProfile() {
-  let history = useHistory();
   let [profileEditable, setProfileEditable] = useState(false);
   let [passwordEditable, setPasswordEditable] = useState(false);
   let textInputContainerStyle = { marginTop: 12, marginBottom: 12 };
   let { register, watch, handleSubmit, errors } = useForm();
-
-  let {
-    state: { role },
-  } = history.location;
+  let role = asyncStorage.getRole();
 
   let [{ email, firstName, lastName, company, title, pendingEmail }, setProfileInfo] = useState<
     Profile

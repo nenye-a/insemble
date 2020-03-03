@@ -21,6 +21,7 @@ type Props = {
 export default function TenantPropertyDetailsView({ keyFacts, insightsView }: Props) {
   if (insightsView) {
     let { topPersonas, demographics1, demographics3, demographics5 } = insightsView;
+    let demographics = [demographics1, demographics3, demographics5];
     return (
       <View>
         <Container>
@@ -36,10 +37,7 @@ export default function TenantPropertyDetailsView({ keyFacts, insightsView }: Pr
         </Container>
 
         <Container>
-          <DemographicCard
-            graphicData={[demographics1, demographics3, demographics5]}
-            withMargin={false}
-          />
+          <DemographicCard demographicsData={demographics} withMargin={false} />
         </Container>
       </View>
     );

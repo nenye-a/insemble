@@ -19,6 +19,7 @@ import { CarouselFilter } from '../components';
 import { roundDecimal, convertToKilos } from '../utils';
 import { LocationDetails_locationDetails_result_demographics1 as LocationDetailsDemographics } from '../generated/LocationDetails';
 import { PropertyLocationDetails_propertyDetails_demographics1 as PropertyDetailsDemographics } from '../generated/PropertyLocationDetails';
+import { TenantDetail_tenantDetail_insightView_demographics1 as TenantDetailsDemographics } from '../generated/TenantDetail';
 
 //TODO Improve Typing for data
 type DemographicsStatus = {
@@ -41,11 +42,16 @@ type DataKey = Exclude<keyof Data, 'population'>;
 
 type Props = {
   withMargin?: boolean;
-  demographicsData?: Array<LocationDetailsDemographics | PropertyDetailsDemographics | undefined>;
+  demographicsData?: Array<
+    | LocationDetailsDemographics
+    | PropertyDetailsDemographics
+    | TenantDetailsDemographics
+    | undefined
+  >;
 };
 
 function hasGrowth(
-  data: LocationDetailsDemographics | PropertyDetailsDemographics
+  data: LocationDetailsDemographics | PropertyDetailsDemographics | TenantDetailsDemographics
 ): data is LocationDetailsDemographics {
   return (data as LocationDetailsDemographics).age[0].growth !== undefined;
 }
