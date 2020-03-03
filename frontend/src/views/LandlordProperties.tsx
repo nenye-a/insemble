@@ -56,7 +56,11 @@ export default function LandlordProperties() {
         })
       )}
 
-      <AddButton>
+      <AddButton
+        onPress={() => {
+          history.push('/landlord/new-property/step-1');
+        }}
+      >
         <SvgPlus style={{ marginRight: 8, color: THEME_COLOR }} />
         <Text color={THEME_COLOR}>New Property</Text>
       </AddButton>
@@ -69,7 +73,7 @@ const Row = styled(Card)`
 `;
 
 const Iframe = styled.iframe`
-  width: 280px;
+  width: 200px;
   border: none;
 `;
 

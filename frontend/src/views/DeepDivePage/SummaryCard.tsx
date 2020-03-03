@@ -13,14 +13,7 @@ type Props = CardProps & {
   tenacy: string;
 };
 
-export default function SummaryCard({
-  priceSqft,
-  type,
-  condition,
-  sqft,
-  tenacy,
-  ...otherProps
-}: Props) {
+export default function SummaryCard({ priceSqft, type, condition, sqft, ...otherProps }: Props) {
   return (
     <Card title="Summary" titleBackground="purple" {...otherProps}>
       <ContentContainer>
@@ -36,21 +29,22 @@ export default function SummaryCard({
                 {type}
               </Text>
             </DescriptionItem>
-            <DescriptionItem>
-              <Text>Condition:</Text>
-              <Text fontWeight={FONT_WEIGHT_MEDIUM}>{condition}</Text>
-            </DescriptionItem>
           </View>
           <Spacing />
           <View flex>
             <DescriptionItem>
+              <Text>Condition:</Text>
+              <Text fontWeight={FONT_WEIGHT_MEDIUM}>{condition}</Text>
+            </DescriptionItem>
+            <DescriptionItem>
               <Text>Sqft:</Text>
               <Text fontWeight={FONT_WEIGHT_MEDIUM}>{sqft}</Text>
             </DescriptionItem>
-            <DescriptionItem>
+            {/* hiding this until data is ready */}
+            {/* <DescriptionItem>
               <Text>Tenacy:</Text>
               <Text fontWeight={FONT_WEIGHT_MEDIUM}>{tenacy}</Text>
-            </DescriptionItem>
+            </DescriptionItem> */}
           </View>
         </RowedView>
       </ContentContainer>
