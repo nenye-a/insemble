@@ -16,7 +16,7 @@ import {
 } from '../generated/LandlordRegisterVerification';
 import { Role } from '../types/types';
 
-export default function TenantEmailVerification() {
+export default function LandlordEmailVerification() {
   let { verificationId } = useParams();
   let history = useHistory();
   let { data } = useQuery<LandlordRegisterVerification, LandlordRegisterVerificationVariables>(
@@ -34,9 +34,9 @@ export default function TenantEmailVerification() {
     } = data;
     if (verified && landlordAuth) {
       let { token } = landlordAuth;
-      asyncStorage.saveTenantToken(token);
+      asyncStorage.saveLandlordToken(token);
       asyncStorage.saveRole(Role.LANDLORD);
-      history.push('/landlord/new-property');
+      history.push('/landlord/new-property/step-1');
     }
   }
   return (
