@@ -13,6 +13,7 @@ import {
 import { DARK_TEXT_COLOR, WHITE, SECONDARY_COLOR, THEME_COLOR } from '../../constants/colors';
 import { PropertyMatches_propertyMatches as PropertyMatchesProps } from '../../generated/PropertyMatches';
 import { EmptyDataComponent } from '../../components';
+import { roundDecimal } from '../../utils';
 
 type Props = {
   onPress: (selectedBrandId: string) => void;
@@ -46,7 +47,7 @@ export default function LandlordTenantMatches({ onPress, matchResult }: Props) {
                     <CardCategoryText>{item.category}</CardCategoryText>
                   </View>
                   <View>
-                    <CardPercentage>{item.matchValue}%</CardPercentage>
+                    <CardPercentage>{roundDecimal(item.matchValue)}%</CardPercentage>
                     <Text>Match</Text>
                   </View>
                 </RowedView>
