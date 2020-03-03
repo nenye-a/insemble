@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useForm, FieldError, FieldValues } from 'react-hook-form';
-import { useQuery, useMutation } from '@apollo/react-hooks';
-// import { useHistory } from 'react-router-dom';
+import { useMutation, useLazyQuery } from '@apollo/react-hooks';
+import { useHistory } from 'react-router-dom';
 
 import {
   Card,
@@ -17,23 +17,113 @@ import {
 } from '../core-ui';
 import { THEME_COLOR } from '../constants/colors';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../constants/theme';
-import { GET_TENANT_PROFILE, EDIT_TENANT_PROFILE } from '../graphql/queries/server/profile';
+import {
+  GET_TENANT_PROFILE,
+  EDIT_TENANT_PROFILE,
+  EDIT_LANDLORD_PROFILE,
+  GET_LANDLORD_PROFILE,
+} from '../graphql/queries/server/profile';
 import { EditTenantProfile, EditTenantProfileVariables } from '../generated/EditTenantProfile';
 import { validateUSPhoneNumber } from '../utils/validation';
+import { Role } from '../types/types';
+import {
+  EditLandlordProfile,
+  EditLandlordProfileVariables,
+} from '../generated/EditLandlordProfile';
+import { GetTenantProfile } from '../generated/GetTenantProfile';
+import { GetLandlordProfile } from '../generated/GetLandlordProfile';
+
+type Profile = {
+  email: string;
+  firstName: string;
+  lastName: string;
+  company: string;
+  title: string | null;
+  pendingEmail: boolean;
+};
 
 export default function BasicProfile() {
-  // let history = useHistory();
+  let history = useHistory();
   let [profileEditable, setProfileEditable] = useState(false);
   let [passwordEditable, setPasswordEditable] = useState(false);
-  let { data, loading } = useQuery(GET_TENANT_PROFILE);
   let textInputContainerStyle = { marginTop: 12, marginBottom: 12 };
   let { register, watch, handleSubmit, errors } = useForm();
+
+  let {
+    state: { role },
+  } = history.location;
+
+  let [{ email, firstName, lastName, company, title, pendingEmail }, setProfileInfo] = useState<
+    Profile
+  >({
+    email: '',
+    firstName: '',
+    lastName: '',
+    company: '',
+    title: '',
+    pendingEmail: false,
+  });
+
+  let onTenantCompleted = (tenantResult: GetTenantProfile) => {
+    let { profileTenant } = tenantResult;
+    if (profileTenant) {
+      let { firstName, lastName, company, title, email } = profileTenant;
+      setProfileInfo({
+        email,
+        firstName,
+        lastName,
+        company,
+        title,
+        pendingEmail,
+      });
+    }
+  };
+
+  let onLandlordCompleted = (landlordResult: GetLandlordProfile) => {
+    let { profileLandlord } = landlordResult;
+    if (profileLandlord) {
+      let { firstName, lastName, company, title } = profileLandlord;
+      setProfileInfo({
+        email,
+        firstName,
+        lastName,
+        company,
+        title,
+        pendingEmail: false, // TODO
+      });
+    }
+  };
+
+  let [getTenant, { loading: tenantLoading }] = useLazyQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
+    onCompleted: onTenantCompleted,
+  });
+
+  let [getLandlord, { loading: landlordLoading }] = useLazyQuery<GetLandlordProfile>(
+    GET_LANDLORD_PROFILE,
+    {
+      onCompleted: onLandlordCompleted,
+    }
+  );
+
+  useEffect(() => {
+    if (role === Role.TENANT) {
+      getTenant();
+    }
+    if (role === Role.LANDLORD) {
+      getLandlord();
+    }
+  }, [getLandlord, getTenant, role]);
+
   let [
     editTenantProfile,
     { data: editTenantData, loading: editTenantLoading, error: editTenantError },
   ] = useMutation<EditTenantProfile, EditTenantProfileVariables>(EDIT_TENANT_PROFILE);
-  // TODO: check role
-  // let {state: {role}} = history.location;
+
+  let [
+    editLandlordProfile,
+    { data: editLandlordData, loading: editLandlordLoading, error: editLandlordError },
+  ] = useMutation<EditLandlordProfile, EditLandlordProfileVariables>(EDIT_LANDLORD_PROFILE);
+
   let onSubmit = (fieldValues: FieldValues) => {
     let {
       email,
@@ -47,38 +137,71 @@ export default function BasicProfile() {
       newPassword,
     } = fieldValues;
     if (Object.keys(errors).length === 0) {
-      editTenantProfile({
-        variables: {
-          profile: {
-            email,
-            firstName,
-            lastName,
-            company,
-            title: jobTitle,
-            phoneNumber,
-            description,
-            oldPassword: currentPassword,
-            newPassword,
+      if (role === Role.TENANT) {
+        editTenantProfile({
+          variables: {
+            profile: {
+              email,
+              firstName,
+              lastName,
+              company,
+              title: jobTitle,
+              phoneNumber,
+              description,
+              oldPassword: currentPassword,
+              newPassword,
+            },
           },
-        },
-        refetchQueries: [
-          {
-            query: GET_TENANT_PROFILE,
+          refetchQueries: [
+            {
+              query: GET_TENANT_PROFILE,
+            },
+          ],
+        });
+      }
+      if (role === Role.LANDLORD) {
+        editLandlordProfile({
+          variables: {
+            profile: {
+              email,
+              firstName,
+              lastName,
+              company,
+              title: jobTitle,
+              phoneNumber,
+              description,
+              oldPassword: currentPassword,
+              newPassword,
+            },
           },
-        ],
-      });
+          refetchQueries: [
+            {
+              query: GET_LANDLORD_PROFILE,
+            },
+          ],
+        });
+      }
     }
   };
 
+  let errorMessage = editTenantError
+    ? editTenantError?.message
+    : editLandlordError
+    ? editLandlordError?.message
+    : '';
+
   return (
     <Container flex>
-      {loading ? (
+      {tenantLoading || landlordLoading ? (
         <LoadingIndicator />
       ) : (
         <Form onSubmit={handleSubmit(onSubmit)}>
           {/* TODO: change to status message returned by the endpoint */}
-          <Alert visible={!!editTenantData} text="Your profile has been updated" />
-          <Alert visible={!!editTenantError} text={editTenantError?.message || ''} />
+          <Alert
+            visible={!!editTenantData || !!editLandlordData}
+            text="Your profile has been updated"
+          />
+          <Alert visible={!!editTenantError || !!editLandlordError} text={errorMessage} />
           <RowedView>
             <Title>Profile</Title>
             <Button
@@ -92,10 +215,10 @@ export default function BasicProfile() {
             placeholder="Email"
             disabled={!profileEditable}
             containerStyle={textInputContainerStyle}
-            defaultValue={data?.profileTenant.email}
+            defaultValue={email}
             name="email"
             errorMessage={
-              data?.profileTenant.pendingEmail
+              pendingEmail
                 ? 'Your account is pending for e-mail verification. Please check your e-mail'
                 : ''
             }
@@ -109,7 +232,7 @@ export default function BasicProfile() {
               placeholder="First Name"
               disabled={!profileEditable}
               containerStyle={textInputContainerStyle}
-              defaultValue={data?.profileTenant.firstName}
+              defaultValue={firstName}
               name="firstName"
               ref={register({
                 required: 'First name should not be empty',
@@ -122,7 +245,7 @@ export default function BasicProfile() {
               placeholder="Last Name"
               disabled={!profileEditable}
               containerStyle={textInputContainerStyle}
-              defaultValue={data?.profileTenant.lastName}
+              defaultValue={lastName}
               name="lastName"
               ref={register({
                 required: 'Last name should not be empty',
@@ -136,7 +259,7 @@ export default function BasicProfile() {
               placeholder="Company"
               disabled={!profileEditable}
               containerStyle={textInputContainerStyle}
-              defaultValue={data?.profileTenant.company}
+              defaultValue={company}
               name="company"
               ref={register}
               errorMessage={(errors?.company as FieldError)?.message || ''}
@@ -147,7 +270,7 @@ export default function BasicProfile() {
               placeholder="Job Title"
               disabled={!profileEditable}
               containerStyle={textInputContainerStyle}
-              defaultValue={data?.profileTenant.title}
+              defaultValue={title ? title : ''}
               name="jobTitle"
               ref={register}
               errorMessage={(errors?.jobTitle as FieldError)?.message || ''}
@@ -223,7 +346,11 @@ export default function BasicProfile() {
             })}
             errorMessage={(errors?.confirmNewPassword as FieldError)?.message || ''}
           />
-          <SaveButton text="Save Changes" type="submit" loading={editTenantLoading} />
+          <SaveButton
+            text="Save Changes"
+            type="submit"
+            loading={editTenantLoading || editLandlordLoading}
+          />
         </Form>
       )}
     </Container>
