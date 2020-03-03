@@ -26,12 +26,13 @@
     "global": "^4.4.0",
     "graphql": "^14.6.0",
     "graphql-shield": "6.1.0",
-    "graphql-upload": "^10.0.0",
+    "graphql-upload": "8.0.7",
     "graphql-yoga": "^1.18.3",
     "js-base64": "^2.5.2",
     "nexus": "^0.12.0-rc.11",
     "nexus-prisma": "^0.9.1",
     "prisma2": "2.0.0-preview021",
+    "shortid": "^2.2.15",
     "stripe": "^8.19.0"
   },
   "devDependencies": {
@@ -42,6 +43,7 @@
     "@types/jest": "^24.0.23",
     "@types/js-base64": "^2.3.1",
     "@types/node": "^12.12.21",
+    "@types/shortid": "^0.0.29",
     "eslint": "^6.7.2",
     "jest": "^24.9.0",
     "prettier": "^1.19.1",

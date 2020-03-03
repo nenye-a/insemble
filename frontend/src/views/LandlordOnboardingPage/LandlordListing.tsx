@@ -1,7 +1,8 @@
-import React, { useState, ChangeEvent, Dispatch, useEffect } from 'react';
+import React, { useState, ChangeEvent, Dispatch, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 import { useForm, FieldError } from 'react-hook-form';
+import { useHistory } from 'react-router-dom';
 
 import {
   View,
@@ -12,6 +13,8 @@ import {
   MultiSelectInput,
   Alert,
   Text,
+  Form,
+  Button,
 } from '../../core-ui';
 import PhotosPicker from './PhotosPicker';
 import { FileWithPreview } from '../../core-ui/Dropzone';
@@ -21,6 +24,7 @@ import { Action, State as LandlordOnboardingState } from '../../reducers/landlor
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
 import { Equipments } from '../../generated/Equipments';
 import { validateNumber } from '../../utils/validation';
+import OnboardingFooter from '../../components/layout/OnboardingFooter';
 
 type Props = {
   state: LandlordOnboardingState;
@@ -28,130 +32,191 @@ type Props = {
 };
 
 export default function LandlordListing(props: Props) {
+  let history = useHistory();
   let { state, dispatch } = props;
-  let { confirmLocation } = state;
+  let { confirmLocation, spaceListing } = state;
+  let { register, errors, handleSubmit, watch } = useForm();
+  let sqft = watch('sqft');
+  let price = watch('price');
+  let date = watch('date');
   let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
-  let [mainPhoto, setMainPhoto] = useState<FileWithPreview | null>(null);
-  let [additionalPhotos, setAdditionalPhotos] = useState<Array<FileWithPreview | null>>([
-    null,
-    null,
-    null,
-    null,
-  ]);
-  let [description, setDescription] = useState<string>('');
-  let [selectedCondition, setSelectedCondition] = useState('Whitebox');
-  let [, setSelectedEquipment] = useState<Array<string>>([]);
-  let { register, errors, triggerValidation } = useForm();
-
+  let [mainPhoto, setMainPhoto] = useState<FileWithPreview | null>(spaceListing.mainPhoto);
+  let [additionalPhotos, setAdditionalPhotos] = useState<Array<FileWithPreview | null>>(
+    spaceListing.propertyPhotos
+  );
+  let [description, setDescription] = useState<string>(spaceListing.description);
+  let [selectedCondition, setSelectedCondition] = useState(spaceListing.condition || 'Whitebox');
+  let [selectedEquipments, setSelectedEquipment] = useState<Array<string>>(spaceListing.equipments);
   let today = new Date().toISOString().slice(0, 10);
 
-  let allValid = mainPhoto && selectedCondition;
+  let allValid = mainPhoto && selectedCondition && Object.keys(errors).length === 0;
+
+  let saveFormState = useCallback(() => {
+    if (allValid && mainPhoto) {
+      dispatch({
+        type: 'SAVE_CHANGES_NEW_LISTING',
+        values: {
+          spaceListing: {
+            mainPhoto,
+            propertyPhotos: additionalPhotos,
+            description,
+            condition: selectedCondition,
+            sqft,
+            pricePerSqft: price,
+            equipments: selectedEquipments,
+            availability: date,
+          },
+        },
+      });
+    }
+  }, [
+    dispatch,
+    allValid,
+    mainPhoto,
+    additionalPhotos,
+    description,
+    selectedCondition,
+    sqft,
+    price,
+    selectedEquipments,
+    date,
+  ]);
+
+  let onSubmit = async () => {
+    if (allValid) {
+      saveFormState();
+      history.push('/landlord/new-property/step-5');
+    }
+  };
 
   useEffect(() => {
-    if (allValid) {
-      dispatch({ type: 'ENABLE_NEXT_BUTTON' });
-      // TODO: save listing state
-    } else {
-      dispatch({ type: 'DISABLE_NEXT_BUTTON' });
-    }
-  }, [dispatch, allValid, triggerValidation]);
+    saveFormState();
+  }, [
+    saveFormState,
+    mainPhoto,
+    additionalPhotos,
+    description,
+    selectedCondition,
+    sqft,
+    price,
+    selectedEquipments,
+    date,
+  ]);
 
   return (
-    <Container>
-      <TitleContainer>
-        {/* Check number of space when connecting to BE */}
-        <Title>Space 1</Title>
-        <Address>{confirmLocation?.physicalAddress?.address || ''}</Address>
-      </TitleContainer>
-      <Alert
-        visible
-        text="We provide complementary virtual tours & comprehensive photos to every listing."
-      />
-      <PhotosPicker
-        mainPhoto={mainPhoto}
-        onMainPhotoChange={(file: FileWithPreview | null) => {
-          setMainPhoto(file);
-        }}
-        additionalPhotos={additionalPhotos}
-        onAdditionalPhotoChange={(files: Array<FileWithPreview | null>) => {
-          setAdditionalPhotos(files);
-        }}
-      />
-      <TextArea
-        label="Description"
-        placeholder="Enter Description"
-        values={description}
-        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-          setDescription(e.target.value);
-        }}
-        showCharacterLimit
-        containerStyle={{ marginTop: 12, marginBottom: 12 }}
-      />
-      <RadioGroupContainer
-        label="Condition"
-        options={['Whitebox', 'Second Generation Restaurant']}
-        selectedOption={selectedCondition}
-        onSelect={(value: string) => {
-          setSelectedCondition(value);
-        }}
-        radioItemProps={{ style: { marginTop: 8 } }}
-      />
-      <ShortTextInput
-        label="Sqft"
-        name="sqft"
-        placeholder="0"
-        ref={register({
-          required: 'Sqft should not be empty',
-          validate: (val) => validateNumber(val) || 'Input should be number',
-        })}
-        containerStyle={{ marginTop: 12, marginBottom: 12 }}
-        errorMessage={(errors?.sqft as FieldError)?.message || ''}
-      />
-      <ShortTextInput
-        label="Price/Sqft"
-        name="price"
-        placeholder="$0"
-        ref={register({
-          required: 'Price/Sqft should not be empty',
-          validate: (val) => validateNumber(val) || 'Input should be number',
-        })}
-        containerStyle={{ marginTop: 12, marginBottom: 12 }}
-        errorMessage={(errors?.price as FieldError)?.message || ''}
-      />
-      <View style={{ paddingTop: 12, paddingBottom: 12 }}>
-        <LabelText text="Features & Amenities" />
-        {!equipmentLoading && equipmentData && (
-          <MultiSelectInput
-            placeholder="Set Equipment Preference"
-            options={equipmentData.equipments}
-            onChange={setSelectedEquipment}
-          />
-        )}
-      </View>
-      <DatePickerContainer>
-        <TextInput
-          type="date"
-          name="date"
-          label="Availability"
-          min={today}
-          defaultValue={today}
-          ref={register({
-            required: 'Date should not be empty',
-          })}
-          errorMessage={(errors?.date as FieldError)?.message || ''}
-        />
-        <SpaceAlert
-          style={{ alignSelf: 'flex-end' }}
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      <Container>
+        <TitleContainer>
+          {/* Check number of space when connecting to BE */}
+          <Title>Space 1</Title>
+          <Address>{confirmLocation?.physicalAddress?.address || ''}</Address>
+        </TitleContainer>
+        <Alert
           visible
-          text="You will be able to add more spaces later"
+          text="We provide complementary virtual tours & comprehensive photos to every listing."
         />
-      </DatePickerContainer>
-    </Container>
+        <PhotosPicker
+          mainPhoto={mainPhoto}
+          onMainPhotoChange={(file: FileWithPreview | null) => {
+            setMainPhoto(file);
+          }}
+          additionalPhotos={additionalPhotos}
+          onAdditionalPhotoChange={(files: Array<FileWithPreview | null>) => {
+            setAdditionalPhotos(files);
+          }}
+        />
+        <TextArea
+          label="Description"
+          placeholder="Enter Description"
+          values={description}
+          onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+            setDescription(e.target.value);
+          }}
+          showCharacterLimit
+          containerStyle={{ marginTop: 12, marginBottom: 12 }}
+        />
+        <RadioGroupContainer
+          label="Condition"
+          options={['Whitebox', 'Second Generation Restaurant']}
+          selectedOption={selectedCondition}
+          onSelect={(value: string) => {
+            setSelectedCondition(value);
+          }}
+          radioItemProps={{ style: { marginTop: 8 } }}
+        />
+        <ShortTextInput
+          label="Sqft"
+          name="sqft"
+          placeholder="0"
+          ref={register({
+            required: 'Sqft should not be empty',
+            validate: (val) => validateNumber(val) || 'Input should be number',
+          })}
+          defaultValue={spaceListing.sqft}
+          containerStyle={{ marginTop: 12, marginBottom: 12 }}
+          errorMessage={(errors?.sqft as FieldError)?.message || ''}
+        />
+        <ShortTextInput
+          label="Price/Sqft"
+          name="price"
+          placeholder="$0"
+          ref={register({
+            required: 'Price/Sqft should not be empty',
+            validate: (val) => validateNumber(val) || 'Input should be number',
+          })}
+          defaultValue={spaceListing.pricePerSqft}
+          containerStyle={{ marginTop: 12, marginBottom: 12 }}
+          errorMessage={(errors?.price as FieldError)?.message || ''}
+        />
+        <View style={{ paddingTop: 12, paddingBottom: 12, zIndex: 2 }}>
+          <LabelText text="Features & Amenities" />
+          {!equipmentLoading && equipmentData && (
+            <MultiSelectInput
+              placeholder="Set Equipment Preference"
+              options={equipmentData.equipments}
+              onChange={setSelectedEquipment}
+              inputContainerStyle={{ flex: 1 }}
+            />
+          )}
+        </View>
+        <DatePickerContainer>
+          <TextInput
+            type="date"
+            name="date"
+            label="Availability"
+            min={today}
+            defaultValue={spaceListing.availability || today}
+            ref={register({
+              required: 'Date should not be empty',
+            })}
+            errorMessage={(errors?.date as FieldError)?.message || ''}
+          />
+          <SpaceAlert
+            style={{ alignSelf: 'flex-end' }}
+            visible
+            text="You will be able to add more spaces later"
+          />
+        </DatePickerContainer>
+      </Container>
+      <OnboardingFooter>
+        <TransparentButton
+          mode="transparent"
+          text="Back"
+          onPress={() => {
+            saveFormState();
+            history.goBack();
+          }}
+          disabled={!allValid}
+        />
+        <Button text="Next" disabled={!allValid} type="submit" />
+      </OnboardingFooter>
+    </Form>
   );
 }
 
 const Container = styled(View)`
   padding: 12px 48px;
+  z-index: 2;
 `;
 
 const RowView = styled(View)`
@@ -192,4 +257,9 @@ const TitleContainer = styled(RowView)`
 
 const DatePickerContainer = styled(RowView)`
   padding: 12px 0;
+`;
+
+const TransparentButton = styled(Button)`
+  margin-right: 8px;
+  padding: 0 12px;
 `;

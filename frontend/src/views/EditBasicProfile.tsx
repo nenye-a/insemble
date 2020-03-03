@@ -231,8 +231,8 @@ export default function BasicProfile() {
               label="First Name"
               placeholder="First Name"
               disabled={!profileEditable}
-              containerStyle={textInputContainerStyle}
               defaultValue={firstName}
+              containerStyle={{ ...textInputContainerStyle, flex: 1 }}
               name="firstName"
               ref={register({
                 required: 'First name should not be empty',
@@ -244,8 +244,8 @@ export default function BasicProfile() {
               label="Last Name"
               placeholder="Last Name"
               disabled={!profileEditable}
-              containerStyle={textInputContainerStyle}
               defaultValue={lastName}
+              containerStyle={{ ...textInputContainerStyle, flex: 1 }}
               name="lastName"
               ref={register({
                 required: 'Last name should not be empty',
@@ -258,8 +258,8 @@ export default function BasicProfile() {
               label="Company"
               placeholder="Company"
               disabled={!profileEditable}
-              containerStyle={textInputContainerStyle}
               defaultValue={company}
+              containerStyle={{ ...textInputContainerStyle, flex: 1 }}
               name="company"
               ref={register}
               errorMessage={(errors?.company as FieldError)?.message || ''}
@@ -269,8 +269,8 @@ export default function BasicProfile() {
               label="Title"
               placeholder="Job Title"
               disabled={!profileEditable}
-              containerStyle={textInputContainerStyle}
               defaultValue={title ? title : ''}
+              containerStyle={{ ...textInputContainerStyle, flex: 1 }}
               name="jobTitle"
               ref={register}
               errorMessage={(errors?.jobTitle as FieldError)?.message || ''}

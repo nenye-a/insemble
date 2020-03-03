@@ -1,13 +1,24 @@
-import React, { useState, Dispatch, useEffect } from 'react';
+import React, { useState, Dispatch } from 'react';
 import styled from 'styled-components';
-
-import { TextInput, View, Label, Checkbox, ClickAway, TouchableOpacity } from '../../core-ui';
-import { FONT_SIZE_NORMAL } from '../../constants/theme';
+import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
+
+import {
+  TextInput,
+  View,
+  Label,
+  Checkbox,
+  ClickAway,
+  TouchableOpacity,
+  Form,
+  Button,
+} from '../../core-ui';
+import { FONT_SIZE_NORMAL } from '../../constants/theme';
 import { Categories } from '../../generated/Categories';
 import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
 import { Filter } from '../../components';
 import { Action, State as LandlordOnboardingState } from '../../reducers/landlordOnboardingReducer';
+import OnboardingFooter from '../../components/layout/OnboardingFooter';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -17,13 +28,14 @@ type Props = {
 const SERVICE_OPTIONS = ['Retail', 'Restaurant', 'Fitness', 'Entertainment', 'Others'];
 
 export default function TenantConfirm(props: Props) {
+  let history = useHistory();
   let { dispatch, state } = props;
   let { confirmTenant } = state;
   let { data: categoriesData } = useQuery<Categories>(GET_CATEGORIES);
   let [selectedBusinessService, setSelectedBusinessService] = useState<Array<string>>(
     confirmTenant?.businessType || []
   );
-  let [otherService, setOtherService] = useState(confirmTenant?.otherBussinessType || '');
+  let [otherService, setOtherService] = useState(confirmTenant?.otherBusinessType || '');
 
   let [categorySelectionVisible, toggleCategorySelection] = useState(false);
   let [selectedCategories, setSelectedCategories] = useState<Array<string>>(
@@ -35,33 +47,34 @@ export default function TenantConfirm(props: Props) {
     confirmTenant?.existingExclusives || []
   );
 
-  let isValid = selectedBusinessService?.includes('Others') && otherService !== '';
-  useEffect(() => {
-    if (isValid) {
-      dispatch({ type: 'ENABLE_NEXT_BUTTON' });
-      dispatch({
-        type: 'SAVE_CHANGES_CONFIRM_TENANT',
-        values: {
-          confirmTenant: {
-            businessType: selectedBusinessService,
-            selectedRetailCategories: selectedCategories,
-            existingExclusives: selectedExistingCategories,
-            otherBussinessType: otherService,
-          },
+  let allValid =
+    !selectedBusinessService?.includes('Others') ||
+    (selectedBusinessService?.includes('Others') && otherService !== '');
+
+  let saveFormState = () => {
+    dispatch({
+      type: 'SAVE_CHANGES_CONFIRM_TENANT',
+      values: {
+        confirmTenant: {
+          businessType: selectedBusinessService,
+          selectedRetailCategories: selectedCategories,
+          existingExclusives: selectedExistingCategories,
+          otherBusinessType: otherService,
         },
-      });
+      },
+    });
+  };
+
+  let handleSubmit = () => {
+    if (allValid) {
+      saveFormState();
+      history.push('/landlord/new-property/step-4');
     }
-  }, [
-    isValid,
-    selectedBusinessService,
-    otherService,
-    selectedExistingCategories,
-    selectedCategories,
-    dispatch,
-  ]);
+  };
+
   return (
-    <>
-      <FormContainer>
+    <Form style={{ flex: 1 }} onSubmit={handleSubmit}>
+      <FormContainer flex>
         <LabelText text="What type of business can your property serve?" />
         {SERVICE_OPTIONS.map((option, index) => {
           let isChecked = selectedBusinessService.includes(option);
@@ -157,16 +170,29 @@ export default function TenantConfirm(props: Props) {
           </>
         )}
       </FormContainer>
-    </>
+      <OnboardingFooter>
+        <TransparentButton
+          mode="transparent"
+          text="Back"
+          onPress={() => {
+            saveFormState();
+            history.goBack();
+          }}
+          disabled={!allValid}
+        />
+        <Button type="submit" text="Next" disabled={!allValid} />
+      </OnboardingFooter>
+    </Form>
   );
 }
 
 const FormContainer = styled(View)`
   padding: 24px 48px;
+  z-index: 1;
 `;
 const FilterContainer = styled(Filter)`
   position: absolute;
-  z-index: 2;
+  z-index: 3;
 `;
 
 const LabelText = styled(Label)`
@@ -181,4 +207,9 @@ const SelectCategories = styled(TextInput)`
   &::placeholder {
     font-style: italic;
   }
+`;
+
+const TransparentButton = styled(Button)`
+  margin-right: 8px;
+  padding: 0 12px;
 `;

@@ -1,23 +1,30 @@
 import { ApolloClient } from 'apollo-client';
 import { withClientState } from 'apollo-link-state';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import { HttpLink } from 'apollo-link-http';
 import { onError } from 'apollo-link-error';
 import { setContext } from 'apollo-link-context';
 import { ApolloLink } from 'apollo-link';
+import { createUploadLink } from 'apollo-upload-client';
 import { API_URI } from '../constants/uris';
 import { defaultState } from './localState';
 import { loginSuccess } from './resolvers';
 import asyncStorage from '../utils/asyncStorage';
+import { Role } from '../types/types';
 
 const cache = new InMemoryCache();
 
 const authLink = setContext(async (_, { headers }) => {
-  let token = await asyncStorage.getTenantToken();
+  let role = await asyncStorage.getRole();
+  let token = null;
+  if (role === Role.TENANT) {
+    token = await asyncStorage.getTenantToken();
+  } else if (role === Role.LANDLORD) {
+    token = await asyncStorage.getLandlordToken();
+  }
   return {
     headers: {
       ...headers,
-      Authorization: `Bearer ${token}`,
+      Authorization: token ? `Bearer ${token}` : undefined,
     },
   };
 });
@@ -37,7 +44,7 @@ const stateLink = withClientState({
   cache,
 });
 
-const httpLink = new HttpLink({
+const httpLink = createUploadLink({
   uri: API_URI,
 });
 
