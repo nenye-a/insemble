@@ -88,3 +88,8 @@ def property_details(property_id):
 def property_address(property_id):
 
     return utils.DB_PROPERTY.find_one({"_id": ObjectId(property_id)})["address"]
+
+
+def tenant_details(tenant_id):
+
+    return utils.DB_PROCESSED_SPACE.find_one({"_id": ObjectId(tenant_id)})

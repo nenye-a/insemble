@@ -33,3 +33,8 @@ class PropertyTenantSerializer(serializers.Serializer):
 class PropertyDetailsSerializer(serializers.Serializer):
 
     property_id = serializers.CharField(max_length=300)
+
+
+class TenantDetailsSerializer(serializers.Serializer):
+
+    tenant_id = serializers.CharField(max_length=30)
