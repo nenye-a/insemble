@@ -8,58 +8,68 @@ import {
   FONT_SIZE_XXLARGE,
 } from '../../constants/theme';
 import { SECONDARY_COLOR } from '../../constants/colors';
+import { TenantDetail_tenantDetail_keyFacts as KeyFactsProps } from '../../generated/TenantDetail';
+import { EmptyDataComponent } from '../../components';
 
-export default function TenantKeyFacts() {
+type Props = {
+  keyFacts?: KeyFactsProps;
+};
+
+export default function TenantKeyFacts({ keyFacts }: Props) {
   let [selectedIndex, setSelectedIndex] = useState<number>(0);
+  if (keyFacts) {
+    let {
+      tenantPerformance: { storeCount, rating, operationYears, averageReviews },
+    } = keyFacts;
 
-  let numbers1 = ['1', '7'];
+    let numbers1 = [storeCount, operationYears];
 
-  let categories1 = ['Number of stores', 'Years of operation'];
+    let categories1 = ['Number of stores', 'Years of operation'];
 
-  let numbers2 = ['4.1/5', '254'];
+    let numbers2 = [rating, averageReviews];
 
-  let categories2 = ['Rating', 'Average # of Reviews'];
-
-  let content = (
-    <>
-      <TextView>
-        <Title>Key Facts & Growth</Title>
-      </TextView>
-      <RowedView>
-        <Tab
-          verticalMode
-          options={['Tenant Performance']}
-          activeTab={selectedIndex}
-          onPress={(index) => {
-            setSelectedIndex(index);
-          }}
-        />
-        <EconomicView flex>
-          <EconomicColumn>
-            {numbers1.map((line, i) => {
-              return <NumberText key={i}>{line}</NumberText>;
-            })}
-          </EconomicColumn>
-          <EconomicColumn>
-            {categories1.map((line, i) => (
-              <CategoriesText key={i}>{line}</CategoriesText>
-            ))}
-          </EconomicColumn>
-          <EconomicColumn>
-            {numbers2.map((line, i) => (
-              <NumberText key={i}>{line}</NumberText>
-            ))}
-          </EconomicColumn>
-          <EconomicColumn>
-            {categories2.map((line, i) => (
-              <CategoriesText key={i}>{line}</CategoriesText>
-            ))}
-          </EconomicColumn>
-        </EconomicView>
-      </RowedView>
-    </>
-  );
-  return <View>{content}</View>;
+    let categories2 = ['Rating', 'Average # of Reviews'];
+    return (
+      <View>
+        <TextView>
+          <Title>Key Facts & Growth</Title>
+        </TextView>
+        <RowedView>
+          <Tab
+            verticalMode
+            options={['Tenant Performance']}
+            activeTab={selectedIndex}
+            onPress={(index) => {
+              setSelectedIndex(index);
+            }}
+          />
+          <EconomicView flex>
+            <EconomicColumn>
+              {numbers1.map((line, i) => {
+                return <NumberText key={i}>{line}</NumberText>;
+              })}
+            </EconomicColumn>
+            <EconomicColumn>
+              {categories1.map((line, i) => (
+                <CategoriesText key={i}>{line}</CategoriesText>
+              ))}
+            </EconomicColumn>
+            <EconomicColumn>
+              {numbers2.map((line, i) => (
+                <NumberText key={i}>{line}</NumberText>
+              ))}
+            </EconomicColumn>
+            <EconomicColumn>
+              {categories2.map((line, i) => (
+                <CategoriesText key={i}>{line}</CategoriesText>
+              ))}
+            </EconomicColumn>
+          </EconomicView>
+        </RowedView>
+      </View>
+    );
+  }
+  return <EmptyDataComponent />;
 }
 
 const RowedView = styled(View)`
