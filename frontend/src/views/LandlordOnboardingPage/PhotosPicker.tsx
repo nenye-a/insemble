@@ -18,8 +18,13 @@ export default function PhotosPicker(props: Props) {
     if (index === 0) {
       onMainPhotoChange(null);
     } else {
-      let newPhotoList = additionalPhotos.filter((_, i) => i !== index);
-      newPhotoList.push(null);
+      let newPhotoList = additionalPhotos.map((item, i) => {
+        if (i + 1 === index) {
+          return null;
+        } else {
+          return item;
+        }
+      });
       onAdditionalPhotoChange(newPhotoList);
     }
   };
@@ -52,7 +57,7 @@ export default function PhotosPicker(props: Props) {
                 source={image?.preview}
                 getPreview={(file) => onAdditionalPhotosChange(file, index)}
                 onPhotoRemove={() => {
-                  onPhotoRemove && onPhotoRemove(index + 1);
+                  onPhotoRemove(index + 1);
                 }}
               />
             </PhotoWrapper>
