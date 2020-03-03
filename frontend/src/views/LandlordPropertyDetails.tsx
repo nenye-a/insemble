@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useHistory, useParams } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
 
 import { View, Card, LoadingIndicator } from '../core-ui';
 import TenantDeepDiveModal from './DeepDivePage/TenantDeepDiveModal';
@@ -11,7 +12,6 @@ import {
   LandlordLocationDetails,
   LandlordManageSpace,
 } from './LandlordProfile';
-import { useQuery } from '@apollo/react-hooks';
 import { PropertyMatches, PropertyMatchesVariables } from '../generated/PropertyMatches';
 import { GET_PROPERTY_MATCHES_DATA } from '../graphql/queries/server/matches';
 
