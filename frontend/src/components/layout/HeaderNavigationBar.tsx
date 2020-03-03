@@ -1,23 +1,72 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-import { useQuery } from '@apollo/react-hooks';
+import { useLazyQuery } from '@apollo/react-hooks';
 
 import InsembleLogo from '../common/InsembleLogo';
 import { TouchableOpacity, Button, View, Avatar } from '../../core-ui';
 import { WHITE, HEADER_BORDER_COLOR, THEME_COLOR } from '../../constants/colors';
 import { NAVBAR_HEIGHT } from '../../constants/theme';
-import { GET_TENANT_PROFILE } from '../../graphql/queries/server/profile';
+import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../../graphql/queries/server/profile';
 import { GetTenantProfile } from '../../generated/GetTenantProfile';
+import { GetLandlordProfile } from '../../generated/GetLandlordProfile';
+import { asyncStorage } from '../../utils';
+import { Role } from '../../types/types';
 
 type Props = {
   showButton?: boolean;
 };
 
+type Profile = {
+  id: string;
+  avatar: string | null;
+};
+
 export default function HeaderNavigationBar(props: Props) {
+  let role = asyncStorage.getRole();
   let history = useHistory();
-  let { data } = useQuery<GetTenantProfile>(GET_TENANT_PROFILE);
-  let avatar = data?.profileTenant.avatar;
+  let [profileInfo, setProfileInfo] = useState<Profile>({ id: '', avatar: '' });
+
+  let onTenantCompleted = (tenantResult: GetTenantProfile) => {
+    let { profileTenant } = tenantResult;
+    if (profileTenant) {
+      let { id, avatar } = profileTenant;
+      setProfileInfo({
+        id,
+        avatar,
+      });
+    }
+  };
+
+  let onLandlordCompleted = (landlordResult: GetLandlordProfile) => {
+    let { profileLandlord } = landlordResult;
+    if (profileLandlord) {
+      let { id, avatar } = profileLandlord;
+      setProfileInfo({
+        id,
+        avatar,
+      });
+    }
+  };
+
+  let [getTenantProfile] = useLazyQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
+    onCompleted: onTenantCompleted,
+    fetchPolicy: 'network-only',
+  });
+
+  let [getLandlordProfile] = useLazyQuery<GetLandlordProfile>(GET_LANDLORD_PROFILE, {
+    onCompleted: onLandlordCompleted,
+    fetchPolicy: 'network-only',
+  });
+
+  useEffect(() => {
+    if (role === Role.TENANT) {
+      getTenantProfile();
+    } else if (role === Role.LANDLORD) {
+      getLandlordProfile();
+    }
+  }, [role, getTenantProfile, getLandlordProfile]);
+
   return (
     <Container>
       <TouchableOpacity
@@ -27,13 +76,13 @@ export default function HeaderNavigationBar(props: Props) {
       >
         <InsembleLogo color="purple" />
       </TouchableOpacity>
-      {data?.profileTenant.id ? (
+      {profileInfo.id ? (
         <TouchableOpacity
           onPress={() => {
             history.push('/user/edit-profile');
           }}
         >
-          <Avatar size="small" image={avatar} />
+          <Avatar size="small" image={profileInfo.avatar} />
         </TouchableOpacity>
       ) : (
         <>
