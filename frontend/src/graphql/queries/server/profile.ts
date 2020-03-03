@@ -33,6 +33,22 @@ export const EDIT_TENANT_PROFILE = gql`
   }
 `;
 
+export const EDIT_LANDLORD_PROFILE = gql`
+  mutation EditLandlordProfile($profile: EditProfileInput!) {
+    editProfileLandlord(profile: $profile) {
+      id
+      email
+      firstName
+      lastName
+      avatar
+      company
+      description
+      title
+      tier
+    }
+  }
+`;
+
 export const GET_LANDLORD_PROFILE = gql`
   query GetLandlordProfile {
     profileLandlord {
