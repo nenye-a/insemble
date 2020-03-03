@@ -21,8 +21,7 @@ def get_arcgis_demo(lat, lng):
     cats, demo_df = environics.create_demo_cats_and_df()
     block_df = spatial.create_block_grp_df()
 
-    demo_dict3 = environics.get_demographics(
-        lat, lng, 3, demo_df, block_df, cats)
+    demo_dict3 = environics.get_demographics(lat, lng, 3)
     print("Demo details")
     pprint.pprint(demo_dict3)
 

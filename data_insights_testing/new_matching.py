@@ -29,8 +29,8 @@ SPATIAL_DF = utils.read_dataframe_csv(
     'insemble-dataframes/spatial_df.csv.gz', file_system=S3_FILESYSTEM)
 DEMO_DF = utils.read_dataframe_csv(
     'insemble-dataframes/demo_df.csv.gz', file_system=S3_FILESYSTEM)
-MATCHING_DF = utils.read_dataframe_csv(
-    'insemble-dataframes/full_df_csv.csv.gz', file_system=S3_FILESYSTEM)
+# MATCHING_DF = utils.read_dataframe_csv(
+#     'insemble-dataframes/full_df_csv.csv.gz', file_system=S3_FILESYSTEM)
 SPATIAL_CATEGORIES = utils.DB_SPATIAL_CATS.find_one(
     {'name': 'spatial_categories'})['spatial_categories']
 DEMO_CATEGORIES = utils.DB_DEMOGRAPHIC_CATS.find_one(
@@ -210,15 +210,13 @@ def _generate_location_vector(address, name=None, lat=None, lng=None):
     psycho_dict = spatial.get_psychographics(
         lat, lng, 1, SPATIAL_DF, BLOCK_DF, SPATIAL_CATEGORIES)
     arcgis_dict = arcgis.details(lat, lng, 1)
-    demo_dict = environics.get_demographics(
-        lat, lng, 1, DEMO_DF, BLOCK_DF, DEMO_CATEGORIES)
+    demo_dict = environics.get_demographics(lat, lng, 1)
 
     # get data (3 mile)
     psycho_dict3 = spatial.get_psychographics(
         lat, lng, 3, SPATIAL_DF, BLOCK_DF, SPATIAL_CATEGORIES)
     arcgis_dict3 = arcgis.details(lat, lng, 3)
-    demo_dict3 = environics.get_demographics(
-        lat, lng, 3, DEMO_DF, BLOCK_DF, DEMO_CATEGORIES)
+    demo_dict3 = environics.get_demographics(lat, lng, 3)
 
     # CREATE ARRAY AS DATAFRAME (for 1 MILE)
     # create psychographic dataframe

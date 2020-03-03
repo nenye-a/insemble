@@ -862,10 +862,8 @@ def demo_builder(radius=1):
             # update with spatial data
             lat = space['geometry']['location']['lat']
             lng = space['geometry']['location']['lng']
-            demo_dict1 = environics.get_demographics(
-                lat, lng, 1, demo_df, block_df, cats)
-            demo_dict3 = environics.get_demographics(
-                lat, lng, 3, demo_df, block_df, cats)
+            demo_dict1 = environics.get_demographics(lat, lng, 1)
+            demo_dict3 = environics.get_demographics(lat, lng, 3)
 
             # space has been detailed and will be updated
             DB_PROCESSED_SPACE.update_one(

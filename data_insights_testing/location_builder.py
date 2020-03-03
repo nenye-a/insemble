@@ -250,8 +250,7 @@ def generate_location_profile_new(address):
     arcgis_dict = arcgis.details(lat, lng, 1)
 
     cats, demo_df = environics.create_demo_cats_and_df()
-    demo_dict = environics.get_demographics(
-        lat, lng, 1, demo_df, block_df, cats)
+    demo_dict = environics.get_demographics(lat, lng, 1)
 
     # create arr as df
     # psycho

@@ -157,7 +157,7 @@ def get_demographics(lat, lng, radius, demographic_dict=None):
         demographics = demographic_dict
     else:
         demographics = environics.get_demographics(
-            lat, lng, radius, matching.DEMO_DF, matching.BLOCK_DF, matching.DEMO_CATEGORIES)
+            lat, lng, radius)
 
     # parse age
     # all the data is referred to by index on the matching algorithm (refer to matching)
@@ -694,7 +694,7 @@ def get_preview_demographics(lat, lng, radius):
     """
 
     demographics = environics.get_demographics(
-        lat, lng, radius, matching.DEMO_DF, matching.BLOCK_DF, matching.DEMO_CATEGORIES)
+        lat, lng, radius)
 
     median_age = round(demographics["Current Year Median Age"])
     median_income = round(demographics["Current Year Median Household Income"])
@@ -969,10 +969,10 @@ def get_nearby_places(lat, lng, radius=1):
 def get_environics_demographics(lat, lng):
 
     demo1 = environics.get_demographics(
-        lat, lng, 1, matching.DEMO_DF, matching.BLOCK_DF, matching.DEMO_CATEGORIES)
+        lat, lng, 1)
 
     demo3 = environics.get_demographics(
-        lat, lng, 3, matching.DEMO_DF, matching.BLOCK_DF, matching.DEMO_CATEGORIES)
+        lat, lng, 3)
 
     return {
         "demo1": demo1,
