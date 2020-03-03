@@ -18,7 +18,7 @@ class PropertyTenantSerializer(serializers.Serializer):
 
     """
 
-    property_id = serializers.CharField(max_length=12, required=False)
+    property_id = serializers.CharField(max_length=30, required=False)
     address = serializers.CharField(max_length=300, required=False)
     property_type = serializers.JSONField(required=False)
     space_type = serializers.JSONField(required=False)

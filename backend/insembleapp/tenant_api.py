@@ -828,11 +828,26 @@ class FastLocationDetailsAPI(AsynchronousAPI):
         lat = place['geometry']['location']['lat']
         lng = place['geometry']['location']['lng']
 
+        try:
+            onemile_demo = provider.get_demographics(lat, lng, 1, demographic_dict=place["demo1"])
+        except Exception:
+            onemile_demo = None
+
+        try:
+            threemile_demo = provider.get_demographics(lat, lng, 3, demographic_dict=place["demo3"])
+        except Exception:
+            threemile_demo = None
+
+        try:
+            fivemile_demo = provider.get_demographics(lat, lng, 5)
+        except Exception:
+            fivemile_demo = None
+
         # get demographics for 1, 3, and 5 mile
         return {
-            "1mile": provider.get_demographics(lat, lng, 1, demographic_dict=place["demo1"]),
-            "3mile": provider.get_demographics(lat, lng, 3, demographic_dict=place["demo3"]),
-            "5mile": provider.get_demographics(lat, lng, 5)
+            "1mile": onemile_demo,
+            "3mile": threemile_demo,
+            "5mile": fivemile_demo
         }
 
     def combine_demographics(self, tenant_demographics, landlord_demographics):
