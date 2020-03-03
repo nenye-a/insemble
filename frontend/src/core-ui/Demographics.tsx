@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
@@ -16,14 +16,15 @@ import {
 import SegmentedControl from './SegmentedControl';
 import { View, Text } from '../core-ui';
 import { CarouselFilter } from '../components';
-import { DeepDiveContext } from '../views/DeepDivePage/DeepDiveModal';
 import { roundDecimal, convertToKilos } from '../utils';
+import { LocationDetails_locationDetails_result_demographics1 as LocationDetailsDemographics } from '../generated/LocationDetails';
+import { PropertyLocationDetails_propertyDetails_demographics1 as PropertyDetailsDemographics } from '../generated/PropertyLocationDetails';
 
 //TODO Improve Typing for data
 type DemographicsStatus = {
   name: string;
   curLocation?: number;
-  targetLocation: number;
+  targetLocation?: number;
   growth?: number;
 };
 
@@ -40,18 +41,21 @@ type DataKey = Exclude<keyof Data, 'population'>;
 
 type Props = {
   withMargin?: boolean;
+  demographicsData?: Array<LocationDetailsDemographics | PropertyDetailsDemographics | undefined>;
 };
-export default function Graphic({ withMargin = true }: Props) {
-  let data = useContext(DeepDiveContext);
+
+function hasGrowth(
+  data: LocationDetailsDemographics | PropertyDetailsDemographics
+): data is LocationDetailsDemographics {
+  return (data as LocationDetailsDemographics).age[0].growth !== undefined;
+}
+
+export default function Graphic(props: Props) {
+  let { demographicsData, withMargin } = props;
   let [activeIndex, setActiveIndex] = useState<number>(0);
   let [selectedFilter, setSelectedFilter] = useState<string>('Age');
   let options = ['Age', 'Income', 'Ethnicity', 'Education', 'Gender'];
-  let datas = [
-    data?.result?.demographics1,
-    data?.result?.demographics3,
-    data?.result?.demographics5,
-  ];
-  let dataActiveIndex = datas[activeIndex];
+  let dataActiveIndex = demographicsData && demographicsData[activeIndex];
   const renderCustomBarLabel = ({
     x,
     y,
@@ -65,36 +69,38 @@ export default function Graphic({ withMargin = true }: Props) {
     width: number;
     value: number;
   }) => {
-    let demographicData =
-      dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey][index];
-    return (
-      <>
-        {demographicData?.growth && demographicData.growth !== 0 && (
-          <>
-            {demographicData.growth > 0 ? (
-              <>
-                <SvgGreenArrow x={x + width / 2 - 5} y={5} />
-                <LabelText fill={GREEN_TEXT} x={x + width / 2 + 16} y={25}>
-                  {roundDecimal(demographicData.growth, 2) + '%'}
-                </LabelText>
-              </>
-            ) : (
-              <>
-                <SvgRedArrow x={x + width / 2 - 5} y={5} />
-                <LabelText fill={RED_TEXT} x={x + width / 2 + 16} y={25}>
-                  {roundDecimal(demographicData.growth, 2) + '%'}
-                </LabelText>
-              </>
-            )}
-          </>
-        )}
-        {value && (
-          <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
-            {roundDecimal(convertToKilos(value)) + 'K'}
-          </LabelText>
-        )}
-      </>
-    );
+    if (dataActiveIndex && hasGrowth(dataActiveIndex)) {
+      let demographicsData =
+        dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey][index];
+      return (
+        <>
+          {demographicsData?.growth && demographicsData.growth !== 0 && (
+            <>
+              {demographicsData.growth > 0 ? (
+                <>
+                  <SvgGreenArrow x={x + width / 2 - 5} y={5} />
+                  <LabelText fill={GREEN_TEXT} x={x + width / 2 + 16} y={25}>
+                    {roundDecimal(demographicsData.growth, 2) + '%'}
+                  </LabelText>
+                </>
+              ) : (
+                <>
+                  <SvgRedArrow x={x + width / 2 - 5} y={5} />
+                  <LabelText fill={RED_TEXT} x={x + width / 2 + 16} y={25}>
+                    {roundDecimal(demographicsData.growth, 2) + '%'}
+                  </LabelText>
+                </>
+              )}
+            </>
+          )}
+          {value && (
+            <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
+              {roundDecimal(convertToKilos(value)) + 'K'}
+            </LabelText>
+          )}
+        </>
+      );
+    }
   };
   const renderCustomSecondBarLabel = ({
     x,

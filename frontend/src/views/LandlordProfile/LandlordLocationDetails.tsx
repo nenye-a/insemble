@@ -1,21 +1,41 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
 
 import { CONSUMER_PERSONAS } from '../../fixtures/dummyData';
 import { View, Text } from '../../core-ui';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD } from '../../constants/theme';
-import { LIGHTEST_GREY, GREY } from '../../constants/colors';
+import { LIGHTEST_GREY } from '../../constants/colors';
 import KeyFacts from '../DeepDivePage/KeyFacts';
 import RelevantConsumerCard from '../DeepDivePage/RelevantConsumerCard';
 import DemographicCard from '../../core-ui/Demographics';
+import { GET_PROPERTY_LOCATION_DETAILS } from '../../graphql/queries/server/deepdive';
+import {
+  PropertyLocationDetails,
+  PropertyLocationDetailsVariables,
+} from '../../generated/PropertyLocationDetails';
 
 export default function LandlordLocationDetails() {
+  let history = useHistory();
+  let location = history.location.state.iframeSource;
+  let { data } = useQuery<PropertyLocationDetails, PropertyLocationDetailsVariables>(
+    GET_PROPERTY_LOCATION_DETAILS
+  );
+  let keyFactsData = data?.propertyDetails.keyFacts;
+  let demographicsData = [
+    data?.propertyDetails.demographics1,
+    data?.propertyDetails.demographics3,
+    data?.propertyDetails.demographics5,
+  ];
+  let commuteData = data?.propertyDetails.commute;
+  let personasData = data?.propertyDetails.topPersonas;
   return (
     <View>
       {/* TODO: change to map */}
-      <Placeholder />
-      <KeyFacts withMargin={false} />
-      <ConsumerPersonaText>All Consumer Personas</ConsumerPersonaText>
+      <Iframe src={location} />
+      <KeyFacts keyFactsData={keyFactsData} commuteData={commuteData} withMargin={false} />
+      <ConsumerPersonaText personasData={personasData}>All Consumer Personas</ConsumerPersonaText>
       <Container flex>
         <CardsContainer>
           {CONSUMER_PERSONAS.map((item, index) => (
@@ -24,7 +44,7 @@ export default function LandlordLocationDetails() {
         </CardsContainer>
       </Container>
       <GraphicContainer>
-        <DemographicCard withMargin={false} />
+        <DemographicCard demographicsData={demographicsData} withMargin={false} />
       </GraphicContainer>
     </View>
   );
@@ -35,11 +55,6 @@ const Container = styled(View)`
   overflow-x: scroll;
 `;
 
-const Placeholder = styled(View)`
-  background-color: ${GREY};
-  width: 100%;
-  height: 200px;
-`;
 const ConsumerPersonaText = styled(Text)`
   font-size: ${FONT_SIZE_MEDIUM};
   font-weight: ${FONT_WEIGHT_BOLD};
@@ -53,4 +68,10 @@ const CardsContainer = styled(View)`
 
 const GraphicContainer = styled(View)`
   margin: 0 14px;
+`;
+const Iframe = styled.iframe`
+  display: block;
+  width: 100%;
+  height: 240px;
+  border: none;
 `;
