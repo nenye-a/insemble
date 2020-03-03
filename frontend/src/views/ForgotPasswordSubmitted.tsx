@@ -38,5 +38,4 @@ const Container = styled(View)`
 const ContainerCard = styled(Card)`
   width: 400px;
   height: 300px;
-  // padding: 20px;
 `;
