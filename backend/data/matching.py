@@ -554,7 +554,7 @@ def weight_and_evaluate(processed_difference_df):
     # weight and sum the differences
     weight = {
         # 1 mile weights
-        'MedHouseholdIncome1': 4,
+        'MedHouseholdIncome1': 5,
         'income': 4.8,
         'race': 4.6,
         'DaytimePop1': 4.4,
