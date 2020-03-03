@@ -68,15 +68,15 @@ const LANDLORD_ROUTES = [
     component: LandlordPropertyDetails,
   },
   {
-    path: '/landlord/verify',
-    exact: true,
-    layout: BasicLayout,
-    component: LandlordOnboarding,
-  },
-  {
     path: '/landlord/email-verification/:verificationId',
     layout: BasicLayout,
     component: LandlordEmailVerification,
+  },
+  {
+    path: '/landlord/new-property/:formStep',
+    exact: true,
+    layout: BasicLayout,
+    component: LandlordOnboarding,
   },
 ];
 

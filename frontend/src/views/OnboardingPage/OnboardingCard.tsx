@@ -9,7 +9,7 @@ type Props = {
   title: string;
   children: ReactNode;
   progress: number;
-  buttons: Array<Button>;
+  buttons?: Array<Button>;
   canPressNext?: boolean;
 };
 
@@ -33,7 +33,7 @@ export default function OnboardingCard(props: Props) {
       <View flex style={{ zIndex: 1 }}>
         {children}
       </View>
-      {buttons.length > 1 && (
+      {buttons && buttons.length > 1 && (
         <Footer>
           {buttons.map(({ onPress, text, loading }, index) => {
             return index === 0 ? (

@@ -32,7 +32,9 @@ export default function SummaryCard({
             </DescriptionItem>
             <DescriptionItem>
               <Text>Type:</Text>
-              <Text fontWeight={FONT_WEIGHT_MEDIUM}>{type}</Text>
+              <Text fontWeight={FONT_WEIGHT_MEDIUM} style={{ textAlign: 'right' }}>
+                {type}
+              </Text>
             </DescriptionItem>
             <DescriptionItem>
               <Text>Condition:</Text>

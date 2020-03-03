@@ -1,19 +1,103 @@
-import React from 'react';
+import React, { Dispatch } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
+import { useMutation } from '@apollo/react-hooks';
 
-import { View, Text, Alert } from '../../core-ui';
+import { View, Text, Alert, Form, Button } from '../../core-ui';
 import PhotoGallery from '../DeepDivePage/PhotoGallery';
 import DescriptionCard from '../DeepDivePage/DescriptionCard';
 import SummaryCard from '../DeepDivePage/SummaryCard';
 import PropertyDeepDiveHeader from '../DeepDivePage/PropertyDeepDiveHeader';
-import { BACKGROUND_COLOR, THEME_COLOR } from '../../constants/colors';
-import { PHOTOS } from '../../fixtures/dummyData';
+import { THEME_COLOR, WHITE } from '../../constants/colors';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
+import OnboardingFooter from '../../components/layout/OnboardingFooter';
+import { State, Action } from '../../reducers/landlordOnboardingReducer';
+import { CREATE_PROPERTY } from '../../graphql/queries/server/property';
+import { CreateProperty, CreatePropertyVariables } from '../../generated/CreateProperty';
+import { getImageBlob, dateFormatter } from '../../utils';
 
-export default function PreviewListing() {
-  /* TODO: replace dummy data */
+type Props = {
+  dispatch: Dispatch<Action>;
+  state: State;
+};
+export default function PreviewListing(props: Props) {
+  let { state: landlordOnboardingState } = props;
+  let { confirmLocation, confirmTenant, spaceListing } = landlordOnboardingState;
+  let propertyPhotos = spaceListing?.propertyPhotos.map((item) => item?.preview || '') || [];
+  let history = useHistory();
+  let [
+    createProperty,
+    { loading: createPropertyLoading, data: createPropertyData, error: createPropertyError },
+  ] = useMutation<CreateProperty, CreatePropertyVariables>(CREATE_PROPERTY);
+  let onSubmit = () => {
+    let { userRelation, propertyType, physicalAddress, marketingPreference } = confirmLocation;
+    let {
+      businessType,
+      otherBusinessType,
+      selectedRetailCategories,
+      existingExclusives,
+    } = confirmTenant;
+
+    let {
+      mainPhoto,
+      propertyPhotos,
+      description,
+      condition,
+      sqft,
+      pricePerSqft,
+      equipments,
+      availability,
+    } = spaceListing;
+    if (mainPhoto) {
+      let mainPhotoBlob = getImageBlob(mainPhoto.file);
+      let additionalPhotosBlob = [];
+      for (let photo of propertyPhotos) {
+        if (!!photo) {
+          let photoBlob = getImageBlob(photo.file);
+          additionalPhotosBlob.push(photoBlob);
+        }
+      }
+
+      let filteredBusinessType = businessType.filter((item) => item !== 'Other');
+      createProperty({
+        variables: {
+          property: {
+            businessType: otherBusinessType
+              ? [...filteredBusinessType, otherBusinessType]
+              : filteredBusinessType,
+            categories: selectedRetailCategories,
+            exclusive: existingExclusives,
+            location: {
+              lat: physicalAddress?.lat || '',
+              lng: physicalAddress?.lng || '',
+              address: physicalAddress?.address || '',
+            },
+            marketingPreference,
+            name: physicalAddress?.name || '',
+            propertyType,
+            userRelation,
+          },
+          space: {
+            available: dateFormatter(availability),
+            condition,
+            description,
+            equipment: equipments,
+            mainPhoto: mainPhotoBlob,
+            photoUploads: additionalPhotosBlob,
+            pricePerSqft: Number(pricePerSqft),
+            sqft: Number(sqft),
+          },
+        },
+      });
+    }
+  };
+
+  if (createPropertyData?.createProperty) {
+    history.push('/landlord/properties');
+  }
   return (
-    <>
+    <Form onSubmit={onSubmit}>
+      <Alert visible={!!createPropertyError} text={createPropertyError?.message || ''} />
       <RowView>
         <Title>Space 1</Title>
         <Alert visible text="This is how the Retailer will see your listing." />
@@ -23,28 +107,29 @@ export default function PreviewListing() {
         <Text>3D Tour</Text>
       </TourContainer>
       <PropertyDeepDiveHeader
-        address={'4027 Sepulveda Boulevard, Los Angeles, CA'}
-        targetNeighborhood={'Mclaughlin, Culver City'}
+        address={confirmLocation?.physicalAddress?.address || ''}
+        // TODO: ask where to get this info
+        targetNeighborhood=""
       />
       <RowedView flex>
-        <PhotoGallery images={PHOTOS} />
+        <PhotoGallery images={[spaceListing?.mainPhoto?.preview || '', ...propertyPhotos]} />
         <CardsContainer flex>
           <SummaryCard
-            priceSqft={'$30'}
-            sqft={'4,900'}
-            tenacy={'Multiple'}
-            type={'Inline'}
-            condition={'Whitebox'}
+            priceSqft={`$${spaceListing.pricePerSqft.toString()}`}
+            sqft={spaceListing.sqft}
+            tenacy="Multiple"
+            type={confirmLocation.propertyType?.join(', ') || ''}
+            condition={spaceListing.condition}
           />
           <Spacing />
-          <DescriptionCard
-            content={
-              'This place, positioned uniquely between a Yoshinoya and a Jack-In-The-Box, is a quick lunchtime getaway location close to nearby grocery stores, salons, and banks. Open your brand in this community today! '
-            }
-          />
+          <DescriptionCard content={spaceListing?.description || ''} />
         </CardsContainer>
       </RowedView>
-    </>
+      <OnboardingFooter>
+        <TransparentButton mode="transparent" text="Back" onPress={() => history.goBack()} />
+        <Button type="submit" text="Next" loading={createPropertyLoading} />
+      </OnboardingFooter>
+    </Form>
   );
 }
 
@@ -57,7 +142,7 @@ const Spacing = styled(View)`
 const RowedView = styled(View)`
   flex-direction: row;
   align-items: flex-start;
-  background-color: ${BACKGROUND_COLOR};
+  background-color: ${WHITE};
 `;
 
 type TourContainerProps = {
@@ -89,4 +174,8 @@ const PendingAlert = styled(Alert)`
   position: absolute;
   top: 12px;
   left: 12px;
+`;
+const TransparentButton = styled(Button)`
+  margin-right: 8px;
+  padding: 0 12px;
 `;

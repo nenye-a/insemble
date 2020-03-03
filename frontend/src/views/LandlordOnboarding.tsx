@@ -1,6 +1,6 @@
-import React, { useState, useReducer } from 'react';
+import React, { useState, useReducer, useEffect } from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
+import { useParams, Redirect } from 'react-router-dom';
 
 import { View } from '../core-ui';
 import landlordOnboardingReducer, {
@@ -14,107 +14,63 @@ import LandlordListing from './LandlordOnboardingPage/LandlordListing';
 import PreviewListing from './LandlordOnboardingPage/PreviewListing';
 import ThankYou from './LandlordOnboardingPage/ThankYou';
 
+type Params = {
+  formStep?: string;
+};
 export default function LandlordOnboarding() {
-  let [activeSegmentIndex, setActiveSegmentIndex] = useState(0);
-  let history = useHistory();
+  let params = useParams<Params>();
+  let [selectedStep, setSelectedStep] = useState(params.formStep || 'step-1');
   let [state, dispatch] = useReducer(landlordOnboardingReducer, landlordOnboardingInitialState);
 
-  let onNextPress = () => setActiveSegmentIndex(activeSegmentIndex + 1);
-  let onBackPress = () => setActiveSegmentIndex(activeSegmentIndex - 1);
+  useEffect(() => {
+    setSelectedStep(params.formStep || 'step-1');
+  }, [params.formStep]);
 
   const SEGMENTS = [
     {
       title: 'Let’s confirm your property details.',
       content: PropertyConfirm,
-      buttons: [
-        {
-          text: 'Back',
-          onPress: () => {
-            history.push('/');
-          },
-        },
-        {
-          text: 'Next',
-          onPress: onNextPress,
-        },
-      ],
+      path: 'step-1',
     },
     {
       title: 'Let’s confirm your property details.',
       content: LocationConfirm,
-      buttons: [
-        {
-          text: 'Back',
-          onPress: onBackPress,
-        },
-        {
-          text: 'Next',
-          onPress: onNextPress,
-        },
-      ],
+      path: 'step-2',
     },
 
     {
       title: 'What types of tenants are you looking for?',
       content: TenantConfirm,
-      buttons: [
-        {
-          text: 'Back',
-          onPress: onBackPress,
-        },
-        {
-          text: 'Next',
-          onPress: onNextPress,
-        },
-      ],
+      path: 'step-3',
     },
     {
       title: 'Let’s build your listings!',
       content: LandlordListing,
-      buttons: [
-        {
-          text: 'Back',
-          onPress: onNextPress,
-        },
-        {
-          text: 'Next',
-          onPress: onNextPress,
-        },
-      ],
+      path: 'step-4',
     },
     {
       title: 'Preview your listing',
       content: PreviewListing,
-      buttons: [
-        {
-          text: 'Back',
-          onPress: onBackPress,
-        },
-        {
-          text: 'Next',
-          onPress: onNextPress,
-        },
-      ],
+      path: 'step-5',
     },
     {
       title: 'Thank You!',
       content: ThankYou,
-      buttons: [
-        {
-          text: 'See Tenants',
-          onPress: onNextPress,
-        },
-      ],
     },
   ];
-  let activeSegment = SEGMENTS[activeSegmentIndex];
-  let Content = SEGMENTS[activeSegmentIndex].content;
+  let selectedPage = SEGMENTS.find((item) => item.path === selectedStep) || SEGMENTS[0];
+
+  let Content = selectedPage.content;
+  if (!params?.formStep) {
+    // TODO: check if user directly hit next step before filling previous form
+    return <Redirect to="/landlord/new-property/step-1" />;
+  }
+
   return (
     <Container flex>
       <OnboardingCard
-        title={activeSegment.title}
-        progress={activeSegmentIndex / SEGMENTS.length}
-        buttons={activeSegment.buttons}
+        title={selectedPage.title}
+        progress={SEGMENTS.indexOf(selectedPage) / SEGMENTS.length}
         canPressNext={state.canPressNext}
       >
         <Content dispatch={dispatch} state={state} />
