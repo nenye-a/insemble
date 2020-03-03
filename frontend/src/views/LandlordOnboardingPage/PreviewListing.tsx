@@ -8,11 +8,12 @@ import PhotoGallery from '../DeepDivePage/PhotoGallery';
 import DescriptionCard from '../DeepDivePage/DescriptionCard';
 import SummaryCard from '../DeepDivePage/SummaryCard';
 import PropertyDeepDiveHeader from '../DeepDivePage/PropertyDeepDiveHeader';
+import OnboardingFooter from '../../components/layout/OnboardingFooter';
 import { THEME_COLOR, WHITE } from '../../constants/colors';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
-import OnboardingFooter from '../../components/layout/OnboardingFooter';
 import { State, Action } from '../../reducers/landlordOnboardingReducer';
 import { CREATE_PROPERTY } from '../../graphql/queries/server/property';
+import { GET_PROPERTIES } from '../../graphql/queries/server/properties';
 import { CreateProperty, CreatePropertyVariables } from '../../generated/CreateProperty';
 import { getImageBlob, dateFormatter } from '../../utils';
 
@@ -88,6 +89,7 @@ export default function PreviewListing(props: Props) {
             sqft: Number(sqft),
           },
         },
+        refetchQueries: [{ query: GET_PROPERTIES }],
       });
     }
   };
