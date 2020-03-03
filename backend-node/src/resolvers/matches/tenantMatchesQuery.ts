@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { queryField, arg } from 'nexus';
+
 import { Root, Context } from 'serverTypes';
 import { LEGACY_API_URI } from '../../constants/host';
-import { queryField, arg } from 'nexus';
 import { TenantMatchesType } from 'dataTypes';
 
 export type MatchingLocation = {
