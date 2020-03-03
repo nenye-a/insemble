@@ -10,6 +10,7 @@ import { WHITE, THEME_COLOR } from '../constants/colors';
 import SvgPlus from '../components/icons/plus';
 import { GET_PROPERTIES } from '../graphql/queries/server/properties';
 import { GetProperties } from '../generated/GetProperties';
+import { MAPS_IFRAME_URL_SEARCH } from '../constants/googleMaps';
 
 export default function LandlordProperties() {
   let history = useHistory();
@@ -23,7 +24,9 @@ export default function LandlordProperties() {
       ) : (
         properties &&
         properties.map((item, index) => {
-          let iframeSource = `https://maps.google.com/maps?q=${item.location.lat},${item.location.lng}&hl=es;z=14&amp;output=embed`;
+          let { lat, lng } = item.location;
+          let iframeSource = MAPS_IFRAME_URL_SEARCH + '&q=' + lat + ', ' + lng;
+
           return (
             <TouchableOpacity
               key={index}
