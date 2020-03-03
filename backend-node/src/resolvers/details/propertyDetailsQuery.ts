@@ -16,7 +16,6 @@ let propertyDetailsResolver: FieldResolver<'Query', 'propertyDetails'> = async (
       location: true,
     },
   });
-  console.log(selectedProperty);
   if (!selectedProperty) {
     throw new Error('Property not found!');
   }
