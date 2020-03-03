@@ -73,7 +73,7 @@ const Row = styled(Card)`
 `;
 
 const Iframe = styled.iframe`
-  width: 280px;
+  width: 200px;
   border: none;
 `;
 
