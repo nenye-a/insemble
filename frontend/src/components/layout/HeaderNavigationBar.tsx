@@ -23,8 +23,8 @@ type Profile = {
 };
 
 export default function HeaderNavigationBar(props: Props) {
-  let role = asyncStorage.getRole();
   let history = useHistory();
+
   let [profileInfo, setProfileInfo] = useState<Profile>({ id: '', avatar: '' });
 
   let onTenantCompleted = (tenantResult: GetTenantProfile) => {
@@ -60,12 +60,13 @@ export default function HeaderNavigationBar(props: Props) {
   });
 
   useEffect(() => {
+    let role = asyncStorage.getRole();
     if (role === Role.TENANT) {
       getTenantProfile();
     } else if (role === Role.LANDLORD) {
       getLandlordProfile();
     }
-  }, [role, getTenantProfile, getLandlordProfile]);
+  }, [getTenantProfile, getLandlordProfile]);
 
   return (
     <Container>
@@ -82,7 +83,7 @@ export default function HeaderNavigationBar(props: Props) {
             history.push('/user/edit-profile');
           }}
         >
-          <Avatar size="small" image={profileInfo.avatar} />
+          <Avatar size="small" image={profileInfo.avatar || ''} />
         </TouchableOpacity>
       ) : (
         <>
