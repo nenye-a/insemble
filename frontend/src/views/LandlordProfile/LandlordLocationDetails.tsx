@@ -1,9 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
-import { CONSUMER_PERSONAS } from '../../fixtures/dummyData';
 import { View, Text } from '../../core-ui';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD } from '../../constants/theme';
 import { LIGHTEST_GREY } from '../../constants/colors';
@@ -19,9 +18,16 @@ import {
 export default function LandlordLocationDetails() {
   let history = useHistory();
   let location = history.location.state.iframeSource;
+  let { propertyId = '' } = useParams();
   let { data } = useQuery<PropertyLocationDetails, PropertyLocationDetailsVariables>(
-    GET_PROPERTY_LOCATION_DETAILS
+    GET_PROPERTY_LOCATION_DETAILS,
+    {
+      variables: {
+        propertyId,
+      },
+    }
   );
+
   let keyFactsData = data?.propertyDetails.keyFacts;
   let demographicsData = [
     data?.propertyDetails.demographics1,
@@ -35,12 +41,13 @@ export default function LandlordLocationDetails() {
       {/* TODO: change to map */}
       <Iframe src={location} />
       <KeyFacts keyFactsData={keyFactsData} commuteData={commuteData} withMargin={false} />
-      <ConsumerPersonaText personasData={personasData}>All Consumer Personas</ConsumerPersonaText>
+      <ConsumerPersonaText>All Consumer Personas</ConsumerPersonaText>
       <Container flex>
         <CardsContainer>
-          {CONSUMER_PERSONAS.map((item, index) => (
-            <RelevantConsumerCard percentile={100} name="name" key={index} {...item} />
-          ))}
+          {personasData &&
+            personasData.map((item, index) => (
+              <RelevantConsumerCard percentile={100} name="name" key={index} {...item} />
+            ))}
         </CardsContainer>
       </Container>
       <GraphicContainer>
