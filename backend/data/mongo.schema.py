@@ -430,10 +430,10 @@ Region:
     }
     name: string,                                       -> name of the region as known publically (is a number if its for a census block etc.)
     I_number: string,                                   -> interanl number for the region
-    ea_demographics: {                                  -> environics analytics data for the entire region (applies mostly to block and blockgroup)
+    environics_demographics: {                          -> environics analytics data for the entire region (applies mostly to block and blockgroup)
         ... all the environics analytics data
     },
-    psychographics: {                                   -> spatial.ai psychographics for the entire region (applies mostly to block and blockgroup)
+    spatial_psychographics: {                           -> spatial.ai psychographics for the entire region (applies mostly to block and blockgroup)
         ... all the psychographics data
     },
 }
