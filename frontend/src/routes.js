@@ -22,7 +22,7 @@ import LandlordEmailVerification from './views/LandlordEmailVerification';
 import LandlordProperties from './views/LandlordProperties';
 import LandlordPropertyDetails from './views/LandlordPropertyDetails';
 
-import { tenantAuthorization } from './utils';
+import { tenantAuthorization, landlordAuthorization } from './utils';
 
 const COMMON_ROUTES = [
   {
@@ -55,17 +55,20 @@ const LANDLORD_ROUTES = [
     path: '/landlord/edit-profile',
     layout: LandlordProfileLayout,
     component: EditBasicProfile,
+    authorization: landlordAuthorization,
   },
   {
     path: '/landlord/properties',
     layout: LandlordProfileLayout,
     exact: true,
     component: LandlordProperties,
+    authorization: landlordAuthorization,
   },
   {
     path: '/landlord/properties/:propertyId',
     layout: LandlordProfileLayout,
     component: LandlordPropertyDetails,
+    authorization: landlordAuthorization,
   },
   {
     path: '/landlord/email-verification/:verificationId',
@@ -77,6 +80,7 @@ const LANDLORD_ROUTES = [
     exact: true,
     layout: BasicLayout,
     component: LandlordOnboarding,
+    authorization: landlordAuthorization,
   },
 ];
 
