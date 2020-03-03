@@ -8,11 +8,11 @@ export let PropertyMatchesThumbnail = objectType({
     t.string('pictureUrl');
     t.string('category');
     t.int('numExistingLocations');
-    t.int('matchValue');
+    t.float('matchValue');
     t.boolean('interested');
     t.boolean('verified');
     t.boolean('claimed');
     t.boolean('matchesTenantType');
-    t.boolean('exclusivityRisk');
+    t.boolean('onPlatform');
   },
 });

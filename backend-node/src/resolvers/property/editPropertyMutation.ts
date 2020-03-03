@@ -32,6 +32,14 @@ export let editPropertyResolver: FieldResolver<
       propertyType: {
         set: propertyType,
       },
+      space: {
+        updateMany: {
+          where: { matchingBrand: { not: { equals: '0' } } },
+          data: {
+            matchingBrand: null,
+          },
+        },
+      },
     },
     where: {
       id: propertyId,
