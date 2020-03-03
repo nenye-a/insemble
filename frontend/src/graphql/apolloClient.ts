@@ -14,12 +14,12 @@ import { Role } from '../types/types';
 const cache = new InMemoryCache();
 
 const authLink = setContext(async (_, { headers }) => {
-  let role = await asyncStorage.getRole();
+  let role = asyncStorage.getRole();
   let token = null;
   if (role === Role.TENANT) {
-    token = await asyncStorage.getTenantToken();
+    token = asyncStorage.getTenantToken();
   } else if (role === Role.LANDLORD) {
-    token = await asyncStorage.getLandlordToken();
+    token = asyncStorage.getLandlordToken();
   }
   return {
     headers: {

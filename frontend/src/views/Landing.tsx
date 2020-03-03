@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { useQuery } from '@apollo/react-hooks';
+import { useLazyQuery } from '@apollo/react-hooks';
 
 import { View, ContainedTextInput as TextInput, TouchableOpacity, Avatar, Text } from '../core-ui';
 import Title from './LandingPage/Title';
@@ -11,20 +11,45 @@ import useGoogleMaps from '../utils/useGoogleMaps';
 import { WHITE } from '../constants/colors';
 import Button from '../core-ui/Button';
 import { GetTenantProfile } from '../generated/GetTenantProfile';
-import { GET_TENANT_PROFILE } from '../graphql/queries/server/profile';
+import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../graphql/queries/server/profile';
+import asyncStorage from '../utils/asyncStorage';
+import { GetLandlordProfile } from '../generated/GetLandlordProfile';
+import { Role } from '../types/types';
 
 function Landing() {
   let { isLoading } = useGoogleMaps();
+  let role = asyncStorage.getRole();
   let history = useHistory();
-  let { data } = useQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
-    fetchPolicy: 'network-only',
-  });
-  let avatar = data?.profileTenant.avatar;
+
+  let [getTenantProfile, { data: tenantData }] = useLazyQuery<GetTenantProfile>(
+    GET_TENANT_PROFILE,
+    {
+      notifyOnNetworkStatusChange: true,
+    }
+  );
+
+  let [getLandlordProfile, { data: landlordData }] = useLazyQuery<GetLandlordProfile>(
+    GET_LANDLORD_PROFILE,
+    {
+      fetchPolicy: 'network-only',
+    }
+  );
+
+  useEffect(() => {
+    if (role === Role.TENANT) {
+      getTenantProfile();
+    } else if (role === Role.LANDLORD) {
+      getLandlordProfile();
+    }
+  }, [getTenantProfile, getLandlordProfile, role]);
+
+  let id = tenantData?.profileTenant.id || landlordData?.profileLandlord.id || '';
+  let avatar = tenantData?.profileTenant.avatar || landlordData?.profileLandlord.avatar || '';
 
   return (
     <Masthead>
       <RowView>
-        {data?.profileTenant.id ? (
+        {id ? (
           <TouchableOpacity
             onPress={() => {
               history.push('/user/edit-profile');
