@@ -18,7 +18,8 @@ export default function PhotosPicker(props: Props) {
     if (index === 0) {
       onMainPhotoChange(null);
     } else {
-      let newPhotoList = additionalPhotos.splice(index, 1, null);
+      let newPhotoList = additionalPhotos.filter((_, i) => i !== index);
+      newPhotoList.push(null);
       onAdditionalPhotoChange(newPhotoList);
     }
   };
