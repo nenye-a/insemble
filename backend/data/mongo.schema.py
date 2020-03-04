@@ -253,7 +253,6 @@ Indexes:
 Location:
 {
     _id: ObjectID(),
-    location_type: string,                              -> type of location
     location: {
         type: "Point",                                  -> GEOJson type, should always be point
         coordinates: [                                  -> coordinates of the location
@@ -287,17 +286,17 @@ Location:
     nearby_apartments: [                                -> all the nearby apartments in the area (within 1 mile)
         ... same as nearby_store
     ],
-    psychographics: {                                   -> the key psychographic details 
+    spatial_psychographics: {                           -> the key psychographic details 
         1mile: Object(),                                -> psychographic object (psychographic: value)
         3mile: Object(),                                -> psychographic object (psychographic: value)
         5mile: Object(),                                -> psychographic object (psychographic: value)
     },
-    ea_demographics: {                                  -> the demographics from environics analytics
+    environics_demographics: {                          -> the demographics from environics analytics
         1mile: Object(),                                -> demographic object (demographic: value)
         3mile: Object(),                                -> demographic object (demographic: value)
         5mile: Object(),                                -> demographic object (demographic: value)
     },
-    arc_demographics: {                                 -> the demographics from arcgis 
+    arcgis_demographics: {                                 -> the demographics from arcgis 
         1mile: Object(),                                -> demographic object (demographic: value)
         3mile: Object(),                                -> demographic object (demographic: value)
         5mile: Object(),                                -> demographic object (demographic: value)
