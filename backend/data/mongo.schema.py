@@ -192,7 +192,7 @@ Places:
     ],
     website: string,                                    -> website of this site
     description: string,                                -> description of this location
-    sub_categories: list[string]                        -> list of subcategories if any
+    categories: list[string]                            -> list of place subcategories if any
 }
 
 '''
