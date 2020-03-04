@@ -4,6 +4,8 @@ This file will take raw places from goole and generate them into actual places a
 It will also generate locations and their details.
 
 '''
+
+from random import randrange
 import utils
 import datetime
 import goog as google
@@ -14,10 +16,12 @@ import environics
 import arcgis
 import anmspatial
 import time
+from urllib.parse import urlparse
 
 # # indempotently create index - BRANDS
-# utils.DB_BRANDS.create_index([("brand_name", 1), ("brand_name", "text")], unique=True)
-# utils.DB_BRANDS.create_index([("domain", 1)], unique=True, sparse=True)
+# utils.DB_BRANDS.create_index([("brand_name", 1)], unique=True)
+# utils.DB_BRANDS.create_index([("alias", "text")])
+# utils.DB_BRANDS.create_index([("domain", 1)], unique=True, partialFilterExpression={"domain": {"$type": "string"}})
 
 # # indempotently places - PLACES
 # utils.DB_PLACES.create_index([("google_place_id", 1)], unique=True)
@@ -30,10 +34,10 @@ import time
 
 def process_place(place):
     """
-    Build a place into the same structure as what's been defined in the 
+    Build a place into the same structure as what's been defined in the
     mongo_schema. This should eventually be placed into a Places class.
     """
-    start = time.time()
+
     google_place_id = place["place_id"]
     location = {
         "type": "Point",
@@ -57,7 +61,7 @@ def process_place(place):
         'last_update': datetime.datetime.utcnow().replace(microsecond=0).isoformat(),
         'price_level': place["price_level"],
         'source': "Google"
-    }] if 'price_level' in place else []
+    }] if 'price_level' in place and place['price_level'] else []
 
     photos = {}
     if 'photos' in place and len(place['photos']) > 0:
@@ -76,16 +80,16 @@ def process_place(place):
         'year': "2019",
         'value': int(place['sales']),
         'source': 'Pitney Bose'
-    }] if 'sales' in place else []
+    }] if 'sales' in place and place['sales'] else []
     website = place['website'] if 'website' in place else None
-    phone_number = place["international_phone_number"]
+    phone_number = place["international_phone_number"] if 'international_phone_number' in place else None
     foursquare_categories = {
         'categories': [{
             'name': category['category_name'],
             'short_name': category['category_short_name']
         } for category in place['foursquare_categories']],
         'source': "Foursquare"
-    } if 'foursquare_categories' in place else None
+    } if 'foursquare_categories' in place and place['foursquare_categories'] else None
     google_categories = {
         'categories': [{
             'name': category,
@@ -122,8 +126,6 @@ def process_place(place):
     this_place['location_id'] = upload_location(location, place)
     this_place['brand_id'] = upload_brand(this_place, place)
 
-    finish = time.time()
-    print("Time", finish - start)
     return this_place
 
 
@@ -162,7 +164,9 @@ def most_relevant_brand(name, domain=None):
 
 def upload_brand(this_place, place):
 
-    brand = most_relevant_brand(this_place['name'], this_place['website'])
+    # strip site specific location into an official url
+    domain = urlparse(this_place['website']).netloc if this_place['webiste'] else None
+    brand = most_relevant_brand(this_place['name'], domain)
 
     if not brand:
         # build out the brand if there is no existing brand.
@@ -170,7 +174,6 @@ def upload_brand(this_place, place):
         alias = brand_name
         logo = place["logo"] if 'logo' in place else None
         headquarters_address = None
-        domain = this_place['website']
 
         average_popularity = this_place['popularity'].copy()
         average_price = this_place['price'].copy()
@@ -218,8 +221,8 @@ def upload_brand(this_place, place):
         # if there is an existing brand, let's splice their results together.
         if not brand['logo']:
             brand['logo'] = place["logo"] if 'logo' in place else None
-        if not brand['domain'] and this_place['website']:
-            brand['domain'] = this_place['website']
+        if not brand['domain'] and domain:
+            brand['domain'] = domain
 
         # adding the popularity of this place to the existing brand.
         if len(brand['average_popularity']) == 0:
@@ -347,18 +350,18 @@ def upload_location(location, place):
     nearby_university = place['nearby_university'] if 'nearby_university' in place else None
     nearby_apartments = place['nearby_apartments'] if 'nearby_apartments' in place else None
     spatial_psychographics = {
-        '1mile': utils.round_dictionary(place['psycho1']) if 'psycho1' in place else spatial.get_psychographics(lat, lng, 1),
-        '3mile': utils.round_dictionary(place['psycho3']) if 'psycho3' in place else spatial.get_psychographics(lat, lng, 3),
+        '1mile': utils.round_dictionary(place['psycho1']) if 'psycho1' in place and place['psycho1'] else spatial.get_psychographics(lat, lng, 1),
+        '3mile': utils.round_dictionary(place['psycho3']) if 'psycho3' in place and place['psycho3'] else spatial.get_psychographics(lat, lng, 3),
         '5mile': spatial.get_psychographics(lat, lng, 5)
     }
     environics_demographics = {
-        '1mile': utils.round_dictionary(place['demo1']) if 'demo1' in place else environics.get_demographics(lat, lng, 1),
-        '3mile': utils.round_dictionary(place['demo3']) if 'demo3' in place else environics.get_demographics(lat, lng, 3),
+        '1mile': utils.round_dictionary(place['demo1']) if 'demo1' in place and place['demo1'] else environics.get_demographics(lat, lng, 1),
+        '3mile': utils.round_dictionary(place['demo3']) if 'demo3' in place and place['demo3'] else environics.get_demographics(lat, lng, 3),
         '5mile': environics.get_demographics(lat, lng, 5)
     }
     arcgis_demographics = {
-        '1mile': place['arcgis_details1'] if 'arcgis_details1' in place else arcgis.details(lat, lng, 1),
-        '3mile': place['arcgis_details3'] if 'arcgis_details3' in place else arcgis.details(lat, lng, 3)
+        '1mile': place['arcgis_details1'] if 'arcgis_details1' in place and place['arcgis_details1'] else arcgis.details(lat, lng, 1),
+        '3mile': place['arcgis_details3'] if 'arcgis_details3' in place and place['arcgis_details1'] else arcgis.details(lat, lng, 3)
     }
     block = anmspatial.point_to_block(lat, lng, state='CA', prune_leading_zero=False)
     blockgroup = block[:-3]
@@ -383,9 +386,52 @@ def upload_location(location, place):
     return utils.DB_LOCATIONS.insert(new_location)
 
 
+def prune_url
+
+
 if __name__ == "__main__":
+
+    """
+    Take data from our spaces and put them in the new structure.
+    """
+
+    start = time.time()
+
+    data_base_query = {'pushed': {'$exists': False}}
+    batch_size = {'size': 100}
+
+    while True:
+
+        # spaces = utils.DB_PROCESSED_SPACE.find({'pushed': {'$exists': False}}).limit(50)
+        spaces = utils.DB_PROCESSED_SPACE.aggregate([
+            {'$match': data_base_query},
+            {'$sample': batch_size},
+        ])
+
+        batch_start = time.time()
+
+        for space in spaces:
+            if 'establishment' not in space['types']:
+                utils.DB_PROCESSED_SPACE.update_one({'place_id': space["place_id"]}, {'$set': {'pushed': True}})
+                continue
+
+            my_location = process_place(space)
+            _id = utils.DB_PLACES.insert(my_location)
+            utils.DB_PROCESSED_SPACE.update_one({'place_id': space["place_id"]}, {'$set': {'pushed': True}})
+
+            print("** Updater: Place {} parsed into new format. Brand - {}, Location - {}"
+                  .format(_id, my_location['brand_id'], my_location['location_id']))
+
+        batch_finish = time.time()
+
+        print("Batch Complete - Elapsed Time in seconds: {}".format(batch_finish - batch_start))
+
+    finish = time.time()
+
+    this_time = finish - start
+    print(this_time)
+
     place = utils.DB_PROCESSED_SPACE.find_one({"place_id": "ChIJnQCUtku5woARaFvnh8vqSn4"})
-    process_place(place)
-    # pprint.pprint(process_place(place))
+    place = process_place(place)
 
     pass
