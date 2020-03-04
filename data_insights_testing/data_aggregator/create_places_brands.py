@@ -73,7 +73,7 @@ def process_place(place):
             'main': main,
             'other': other
         }
-    opening_hours = place['opening_hours']['periods'] if 'opening_hours' in place else []
+    opening_hours = place['opening_hours']['periods'] if 'opening_hours' in place and 'periods' in place['opening_hours'] else []
     description = ""
     annual_sales = [{
         'last_update': datetime.datetime.utcnow().replace(microsecond=0).isoformat(),
@@ -166,13 +166,14 @@ def upload_brand(this_place, place):
 
     # strip site specific location into an official url
     domain = urlparse(this_place['website']).netloc if this_place['website'] else None
+    brand_name = this_place['name']
+
     if domain and domain == "www.facebook.com" and fuzz.WRatio("facebook", brand_name) < 89:
         domain = None
-    brand = most_relevant_brand(this_place['name'], domain)
+    brand = most_relevant_brand(brand_name, domain)
 
     if not brand:
         # build out the brand if there is no existing brand.
-        brand_name = this_place["name"]
         alias = brand_name
         logo = place["logo"] if 'logo' in place else None
         headquarters_address = None
@@ -430,7 +431,7 @@ if __name__ == "__main__":
     this_time = finish - start
     print(this_time)
 
-    place = utils.DB_PROCESSED_SPACE.find_one({"place_id": "ChIJnQCUtku5woARaFvnh8vqSn4"})
-    place = process_place(place)
+    # place = utils.DB_PROCESSED_SPACE.find_one({"place_id": "ChIJnQCUtku5woARaFvnh8vqSn4"})
+    # place = process_place(place)
 
     pass
