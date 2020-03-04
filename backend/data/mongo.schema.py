@@ -14,11 +14,13 @@ These should always be unique, and enforced for uniqueness.
 Indexes:
 - _id                   (unique)
 - brand_name            (unique)
+- domain                (unique - this is a suggestion, but will not be immediately implemented)
 
 Brands:
 {
     _id: ObjectId(),                                    -> mongodb ID identifying this brand
     brand_name: string,                                 -> name identifying this brand
+    alias: string,                                      -> visible alias for the brand (not unique)
     logo: string (url),                                 -> url that paths to the logo of this brand
     places: list[ObjectId()],                           -> list of all the places/sites that this brand has
     address: string,
