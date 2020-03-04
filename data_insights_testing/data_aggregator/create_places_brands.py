@@ -398,12 +398,14 @@ if __name__ == "__main__":
     start = time.time()
 
     data_base_query = {'pushed': {'$exists': False}}
+    pre_sample = {'size': 3000}
     batch_size = {'size': 100}
 
     while True:
 
         # spaces = utils.DB_PROCESSED_SPACE.find({'pushed': {'$exists': False}}).limit(50)
         spaces = utils.DB_PROCESSED_SPACE.aggregate([
+            {'$sample': pre_sample},
             {'$match': data_base_query},
             {'$sample': batch_size},
         ])
@@ -416,11 +418,15 @@ if __name__ == "__main__":
                 continue
 
             my_location = process_place(space)
-            _id = utils.DB_PLACES.insert(my_location)
-            utils.DB_PROCESSED_SPACE.update_one({'place_id': space["place_id"]}, {'$set': {'pushed': True}})
+            try:
+                _id = utils.DB_PLACES.insert(my_location)
+                utils.DB_PROCESSED_SPACE.update_one({'place_id': space["place_id"]}, {'$set': {'pushed': True}})
 
-            print("** Updater: Place {} parsed into new format. Brand - {}, Location - {}"
-                  .format(_id, my_location['brand_id'], my_location['location_id']))
+                print("** Updater: Place {} parsed into new format. Brand - {}, Location - {}"
+                      .format(_id, my_location['brand_id'], my_location['location_id']))
+            except Exception:
+                print('Insertion did not work.')
+                continue
 
         batch_finish = time.time()
 
