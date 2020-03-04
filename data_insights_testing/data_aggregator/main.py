@@ -754,10 +754,8 @@ def psycho_builder(radius=1):
             # update with spatial data
             lat = space['geometry']['location']['lat']
             lng = space['geometry']['location']['lng']
-            psycho_dict1 = spatial.get_psychographics(
-                lat, lng, 1, spatial_df, block_df, cats)
-            psycho_dict3 = spatial.get_psychographics(
-                lat, lng, 3, spatial_df, block_df, cats)
+            psycho_dict1 = spatial.get_psychographics(lat, lng, 1)
+            psycho_dict3 = spatial.get_psychographics(lat, lng, 3)
 
             # space has been detailed and will be updated
             DB_PROCESSED_SPACE.update_one(

@@ -978,11 +978,8 @@ def get_environics_demographics(lat, lng):
 
 def get_spatial_personas(lat, lng):
 
-    psycho1 = spatial.get_psychographics(
-        lat, lng, 1, matching.SPATIAL_DF, matching.BLOCK_DF, matching.SPATIAL_CATEGORIES)
-
-    psycho3 = spatial.get_psychographics(
-        lat, lng, 3, matching.SPATIAL_DF, matching.BLOCK_DF, matching.SPATIAL_CATEGORIES)
+    psycho1 = spatial.get_psychographics(lat, lng, 1)
+    psycho3 = spatial.get_psychographics(lat, lng, 3)
 
     return {
         "psycho1": psycho1,

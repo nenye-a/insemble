@@ -4,33 +4,38 @@ File for spatial analytics data processing
 
 '''
 
-from utils import distance
+import data.utils as utils
 # import pandas as pd
 
 # get psychographics given lat and lng
 
 
-def get_psychographics(lat, lng, radius, spatial_df, block_grp_df, cats):
-    # get block groups overlapping w circle
-    block_grp_df["dist"] = block_grp_df.apply(
-        lambda row: distance((row["lat"], row["lng"]), (lat, lng)), axis=1)
-    # isolate block groups that we want
-    df_trimmed = block_grp_df[block_grp_df["dist"] <= radius]
+def get_psychographics(lat, lng, radius):
+    """
+    Given a location (lat, lng) and a radius will return all the psychographic details for
+    this location.
+    """
 
-    # get relevant spatial block groups
-    block_grps = [str(block) for block in list(df_trimmed["block_grp"])]
+    blockgroups = utils.DB_REGIONS.find({'type': 'blockgroup', 'location': {
+        '$near': {
+            '$geometry': {
+                'type': "Point",
+                'coordinates': [lng, lat]
+            },
+            '$maxDistance': utils.miles_to_meters(radius)
+        }
+    }, 'spatial_psychographics': {'$exists': True}})
 
-    try:
-        spatial_trimmed = spatial_df[block_grps]
-    except:
-        print("No spatial data on block group.")
-
-    # compute result
-    sums = list(spatial_trimmed.sum(axis=1))
-
-    # If the weighted total does not exist, the data is not valid. Return None
-    if sums[-1] == 0:
+    if blockgroups.count() == 0:
+        print("No blockgroups with spatial data found!")
         return None
-    data = [sums[i] / sums[-1] for i in range(0, len(sums) - 1)]
 
-    return dict(zip(cats, data))
+    blockgroups = list(blockgroups)
+
+    total_weight = sum(blockgroup["spatial_psychographics"].pop("volume_percentile") for blockgroup in blockgroups)
+
+    data = {}
+    for psychographic in blockgroups[0]["spatial_psychographics"].keys():
+        data[psychographic] = round(sum(item["spatial_psychographics"][psychographic] for item in blockgroups) / total_weight)
+
+    return data

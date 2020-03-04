@@ -31,8 +31,7 @@ def get_spatial(lat, lng):
     cats, spatial_df = spatial.create_spatial_cats_and_df()
     block_df = spatial.create_block_grp_df()
 
-    psycho_dict1 = spatial.get_psychographics(
-        lat, lng, 1, spatial_df, block_df, cats)
+    psycho_dict1 = spatial.get_psychographics(lat, lng, 1)
 
     print("Personas:")
     pprint.pprint(psycho_dict1)

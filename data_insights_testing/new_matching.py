@@ -207,14 +207,12 @@ def _generate_location_vector(address, name=None, lat=None, lng=None):
         lng = location["geometry"]["location"]["lng"]
 
     # get data (1 mile)
-    psycho_dict = spatial.get_psychographics(
-        lat, lng, 1, SPATIAL_DF, BLOCK_DF, SPATIAL_CATEGORIES)
+    psycho_dict = spatial.get_psychographics(lat, lng, 1)
     arcgis_dict = arcgis.details(lat, lng, 1)
     demo_dict = environics.get_demographics(lat, lng, 1)
 
     # get data (3 mile)
-    psycho_dict3 = spatial.get_psychographics(
-        lat, lng, 3, SPATIAL_DF, BLOCK_DF, SPATIAL_CATEGORIES)
+    psycho_dict3 = spatial.get_psychographics(lat, lng, 3)
     arcgis_dict3 = arcgis.details(lat, lng, 3)
     demo_dict3 = environics.get_demographics(lat, lng, 3)
 
