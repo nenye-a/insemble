@@ -165,7 +165,7 @@ def most_relevant_brand(name, domain=None):
 def upload_brand(this_place, place):
 
     # strip site specific location into an official url
-    domain = urlparse(this_place['website']).netloc if this_place['webiste'] else None
+    domain = urlparse(this_place['website']).netloc if this_place['website'] else None
     brand = most_relevant_brand(this_place['name'], domain)
 
     if not brand:
