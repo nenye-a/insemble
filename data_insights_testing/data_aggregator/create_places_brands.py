@@ -46,7 +46,7 @@ def process_place(place):
             round(place["geometry"]["location"]["lat"], 6)
         ]
     }
-    address = place["formatted_address"]
+    address = place["formatted_address"] if 'formatted_address' in place else place["vicinity"]
     address_components = place["address_components"]
     name = place["name"]
     property_id = None
