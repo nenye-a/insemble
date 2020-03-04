@@ -23,7 +23,7 @@ EARTHS_RADIUS_MILES = 3958.8
 client = Connect.get_connection()  # client, MongoDB connection
 
 # top level database connections
-DB_SPACE = client.spaceData  # database for all spatial information
+DB_SPACE = client.spaceData  # database for legacy spatial information
 DB_APP_LEGACY = client.appMatchData  # legacy app database
 DB_APP = client.appData  # hosts the main data for the application
 DB_REQUESTS = client.requests  # database the hosts requests saved by safe_request
@@ -40,7 +40,7 @@ DB_COLLECT = DB_SPACE.collect_records
 # collection connections - application support
 DB_BRANDS = DB_APP.brands
 DB_PLACES = DB_APP.places
-DB_LOCATIONS = DB_SPACE.locations
+DB_LOCATIONS = DB_APP.locations
 DB_LOCATION_MATCHES = DB_APP.location_matches
 DB_PROPERTY = DB_APP.properties
 DB_BRAND_SPACE = DB_APP.brand_space_matches
