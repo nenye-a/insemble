@@ -367,8 +367,8 @@ def upload_location(location, place):
         '3mile': place['arcgis_details3'] if 'arcgis_details3' in place and place['arcgis_details1'] else arcgis.details(lat, lng, 3)
     }
     block = anmspatial.point_to_block(lat, lng, state='CA', prune_leading_zero=False)
-    blockgroup = block[:-3]
-    tract = block[:-4]
+    blockgroup = block[:-3] if block else None
+    tract = block[:-4] if block else None
 
     new_location = {
         'location': location,
