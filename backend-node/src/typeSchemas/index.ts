@@ -33,3 +33,4 @@ export * from './TenantDetailsResult';
 
 export * from './PropertyInput';
 export * from './SpaceInput';
+export * from './PropertyType';
