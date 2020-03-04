@@ -20,6 +20,18 @@ type Props = {
   keyFactsData?: LocationDetailsKeyFacts;
   commuteData?: Array<LocationDetailsCommute>;
 };
+
+function formatCommuteValue(value: number) {
+  let convertedValue = convertToKilos(value);
+  if (Number(convertedValue) < 1) {
+    return '<1%';
+  }
+  {
+    let formattedValue = `${roundDecimal(convertedValue)}%`;
+    return formattedValue;
+  }
+}
+
 export default function KeyFacts(props: Props) {
   let { withMargin, keyFactsData, commuteData } = props;
   let [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -74,7 +86,7 @@ export default function KeyFacts(props: Props) {
         </Label>
         {commuteData && (
           <Value x={x} y={y && y + 20} fill="black" textAnchor="middle" dominantBaseline="central">
-            {convertToKilos(commuteData[index].value)}K
+            {formatCommuteValue(commuteData[index].value)}
           </Value>
         )}
       </>
@@ -237,6 +249,7 @@ const Value = styled.text`
 
 const CommuteView = styled(View)`
   justify-content: space-between;
+  height: 360px;
 `;
 
 const NumberText = styled(Text)`
