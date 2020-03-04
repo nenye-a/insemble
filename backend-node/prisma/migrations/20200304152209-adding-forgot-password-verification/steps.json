@@ -1,0 +1,191 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateModel",
+      "model": "TenantResetPasswordVerification"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantResetPasswordVerification",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "TenantResetPasswordVerification",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "TenantResetPasswordVerification",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "cuid()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "TenantResetPasswordVerification",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantResetPasswordVerification",
+      "field": "email",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantResetPasswordVerification",
+      "field": "user",
+      "type": "TenantUser",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantResetPasswordVerification",
+      "field": "verified",
+      "type": "Boolean",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "TenantResetPasswordVerification",
+          "field": "verified"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "TenantResetPasswordVerification",
+          "field": "verified"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "false"
+    },
+    {
+      "tag": "CreateModel",
+      "model": "LandlordResetPasswordVerification"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LandlordResetPasswordVerification",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "LandlordResetPasswordVerification",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LandlordResetPasswordVerification",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "cuid()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "LandlordResetPasswordVerification",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "LandlordResetPasswordVerification",
+      "field": "email",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LandlordResetPasswordVerification",
+      "field": "user",
+      "type": "LandlordUser",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LandlordResetPasswordVerification",
+      "field": "verified",
+      "type": "Boolean",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "LandlordResetPasswordVerification",
+          "field": "verified"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LandlordResetPasswordVerification",
+          "field": "verified"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "false"
+    }
+  ]
+}
