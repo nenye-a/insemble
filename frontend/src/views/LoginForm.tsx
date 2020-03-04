@@ -45,7 +45,10 @@ export default function Login(props: Props) {
     let { loginTenant } = data;
     let { token, brandId } = loginTenant;
     saveUserData(token, Role.TENANT, brandId);
-    history.push(`/map/${brandId}`);
+    if (brandId) {
+      history.push(`/map/${brandId}`);
+    }
+    history.push('/user/brands');
   }
 
   //TODO: Check did landlord have property (for which page we should redirect)
