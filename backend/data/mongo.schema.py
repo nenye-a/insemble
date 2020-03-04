@@ -123,6 +123,7 @@ Indexes:
 - _id                   (unique)
 - google_place_id       (unique)
 - location              (2D spherical index - mongoDB)
+- brand_id              
 
 Places:
 {
