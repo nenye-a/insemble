@@ -386,9 +386,6 @@ def upload_location(location, place):
     return utils.DB_LOCATIONS.insert(new_location)
 
 
-def prune_url
-
-
 if __name__ == "__main__":
 
     """
