@@ -36,3 +36,7 @@ export * from './property/editSpaceMutation';
 export * from './property/spacesQuery';
 export * from './matches/propertyMatchesQuery';
 export * from './details/propertyDetailsQuery';
+
+export * from './auth/forgotPasswordTenantMutation';
+export * from './auth/resetPasswordTenantMutation';
+export * from './auth/resetPasswordTenantVerificationQuery';
