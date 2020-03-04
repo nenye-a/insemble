@@ -36,3 +36,5 @@ export * from './property/editSpaceMutation';
 export * from './property/spacesQuery';
 export * from './matches/propertyMatchesQuery';
 export * from './details/propertyDetailsQuery';
+export * from './property/propertyQuery';
+export * from './property/editPropertySpaceMutation';
