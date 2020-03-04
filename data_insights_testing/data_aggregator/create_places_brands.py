@@ -347,7 +347,7 @@ def upload_location(location, place):
     lat = round(place['geometry']['location']['lat'], 6)
     lng = round(place['geometry']['location']['lng'], 6)
     nearby_store = place['nearby_store'] if 'nearby_store' in place else None
-    nearby_restaurant = place['nearby_restaurant'] if 'nearby_store' in place else None
+    nearby_restaurant = place['nearby_restaurant'] if 'nearby_restaurant' in place else None
     nearby_hospital = place['nearby_hospital'] if 'nearby_hospital' in place else None
     nearby_church = place['nearby_church'] if 'neraby_church' in place else None
     nearby_university = place['nearby_university'] if 'nearby_university' in place else None
