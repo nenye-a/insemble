@@ -329,6 +329,17 @@ def list_matches_condition(bool_func, eval_list):
     return False
 
 
+def round_dictionary(dictionary):
+    """
+    Rounds a dictrionary of numbers. This will round infinitely deep dictrionaries as long
+    as they are entirely numerical.
+    """
+    for item in dictionary:
+        if isinstance(item, dict):
+            round_dictionary(dictionary[item])
+        dictionary[item] = round(dictionary[item])
+
+
 if __name__ == "__main__":
 
     def test_location_at_distance():
