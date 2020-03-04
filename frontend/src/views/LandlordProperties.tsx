@@ -9,14 +9,17 @@ import { WHITE, THEME_COLOR } from '../constants/colors';
 
 import SvgPlus from '../components/icons/plus';
 import { GET_PROPERTIES } from '../graphql/queries/server/properties';
-import { GetProperties } from '../generated/GetProperties';
+import {
+  GetProperties,
+  GetProperties_properties_space as GetPropertiesSpace,
+} from '../generated/GetProperties';
 import { MAPS_IFRAME_URL_SEARCH } from '../constants/googleMaps';
 
 export default function LandlordProperties() {
   let history = useHistory();
   let { data, loading } = useQuery<GetProperties>(GET_PROPERTIES);
   let properties = data?.properties;
-
+  let spaces: Array<GetPropertiesSpace>;
   return (
     <View flex>
       {loading && !data ? (
@@ -26,7 +29,7 @@ export default function LandlordProperties() {
         properties.map((item, index) => {
           let { lat, lng } = item.location;
           let iframeSource = MAPS_IFRAME_URL_SEARCH + '&q=' + lat + ', ' + lng;
-
+          spaces = item.space;
           return (
             <TouchableOpacity
               key={index}
@@ -35,6 +38,7 @@ export default function LandlordProperties() {
                 history.push(`/landlord/properties/${item.id}`, {
                   iframeSource,
                   address: item.location.address,
+                  spaces,
                 });
               }}
             >
