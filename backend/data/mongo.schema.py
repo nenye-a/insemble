@@ -23,12 +23,41 @@ Brands:
     alias: string,                                      -> visible alias for the brand (not unique)
     logo: string (url),                                 -> url that paths to the logo of this brand
     headquarters_address: string,                       -> address of the headquarters of this brand
-    website_domain: string (url),                       -> domain name of the brand that is present
-    average_rating: float,
-    total_number_ratings: int,
+    domain: string (url),                               -> domain name of the brand that is present
+    number_locations: int,                              -> number of locations in totality
+    number_found_locations: int,                        -> number of locations that are actually in the database
+    average_popularity: [                               -> document tracking the average popularity of this location 
+        {
+            last_update: ISODate(),                     -> last update of this popularity metric
+            rating: float,                              -> actual rating value of this establishment
+            user_ratings_total: int,                     -> number of user ratings provided.
+            source: string,                             -> source of the user ratings data [google, yelp, foursquare, etc.]
+        },
+        ... more popularity metrics
+    ],
+    average_price: [
+        {
+            last_update: ISODate(),                     -> last update of price
+            price_level: int,                           -> price level of the establishment
+            source: string,                             -> source of the pricing information
+            priced_locations: int                       -> the number of locations that have an assigned price
+        }
+    ],
     years_operation: int,
     description: string,
-    categories: list[string],
+    categories: [                                       -> list of subcategories and their sources
+        {
+            categories: [                               -> list of categories for the source
+                {
+                    name: string,                       -> long name of the category
+                    short_name: string,                 -> short name of the category
+                }
+                ... more categories
+            ],
+            source: string                              -> source of the cagegory, typically google, foursquare, or yelp
+        }
+        ... more categories
+    ],   
     similar_brands: list[ObjectId()],                   -> brands similar to this brand
     average_demographics: {                             # TODO: flesh out average demographics
     },
@@ -38,8 +67,10 @@ Brands:
         {
             last_update: ISODate(),
             year: string,                               -> year of update YYYY
-            average_sale_value: float,                  -> average sales across all the locations
-            median_sale_value: float                    -> median sales across all the locations
+            average_sales_value: float,                  -> average sales across all the locations
+            # median_sales_value: float,                 -> median sales across all the locations (this will be added later)
+            source: string,                             -> source of the sales information
+            recorded_sales_locations: string            -> number of locations with recorded sales
         }
         ... more sales
     ],
@@ -61,7 +92,7 @@ Brands:
                 name: string,                           -> name of the user associated with the brand
             },
             ... more representatives
-        ],
+        ]
     },
     match_requests: {                                   -> all the requests for matches related to this brand
         active: {                                       -> the match schema that is currently active for the brand (perhaps enable different strategies for different regions)
@@ -151,6 +182,7 @@ Places:
             last_update: ISODate(),                     -> time when the last update was made
             year: string,                               -> year of sales YYYY
             value: float,                               -> value of sales (in $)
+            source: string                              -> source of the sales value
         },
         ... more sales updates
     ],
@@ -191,7 +223,18 @@ Places:
     ],
     website: string,                                    -> website of this site
     description: string,                                -> description of this location
-    categories: list[string]                            -> list of place subcategories if any
+    categories: [                                       -> list of subcategories and their sources
+        {
+            categories: [                               -> list of categories for the source
+                {
+                    name: string,                       -> long name of the category
+                    short_name: string,                 -> short name of the category
+                }
+                ... more categories
+            ],
+            source: string                              -> source of the cagegory, typically google, foursquare, or yelp
+        }
+    ]                            
 }
 
 '''
