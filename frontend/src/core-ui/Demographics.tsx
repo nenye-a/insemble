@@ -6,7 +6,13 @@ import SvgGreenArrow from '../components/icons/green-arrow';
 import SvgRedArrow from '../components/icons/red-arrow';
 import Card from './Card';
 import Legend from '../views/MapPage/Legend';
-import { HOVERED_LIST_ITEM_BG, THEME_COLOR, RED_TEXT, GREEN_TEXT } from '../constants/colors';
+import {
+  HOVERED_LIST_ITEM_BG,
+  THEME_COLOR,
+  RED_TEXT,
+  GREEN_TEXT,
+  LIGHT_GREY,
+} from '../constants/colors';
 import {
   FONT_WEIGHT_BOLD,
   FONT_SIZE_MEDIUM,
@@ -56,6 +62,12 @@ function hasGrowth(
   return (data as LocationDetailsDemographics).age[0].growth !== undefined;
 }
 
+function formatLabel(value: string) {
+  let replaced = value.replace('_', ' ');
+  let formatted = replaced[0].toUpperCase() + replaced.substr(1);
+  return formatted;
+}
+
 export default function Graphic(props: Props) {
   let { demographicsData, withMargin } = props;
   let [activeIndex, setActiveIndex] = useState<number>(0);
@@ -101,7 +113,7 @@ export default function Graphic(props: Props) {
           )}
           {value && (
             <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
-              {roundDecimal(convertToKilos(value)) + 'K'}
+              {Number(convertToKilos(value)).toFixed() + 'K'}
             </LabelText>
           )}
         </>
@@ -121,7 +133,7 @@ export default function Graphic(props: Props) {
   }) => {
     return (
       <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
-        {`${value ? roundDecimal(convertToKilos(value)) + 'K' : ''}`}
+        {`${value ? Number(convertToKilos(value)).toFixed() + 'K' : ''}`}
       </LabelText>
     );
   };
@@ -150,8 +162,10 @@ export default function Graphic(props: Props) {
           height={400}
           data={dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey]}
         >
-          <XAxis dataKey="name" />
+          <XAxis dataKey="name" tickFormatter={(value: string) => formatLabel(value)} />
           <YAxis
+            axisLine={false}
+            tick={{ fill: LIGHT_GREY }}
             tickFormatter={(value: number) =>
               value
                 .toString()
@@ -163,7 +177,7 @@ export default function Graphic(props: Props) {
             scale="linear"
             orientation="left"
             label={{
-              value: 'population',
+              value: 'Population',
               angle: -90,
               x: -100,
               position: 'insideLeft',
