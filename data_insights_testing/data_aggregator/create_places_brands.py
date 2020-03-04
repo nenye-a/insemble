@@ -47,7 +47,7 @@ def process_place(place):
         ]
     }
     address = place["formatted_address"] if 'formatted_address' in place else place["vicinity"]
-    address_components = place["address_components"]
+    address_components = place["address_components"] if 'address_components' in place else None
     name = place["name"]
     property_id = None
     popularity = [{
@@ -137,6 +137,10 @@ def most_relevant_brand(name, domain=None):
         brand = utils.DB_BRANDS.find_one({"domain": domain})
         if brand:
             return brand
+
+    brand = utils.DB_BRANDS.find_one({'brand_name': name})
+    if brand:
+        return brand
 
     # Otherwise, fuzzily search using Lucene method for the top three matching brands.
     scored_brands = utils.DB_BRANDS.find(
