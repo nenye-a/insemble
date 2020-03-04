@@ -2,20 +2,12 @@ import sys
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(BASE_DIR, 'data_aggregator'))
-from decouple import config
-import pandas as pd
-import environics
-import arcgis
-import spatial
-import goog as google
 import utils
 import new_matching
 
-demo_df = new_matching.DEMO_DF
+
 demo_categories = new_matching.DEMO_CATEGORIES
-spatial_df = new_matching.SPATIAL_DF
 spatial_categories = new_matching.SPATIAL_CATEGORIES
-block_df = new_matching.BLOCK_DF
 
 # indempotently create index
 # utils.DB_REGIONS.create_index([("name", 1)], unique=True)
@@ -23,7 +15,11 @@ block_df = new_matching.BLOCK_DF
 # utils.DB_REGIONS.create_index([("geometry", "2dsphere")])
 
 
-def insert_block_group():
+def insert_block_group(block_df):
+    """
+    Provided a dataframe of lat, lng, and block_grp, insert
+    blockgroup into our database.
+    """
 
     blockgroups = block_df.to_dict(orient='records')
     for block in blockgroups:
@@ -58,7 +54,13 @@ def find_blocks(lat, lng, radius):
         print(locations["name"])
 
 
-def insert_environics_data():
+def insert_environics_data(demo_df):
+    """
+    Provided a demographic dataframe that links blockgroups
+    to environics data, insert data into datbase. NOTE:
+    Items have to be ordered correctly!!! Refer to
+    "Demo Categories" in mongoDB database for correct ordering
+    """
 
     missing_blocks = []
 
@@ -119,7 +121,14 @@ def parse_environics_row(demo_series):
     return ea_demographics
 
 
-def insert_spatial_data():
+def insert_spatial_data(spatial_df):
+    """
+    Provided a psychographic dataframe that links blockgroups
+    to environics data, insert data into datbase. NOTE:
+    Items have to be ordered correctly!!! Refer to
+    "Spatial Categories" in mongoDB database for correct ordering
+    """
+
     # print(spatial_df)
     missing_blocks = []
     categories = spatial_categories + ['volume_percentile']

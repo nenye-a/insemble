@@ -242,14 +242,8 @@ def generate_location_profile_new(address):
         return None, valid
 
     # get data
-    cats, spatial_df = spatial.create_spatial_cats_and_df()
-    block_df = spatial.create_block_grp_df()
-    psycho_dict = spatial.get_psychographics(
-        lat, lng, 1, spatial_df, block_df, cats)
-
+    psycho_dict = spatial.get_psychographics(lat, lng, 1)
     arcgis_dict = arcgis.details(lat, lng, 1)
-
-    cats, demo_df = environics.create_demo_cats_and_df()
     demo_dict = environics.get_demographics(lat, lng, 1)
 
     # create arr as df

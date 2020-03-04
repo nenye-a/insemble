@@ -23,12 +23,12 @@ AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
 S3_FILESYSTEM = S3FileSystem(
     key=AWS_ACCESS_KEY_ID, secret=AWS_SECRET_ACCESS_KEY)
 
-BLOCK_DF = utils.read_dataframe_csv(
-    'insemble-dataframes/block_df.csv.gz', file_system=S3_FILESYSTEM)
-SPATIAL_DF = utils.read_dataframe_csv(
-    'insemble-dataframes/spatial_df.csv.gz', file_system=S3_FILESYSTEM)
-DEMO_DF = utils.read_dataframe_csv(
-    'insemble-dataframes/demo_df.csv.gz', file_system=S3_FILESYSTEM)
+# BLOCK_DF = utils.read_dataframe_csv(
+#     'insemble-dataframes/block_df.csv.gz', file_system=S3_FILESYSTEM)
+# SPATIAL_DF = utils.read_dataframe_csv(
+#     'insemble-dataframes/spatial_df.csv.gz', file_system=S3_FILESYSTEM)
+# DEMO_DF = utils.read_dataframe_csv(
+#     'insemble-dataframes/demo_df.csv.gz', file_system=S3_FILESYSTEM)
 # MATCHING_DF = utils.read_dataframe_csv(
 #     'insemble-dataframes/full_df_csv.csv.gz', file_system=S3_FILESYSTEM)
 SPATIAL_CATEGORIES = utils.DB_SPATIAL_CATS.find_one(

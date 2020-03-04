@@ -735,9 +735,6 @@ def psycho_builder(radius=1):
     update_size = 15  # how many records to update prior to pinging console
     updating = True
 
-    cats, spatial_df = spatial.create_spatial_cats_and_df()
-    block_df = spatial.create_block_grp_df()
-
     data_base_query = {'psycho_finished': {'$exists': False}}
     batch_size = {'size': 100}
 
@@ -840,9 +837,6 @@ def demo_builder(radius=1):
     update_count = 0
     update_size = 15  # how many records to update prior to pinging console
     updating = True
-
-    cats, demo_df = environics.create_demo_cats_and_df()
-    block_df = spatial.create_block_grp_df()
 
     data_base_query = {'demo_finished': {'$exists': False}}
     batch_size = {'size': 100}
