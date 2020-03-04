@@ -160,12 +160,19 @@ Places:
         {
             last_update: ISODate(),                     -> last update of this popularity metric
             rating: float,                              -> actual rating value of this establishment
-            user_rating_total: int,                     -> number of user ratings provided.
+            user_ratings_total: int,                     -> number of user ratings provided.
             source: string,                             -> source of the user ratings data [google, yelp, foursquare, etc.]
             reviews: []                                 # TODO: flesh out the reviews
         },
         ... more popularity metrics
     ],
+    price: [
+        {
+            last_update: ISODate(),                     -> last update of price
+            price_level: int,                           -> price level of the establishment
+            source: string                              -> source of the pricing information
+        }
+    ]
     photos: {
         main: url_string,                               -> link to the main photo of this place  
         other: list[url_string]                         -> list of links to the other photos of this place
