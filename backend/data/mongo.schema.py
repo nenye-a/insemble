@@ -177,16 +177,19 @@ Places:
         main: url_string,                               -> link to the main photo of this place  
         other: list[url_string]                         -> list of links to the other photos of this place
     },
-    opening_hours: {                                    -> opening hours of the location
-        periods: [
-            {
+    opening_hours: [                                    -> opening hours of the location
+        {
+            open: {
                 day: int,                               -> day of the week, with 0 (monday) -> 6 (sunday)
-                open_time: string,                      -> opening time as string in military time (24 hour time)
-                close_time: string,                     -> closing time as string in military time (24 hour time)
-            },
-            ... other days
-        ]
-    },
+                time: string                            -> opening time as string in military time (24 hour time)
+            }
+            close: {
+                day: int,                               -> day of the week, with 0 (monday) -> 6 (sunday)
+                time: string                            -> opening time as string in military time (24 hour time)
+            }
+        }
+        ... other days
+    ],
     website: string,                                    -> website of this site
     description: string,                                -> description of this location
     sub_categories: list[string]                        -> list of subcategories if any
