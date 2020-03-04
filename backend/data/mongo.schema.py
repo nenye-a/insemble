@@ -190,7 +190,7 @@ Places:
 
 '''
 
-# LOCATIONS -> hosted in spaceData.locations [a.k.a. DB_LOCATIONS] (currently called spaceData.spaces) # TODO: migrate to locations
+# LOCATIONS -> hosted in appData.locations [a.k.a. DB_LOCATIONS] (currently called spaceData.spaces) # TODO: migrate to locations
 '''
 
 Locations represent geo-spatial points within a location. These points contain all the location based information
