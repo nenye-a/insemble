@@ -334,12 +334,16 @@ def list_matches_condition(bool_func, eval_list):
 def round_dictionary(dictionary):
     """
     Rounds a dictrionary of numbers. This will round infinitely deep dictrionaries as long
-    as they are entirely numerical.
+    as they are entirely numerical. Though it modifies the data inplace, it will still return
+    the pointer to the object for ease.
     """
     for item in dictionary:
-        if isinstance(item, dict):
+        if isinstance(dictionary[item], dict):
             round_dictionary(dictionary[item])
+        print(item)
         dictionary[item] = round(dictionary[item])
+
+    return dictionary
 
 
 if __name__ == "__main__":

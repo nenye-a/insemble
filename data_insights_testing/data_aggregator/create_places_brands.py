@@ -10,6 +10,10 @@ import goog as google
 import pprint
 from fuzzywuzzy import fuzz
 import spatial
+import environics
+import arcgis
+import anmspatial
+import time
 
 # # indempotently create index - BRANDS
 # utils.DB_BRANDS.create_index([("brand_name", 1), ("brand_name", "text")], unique=True)
@@ -29,13 +33,13 @@ def process_place(place):
     Build a place into the same structure as what's been defined in the 
     mongo_schema. This should eventually be placed into a Places class.
     """
-
+    start = time.time()
     google_place_id = place["place_id"]
     location = {
         "type": "Point",
         "coordinates": [
-            place["geometry"]["location"]["lng"],
-            place["geometry"]["location"]["lat"]
+            round(place["geometry"]["location"]["lng"], 6),
+            round(place["geometry"]["location"]["lat"], 6)
         ]
     }
     address = place["formatted_address"]
@@ -115,13 +119,11 @@ def process_place(place):
         'phone_number': phone_number
     }
 
-    # location_id = upload_location(place)
-    brand_id = upload_brand(this_place, place)
-    print(brand_id)
+    this_place['location_id'] = upload_location(location, place)
+    this_place['brand_id'] = upload_brand(this_place, place)
 
-    # brand_id = "Test"
-    # location_id = "Test"
-
+    finish = time.time()
+    print("Time", finish - start)
     return this_place
 
 
@@ -331,6 +333,54 @@ def upload_brand(this_place, place):
         brand_id = utils.DB_BRANDS.insert(brand)
 
     return brand_id
+
+
+def upload_location(location, place):
+
+    # location = location - placeholder
+    lat = round(place['geometry']['location']['lat'], 6)
+    lng = round(place['geometry']['location']['lng'], 6)
+    nearby_store = place['nearby_store'] if 'nearby_store' in place else None
+    nearby_restaurant = place['nearby_restaurant'] if 'nearby_store' in place else None
+    nearby_hospital = place['nearby_hospital'] if 'nearby_hospital' in place else None
+    nearby_church = place['nearby_church'] if 'neraby_church' in place else None
+    nearby_university = place['nearby_university'] if 'nearby_university' in place else None
+    nearby_apartments = place['nearby_apartments'] if 'nearby_apartments' in place else None
+    spatial_psychographics = {
+        '1mile': utils.round_dictionary(place['psycho1']) if 'psycho1' in place else spatial.get_psychographics(lat, lng, 1),
+        '3mile': utils.round_dictionary(place['psycho3']) if 'psycho3' in place else spatial.get_psychographics(lat, lng, 3),
+        '5mile': spatial.get_psychographics(lat, lng, 5)
+    }
+    environics_demographics = {
+        '1mile': utils.round_dictionary(place['demo1']) if 'demo1' in place else environics.get_demographics(lat, lng, 1),
+        '3mile': utils.round_dictionary(place['demo3']) if 'demo3' in place else environics.get_demographics(lat, lng, 3),
+        '5mile': environics.get_demographics(lat, lng, 5)
+    }
+    arcgis_demographics = {
+        '1mile': place['arcgis_details1'] if 'arcgis_details1' in place else arcgis.details(lat, lng, 1),
+        '3mile': place['arcgis_details3'] if 'arcgis_details3' in place else arcgis.details(lat, lng, 3)
+    }
+    block = anmspatial.point_to_block(lat, lng, state='CA', prune_leading_zero=False)
+    blockgroup = block[:-3]
+    tract = block[:-4]
+
+    new_location = {
+        'location': location,
+        'nearby_store': nearby_store,
+        'nearby_restaurant': nearby_restaurant,
+        'nearby_hospital': nearby_hospital,
+        'nearby_church': nearby_church,
+        'nearby_university': nearby_university,
+        'nearby_apartments': nearby_apartments,
+        'spatial_psychographics': spatial_psychographics,
+        'environics_demographics': environics_demographics,
+        'arcgis_demographics': arcgis_demographics,
+        'block': block,
+        'blockgroup': blockgroup,
+        'tract': tract
+    }
+
+    return utils.DB_LOCATIONS.insert(new_location)
 
 
 if __name__ == "__main__":
