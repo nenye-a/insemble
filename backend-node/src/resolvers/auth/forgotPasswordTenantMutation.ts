@@ -2,7 +2,7 @@ import { mutationField, FieldResolver, stringArg } from 'nexus';
 import { Base64 } from 'js-base64';
 
 import { Context } from 'serverTypes';
-import { sendVerificationEmail } from '../../helpers/sendEmail';
+import { sendForgotPasswordEmail } from '../../helpers/sendEmail';
 import { NODE_ENV, FRONTEND_HOST } from '../../constants/constants';
 
 let forgotPasswordTenantResolver: FieldResolver<
@@ -39,7 +39,7 @@ let forgotPasswordTenantResolver: FieldResolver<
   }
 
   if (NODE_ENV === 'production') {
-    sendVerificationEmail(
+    sendForgotPasswordEmail(
       {
         email: `${existing.email}`,
         name: `${existing.firstName} ${existing.lastName}`,
