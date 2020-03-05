@@ -10,6 +10,7 @@ import { permissions } from './middlewares/permission';
 import { paymentHandler } from './controllers/paymentHandler';
 import { registerTenantHandler } from './controllers/registerTenantController';
 import { emailVerificationTenantHandler } from './controllers/emailVerificationTenantController';
+import { emailVerificationLandlordHandler } from './controllers/emailVerificationLandlordController';
 import { registerLandlordHandler } from './controllers/registerLandlordController';
 
 const server = new GraphQLServer({
@@ -58,6 +59,11 @@ server.express.get(
 server.express.get(
   '/email-tenant-verification/:token',
   emailVerificationTenantHandler,
+);
+
+server.express.get(
+  '/email-landlord-verification/:token',
+  emailVerificationLandlordHandler,
 );
 
 server.start({}, () => {
