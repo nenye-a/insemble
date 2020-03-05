@@ -1,3 +1,5 @@
+import { ReactElement, ReactNode, FC } from 'react';
+
 // Layout Types
 import { BasicLayout, UserProfileLayout, BlankLayout, LandlordProfileLayout } from './layouts';
 
@@ -25,6 +27,22 @@ import ForgotPassword from './views/ForgotPassword';
 import ForgotPasswordSubmitted from './views/ForgotPasswordSubmitted';
 
 import { tenantAuthorization, landlordAuthorization } from './utils';
+
+export type RouteType = {
+  path: string;
+  exact?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  layout: FC<any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: FC<any>;
+  authorization?: {
+    redirectPath: string;
+    isAuthorized: () => boolean;
+  };
+  props?: {
+    showButton?: boolean;
+  };
+};
 
 const COMMON_ROUTES = [
   {
@@ -140,7 +158,7 @@ const TENANT_ROUTES = [
     component: TenantBrands,
     exact: true,
     authorization: tenantAuthorization,
-  }, // TODO: change tenant matches to brand
+  },
   {
     path: '/user/brands/:brandId',
     layout: UserProfileLayout,
