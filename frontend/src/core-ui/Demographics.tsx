@@ -107,6 +107,7 @@ export default function Graphic(props: Props) {
           )}
           {value && (
             <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
+              {/* TODO: Adjust roundDecimal */}
               {roundDecimal(convertToKilos(value), 0) + 'K'}
             </LabelText>
           )}
@@ -127,6 +128,7 @@ export default function Graphic(props: Props) {
   }) => {
     return (
       <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
+        {/* TODO: Adjust roundDecimal */}
         {`${value ? roundDecimal(convertToKilos(value), 0) + 'K' : ''}`}
       </LabelText>
     );
