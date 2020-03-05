@@ -70,13 +70,6 @@ def average_dictionary_list(dictionary_list):
         try:
             average_dictionary[item] = round(sum(items_to_sum) / len(items_to_sum), 2)
         except Exception:
-            print(items_to_sum)
-            print()
-            print(item)
-            print()
-            print(dictionary_list[0][item])
-            print()
-            print(rep_item)
             raise
 
     return average_dictionary
