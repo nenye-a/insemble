@@ -80,7 +80,7 @@ export let createProperty = mutationField('createProperty', {
   type: 'String',
   args: {
     property: arg({ type: 'PropertyInput', required: true }),
-    space: arg({ type: 'SpaceInput', required: true }),
+    space: arg({ type: 'CreateSpaceInput', required: true }),
   },
   resolve: createPropertyResolver,
 });

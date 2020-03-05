@@ -29,13 +29,13 @@ export let editSpaceResolver: FieldResolver<'Mutation', 'editSpace'> = async (
   }
   let uploadedMainPhotoUrl = '';
   if (mainPhoto) {
-    let { Location: mainPhotoUrl } = await uploadS3(mainPhoto, 'MAIN_SPACE');
-    uploadedMainPhotoUrl = mainPhotoUrl;
+    let { Location: url } = await uploadS3(mainPhoto, 'MAIN_SPACE');
+    uploadedMainPhotoUrl = url;
   }
   let updatedSpace = await context.prisma.space.update({
     data: {
       ...spaceInput,
-      mainPhoto: mainPhotoUrl || uploadedMainPhotoUrl,
+      mainPhoto: uploadedMainPhotoUrl || mainPhotoUrl,
       equipment: {
         set: equipment,
       },
