@@ -157,11 +157,19 @@ def most_relevant_brand(name, domain=None):
         # if very close, return the brand.
         if ratio < 89:
             continue
-        if not most_relevant_brand or ratio > most_relevant_brand["score"]:
+        if not most_relevant_brand or ratio > most_relevant_brand["ratio"]:
             most_relevant_brand = brand
+            most_relevant_brand['ratio'] = ratio
+        elif ratio == most_relevant_brand["ratio"]:
+            quick_ratio_brand = fuzz.QRatio(name, brand["brand_name"])
+            quick_ratio_most_rel = fuzz.QRatio(name, most_relevant_brand["brand_name"])
+            if quick_ratio_brand > quick_ratio_most_rel:
+                most_relevant_brand = brand
+                most_relevant_brand['ratio'] = ratio
 
     if most_relevant_brand:
         most_relevant_brand.pop("score")
+        most_relevant_brand.pop("ratio")
 
     return most_relevant_brand
 

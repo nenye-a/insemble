@@ -344,6 +344,13 @@ def round_dictionary(dictionary):
     return dictionary
 
 
+def literal_int(string_number):
+    '''
+    Will turn string of an integer into an integer, even if the number has commas. Assumes that all numbers
+    '''
+    return int("".join(string_number.split(',')))
+
+
 if __name__ == "__main__":
 
     def test_location_at_distance():
