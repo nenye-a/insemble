@@ -61,6 +61,7 @@ export const GET_LANDLORD_PROFILE = gql`
       description
       title
       tier
+      pendingEmail
     }
   }
 `;
