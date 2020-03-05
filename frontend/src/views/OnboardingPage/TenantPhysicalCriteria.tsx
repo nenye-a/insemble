@@ -76,7 +76,7 @@ export default function TenantPhysicalCriteria(props: Props) {
             business: {
               name,
               userRelation: userRelation === 'Other' ? otherUserRelation || '' : userRelation,
-              location: location || { lat: '', lng: '', address: '' },
+              location: location,
               locationCount: tenantGoals.locationCount ? Number(tenantGoals.locationCount) : null,
               newLocationPlan: tenantGoals.newLocationPlan?.value,
               nextLocations: tenantGoals.location,
