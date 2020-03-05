@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode, FC } from 'react';
+import { FC } from 'react';
 
 // Layout Types
 import { BasicLayout, UserProfileLayout, BlankLayout, LandlordProfileLayout } from './layouts';
