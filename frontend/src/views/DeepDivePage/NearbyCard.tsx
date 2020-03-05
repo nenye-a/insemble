@@ -32,7 +32,10 @@ export default function NearbyCard() {
   let [selectedDropdownVal, setSelectedDropdownVal] = useState('Most Popular');
   let isGridViewMode = selectedView === 'grid';
   let data = useContext(DeepDiveContext);
+  let mile = data?.result?.keyFacts.mile;
   let nearbyData = data?.result?.nearby;
+  let category = data?.categories;
+
   let filteredData = useMemo(() => {
     switch (selectedDropdownVal) {
       case 'Similar': {
@@ -92,7 +95,9 @@ export default function NearbyCard() {
 
             <NearbyPlacesCardContainer flex>
               {filteredData?.length === 0 ? (
-                <EmptyDataComponent />
+                <EmptyDataComponent
+                  text={category && mile ? `No ${category} within ${mile} mile(s)` : ''}
+                />
               ) : isGridViewMode ? (
                 filteredData?.map((item, index) => <MiniNearbyPlacesCard key={index} {...item} />)
               ) : (

@@ -39,6 +39,7 @@ export let PersonaDeepDive = objectType({
     t.float('percentile');
     t.string('name');
     t.string('description');
+    t.string('photo');
     t.string('tags', { list: true });
   },
 });
