@@ -25,7 +25,10 @@ Brands:
     parent_company: string,                             -> parent company of the brand
     headquarters_address: string,                       -> address of the headquarters of this brand
     headquarters_city: string,                          -> city headquarters of this brand (we will have this more than the address)
-    regions_present: list[string],                      -> regions that the brand is present in 
+    regions_present: {                                  -> regions that the brand is present in 
+        'last_update': ISODate(),                       -> last update
+        'regions': list[string],                        -> actual regions
+    },                      
     domain: string (url),                               -> domain name of the brand that is present
     typical_squarefoot: [
         {
