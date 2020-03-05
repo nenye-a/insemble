@@ -127,7 +127,7 @@ export default function TenantGoals(props: Props) {
       </Content>
       <OnboardingFooter>
         <TransparentButton
-          text="Not My Address"
+          text="Back"
           mode="transparent"
           type="submit"
           onPress={() => history.goBack()}
