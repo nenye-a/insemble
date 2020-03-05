@@ -340,7 +340,7 @@ def round_dictionary(dictionary):
     for item in dictionary:
         if isinstance(dictionary[item], dict):
             round_dictionary(dictionary[item])
-        print(item)
+            continue
         dictionary[item] = round(dictionary[item])
 
     return dictionary
