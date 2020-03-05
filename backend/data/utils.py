@@ -21,24 +21,45 @@ EARTHS_RADIUS_MILES = 3958.8
 # Database connections
 client = Connect.get_connection()
 
-DB_SPACE = client.spaceData
-DB_REQUESTS = client.requests
-DB_APP = client.appMatchData
-DB_TENANT = DB_APP.tenant_details
-DB_PROPERTY = DB_APP.property_details
-DB_BRANDS = DB_APP.validated_brand_details
-DB_AGGREGATE = DB_SPACE.aggregate_records
-DB_COLLECT = DB_SPACE.collect_records
-DB_ZIP_CODES = DB_SPACE.zip_codes
-DB_PROCESSED_SPACE = DB_SPACE.spaces
-DB_OLD_SPACES = DB_SPACE.dataset2
-DB_VECTORS = DB_SPACE.preprocessed_vectors
-DB_VECTORS_LA = DB_SPACE.LA_space_vectors
-DB_SPATIAL_CATS = DB_SPACE.spatial_categories
-DB_DEMOGRAPHIC_CATS = DB_SPACE.demographic_categories
+# DATABASE CONNECTIONS
+client = Connect.get_connection()  # client, MongoDB connection
+
+# top level database connections
+DB_SPACE = client.spaceData  # database for legacy spatial information
+DB_APP_LEGACY = client.appMatchData  # legacy app database
+DB_APP = client.appData  # hosts the main data for the application
+DB_REQUESTS = client.requests  # database the hosts requests saved by safe_request
+
+# collection connections - categories
 DB_FOURSQUARE = DB_SPACE.foursquare_categories
 DB_SPATIAL_TAXONOMY = DB_SPACE.spatial_taxonomy
 DB_CATEGORIES = DB_SPACE.categories
+
+# collection connections - scraping
+DB_AGGREGATE = DB_SPACE.aggregate_records
+DB_COLLECT = DB_SPACE.collect_records
+
+# collection connections - application support
+DB_BRANDS = DB_APP.brands
+DB_PLACES = DB_APP.places
+DB_LOCATIONS = DB_APP.locations
+DB_LOCATION_MATCHES = DB_APP.location_matches
+DB_PROPERTY = DB_APP.properties
+DB_BRAND_SPACE = DB_APP.brand_space_matches
+DB_REGIONS = DB_APP.regions
+
+# collection connections - matching
+DB_VECTORS = DB_SPACE.preprocessed_vectors
+DB_VECTORS_LA = DB_SPACE.LA_space_vectors
+
+# legacy databaces - pending deletion
+DB_TENANT = DB_APP_LEGACY.tenant_details
+DB_PROPERTY_LEGACY = DB_APP_LEGACY.property_details
+DB_ZIP_CODES = DB_SPACE.zip_codes
+DB_PROCESSED_SPACE = DB_SPACE.spaces
+DB_OLD_SPACES = DB_SPACE.dataset2
+DB_SPATIAL_CATS = DB_SPACE.spatial_categories
+DB_DEMOGRAPHIC_CATS = DB_SPACE.demographic_categories
 
 
 # simple unique index of a pymongo database collection
@@ -308,6 +329,28 @@ def list_matches_condition(bool_func, eval_list):
         if bool_func(item):
             return True
     return False
+
+
+def round_dictionary(dictionary):
+    """
+    Rounds a dictrionary of numbers. This will round infinitely deep dictrionaries as long
+    as they are entirely numerical. Though it modifies the data inplace, it will still return
+    the pointer to the object for ease.
+    """
+    for item in dictionary:
+        if isinstance(dictionary[item], dict):
+            round_dictionary(dictionary[item])
+            continue
+        dictionary[item] = round(dictionary[item])
+
+    return dictionary
+
+
+def literal_int(string_number):
+    '''
+    Will turn string of an integer into an integer, even if the number has commas. Assumes that all numbers
+    '''
+    return int("".join(string_number.split(',')))
 
 
 if __name__ == "__main__":

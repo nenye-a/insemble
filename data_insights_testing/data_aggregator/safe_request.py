@@ -15,7 +15,7 @@ API_KEY_MASK = 'API_KEY_MASK'
 # executable request method
 
 
-def request(api_name, req_type, url, headers={}, data={}, params={}, api_field=None):
+def request(api_name, req_type, url, headers={}, data={}, params={}, api_field=None, safe=True):
     """
 
     Method recieves typical request fields & checks that database to ensure
@@ -84,15 +84,18 @@ def request(api_name, req_type, url, headers={}, data={}, params={}, api_field=N
     api_request['response'] = response
 
     # try to input into the database. If someone input concorrently, still return the actual _id
-    try:
-        _id = utils.DB_REQUESTS[api_name].insert(api_request)
-    except:
-        time.sleep(1.5)
-        search = utils.DB_REQUESTS[api_name].find_one(api_request)
-        if search is not None:
-            return search['response'], search['_id']
-        else:
-            return None, None
+    if safe:
+        try:
+            _id = utils.DB_REQUESTS[api_name].insert(api_request)
+        except:
+            time.sleep(1.5)
+            search = utils.DB_REQUESTS[api_name].find_one(api_request)
+            if search is not None:
+                return search['response'], search['_id']
+            else:
+                return None, None
+    else:
+        _id = None
 
     return (response, _id)
 

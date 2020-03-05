@@ -735,9 +735,6 @@ def psycho_builder(radius=1):
     update_size = 15  # how many records to update prior to pinging console
     updating = True
 
-    cats, spatial_df = spatial.create_spatial_cats_and_df()
-    block_df = spatial.create_block_grp_df()
-
     data_base_query = {'psycho_finished': {'$exists': False}}
     batch_size = {'size': 100}
 
@@ -754,10 +751,8 @@ def psycho_builder(radius=1):
             # update with spatial data
             lat = space['geometry']['location']['lat']
             lng = space['geometry']['location']['lng']
-            psycho_dict1 = spatial.get_psychographics(
-                lat, lng, 1, spatial_df, block_df, cats)
-            psycho_dict3 = spatial.get_psychographics(
-                lat, lng, 3, spatial_df, block_df, cats)
+            psycho_dict1 = spatial.get_psychographics(lat, lng, 1)
+            psycho_dict3 = spatial.get_psychographics(lat, lng, 3)
 
             # space has been detailed and will be updated
             DB_PROCESSED_SPACE.update_one(
@@ -843,9 +838,6 @@ def demo_builder(radius=1):
     update_size = 15  # how many records to update prior to pinging console
     updating = True
 
-    cats, demo_df = environics.create_demo_cats_and_df()
-    block_df = spatial.create_block_grp_df()
-
     data_base_query = {'demo_finished': {'$exists': False}}
     batch_size = {'size': 100}
 
@@ -862,10 +854,8 @@ def demo_builder(radius=1):
             # update with spatial data
             lat = space['geometry']['location']['lat']
             lng = space['geometry']['location']['lng']
-            demo_dict1 = environics.get_demographics(
-                lat, lng, 1, demo_df, block_df, cats)
-            demo_dict3 = environics.get_demographics(
-                lat, lng, 3, demo_df, block_df, cats)
+            demo_dict1 = environics.get_demographics(lat, lng, 1)
+            demo_dict3 = environics.get_demographics(lat, lng, 3)
 
             # space has been detailed and will be updated
             DB_PROCESSED_SPACE.update_one(

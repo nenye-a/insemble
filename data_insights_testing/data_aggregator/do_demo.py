@@ -18,22 +18,14 @@ def get_arcgis_demo(lat, lng):
     arcgis_details1 = arcgis.details(lat, lng, 3)
     print("Arcgis: {}".format(arcgis_details1))
 
-    cats, demo_df = environics.create_demo_cats_and_df()
-    block_df = spatial.create_block_grp_df()
-
-    demo_dict3 = environics.get_demographics(
-        lat, lng, 3, demo_df, block_df, cats)
+    demo_dict3 = environics.get_demographics(lat, lng, 3)
     print("Demo details")
     pprint.pprint(demo_dict3)
 
 
 def get_spatial(lat, lng):
 
-    cats, spatial_df = spatial.create_spatial_cats_and_df()
-    block_df = spatial.create_block_grp_df()
-
-    psycho_dict1 = spatial.get_psychographics(
-        lat, lng, 1, spatial_df, block_df, cats)
+    psycho_dict1 = spatial.get_psychographics(lat, lng, 1)
 
     print("Personas:")
     pprint.pprint(psycho_dict1)

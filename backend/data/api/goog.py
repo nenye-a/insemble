@@ -223,7 +223,57 @@ def search(lat, lng, query, radius=1, pagetoken=None, save=True):
     return result['results']
 
 
+def portfolio(lat, lng, name, pagetoken=None):
+
+    url = GOOG_NEARBY_ENDPOINT
+
+    payload = {}
+    headers = {}
+
+    params = {
+        'key': GOOG_KEY
+    }
+
+    # get next page from previous request, or initiate new request
+    if pagetoken:
+        params.update({
+            'pagetoken': pagetoken
+        })
+    else:
+        location = str(lat) + ',' + str(lng)
+        params.update({
+            'location': location,
+            'name': name,
+            'language': 'en',
+            'rankby': 'distance'
+        })
+
+    result, _id = safe_request.request(
+        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
+
+    # evaluate if call failed due to unstaged google next page. If so, try again
+    # otherwise, return None. Proceed to check if there's a new page. Paths should
+    # never be possible to occur at the same time but elif for extra safety
+    next_page = None
+    if not result:
+        return None
+    if result['status'] == 'INVALID_REQUEST':
+        utils.DB_REQUESTS[API_NAME].delete_one({'_id': _id})
+        if not pagetoken:
+            return None
+        next_page = portfolio(lat, lng, name, pagetoken=pagetoken)
+    elif "next_page_token" in result:
+        next_page_token = result["next_page_token"]
+        next_page = portfolio(lat, lng, name, pagetoken=next_page_token)
+
+    if next_page:
+        result['results'].extend(next_page)
+
+    return result['results']
+
 # Get Photo URLS
+
+
 def get_photo_url(photo_reference):
 
     params = {
