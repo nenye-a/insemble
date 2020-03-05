@@ -44,7 +44,7 @@ let resetPasswordTenantResolver: FieldResolver<
       id: targetUser.id,
     },
   });
-  await context.prisma.tenantRegisterVerification.update({
+  await context.prisma.tenantResetPasswordVerification.update({
     data: {
       verified: true,
     },
