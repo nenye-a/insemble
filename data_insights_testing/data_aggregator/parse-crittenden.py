@@ -1,10 +1,8 @@
 import datetime
 import re
-import ast
 import utils
 import create_places_brands
 import csv
-import pprint
 
 '''
 
@@ -20,7 +18,7 @@ def process_csv():
 
         businesses = []
 
-        for line in read_file[2:]:
+        for line in read_file[1:]:
             business_dict = dict(zip(read_file[0], line))
             processed_dict = process_dict(business_dict)
 
@@ -37,7 +35,7 @@ def process_csv():
             # if we haven't been weeded out yet, we then add the business
             businesses.append(processed_dict)
 
-    for business in businesses[0:300]:
+    for business in businesses:
         process_business(business)
 
     # compare_businesses(businesses)
