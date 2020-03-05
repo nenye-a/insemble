@@ -2,6 +2,7 @@ from decouple import config
 import utils
 import safe_request
 import pprint
+import urllib
 
 '''
 All google related methods to confirm a location, and build dataset of all information needed.
@@ -16,12 +17,13 @@ GOOG_NEARBY_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/nearbysearch/
 GOOG_DETAILS_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/details/json'
 GOOG_TEXTSEARCH_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/textsearch/json?'
 GOOG_GEOCODE_ENDPOINT = 'https://maps.googleapis.com/maps/api/geocode/json'
+GOOG_PLACE_PHOTOS_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/photo'
 
 
 # Provided a location address & name, method corrects address if available in google. Method
 # corrects address if available in google. Returns google place_id, geometry, address, & name
 # If bias needed, please specific in bias field as per the google API
-def find(address, name="", bias='ipbias', allow_non_establishments=False):
+def find(address, name="", bias='ipbias', allow_non_establishments=False, save=True):
 
     url = GOOG_FINDPLACE_ENDPOINT
     payload = {}
@@ -36,7 +38,7 @@ def find(address, name="", bias='ipbias', allow_non_establishments=False):
     }
 
     response, _id = safe_request.request(
-        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
+        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key', safe=save)
 
     if response['status'] == 'ZERO_RESULTS':
         print('Zero results from google')
@@ -49,9 +51,10 @@ def find(address, name="", bias='ipbias', allow_non_establishments=False):
 
     return place
 
-
 # Provided a latitude and longitude, this endpoint will provide address including all address components:
-def reverse_geocode(lat, lng):
+
+
+def reverse_geocode(lat, lng, save=True):
 
     url = GOOG_GEOCODE_ENDPOINT
     payload = {}
@@ -63,7 +66,17 @@ def reverse_geocode(lat, lng):
         'latlng': latlng,
     }
 
-    result, _id = safe_request.request(API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
+    result, _id = safe_request.request(API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key', safe=save)
+
+    if 'status' in result:
+        status = result['status']
+        not_valid = status == "INVALID_REQUEST"
+        is_denied = status == "REQUEST_DENIED"
+
+        if not_valid or is_denied:
+            utils.DB_REQUESTS[API_NAME].delete_one({'_id': _id})
+            print("Request is Invalid")
+            return None
 
     if 'results' not in result:
         print('Zero results from google')
@@ -76,7 +89,7 @@ def reverse_geocode(lat, lng):
 
 # Given google place ID, can generate the other nearby locations.
 # By default, algorithm returns all results in 1 miles up to 60.
-def nearby(lat, lng, category, radius=1, rankby='prominence', pagetoken=None):
+def nearby(lat, lng, category, radius=1, rankby='prominence', pagetoken=None, save=True):
 
     url = GOOG_NEARBY_ENDPOINT
 
@@ -105,7 +118,7 @@ def nearby(lat, lng, category, radius=1, rankby='prominence', pagetoken=None):
             params['radius'] = radius
 
     result, _id = safe_request.request(
-        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
+        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key', safe=save)
 
     # evaluate if call failed due to unstaged google next page. If so, try again
     # otherwise, return None. Proceed to check if there's a new page. Paths should
@@ -130,7 +143,7 @@ def nearby(lat, lng, category, radius=1, rankby='prominence', pagetoken=None):
 
 # Obtains details of a specific google place. User can determine fields of interest.
 # all details are returned by default.
-def details(place_id, fields=None):
+def details(place_id, fields=None, save=True):
 
     url = GOOG_DETAILS_ENDPOINT
 
@@ -145,7 +158,7 @@ def details(place_id, fields=None):
         params['fields'] = fields
 
     response, _id = safe_request.request(
-        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
+        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key', safe=save)
 
     if response is None:
         return None
@@ -161,7 +174,7 @@ def details(place_id, fields=None):
 # Similar to nearby search, but does search based on google text, and has a wider application
 # of "types" than nearby(). for example, one can serach "apartments" which is not a google
 # category to get the details that are needed
-def search(lat, lng, query, radius=1, pagetoken=None):
+def search(lat, lng, query, radius=1, pagetoken=None, save=True):
 
     url = GOOG_TEXTSEARCH_ENDPOINT
 
@@ -188,7 +201,7 @@ def search(lat, lng, query, radius=1, pagetoken=None):
         })
 
     result, _id = safe_request.request(
-        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
+        API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key', safe=save)
 
     next_page = None
     if result is None:
@@ -257,6 +270,18 @@ def portfolio(lat, lng, name, pagetoken=None):
         result['results'].extend(next_page)
 
     return result['results']
+
+
+def get_photo_url(photo_reference):
+
+    params = {
+        'key': GOOG_KEY,
+        'photoreference': photo_reference,
+        'maxheight': 1000
+    }
+
+    url = GOOG_PLACE_PHOTOS_ENDPOINT + '?' + urllib.parse.urlencode(params)
+    return url
 
 
 if __name__ == "__main__":

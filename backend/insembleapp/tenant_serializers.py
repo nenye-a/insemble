@@ -131,6 +131,24 @@ class LocationDetailSerializer(serializers.Serializer):
                 "Please provide either (address, brand_name, and categories) or (categories and income) in my_location"]
             raise serializers.ValidationError(error_message)
 
+        has_lat = 'lat' in data['target_location']
+        has_lng = 'lng' in data['target_location']
+
+        error_message = {}
+        if not (has_lat and has_lng):
+            error_message['status'] = 400
+            error_message['status_detail'] = ["Please provide lat and lng in the request"]
+            raise serializers.ValidationError(error_message)
+
+        try:
+            data['target_location']['lat'] = float(data['target_location']['lat'])
+            data['target_location']['lng'] = float(data['target_location']['lng'])
+        except Exception:
+            error_message['status'] = 400
+            error_message['status_detail'] = [
+                "Please make sure the latitude and longitude are either floats or string representations of floats"]
+            raise serializers.ValidationError(error_message)
+
         return data
 
 
@@ -143,3 +161,24 @@ class FastLocationDetailSerializer(serializers.Serializer):
     tenant_id = serializers.CharField(required=True, max_length=500)
     target_location = serializers.JSONField(required=True)
     property_id = serializers.CharField(required=False)
+
+    def validate(self, data):
+        has_lat = 'lat' in data['target_location']
+        has_lng = 'lng' in data['target_location']
+
+        error_message = {}
+        if not (has_lat and has_lng):
+            error_message['status'] = 400
+            error_message['status_detail'] = ["Please provide lat and lng in the request"]
+            raise serializers.ValidationError(error_message)
+
+        try:
+            data['target_location']['lat'] = float(data['target_location']['lat'])
+            data['target_location']['lng'] = float(data['target_location']['lng'])
+        except Exception:
+            error_message['status'] = 400
+            error_message['status_detail'] = [
+                "Please make sure the latitude and longitude are either floats or string representations of floats"]
+            raise serializers.ValidationError(error_message)
+
+        return data
