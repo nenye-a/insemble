@@ -181,7 +181,6 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
             </InfoBox>
           </Marker>
         )}
-        {showGuide && <div className="marker-example heat-map-example empty-container" />}
         {heatmapData && (
           <HeatMapLayer
             data={heatmapData}
