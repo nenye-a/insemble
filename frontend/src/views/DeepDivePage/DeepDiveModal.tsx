@@ -58,6 +58,7 @@ export default function LocationDeepDiveModal(props: Props) {
           lng,
         },
       },
+      notifyOnNetworkStatusChange: true,
     }
   );
 

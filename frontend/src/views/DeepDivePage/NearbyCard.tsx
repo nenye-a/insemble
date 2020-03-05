@@ -10,6 +10,7 @@ import { BACKGROUND_COLOR, GREY_ICON, THEME_COLOR } from '../../constants/colors
 import SvgGrid from '../../components/icons/grid';
 import SvgList from '../../components/icons/list';
 import { DeepDiveContext } from './DeepDiveModal';
+import { EmptyDataComponent } from '../../components';
 
 type ViewMode = 'grid' | 'list';
 
@@ -94,11 +95,9 @@ export default function NearbyCard() {
 
             <NearbyPlacesCardContainer flex>
               {filteredData?.length === 0 ? (
-                <EmptyDataContainer flex>
-                  <Text color={THEME_COLOR}>
-                    {category && mile ? `No ${category} within ${mile} mile(s)` : `No Data Found`}
-                  </Text>
-                </EmptyDataContainer>
+                <EmptyDataComponent
+                  text={category && mile ? `No ${category} within ${mile} mile(s)` : ''}
+                />
               ) : isGridViewMode ? (
                 filteredData?.map((item, index) => <MiniNearbyPlacesCard key={index} {...item} />)
               ) : (
@@ -111,11 +110,6 @@ export default function NearbyCard() {
     </Container>
   );
 }
-
-const EmptyDataContainer = styled(View)`
-  justify-content: center;
-  align-items: center;
-`;
 
 const Container = styled(Card)`
   margin: 18px 36px;
