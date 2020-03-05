@@ -6,7 +6,13 @@ import SvgGreenArrow from '../components/icons/green-arrow';
 import SvgRedArrow from '../components/icons/red-arrow';
 import Card from './Card';
 import Legend from '../views/MapPage/Legend';
-import { HOVERED_LIST_ITEM_BG, THEME_COLOR, RED_TEXT, GREEN_TEXT } from '../constants/colors';
+import {
+  HOVERED_LIST_ITEM_BG,
+  THEME_COLOR,
+  RED_TEXT,
+  GREEN_TEXT,
+  LIGHT_GREY,
+} from '../constants/colors';
 import {
   FONT_WEIGHT_BOLD,
   FONT_SIZE_MEDIUM,
@@ -16,7 +22,7 @@ import {
 import SegmentedControl from './SegmentedControl';
 import { View, Text } from '../core-ui';
 import { CarouselFilter } from '../components';
-import { roundDecimal, convertToKilos } from '../utils';
+import { roundDecimal, convertToKilos, formatSnakeCaseLabel } from '../utils';
 import { LocationDetails_locationDetails_result_demographics1 as LocationDetailsDemographics } from '../generated/LocationDetails';
 import { PropertyLocationDetails_propertyDetails_demographics1 as PropertyDetailsDemographics } from '../generated/PropertyLocationDetails';
 import { TenantDetail_tenantDetail_insightView_demographics1 as TenantDetailsDemographics } from '../generated/TenantDetail';
@@ -101,7 +107,8 @@ export default function Graphic(props: Props) {
           )}
           {value && (
             <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
-              {roundDecimal(convertToKilos(value)) + 'K'}
+              {/* TODO: Adjust roundDecimal */}
+              {roundDecimal(convertToKilos(value), 0) + 'K'}
             </LabelText>
           )}
         </>
@@ -121,7 +128,8 @@ export default function Graphic(props: Props) {
   }) => {
     return (
       <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
-        {`${value ? roundDecimal(convertToKilos(value)) + 'K' : ''}`}
+        {/* TODO: Adjust roundDecimal */}
+        {`${value ? roundDecimal(convertToKilos(value), 0) + 'K' : ''}`}
       </LabelText>
     );
   };
@@ -150,8 +158,10 @@ export default function Graphic(props: Props) {
           height={400}
           data={dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey]}
         >
-          <XAxis dataKey="name" />
+          <XAxis dataKey="name" tickFormatter={formatSnakeCaseLabel} />
           <YAxis
+            axisLine={false}
+            tick={{ fill: LIGHT_GREY }}
             tickFormatter={(value: number) =>
               value
                 .toString()
@@ -163,7 +173,7 @@ export default function Graphic(props: Props) {
             scale="linear"
             orientation="left"
             label={{
-              value: 'population',
+              value: 'Population',
               angle: -90,
               x: -100,
               position: 'insideLeft',

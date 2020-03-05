@@ -13,13 +13,14 @@ import OnboardingSignUp from './OnboardingPage/OnboardingSignUp';
 import tenantOnboardingReducer, {
   tenantOnboardingInitialState,
 } from '../reducers/tenantOnboardingReducer';
-import { CREATE_BRAND } from '../graphql/queries/server/brand';
+import { CREATE_BRAND, GET_BRANDS } from '../graphql/queries/server/brand';
 import asyncStorage from '../utils/asyncStorage';
 import { CreateBrandVariables, CreateBrand } from '../generated/CreateBrand';
 
 export default function Onboarding() {
   let [createBrand, { loading, data }] = useMutation<CreateBrand, CreateBrandVariables>(
-    CREATE_BRAND
+    CREATE_BRAND,
+    { refetchQueries: [{ query: GET_BRANDS }] }
   );
   let [activeSegmentIndex, setActiveSegmentIndex] = useState(0);
   let history = useHistory();

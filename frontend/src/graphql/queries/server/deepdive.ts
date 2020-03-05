@@ -39,6 +39,7 @@ export const GET_LOCATION_DETAILS = gql`
           name
           description
           tags
+          photo
         }
         demographics1 {
           age {
@@ -188,6 +189,7 @@ export const GET_PROPERTY_LOCATION_DETAILS = gql`
         name
         description
         tags
+        photo
       }
       demographics1 {
         age {
@@ -286,6 +288,7 @@ export const GET_TENANT_DETAILS = gql`
           name
           description
           tags
+          photo
         }
         demographics1 {
           age {
