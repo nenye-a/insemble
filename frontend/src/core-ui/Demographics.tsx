@@ -22,7 +22,7 @@ import {
 import SegmentedControl from './SegmentedControl';
 import { View, Text } from '../core-ui';
 import { CarouselFilter } from '../components';
-import { roundDecimal, convertToKilos } from '../utils';
+import { roundDecimal, convertToKilos, formatSnakeCaseLabel } from '../utils';
 import { LocationDetails_locationDetails_result_demographics1 as LocationDetailsDemographics } from '../generated/LocationDetails';
 import { PropertyLocationDetails_propertyDetails_demographics1 as PropertyDetailsDemographics } from '../generated/PropertyLocationDetails';
 import { TenantDetail_tenantDetail_insightView_demographics1 as TenantDetailsDemographics } from '../generated/TenantDetail';
@@ -60,12 +60,6 @@ function hasGrowth(
   data: LocationDetailsDemographics | PropertyDetailsDemographics | TenantDetailsDemographics
 ): data is LocationDetailsDemographics {
   return (data as LocationDetailsDemographics).age[0].growth !== undefined;
-}
-
-function formatLabel(value: string) {
-  let replaced = value.replace('_', ' ');
-  let formatted = replaced[0].toUpperCase() + replaced.substr(1);
-  return formatted;
 }
 
 export default function Graphic(props: Props) {
@@ -113,7 +107,7 @@ export default function Graphic(props: Props) {
           )}
           {value && (
             <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
-              {Number(convertToKilos(value)).toFixed() + 'K'}
+              {roundDecimal(convertToKilos(value), 0) + 'K'}
             </LabelText>
           )}
         </>
@@ -133,7 +127,7 @@ export default function Graphic(props: Props) {
   }) => {
     return (
       <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
-        {`${value ? Number(convertToKilos(value)).toFixed() + 'K' : ''}`}
+        {`${value ? roundDecimal(convertToKilos(value), 0) + 'K' : ''}`}
       </LabelText>
     );
   };
@@ -162,7 +156,7 @@ export default function Graphic(props: Props) {
           height={400}
           data={dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey]}
         >
-          <XAxis dataKey="name" tickFormatter={(value: string) => formatLabel(value)} />
+          <XAxis dataKey="name" tickFormatter={formatSnakeCaseLabel} />
           <YAxis
             axisLine={false}
             tick={{ fill: LIGHT_GREY }}
