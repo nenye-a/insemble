@@ -22,6 +22,7 @@ Brands:
     brand_name: string,                                 -> name identifying this brand
     alias: string,                                      -> visible alias for the brand (not unique)
     logo: string (url),                                 -> url that paths to the logo of this brand
+    parent_company: string,                             -> parent company of the brand
     headquarters_address: string,                       -> address of the headquarters of this brand
     headquarters_city: string,                          -> city headquarters of this brand (we will have this more than the address)
     domain: string (url),                               -> domain name of the brand that is present
