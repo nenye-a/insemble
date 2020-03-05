@@ -23,7 +23,18 @@ Brands:
     alias: string,                                      -> visible alias for the brand (not unique)
     logo: string (url),                                 -> url that paths to the logo of this brand
     headquarters_address: string,                       -> address of the headquarters of this brand
+    headquarters_city: string,                          -> city headquarters of this brand (we will have this more than the address)
     domain: string (url),                               -> domain name of the brand that is present
+    typical_squarefoot: {                               -> typical square footage of the user
+        min: int,                                       -> typical minimum square footage
+        max: int                                        -> typical maximum square footage
+    },
+    typical_property_type: [                            -> typical property_type of this brand
+        {
+            type: list[string],                         -> actual types
+            source: string,                             -> source of property types
+        }
+    ],
     number_locations: int,                              -> number of locations in totality
     number_found_locations: int,                        -> number of locations that are actually in the database
     average_popularity: [                               -> document tracking the average popularity of this location 
