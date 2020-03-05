@@ -74,6 +74,7 @@ def process_business(business):
         brand['match_requests'] = {}
     else:
         # if there is an existing brand, let's splice their results together.
+        # TODO: add a check for if crittenden has already been updated
         brand['parent_company'] = business['parent_company']
         brand['headquarters_city'] = business['headquarters_city']
         brand['typical_property_type'] = business['typical_property_type']
@@ -81,6 +82,7 @@ def process_business(business):
         brand['description'] = business['description']
         brand['categories'].append(business['categories'])
         brand['contacts'] = {'owners': business['contacts']}
+        brand['regions_present'] = business['regions_present']
 
     if "_id" in brand:
         utils.DB_BRANDS.update({'_id': brand['_id']}, {'$set': brand}, upsert=True)
