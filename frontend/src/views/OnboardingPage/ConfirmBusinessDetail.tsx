@@ -100,7 +100,7 @@ export default function ConfirmBusinessDetail(props: Props) {
   let onSubmit = () => {
     if (allValid) {
       saveFormState();
-      history.replace('/verify/step-2');
+      history.push('/verify/step-2');
     }
   };
 
