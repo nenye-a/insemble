@@ -1,7 +1,7 @@
 import React, { useState, useContext, useMemo } from 'react';
 import styled from 'styled-components';
 
-import { View, Card, TouchableOpacity, Dropdown, Text } from '../../core-ui';
+import { View, Card, TouchableOpacity, Dropdown } from '../../core-ui';
 import NearbyPlacesCard from './NearbyPlacesCard';
 import NearbyMap from './NearbyMap';
 import NearbyMapLegend from './NearbyMapLegend';
