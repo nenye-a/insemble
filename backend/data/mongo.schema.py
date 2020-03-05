@@ -27,10 +27,14 @@ Brands:
     headquarters_city: string,                          -> city headquarters of this brand (we will have this more than the address)
     regions_present: list[string],                      -> regions that the brand is present in 
     domain: string (url),                               -> domain name of the brand that is present
-    typical_squarefoot: {                               -> typical square footage of the user
-        min: int,                                       -> typical minimum square footage
-        max: int                                        -> typical maximum square footage
-    },
+    typical_squarefoot: [
+        {
+            min: int,                                   -> typical minimum square footage of this brand under this context
+            max: int,                                   -> typical maximim square footage of this brand under this context
+            context: string                             -> the context of the sizing (pharmacy vs. big box, etc.)
+        }
+        ... other squarefoot options
+    ]
     typical_property_type: [                            -> typical property_type of this brand
         {
             type: list[string],                         -> actual types
