@@ -122,8 +122,8 @@ function Landing() {
           text="Don't have an address?"
           mode="transparent"
           onPress={() => {
-            history.push('/verify', {
-              categories: [],
+            history.push('/verify/step-1', {
+              newPlace: true,
             });
           }}
         />

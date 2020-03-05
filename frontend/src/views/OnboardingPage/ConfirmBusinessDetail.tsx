@@ -1,6 +1,6 @@
 import React, { useState, Dispatch, useEffect } from 'react';
 import styled from 'styled-components';
-import { useParams, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 import { useForm, FieldError } from 'react-hook-form';
 

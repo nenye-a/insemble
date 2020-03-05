@@ -1,7 +1,7 @@
-import React, { useState, useEffect, Dispatch } from 'react';
+import React, { useState, Dispatch } from 'react';
 import styled from 'styled-components';
-import { useQuery } from '@apollo/react-hooks';
-import { useHistory } from 'react-router-dom';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useHistory, Redirect } from 'react-router-dom';
 import { useForm, FieldError, FieldValues } from 'react-hook-form';
 
 import {
@@ -14,13 +14,14 @@ import {
   Button,
   TextInput,
 } from '../../core-ui';
-import { RangeInput } from '../../components';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
 import { Equipments } from '../../generated/Equipments';
 import { SPACES_TYPE } from '../../constants/spaces';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
-import { validateNumber } from '../../utils/';
+import { validateNumber, asyncStorage } from '../../utils/';
+import { CreateBrand, CreateBrandVariables } from '../../generated/CreateBrand';
+import { CREATE_BRAND } from '../../graphql/queries/server/brand';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -28,9 +29,13 @@ type Props = {
 };
 
 export default function TenantPhysicalCriteria(props: Props) {
-  let { dispatch } = props;
+  let { dispatch, state } = props;
+  let signedIn = asyncStorage.getTenantToken();
   let history = useHistory();
   let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
+  let [createBrand, { loading, data }] = useMutation<CreateBrand, CreateBrandVariables>(
+    CREATE_BRAND
+  );
   let [selectedSpaceOptions, setSelectedSpaceOptions] = useState<Array<string>>([]);
   let [selectedEquipmentOptions, setSelectedEquipmentOptions] = useState<Array<string>>([]);
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
@@ -49,9 +54,60 @@ export default function TenantPhysicalCriteria(props: Props) {
           },
         },
       });
-      history.push('verify/success');
+      if (signedIn) {
+        let { confirmBusinessDetail, tenantGoals, targetCustomers, physicalSiteCriteria } = state;
+        let { categories, name, userRelation, otherUserRelation, location } = confirmBusinessDetail;
+        let {
+          noPersonasPreference,
+          noAgePreference,
+          noIncomePreference,
+          noEducationsPreference,
+          personas,
+          minAge,
+          maxAge,
+          minIncome,
+          maxIncome,
+          educations,
+          minDaytimePopulation,
+        } = targetCustomers;
+        let { minSize, minFrontageWidth, spaceType, equipments } = physicalSiteCriteria;
+        createBrand({
+          variables: {
+            business: {
+              name,
+              userRelation: userRelation === 'Other' ? otherUserRelation || '' : userRelation,
+              location: location || { lat: '', lng: '', address: '' },
+              locationCount: tenantGoals.locationCount ? Number(tenantGoals.locationCount) : null,
+              newLocationPlan: tenantGoals.newLocationPlan?.value,
+              nextLocations: tenantGoals.location,
+            },
+            filter: {
+              categories,
+              personas: noPersonasPreference ? null : personas,
+              education: noEducationsPreference ? null : educations,
+              minDaytimePopulation: minDaytimePopulation ? null : Number(minDaytimePopulation),
+              minAge: noAgePreference ? null : Number(minAge),
+              maxAge: noAgePreference ? null : Number(maxAge),
+              minIncome: noIncomePreference ? null : Number(minIncome) * 1000,
+              maxIncome: noIncomePreference ? null : Number(maxIncome) * 1000,
+              minSize: Number(minSize),
+              minFrontageWidth: Number(minFrontageWidth),
+              spaceType,
+              equipment: equipments,
+            },
+          },
+        });
+      } else {
+        history.push('/verify/step-5');
+      }
     }
   };
+
+  if (data && data.createBrand) {
+    let brandId = data.createBrand;
+    return <Redirect to={`/map/${brandId}`} />;
+  }
+
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Content flex>
@@ -118,7 +174,7 @@ export default function TenantPhysicalCriteria(props: Props) {
           type="submit"
           onPress={() => history.goBack()}
         />
-        <Button text="Next" type="submit" />
+        <Button text={signedIn ? 'Submit' : 'Next'} type="submit" loading={loading} />
       </OnboardingFooter>
     </Form>
   );
