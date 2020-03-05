@@ -342,6 +342,7 @@ export default function MainMap() {
             lat={selectedLatLng.lat || ''}
             lng={selectedLatLng.lng || ''}
             address={selectedLatLng.address}
+            categories={tenantMatchesData?.tenantMatches.categories}
             targetNeighborhood={selectedLatLng.targetNeighborhood}
             visible={deepDiveModalVisible}
             onClose={() => toggleDeepDiveModal(!deepDiveModalVisible)}

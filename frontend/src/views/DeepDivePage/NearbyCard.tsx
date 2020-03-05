@@ -1,7 +1,7 @@
 import React, { useState, useContext, useMemo } from 'react';
 import styled from 'styled-components';
 
-import { View, Card, TouchableOpacity, Dropdown } from '../../core-ui';
+import { View, Card, TouchableOpacity, Dropdown, Text } from '../../core-ui';
 import NearbyPlacesCard from './NearbyPlacesCard';
 import NearbyMap from './NearbyMap';
 import NearbyMapLegend from './NearbyMapLegend';
@@ -10,7 +10,6 @@ import { BACKGROUND_COLOR, GREY_ICON, THEME_COLOR } from '../../constants/colors
 import SvgGrid from '../../components/icons/grid';
 import SvgList from '../../components/icons/list';
 import { DeepDiveContext } from './DeepDiveModal';
-import { EmptyDataComponent } from '../../components';
 
 type ViewMode = 'grid' | 'list';
 
@@ -32,7 +31,10 @@ export default function NearbyCard() {
   let [selectedDropdownVal, setSelectedDropdownVal] = useState('Most Popular');
   let isGridViewMode = selectedView === 'grid';
   let data = useContext(DeepDiveContext);
+  let mile = data?.result?.keyFacts.mile;
   let nearbyData = data?.result?.nearby;
+  let category = data?.categories;
+
   let filteredData = useMemo(() => {
     switch (selectedDropdownVal) {
       case 'Similar': {
@@ -92,7 +94,11 @@ export default function NearbyCard() {
 
             <NearbyPlacesCardContainer flex>
               {filteredData?.length === 0 ? (
-                <EmptyDataComponent />
+                <EmptyDataContainer flex>
+                  <Text color={THEME_COLOR}>
+                    {category && mile ? `No ${category} within ${mile} mile(s)` : `No Data Found`}
+                  </Text>
+                </EmptyDataContainer>
               ) : isGridViewMode ? (
                 filteredData?.map((item, index) => <MiniNearbyPlacesCard key={index} {...item} />)
               ) : (
@@ -105,6 +111,11 @@ export default function NearbyCard() {
     </Container>
   );
 }
+
+const EmptyDataContainer = styled(View)`
+  justify-content: center;
+  align-items: center;
+`;
 
 const Container = styled(Card)`
   margin: 18px 36px;

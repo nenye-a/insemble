@@ -24,6 +24,7 @@ type DeepDiveContextType =
       result?: LocationDetailsLocationDetailsResult;
       propertyDetails?: LocationDetailsLocationDetailsPropertyDetails | null;
       selectedLocation?: SelectedLocation;
+      categories?: Array<string>;
     }
   | undefined;
 
@@ -35,12 +36,13 @@ type Props = {
   lng: string;
   address: string;
   targetNeighborhood: string;
+  categories?: Array<string>;
 };
 
 // const SHRINK_HEIGHT = 160;
 export default function LocationDeepDiveModal(props: Props) {
   let { brandId = '' } = useParams();
-  let { visible, onClose, lat, lng, address, targetNeighborhood } = props;
+  let { visible, onClose, lat, lng, address, targetNeighborhood, categories } = props;
   let [isLiked, toggleIsLiked] = useState(false); // get value from backend
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   // let [headerShrink, setHeaderShrink] = useState(false);
@@ -82,6 +84,7 @@ export default function LocationDeepDiveModal(props: Props) {
           address,
           targetNeighborhood,
         },
+        categories,
       }}
     >
       <Modal onClose={onClose} visible={visible} svgCloseProps={{ fill: THEME_COLOR }}>
