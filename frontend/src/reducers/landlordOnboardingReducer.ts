@@ -17,8 +17,8 @@ type ConfirmTenant = {
 };
 
 type SpaceListing = {
-  mainPhoto: FileWithPreview | null;
-  propertyPhotos: Array<FileWithPreview | null>;
+  mainPhoto: FileWithPreview | null | string;
+  propertyPhotos: Array<FileWithPreview | null | string>;
   description: string;
   condition: string;
   sqft: string;

@@ -40,8 +40,8 @@ export default function LandlordListing(props: Props) {
   let price = watch('price');
   let date = watch('date');
   let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
-  let [mainPhoto, setMainPhoto] = useState<FileWithPreview | null>(spaceListing.mainPhoto);
-  let [additionalPhotos, setAdditionalPhotos] = useState<Array<FileWithPreview | null>>(
+  let [mainPhoto, setMainPhoto] = useState<string | FileWithPreview | null>(spaceListing.mainPhoto);
+  let [additionalPhotos, setAdditionalPhotos] = useState<Array<string | FileWithPreview | null>>(
     spaceListing.propertyPhotos
   );
   let [description, setDescription] = useState<string>(spaceListing.description);
@@ -117,11 +117,11 @@ export default function LandlordListing(props: Props) {
         />
         <PhotosPicker
           mainPhoto={mainPhoto}
-          onMainPhotoChange={(file: FileWithPreview | null) => {
+          onMainPhotoChange={(file: FileWithPreview | null | string) => {
             setMainPhoto(file);
           }}
           additionalPhotos={additionalPhotos}
-          onAdditionalPhotoChange={(files: Array<FileWithPreview | null>) => {
+          onAdditionalPhotoChange={(files: Array<FileWithPreview | null | string>) => {
             setAdditionalPhotos(files);
           }}
         />

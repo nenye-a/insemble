@@ -5,10 +5,10 @@ import { View, Label, TouchableOpacity, Dropzone } from '../../core-ui';
 import { FileWithPreview } from '../../core-ui/Dropzone';
 
 type Props = {
-  mainPhoto: FileWithPreview | null;
-  onMainPhotoChange: (withPreview: FileWithPreview | null) => void;
-  additionalPhotos: Array<FileWithPreview | null>;
-  onAdditionalPhotoChange: (withPreviews: Array<FileWithPreview | null>) => void;
+  mainPhoto: string | FileWithPreview | null;
+  onMainPhotoChange: (withPreview: FileWithPreview | null | string) => void;
+  additionalPhotos: Array<string | FileWithPreview | null>;
+  onAdditionalPhotoChange: (withPreviews: Array<string | FileWithPreview | null>) => void;
 };
 
 export default function PhotosPicker(props: Props) {
@@ -43,18 +43,18 @@ export default function PhotosPicker(props: Props) {
     <View>
       <LabelText text="Temporary Main Photo" />
       <Dropzone
-        source={mainPhoto?.preview}
+        source={typeof mainPhoto === 'string' ? mainPhoto : mainPhoto?.preview}
         getPreview={onMainPhotoChange}
         onPhotoRemove={() => onPhotoRemove(0)}
       />
       <LabelText text="Additional Property Photos" />
       <PhotosContainer flex>
-        {Array.from({ length: 4 }).map((item, index) => {
+        {Array.from({ length: 4 }).map((_, index) => {
           let image = additionalPhotos[index];
           return (
             <PhotoWrapper key={index}>
               <Dropzone
-                source={image?.preview}
+                source={typeof image === 'string' ? image : image?.preview}
                 getPreview={(file) => onAdditionalPhotosChange(file, index)}
                 onPhotoRemove={() => {
                   onPhotoRemove(index + 1);

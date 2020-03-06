@@ -16,7 +16,6 @@ export default function LandlordProperties() {
   let history = useHistory();
   let { data, loading } = useQuery<GetProperties>(GET_PROPERTIES);
   let properties = data?.properties;
-
   return (
     <View flex>
       {loading && !data ? (
@@ -26,7 +25,7 @@ export default function LandlordProperties() {
         properties.map((item, index) => {
           let { lat, lng } = item.location;
           let iframeSource = MAPS_IFRAME_URL_SEARCH + '&q=' + lat + ', ' + lng;
-
+          let spaces = item.space;
           return (
             <TouchableOpacity
               key={index}
@@ -35,6 +34,7 @@ export default function LandlordProperties() {
                 history.push(`/landlord/properties/${item.id}`, {
                   iframeSource,
                   address: item.location.address,
+                  spaces,
                 });
               }}
             >

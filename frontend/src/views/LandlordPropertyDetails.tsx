@@ -30,11 +30,11 @@ type Params = {
 export default function LandlordPropertyDetails() {
   let history = useHistory();
   let params = useParams<Params>();
+  let [selectedBrandId, setSelectedBrandId] = useState('');
+  let { address, spaces } = history.location.state;
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [selectedSpaceIndex, setSelectedSpaceIndex] = useState(0);
-  let [selectedBrandId, setSelectedBrandId] = useState('');
-  let { address } = history.location.state;
-
+  let [selectedSpaceId, setSelectedSpaceId] = useState(spaces[spaces.length - 1].id);
   let isTenantMatchSelected = selectedTabIndex === Tab.TENANT_MATCH_INDEX;
   let isLocationDetailSelected = selectedTabIndex === Tab.LOCATION_DETAIL_INDEX;
   let isManageSpaceSelected = selectedTabIndex === Tab.MANAGE_SPACE_INDEX;
@@ -57,7 +57,10 @@ export default function LandlordPropertyDetails() {
             address={address}
             request="1" // TODO
             selectedSpaceIndex={selectedSpaceIndex}
-            onPressSpace={(index: number) => setSelectedSpaceIndex(index)}
+            onPressSpace={(index: number) => {
+              setSelectedSpaceId(spaces[index].id);
+              setSelectedSpaceIndex(index);
+            }}
             onPressAdd={() => {}} // TODO
           />
           <Card>
@@ -77,7 +80,7 @@ export default function LandlordPropertyDetails() {
             ) : isLocationDetailSelected ? (
               <LandlordLocationDetails />
             ) : isManageSpaceSelected ? (
-              <LandlordManageSpace />
+              <LandlordManageSpace spaceId={selectedSpaceId} />
             ) : null}
           </Card>
         </>
