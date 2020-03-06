@@ -22,7 +22,7 @@ let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
         tenant_id: brandId,
       },
     })
-  ).data;
+  ).data.result;
   return {
     name: 'California Cheeseburgers',
     category: 'Hamburger Restaurant',
