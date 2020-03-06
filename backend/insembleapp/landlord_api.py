@@ -219,14 +219,7 @@ class PropertyDetailsAPI(AsynchronousAPI):
     response: {
         status: int (HTTP),                     (always provided)
         status_detail: string or list,          (always provided)
-        overview: {                               (not provided if error occurs)
-            match_value: float,
-            affinities: {
-                growth: boolean,
-                personas: boolean,
-                demographics: boolean,
-                ecosystem: boolean,
-            },
+        result: {    
             key_facts: {
                 mile: int
                 DaytimePop: float,
@@ -448,9 +441,9 @@ class TenantDetailsAPI(AsynchronousAPI):
         response = {
             'status': 200,
             'status_detail': 'Success',
-            'brand_name': brand['brand_name'],
-            'category': brand['categories'][0]['categories'][0]['short_name'],
             'result': {
+                'brand_name': brand['brand_name'],
+                'category': brand['categories'][0]['categories'][0]['short_name'],
                 'key_facts': key_facts,
                 'tenant': {
                     'overview': overview,
