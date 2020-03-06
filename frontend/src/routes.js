@@ -79,9 +79,15 @@ const LANDLORD_ROUTES = [
   },
   {
     path: '/landlord/new-property/:formStep',
-    exact: true,
     layout: BasicLayout,
     component: LandlordOnboarding,
+    authorization: landlordAuthorization,
+  },
+  {
+    path: '/landlord/new-property/',
+    layout: BasicLayout,
+    component: LandlordOnboarding,
+    exact: true,
     authorization: landlordAuthorization,
   },
 ];
