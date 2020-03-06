@@ -63,7 +63,7 @@ export default function LandlordPropertyDetails() {
             }}
             onPressAdd={() => {}} // TODO
           />
-          <Card>
+          <PropertyDetailsCard>
             <PropertyDetailSegment
               selectedTabIndex={selectedTabIndex}
               onPress={(index: number) => setSelectedTabIndex(index)}
@@ -82,7 +82,7 @@ export default function LandlordPropertyDetails() {
             ) : isManageSpaceSelected ? (
               <LandlordManageSpace spaceId={selectedSpaceId} />
             ) : null}
-          </Card>
+          </PropertyDetailsCard>
         </>
       )}
 
@@ -97,4 +97,8 @@ export default function LandlordPropertyDetails() {
 
 const ContentWrapper = styled(View)`
   padding: 0 20px;
+`;
+
+const PropertyDetailsCard = styled(Card)`
+  overflow: visible;
 `;
