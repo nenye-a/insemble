@@ -231,6 +231,7 @@ const Value = styled.text`
 const CommuteView = styled(View)`
   flex: 1;
   justify-content: space-between;
+  padding-left: 20px;
 `;
 
 const NumberText = styled(Text)`
