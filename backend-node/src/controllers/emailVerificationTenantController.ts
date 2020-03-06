@@ -8,7 +8,14 @@ export let emailVerificationTenantHandler = async (
   req: Request,
   res: Response,
 ) => {
-  let tenantEmailVerificationId = Base64.decode(req.params.token);
+  let [verifyId, tokenEmail] = req.params.token
+    ? req.params.token.split(':')
+    : [];
+  if (!verifyId || !tokenEmail) {
+    throw new Error('Invalid verification code');
+  }
+  let tenantEmailVerificationId = Base64.decode(verifyId);
+  let decodedTokenEmail = Base64.decode(tokenEmail);
   let tenantEmailVerification = await prisma.tenantEmailVerification.findOne({
     where: {
       id: tenantEmailVerificationId,
@@ -23,6 +30,10 @@ export let emailVerificationTenantHandler = async (
   }
   if (tenantEmailVerification.verified) {
     res.status(400).send('Verification code already used.');
+    return;
+  }
+  if (decodedTokenEmail !== tenantEmailVerification.tokenEmail) {
+    res.status(400).send('Invalid token');
     return;
   }
   await prisma.tenantUser.update({
