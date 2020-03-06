@@ -42,6 +42,10 @@ let forgotPasswordTenantResolver: FieldResolver<
       },
     );
   }
+  let emailVerifyCode =
+    Base64.encodeURI(tenantRPVerification.id) +
+    ':' +
+    tenantRPVerification.tokenEmail;
 
   if (NODE_ENV === 'production') {
     sendForgotPasswordEmail(
@@ -49,31 +53,19 @@ let forgotPasswordTenantResolver: FieldResolver<
         email: `${existing.email}`,
         name: `${existing.firstName} ${existing.lastName}`,
       },
-      `${FRONTEND_HOST}/reset-password-tenant/${Base64.encodeURI(
-        tenantRPVerification.id,
-      )}:${tenantRPVerification.tokenEmail}`,
+      `${FRONTEND_HOST}/reset-password-tenant/${emailVerifyCode}`,
     );
   } else {
     // console the verification id so we could still test it on dev environment
     // eslint-disable-next-line no-console
-    console.log(
-      Base64.encodeURI(tenantRPVerification.id) +
-        ':' +
-        tenantRPVerification.tokenEmail,
-    );
+    console.log(emailVerifyCode);
   }
 
-  return {
-    message: 'success',
-    verificationId:
-      Base64.encodeURI(tenantRPVerification.id) +
-      ':' +
-      tenantRPVerification.tokenQuery,
-  };
+  return 'success';
 };
 
 export let forgotPasswordTenant = mutationField('forgotPasswordTenant', {
-  type: 'TenantRegisterResult',
+  type: 'String',
   args: {
     email: stringArg({ required: true }),
   },
