@@ -9,7 +9,7 @@ import json
 
 # TODO: get permanent token. This may fail eventually
 url = "https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/GeoEnrichment/enrich"
-TOKEN = "B5zwIZH_gQGg1DUeqbdubRni3E8O_4i8n7POC0iAIlEpjcSGBZWupNd-_DOmUQT5v1cV6nTMaUP7_ORbmVYZX9sY0NR2yO_I3W7tliD0HvAxUyYEyJCQdX554OAgJ3uMeDRjISSij55-78xZcfCYeFRh18ZqBSWxl6B3ULkxqWM5MF_sRbixdwJb2xIs-CgrZGWncAgw_3lIlSTkguD5M7XPT1ufFxZop1j3V-kfoBU."
+TOKEN = "p5iiQNm6L7FBEz65aVJrvjkU4MrY1qH6pXzN6Xe6fV7IfkGHLvkXQyPRcfthVu9biojEkqg6nmvqfbYCOU55KzhCA6ZqNGxEdMMjWGQ6CLnUkRANnJj3LF--7iGzT_yYmxntkde_iANC26vbVaLIi1JiOPYC6YlYznxk6R9gBnw0fFZjpJCzWJwQSxQxmW5OTEmohip2TgFvEA0SA6TAqPSkqnZGuG8qiPu_jTEwTJE."
 
 
 def details(lat, lng, radius):
