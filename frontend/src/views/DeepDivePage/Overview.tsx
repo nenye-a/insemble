@@ -23,7 +23,7 @@ export default function Overview() {
       <MatchPercentageCard />
       <KeyFacts commuteData={commuteData} keyFactsData={keyFactsData} />
       <RelevantConsumerPersonas personasData={personasData} />
-      <Demographics demographicsData={demographicsData} />
+      <Demographics demographicsData={demographicsData} withMargin={true} />
       <NearbyCard />
     </View>
   );
