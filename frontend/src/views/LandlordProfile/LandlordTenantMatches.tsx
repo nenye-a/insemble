@@ -76,7 +76,7 @@ const RowedView = styled(View)`
 
 const Container = styled(RowedView)`
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
 `;
 
 const InterestedText = styled(Text)`
@@ -99,7 +99,7 @@ const TenantCard = styled(TouchableOpacity)<TenantCardProps>`
   &:nth-child(3n) {
     margin-right: 0;
   }
-  min-height: 200px
+  min-height: 200px;
   height: fit-content;
   box-shadow: ${(props) =>
     props.isInterested ? `0px 0px 10px 0px ${SECONDARY_COLOR}` : undefined};
