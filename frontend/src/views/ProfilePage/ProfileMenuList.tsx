@@ -7,8 +7,6 @@ import { THEME_COLOR, WHITE } from '../../constants/colors';
 import { DEFAULT_BORDER_RADIUS } from '../../constants/theme';
 import SvgPerson from '../../components/icons/person';
 import SvgBusiness from '../../components/icons/business';
-import SvgMessage from '../../components/icons/message';
-import SvgBilling from '../../components/icons/billing';
 import { Role } from '../../types/types';
 
 type Props = {
@@ -130,14 +128,14 @@ const LANDLORD_PROFILE_MENU: Array<MenuObj> = [
     icon: <SvgBusiness />,
     path: '/landlord/properties',
   },
-  {
-    menu: 'Messages',
-    icon: <SvgMessage />,
-    path: '/landlord/messages',
-  },
-  {
-    menu: 'Billing & Plans',
-    icon: <SvgBilling />,
-    path: '/landlord/billing',
-  },
+  // {
+  //   menu: 'Messages',
+  //   icon: <SvgMessage />,
+  //   path: '/landlord/messages',
+  // },
+  // {
+  //   menu: 'Billing & Plans',
+  //   icon: <SvgBilling />,
+  //   path: '/landlord/billing',
+  // },
 ];
