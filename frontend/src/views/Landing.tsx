@@ -105,7 +105,7 @@ function Landing() {
                 let { lat, lng } = location;
                 let latitude = lat();
                 let longitude = lng();
-                history.push(`/verify/${placeID}`, {
+                history.push('/verify/step-1', {
                   placeID,
                   name,
                   formattedAddress,
@@ -122,8 +122,8 @@ function Landing() {
           text="Don't have an address?"
           mode="transparent"
           onPress={() => {
-            history.push('/verify', {
-              categories: [],
+            history.push('/verify/step-1', {
+              newPlace: true,
             });
           }}
         />

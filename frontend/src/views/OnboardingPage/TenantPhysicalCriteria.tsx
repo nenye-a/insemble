@@ -1,13 +1,27 @@
-import React, { useState, useEffect, Dispatch } from 'react';
+import React, { useState, Dispatch } from 'react';
 import styled from 'styled-components';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useHistory, Redirect } from 'react-router-dom';
+import { useForm, FieldError, FieldValues } from 'react-hook-form';
 
-import { View, Alert, Label, Checkbox, MultiSelectInput } from '../../core-ui';
-import { RangeInput } from '../../components';
+import {
+  View,
+  Alert,
+  Label,
+  Checkbox,
+  MultiSelectInput,
+  Form as BaseForm,
+  Button,
+  TextInput,
+} from '../../core-ui';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
 import { Equipments } from '../../generated/Equipments';
 import { SPACES_TYPE } from '../../constants/spaces';
+import OnboardingFooter from '../../components/layout/OnboardingFooter';
+import { validateNumber, asyncStorage } from '../../utils/';
+import { CreateBrand, CreateBrandVariables } from '../../generated/CreateBrand';
+import { CREATE_BRAND } from '../../graphql/queries/server/brand';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -15,91 +29,179 @@ type Props = {
 };
 
 export default function TenantPhysicalCriteria(props: Props) {
-  let { dispatch } = props;
+  let { dispatch, state } = props;
+  let signedIn = asyncStorage.getTenantToken();
+  let history = useHistory();
   let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
-  let [minSqft, setMinSqft] = useState('');
-  let [minFrontageWidth, setMinFrontageWidth] = useState('');
+  let [createBrand, { loading, data }] = useMutation<CreateBrand, CreateBrandVariables>(
+    CREATE_BRAND
+  );
   let [selectedSpaceOptions, setSelectedSpaceOptions] = useState<Array<string>>([]);
   let [selectedEquipmentOptions, setSelectedEquipmentOptions] = useState<Array<string>>([]);
-  useEffect(() => {
-    dispatch({ type: 'ENABLE_NEXT_BUTTON' });
-    dispatch({
-      type: 'SAVE_CHANGES_PHYSICAL_SITE_CRITERIA',
-      values: {
-        physicalSiteCriteria: {
-          minSize: minSqft,
-          minFrontageWidth: minFrontageWidth,
-          equipments: selectedEquipmentOptions,
-          spaceType: selectedSpaceOptions,
+  let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
+  let { register, errors, handleSubmit } = useForm();
+
+  let onSubmit = (fieldValues: FieldValues) => {
+    if (Object.keys(errors).length === 0) {
+      dispatch({
+        type: 'SAVE_CHANGES_PHYSICAL_SITE_CRITERIA',
+        values: {
+          physicalSiteCriteria: {
+            minSize: fieldValues.minSqft,
+            minFrontageWidth: fieldValues.minFrontageWidth,
+            equipments: selectedEquipmentOptions,
+            spaceType: selectedSpaceOptions,
+          },
         },
-      },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, selectedEquipmentOptions, selectedSpaceOptions]);
+      });
+      if (signedIn) {
+        let { confirmBusinessDetail, tenantGoals, targetCustomers, physicalSiteCriteria } = state;
+        let { categories, name, userRelation, otherUserRelation, location } = confirmBusinessDetail;
+        let {
+          noPersonasPreference,
+          noAgePreference,
+          noIncomePreference,
+          noEducationsPreference,
+          personas,
+          minAge,
+          maxAge,
+          minIncome,
+          maxIncome,
+          educations,
+          minDaytimePopulation,
+        } = targetCustomers;
+        let { minSize, minFrontageWidth, spaceType, equipments } = physicalSiteCriteria;
+        createBrand({
+          variables: {
+            business: {
+              name,
+              userRelation: userRelation === 'Other' ? otherUserRelation || '' : userRelation,
+              location: location,
+              locationCount: tenantGoals.locationCount ? Number(tenantGoals.locationCount) : null,
+              newLocationPlan: tenantGoals.newLocationPlan?.value,
+              nextLocations: tenantGoals.location,
+            },
+            filter: {
+              categories,
+              personas: noPersonasPreference ? null : personas,
+              education: noEducationsPreference ? null : educations,
+              minDaytimePopulation: minDaytimePopulation ? null : Number(minDaytimePopulation),
+              minAge: noAgePreference ? null : Number(minAge),
+              maxAge: noAgePreference ? null : Number(maxAge),
+              minIncome: noIncomePreference ? null : Number(minIncome) * 1000,
+              maxIncome: noIncomePreference ? null : Number(maxIncome) * 1000,
+              minSize: Number(minSize),
+              minFrontageWidth: Number(minFrontageWidth),
+              spaceType,
+              equipment: equipments,
+            },
+          },
+        });
+      } else {
+        history.push('/verify/step-5');
+      }
+    }
+  };
+
+  if (data && data.createBrand) {
+    let brandId = data.createBrand;
+    return <Redirect to={`/map/${brandId}`} />;
+  }
 
   return (
-    <Container>
-      <Description
-        visible
-        text="Customer criteria has been pre-populated based on your store's location."
-      />
-      <LabelText text="Minimum Sqft" />
-      <RangeInputContainer lowValue={minSqft} onLowRangeInputChange={setMinSqft} />
-      <LabelText text="Minimum Frontage Width (ft)" />
-      <RangeInputContainer
-        lowValue={minFrontageWidth}
-        onLowRangeInputChange={setMinFrontageWidth}
-      />
-      <LabelText text="Buildout Preference" />
-      {!equipmentLoading && equipmentData && (
-        <MultiSelectInput
-          placeholder="Buildout preference"
-          options={equipmentData.equipments}
-          onChange={setSelectedEquipmentOptions}
-          containerStyle={{ marginBottom: 24 }}
-          inputContainerStyle={{ flex: 1 }}
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      <Content flex>
+        <Description
+          visible
+          text="Customer criteria has been pre-populated based on your store's location."
         />
-      )}
-      <LabelText text="Space type" />
-      {SPACES_TYPE.map((option, index) => {
-        let isChecked = selectedSpaceOptions.includes(option);
-        return (
-          <Checkbox
-            key={index}
-            size="18px"
-            title={option}
-            isChecked={isChecked}
-            onPress={() => {
-              if (isChecked) {
-                let newSelectedSpaceOptions = selectedSpaceOptions.filter(
-                  (item: string) => item !== option
-                );
-                setSelectedSpaceOptions(newSelectedSpaceOptions);
-              } else {
-                setSelectedSpaceOptions([...selectedSpaceOptions, option]);
-              }
-            }}
-            style={{ lineHeight: 2 }}
+        <NumberTextInput
+          label="Minimum Sqft"
+          name="minSqft"
+          ref={register({
+            validate: (val) => validateNumber(val) || 'Input should be number',
+          })}
+          containerStyle={inputContainerStyle}
+          errorMessage={(errors?.minSqft as FieldError)?.message || ''}
+        />
+        <NumberTextInput
+          label="Minimum Frontage Width (ft)"
+          name="minFrontageWidth"
+          ref={register({
+            validate: (val) => validateNumber(val) || 'Input should be number',
+          })}
+          containerStyle={inputContainerStyle}
+          errorMessage={(errors?.minFrontageWidth as FieldError)?.message || ''}
+        />
+        <LabelText text="Buildout Preference" />
+        {!equipmentLoading && equipmentData && (
+          <MultiSelectInput
+            placeholder="Buildout preference"
+            options={equipmentData.equipments}
+            onChange={setSelectedEquipmentOptions}
+            containerStyle={{ marginBottom: 12 }}
+            inputContainerStyle={{ flex: 1 }}
           />
-        );
-      })}
-    </Container>
+        )}
+        <LabelText text="Space type" />
+        {SPACES_TYPE.map((option, index) => {
+          let isChecked = selectedSpaceOptions.includes(option);
+          return (
+            <Checkbox
+              key={index}
+              size="18px"
+              title={option}
+              isChecked={isChecked}
+              onPress={() => {
+                if (isChecked) {
+                  let newSelectedSpaceOptions = selectedSpaceOptions.filter(
+                    (item: string) => item !== option
+                  );
+                  setSelectedSpaceOptions(newSelectedSpaceOptions);
+                } else {
+                  setSelectedSpaceOptions([...selectedSpaceOptions, option]);
+                }
+              }}
+              style={{ lineHeight: 2 }}
+            />
+          );
+        })}
+      </Content>
+      <OnboardingFooter>
+        <TransparentButton
+          text="Back"
+          mode="transparent"
+          type="submit"
+          onPress={() => history.goBack()}
+        />
+        <Button text={signedIn ? 'Submit' : 'Next'} type="submit" loading={loading} />
+      </OnboardingFooter>
+    </Form>
   );
 }
 
-const Container = styled(View)`
+const Form = styled(BaseForm)`
+  flex: 1;
+`;
+
+const Content = styled(View)`
   padding: 24px 48px;
 `;
 
-const RangeInputContainer = styled(RangeInput)`
-  width: 108px;
-  margin: 0 0 6px 0;
+const NumberTextInput = styled(TextInput)`
+  width: 80px;
 `;
 
 const LabelText = styled(Label)`
-  margin-bottom: 8px;
+  padding-top: 12px;
+  padding-bottom: 8px;
 `;
 
 const Description = styled(Alert)`
-  margin-bottom: 21px;
+  margin-bottom: 9px;
+`;
+
+const TransparentButton = styled(Button)`
+  margin-right: 8px;
+  padding: 0 12px;
 `;

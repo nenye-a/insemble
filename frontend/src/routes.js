@@ -108,13 +108,7 @@ const TENANT_ROUTES = [
     component: ForgotPasswordSubmitted,
   },
   {
-    path: '/verify',
-    exact: true,
-    layout: BasicLayout,
-    component: Onboarding,
-  },
-  {
-    path: '/verify/:placeID',
+    path: '/verify/:formStep',
     layout: BasicLayout,
     component: Onboarding,
   },
