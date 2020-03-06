@@ -21,7 +21,7 @@ export default function Overview() {
   return (
     <View>
       <MatchPercentageCard />
-      <KeyFacts commuteData={commuteData} keyFactsData={keyFactsData} />
+      <KeyFacts commuteData={commuteData} keyFactsData={keyFactsData} withMargin />
       <RelevantConsumerPersonas personasData={personasData} />
       <Demographics demographicsData={demographicsData} withMargin={true} />
       <NearbyCard />
