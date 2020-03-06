@@ -8,7 +8,13 @@ let resetPasswordTenantResolver: FieldResolver<
   'Mutation',
   'resetPasswordTenant'
 > = async (_, { verificationCode, password }, context: Context) => {
-  let tenantRPVerificationId = Base64.decode(verificationCode);
+  let [verifyId, tokenQuery] = verificationCode
+    ? verificationCode.split(':')
+    : [];
+  if (!verifyId || !tokenQuery) {
+    throw new Error('Invalid verification code');
+  }
+  let tenantRPVerificationId = Base64.decode(verifyId);
   let tenantRPVerification = await context.prisma.tenantResetPasswordVerification.findOne(
     {
       where: {
@@ -26,6 +32,10 @@ let resetPasswordTenantResolver: FieldResolver<
 
   if (tenantRPVerification.verified) {
     throw new Error('Verification code already used.');
+  }
+
+  if (tokenQuery !== tenantRPVerification.tokenEmail) {
+    throw new Error('Invalid token');
   }
 
   let targetUser = await context.prisma.tenantUser.findOne({
@@ -53,7 +63,13 @@ let resetPasswordTenantResolver: FieldResolver<
     },
   });
 
-  return { message: 'success', verificationId: tenantRPVerification.id };
+  return {
+    message: 'success',
+    verificationId:
+      Base64.encodeURI(tenantRPVerification.id) +
+      ':' +
+      tenantRPVerification.tokenQuery,
+  };
 };
 
 export let resetPasswordTenant = mutationField('resetPasswordTenant', {
