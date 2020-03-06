@@ -31,6 +31,7 @@ let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
     insightView: {
       topPersonas: [
         {
+          photo: '',
           percentile: 0.6,
           name: 'Trendy Eats',
           description:
