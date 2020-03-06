@@ -57,7 +57,7 @@ let locationDetails = queryField('locationDetails', {
         affinities,
         key_facts: keyFacts,
         commute,
-        top_personas: topPersonas,
+        top_personas: topPersonasRaw,
         demographics1,
         demographics3,
         demographics5,
@@ -133,6 +133,10 @@ let locationDetails = queryField('locationDetails', {
           };
         },
       );
+
+      let topPersonas = topPersonasRaw.map(({ ...persona }) => {
+        return { photo: '', ...persona }; // TODO: change to real photoURL
+      });
 
       return {
         result: {

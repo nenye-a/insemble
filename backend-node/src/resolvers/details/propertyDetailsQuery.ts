@@ -32,7 +32,7 @@ let propertyDetailsResolver: FieldResolver<'Query', 'propertyDetails'> = async (
   let {
     key_facts: keyFacts,
     commute,
-    personas: topPersonas,
+    personas,
     demographics1,
     demographics3,
     demographics5,
@@ -71,6 +71,9 @@ let propertyDetailsResolver: FieldResolver<'Query', 'propertyDetails'> = async (
     });
     return objectKeyValue;
   };
+  let topPersonas = personas.map(({ ...persona }) => {
+    return { photo: '', ...persona }; // TODO: change to real photoURL
+  });
 
   return {
     keyFacts: {
