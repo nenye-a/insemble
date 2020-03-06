@@ -5,7 +5,14 @@ import { prisma } from '../prisma';
 import { FRONTEND_HOST } from '../constants/constants';
 
 export let registerLandlordHandler = async (req: Request, res: Response) => {
-  let landlordVerificationId = Base64.decode(req.params.token);
+  let [verifyId, tokenEmail] = req.params.token
+    ? req.params.token.split(':')
+    : [];
+  if (!verifyId || !tokenEmail) {
+    throw new Error('Invalid verification code');
+  }
+  let landlordVerificationId = Base64.decode(verifyId);
+  let decodedTokenEmail = Base64.decode(tokenEmail);
   let landlordVerification = await prisma.landlordRegisterVerification.findOne({
     where: {
       id: landlordVerificationId,
@@ -17,6 +24,10 @@ export let registerLandlordHandler = async (req: Request, res: Response) => {
   }
   if (landlordVerification.verified) {
     res.status(400).send('Verification code already used.');
+    return;
+  }
+  if (decodedTokenEmail !== landlordVerification.tokenEmail) {
+    res.status(400).send('Invalid token');
     return;
   }
   let landlord = JSON.parse(landlordVerification.landlordInput);
