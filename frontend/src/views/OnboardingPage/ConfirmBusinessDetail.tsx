@@ -1,6 +1,6 @@
 import React, { useState, Dispatch, useEffect } from 'react';
 import styled from 'styled-components';
-import { useParams, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 import { useForm, FieldError } from 'react-hook-form';
 
@@ -17,7 +17,7 @@ import {
 } from '../../core-ui';
 import { Filter } from '../../components';
 import { BUTTON_TRANSPARENT_TEXT_COLOR, RED_TEXT } from '../../constants/colors';
-import { MAPS_IFRAME_URL_PLACE } from '../../constants/googleMaps';
+import { MAPS_IFRAME_URL_SEARCH } from '../../constants/googleMaps';
 import { FONT_SIZE_SMALL } from '../../constants/theme';
 import { GET_CATEGORIES, GET_AUTOPOPULATE_FILTER } from '../../graphql/queries/server/filters';
 import { Categories } from '../../generated/Categories';
@@ -27,6 +27,7 @@ import {
   AutoPopulateFilterVariables,
 } from '../../generated/AutoPopulateFilter';
 import { LocationState } from './types';
+import OnboardingFooter from '../../components/layout/OnboardingFooter';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -37,13 +38,9 @@ export default function ConfirmBusinessDetail(props: Props) {
   let { dispatch, state: onboardingState } = props;
   let { confirmBusinessDetail } = onboardingState;
 
-  let { register, errors, watch } = useForm();
+  let { register, errors, watch, handleSubmit } = useForm();
   let otherBusinessRelation = watch('otherBusinessRelation');
-
-  let history = useHistory<LocationState>();
-  let { state: landingState } = history.location;
-  let { name: nameOnLanding, lat, lng, formattedAddress, categories } = landingState;
-  let name = nameOnLanding || confirmBusinessDetail.name || watch('businessName');
+  let name = confirmBusinessDetail.name || watch('businessName');
 
   let { data: categoriesData } = useQuery<Categories>(GET_CATEGORIES);
   let { data: autopopulateData, loading: autopopulateLoading } = useQuery<
@@ -51,21 +48,28 @@ export default function ConfirmBusinessDetail(props: Props) {
     AutoPopulateFilterVariables
   >(GET_AUTOPOPULATE_FILTER, {
     variables: {
-      address: formattedAddress,
-      brandName: nameOnLanding,
+      address: confirmBusinessDetail.location?.address || '',
+      brandName: name,
     },
-    skip: !formattedAddress || !nameOnLanding,
+    skip: !confirmBusinessDetail.location?.address || !confirmBusinessDetail.name,
   });
   let [selectedBusinessRelation, setBussinesRelation] = useState(
     confirmBusinessDetail.userRelation || ''
   );
   let [categorySelectionVisible, toggleCategorySelection] = useState(false);
   let [selectedCategories, setSelectedCategories] = useState<Array<string>>(
-    categories || confirmBusinessDetail.categories || []
+    confirmBusinessDetail.categories || []
   );
+  let history = useHistory<LocationState>();
 
-  let { placeID } = useParams();
-  let mapURL = MAPS_IFRAME_URL_PLACE + '&q=place_id:' + placeID;
+  let iframeSource =
+    confirmBusinessDetail.location?.lat && confirmBusinessDetail.location?.lng
+      ? MAPS_IFRAME_URL_SEARCH +
+        '&q=' +
+        confirmBusinessDetail.location?.lat +
+        ', ' +
+        confirmBusinessDetail.location?.lng
+      : '';
 
   let businessRelationValid =
     (selectedBusinessRelation && selectedBusinessRelation !== 'Other') ||
@@ -78,43 +82,31 @@ export default function ConfirmBusinessDetail(props: Props) {
     }
   }, [autopopulateData]);
 
-  useEffect(() => {
-    if (allValid) {
-      dispatch({ type: 'ENABLE_NEXT_BUTTON' });
-      dispatch({
-        type: 'SAVE_CHANGES_CONFIRM_BUSINESS_DETAIL',
-        values: {
-          confirmBusinessDetail: {
-            name,
-            categories: selectedCategories,
-            userRelation: selectedBusinessRelation,
-            otherUserRelation: otherBusinessRelation,
-            location: {
-              lat: (lat && lat.toString()) || '',
-              lng: (lng && lng.toString()) || '',
-              address: formattedAddress || '',
-            },
-          },
+  let saveFormState = () => {
+    dispatch({
+      type: 'SAVE_CHANGES_CONFIRM_BUSINESS_DETAIL',
+      values: {
+        confirmBusinessDetail: {
+          ...onboardingState.confirmBusinessDetail,
+          name,
+          categories: selectedCategories,
+          userRelation: selectedBusinessRelation,
+          otherUserRelation: otherBusinessRelation,
         },
-      });
-    } else {
-      dispatch({ type: 'DISABLE_NEXT_BUTTON' });
+      },
+    });
+  };
+
+  let onSubmit = () => {
+    if (allValid) {
+      saveFormState();
+      history.push('/verify/step-2');
     }
-  }, [
-    selectedBusinessRelation,
-    selectedCategories,
-    name,
-    dispatch,
-    allValid,
-    lat,
-    lng,
-    otherBusinessRelation,
-    formattedAddress,
-  ]);
+  };
 
   return (
-    <Form>
-      {placeID && <Iframe src={mapURL} />}
+    <Form style={{ flex: 1 }} onSubmit={handleSubmit(onSubmit)}>
+      {iframeSource && <Iframe src={iframeSource} />}
       <FormContainer>
         <TextInput
           label="Business Name"
@@ -189,6 +181,15 @@ export default function ConfirmBusinessDetail(props: Props) {
           />
         )}
       </FormContainer>
+      <OnboardingFooter>
+        <TransparentButton
+          text="Not My Address"
+          mode="transparent"
+          type="submit"
+          onPress={() => history.goBack()}
+        />
+        <Button text="Next" disabled={!allValid} type="submit" />
+      </OnboardingFooter>
     </Form>
   );
 }
@@ -202,6 +203,8 @@ const Iframe = styled.iframe`
 
 const FormContainer = styled(View)`
   padding: 24px 48px;
+  z-index: 1;
+  flex: 1;
 `;
 
 const RowedView = styled(View)`
@@ -232,6 +235,12 @@ const ErrorText = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
   color: ${RED_TEXT};
 `;
+
 const RowWrap = styled(View)`
   flex-flow: row wrap;
+`;
+
+const TransparentButton = styled(Button)`
+  margin-right: 8px;
+  padding: 0 12px;
 `;

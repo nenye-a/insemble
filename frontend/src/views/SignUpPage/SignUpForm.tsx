@@ -48,7 +48,7 @@ export default function SignUpForm(props: Props) {
             confirmBusinessDetail.userRelation === 'Other'
               ? confirmBusinessDetail.otherUserRelation || ''
               : confirmBusinessDetail.userRelation,
-          location: confirmBusinessDetail.location || { lat: '', lng: '', address: '' },
+          location: confirmBusinessDetail.location,
           locationCount: tenantGoals.locationCount ? Number(tenantGoals.locationCount) : null,
           newLocationPlan: tenantGoals.newLocationPlan?.value,
           nextLocations: tenantGoals.location,
