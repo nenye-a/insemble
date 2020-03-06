@@ -12,8 +12,7 @@ import OnboardingFooter from '../../components/layout/OnboardingFooter';
 import { THEME_COLOR, WHITE } from '../../constants/colors';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
 import { State, Action } from '../../reducers/landlordOnboardingReducer';
-import { CREATE_PROPERTY } from '../../graphql/queries/server/property';
-import { GET_PROPERTIES } from '../../graphql/queries/server/properties';
+import { CREATE_PROPERTY, GET_PROPERTIES } from '../../graphql/queries/server/properties';
 import { CreateProperty, CreatePropertyVariables } from '../../generated/CreateProperty';
 import { getImageBlob, dateFormatter } from '../../utils';
 
@@ -87,7 +86,7 @@ export default function PreviewListing(props: Props) {
             description,
             equipment: equipments,
             mainPhoto: mainPhotoBlob,
-            photoUploads: additionalPhotosBlob,
+            photoUploads: additionalPhotosBlob.filter((item) => item != null),
             pricePerSqft: Number(pricePerSqft),
             sqft: Number(sqft),
           },
