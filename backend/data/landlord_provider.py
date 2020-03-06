@@ -106,7 +106,8 @@ def get_matching_tenants_new(eval_property, space_id):
             'interested': interested,
             'number_existing_locations': number_existing_locations,
             'photo_url': photo_url,
-            'brand_id': match['brand_id']
+            'brand_id': match['brand_id'],
+            'onPlatform': False             # TODO: add more details to onPlatform
         })
 
     return final_matches

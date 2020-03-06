@@ -1,11 +1,10 @@
-from rest_framework import status, generics, permissions
+from rest_framework import status, permissions
 from .tenant_api import AsynchronousAPI, FastLocationDetailsAPI
 from rest_framework.response import Response
 from .landlord_serializers import PropertyTenantSerializer, PropertyDetailsSerializer, TenantDetailsSerializer
 from bson import ObjectId
 import data.api.goog as google
 import data.utils as utils
-import data.landlord_matching as landlord_matching
 import data.landlord_provider as landlord_provider
 import data.provider as provider
 from .celery import app as celery_app
@@ -82,9 +81,9 @@ class PropertyTenantAPI(AsynchronousAPI):
                 name: string,
                 category: string,
                 num_existing_locations: int,
+                onPlatform: boolean,
                 match_value: int,
                 interested: boolean,
-                matches_tenant_type: boolean
             }
             ... many more
         ]
@@ -200,33 +199,126 @@ class PropertyTenantAPI(AsynchronousAPI):
 
     @staticmethod
     @celery_app.task
-    def generate_matches(address):
-        return landlord_provider.get_matching_tenants(address)
-
-    @staticmethod
-    @celery_app.task
-    def get_spatial_personas(lat, lng):
-        return provider.get_spatial_personas(lat, lng)
-
-    @staticmethod
-    @celery_app.task
-    def get_environics_demographics(lat, lng):
-        return provider.get_environics_demographics(lat, lng)
-
-    @staticmethod
-    @celery_app.task
     def get_nearby_places(lat, lng):
         return provider.get_nearby_places(lat, lng)
 
     def _register_tasks(self) -> None:
-        celery_app.register_task(self.generate_matches)
-        celery_app.register_task(self.get_spatial_personas)
-        celery_app.register_task(self.get_environics_demographics)
         celery_app.register_task(self.get_nearby_places)
 
 
 # PropertyDetailsAPI - api/propertyDetails/
 class PropertyDetailsAPI(AsynchronousAPI):
+
+    """
+    Provided with the property_id, will return all the details needed to run the matches.
+
+    params" {
+        property_id: string
+    }
+
+    response: {
+        status: int (HTTP),                     (always provided)
+        status_detail: string or list,          (always provided)
+        overview: {                               (not provided if error occurs)
+            match_value: float,
+            affinities: {
+                growth: boolean,
+                personas: boolean,
+                demographics: boolean,
+                ecosystem: boolean,
+            },
+            key_facts: {
+                mile: int
+                DaytimePop: float,
+                MediumHouseholdIncome: float,
+                TotalHousholds: float,
+                HouseholdGrowth2017-2022: float,
+                num_metro: int,                       (will never exceed 60)
+                num_universities: int,                (will never exceed 60)
+                num_hospitals: int,                   (will never exceed 60)
+                num_apartments: int                   (will never exceed 60)
+            },
+            commute: {
+                Public Transport: int,
+                Bicycle: int,
+                Carpooled: int,
+                Drove Alone: int,
+                Walked: int,
+                Worked at Home: int
+            },
+            top_personas: [
+                {
+                    percentile: float,
+                    photo: url,
+                    name: string,
+                    description: string,
+                    tags: List[string]
+                },
+                { ... same as above },
+                { ... same as above }
+            ],
+            demographics1: {
+                age: {
+                    <18: {
+                        value: float
+                        growth: float
+                    },
+                    18-24: { ... same as above },
+                    25-34: { ... same as above },
+                    35-54: { ... same as above },
+                    45-54: { ... same as above },
+                    55-64: { ... same as above },
+                    65+ : { ... same as above}
+                    }
+                },
+                income: {
+                    <$50K: {
+                        value: float
+                        growth: float
+                    },
+                    $50K-$74K: { ... same as above },
+                    $75K-$124K: { ... same as above },
+                    $125K-$199K: { ... same as above },
+                    $200K: { ... same as above}
+                },
+                ethnicity: {                                                (no subcategory will contain growth)
+                    white: {
+                        value: float
+                        growth: float
+                    },
+                    black: { ... same as above },
+                    indian: { ... same as above },
+                    asian: { ... same as above},
+                    pacific_islander: { ... same as above },
+                    other: { ... same as above }
+                },
+                education: {                                                (no subcategory will contain growth)
+                    some_highschool: {
+                        value: float
+                        growth: float
+                    },
+                    highschool: { ... same as above },
+                    some_college: { ... same as above },
+                    associate: { ... same as above },
+                    bachelor: { ... same as above },
+                    masters: { ... same as above },
+                    professional: { ... same as above },
+                    doctorate: { ... same as above }
+                },
+                gender: {
+                    male: {
+                        value: float
+                        growth: float
+                    },
+                    female: { ... same as above }
+                }
+            },
+            demographics3: ... same as demographics,
+            demographics5: ... same as demographics,
+        }
+    }
+
+    """
 
     serializer_class = PropertyDetailsSerializer
 
@@ -237,30 +329,48 @@ class PropertyDetailsAPI(AsynchronousAPI):
         validated_params = serializer.validated_data
 
         property_id = validated_params['property_id']
-        place = landlord_provider.property_details(property_id)
+        this_property = utils.DB_PROPERTY.find_one({'_id': ObjectId(property_id)}, {'location_id'})
 
-        if not place:
+        if not this_property:
             return Response({
-                'status': 200,
-                'status_detail': 'Successful Call, but No Details Found',
-                'result': {}
-            })
+                'status': status.HTTP_404_NOT_FOUND,
+                'status_detail': ['This property was not found, please make sure to check the id.']
+            }, status=status.HTTP_404_NOT_FOUND)
 
-        demographics = FastLocationDetailsAPI.obtain_demographics(place)
-        personas = provider.fill_personas(place["psycho1"])
+        location_id = this_property['location_id']
+        location = utils.DB_LOCATIONS.find_one({'_id': location_id})
+        property_lat = location['location']['coordinates'][1]
+        property_lng = location['location']['coordinates'][0]
+
+        personas = provider.fill_personas(location['spatial_psychographics']["1mile"])
+        demographics = self.convert_demographics(location['environics_demographics'])
 
         try:
-            commute = demographics["1mile"].pop("commute")
-            demographics["3mile"].pop("commute")
-            demographics["5mile"].pop("commute")
+            commute = demographics["1mile"].pop("commute") if 'commute' in demographics["1mile"] else None
+            demographics["3mile"].pop("commute") if 'commute' in demographics["1mile"] else None
+            demographics["5mile"].pop("commute") if 'commute' in demographics["1mile"] else None
         except Exception:
             commute = None
+
+        key_facts = location['arcgis_demographics']['1mile'] or {}
+        if key_facts != {}:
+            key_facts.pop('DaytimeWorkingPop')
+            key_facts.pop('DaytimeResidentPop')
+
+        key_facts['num_metro'] = len(location['nearby_subway_station'] if 'neaby_subway_station' in location else google.nearby(
+            property_lat, property_lng, 'subway_station', radius=1))
+        key_facts['num_universities'] = len(location['nearby_university'] if 'nearby_university' in location else google.nearby(
+            property_lat, property_lng, 'university', radius=1))
+        key_facts['num_hospitals'] = len(location['nearby_hospitals'] if 'nearby_hospitals' in location else google.nearby(
+            property_lat, property_lng, 'hospital', radius=1))
+        key_facts['nearby_apartments'] = len(location['nearby_apartments'] if 'nearby_apartments' in location else google.search(
+            property_lat, property_lng, 'apartments', radius=1))
 
         response = {
             'status': 200,
             'status_detail': 'Success',
             'result': {
-                'key_facts': place['key_facts'],
+                'key_facts': key_facts,
                 'commute': commute,
                 'personas': personas,
                 'demographics1': demographics["1mile"],
@@ -270,6 +380,13 @@ class PropertyDetailsAPI(AsynchronousAPI):
         }
 
         return Response(response, status=status.HTTP_200_OK)
+
+    def convert_demographics(self, demographic_dict):
+        return {
+            '1mile': provider.get_demographics(1, 1, 1, demographic_dict=demographic_dict['1mile']),
+            '3mile': provider.get_demographics(1, 1, 1, demographic_dict=demographic_dict['3mile']),
+            '5mile': provider.get_demographics(1, 1, 1, demographic_dict=demographic_dict['5mile'])
+        }
 
 
 # TenantDetailsAPI - api/tenantDetails/
