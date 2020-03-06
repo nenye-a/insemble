@@ -198,14 +198,20 @@ export default function KeyFacts(props: Props) {
       </RowedView>
     </>
   );
-  return withMargin ? <Container>{content}</Container> : <View>{content}</View>;
+  return withMargin ? (
+    <Container>{content}</Container>
+  ) : (
+    <WithoutMargin>{content}</WithoutMargin>
+  );
 }
 
 const Container = styled(Card)`
   margin: 18px 36px;
   min-height: 600px;
 `;
-
+const WithoutMargin = styled(View)`
+  min-height: 600px;
+`;
 const RowedView = styled(View)`
   flex: 1;
   flex-direction: row;
@@ -248,8 +254,8 @@ const Value = styled.text`
 `;
 
 const CommuteView = styled(View)`
+  flex: 1;
   justify-content: space-between;
-  height: 360px;
 `;
 
 const NumberText = styled(Text)`

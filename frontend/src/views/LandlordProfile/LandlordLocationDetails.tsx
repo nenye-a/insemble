@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { useHistory, useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
-import { View, Text } from '../../core-ui';
-import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD } from '../../constants/theme';
+import { View, Text, LoadingIndicator, Button } from '../../core-ui';
+import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD, FONT_SIZE_LARGE } from '../../constants/theme';
 import { LIGHTEST_GREY } from '../../constants/colors';
 import KeyFacts from '../DeepDivePage/KeyFacts';
 import RelevantConsumerCard from '../DeepDivePage/RelevantConsumerCard';
@@ -19,14 +19,14 @@ export default function LandlordLocationDetails() {
   let history = useHistory();
   let location = history.location.state.iframeSource;
   let { propertyId = '' } = useParams();
-  let { data } = useQuery<PropertyLocationDetails, PropertyLocationDetailsVariables>(
-    GET_PROPERTY_LOCATION_DETAILS,
-    {
-      variables: {
-        propertyId,
-      },
-    }
-  );
+  let { data, loading, error, refetch } = useQuery<
+    PropertyLocationDetails,
+    PropertyLocationDetailsVariables
+  >(GET_PROPERTY_LOCATION_DETAILS, {
+    variables: {
+      propertyId,
+    },
+  });
 
   let keyFactsData = data?.propertyDetails.keyFacts;
   let demographicsData = [
@@ -38,19 +38,30 @@ export default function LandlordLocationDetails() {
   let personasData = data?.propertyDetails.topPersonas;
   return (
     <View>
-      {/* TODO: change to map */}
-      <Iframe src={location} />
-      <KeyFacts keyFactsData={keyFactsData} commuteData={commuteData} withMargin={false} />
-      <ConsumerPersonaText>All Consumer Personas</ConsumerPersonaText>
-      <Container flex>
-        <CardsContainer>
-          {personasData &&
-            personasData.map((item, index) => <RelevantConsumerCard key={index} {...item} />)}
-        </CardsContainer>
-      </Container>
-      <GraphicContainer>
-        <DemographicCard demographicsData={demographicsData} withMargin={false} />
-      </GraphicContainer>
+      {loading ? (
+        <LoadingIndicator />
+      ) : error ? (
+        <CenteredView flex>
+          <Text fontSize={FONT_SIZE_LARGE}>{error.message || ''}</Text>
+          <Button text="Try Again" onPress={refetch} />
+        </CenteredView>
+      ) : (
+        // {/* TODO: change to map */}
+        <>
+          <Iframe src={location} />
+          <KeyFacts keyFactsData={keyFactsData} commuteData={commuteData} withMargin={false} />
+          <ConsumerPersonaText>All Consumer Personas</ConsumerPersonaText>
+          <Container flex>
+            <CardsContainer>
+              {personasData &&
+                personasData.map((item, index) => <RelevantConsumerCard key={index} {...item} />)}
+            </CardsContainer>
+          </Container>
+          <GraphicContainer>
+            <DemographicCard demographicsData={demographicsData} withMargin={false} />
+          </GraphicContainer>
+        </>
+      )}
     </View>
   );
 }
@@ -79,4 +90,8 @@ const Iframe = styled.iframe`
   width: 100%;
   height: 240px;
   border: none;
+`;
+const CenteredView = styled(View)`
+  justify-content: center;
+  align-items: center;
 `;
