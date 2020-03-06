@@ -198,11 +198,7 @@ export default function KeyFacts(props: Props) {
       </RowedView>
     </>
   );
-  return withMargin ? (
-    <Container>{content}</Container>
-  ) : (
-    <WithoutMargin>{content}</WithoutMargin>
-  );
+  return withMargin ? <Container>{content}</Container> : <WithoutMargin>{content}</WithoutMargin>;
 }
 
 const Container = styled(Card)`
