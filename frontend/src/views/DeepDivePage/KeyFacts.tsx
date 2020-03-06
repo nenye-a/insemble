@@ -8,7 +8,7 @@ import {
   FONT_SIZE_MEDIUM,
   FONT_SIZE_XXLARGE,
 } from '../../constants/theme';
-import { THEME_COLOR, COMMUTE_CHART_COLORS, SECONDARY_COLOR } from '../../constants/colors';
+import { COMMUTE_CHART_COLORS, SECONDARY_COLOR } from '../../constants/colors';
 import { convertToKilos, roundDecimal, getKeyfactsValue } from '../../utils';
 import {
   LocationDetails_locationDetails_result_commute as LocationDetailsCommute,
@@ -222,10 +222,6 @@ const Title = styled(Text)`
 //   font-size: ${FONT_SIZE_LARGE};
 //   font-weight: ${FONT_WEIGHT_LIGHT};
 // `;
-const Label = styled.text`
-  font-size: ${FONT_SIZE_MEDIUM};
-  fill: ${THEME_COLOR};
-`;
 const Value = styled.text`
   font-size: ${FONT_SIZE_MEDIUM};
   font-weight: ${FONT_WEIGHT_LIGHT};
