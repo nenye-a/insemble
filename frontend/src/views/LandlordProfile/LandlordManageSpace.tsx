@@ -33,7 +33,7 @@ type Props = {
 export default function LandlordManageSpace(props: Props) {
   let { spaceId } = props;
   let { data, error, loading, refetch } = useQuery<GetSpace, GetSpaceVariables>(GET_SPACE, {
-    variables: { spaceId: spaceId },
+    variables: { spaceId },
   });
   let [
     editSpace,
@@ -70,15 +70,18 @@ export default function LandlordManageSpace(props: Props) {
           additionalPhotosBlob.push(photoBlob);
         }
       }
+      let newMainPhotoUrl =
+        typeof mainPhoto === 'string' && mainPhoto === data?.space.mainPhoto ? mainPhoto : null;
+      let newPhotoUrls = data?.space.photos.filter((item) => additionalPhotos.includes(item));
       if (Object.keys(errors).length === 0) {
         editSpace({
           variables: {
             spaceId,
             space: {
-              mainPhoto: mainPhotoBlob,
+              mainPhoto: mainPhotoBlob ? mainPhotoBlob : null,
               photoUploads: additionalPhotosBlob,
-              photoUrls: data?.space.photos,
-              mainPhotoUrl: data?.space.mainPhoto,
+              photoUrls: newPhotoUrls,
+              mainPhotoUrl: newMainPhotoUrl,
               description: description,
               condition: selectedCondition,
               sqft,
@@ -101,31 +104,29 @@ export default function LandlordManageSpace(props: Props) {
   let today = new Date().toISOString().slice(0, 10);
   return (
     <>
-      <PhotoWrapper flex>
-        {loading ? (
-          <LoadingIndicator />
-        ) : error ? (
-          <CenteredView flex>
-            <Text fontSize={FONT_SIZE_LARGE}>{error.message || ''}</Text>
-            <Button text="Try Again" onPress={refetch} />
-          </CenteredView>
-        ) : (
-          data?.space && (
-            <PhotosPicker
-              mainPhoto={mainPhoto}
-              onMainPhotoChange={(file: FileWithPreview | null | string) => {
-                setMainPhoto(file);
-              }}
-              additionalPhotos={additionalPhotos}
-              onAdditionalPhotoChange={(files: Array<FileWithPreview | null | string>) => {
-                setAdditionalPhotos(files);
-              }}
-            />
-          )
-        )}
-      </PhotoWrapper>
-      <Container>
-        <Form onSubmit={handleSubmit(onSubmit)}>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <Container>
+          {loading ? (
+            <LoadingIndicator />
+          ) : error ? (
+            <CenteredView flex>
+              <Text fontSize={FONT_SIZE_LARGE}>{error.message || ''}</Text>
+              <Button text="Try Again" onPress={refetch} />
+            </CenteredView>
+          ) : (
+            data?.space && (
+              <PhotosPicker
+                mainPhoto={mainPhoto}
+                onMainPhotoChange={(file: FileWithPreview | null | string) => {
+                  setMainPhoto(file);
+                }}
+                additionalPhotos={additionalPhotos}
+                onAdditionalPhotoChange={(files: Array<FileWithPreview | null | string>) => {
+                  setAdditionalPhotos(files);
+                }}
+              />
+            )
+          )}
           <Alert visible={!!editSpaceData} text="Your profile has been updated" />
           <Alert visible={!!editSpaceError} text={errorMessage} />
           <TextArea
@@ -192,11 +193,11 @@ export default function LandlordManageSpace(props: Props) {
               containerStyle={{ marginTop: 8 }}
             />
           </RowView>
-          <OnboardingFooter>
-            <DoneButton text="Done" type="submit" loading={editSpaceLoading} />
-          </OnboardingFooter>
-        </Form>
-      </Container>
+        </Container>
+        <OnboardingFooter>
+          <Button text="Done" type="submit" loading={editSpaceLoading} />
+        </OnboardingFooter>
+      </Form>
     </>
   );
 }
@@ -229,12 +230,4 @@ const DatePicker = styled(TextInput)`
 const CenteredView = styled(View)`
   justify-content: center;
   align-items: center;
-`;
-
-const DoneButton = styled(Button)`
-  justify-content: flex-end;
-  margin: 12px;
-`;
-const PhotoWrapper = styled(View)`
-  margin: 24px;
 `;

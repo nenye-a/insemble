@@ -10,6 +10,7 @@ type Props = {
   additionalPhotos: Array<string | FileWithPreview | null>;
   onAdditionalPhotoChange: (withPreviews: Array<string | FileWithPreview | null>) => void;
 };
+
 export default function PhotosPicker(props: Props) {
   let { mainPhoto, onMainPhotoChange, additionalPhotos, onAdditionalPhotoChange } = props;
 
