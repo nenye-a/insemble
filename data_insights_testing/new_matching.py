@@ -29,8 +29,8 @@ S3_FILESYSTEM = S3FileSystem(
 #     'insemble-dataframes/spatial_df.csv.gz', file_system=S3_FILESYSTEM)
 # DEMO_DF = utils.read_dataframe_csv(
 #     'insemble-dataframes/demo_df.csv.gz', file_system=S3_FILESYSTEM)
-# MATCHING_DF = utils.read_dataframe_csv(
-#     'insemble-dataframes/full_df_csv.csv.gz', file_system=S3_FILESYSTEM)
+MATCHING_DF = utils.read_dataframe_csv(
+    'insemble-dataframes/full_df_csv.csv.gz', file_system=S3_FILESYSTEM)
 SPATIAL_CATEGORIES = utils.DB_SPATIAL_CATS.find_one(
     {'name': 'spatial_categories'})['spatial_categories']
 DEMO_CATEGORIES = utils.DB_DEMOGRAPHIC_CATS.find_one(
@@ -166,6 +166,10 @@ def generate_matches(location_address, name=None, my_place_type={}):
 
     print("** Matching: Post-processing start.")
     processed_diff = postprocess_match_df(diff)
+
+    print(processed_diff.columns)
+    processed_diff.to_csv('full.csv')
+    processed_diff.describe().to_csv('stats-v2.csv')
 
     print("** Matching: Matching start.")
     norm_df = weight_and_evaluate(processed_diff)

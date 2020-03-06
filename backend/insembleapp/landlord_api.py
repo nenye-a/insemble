@@ -9,7 +9,6 @@ import data.landlord_matching as landlord_matching
 import data.landlord_provider as landlord_provider
 import data.provider as provider
 from .celery import app as celery_app
-import json
 
 
 '''
@@ -85,10 +84,7 @@ class PropertyTenantAPI(AsynchronousAPI):
                 num_existing_locations: int,
                 match_value: int,
                 interested: boolean,
-                verified: boolean,
-                claimed: boolean,
-                matches_tenant_type: boolean,
-                exclusivity_risk: boolean
+                matches_tenant_type: boolean
             }
             ... many more
         ]
@@ -130,9 +126,9 @@ class PropertyTenantAPI(AsynchronousAPI):
             if not this_property:
                 # if the property does not exist, return no content response
                 return Response({
-                    'status': status.HTTP_404_NO_CONTENT,
+                    'status': status.HTTP_404_NOT_FOUND,
                     'status_detail': ["Could not find a property that matches that Id."],
-                }, status=status.HTTP_404_NO_CONTENT)
+                }, status=status.HTTP_404_NOT_FOUND)
             this_property['spaces'].append(space)
             # ignore all updates to the space if provided
             utils.DB_PROPERTY.update_one({'_id': this_property['_id']}, {'$set': this_property})
@@ -186,126 +182,16 @@ class PropertyTenantAPI(AsynchronousAPI):
                 this_property['location_id'] = utils.DB_LOCATIONS.insert(location)
             property_id = utils.DB_PROPERTY.insert(this_property)
 
+        # Should do this in an other class that is made for updating and refetching
+        # the matches for a space. Then this is just an automatic call.
+        brands = landlord_provider.get_matching_tenants_new(this_property, space_id)
+
         return Response({
+            'status': status.HTTP_200_OK,
             'property_id': str(property_id),
             'space_id': str(space_id),
-            'location_id': str(this_property['location_id'])
-        })
-        # # STORE THE SPACE DETAILS
-        # property_params = validated_params.copy()
-        # space_params = {}
-        # for item in ['space_type', 'sqft', 'asking_rent']:
-        #     if item in validated_params:
-        #         space_params[item] = property_params.pop(item)
-
-        # # KO TENANT MATCHING FOR THE SPACE:
-        # # TODO: do this asynchronously and actually obtain real data. (should take in space_params)
-
-        # address = landlord_provider.property_address(
-        #     validated_params['property_id']) if 'property_id' in validated_params else validated_params['address']
-        # m_process, match_details = self.generate_matches.delay(address), []
-        # match_listener = self._celery_listener(m_process, match_details)
-        # match_listener.start()
-
-        # # GENERATE_PROPERTY_LOCATION_DETAILS
-        # if 'property_id' not in validated_params:
-        #     # if not property, generate the property details fresh.
-        #     google_location = google.find(validated_params['address'], allow_non_establishments=True, save=False)
-        #     location = google_location['geometry']['location']
-        #     lat = location['lat']
-        #     lng = location['lng']
-
-        #     location_details = provider.get_location_details(location)
-        #     if not (location_details and 'demo1' in location_details and 'psycho1' in location_details and 'nearby_complete' in location_details):
-
-        #         # grab the 1 and 3 mile arcgis data
-        #         arcgis_details1 = provider.get_formatted_arcgisdetails(lat, lng, 1)
-        #         arcgis_details3 = provider.get_formatted_arcgisdetails(lat, lng, 3)
-
-        #         # grab the nearby locations
-        #         n_process, nearby = self.get_nearby_places.delay(lat, lng), []
-        #         nearby_listener = self._celery_listener(n_process, nearby)
-        #         nearby_listener.start()
-
-        #         # obtain the 1, 3 mile demographic details asynchronously
-        #         d_process, demo = self.get_environics_demographics.delay(lat, lng), []
-        #         demo_listener = self._celery_listener(d_process, demo)
-        #         demo_listener.start()
-
-        #         # grab the 1, 3 mile psychographic deatils asynchronously
-        #         p_process, psycho = self.get_spatial_personas.delay(lat, lng), []
-        #         psycho_listener = self._celery_listener(p_process, psycho)
-        #         psycho_listener.start()
-
-        #         location["arcgis_details1"] = arcgis_details1
-
-        #         # Obtain the keyfacts
-        #         key_facts_demo = FastLocationDetailsAPI.obtain_key_demographics("", location)
-        #         key_facts_nearby = FastLocationDetailsAPI.obtain_key_nearby("", google_location, key_facts_demo['mile'])
-        #         key_facts_demo.update({
-        #             "num_metro": len(key_facts_nearby["nearby_metro"]),
-        #             "num_universities": len(key_facts_nearby["nearby_university"]),
-        #             "num_hospitals": len(key_facts_nearby["nearby_hospitals"]),
-        #             "num_apartments": len(key_facts_nearby["nearby_apartments"])
-        #         })
-        #         key_facts = key_facts_demo
-        #         location["nearby_metro"] = key_facts_nearby["nearby_metro"]
-
-        #         _, nearby = nearby_listener.join(), nearby[0]
-        #         _, demo = demo_listener.join(), demo[0]
-        #         _, psycho = psycho_listener.join(), psycho[0]
-
-        #         location_details['arcgis_details1'] = arcgis_details1
-        #         location_details['arcgis_details3'] = arcgis_details3
-
-        #         location_details.update(nearby)
-        #         location_details.update(demo)
-        #         location_details.update(psycho)
-        #         location_details["key_facts"] = key_facts
-        #     else:
-        #         location["arcgis_details1"] = provider.get_formatted_arcgisdetails(lat, lng, 1)
-        #         key_facts_demo = FastLocationDetailsAPI.obtain_key_demographics("", location)
-        #         key_facts_nearby = FastLocationDetailsAPI.obtain_key_nearby("", google_location, key_facts_demo['mile'])
-
-        #         key_facts_demo.update({
-        #             "num_metro": len(key_facts_nearby["nearby_metro"]),
-        #             "num_universities": len(key_facts_nearby["nearby_university"]),
-        #             "num_hospitals": len(key_facts_nearby["nearby_hospitals"]),
-        #             "num_apartments": len(key_facts_nearby["nearby_apartments"])
-        #         })
-
-        #         key_facts = key_facts_demo
-        #         location["nearby_metro"] = key_facts_nearby["nearby_metro"]
-        #         location_details["key_facts"] = key_facts
-
-        #         for item in ['name', 'rating', 'user_ratings_total', 'reviews', 'international_phone_number',
-        #                      'foursquare_categories', 'formatted_address', 'detailed', 'types', 'reference',
-        #                      'price_level', 'plus_code', 'place_id', 'photos', 'icon', '_id', 'formatted_phone_number',
-        #                      'url', 'opening_hours']:
-        #             if item in location_details:
-        #                 location_details.pop(item)
-
-        #     property_params['location_details'] = location_details
-
-        # match_listener.join()
-        # space_params['brands'] = match_details[0]
-
-        # property_id = None
-        # if 'property_id' not in validated_params:
-        #     # TODO: store the location details in the database and generate_id
-        #     property_id, space_id = landlord_provider.add_property(property_params, space_params)
-        # else:
-        #     space_id = landlord_provider.update_property_with_id(validated_params['property_id'], space_params)
-
-        # response = {
-        #     'status': status.HTTP_200_OK,
-        #     'status_detail': "Success",
-        #     'property_id': property_id if property_id else validated_params['property_id'],
-        #     'space_id': space_id,
-        #     'brands': space_params['brands']
-        # }
-
-        # return Response(response, status=status.HTTP_200_OK)
+            'brands': brands,
+        }, status=status.HTTP_200_OK)
 
     def check_property_exists(self, address):
         existing_property = utils.DB_PROPERTY.find_one({'address': address}, {'_id': 1})

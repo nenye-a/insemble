@@ -44,12 +44,72 @@ def get_matching_tenants(address):  # , sqft, rent=None, tenant_type=None, exclu
     best_matches["num_existing_locations"] = 10
     best_matches["on_platform"] = True
     best_matches["interested"] = False
-    best_matches["verified"] = False
-    best_matches["claimed"] = False
-    best_matches["matches_tenant_type"] = False
     best_matches["photo_url"] = best_matches["brand_id"].apply(get_photos)
 
     return best_matches.to_dict(orient='records')
+
+
+def get_matching_tenants_new(eval_property, space_id):
+
+    # grab my location details
+    my_location = utils.DB_PROPERTY.find_one({'_id': eval_property['location_id']})
+    for item in eval_property['spaces']:
+        if item['space_id'] == space_id:
+            my_space = item
+
+    # fetch the tenants that we will use for matching and kick off matching.
+    tenants = utils.DB_BRANDS.find({
+        "$or": [{'regions_present.regions': "California"}, {'regions_present.regions': "Nationwide"}],
+        'number_found_locations': {'$gt': 1},
+        'average_arcgis_demographics': {'$exists': True},
+        'average_environics_demographics': {'$exists': True},
+        'average_spatial_psychographics': {'$exists': True}
+    })
+    tenant_dict = {tenant['brand_name']: tenant for tenant in tenants}
+    match_list = list(tenant_dict.values()) + [my_location]
+    matches = landlord_matching.generate_matches(match_list)
+
+    final_matches = []
+    for match in matches:
+        brand = tenant_dict[match['brand_name']]
+        name = brand['alias']
+
+        category = brand['categories'][0]['categories'][0]['name']
+
+        match_value = match['match_value']
+        number_existing_locations = brand['number_found_locations']
+
+        most_popular_store = utils.DB_PLACES.find({
+            'brand_id': ObjectId(match['brand_id']),
+            'popularity.source': "Google"
+        }, {'photos.main': 1}).sort([('popularity.user_ratings_total', -1)])
+
+        for store in most_popular_store:
+            photo_url = store['photos']['main'] if 'main' in store['photos'] else None
+            if photo_url:
+                break
+
+        interested = False
+
+        if brand['typical_squarefoot']:
+            for ft in brand['typical_squarefoot']:
+                square_foot_range = [ft['min'], ft['max'] or 2000]
+                if utils.in_range(my_space['sqft'], square_foot_range):
+                    match_value = min(match_value * 1.05, 99)
+                else:
+                    match_value = max(match_value * 0.75, 0)
+
+        final_matches.append({
+            'name': name,
+            'match_value': match_value,
+            'category': category,
+            'interested': interested,
+            'number_existing_locations': number_existing_locations,
+            'photo_url': photo_url,
+            'brand_id': match['brand_id']
+        })
+
+    return final_matches
 
 
 def get_photos(location_id):

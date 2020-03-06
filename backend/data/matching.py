@@ -186,21 +186,21 @@ def generate_matches(location_address, name=None, options={}):
     print("** Matching: Post-processing start.")
     processed_diff = postprocess_match_df(diff, options)
     print("** Matching: Evaluation Ongoing.")
-    norm_df = weight_and_evaluate(processed_diff)
+    weighted_df = weight_and_evaluate(standardize(processed_diff))
     # re-assign the important tracking information (location id & positioning)
-    norm_df['lat'], norm_df['lng'], norm_df['loc_id'], norm_df['_id'] = df['lat'], df['lng'], df['loc_id'], df['_id']
+    weighted_df['lat'], weighted_df['lng'], weighted_df['loc_id'], weighted_df['_id'] = df['lat'], df['lng'], df['loc_id'], df['_id']
     print("** Matching: Matching complete, results immenent.")
     # calculate matches for all vectors
-    norm_df["match_value"] = norm_df["error_sum"].apply(_map_difference_to_match)
-    best = norm_df[norm_df['error_sum'] < .3].copy()
+    weighted_df["match_value"] = weighted_df["error_sum"].apply(_map_difference_to_match)
+    best = weighted_df[weighted_df['error_sum'] < .3].copy()
     # Convert distance to match value, and convert any object ids to strings to allow JSON serialization
     best["match"] = best["error_sum"].apply(_map_difference_to_heatmap)
 
     # RETURN VALUES AND UPDATE DATABASE
     # "match" referes to the heatmap rating (hasn't been changed due to frontend dependency)
     # "match_value" refers to the actual map value
-    norm_df['match_value'] = norm_df['match_value'].round()
-    all_dict = norm_df.set_index('_id')['match_value'].to_dict()
+    weighted_df['match_value'] = weighted_df['match_value'].round()
+    all_dict = weighted_df.set_index('_id')['match_value'].to_dict()
 
     best_dict = best[['lat', 'lng', 'match']].to_dict(orient='records')
     tenant_id = utils.DB_TENANT.insert({'match_values': all_dict})
@@ -507,12 +507,15 @@ def postprocess_match_df(difference_dataframe, options):
     return difference_dataframe
 
 
-# will normalize, weight, and evaluate the vectors
-def weight_and_evaluate(processed_difference_df):
-
-    # normalize between 0 and 1
-    normalized_dataframe = (processed_difference_df - processed_difference_df.min()) / \
+def standardize(processed_difference_df):
+    # standardize the differences so that you can more equivalently weight them.
+    # standardizes them between 0 and one.
+    return (processed_difference_df - processed_difference_df.min()) / \
         (processed_difference_df.max() - processed_difference_df.min())
+
+
+# will normalize, weight, and evaluate the vectors
+def weight_and_evaluate(standardized_df):
 
     # ------
     # old weighting
@@ -579,10 +582,10 @@ def weight_and_evaluate(processed_difference_df):
     }
 
     weight_df = pd.DataFrame([weight])
-    normalized_dataframe["error_sum"] = normalized_dataframe[list(weight.keys())].copy().dot(weight_df.transpose()) / \
+    standardized_df["error_sum"] = standardized_df[list(weight.keys())].copy().dot(weight_df.transpose()) / \
         sum(weight.values())
 
-    return normalized_dataframe
+    return standardized_df
 
 
 def _map_difference_to_match(difference):
