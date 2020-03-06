@@ -24,7 +24,10 @@ type Props = {
 export default function PreviewListing(props: Props) {
   let { state: landlordOnboardingState } = props;
   let { confirmLocation, confirmTenant, spaceListing } = landlordOnboardingState;
-  let propertyPhotos = spaceListing?.propertyPhotos.map((item) => item?.preview || '') || [];
+  let propertyPhotos =
+    spaceListing?.propertyPhotos.map((item) =>
+      item && typeof item !== 'string' ? item?.preview : null
+    ) || [];
   let history = useHistory();
   let [
     createProperty,
@@ -49,11 +52,11 @@ export default function PreviewListing(props: Props) {
       equipments,
       availability,
     } = spaceListing;
-    if (mainPhoto) {
+    if (mainPhoto && typeof mainPhoto !== 'string') {
       let mainPhotoBlob = getImageBlob(mainPhoto.file);
       let additionalPhotosBlob = [];
       for (let photo of propertyPhotos) {
-        if (!!photo) {
+        if (!!photo && typeof photo !== 'string') {
           let photoBlob = getImageBlob(photo.file);
           additionalPhotosBlob.push(photoBlob);
         }
@@ -114,7 +117,12 @@ export default function PreviewListing(props: Props) {
         targetNeighborhood=""
       />
       <RowedView flex>
-        <PhotoGallery images={[spaceListing?.mainPhoto?.preview || '', ...propertyPhotos]} />
+        <PhotoGallery
+          images={[
+            (typeof spaceListing.mainPhoto !== 'string' && spaceListing?.mainPhoto?.preview) || '',
+            ...propertyPhotos,
+          ]}
+        />
         <CardsContainer flex>
           <SummaryCard
             priceSqft={`$${spaceListing.pricePerSqft.toString()}`}
