@@ -8,10 +8,10 @@ let resetPasswordLandlordResolver: FieldResolver<
   'Mutation',
   'resetPasswordLandlord'
 > = async (_, { verificationCode, password }, context: Context) => {
-  let [verifyId, tokenEmail] = verificationCode
+  let [verifyId, tokenQuery] = verificationCode
     ? verificationCode.split(':')
     : [];
-  if (!verifyId || !tokenEmail) {
+  if (!verifyId || !tokenQuery) {
     throw new Error('Invalid verification code');
   }
   let landlordRPVerificationId = Base64.decode(verifyId);
@@ -34,7 +34,7 @@ let resetPasswordLandlordResolver: FieldResolver<
     throw new Error('Verification code already used.');
   }
 
-  if (tokenEmail !== landlordRPVerification.tokenEmail) {
+  if (tokenQuery !== landlordRPVerification.tokenQuery) {
     throw new Error('Invalid token');
   }
 

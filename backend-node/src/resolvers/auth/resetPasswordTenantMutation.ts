@@ -34,7 +34,7 @@ let resetPasswordTenantResolver: FieldResolver<
     throw new Error('Verification code already used.');
   }
 
-  if (tokenQuery !== tenantRPVerification.tokenEmail) {
+  if (tokenQuery !== tenantRPVerification.tokenQuery) {
     throw new Error('Invalid token');
   }
 
