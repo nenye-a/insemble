@@ -28,12 +28,14 @@ export * from './landlord/tenantDetailsQuery';
 export * from './brand/createBrandMutation';
 export * from './brand/editBrandMutation';
 export * from './brand/brandsQuery';
+export * from './brand/deleteBrandMutation';
 
 export * from './property/propertiesQuery';
 export * from './property/createPropertyMutation';
 export * from './property/editPropertyMutation';
 export * from './property/editSpaceMutation';
 export * from './property/spacesQuery';
+export * from './property/deletePropertyMutation';
 export * from './matches/propertyMatchesQuery';
 export * from './details/propertyDetailsQuery';
 
