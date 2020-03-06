@@ -19,12 +19,21 @@ type Params = {
 };
 export default function LandlordOnboarding() {
   let params = useParams<Params>();
+  let { formStep } = params;
   let [selectedStep, setSelectedStep] = useState(params.formStep || 'step-1');
   let [state, dispatch] = useReducer(landlordOnboardingReducer, landlordOnboardingInitialState);
+  let {
+    confirmLocation: { physicalAddress },
+  } = state;
 
   useEffect(() => {
-    setSelectedStep(params.formStep || 'step-1');
-  }, [params.formStep]);
+    // putting here as well to avoid blinking
+    if (!physicalAddress && formStep !== 'step-1') {
+      setSelectedStep('step-1');
+    } else {
+      setSelectedStep(formStep || 'step-1');
+    }
+  }, [formStep, physicalAddress]);
 
   const SEGMENTS = [
     {
@@ -61,8 +70,8 @@ export default function LandlordOnboarding() {
   let selectedPage = SEGMENTS.find((item) => item.path === selectedStep) || SEGMENTS[0];
 
   let Content = selectedPage.content;
-  if (!params?.formStep) {
-    // TODO: check if user directly hit next step before filling previous form
+
+  if (!formStep || (!physicalAddress && formStep !== 'step-1')) {
     return <Redirect to="/landlord/new-property/step-1" />;
   }
 
