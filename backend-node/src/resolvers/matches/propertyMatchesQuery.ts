@@ -65,7 +65,7 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
           address: location.address,
           property_type:
             propertyType.length > 0 ? JSON.stringify(propertyType) : undefined,
-          space_type: JSON.stringify([condition]),
+          space_condition: JSON.stringify([condition]),
           tenant_type:
             businessType.length > 0 ? JSON.stringify(businessType) : undefined,
           sqft,
