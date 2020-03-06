@@ -118,6 +118,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
           minZoom: 7,
           mapTypeControl: false,
           styles: GOOGLE_MAPS_STYLE,
+          fullscreenControl: false,
         }}
         onClick={(event) => onMapClick(event.latLng)}
       >
