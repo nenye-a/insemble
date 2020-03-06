@@ -14,19 +14,22 @@ export async function authSession(authToken: string | undefined) {
   ) {
     return null;
   }
-  let user =
+  let session =
     type === 'TENANT'
-      ? await prisma.tenantSession
-          .findOne({
-            where: { id: sessionID },
-          })
-          .user()
-      : await prisma.landlordSession
-          .findOne({
-            where: { id: sessionID },
-          })
-          .user();
-  if (!user) {
+      ? await prisma.tenantSession.findOne({
+          where: { id: sessionID },
+          include: { user: true },
+        })
+      : await prisma.landlordSession.findOne({
+          where: { id: sessionID },
+          include: { user: true },
+        });
+  if (!session) {
+    return null;
+  }
+  let { user, token } = session;
+
+  if (token !== sessionToken) {
     return null;
   }
   return {

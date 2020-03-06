@@ -1,7 +1,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://prisma:prisma@localhost:5432/insemble?schema=public"
+  url = "***"
 }
 
 
@@ -10,28 +10,19 @@ generator client {
 }
 
 enum TenantTier {
-  FREE
-  EXPLORE
-  SMART
-  PROFESSIONAL
+  FREE EXPLORE SMART PROFESSIONAL
 }
 
 enum LandlordTier {
-  FREE
-  EXPLORE
-  SMART
-  PROFESSIONAL
+  FREE EXPLORE SMART PROFESSIONAL
 }
 
 enum NewLocationPlan {
-  YES
-  NOT_ACTIVE
-  NOT_PLANNING
+  YES NOT_ACTIVE NOT_PLANNING
 }
 
 enum MarketingPreference {
-  PUBLIC
-  PRIVATE
+  PUBLIC PRIVATE
 }
 
 model MatchingProperty {
@@ -89,7 +80,6 @@ model LandlordUser {
   description          String?
   properties           Property[]
   tier                 LandlordTier
-  pendingEmail         Boolean      @default(false)
   stripeCustomerId     String?      @unique
   stripeSubscriptionId String?      @unique
 }
@@ -182,13 +172,6 @@ model LandlordRegisterVerification {
   email         String
   landlordInput String
   verified      Boolean @default(false)
-}
-
-model LandlordEmailVerification {
-  id       String       @default(cuid()) @id
-  email    String
-  user     LandlordUser
-  verified Boolean      @default(false)
 }
 
 model SubscriptionTenantHistory {

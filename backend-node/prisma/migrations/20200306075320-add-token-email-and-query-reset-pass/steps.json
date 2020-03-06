@@ -1,0 +1,33 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "TenantResetPasswordVerification",
+      "field": "tokenEmail",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantResetPasswordVerification",
+      "field": "tokenQuery",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LandlordResetPasswordVerification",
+      "field": "tokenEmail",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LandlordResetPasswordVerification",
+      "field": "tokenQuery",
+      "type": "String",
+      "arity": "Required"
+    }
+  ]
+}

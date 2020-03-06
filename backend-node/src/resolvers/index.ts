@@ -36,3 +36,11 @@ export * from './property/editSpaceMutation';
 export * from './property/spacesQuery';
 export * from './matches/propertyMatchesQuery';
 export * from './details/propertyDetailsQuery';
+
+export * from './auth/forgotPasswordTenantMutation';
+export * from './auth/resetPasswordTenantMutation';
+export * from '.DELETED_BASE64_STRING';
+
+export * from './auth/forgotPasswordLandlordMutation';
+export * from './auth/resetPasswordLandlordMutation';
+export * from '.DELETED_BASE64_STRING';
