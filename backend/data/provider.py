@@ -939,6 +939,8 @@ def get_nearby_places(lat, lng, radius=1):
 
         # update the dictionary with this search details
         nearby[nearby_tag] = [{
+            'lat': place['geometry']['location']['lat'],
+            'lng': place['geometry']['location']['lng'],
             'distance': utils.distance(
                 (lat, lng),
                 (place['geometry']['location']['lat'],

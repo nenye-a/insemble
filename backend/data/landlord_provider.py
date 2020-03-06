@@ -8,6 +8,8 @@ import data.api.goog as google
 import data.api.foursquare as foursquare
 import data.api.arcgis as arcgis
 import data.api.environics as environics
+import data.api.anmspatial as anmspatial
+import data.api.spatial as spatial
 from bson import ObjectId
 
 
@@ -58,6 +60,59 @@ def get_photos(location_id):
 
     photo_reference = space['photos'][0]['photo_reference']
     return google.get_photo_url(photo_reference)
+
+
+def get_property(property_id):
+    return utils.DB_PROPERTY.find_one({'_id': ObjectId(property_id)})
+
+
+def build_location(lat, lng):
+    """
+    Provided a latitude and longitude, grabs the nearest location with details. If one does not exist it just generates
+    one entirely new.
+    """
+    max_distance = 0.10
+
+    locations = utils.DB_LOCATIONS.find({'location': {
+        '$near': {
+            '$geometry': {
+                'type': 'Point',
+                'coordinates': [lng, lat]
+            },
+            '$maxDistance': utils.miles_to_meters(max_distance)
+        }
+    }})
+
+    if locations:
+        # return the closest location, as near returns the items sorted by distance
+        return list(locations)[0]
+
+    block = anmspatial.point_to_block(lat, lng, state='CA', prune_leading_zero=False)
+    blockgroup = block[:-3] if block else None
+    tract = block[:-4] if block else None
+    # return the built locationlocation
+    return {
+        'location': {
+            'type': "Point",
+            'coordinates': [lng, lat]
+        },
+        'block': block,
+        'blockgroup': blockgroup,
+        'tract': tract,
+        'environics_demographics': {
+            '1mile': environics.get_demographics(lat, lng, 1),
+            '3mile': environics.get_demographics(lat, lng, 3),
+            '5mile': environics.get_demographics(lat, lng, 5)},
+        'spatial_psychographics': {
+            '1mile': spatial.get_psychographics(lat, lng, 1),
+            '3mile': spatial.get_psychographics(lat, lng, 3),
+            '5mile': spatial.get_psychographics(lat, lng, 5)
+        },
+        'arcgis_demographics': {
+            '1mile': arcgis.details(lat, lng, 1),
+            '3mile': arcgis.details(lat, lng, 3)
+        }
+    }
 
 
 def add_property(property_params, space_params):
