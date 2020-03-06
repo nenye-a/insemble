@@ -4,6 +4,7 @@ import { Base64 } from 'js-base64';
 import { Context } from 'serverTypes';
 import { sendForgotPasswordEmail } from '../../helpers/sendEmail';
 import { NODE_ENV, FRONTEND_HOST } from '../../constants/constants';
+import getRandomBytes from '../../helpers/getRandomBytes';
 
 let forgotPasswordLandlordResolver: FieldResolver<
   'Mutation',
@@ -28,11 +29,15 @@ let forgotPasswordLandlordResolver: FieldResolver<
   if (existingLandlordRPVerification.length) {
     landlordRPVerification = existingLandlordRPVerification[0];
   } else {
+    let bytesEmail = await getRandomBytes(18);
+    let bytesQuery = await getRandomBytes(18);
     landlordRPVerification = await context.prisma.landlordResetPasswordVerification.create(
       {
         data: {
           user: { connect: { id: existing.id } },
           email: lowerCasedEmail,
+          tokenEmail: bytesEmail.toString('base64'),
+          tokenQuery: bytesQuery.toString('base64'),
         },
       },
     );
@@ -46,15 +51,25 @@ let forgotPasswordLandlordResolver: FieldResolver<
       },
       `${FRONTEND_HOST}/reset-password-landlord/${Base64.encodeURI(
         landlordRPVerification.id,
-      )}`,
+      )}:${landlordRPVerification.tokenEmail}`,
     );
   } else {
     // console the verification id so we could still test it on dev environment
     // eslint-disable-next-line no-console
-    console.log(Base64.encodeURI(landlordRPVerification.id));
+    console.log(
+      Base64.encodeURI(landlordRPVerification.id) +
+        ':' +
+        landlordRPVerification.tokenEmail,
+    );
   }
 
-  return { message: 'success', verificationId: landlordRPVerification.id };
+  return {
+    message: 'success',
+    verificationId:
+      Base64.encodeURI(landlordRPVerification.id) +
+      ':' +
+      landlordRPVerification.tokenQuery,
+  };
 };
 
 export let forgotPasswordLandlord = mutationField('forgotPasswordLandlord', {

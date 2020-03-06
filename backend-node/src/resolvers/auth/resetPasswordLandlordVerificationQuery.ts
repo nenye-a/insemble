@@ -6,7 +6,13 @@ let resetPasswordLandlordResolver: FieldResolver<
   'Query',
   'resetPasswordLandlordVerification'
 > = async (_: Root, { verificationCode }, context: Context) => {
-  let landlordRPVerificationId = Base64.decode(verificationCode);
+  let [verifyId, tokenEmail] = verificationCode
+    ? verificationCode.split(':')
+    : [];
+  if (!verifyId || !tokenEmail) {
+    throw new Error('Invalid verification code');
+  }
+  let landlordRPVerificationId = Base64.decode(verifyId);
   let landlordRPVerification = await context.prisma.landlordResetPasswordVerification.findOne(
     {
       where: {
@@ -25,7 +31,17 @@ let resetPasswordLandlordResolver: FieldResolver<
     throw new Error('Verification code already used.');
   }
 
-  return { message: 'success', verificationId: landlordRPVerification.id };
+  if (tokenEmail !== landlordRPVerification.tokenEmail) {
+    throw new Error('Invalid token');
+  }
+
+  return {
+    message: 'success',
+    verificationId:
+      Base64.encodeURI(landlordRPVerification.id) +
+      ':' +
+      landlordRPVerification.tokenQuery,
+  };
 };
 
 let resetPasswordLandlordVerification = queryField(
