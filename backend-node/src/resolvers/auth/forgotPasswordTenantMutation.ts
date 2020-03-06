@@ -45,7 +45,7 @@ let forgotPasswordTenantResolver: FieldResolver<
   let emailVerifyCode =
     Base64.encodeURI(tenantRPVerification.id) +
     ':' +
-    tenantRPVerification.tokenEmail;
+    Base64.encodeURI(tenantRPVerification.tokenEmail);
 
   if (NODE_ENV === 'production') {
     sendForgotPasswordEmail(
