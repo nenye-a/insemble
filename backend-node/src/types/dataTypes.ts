@@ -48,6 +48,11 @@ export type DemographicStat = {
   growth?: number;
 };
 
+export type DemographicStatProperty = {
+  value: number;
+  growth?: number;
+};
+
 type NearbyObject = {
   lat: number;
   lng: number;
@@ -102,6 +107,47 @@ type Demographics = {
   gender: {
     male: DemographicStat;
     female: DemographicStat;
+  };
+};
+
+type DemographicsProperty = {
+  age: {
+    '<18': DemographicStatProperty;
+    '18-24': DemographicStatProperty;
+    '25-34': DemographicStatProperty;
+    '35-44': DemographicStatProperty;
+    '45-54': DemographicStatProperty;
+    '55-64': DemographicStatProperty;
+    '65+': DemographicStatProperty;
+  };
+  income: {
+    '<50K': DemographicStatProperty;
+    '$50K-$74K': DemographicStatProperty;
+    '$75K-$124K': DemographicStatProperty;
+    '$125K-$199K': DemographicStatProperty;
+    '$200K+': DemographicStatProperty;
+  };
+  ethnicity: {
+    white: DemographicStatProperty;
+    black: DemographicStatProperty;
+    indian: DemographicStatProperty;
+    asian: DemographicStatProperty;
+    pacific_islander: DemographicStatProperty;
+    other: DemographicStatProperty;
+  };
+  education: {
+    some_highschool: DemographicStatProperty;
+    high_school: DemographicStatProperty;
+    some_college: DemographicStatProperty;
+    associate: DemographicStatProperty;
+    bachelor: DemographicStatProperty;
+    masters: DemographicStatProperty;
+    professional: DemographicStatProperty;
+    doctorate: DemographicStatProperty;
+  };
+  gender: {
+    male: DemographicStatProperty;
+    female: DemographicStatProperty;
   };
 };
 
@@ -193,4 +239,34 @@ export type PropertyMatchesType = {
   property_id?: string;
   space_id?: string;
   brands?: Array<PropertyMatchesBrand>;
+};
+
+export type PropertyDetailsType = {
+  status: number;
+  status_detail: string;
+  result?: {
+    key_facts: {
+      mile: number;
+      DaytimePop: number;
+      MedHouseholdIncome: number;
+      TotalHousholds: number;
+      'HouseholdGrowth2017-2022': number;
+      num_metro: number;
+      num_universities: number;
+      num_hospitals: number;
+      num_apartments: number;
+    };
+    commute?: {
+      'Public Transport': number;
+      Bicycle: number;
+      Carpooled: number;
+      'Drove Alone': number;
+      Walked: number;
+      'Worked at Home': number;
+    };
+    personas: Array<Personas>;
+    demographics1?: DemographicsProperty;
+    demographics3?: DemographicsProperty;
+    demographics5?: DemographicsProperty;
+  };
 };
