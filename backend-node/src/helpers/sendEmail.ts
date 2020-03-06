@@ -28,4 +28,22 @@ async function sendVerificationEmail(
   await sgMail.send(msg);
 }
 
-export { sendVerificationEmail };
+async function sendForgotPasswordEmail(
+  receiver: { email: string; name: string },
+  link: string,
+) {
+  let htmlContent = ejs.render(emailVerificationTemplate, {
+    name: receiver.name,
+    url: link,
+  });
+  let msg = {
+    to: receiver.email,
+    from: 'Insemble <no-reply@insemble.co>',
+    subject: 'Forgot password user Insemble',
+    text: `We received a request to reset the password directed to this e-mail address. Please proceed by clicking this link : ${link}`,
+    html: htmlContent,
+  };
+  await sgMail.send(msg);
+}
+
+export { sendVerificationEmail, sendForgotPasswordEmail };

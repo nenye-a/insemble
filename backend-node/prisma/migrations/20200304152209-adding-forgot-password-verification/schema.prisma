@@ -1,7 +1,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://prisma:prisma@localhost:5432/insemble?schema=public"
+  url = "***"
 }
 
 
@@ -89,7 +89,6 @@ model LandlordUser {
   description          String?
   properties           Property[]
   tier                 LandlordTier
-  pendingEmail         Boolean      @default(false)
   stripeCustomerId     String?      @unique
   stripeSubscriptionId String?      @unique
 }
@@ -184,13 +183,6 @@ model LandlordRegisterVerification {
   verified      Boolean @default(false)
 }
 
-model LandlordEmailVerification {
-  id       String       @default(cuid()) @id
-  email    String
-  user     LandlordUser
-  verified Boolean      @default(false)
-}
-
 model SubscriptionTenantHistory {
   id             String     @default(cuid()) @id
   subscriptionId String
@@ -215,19 +207,15 @@ model TenantEmailVerification {
 }
 
 model TenantResetPasswordVerification {
-  id         String     @default(cuid()) @id
-  email      String
-  user       TenantUser
-  verified   Boolean    @default(false)
-  tokenEmail String
-  tokenQuery String
+  id       String     @default(cuid()) @id
+  email    String
+  user     TenantUser
+  verified Boolean    @default(false)
 }
 
 model LandlordResetPasswordVerification {
-  id         String       @default(cuid()) @id
-  email      String
-  user       LandlordUser
-  verified   Boolean      @default(false)
-  tokenEmail String
-  tokenQuery String
+  id       String     @default(cuid()) @id
+  email    String
+  user     LandlordUser
+  verified Boolean    @default(false)
 }
