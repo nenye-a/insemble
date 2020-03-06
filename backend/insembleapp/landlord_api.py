@@ -408,39 +408,48 @@ class TenantDetailsAPI(AsynchronousAPI):
         validated_params = serializer.validated_data
 
         tenant_id = validated_params['tenant_id']
-        place = landlord_provider.tenant_details(tenant_id)
-
-        if not place:
+        brand = utils.DB_BRANDS.find_one({'_id': ObjectId(tenant_id)})
+        if not brand:
             return Response({
-                'status': 200,
-                'status_detail': 'Successful Call, but No Details Found',
-                'result': {}
-            })
+                'status': status.HTTP_404_NOT_FOUND,
+                'status_detail': ['Brand not found, please check the provided id'],
+            }, status=status.HTTP_404_NOT_FOUND)
 
-        demographics = FastLocationDetailsAPI.obtain_demographics(place)
-        personas = provider.fill_personas({
-            key: value for key, value in list(place["psycho1"].items())[:3]
-        })
+        personas = provider.fill_personas(
+            {
+                key: value for key, value in list(sorted(
+                    brand['average_spatial_psychographics']["1mile"].items(), key=lambda item: item[1]))[:3]
+            }
+        )
+
+        demographics = self.convert_demographics(brand['average_environics_demographics'])
+        demographics["1mile"].pop("commute") if 'commute' in demographics["1mile"] else None
+        demographics["3mile"].pop("commute") if 'commute' in demographics["1mile"] else None
+        demographics["5mile"].pop("commute") if 'commute' in demographics["1mile"] else None
 
         # TODO: algorithmically generate overview and requirement details:
-        overview = "Actively looking for a space in the Greater Los Angeles Area"
-        description = place["name"] + " is an awesome new restailer/restaurant in town"
+        overview = "Expanding in " + ", ".join(brand['regions_present']['regions']) if 'regions' in brand['regions_present'] else ""
+        description = brand['description'] if brand['description'] else "No description provided."
+
         physical_requirements = {
-            'minimum sqft': 4000,
-            'frontage width': 40,
-            'condition': "White Box"
+            'minimum sqft': brand['typical_squarefoot'][0]['min'] if len(brand['typical_squarefoot']) > 0 else None,
+            'frontage width': None,
+            'condition': "",
+            'property_type': brand['typical_property_type']['type'] if len(brand['typical_property_type']) > 0 else None
         }
 
         key_facts = {
-            'num_stores': 10,
-            'years_operating': 7,
-            'rating': place["rating"] if 'rating' in place else 4.3,
-            'num_reviews': place["user_ratings_total"] if 'user_ratings_total' in place else 203
+            'num_stores': brand["number_found_locations"],
+            'years_operating': None,
+            'rating': brand["average_popularity"][0]['rating'] if len(brand['average_popularity']) > 0 else None,
+            'num_reviews': brand["average_popularity"][0]['user_ratings_total'] if len(brand['average_popularity']) > 0 else None
         }
 
         response = {
             'status': 200,
             'status_detail': 'Success',
+            'brand_name': brand['brand_name'],
+            'category': brand['categories'][0]['categories'][0]['short_name'],
             'result': {
                 'key_facts': key_facts,
                 'tenant': {
@@ -458,6 +467,13 @@ class TenantDetailsAPI(AsynchronousAPI):
         }
 
         return Response(response, status=status.HTTP_200_OK)
+
+    def convert_demographics(self, demographic_dict):
+        return {
+            '1mile': provider.get_demographics(1, 1, 1, demographic_dict=demographic_dict['1mile']),
+            '3mile': provider.get_demographics(1, 1, 1, demographic_dict=demographic_dict['3mile']),
+            '5mile': provider.get_demographics(1, 1, 1, demographic_dict=demographic_dict['5mile'])
+        }
 
 
 class UpdateSpaceBrandsAPI(AsynchronousAPI):
