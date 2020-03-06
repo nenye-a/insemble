@@ -35,7 +35,7 @@ type Props = {
 
 export default function TenantOverview({ keyFacts, tenantView }: Props) {
   if (tenantView) {
-    let { overview, description, minSqft, maxSqft, ceilingHeight, condition } = tenantView;
+    let { overview, description, minSqft, ceilingHeight, condition } = tenantView;
     return (
       <View>
         <Container>
@@ -49,13 +49,11 @@ export default function TenantOverview({ keyFacts, tenantView }: Props) {
           <SpaceContainer>
             <OverviewCard title="Physical Space">
               <TextRow>
-                <Text>Target Sqft:</Text>
-                <ContentText>
-                  {minSqft} - {maxSqft}
-                </ContentText>
+                <Text>Min Sqft:</Text>
+                <ContentText>{minSqft}</ContentText>
               </TextRow>
               <TextRow>
-                <Text>Target Ceiling Height:</Text>
+                <Text>Min Frontage:</Text>
                 <ContentText>{ceilingHeight}</ContentText>
               </TextRow>
               <TextRow>

@@ -278,7 +278,6 @@ export const GET_TENANT_DETAILS = gql`
         overview
         description
         minSqft
-        maxSqft
         ceilingHeight
         condition
       }

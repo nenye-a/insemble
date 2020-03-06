@@ -23,7 +23,6 @@ export let TenantView = objectType({
     t.string('overview');
     t.string('description');
     t.int('minSqft');
-    t.int('maxSqft');
     t.int('ceilingHeight');
     t.string('condition');
   },
