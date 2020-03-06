@@ -26,6 +26,7 @@ export default function LandlordLocationDetails() {
     variables: {
       propertyId,
     },
+    notifyOnNetworkStatusChange: true,
   });
 
   let keyFactsData = data?.propertyDetails.keyFacts;
