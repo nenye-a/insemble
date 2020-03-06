@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, View, Text, TabBar } from '../../core-ui';
-import { PieChart, Pie, Cell } from 'recharts';
+import { PieChart, Pie, Cell, Legend } from 'recharts';
 import styled from 'styled-components';
 import {
   FONT_WEIGHT_BOLD,
@@ -8,7 +8,7 @@ import {
   FONT_SIZE_MEDIUM,
   FONT_SIZE_XXLARGE,
 } from '../../constants/theme';
-import { THEME_COLOR, COMMUTE_CHART_COLORS, SECONDARY_COLOR } from '../../constants/colors';
+import { COMMUTE_CHART_COLORS, SECONDARY_COLOR } from '../../constants/colors';
 import { convertToKilos, roundDecimal, getKeyfactsValue } from '../../utils';
 import {
   LocationDetails_locationDetails_result_commute as LocationDetailsCommute,
@@ -37,7 +37,6 @@ export default function KeyFacts(props: Props) {
   let [selectedIndex, setSelectedIndex] = useState<number>(0);
   let [pieSize, setPieSize] = useState<Array<number>>([]);
   let isCommuteSelected = selectedIndex === 1;
-
   useEffect(() => {
     let size = () => {
       let target = document.getElementById('commute-view');
@@ -49,15 +48,14 @@ export default function KeyFacts(props: Props) {
     setPieSize(size());
   }, [selectedIndex]);
 
-  const RADIAN = Math.PI / 180;
   const renderCustomizedLabel = ({
-    cx = 0,
-    cy = 0,
-    midAngle = 0,
-    innerRadius = 0,
-    outerRadius = 0,
     index = 0,
+    x,
+    y,
   }: {
+    x: number;
+    y: number;
+
     cx?: number | string;
     cy?: number | string;
     midAngle?: number;
@@ -66,26 +64,10 @@ export default function KeyFacts(props: Props) {
     percent?: number;
     index?: number;
   }) => {
-    let x;
-    let y;
-    if (
-      typeof innerRadius === 'number' &&
-      typeof outerRadius === 'number' &&
-      typeof cx === 'number' &&
-      typeof cy === 'number'
-    ) {
-      const radius = innerRadius + outerRadius + 80;
-      x = cx - 20 + radius * Math.cos(-midAngle * RADIAN);
-      y = cy + radius * Math.sin(-midAngle * RADIAN);
-    }
-
     return (
       <>
-        <Label x={x} y={y} textAnchor="middle" dominantBaseline="central">
-          {commuteData && commuteData[index].name}
-        </Label>
         {commuteData && (
-          <Value x={x} y={y && y + 20} fill="black" textAnchor="middle" dominantBaseline="central">
+          <Value x={x} y={y} fill="black" textAnchor="middle" dominantBaseline="central">
             {formatCommuteValue(commuteData[index].value)}
           </Value>
         )}
@@ -151,6 +133,7 @@ export default function KeyFacts(props: Props) {
                     />
                   ))}
               </Pie>
+              <Legend layout="vertical" verticalAlign="middle" align="left" />
             </PieChart>
             {/* hiding this until data is ready */}
             {/* <TextView>
@@ -239,10 +222,6 @@ const Title = styled(Text)`
 //   font-size: ${FONT_SIZE_LARGE};
 //   font-weight: ${FONT_WEIGHT_LIGHT};
 // `;
-const Label = styled.text`
-  font-size: ${FONT_SIZE_MEDIUM};
-  fill: ${THEME_COLOR};
-`;
 const Value = styled.text`
   font-size: ${FONT_SIZE_MEDIUM};
   font-weight: ${FONT_WEIGHT_LIGHT};
@@ -252,6 +231,7 @@ const Value = styled.text`
 const CommuteView = styled(View)`
   flex: 1;
   justify-content: space-between;
+  padding-left: 20px;
 `;
 
 const NumberText = styled(Text)`

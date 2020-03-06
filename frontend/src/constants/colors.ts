@@ -64,4 +64,11 @@ export const LIGHT_GREY_ICON = LIGHT_GREY;
 export const FILTER_CAROUSEL_INDICATOR = LIGHT_GREY;
 
 // Pie chart colors
-export const COMMUTE_CHART_COLORS = ['#674EA7CC', '#674EA799', '#674EA766', '#674EA733'];
+export const COMMUTE_CHART_COLORS = [
+  '#1C004D',
+  '#3A2166',
+  '#502D8C',
+  '#5A35A6',
+  '#AE80FF',
+  '#673AB4',
+];
