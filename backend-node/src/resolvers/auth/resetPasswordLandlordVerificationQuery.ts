@@ -13,6 +13,7 @@ let resetPasswordLandlordResolver: FieldResolver<
     throw new Error('Invalid verification code');
   }
   let landlordRPVerificationId = Base64.decode(verifyId);
+  let decodedTokenEmail = Base64.decode(tokenEmail);
   let landlordRPVerification = await context.prisma.landlordResetPasswordVerification.findOne(
     {
       where: {
@@ -31,7 +32,7 @@ let resetPasswordLandlordResolver: FieldResolver<
     throw new Error('Verification code already used.');
   }
 
-  if (tokenEmail !== landlordRPVerification.tokenEmail) {
+  if (decodedTokenEmail !== landlordRPVerification.tokenEmail) {
     throw new Error('Invalid token');
   }
 

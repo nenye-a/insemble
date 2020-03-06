@@ -5,6 +5,7 @@ import { Base64 } from 'js-base64';
 import { Context } from 'serverTypes';
 import { sendVerificationEmail } from '../../helpers/sendEmail';
 import { NODE_ENV, HOST } from '../../constants/constants';
+import getRandomBytes from '../../helpers/getRandomBytes';
 
 let registerTenantResolver: FieldResolver<
   'Mutation',
@@ -20,6 +21,9 @@ let registerTenantResolver: FieldResolver<
   if (existing.length) {
     throw new Error('User already exists');
   }
+
+  let bytesEmail = await getRandomBytes(18);
+  let bytesQuery = await getRandomBytes(18);
   let tenantVerification = await context.prisma.tenantRegisterVerification.create(
     {
       data: {
@@ -32,9 +36,15 @@ let registerTenantResolver: FieldResolver<
           tier: 'FREE',
         }),
         email: lowerCasedEmail,
+        tokenEmail: bytesEmail.toString('base64'),
+        tokenQuery: bytesQuery.toString('base64'),
       },
     },
   );
+  let emailVerifyCode =
+    Base64.encodeURI(tenantVerification.id) +
+    ':' +
+    Base64.encodeURI(tenantVerification.tokenEmail);
 
   if (NODE_ENV === 'production') {
     sendVerificationEmail(
@@ -42,17 +52,21 @@ let registerTenantResolver: FieldResolver<
         email: `${tenant.email}`,
         name: `${tenant.firstName} ${tenant.lastName}`,
       },
-      `${HOST}/register-tenant-verification/${Base64.encodeURI(
-        tenantVerification.id,
-      )}`,
+      `${HOST}/register-tenant-verification/${emailVerifyCode}`,
     );
   } else {
     // console the verification id so we could still test it on dev environment
     // eslint-disable-next-line no-console
-    console.log(Base64.encodeURI(tenantVerification.id));
+    console.log(emailVerifyCode);
   }
 
-  return { message: 'success', verificationId: tenantVerification.id };
+  return {
+    message: 'success',
+    verificationId:
+      Base64.encodeURI(tenantVerification.id) +
+      ':' +
+      tenantVerification.tokenQuery,
+  };
 };
 
 export let registerTenant = mutationField('registerTenant', {

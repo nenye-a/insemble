@@ -5,6 +5,7 @@ import { Root, Context } from 'serverTypes';
 import { sendVerificationEmail } from '../../helpers/sendEmail';
 import { HOST, NODE_ENV } from '../../constants/constants';
 import { uploadS3 } from '../../helpers/uploadUtils';
+import getRandomBytes from '../../helpers/getRandomBytes';
 
 let editProfileResolver: FieldResolver<
   'Mutation',
@@ -28,6 +29,8 @@ let editProfileResolver: FieldResolver<
     if (emailExist && emailExist.id !== context.tenantUserId) {
       throw new Error('Email already exist');
     }
+
+    let bytesEmail = await getRandomBytes(18);
     let tenantEmailVerification = await context.prisma.tenantEmailVerification.create(
       {
         data: {
@@ -35,6 +38,7 @@ let editProfileResolver: FieldResolver<
           user: {
             connect: { id: context.tenantUserId },
           },
+          tokenEmail: bytesEmail.toString('base64'),
         },
       },
     );
@@ -46,20 +50,22 @@ let editProfileResolver: FieldResolver<
         id: context.tenantUserId,
       },
     });
+    let emailVerifyCode =
+      Base64.encodeURI(tenantEmailVerification.id) +
+      ':' +
+      Base64.encodeURI(tenantEmailVerification.tokenEmail);
     if (NODE_ENV === 'production') {
       sendVerificationEmail(
         {
           email: tenantEmailVerification.email,
           name: `${currentUser.firstName} ${currentUser.lastName}`,
         },
-        `${HOST}/email-tenant-verification/${Base64.encodeURI(
-          tenantEmailVerification.id,
-        )}`,
+        `${HOST}/email-tenant-verification/${emailVerifyCode}`,
       );
     } else {
       // console the verification id so we could still test it on dev environment
       // eslint-disable-next-line no-console
-      console.log(Base64.encodeURI(tenantEmailVerification.id));
+      console.log(emailVerifyCode);
     }
   }
   if (profile.oldPassword && profile.newPassword) {

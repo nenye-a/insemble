@@ -45,7 +45,7 @@ let forgotPasswordLandlordResolver: FieldResolver<
   let emailVerifyCode =
     Base64.encodeURI(landlordRPVerification.id) +
     ':' +
-    landlordRPVerification.tokenEmail;
+    Base64.encodeURI(landlordRPVerification.tokenEmail);
 
   if (NODE_ENV === 'production') {
     sendForgotPasswordEmail(

@@ -8,7 +8,14 @@ export let emailVerificationLandlordHandler = async (
   req: Request,
   res: Response,
 ) => {
-  let landlordEmailVerificationId = Base64.decode(req.params.token);
+  let [verifyId, tokenEmail] = req.params.token
+    ? req.params.token.split(':')
+    : [];
+  if (!verifyId || !tokenEmail) {
+    throw new Error('Invalid verification code');
+  }
+  let landlordEmailVerificationId = Base64.decode(verifyId);
+  let decodedTokenEmail = Base64.decode(tokenEmail);
   let landlordEmailVerification = await prisma.landlordEmailVerification.findOne(
     {
       where: {
@@ -25,6 +32,10 @@ export let emailVerificationLandlordHandler = async (
   }
   if (landlordEmailVerification.verified) {
     res.status(400).send('Verification code already used.');
+    return;
+  }
+  if (decodedTokenEmail !== landlordEmailVerification.tokenEmail) {
+    res.status(400).send('Invalid token');
     return;
   }
   await prisma.landlordUser.update({

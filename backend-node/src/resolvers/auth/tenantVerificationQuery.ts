@@ -7,10 +7,15 @@ let tenantVerificationResolver: FieldResolver<
   'Query',
   'tenantRegisterVerification'
 > = async (_: Root, { verificationId }, context: Context) => {
+  let [verifyId, tokenQuery] = verificationId ? verificationId.split(':') : [];
+  if (!verifyId || !tokenQuery) {
+    throw new Error('Invalid verification code');
+  }
+  let tenantVerificationId = Base64.decode(verifyId);
   let tenantVerification = await context.prisma.tenantRegisterVerification.findOne(
     {
       where: {
-        id: verificationId,
+        id: tenantVerificationId,
       },
     },
   );
@@ -28,6 +33,11 @@ let tenantVerificationResolver: FieldResolver<
   if (!tenantUser) {
     throw new Error('User not found');
   }
+
+  if (tokenQuery !== tenantVerification.tokenQuery) {
+    throw new Error('Invalid token');
+  }
+
   let brandId = tenantUser.brands.length ? tenantUser.brands[0].id : '';
 
   return {
@@ -44,6 +54,7 @@ let tenantVerification = queryField('tenantRegisterVerification', {
   type: 'TenantRegisterVerification',
   args: {
     verificationId: stringArg({
+      // TODO: fix naming args
       required: true,
     }),
   },
