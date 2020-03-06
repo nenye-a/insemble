@@ -241,6 +241,36 @@ export type PropertyMatchesType = {
   brands?: Array<PropertyMatchesBrand>;
 };
 
+export type PropertyDetailsType = {
+  status: number;
+  status_detail: string;
+  result?: {
+    key_facts: {
+      mile: number;
+      DaytimePop: number;
+      MedHouseholdIncome: number;
+      TotalHousholds: number;
+      'HouseholdGrowth2017-2022': number;
+      num_metro: number;
+      num_universities: number;
+      num_hospitals: number;
+      num_apartments: number;
+    };
+    commute?: {
+      'Public Transport': number;
+      Bicycle: number;
+      Carpooled: number;
+      'Drove Alone': number;
+      Walked: number;
+      'Worked at Home': number;
+    };
+    personas: Array<Personas>;
+    demographics1?: DemographicsProperty;
+    demographics3?: DemographicsProperty;
+    demographics5?: DemographicsProperty;
+  };
+};
+
 export type TenantDetail = {
   key_facts: {
     num_stores: number;
