@@ -12,6 +12,9 @@ let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
   __: Context,
 ) => {
   let {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    brand_name,
+    category,
     insights: { demographics1, demographics2, demographics3, personas },
     // eslint-disable-next-line @typescript-eslint/camelcase
     key_facts,
@@ -24,8 +27,8 @@ let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
     })
   ).data.result;
   return {
-    name: 'California Cheeseburgers',
-    category: 'Hamburger Restaurant',
+    name: brand_name,
+    category: category,
     keyFacts: {
       tenantPerformance: {
         storeCount: key_facts.num_stores,

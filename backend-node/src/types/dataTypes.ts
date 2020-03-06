@@ -272,6 +272,8 @@ export type PropertyDetailsType = {
 };
 
 export type TenantDetail = {
+  brand_name: string;
+  category: string;
   key_facts: {
     num_stores: number;
     years_operating: number;
