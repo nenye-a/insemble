@@ -73,7 +73,6 @@ let editProfileResolver: FieldResolver<
   let tenant = await context.prisma.tenantUser.update({
     data: {
       ...updateData,
-      email: profile.email?.toLocaleLowerCase(),
       avatar: avatar ? avatarUrl : undefined,
       password,
     },

@@ -49,9 +49,7 @@ export default function BasicProfile() {
   let { register, watch, handleSubmit, errors } = useForm();
   let role = asyncStorage.getRole();
 
-  let [{ email, firstName, lastName, company, title, pendingEmail }, setProfileInfo] = useState<
-    Profile
-  >({
+  let [profileInfo, setProfileInfo] = useState<Profile>({
     email: '',
     firstName: '',
     lastName: '',
@@ -59,18 +57,26 @@ export default function BasicProfile() {
     title: '',
     pendingEmail: false,
   });
+  let { email, firstName, lastName, company, title, pendingEmail } = profileInfo;
 
   let onTenantCompleted = (tenantResult: GetTenantProfile) => {
     let { profileTenant } = tenantResult;
     if (profileTenant) {
-      let { firstName, lastName, company, title, email } = profileTenant;
+      let {
+        firstName: tenantFirstName,
+        lastName: tenantLastName,
+        company: tenantCompany,
+        title: tenantTitle,
+        email: tenantEmail,
+        pendingEmail: tenantPendingEmail,
+      } = profileTenant;
       setProfileInfo({
-        email,
-        firstName,
-        lastName,
-        company,
-        title,
-        pendingEmail,
+        email: tenantEmail,
+        firstName: tenantFirstName,
+        lastName: tenantLastName,
+        company: tenantCompany,
+        title: tenantTitle,
+        pendingEmail: tenantPendingEmail,
       });
     }
   };
@@ -78,28 +84,38 @@ export default function BasicProfile() {
   let onLandlordCompleted = (landlordResult: GetLandlordProfile) => {
     let { profileLandlord } = landlordResult;
     if (profileLandlord) {
-      let { firstName, lastName, company, title } = profileLandlord;
+      let {
+        firstName: landlordFirstName,
+        lastName: landlordLastName,
+        company: landlordCompany,
+        title: landlordTitle,
+        email: landlordEmail,
+        pendingEmail: landlordPendingEmail,
+      } = profileLandlord;
       setProfileInfo({
-        email,
-        firstName,
-        lastName,
-        company,
-        title,
-        pendingEmail: false, // TODO
+        email: landlordEmail,
+        firstName: landlordFirstName,
+        lastName: landlordLastName,
+        company: landlordCompany,
+        title: landlordTitle,
+        pendingEmail: landlordPendingEmail,
       });
     }
   };
 
-  let [getTenant, { loading: tenantLoading }] = useLazyQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
+  let [getTenant, { loading: tenantLoading, refetch: refetchTenantProfile }] = useLazyQuery<
+    GetTenantProfile
+  >(GET_TENANT_PROFILE, {
     onCompleted: onTenantCompleted,
+    notifyOnNetworkStatusChange: true,
   });
 
-  let [getLandlord, { loading: landlordLoading }] = useLazyQuery<GetLandlordProfile>(
-    GET_LANDLORD_PROFILE,
-    {
-      onCompleted: onLandlordCompleted,
-    }
-  );
+  let [getLandlord, { loading: landlordLoading, refetch: refetchLandlordProfile }] = useLazyQuery<
+    GetLandlordProfile
+  >(GET_LANDLORD_PROFILE, {
+    onCompleted: onLandlordCompleted,
+    notifyOnNetworkStatusChange: true,
+  });
 
   useEffect(() => {
     if (role === Role.TENANT) {
@@ -113,12 +129,20 @@ export default function BasicProfile() {
   let [
     editTenantProfile,
     { data: editTenantData, loading: editTenantLoading, error: editTenantError },
-  ] = useMutation<EditTenantProfile, EditTenantProfileVariables>(EDIT_TENANT_PROFILE);
+  ] = useMutation<EditTenantProfile, EditTenantProfileVariables>(EDIT_TENANT_PROFILE, {
+    onCompleted: () => {
+      refetchTenantProfile();
+    },
+  });
 
   let [
     editLandlordProfile,
     { data: editLandlordData, loading: editLandlordLoading, error: editLandlordError },
-  ] = useMutation<EditLandlordProfile, EditLandlordProfileVariables>(EDIT_LANDLORD_PROFILE);
+  ] = useMutation<EditLandlordProfile, EditLandlordProfileVariables>(EDIT_LANDLORD_PROFILE, {
+    onCompleted: () => {
+      refetchLandlordProfile();
+    },
+  });
 
   let onSubmit = (fieldValues: FieldValues) => {
     let {
@@ -215,7 +239,7 @@ export default function BasicProfile() {
             name="email"
             errorMessage={
               pendingEmail
-                ? 'Your account is pending for e-mail verification. Please check your e-mail'
+                ? 'Your account is pending for e-mail verification. Please check your new e-mail'
                 : ''
             }
             ref={register({
