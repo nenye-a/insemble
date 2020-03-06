@@ -402,10 +402,10 @@ Properties:
             tenant_type: list[string],                  -> type of tenant that this space can actgually serve
             asking_rent: int,                           -> asking rent that the landlord would like for the property
             sqft: int,                                  -> square footage of the space
-            divisiable: string,                         -> whether the space can be potentially divided
-            dibisible_sqft: list[int]                   -> a list of the potential square footage the space can be split into
+            divisiable: boolean,                        -> whether the space can be potentially divided
+            divisible_sqft: list[int]                   -> a list of the potential square footage the space can be split into
             pro: boolean,                               -> whether or not the space is under the pro plan or not
-            visibile: boolean,                          -> whether or not the space is visible or not
+            visible: boolean,                           -> whether or not the space is visible or not
             media: {                                    -> a location of all the media associated with the space
                 photos: {
                     main: url_string,                   -> link to the main photo of this place  
