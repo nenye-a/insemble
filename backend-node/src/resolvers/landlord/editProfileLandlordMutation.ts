@@ -5,6 +5,7 @@ import { Root, Context } from 'serverTypes';
 import { uploadS3 } from '../../helpers/uploadUtils';
 import { NODE_ENV, HOST } from '../../constants/constants';
 import { sendVerificationEmail } from '../../helpers/sendEmail';
+import getRandomBytes from '../../helpers/getRandomBytes';
 
 let editProfileResolver: FieldResolver<
   'Mutation',
@@ -31,6 +32,7 @@ let editProfileResolver: FieldResolver<
       throw new Error('Email already exist');
     }
 
+    let bytesEmail = await getRandomBytes(18);
     let landlordEmailVerification = await context.prisma.landlordEmailVerification.create(
       {
         data: {
@@ -38,9 +40,14 @@ let editProfileResolver: FieldResolver<
           user: {
             connect: { id: context.landlordUserId },
           },
+          tokenEmail: bytesEmail.toString('base64'),
         },
       },
     );
+    let emailVerifyCode =
+      Base64.encodeURI(landlordEmailVerification.id) +
+      ':' +
+      Base64.encodeURI(landlordEmailVerification.tokenEmail);
 
     await context.prisma.landlordUser.update({
       data: {
@@ -57,14 +64,12 @@ let editProfileResolver: FieldResolver<
           email: landlordEmailVerification.email,
           name: `${currentUser.firstName} ${currentUser.lastName}`,
         },
-        `${HOST}/email-landlord-verification/${Base64.encodeURI(
-          landlordEmailVerification.id,
-        )}`,
+        `${HOST}/email-landlord-verification/${emailVerifyCode}`,
       );
     } else {
       // console the verification id so we could still test it on dev environment
       // eslint-disable-next-line no-console
-      console.log(Base64.encodeURI(landlordEmailVerification.id));
+      console.log(emailVerifyCode);
     }
   }
 

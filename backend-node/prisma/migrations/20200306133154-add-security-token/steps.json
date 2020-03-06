@@ -1,0 +1,47 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "TenantRegisterVerification",
+      "field": "tokenEmail",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantRegisterVerification",
+      "field": "tokenQuery",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "TenantEmailVerification",
+      "field": "tokenEmail",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LandlordRegisterVerification",
+      "field": "tokenEmail",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LandlordRegisterVerification",
+      "field": "tokenQuery",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LandlordEmailVerification",
+      "field": "tokenEmail",
+      "type": "String",
+      "arity": "Required"
+    }
+  ]
+}

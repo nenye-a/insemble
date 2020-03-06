@@ -7,7 +7,14 @@ import { GraphQLResolveInfo } from 'graphql';
 import { FRONTEND_HOST } from '../constants/constants';
 
 export let registerTenantHandler = async (req: Request, res: Response) => {
-  let tenantVerificationId = Base64.decode(req.params.token);
+  let [verifyId, tokenEmail] = req.params.token
+    ? req.params.token.split(':')
+    : [];
+  if (!verifyId || !tokenEmail) {
+    throw new Error('Invalid verification code');
+  }
+  let tenantVerificationId = Base64.decode(verifyId);
+  let decodedTokenEmail = Base64.decode(tokenEmail);
   let tenantVerification = await prisma.tenantRegisterVerification.findOne({
     where: {
       id: tenantVerificationId,
@@ -19,6 +26,10 @@ export let registerTenantHandler = async (req: Request, res: Response) => {
   }
   if (tenantVerification.verified) {
     res.status(400).send('Verification code already used.');
+    return;
+  }
+  if (decodedTokenEmail !== tenantVerification.tokenEmail) {
+    res.status(400).send('Invalid token');
     return;
   }
   let tenant = JSON.parse(tenantVerification.tenantInput);
