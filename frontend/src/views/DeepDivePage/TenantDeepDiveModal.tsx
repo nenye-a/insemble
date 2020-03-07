@@ -9,18 +9,20 @@ import { WHITE, BACKGROUND_COLOR } from '../../constants/colors';
 import { GET_TENANT_DETAILS } from '../../graphql/queries/server/deepdive';
 import { useQuery } from '@apollo/react-hooks';
 import { TenantDetail, TenantDetailVariables } from '../../generated/TenantDetail';
+import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
 
 type Props = {
   visible: boolean;
   onClose: () => void;
   brandId: string;
   propertyId: string;
+  tenantPhoto: string;
 };
 
 const SHRINK_HEIGHT = 160;
 
 export default function TenantDeepDiveModal(props: Props) {
-  let { visible, onClose, brandId } = props;
+  let { visible, onClose, brandId, tenantPhoto } = props;
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [headerShrink, setHeaderShrink] = useState(false);
   let isOverviewSelected = selectedTabIndex === 0;
@@ -48,7 +50,7 @@ export default function TenantDeepDiveModal(props: Props) {
         <LoadingIndicator />
       ) : (
         <>
-          <TourContainer isShrink={headerShrink} />
+          <TourContainer isShrink={headerShrink} src={tenantPhoto || imgPlaceholder} />
           <TabBar
             fullWidth={false}
             options={['Tenant View', 'Insights View']}
@@ -89,12 +91,10 @@ type TourContainerProps = {
   isShrink: boolean;
 };
 
-const TourContainer = styled(View)<TourContainerProps>`
+const TourContainer = styled.img<TourContainerProps>`
   height: ${(props) => (props.isShrink ? '180px' : '320px')};
   transition: 0.3s height linear;
-  justify-content: center;
-  align-items: center;
-  background-color: grey;
+  object-fit: cover;
 `;
 
 const ScrollView = styled(View)`

@@ -16,7 +16,7 @@ import { EmptyDataComponent } from '../../components';
 import { roundDecimal } from '../../utils';
 
 type Props = {
-  onPress: (selectedBrandId: string) => void;
+  onPress: (selectedBrandId: string, selectedTenantPhoto: string) => void;
   matchResult?: Array<PropertyMatchesProps>;
 };
 
@@ -32,7 +32,7 @@ export default function LandlordTenantMatches({ onPress, matchResult }: Props) {
             <TenantCard
               key={index}
               isInterested={item.interested}
-              onPress={() => onPress(item.brandId)}
+              onPress={() => onPress(item.brandId, item.pictureUrl)}
             >
               {item.interested ? (
                 <InterestedContainer>
