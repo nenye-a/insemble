@@ -1,6 +1,7 @@
 const INSEMBLE_PURPLE = '#674EA7';
 const LIGHT_PURPLE = '#BBAFDB';
 const LIGHTEST_PURPLE = '#EEEBF5';
+const DARK_PURPLE = '#1C004D';
 const DETAIL_GREY = '#727272';
 const DARK_DETAIL = '#4B4B4B';
 const BRIGHT_BLUE = '#0D7EFF';
@@ -66,10 +67,13 @@ export const FILTER_CAROUSEL_INDICATOR = LIGHT_GREY;
 
 // Pie chart colors
 export const COMMUTE_CHART_COLORS = [
-  '#1C004D',
+  DARK_PURPLE,
   '#3A2166',
   '#502D8C',
   '#5A35A6',
   '#AE80FF',
   '#673AB4',
 ];
+
+// Banner colors
+export const HIGHLIGHTED_BANNER_BACKGROUND = DARK_PURPLE;

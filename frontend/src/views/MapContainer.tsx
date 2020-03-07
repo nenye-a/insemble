@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
 import { useParams } from 'react-router-dom';
+import { useApolloClient } from '@apollo/react-hooks';
 
 import { GET_LOCATION_PREVIEW } from '../graphql/queries/server/preview';
 import { View, Alert, LoadingIndicator } from '../core-ui';
@@ -34,6 +35,7 @@ const defaultCenter = {
 const defaultZoom = 10;
 
 function MapContainer({ onMarkerClick, matchingLocations }: Props) {
+  let apolloClient = useApolloClient();
   let { brandId = '' } = useParams();
   let [getLocation, { data, loading, error }] = useLazyQuery<
     LocationPreview,
@@ -98,6 +100,19 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
       };
     }
   });
+
+  useEffect(() => {
+    if (error) {
+      apolloClient.writeData({
+        data: {
+          errorState: {
+            __typename: 'ErrorState',
+            locationPreview: true,
+          },
+        },
+      });
+    }
+  }, [error]);
 
   return (
     <div>
