@@ -26,7 +26,7 @@ export default function TenantKeyFacts({ keyFacts }: Props) {
 
     let categories1 = ['Number of stores', 'Years of operation'];
 
-    let numbers2 = [rating.toFixed(2), averageReviews];
+    let numbers2 = [(rating && rating.toFixed(2)) || '-', averageReviews];
 
     let categories2 = ['Rating', 'Average # of Reviews'];
     return (

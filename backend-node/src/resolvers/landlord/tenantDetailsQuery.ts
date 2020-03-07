@@ -4,7 +4,7 @@ import { FieldResolver, queryField, stringArg } from 'nexus';
 import { Root, Context } from 'serverTypes';
 import { LEGACY_API_URI } from '../../constants/host';
 import { TenantDetail } from 'dataTypes';
-import { objectToArrayKeyObjectDemographics } from '../../helpers/objectToArrayKeyObjectDemographics';
+import { objectToArrayKeyObjectDemographicsTenantDetail } from '../../helpers/objectToArrayKeyObjectDemographics';
 
 let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
   _: Root,
@@ -31,7 +31,7 @@ let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
     await axios.get(`${LEGACY_API_URI}/api/tenantDetails/`, {
       params: {
         tenant_id: brandId,
-        propety_id: property.propertyId,
+        property_id: property.propertyId,
       },
     })
   ).data.result;
@@ -58,25 +58,49 @@ let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
         return { ...persona, photo: persona.photo || '' };
       }),
       demographics1: {
-        age: objectToArrayKeyObjectDemographics(demographics1.age),
-        income: objectToArrayKeyObjectDemographics(demographics1.income),
-        ethnicity: objectToArrayKeyObjectDemographics(demographics1.ethnicity),
-        education: objectToArrayKeyObjectDemographics(demographics1.education),
-        gender: objectToArrayKeyObjectDemographics(demographics1.gender),
+        age: objectToArrayKeyObjectDemographicsTenantDetail(demographics1.age),
+        income: objectToArrayKeyObjectDemographicsTenantDetail(
+          demographics1.income,
+        ),
+        ethnicity: objectToArrayKeyObjectDemographicsTenantDetail(
+          demographics1.ethnicity,
+        ),
+        education: objectToArrayKeyObjectDemographicsTenantDetail(
+          demographics1.education,
+        ),
+        gender: objectToArrayKeyObjectDemographicsTenantDetail(
+          demographics1.gender,
+        ),
       },
       demographics3: {
-        age: objectToArrayKeyObjectDemographics(demographics2.age),
-        income: objectToArrayKeyObjectDemographics(demographics2.income),
-        ethnicity: objectToArrayKeyObjectDemographics(demographics2.ethnicity),
-        education: objectToArrayKeyObjectDemographics(demographics2.education),
-        gender: objectToArrayKeyObjectDemographics(demographics2.gender),
+        age: objectToArrayKeyObjectDemographicsTenantDetail(demographics2.age),
+        income: objectToArrayKeyObjectDemographicsTenantDetail(
+          demographics2.income,
+        ),
+        ethnicity: objectToArrayKeyObjectDemographicsTenantDetail(
+          demographics2.ethnicity,
+        ),
+        education: objectToArrayKeyObjectDemographicsTenantDetail(
+          demographics2.education,
+        ),
+        gender: objectToArrayKeyObjectDemographicsTenantDetail(
+          demographics2.gender,
+        ),
       },
       demographics5: {
-        age: objectToArrayKeyObjectDemographics(demographics3.age),
-        income: objectToArrayKeyObjectDemographics(demographics3.income),
-        ethnicity: objectToArrayKeyObjectDemographics(demographics3.ethnicity),
-        education: objectToArrayKeyObjectDemographics(demographics3.education),
-        gender: objectToArrayKeyObjectDemographics(demographics3.gender),
+        age: objectToArrayKeyObjectDemographicsTenantDetail(demographics3.age),
+        income: objectToArrayKeyObjectDemographicsTenantDetail(
+          demographics3.income,
+        ),
+        ethnicity: objectToArrayKeyObjectDemographicsTenantDetail(
+          demographics3.ethnicity,
+        ),
+        education: objectToArrayKeyObjectDemographicsTenantDetail(
+          demographics3.education,
+        ),
+        gender: objectToArrayKeyObjectDemographicsTenantDetail(
+          demographics3.gender,
+        ),
       },
     },
   };
