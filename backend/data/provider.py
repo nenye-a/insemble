@@ -158,6 +158,9 @@ def get_demographics(lat, lng, radius, demographic_dict=None):
     else:
         demographics = environics.get_demographics(lat, lng, radius)
 
+    if not demographics:
+        return None
+
     # parse age
     # all the data is referred to by index on the matching algorithm (refer to matching)
     age_demographics = demographics["Current Year Population, Age"]
@@ -678,7 +681,13 @@ def combine_demographics(my_location, target_location, field_names=("my_location
 
     field1, field2 = field_names
 
+    # if we have both dicts, combine them. However, if one is null, return the other. finally if both are null,
+    # return None
     if not (my_location and target_location):
+        if my_location:
+            return my_location
+        if target_location:
+            return target_location
         return None
 
     for demographic_category in target_location:
