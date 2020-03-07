@@ -40,9 +40,13 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLTextAreaElement>)
           <RemainingCharacters text={`${remainingCharacters} characters left`} />
         )}
       </RowedView>
-      <TextAreaBox {...otherProps} id={id} ref={forwardedRef} maxLength={characterLimit}>
-        {values}
-      </TextAreaBox>
+      <TextAreaBox
+        {...otherProps}
+        id={id}
+        ref={forwardedRef}
+        maxLength={characterLimit}
+        value={values}
+      />
     </View>
   );
 });
