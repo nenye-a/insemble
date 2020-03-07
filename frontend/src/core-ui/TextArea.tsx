@@ -30,8 +30,8 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLTextAreaElement>)
     ...otherProps
   } = props;
   let remainingCharacters = characterLimit - values.length;
-
-  let id = providedID || useID();
+  let generatedID = useID();
+  let id = providedID || generatedID;
   return (
     <View style={containerStyle}>
       <RowedView>
