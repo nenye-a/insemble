@@ -50,15 +50,15 @@ export default function TenantOverview({ keyFacts, tenantView }: Props) {
             <OverviewCard title="Physical Space">
               <TextRow>
                 <Text>Min Sqft:</Text>
-                <ContentText>{minSqft}</ContentText>
+                <ContentText>{minSqft || 'Not Provided'}</ContentText>
               </TextRow>
               <TextRow>
                 <Text>Min Frontage:</Text>
-                <ContentText>{ceilingHeight}</ContentText>
+                <ContentText>{ceilingHeight || 'Not Provided'}</ContentText>
               </TextRow>
               <TextRow>
                 <Text>Condition:</Text>
-                <ContentText>{condition}</ContentText>
+                <ContentText>{condition || 'Not Provided'}</ContentText>
               </TextRow>
             </OverviewCard>
           </SpaceContainer>

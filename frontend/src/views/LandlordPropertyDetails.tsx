@@ -88,6 +88,7 @@ export default function LandlordPropertyDetails() {
 
       <TenantDeepDiveModal
         brandId={selectedBrandId}
+        propertyId={params.propertyId}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
       />

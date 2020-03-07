@@ -1,3 +1,5 @@
+type Nullable<t> = t | null;
+
 export type FilterOptions = {
   brand_categories: Array<string>;
   personas: Array<string>;
@@ -39,12 +41,14 @@ type Personas = {
   percentile: number;
   name: string;
   description: string;
+  photo: string;
   tags: Array<string>;
 };
 
 export type DemographicStat = {
   my_location?: number;
   target_location: number;
+  value: number; //overloading, these type only appear on the tenantDetail
   growth?: number;
 };
 
@@ -273,20 +277,20 @@ export type PropertyDetailsType = {
 
 export type TenantDetail = {
   brand_name: string;
-  category: string;
+  category: Nullable<string>;
   key_facts: {
-    num_stores: number;
-    years_operating: number;
-    rating: number;
-    num_reviews: number;
+    num_stores: Nullable<number>;
+    years_operating: Nullable<number>;
+    rating: Nullable<number>;
+    num_reviews: Nullable<number>;
   };
   tenant: {
     overview: string;
     description: string;
     'physical requirements': {
-      'minimum sqft': number;
-      'frontage width': number;
-      condition: 'White Box';
+      'minimum sqft': Nullable<number>;
+      'frontage width': Nullable<number>;
+      condition: Nullable<string>;
     };
   };
   insights: {

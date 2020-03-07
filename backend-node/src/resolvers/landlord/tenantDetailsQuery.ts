@@ -8,9 +8,17 @@ import { objectToArrayKeyObjectDemographics } from '../../helpers/objectToArrayK
 
 let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
   _: Root,
-  { brandId },
-  __: Context,
+  { brandId, propertyId: nodePropertyId },
+  context: Context,
 ) => {
+  let property = await context.prisma.property.findOne({
+    where: {
+      id: nodePropertyId,
+    },
+  });
+  if (!property) {
+    throw new Error('Invalid property Id');
+  }
   let {
     // eslint-disable-next-line @typescript-eslint/camelcase
     brand_name,
@@ -23,12 +31,13 @@ let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
     await axios.get(`${LEGACY_API_URI}/api/tenantDetails/`, {
       params: {
         tenant_id: brandId,
+        propety_id: property.propertyId,
       },
     })
   ).data.result;
   return {
     name: brand_name,
-    category: category,
+    category: category || '',
     keyFacts: {
       tenantPerformance: {
         storeCount: key_facts.num_stores,
@@ -46,7 +55,7 @@ let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
     },
     insightView: {
       topPersonas: personas.map((persona) => {
-        return { ...persona, photo: '' };
+        return { ...persona, photo: persona.photo || '' };
       }),
       demographics1: {
         age: objectToArrayKeyObjectDemographics(demographics1.age),
@@ -75,7 +84,10 @@ let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
 
 let tenantDetailQuery = queryField('tenantDetail', {
   type: 'TenantDetailsResult',
-  args: { brandId: stringArg({ required: true }) },
+  args: {
+    brandId: stringArg({ required: true }),
+    propertyId: stringArg({ required: true }),
+  },
   resolve: tenantDetailResolver,
 });
 

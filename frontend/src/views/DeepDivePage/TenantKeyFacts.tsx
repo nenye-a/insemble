@@ -26,7 +26,7 @@ export default function TenantKeyFacts({ keyFacts }: Props) {
 
     let categories1 = ['Number of stores', 'Years of operation'];
 
-    let numbers2 = [rating, averageReviews];
+    let numbers2 = [rating.toFixed(2), averageReviews];
 
     let categories2 = ['Rating', 'Average # of Reviews'];
     return (
@@ -46,22 +46,22 @@ export default function TenantKeyFacts({ keyFacts }: Props) {
           <EconomicView flex>
             <EconomicColumn>
               {numbers1.map((line, i) => {
-                return <NumberText key={i}>{line}</NumberText>;
+                return <NumberText key={i}>{line || '-'}</NumberText>;
               })}
             </EconomicColumn>
             <EconomicColumn>
               {categories1.map((line, i) => (
-                <CategoriesText key={i}>{line}</CategoriesText>
+                <CategoriesText key={i}>{line || '-'}</CategoriesText>
               ))}
             </EconomicColumn>
             <EconomicColumn>
               {numbers2.map((line, i) => (
-                <NumberText key={i}>{line}</NumberText>
+                <NumberText key={i}>{line || '-'}</NumberText>
               ))}
             </EconomicColumn>
             <EconomicColumn>
               {categories2.map((line, i) => (
-                <CategoriesText key={i}>{line}</CategoriesText>
+                <CategoriesText key={i}>{line || '-'}</CategoriesText>
               ))}
             </EconomicColumn>
           </EconomicView>
