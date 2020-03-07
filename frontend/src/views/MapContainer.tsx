@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
 import { useParams } from 'react-router-dom';
-import { useApolloClient } from '@apollo/react-hooks';
+import { useApolloClient, useLazyQuery } from '@apollo/react-hooks';
 
 import { GET_LOCATION_PREVIEW } from '../graphql/queries/server/preview';
 import { View, Alert, LoadingIndicator } from '../core-ui';
@@ -13,7 +13,6 @@ import {
   TenantMatches_tenantMatches_matchingLocations as TenantMatchesMatchingLocations,
   TenantMatches_tenantMatches_matchingProperties as TenantMatchesMatchingProperties,
 } from '../generated/TenantMatches';
-import { useLazyQuery } from '@apollo/react-hooks';
 import { LocationPreview, LocationPreviewVariables } from '../generated/LocationPreview';
 import { GOOGLE_MAPS_STYLE } from '../constants/googleMaps';
 import MapTour from './MapPage/MapTour';
@@ -56,6 +55,12 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
 
   let infoRef = useRef<Element | undefined>();
   let mapRef = useRef<GoogleMap | null>(null);
+
+  /**
+   * right now the be returns error 500 when the user hit outside the map bound
+   * TODO: change this to a better error handler
+   */
+  let outsideBoundError = error?.message.includes('Request failed with status code 500');
 
   // TODO: fix this. tried useCallback with all deps, still not working
   let onPreviewClick = () => {
@@ -102,7 +107,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
   });
 
   useEffect(() => {
-    if (error) {
+    if (outsideBoundError) {
       apolloClient.writeData({
         data: {
           errorState: {
@@ -112,7 +117,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         },
       });
     }
-  }, [error]);
+  }, [error, apolloClient, outsideBoundError]);
 
   return (
     <div>
@@ -123,7 +128,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         }}
       />
       <LoadingIndicator visible={loading} />
-      <Alert visible={!!error} text={error?.message || ''} />
+      <Alert visible={!!error && !outsideBoundError} text={error?.message || ''} />
       <GoogleMap
         ref={mapRef}
         defaultZoom={defaultZoom}
