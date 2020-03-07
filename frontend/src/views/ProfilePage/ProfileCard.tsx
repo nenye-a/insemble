@@ -60,14 +60,14 @@ export default function ProfileCard({ role }: Props) {
 
   let [getTenant, { loading: tenantLoading }] = useLazyQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
     onCompleted: onTenantCompleted,
-    fetchPolicy: 'network-only',
+    notifyOnNetworkStatusChange: true,
   });
 
   let [getLandlord, { loading: landlordLoading }] = useLazyQuery<GetLandlordProfile>(
     GET_LANDLORD_PROFILE,
     {
       onCompleted: onLandlordCompleted,
-      fetchPolicy: 'network-only',
+      notifyOnNetworkStatusChange: true,
     }
   );
 

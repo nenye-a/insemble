@@ -20,7 +20,7 @@ let editProfileResolver: FieldResolver<
     throw new Error('User not found');
   }
 
-  if (profile.email) {
+  if (profile.email && profile.email !== currentUser.email) {
     let lowercasedEmail = profile.email?.toLocaleLowerCase();
     let emailExist = await context.prisma.landlordUser.findOne({
       where: {
