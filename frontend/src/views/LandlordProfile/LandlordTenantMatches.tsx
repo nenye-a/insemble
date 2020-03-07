@@ -77,6 +77,7 @@ const RowedView = styled(View)`
 const Container = styled(RowedView)`
   flex-wrap: wrap;
   justify-content: flex-start;
+  overflow-y: scroll;
 `;
 
 const InterestedText = styled(Text)`
