@@ -386,8 +386,15 @@ class PropertyDetailsAPI(AsynchronousAPI):
 class TenantDetailsAPI(AsynchronousAPI):
     """
 
+    Provided both the tenant_id and the property_id, will return the deep dive details.
+
     params: {
-        tenant_id: string
+        tenant_id: string,
+        property_id: string
+    }
+
+    response: {
+
     }
 
     """
@@ -401,24 +408,42 @@ class TenantDetailsAPI(AsynchronousAPI):
         validated_params = serializer.validated_data
 
         tenant_id = validated_params['tenant_id']
+        property_id = validated_params['property_id']
+
         brand = utils.DB_BRANDS.find_one({'_id': ObjectId(tenant_id)})
+        this_property = utils.DB_PROPERTY.find_one({'_id': ObjectId(property_id)}, {'location_id': 1})
+
         if not brand:
             return Response({
                 'status': status.HTTP_404_NOT_FOUND,
                 'status_detail': ['Brand not found, please check the provided id'],
             }, status=status.HTTP_404_NOT_FOUND)
+        if not this_property:
+            return Response({
+                'status': status.HTTP_404_NOT_FOUND,
+                'status_detail': ['Property not found, please check the provided id'],
+            }, status=status.HTTP_404_NOT_FOUND)
 
+        property_location = utils.DB_LOCATIONS.find_one({'_id': this_property['location_id']})
         personas = provider.fill_personas(
             {
-                key: value for key, value in list(sorted(
-                    brand['average_spatial_psychographics']["1mile"].items(), key=lambda item: item[1]))[:3]
+                key: value for key, value in sorted(
+                    brand['average_spatial_psychographics']["1mile"].items(), key=lambda item: item[1], reverse=True)[:3]
             }
         )
 
-        demographics = self.convert_demographics(brand['average_environics_demographics'])
+        tenant_demographics = self.convert_demographics(brand['average_environics_demographics'])
+        property_demographics = self.convert_demographics(property_location['environics_demographics'])
+        field_names = ("tenant_location", "property_details")
+
+        demographics = {}
+        demographics["1mile"] = provider.combine_demographics(tenant_demographics["1mile"], property_demographics["1mile"], field_names)
+        demographics["3mile"] = provider.combine_demographics(tenant_demographics["3mile"], property_demographics["3mile"], field_names)
+        demographics["5mile"] = provider.combine_demographics(tenant_demographics["5mile"], property_demographics["5mile"], field_names)
+
         demographics["1mile"].pop("commute") if 'commute' in demographics["1mile"] else None
-        demographics["3mile"].pop("commute") if 'commute' in demographics["1mile"] else None
-        demographics["5mile"].pop("commute") if 'commute' in demographics["1mile"] else None
+        demographics["3mile"].pop("commute") if 'commute' in demographics["3mile"] else None
+        demographics["5mile"].pop("commute") if 'commute' in demographics["5mile"] else None
 
         # TODO: algorithmically generate overview and requirement details:
         overview = "Expanding in " + ", ".join(brand['regions_present']['regions']) if 'regions' in brand['regions_present'] else ""

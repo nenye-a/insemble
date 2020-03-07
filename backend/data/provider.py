@@ -669,20 +669,26 @@ def fill_personas(personas_dict):
     } for persona in detailed_personas]
 
 
-def combine_demographics(my_location, target_location):
+def combine_demographics(my_location, target_location, field_names=("my_location", "target_location")):
     """
     combine two dictionaries generated from the "get_demographics" method in order to
-    return a dictionary in the form expected from location details
+    return a dictionary in the form expected from location details. Please note that
+    only the growh from the 2nd field is kept.
     """
+
+    field1, field2 = field_names
+
+    if not (my_location and target_location):
+        return None
 
     for demographic_category in target_location:
         for sub_category in target_location[demographic_category]:
             sub_category_dict = target_location[demographic_category][sub_category]
             if not isinstance(sub_category_dict, dict):
                 continue
-            my_value = my_location[demographic_category][sub_category]["value"]
-            sub_category_dict["my_location"] = my_value
-            sub_category_dict["target_location"] = sub_category_dict.pop("value")
+            my_sub_category_dict = my_location[demographic_category][sub_category]
+            sub_category_dict[field1] = my_sub_category_dict["value"]
+            sub_category_dict[field2] = sub_category_dict.pop("value")
 
     return target_location
 
