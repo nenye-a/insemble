@@ -46,23 +46,13 @@ type Profile = {
 
 export default function BasicProfile() {
   let history = useHistory();
-  console.log(history, '<<');
   let [profileEditable, setProfileEditable] = useState(false);
   let [passwordEditable, setPasswordEditable] = useState(false);
   let textInputContainerStyle = { marginTop: 12, marginBottom: 12 };
   let { register, watch, handleSubmit, errors } = useForm();
   let role = asyncStorage.getRole();
 
-  let [profileInfo, setProfileInfo] = useState<Profile>({
-    email: '',
-    firstName: '',
-    lastName: '',
-    company: '',
-    title: '',
-    pendingEmail: false,
-    description: '',
-  });
-  let { email, firstName, lastName, company, title, pendingEmail, description } = profileInfo;
+  let [profile, setProfileInfo] = useState<Profile | null>(null);
 
   let onTenantCompleted = (tenantResult: GetTenantProfile) => {
     let { profileTenant } = tenantResult;
@@ -175,7 +165,6 @@ export default function BasicProfile() {
       currentPassword,
       newPassword,
     } = fieldValues;
-    console.log(fieldValues, '<<<');
     if (Object.keys(errors).length === 0) {
       if (role === Role.TENANT) {
         editTenantProfile({
@@ -232,7 +221,7 @@ export default function BasicProfile() {
 
   return (
     <Container flex>
-      {tenantLoading || landlordLoading ? (
+      {!profile || tenantLoading || landlordLoading ? (
         <LoadingIndicator />
       ) : (
         !tenantLoading &&
@@ -258,10 +247,10 @@ export default function BasicProfile() {
               placeholder="Email"
               disabled={!profileEditable}
               containerStyle={textInputContainerStyle}
-              defaultValue={email}
+              defaultValue={profile.email}
               name="email"
               errorMessage={
-                pendingEmail
+                profile.pendingEmail
                   ? 'Your account is pending for e-mail verification. Please check your new e-mail'
                   : ''
               }
@@ -274,7 +263,7 @@ export default function BasicProfile() {
                 label="First Name"
                 placeholder="First Name"
                 disabled={!profileEditable}
-                defaultValue={firstName}
+                defaultValue={profile.firstName}
                 containerStyle={{ ...textInputContainerStyle, flex: 1 }}
                 name="firstName"
                 ref={register({
@@ -287,7 +276,7 @@ export default function BasicProfile() {
                 label="Last Name"
                 placeholder="Last Name"
                 disabled={!profileEditable}
-                defaultValue={lastName}
+                defaultValue={profile.lastName}
                 containerStyle={{ ...textInputContainerStyle, flex: 1 }}
                 name="lastName"
                 ref={register({
@@ -301,7 +290,7 @@ export default function BasicProfile() {
                 label="Company"
                 placeholder="Company"
                 disabled={!profileEditable}
-                defaultValue={company}
+                defaultValue={profile.company}
                 containerStyle={{ ...textInputContainerStyle, flex: 1 }}
                 name="company"
                 ref={register}
@@ -312,7 +301,7 @@ export default function BasicProfile() {
                 label="Title"
                 placeholder="Job Title"
                 disabled={!profileEditable}
-                defaultValue={title ? title : ''}
+                defaultValue={profile.title ? profile.title : ''}
                 containerStyle={{ ...textInputContainerStyle, flex: 1 }}
                 name="jobTitle"
                 ref={register}
@@ -337,8 +326,7 @@ export default function BasicProfile() {
               errorMessage={(errors?.phoneNumber as FieldError)?.message || ''}
             />
             <TextArea
-              values={description}
-              // defaultValue={description || ''}
+              defaultValue={profile.description || ''}
               label="About"
               disabled={!profileEditable}
               containerStyle={textInputContainerStyle}
