@@ -55,15 +55,15 @@ def get_representative_location(categories, income_dict):
 
     """
 
-    income_query = {'$gte': income_dict["min"]}
-    income_query.update({'$lte': income_dict["max"]}) if 'max' in income_dict else None
+    income_query = {'$gte': int(income_dict["min"]) * 0.90}
+    income_query.update({'$lte': int(income_dict["max"]) * 1.10}) if 'max' in income_dict else None
 
     candidates = utils.DB_PROCESSED_SPACE.find({
         'foursquare_categories.category_name': {'$in': categories},
         'arcgis_details1.MedHouseholdIncome1': income_query,
         'arcgis_details3.MedHouseholdIncome3': income_query,
         'user_ratings_total': {'$exists': True},
-        'rating': {'$gte': 4.2}
+        'rating': {'$gte': 4}
     }).sort([('user_ratings_total', -1)]).limit(10)
 
     if candidates.count() == 0:
