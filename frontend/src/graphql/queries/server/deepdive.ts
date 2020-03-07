@@ -262,8 +262,8 @@ export const GET_PROPERTY_LOCATION_DETAILS = gql`
 `;
 
 export const GET_TENANT_DETAILS = gql`
-  query TenantDetail($brandId: String!) {
-    tenantDetail(brandId: $brandId) {
+  query TenantDetail($brandId: String!, $propertyId: String!) {
+    tenantDetail(brandId: $brandId, propertyId: $propertyId) {
       name
       category
       keyFacts {
@@ -278,7 +278,6 @@ export const GET_TENANT_DETAILS = gql`
         overview
         description
         minSqft
-        maxSqft
         ceilingHeight
         condition
       }

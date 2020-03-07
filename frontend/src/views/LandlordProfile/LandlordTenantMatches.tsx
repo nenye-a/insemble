@@ -39,7 +39,7 @@ export default function LandlordTenantMatches({ onPress, matchResult }: Props) {
                   <InterestedText>Interested</InterestedText>
                 </InterestedContainer>
               ) : null}
-              <Image src={imgPlaceholder} />
+              <Image src={item.pictureUrl || imgPlaceholder} />
               <DescriptionContainer>
                 <RowedView flex>
                   <View>

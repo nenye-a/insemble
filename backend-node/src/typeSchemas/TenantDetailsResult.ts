@@ -22,10 +22,9 @@ export let TenantView = objectType({
   definition(t) {
     t.string('overview');
     t.string('description');
-    t.int('minSqft');
-    t.int('maxSqft');
-    t.int('ceilingHeight');
-    t.string('condition');
+    t.int('minSqft', { nullable: true });
+    t.int('ceilingHeight', { nullable: true });
+    t.string('condition', { nullable: true });
   },
 });
 
@@ -53,7 +52,7 @@ export let DemographicTenantDetailStat = objectType({
   definition(t) {
     t.string('name');
     t.float('myLocation', { nullable: true });
-    t.float('targetLocation');
+    t.float('targetLocation', { nullable: true });
   },
 });
 
@@ -94,9 +93,9 @@ export let TenantDetailKeyFacts = objectType({
 export let TenantPerformance = objectType({
   name: 'TenantPerformance',
   definition(t) {
-    t.int('storeCount');
-    t.int('averageReviews');
-    t.int('operationYears');
-    t.float('rating');
+    t.int('storeCount', { nullable: true });
+    t.int('averageReviews', { nullable: true });
+    t.int('operationYears', { nullable: true });
+    t.float('rating', { nullable: true });
   },
 });

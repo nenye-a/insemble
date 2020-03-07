@@ -10,9 +10,6 @@ export let PropertyMatchesThumbnail = objectType({
     t.int('numExistingLocations');
     t.float('matchValue');
     t.boolean('interested');
-    t.boolean('verified');
-    t.boolean('claimed');
-    t.boolean('matchesTenantType');
     t.boolean('onPlatform');
   },
 });
