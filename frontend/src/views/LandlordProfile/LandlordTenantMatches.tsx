@@ -21,6 +21,7 @@ type Props = {
 };
 
 export default function LandlordTenantMatches({ onPress, matchResult }: Props) {
+  console.log(matchResult);
   return (
     <Container flex>
       {!matchResult ? (
