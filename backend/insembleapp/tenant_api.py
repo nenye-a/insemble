@@ -173,6 +173,8 @@ class TenantMatchAPI(AsynchronousAPI):
         # PREPARE TO STORE THE REQUEST INFORMATION IN THE DATABASE
         database_update = {'search_details': validated_params}
 
+        address = None
+        name = None
         # ASYNCHRONOUSLY GENERATE MATCH DETAILS & OBTAIN OBJECT ID
         if 'address' in validated_params:
             address = validated_params['address']
@@ -193,8 +195,14 @@ class TenantMatchAPI(AsynchronousAPI):
                 match_listener = self._celery_listener(m_process, match_details)
                 match_listener.start()
             else:
-                match_listener = None
-                match_details = [([], None)]
+                return Response({
+                    'status': 200,
+                    'status_detail': ["No matches found for that category with the specified income. "
+                                      "You should try increasing the income range or adjusting category."],
+                    'result': {}
+                })
+                # match_listener = None
+                # match_details = [([], None)]
 
         # TODO: GENERATE TENANT LOCATION DETAILS
         tenant_details, rep_id = self.build_location(address, brand_name=name)
