@@ -15,7 +15,7 @@ type Props = ComponentProps<'textarea'> & {
   label?: string;
   characterLimit?: number;
   showCharacterLimit?: boolean;
-  values: string;
+  values?: string;
   containerStyle?: CSSProperties;
 };
 
@@ -23,13 +23,15 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLTextAreaElement>)
   let {
     id: providedID,
     values,
+    defaultValue,
     label,
     characterLimit = 500,
     showCharacterLimit,
     containerStyle,
     ...otherProps
   } = props;
-  let remainingCharacters = characterLimit - values.length;
+  let remainingCharacters =
+    characterLimit - (values?.length || defaultValue?.toString().length || 0);
   let generatedID = useID();
   let id = providedID || generatedID;
   return (
@@ -43,6 +45,7 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLTextAreaElement>)
       <TextAreaBox
         {...otherProps}
         id={id}
+        defaultValue={defaultValue}
         ref={forwardedRef}
         maxLength={characterLimit}
         value={values}

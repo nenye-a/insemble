@@ -45,7 +45,6 @@ export default function LandlordPropertyDetails() {
     GET_PROPERTY_MATCHES_DATA,
     { variables: { propertyId: params.propertyId } }
   );
-
   return (
     <View flex>
       {loading ? (

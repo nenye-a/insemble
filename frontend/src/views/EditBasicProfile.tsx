@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useMutation, useLazyQuery } from '@apollo/react-hooks';
+import { useHistory } from 'react-router-dom';
 
 import {
   Card,
@@ -40,24 +41,18 @@ type Profile = {
   company: string;
   title: string | null;
   pendingEmail: boolean;
+  description: string | null;
 };
 
 export default function BasicProfile() {
+  let history = useHistory();
   let [profileEditable, setProfileEditable] = useState(false);
   let [passwordEditable, setPasswordEditable] = useState(false);
   let textInputContainerStyle = { marginTop: 12, marginBottom: 12 };
   let { register, watch, handleSubmit, errors } = useForm();
   let role = asyncStorage.getRole();
 
-  let [profileInfo, setProfileInfo] = useState<Profile>({
-    email: '',
-    firstName: '',
-    lastName: '',
-    company: '',
-    title: '',
-    pendingEmail: false,
-  });
-  let { email, firstName, lastName, company, title, pendingEmail } = profileInfo;
+  let [profile, setProfileInfo] = useState<Profile | null>(null);
 
   let onTenantCompleted = (tenantResult: GetTenantProfile) => {
     let { profileTenant } = tenantResult;
@@ -69,6 +64,7 @@ export default function BasicProfile() {
         title: tenantTitle,
         email: tenantEmail,
         pendingEmail: tenantPendingEmail,
+        description: tenantDescription,
       } = profileTenant;
       setProfileInfo({
         email: tenantEmail,
@@ -77,6 +73,7 @@ export default function BasicProfile() {
         company: tenantCompany,
         title: tenantTitle,
         pendingEmail: tenantPendingEmail,
+        description: tenantDescription,
       });
     }
   };
@@ -91,6 +88,7 @@ export default function BasicProfile() {
         title: landlordTitle,
         email: landlordEmail,
         pendingEmail: landlordPendingEmail,
+        description: landlordDescription,
       } = profileLandlord;
       setProfileInfo({
         email: landlordEmail,
@@ -99,22 +97,24 @@ export default function BasicProfile() {
         company: landlordCompany,
         title: landlordTitle,
         pendingEmail: landlordPendingEmail,
+        description: landlordDescription,
       });
     }
   };
 
-  let [getTenant, { loading: tenantLoading, refetch: refetchTenantProfile }] = useLazyQuery<
-    GetTenantProfile
-  >(GET_TENANT_PROFILE, {
-    onCompleted: onTenantCompleted,
-    notifyOnNetworkStatusChange: true,
+  let [
+    getTenant,
+    { data: tenantData, loading: tenantLoading, refetch: refetchTenantProfile },
+  ] = useLazyQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
+    fetchPolicy: 'network-only',
   });
 
-  let [getLandlord, { loading: landlordLoading, refetch: refetchLandlordProfile }] = useLazyQuery<
-    GetLandlordProfile
-  >(GET_LANDLORD_PROFILE, {
-    onCompleted: onLandlordCompleted,
+  let [
+    getLandlord,
+    { data: landlordData, loading: landlordLoading, refetch: refetchLandlordProfile },
+  ] = useLazyQuery<GetLandlordProfile>(GET_LANDLORD_PROFILE, {
     notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'network-only',
   });
 
   useEffect(() => {
@@ -124,8 +124,16 @@ export default function BasicProfile() {
     if (role === Role.LANDLORD) {
       getLandlord();
     }
-  }, [getLandlord, getTenant, role]);
+  }, [getLandlord, getTenant, role, history.action]);
 
+  useEffect(() => {
+    if (role === Role.LANDLORD && landlordData) {
+      onLandlordCompleted(landlordData);
+    } else if (role === Role.TENANT && tenantData) {
+      onTenantCompleted(tenantData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tenantLoading, landlordLoading, role]);
   let [
     editTenantProfile,
     { data: editTenantData, loading: editTenantLoading, error: editTenantError },
@@ -212,166 +220,170 @@ export default function BasicProfile() {
 
   return (
     <Container flex>
-      {tenantLoading || landlordLoading ? (
+      {!profile || tenantLoading || landlordLoading ? (
         <LoadingIndicator />
       ) : (
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          {/* TODO: change to status message returned by the endpoint */}
-          <Alert
-            visible={!!editTenantData || !!editLandlordData}
-            text="Your profile has been updated"
-          />
-          <Alert visible={!!editTenantError || !!editLandlordError} text={errorMessage} />
-          <RowedView>
-            <Title>Profile</Title>
-            <Button
-              text="Edit Your Profile"
-              mode="transparent"
-              onPress={() => setProfileEditable(true)}
+        !tenantLoading &&
+        !landlordLoading &&
+        (tenantData || landlordData) && (
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            {/* TODO: change to status message returned by the endpoint */}
+            <Alert
+              visible={!!editTenantData || !!editLandlordData}
+              text="Your profile has been updated"
             />
-          </RowedView>
-          <TextInput
-            label="Email Address"
-            placeholder="Email"
-            disabled={!profileEditable}
-            containerStyle={textInputContainerStyle}
-            defaultValue={email}
-            name="email"
-            errorMessage={
-              pendingEmail
-                ? 'Your account is pending for e-mail verification. Please check your new e-mail'
-                : ''
-            }
-            ref={register({
-              required: 'Email should not be empty',
-            })}
-          />
-          <RowedView>
+            <Alert visible={!!editTenantError || !!editLandlordError} text={errorMessage} />
+            <RowedView>
+              <Title>Profile</Title>
+              <Button
+                text="Edit Your Profile"
+                mode="transparent"
+                onPress={() => setProfileEditable(true)}
+              />
+            </RowedView>
             <TextInput
-              label="First Name"
-              placeholder="First Name"
+              label="Email Address"
+              placeholder="Email"
               disabled={!profileEditable}
-              defaultValue={firstName}
-              containerStyle={{ ...textInputContainerStyle, flex: 1 }}
-              name="firstName"
+              containerStyle={textInputContainerStyle}
+              defaultValue={profile.email}
+              name="email"
+              errorMessage={
+                profile.pendingEmail
+                  ? 'Your account is pending for e-mail verification. Please check your new e-mail'
+                  : ''
+              }
               ref={register({
-                required: 'First name should not be empty',
+                required: 'Email should not be empty',
               })}
-              errorMessage={(errors?.firstName as FieldError)?.message || ''}
             />
-            <Spacing />
+            <RowedView>
+              <TextInput
+                label="First Name"
+                placeholder="First Name"
+                disabled={!profileEditable}
+                defaultValue={profile.firstName}
+                containerStyle={{ ...textInputContainerStyle, flex: 1 }}
+                name="firstName"
+                ref={register({
+                  required: 'First name should not be empty',
+                })}
+                errorMessage={(errors?.firstName as FieldError)?.message || ''}
+              />
+              <Spacing />
+              <TextInput
+                label="Last Name"
+                placeholder="Last Name"
+                disabled={!profileEditable}
+                defaultValue={profile.lastName}
+                containerStyle={{ ...textInputContainerStyle, flex: 1 }}
+                name="lastName"
+                ref={register({
+                  required: 'Last name should not be empty',
+                })}
+                errorMessage={(errors?.lastName as FieldError)?.message || ''}
+              />
+            </RowedView>
+            <RowedView>
+              <TextInput
+                label="Company"
+                placeholder="Company"
+                disabled={!profileEditable}
+                defaultValue={profile.company}
+                containerStyle={{ ...textInputContainerStyle, flex: 1 }}
+                name="company"
+                ref={register}
+                errorMessage={(errors?.company as FieldError)?.message || ''}
+              />
+              <Spacing />
+              <TextInput
+                label="Title"
+                placeholder="Job Title"
+                disabled={!profileEditable}
+                defaultValue={profile.title ? profile.title : ''}
+                containerStyle={{ ...textInputContainerStyle, flex: 1 }}
+                name="jobTitle"
+                ref={register}
+                errorMessage={(errors?.jobTitle as FieldError)?.message || ''}
+              />
+            </RowedView>
+            <Title>Public Profile</Title>
             <TextInput
-              label="Last Name"
-              placeholder="Last Name"
+              label="Phone Number"
+              placeholder="Phone Number"
               disabled={!profileEditable}
-              defaultValue={lastName}
-              containerStyle={{ ...textInputContainerStyle, flex: 1 }}
-              name="lastName"
+              containerStyle={{
+                ...textInputContainerStyle,
+                width: `calc(50% - ${(SPACING_WIDTH / 2).toString() + 'px'})`,
+              }}
+              name="phoneNumber"
               ref={register({
-                required: 'Last name should not be empty',
+                ...(watch('phoneNumber') && {
+                  validate: (val) => validateUSPhoneNumber(val) || 'Invalid phone number',
+                }),
               })}
-              errorMessage={(errors?.lastName as FieldError)?.message || ''}
+              errorMessage={(errors?.phoneNumber as FieldError)?.message || ''}
             />
-          </RowedView>
-          <RowedView>
-            <TextInput
-              label="Company"
-              placeholder="Company"
+            <TextArea
+              defaultValue={profile.description || ''}
+              label="About"
               disabled={!profileEditable}
-              defaultValue={company}
-              containerStyle={{ ...textInputContainerStyle, flex: 1 }}
-              name="company"
+              containerStyle={textInputContainerStyle}
+              name="description"
               ref={register}
-              errorMessage={(errors?.company as FieldError)?.message || ''}
             />
-            <Spacing />
+            <RowedView>
+              <Title>Password</Title>
+              <Button
+                text="Change your password"
+                mode="transparent"
+                onPress={() => setPasswordEditable(true)}
+              />
+            </RowedView>
             <TextInput
-              label="Title"
-              placeholder="Job Title"
-              disabled={!profileEditable}
-              defaultValue={title ? title : ''}
-              containerStyle={{ ...textInputContainerStyle, flex: 1 }}
-              name="jobTitle"
+              label="Current Password"
+              placeholder="Enter Your Current Password"
+              disabled={!passwordEditable}
+              type="password"
+              containerStyle={textInputContainerStyle}
+              name="currentPassword"
               ref={register}
-              errorMessage={(errors?.jobTitle as FieldError)?.message || ''}
+              errorMessage={(errors?.password as FieldError)?.message || ''}
             />
-          </RowedView>
-          <Title>Public Profile</Title>
-          <TextInput
-            label="Phone Number"
-            placeholder="Phone Number"
-            disabled={!profileEditable}
-            containerStyle={{
-              ...textInputContainerStyle,
-              width: `calc(50% - ${(SPACING_WIDTH / 2).toString() + 'px'})`,
-            }}
-            name="phoneNumber"
-            ref={register({
-              ...(watch('phoneNumber') && {
-                validate: (val) => validateUSPhoneNumber(val) || 'Invalid phone number',
-              }),
-            })}
-            errorMessage={(errors?.phoneNumber as FieldError)?.message || ''}
-          />
-          <TextArea
-            values=""
-            label="About"
-            disabled={!profileEditable}
-            containerStyle={textInputContainerStyle}
-            name="description"
-            ref={register}
-          />
-          <RowedView>
-            <Title>Password</Title>
-            <Button
-              text="Change your password"
-              mode="transparent"
-              onPress={() => setPasswordEditable(true)}
+            <TextInput
+              label="New Password"
+              placeholder="Enter Your New Password"
+              disabled={!passwordEditable}
+              type="password"
+              name="newPassword"
+              ref={register({
+                required: watch('currentPassword') ? 'New password should not be empty' : false,
+              })}
+              errorMessage={(errors?.newPassword as FieldError)?.message || ''}
             />
-          </RowedView>
-          <TextInput
-            label="Current Password"
-            placeholder="Enter Your Current Password"
-            disabled={!passwordEditable}
-            type="password"
-            containerStyle={textInputContainerStyle}
-            name="currentPassword"
-            ref={register}
-            errorMessage={(errors?.password as FieldError)?.message || ''}
-          />
-          <TextInput
-            label="New Password"
-            placeholder="Enter Your New Password"
-            disabled={!passwordEditable}
-            type="password"
-            name="newPassword"
-            ref={register({
-              required: watch('currentPassword') ? 'New password should not be empty' : false,
-            })}
-            errorMessage={(errors?.newPassword as FieldError)?.message || ''}
-          />
-          <TextInput
-            label="Confirm New Password"
-            placeholder="Re-Enter Your New Password"
-            disabled={!passwordEditable}
-            type="password"
-            containerStyle={textInputContainerStyle}
-            name="confirmNewPassword"
-            ref={register({
-              required: watch('newPassword') ? 'Confirm password should not be empty' : false,
-              ...(watch('newPassword') && {
-                validate: (val) =>
-                  val === watch('newPassword') || 'Confirm password does not match',
-              }),
-            })}
-            errorMessage={(errors?.confirmNewPassword as FieldError)?.message || ''}
-          />
-          <SaveButton
-            text="Save Changes"
-            type="submit"
-            loading={editTenantLoading || editLandlordLoading}
-          />
-        </Form>
+            <TextInput
+              label="Confirm New Password"
+              placeholder="Re-Enter Your New Password"
+              disabled={!passwordEditable}
+              type="password"
+              containerStyle={textInputContainerStyle}
+              name="confirmNewPassword"
+              ref={register({
+                required: watch('newPassword') ? 'Confirm password should not be empty' : false,
+                ...(watch('newPassword') && {
+                  validate: (val) =>
+                    val === watch('newPassword') || 'Confirm password does not match',
+                }),
+              })}
+              errorMessage={(errors?.confirmNewPassword as FieldError)?.message || ''}
+            />
+            <SaveButton
+              text="Save Changes"
+              type="submit"
+              loading={editTenantLoading || editLandlordLoading}
+            />
+          </Form>
+        )
       )}
     </Container>
   );
