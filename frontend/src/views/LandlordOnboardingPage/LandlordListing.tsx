@@ -185,7 +185,7 @@ export default function LandlordListing(props: Props) {
             name="date"
             label="Availability"
             min={today}
-            defaultValue={spaceListing.availability || today}
+            defaultValue={spaceListing.availability.slice(0, 10) || today}
             ref={register({
               required: 'Date should not be empty',
             })}

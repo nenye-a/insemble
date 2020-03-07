@@ -30,11 +30,19 @@ type Props = {
   onChange: (options: Array<string>) => void;
   containerStyle?: CSSProperties;
   inputContainerStyle?: CSSProperties;
+  defaultSelected?: Array<string>;
 };
 
 export default function MultiSelectInput(props: Props) {
-  let { options, placeholder, onChange, containerStyle, inputContainerStyle } = props;
-  let [selectedValues, setSelectedValues] = useState<Array<string>>([]);
+  let {
+    options,
+    placeholder,
+    onChange,
+    containerStyle,
+    inputContainerStyle,
+    defaultSelected,
+  } = props;
+  let [selectedValues, setSelectedValues] = useState<Array<string>>(defaultSelected || []);
   let [inputValue, setInputValue] = useState<string>('');
   let [isFocused, setFocus] = useState<boolean>(false);
   let inputRef = useRef<HTMLInputElement | null>(null);
