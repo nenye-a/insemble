@@ -106,7 +106,6 @@ export default function BasicProfile() {
     getTenant,
     { data: tenantData, loading: tenantLoading, refetch: refetchTenantProfile },
   ] = useLazyQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
-    // onCompleted: onTenantCompleted,
     fetchPolicy: 'network-only',
   });
 
@@ -114,7 +113,6 @@ export default function BasicProfile() {
     getLandlord,
     { data: landlordData, loading: landlordLoading, refetch: refetchLandlordProfile },
   ] = useLazyQuery<GetLandlordProfile>(GET_LANDLORD_PROFILE, {
-    // onCompleted: onLandlordCompleted,
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'network-only',
   });
@@ -134,7 +132,8 @@ export default function BasicProfile() {
     } else if (role === Role.TENANT && tenantData) {
       onTenantCompleted(tenantData);
     }
-  }, [tenantLoading, landlordLoading]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tenantLoading, landlordLoading, role]);
   let [
     editTenantProfile,
     { data: editTenantData, loading: editTenantLoading, error: editTenantError },
