@@ -36,7 +36,7 @@ class PropertyTenantSerializer(serializers.Serializer):
 
     """
 
-    property_id = serializers.CharField(max_length=30, required=False)
+    property_id = serializers.CharField(max_length=24, required=False)
     address = serializers.CharField(max_length=300, required=False)
     property_type = serializers.JSONField(required=False)
     logo = serializers.CharField(max_length=500, required=False)
@@ -71,9 +71,10 @@ class PropertyTenantSerializer(serializers.Serializer):
 
 class PropertyDetailsSerializer(serializers.Serializer):
 
-    property_id = serializers.CharField(max_length=300)
+    property_id = serializers.CharField(max_length=24)
 
 
 class TenantDetailsSerializer(serializers.Serializer):
 
-    tenant_id = serializers.CharField(max_length=30)
+    tenant_id = serializers.CharField(max_length=24)
+    property_id = serializers.CharField(max_length=24)
