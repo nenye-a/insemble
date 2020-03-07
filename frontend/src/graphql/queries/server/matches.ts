@@ -10,9 +10,6 @@ export const GET_PROPERTY_MATCHES_DATA = gql`
       numExistingLocations
       matchValue
       interested
-      verified
-      claimed
-      matchesTenantType
     }
   }
 `;

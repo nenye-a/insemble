@@ -14,6 +14,7 @@ type Props = {
   visible: boolean;
   onClose: () => void;
   brandId: string;
+  propertyId: string;
 };
 
 const SHRINK_HEIGHT = 160;
@@ -26,6 +27,7 @@ export default function TenantDeepDiveModal(props: Props) {
   let { data, loading } = useQuery<TenantDetail, TenantDetailVariables>(GET_TENANT_DETAILS, {
     variables: {
       brandId,
+      propertyId: props.propertyId,
     },
   });
 

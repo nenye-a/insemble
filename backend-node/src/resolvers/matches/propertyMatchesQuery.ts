@@ -82,7 +82,7 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
         match_value: matchValue,
         brand_id: brandId,
         matches_tenant_type: matchesTenantType,
-        num_existing_locations: numExistingLocations,
+        number_existing_locations: numExistingLocations,
         on_platform: onPlatform,
         photo_url: pictureUrl,
         ...other
@@ -93,7 +93,7 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
           matchesTenantType,
           numExistingLocations,
           onPlatform,
-          pictureUrl,
+          pictureUrl: pictureUrl || '',
           ...other,
         };
       },
@@ -117,7 +117,6 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
     });
     matchingBrands = newMatchingBrands;
   }
-
   return matchingBrands ? matchingBrands : [];
 };
 

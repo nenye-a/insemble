@@ -2,7 +2,8 @@ import axios from 'axios';
 import { queryField, arg } from 'nexus';
 import { Root, Context } from 'serverTypes';
 import { LEGACY_API_URI } from '../../constants/host';
-import { LocationDetailsType, DemographicStat } from 'dataTypes';
+import { LocationDetailsType } from 'dataTypes';
+import { objectToArrayKeyObjectDemographics } from '../../helpers/objectToArrayKeyObjectDemographics';
 
 let locationDetails = queryField('locationDetails', {
   type: 'LocationDetailsResult',
@@ -75,24 +76,6 @@ let locationDetails = queryField('locationDetails', {
         TotalHousholds: totalHousehold,
         mile,
       } = keyFacts;
-      let objectToArrayKeyObjectDemographics = (
-        object: Record<string, DemographicStat>,
-      ) => {
-        let objectKeyValue = Object.keys(object).map((key) => {
-          let {
-            growth,
-            my_location: myLocation,
-            target_location: targetLocation,
-          } = object[key];
-          return {
-            name: key,
-            growth,
-            myLocation,
-            targetLocation,
-          };
-        });
-        return objectKeyValue;
-      };
 
       let objectToArrayKeyObjectCommute = (object: Record<string, number>) => {
         let objectKeyValue = Object.keys(object).map((key) => {
@@ -154,7 +137,9 @@ let locationDetails = queryField('locationDetails', {
             mediumHouseholdIncome,
           },
           commute: objectToArrayKeyObjectCommute(commute),
-          topPersonas,
+          topPersonas: topPersonas.map((topPersona) => {
+            return { ...topPersona, photo: '' };
+          }),
           demographics1: {
             age: objectToArrayKeyObjectDemographics(demographics1.age),
             income: objectToArrayKeyObjectDemographics(demographics1.income),

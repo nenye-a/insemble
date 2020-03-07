@@ -1,3 +1,5 @@
+type Nullable<t> = t | null;
+
 export type FilterOptions = {
   brand_categories: Array<string>;
   personas: Array<string>;
@@ -39,6 +41,7 @@ type Personas = {
   percentile: number;
   name: string;
   description: string;
+  photo: string;
   tags: Array<string>;
 };
 
@@ -46,6 +49,12 @@ export type DemographicStat = {
   my_location?: number;
   target_location: number;
   growth?: number;
+};
+
+export type DemographicTenantDetailStat = {
+  growth: number;
+  tenant_location: number;
+  property_details: number;
 };
 
 export type DemographicStatProperty = {
@@ -69,44 +78,44 @@ type NearbyObject = {
   metro?: boolean;
 };
 
-type Demographics = {
+type Demographics<T> = {
   age: {
-    '<18': DemographicStat;
-    '18-24': DemographicStat;
-    '25-34': DemographicStat;
-    '35-44': DemographicStat;
-    '45-54': DemographicStat;
-    '55-64': DemographicStat;
-    '65+': DemographicStat;
+    '<18': T;
+    '18-24': T;
+    '25-34': T;
+    '35-44': T;
+    '45-54': T;
+    '55-64': T;
+    '65+': T;
   };
   income: {
-    '<50K': DemographicStat;
-    '$50K-$74K': DemographicStat;
-    '$75K-$124K': DemographicStat;
-    '$125K-$199K': DemographicStat;
-    '$200K+': DemographicStat;
+    '<50K': T;
+    '$50K-$74K': T;
+    '$75K-$124K': T;
+    '$125K-$199K': T;
+    '$200K+': T;
   };
   ethnicity: {
-    white: DemographicStat;
-    black: DemographicStat;
-    indian: DemographicStat;
-    asian: DemographicStat;
-    pacific_islander: DemographicStat;
-    other: DemographicStat;
+    white: T;
+    black: T;
+    indian: T;
+    asian: T;
+    pacific_islander: T;
+    other: T;
   };
   education: {
-    some_highschool: DemographicStat;
-    high_school: DemographicStat;
-    some_college: DemographicStat;
-    associate: DemographicStat;
-    bachelor: DemographicStat;
-    masters: DemographicStat;
-    professional: DemographicStat;
-    doctorate: DemographicStat;
+    some_highschool: T;
+    high_school: T;
+    some_college: T;
+    associate: T;
+    bachelor: T;
+    masters: T;
+    professional: T;
+    doctorate: T;
   };
   gender: {
-    male: DemographicStat;
-    female: DemographicStat;
+    male: T;
+    female: T;
   };
 };
 
@@ -200,9 +209,9 @@ export type LocationDetailsType = {
       'Worked at Home': number;
     };
     top_personas: Array<Personas>;
-    demographics1: Demographics;
-    demographics3: Demographics;
-    demographics5: Demographics;
+    demographics1: Demographics<DemographicStat>;
+    demographics3: Demographics<DemographicStat>;
+    demographics5: Demographics<DemographicStat>;
     nearby: Array<NearbyObject>;
   };
   property_details?: {
@@ -224,7 +233,7 @@ type PropertyMatchesBrand = {
   brand_id: string;
   name: string;
   category: string;
-  num_existing_locations: number;
+  number_existing_locations: number;
   on_platform: boolean;
   interested: boolean;
   verified: boolean;
@@ -268,5 +277,31 @@ export type PropertyDetailsType = {
     demographics1?: DemographicsProperty;
     demographics3?: DemographicsProperty;
     demographics5?: DemographicsProperty;
+  };
+};
+
+export type TenantDetail = {
+  brand_name: string;
+  category: Nullable<string>;
+  key_facts: {
+    num_stores: Nullable<number>;
+    years_operating: Nullable<number>;
+    rating: Nullable<number>;
+    num_reviews: Nullable<number>;
+  };
+  tenant: {
+    overview: string;
+    description: string;
+    'physical requirements': {
+      'minimum sqft': Nullable<number>;
+      'frontage width': Nullable<number>;
+      condition: Nullable<string>;
+    };
+  };
+  insights: {
+    personas: Array<Personas>;
+    demographics1: Demographics<DemographicTenantDetailStat>;
+    demographics2: Demographics<DemographicTenantDetailStat>;
+    demographics3: Demographics<DemographicTenantDetailStat>;
   };
 };
