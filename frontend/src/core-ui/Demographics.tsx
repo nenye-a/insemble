@@ -113,6 +113,13 @@ export default function Graphic(props: Props) {
           )}
         </>
       );
+    } else {
+      return (
+        <LabelText x={x + width / 2} y={y} fill={THEME_COLOR} textAnchor="middle" dy={-6}>
+          {/* TODO: Adjust roundDecimal */}
+          {roundDecimal(convertToKilos(value || 0), 0) + 'K'}
+        </LabelText>
+      );
     }
   };
   const renderCustomSecondBarLabel = ({

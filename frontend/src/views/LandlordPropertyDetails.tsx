@@ -35,10 +35,10 @@ export default function LandlordPropertyDetails() {
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [selectedSpaceIndex, setSelectedSpaceIndex] = useState(0);
   let [selectedSpaceId, setSelectedSpaceId] = useState(spaces[spaces.length - 1].id);
+  let [selectedTenantPhoto, setSelectedTenantPhoto] = useState('');
   let isTenantMatchSelected = selectedTabIndex === Tab.TENANT_MATCH_INDEX;
   let isLocationDetailSelected = selectedTabIndex === Tab.LOCATION_DETAIL_INDEX;
   let isManageSpaceSelected = selectedTabIndex === Tab.MANAGE_SPACE_INDEX;
-
   let [modalVisible, setModalVisible] = useState(false);
 
   let { data, loading } = useQuery<PropertyMatches, PropertyMatchesVariables>(
@@ -72,8 +72,10 @@ export default function LandlordPropertyDetails() {
               <ContentWrapper>
                 <LandlordTenantMatches
                   matchResult={data?.propertyMatches}
-                  onPress={(selectedBrandId) => {
-                    setModalVisible(true), setSelectedBrandId(selectedBrandId);
+                  onPress={(selectedBrandId, tenantPhoto) => {
+                    setModalVisible(true),
+                      setSelectedBrandId(selectedBrandId),
+                      setSelectedTenantPhoto(tenantPhoto);
                   }}
                 />
               </ContentWrapper>
@@ -91,6 +93,7 @@ export default function LandlordPropertyDetails() {
         propertyId={params.propertyId}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
+        tenantPhoto={selectedTenantPhoto}
       />
     </View>
   );
@@ -98,6 +101,7 @@ export default function LandlordPropertyDetails() {
 
 const ContentWrapper = styled(View)`
   padding: 0 20px;
+  height: 70vh;
 `;
 
 const PropertyDetailsCard = styled(Card)`
