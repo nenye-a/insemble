@@ -139,6 +139,7 @@ const UpdateMapButton = styled(Button)`
 //   margin-left: -20%;
 // `;
 
+// TODO: check this styling esp on Safari when uncommenting
 // const LocationInput = styled(TextInput)`
 //   width: 343px;
 //   height: 36px;

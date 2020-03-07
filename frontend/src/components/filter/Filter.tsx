@@ -9,6 +9,7 @@ import {
   Button,
   LoadingIndicator,
   TouchableOpacity,
+  ContainedTextInput,
 } from '../../core-ui';
 import {
   THEME_COLOR,
@@ -19,7 +20,6 @@ import {
   LINK_COLOR,
 } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_SIZE_NORMAL } from '../../constants/theme';
-import TextInput from '../../core-ui/ContainedTextInput';
 import SliderFilter from './SliderFilter';
 import RangeInput from './RangeInput';
 
@@ -283,12 +283,17 @@ const ResultsPillButton = styled(SmallPillButton)`
   }
 `;
 
-const TextInputWithBorder = styled(TextInput)`
+const TextInputWithBorder = styled(ContainedTextInput)`
   border: solid;
-  border-width: 0.8px;
+  border-width: 1px;
   border-color: ${TEXT_INPUT_BORDER_COLOR};
   height: 36px;
   font-size: ${FONT_SIZE_NORMAL};
+  padding: 0px 12px;
+  line-height: ${FONT_SIZE_NORMAL};
+  &::placeholder {
+    padding-top: 4px;
+  }
 `;
 
 const ShowingResultsText = styled(SmallText)`
