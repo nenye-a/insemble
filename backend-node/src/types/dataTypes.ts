@@ -224,7 +224,7 @@ type PropertyMatchesBrand = {
   brand_id: string;
   name: string;
   category: string;
-  num_existing_locations: number;
+  number_existing_locations: number;
   on_platform: boolean;
   interested: boolean;
   verified: boolean;
