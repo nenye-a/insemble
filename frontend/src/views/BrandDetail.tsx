@@ -16,31 +16,20 @@ import {
   Form,
   Alert,
 } from '../core-ui';
-import {
-  FONT_SIZE_LARGE,
-  FONT_WEIGHT_BOLD,
-  DEFAULT_BORDER_RADIUS,
-  FONT_FAMILY_NORMAL,
-  FONT_SIZE_NORMAL,
-} from '../constants/theme';
-import {
-  THEME_COLOR,
-  TEXT_INPUT_BORDER_COLOR,
-  TEXT_COLOR,
-  WHITE,
-  DISABLED_TEXT_INPUT_BACKGROUND,
-} from '../constants/colors';
+import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../constants/theme';
+import { THEME_COLOR } from '../constants/colors';
 import { useGoogleMaps } from '../utils';
 import { LocationInput } from '../generated/globalTypes';
 import SvgArrowBack from '../components/icons/arrow-back';
 import { NEW_LOCATION_PLAN_OPTIONS } from '../constants/locationPlan';
 import { NewLocationPlanObj } from '../reducers/tenantOnboardingReducer';
-import LocationsInput from './LandingPage/LocationsInput';
+import { LocationInput as LocationsInput } from '../components';
 import { validateNumber } from '../utils/validation';
 import omitTypename from '../utils/omitTypename';
 import { EDIT_BRAND, GET_BRANDS } from '../graphql/queries/server/brand';
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 import { GetBrands_brands as GetBrandsBrands } from '../generated/GetBrands';
+import { SelectedLocation } from '../components/LocationInput';
 
 export default function BrandDetail() {
   let { brandId = '' } = useParams();
@@ -143,41 +132,18 @@ export default function BrandDetail() {
           ref={register}
         />
         <Label id="representativeAddress" text="Representative Location Address" />
-        <LocationsInput
+        <RepresentativeAddress
           id="representativeAddress"
           placeholder="Representative Location Address"
           defaultValue={location?.address || ''}
           disabled={!matchesEditable}
-          style={{
-            borderRadius: DEFAULT_BORDER_RADIUS,
-            borderColor: TEXT_INPUT_BORDER_COLOR,
-            borderStyle: 'solid',
-            borderWidth: 1,
-            paddingLeft: 12,
-            paddingRight: 12,
-            height: 36,
-            color: TEXT_COLOR,
-            fontFamily: FONT_FAMILY_NORMAL,
-            fontSize: FONT_SIZE_NORMAL,
-            backgroundColor: !matchesEditable ? DISABLED_TEXT_INPUT_BACKGROUND : WHITE,
-            marginTop: 12,
-            marginBottom: 8,
-          }}
-          onSubmit={(place: google.maps.places.PlaceResult) => {
-            let { geometry, formatted_address: formattedAddress } = place;
-            if (geometry) {
-              let { location } = geometry;
-              if (location) {
-                let { lat, lng } = location;
-                let latitude = lat();
-                let longitude = lng();
-                setBusinessLocation({
-                  lat: latitude.toString(),
-                  lng: longitude.toString(),
-                  address: formattedAddress || '',
-                });
-              }
-            }
+          style={{}}
+          onPlaceSelected={({ lat, lng, address }: SelectedLocation) => {
+            setBusinessLocation({
+              lat,
+              lng,
+              address,
+            });
           }}
           name="representativeAddress"
         />
@@ -271,4 +237,9 @@ const RadioGroupWrapper = styled(RadioGroup)`
 const SaveButton = styled(Button)`
   align-self: flex-end;
   margin: 12px 0;
+`;
+
+const RepresentativeAddress = styled(LocationsInput)`
+  margin-top: 12px;
+  margin-bottom: 8px;
 `;
