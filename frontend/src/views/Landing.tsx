@@ -8,6 +8,7 @@ import Title from './LandingPage/Title';
 import Masthead from './LandingPage/Masthead';
 import LocationsInput from './LandingPage/LocationsInput';
 import Description from './LandingPage/Description';
+import Features from './LandingPage/Features';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import { WHITE } from '../constants/colors';
 import Button from '../core-ui/Button';
@@ -134,6 +135,7 @@ function Landing() {
         </View>
       </Masthead>
       <Description />
+      <Features />
     </View>
   );
 }

@@ -20,7 +20,7 @@ export default function Description() {
 const Container = styled(View)`
   justify-content: center;
   align-items: center;
-  padding: 75px 20%;
+  padding: 75px 20% 180px 20%;
 `;
 
 const CenteredText = styled(Text)`
