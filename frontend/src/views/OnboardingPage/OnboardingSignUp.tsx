@@ -28,7 +28,9 @@ export default function OnBoardingSignUp(props: Props) {
             mode="transparent"
             text="Log in here"
             onPress={() => {
-              history.push('/login');
+              history.push('/login', {
+                onboardingState,
+              });
             }}
           />
         </RowView>

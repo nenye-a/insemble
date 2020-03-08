@@ -21,7 +21,7 @@ export default function Login() {
         titleProps={{ style: { fontSize: FONT_SIZE_MEDIUM, fontWeight: FONT_WEIGHT_NORMAL } }}
         titleBackground="purple"
       >
-        <LoginForm role={Role.TENANT} />
+        <LoginForm role={Role.TENANT} onboardingState={history.location.state.onboardingState} />
       </LoginCard>
       <NoAccountContainer>
         <Text>{noAccount} </Text>
