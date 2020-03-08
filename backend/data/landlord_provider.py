@@ -144,7 +144,7 @@ def build_location(lat, lng):
         }
     }})
 
-    if locations:
+    if locations and len(locations) > 0:
         # return the closest location, as near returns the items sorted by distance
         return list(locations)[0]
 
