@@ -90,14 +90,14 @@ export default function TenantGoals(props: Props) {
             setNewLocationPlan(item);
           }}
           radioItemProps={{ style: { marginTop: 9 } }}
-          style={{ marginBottom: 24 }}
+          style={{ marginBottom: 12 }}
           titleExtractor={(item: NewLocationPlanObj) => item.label}
         />
 
         {selectedNewLocationPlan.value === NewLocationPlan.YES && (
           <>
             {!isLoading && (
-              <>
+              <FieldContainer>
                 <Label text="Where will you open your locations? (Cities, regions, or counties)" />
                 <MultiSelectLocation
                   onSelected={(values: Array<LocationInput>) => {
@@ -108,7 +108,7 @@ export default function TenantGoals(props: Props) {
                 {selectedLocations.length === 0 && (
                   <ErrorMessage>Please provide a location</ErrorMessage>
                 )}
-              </>
+              </FieldContainer>
             )}
             {hasFillLocations && (
               <LocationsNumberInput
@@ -120,6 +120,7 @@ export default function TenantGoals(props: Props) {
                   validate: (val) => validateNumber(val) || 'Invalid number of locations',
                 })}
                 errorMessage={(errors?.locationCount as FieldError)?.message || ''}
+                containerStyle={{ paddingTop: 12, paddingBottom: 12 }}
               />
             )}
           </>
@@ -158,4 +159,8 @@ const ErrorMessage = styled(Text)`
 const TransparentButton = styled(Button)`
   margin-right: 8px;
   padding: 0 12px;
+`;
+
+const FieldContainer = styled(View)`
+  padding: 12px 0;
 `;
