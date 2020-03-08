@@ -33,3 +33,9 @@ export const GET_PROPERTIES = gql`
     }
   }
 `;
+
+export const DELETE_PROPERTY = gql`
+  mutation DeleteProperty($propertyId: String!) {
+    deleteProperty(propertyId: $propertyId)
+  }
+`;
