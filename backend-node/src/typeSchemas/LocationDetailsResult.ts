@@ -13,15 +13,15 @@ export let AffinitiesDeepDive = objectType({
 export let KeyFactsDeepDive = objectType({
   name: 'KeyFactsDeepDive',
   definition(t) {
-    t.int('mile');
-    t.float('daytimePop');
-    t.float('mediumHouseholdIncome');
-    t.float('totalHousehold');
-    t.float('householdGrowth2017to2022');
-    t.int('numMetro');
-    t.int('numUniversities');
-    t.int('numHospitals');
-    t.int('numApartements');
+    t.int('mile', { nullable: true });
+    t.float('daytimePop', { nullable: true });
+    t.float('mediumHouseholdIncome', { nullable: true });
+    t.float('totalHousehold', { nullable: true });
+    t.float('householdGrowth2017to2022', { nullable: true });
+    t.int('numMetro', { nullable: true });
+    t.int('numUniversities', { nullable: true });
+    t.int('numHospitals', { nullable: true });
+    t.int('numApartements', { nullable: true });
   },
 });
 
