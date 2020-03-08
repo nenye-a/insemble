@@ -23,8 +23,12 @@ let permissions = shield({
   Mutation: {
     editProfileTenant: isTenantAuthenticated,
     createBrand: isTenantAuthenticated,
+    deleteBrand: isTenantAuthenticated,
     editBrand: isTenantAuthenticated,
     createProperty: isLandlordAuthenticated,
+    deleteProperty: isLandlordAuthenticated,
+    editSpace: isLandlordAuthenticated,
+    editProperty: isLandlordAuthenticated,
   },
 });
 
