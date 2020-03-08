@@ -7,6 +7,7 @@ import { View, ContainedTextInput as TextInput, TouchableOpacity, Avatar, Text }
 import Title from './LandingPage/Title';
 import Masthead from './LandingPage/Masthead';
 import LocationsInput from './LandingPage/LocationsInput';
+import Description from './LandingPage/Description';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import { WHITE } from '../constants/colors';
 import Button from '../core-ui/Button';
@@ -47,94 +48,93 @@ function Landing() {
   let avatar = tenantData?.profileTenant.avatar || landlordData?.profileLandlord.avatar || '';
 
   return (
-    <Masthead>
-      <RowView>
-        {id ? (
-          <TouchableOpacity
-            onPress={() => {
-              role === Role.TENANT
-                ? history.push('/user/edit-profile')
-                : history.push('/landlord/edit-profile');
-            }}
-          >
-            <Avatar size="small" image={avatar} />
-          </TouchableOpacity>
+    <View>
+      <Masthead>
+        <RowView>
+          {id ? (
+            <TouchableOpacity
+              onPress={() => {
+                role === Role.TENANT
+                  ? history.push('/user/edit-profile')
+                  : history.push('/landlord/edit-profile');
+              }}
+            >
+              <Avatar size="small" image={avatar} />
+            </TouchableOpacity>
+          ) : (
+            <>
+              <FindTenantsButton
+                text="Landlord Portal"
+                mode="transparent"
+                onPress={() => {
+                  history.push('/landlord/signup');
+                }}
+              />
+              <LogIn
+                mode="secondary"
+                text="Log In"
+                textProps={{ style: { color: WHITE } }}
+                onPress={() => {
+                  history.push('/login');
+                }}
+              />
+              <Button
+                text="Sign Up"
+                onPress={() => {
+                  history.push('/signup');
+                }}
+              />
+            </>
+          )}
+        </RowView>
+        <Title style={{ maxWidth: 800 }}>
+          Find the next best locations for your retail or restaurant business
+        </Title>
+        {isLoading ? (
+          <TextInput placeholder="Loading..." disabled={true} />
         ) : (
-          <>
-            <FindTenantsButton
-              text="Landlord Portal"
-              mode="transparent"
-              onPress={() => {
-                history.push('/landlord/signup');
-              }}
-            />
-            <LogIn
-              mode="secondary"
-              text="Log In"
-              textProps={{ style: { color: WHITE } }}
-              onPress={() => {
-                history.push('/login');
-              }}
-            />
-            <Button
-              text="Sign Up"
-              onPress={() => {
-                history.push('/signup');
-              }}
-            />
-          </>
-        )}
-      </RowView>
-      <Title style={{ maxWidth: 800 }}>
-        Find the next best locations for your retail or restaurant business
-      </Title>
-      {/* <Text color={WHITE} fontSize={FONT_SIZE_LARGE}>
-        I have an existing location
-      </Text> */}
-      {isLoading ? (
-        <TextInput placeholder="Loading..." disabled={true} />
-      ) : (
-        <LocationsInput
-          placeholder="Enter the name or address of your top performing location"
-          buttonText="Find locations"
-          onSubmit={(place: google.maps.places.PlaceResult) => {
-            let { geometry, formatted_address: formattedAddress, name, place_id: placeID } = place;
-            if (geometry) {
-              let { location } = geometry;
-              if (location) {
-                let { lat, lng } = location;
-                let latitude = lat();
-                let longitude = lng();
-                history.push('/verify/step-1', {
-                  placeID,
-                  name,
-                  formattedAddress,
-                  lat: latitude.toString(),
-                  lng: longitude.toString(),
-                });
+          <LocationsInput
+            placeholder="Enter the name or address of your top performing location"
+            buttonText="Find locations"
+            onSubmit={(place: google.maps.places.PlaceResult) => {
+              let {
+                geometry,
+                formatted_address: formattedAddress,
+                name,
+                place_id: placeID,
+              } = place;
+              if (geometry) {
+                let { location } = geometry;
+                if (location) {
+                  let { lat, lng } = location;
+                  let latitude = lat();
+                  let longitude = lng();
+                  history.push('/verify/step-1', {
+                    placeID,
+                    name,
+                    formattedAddress,
+                    lat: latitude.toString(),
+                    lng: longitude.toString(),
+                  });
+                }
               }
-            }
-          }}
-        />
-      )}
-      <View>
-        <NoAddressButton
-          text="Don't have an address?"
-          mode="transparent"
-          onPress={() => {
-            history.push('/verify/step-1', {
-              newPlace: true,
-            });
-          }}
-        />
-      </View>
-      <BottomContainer>
-        {/* <Text color={WHITE} fontSize={FONT_SIZE_LARGE}>
-          Exploring a new restaurant or retail concept
-        </Text> */}
-        {/* <CategoriesInput /> */}
-      </BottomContainer>
-    </Masthead>
+            }}
+          />
+        )}
+        <View>
+          <NoAddressButton
+            text="Don't have an address?"
+            mode="transparent"
+            onPress={() => {
+              history.push('/verify/step-1', {
+                newPlace: true,
+              });
+            }}
+          />
+        </View>
+      </Masthead>
+      <Description />
+    </View>
   );
 }
 
