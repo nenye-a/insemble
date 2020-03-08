@@ -16,12 +16,12 @@ import {
   Form,
   Alert,
 } from '../core-ui';
+import { LocationInput as LocationsInput, Popup } from '../components';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../constants/theme';
-import { THEME_COLOR, RED_TEXT } from '../constants/colors';
+import { THEME_COLOR } from '../constants/colors';
 import { useGoogleMaps } from '../utils';
 import { NEW_LOCATION_PLAN_OPTIONS } from '../constants/locationPlan';
 import { NewLocationPlanObj } from '../reducers/tenantOnboardingReducer';
-import { LocationInput as LocationsInput } from '../components';
 import { SelectedLocation } from '../components/LocationInput';
 import SvgArrowBack from '../components/icons/arrow-back';
 import { validateNumber } from '../utils/validation';
@@ -48,6 +48,7 @@ export default function BrandDetail() {
   let [matchesEditable, setMatchesEditable] = useState(false);
   let [goalsEditable, setGoalsEditable] = useState(false);
 
+  let [deleteConfirmationVisible, setDeleteConfirmationVisible] = useState(false);
   let [newLocationPlan, setNewLocationPlan] = useState<NewLocationPlanObj | undefined>();
   let [businessLocation, setBusinessLocation] = useState<LocationInput | undefined>();
   let [selectedLocations, setSelectedLocations] = useState<Array<LocationInput> | undefined>();
@@ -87,6 +88,11 @@ export default function BrandDetail() {
       },
       refetchQueries: [{ query: GET_BRANDS }],
     });
+    closeDeleteConfirmation();
+  };
+
+  let closeDeleteConfirmation = () => {
+    setDeleteConfirmationVisible(false);
   };
 
   useEffect(() => {
@@ -107,10 +113,20 @@ export default function BrandDetail() {
   }, [location, newLocationPlanParam]);
 
   if (deleteBrandData?.deleteBrand) {
-    return <Redirect to="/brands" />;
+    return <Redirect to="/user/brands" />;
   }
   return (
     <Container flex>
+      <Popup
+        visible={deleteConfirmationVisible}
+        title="Remove Brand"
+        bodyText="Are you sure you want to remove this brand"
+        buttons={[
+          { text: 'Yes', onPress: onRemovePress },
+          { text: 'No', onPress: closeDeleteConfirmation },
+        ]}
+        onClose={closeDeleteConfirmation}
+      />
       <View style={{ alignItems: 'flex-start' }}>
         <Button
           mode="transparent"
@@ -120,7 +136,6 @@ export default function BrandDetail() {
           onPress={() => history.goBack()}
         />
       </View>
-
       <Form onSubmit={handleSubmit(onSubmit)}>
         {/* TODO: need to modify the BE so it returns statusMessage */}
         <Alert visible={!!editBrandData} text="Your brand has been updated" />
@@ -210,9 +225,11 @@ export default function BrandDetail() {
         />
         <ButtonRow>
           <RemoveButton
-            mode="transparent"
+            mode="secondary"
             text="Remove Brand"
-            onPress={onRemovePress}
+            onPress={() => {
+              setDeleteConfirmationVisible(true);
+            }}
             loading={deleteBrandLoading}
           />
           <Button text="Save Changes" type="submit" loading={editBrandLoading} />
@@ -268,9 +285,6 @@ const ButtonRow = styled(View)`
 
 const RemoveButton = styled(Button)`
   margin-right: 8px;
-  ${Text} {
-    color: ${RED_TEXT};
-  }
 `;
 
 const RepresentativeAddress = styled(LocationsInput)`
