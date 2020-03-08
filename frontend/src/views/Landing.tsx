@@ -18,6 +18,7 @@ import asyncStorage from '../utils/asyncStorage';
 import { GetLandlordProfile } from '../generated/GetLandlordProfile';
 import { Role } from '../types/types';
 import SpeedUpLeasing from './LandingPage/SpeedUpLeasing';
+import Footer from './LandingPage/Footer';
 
 function Landing() {
   let { isLoading } = useGoogleMaps();
@@ -138,6 +139,7 @@ function Landing() {
       <Description />
       <Features />
       <SpeedUpLeasing />
+      <Footer />
     </View>
   );
 }
