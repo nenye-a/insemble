@@ -21,7 +21,7 @@ import { SPACES_TYPE } from '../../constants/spaces';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
 import { validateNumber, asyncStorage } from '../../utils/';
 import { CreateBrand, CreateBrandVariables } from '../../generated/CreateBrand';
-import { CREATE_BRAND } from '../../graphql/queries/server/brand';
+import { CREATE_BRAND, GET_BRANDS } from '../../graphql/queries/server/brand';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -96,6 +96,8 @@ export default function TenantPhysicalCriteria(props: Props) {
               equipment: equipments,
             },
           },
+          refetchQueries: [{ query: GET_BRANDS }],
+          awaitRefetchQueries: true,
         });
       } else {
         history.push('/verify/step-5');

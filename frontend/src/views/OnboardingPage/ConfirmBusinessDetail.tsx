@@ -116,44 +116,48 @@ export default function ConfirmBusinessDetail(props: Props) {
             required: 'Business Name should not be empty',
           })}
           errorMessage={(errors?.businessName as FieldError)?.message || ''}
+          containerStyle={{ paddingBottom: 12 }}
         />
-        <RowedView>
-          <Label text="Categories" />
-          <EditButton
-            text="Edit"
-            onPress={() => toggleCategorySelection(!categorySelectionVisible)}
-          />
-        </RowedView>
-        <ClickAway onClickAway={() => toggleCategorySelection(false)}>
-          {categoriesData && (
-            <FilterContainer
-              search
-              visible={categorySelectionVisible}
-              selectedOptions={selectedCategories}
-              allOptions={categoriesData.categories}
-              onSelect={(category: string) => {
-                setSelectedCategories([...selectedCategories, category]);
-              }}
-              onUnSelect={(category: string) => {
-                let newSelectedCategories = selectedCategories.filter(
-                  (el: string) => !el.includes(category)
-                );
-                setSelectedCategories(newSelectedCategories);
-              }}
-              onDone={() => toggleCategorySelection(false)}
-              loading={autopopulateLoading}
+        <CategoryInput>
+          <RowedView>
+            <Label text="Categories" />
+            <EditButton
+              text="Edit"
+              onPress={() => toggleCategorySelection(!categorySelectionVisible)}
             />
-          )}
-        </ClickAway>
-        <RowWrap>
-          {selectedCategories.map((category, index) => (
-            <PillButton primary key={index} style={{ marginRight: 4, marginTop: 4 }}>
-              {category}
-            </PillButton>
-          ))}
-        </RowWrap>
-        {selectedCategories.length === 0 && <ErrorText>Please Select Categories</ErrorText>}
-        <Label text="What is your relationship to this business?" />
+          </RowedView>
+          <ClickAway onClickAway={() => toggleCategorySelection(false)}>
+            {categoriesData && (
+              <FilterContainer
+                search
+                visible={categorySelectionVisible}
+                selectedOptions={selectedCategories}
+                allOptions={categoriesData.categories}
+                onSelect={(category: string) => {
+                  setSelectedCategories([...selectedCategories, category]);
+                }}
+                onUnSelect={(category: string) => {
+                  let newSelectedCategories = selectedCategories.filter(
+                    (el: string) => !el.includes(category)
+                  );
+                  setSelectedCategories(newSelectedCategories);
+                }}
+                onDone={() => toggleCategorySelection(false)}
+                loading={autopopulateLoading}
+              />
+            )}
+          </ClickAway>
+          <RowWrap>
+            {selectedCategories.map((category, index) => (
+              <PillButton primary key={index} style={{ marginRight: 4, marginTop: 4 }}>
+                {category}
+              </PillButton>
+            ))}
+          </RowWrap>
+          {selectedCategories.length === 0 && <ErrorText>Please Select Categories</ErrorText>}
+        </CategoryInput>
+
+        <LabelText text="What is your relationship to this business?" />
         <RadioGroup
           name="business-relationship"
           options={[
@@ -166,7 +170,7 @@ export default function ConfirmBusinessDetail(props: Props) {
           onSelect={(item) => {
             setBussinesRelation(item);
           }}
-          radioItemProps={{ style: { marginTop: 9 } }}
+          radioItemProps={{ style: { marginBottom: 8 } }}
         />
         {/* TODO: put to constants */}
         {selectedBusinessRelation === 'Other' && (
@@ -243,4 +247,14 @@ const RowWrap = styled(View)`
 const TransparentButton = styled(Button)`
   margin-right: 8px;
   padding: 0 12px;
+`;
+
+const CategoryInput = styled(View)`
+  padding: 12px 0;
+  z-index: 2;
+`;
+
+const LabelText = styled(Label)`
+  padding-top: 12px;
+  padding-bottom: 8px;
 `;

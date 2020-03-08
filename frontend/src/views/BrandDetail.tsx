@@ -120,7 +120,7 @@ export default function BrandDetail() {
       <Popup
         visible={deleteConfirmationVisible}
         title="Remove Brand"
-        bodyText="Are you sure you want to remove this brand"
+        bodyText="Are you sure you want to remove this brand?"
         buttons={[
           { text: 'Yes', onPress: onRemovePress },
           { text: 'No', onPress: closeDeleteConfirmation },
