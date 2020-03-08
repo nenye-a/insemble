@@ -38,3 +38,9 @@ export const GET_BRANDS = gql`
     }
   }
 `;
+
+export const DELETE_BRAND = gql`
+  mutation DeleteBrand($brandId: String!) {
+    deleteBrand(brandId: $brandId)
+  }
+`;
