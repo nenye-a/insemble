@@ -11,7 +11,7 @@ const BackgroundContainer = styled.div`
 
 const ContentContainer = styled.div`
   background-color: rgba(32, 32, 32, 0.7);
-  min-height: 100vh;
+  min-height: 60vh;
   padding-top: 72px;
 `;
 

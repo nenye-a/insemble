@@ -13,6 +13,7 @@ export const GREY = '#B2B2B2';
 export const DARKER_GREY = '#D3D3D3';
 
 export const WHITE = '#FFFFFF';
+export const BLACK = '#000000';
 
 export const THEME_COLOR = INSEMBLE_PURPLE;
 export const SECONDARY_COLOR = '#8E7BC4';
