@@ -42,7 +42,7 @@ export default function LandlordTenantMatches({ onPress, matchResult }: Props) {
               <Image src={item.pictureUrl || imgPlaceholder} />
               <DescriptionContainer>
                 <RowedView flex>
-                  <View>
+                  <View style={{ flex: 1 }}>
                     <CardTitle>{item.name}</CardTitle>
                     <CardCategoryText>{item.category}</CardCategoryText>
                   </View>
@@ -100,8 +100,7 @@ const TenantCard = styled(TouchableOpacity)<TenantCardProps>`
   &:nth-child(3n) {
     margin-right: 0;
   }
-  min-height: 200px;
-  height: fit-content;
+  height:234px
   box-shadow: ${(props) =>
     props.isInterested ? `0px 0px 10px 0px ${SECONDARY_COLOR}` : undefined};
 `;
@@ -123,12 +122,18 @@ const DescriptionContainer = styled(View)`
 const CardTitle = styled(Text)`
   color: ${THEME_COLOR};
   font-weight: ${FONT_WEIGHT_MEDIUM};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 `;
 
 const CardPercentage = styled(Text)`
   color: ${THEME_COLOR};
   font-size: ${FONT_SIZE_LARGE};
   font-weight: ${FONT_WEIGHT_HEAVY};
+  width: 54px;
 `;
 
 const CardCategoryText = styled(Text)`
