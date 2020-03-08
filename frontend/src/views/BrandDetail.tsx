@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, Redirect } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';
 import { useForm, FieldValues, FieldError } from 'react-hook-form';
 
@@ -17,19 +17,20 @@ import {
   Alert,
 } from '../core-ui';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../constants/theme';
-import { THEME_COLOR } from '../constants/colors';
+import { THEME_COLOR, RED_TEXT } from '../constants/colors';
 import { useGoogleMaps } from '../utils';
-import { LocationInput } from '../generated/globalTypes';
-import SvgArrowBack from '../components/icons/arrow-back';
 import { NEW_LOCATION_PLAN_OPTIONS } from '../constants/locationPlan';
 import { NewLocationPlanObj } from '../reducers/tenantOnboardingReducer';
 import { LocationInput as LocationsInput } from '../components';
+import { SelectedLocation } from '../components/LocationInput';
+import SvgArrowBack from '../components/icons/arrow-back';
 import { validateNumber } from '../utils/validation';
 import omitTypename from '../utils/omitTypename';
-import { EDIT_BRAND, GET_BRANDS } from '../graphql/queries/server/brand';
+import { EDIT_BRAND, GET_BRANDS, DELETE_BRAND } from '../graphql/queries/server/brand';
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
+import { LocationInput } from '../generated/globalTypes';
 import { GetBrands_brands as GetBrandsBrands } from '../generated/GetBrands';
-import { SelectedLocation } from '../components/LocationInput';
+import { DeleteBrand, DeleteBrandVariables } from '../generated/DeleteBrand';
 
 export default function BrandDetail() {
   let { brandId = '' } = useParams();
@@ -38,6 +39,10 @@ export default function BrandDetail() {
     editBrand,
     { data: editBrandData, loading: editBrandLoading, error: editBrandError },
   ] = useMutation<EditBrand, EditBrandVariables>(EDIT_BRAND);
+  let [deleteBrand, { data: deleteBrandData, loading: deleteBrandLoading }] = useMutation<
+    DeleteBrand,
+    DeleteBrandVariables
+  >(DELETE_BRAND);
   let { isLoading } = useGoogleMaps();
   let { register, errors, handleSubmit } = useForm();
   let [matchesEditable, setMatchesEditable] = useState(false);
@@ -75,6 +80,15 @@ export default function BrandDetail() {
     }
   };
 
+  let onRemovePress = () => {
+    deleteBrand({
+      variables: {
+        brandId,
+      },
+      refetchQueries: [{ query: GET_BRANDS }],
+    });
+  };
+
   useEffect(() => {
     let foundLocationPlan = NEW_LOCATION_PLAN_OPTIONS.find(
       (item) => item.value === newLocationPlanParam
@@ -92,6 +106,9 @@ export default function BrandDetail() {
     }
   }, [location, newLocationPlanParam]);
 
+  if (deleteBrandData?.deleteBrand) {
+    return <Redirect to="/brands" />;
+  }
   return (
     <Container flex>
       <View style={{ alignItems: 'flex-start' }}>
@@ -191,7 +208,15 @@ export default function BrandDetail() {
           })}
           errorMessage={(errors?.locationCount as FieldError)?.message || ''}
         />
-        <SaveButton text="Save Changes" type="submit" loading={editBrandLoading} />
+        <ButtonRow>
+          <RemoveButton
+            mode="transparent"
+            text="Remove Brand"
+            onPress={onRemovePress}
+            loading={deleteBrandLoading}
+          />
+          <Button text="Save Changes" type="submit" loading={editBrandLoading} />
+        </ButtonRow>
         {/*
             <RowedView>
               <Title>Locations & Performance</Title>
@@ -234,9 +259,18 @@ const RadioGroupWrapper = styled(RadioGroup)`
   padding: 12px 0;
 `;
 
-const SaveButton = styled(Button)`
-  align-self: flex-end;
-  margin: 12px 0;
+const ButtonRow = styled(View)`
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 12px 0;
+`;
+
+const RemoveButton = styled(Button)`
+  margin-right: 8px;
+  ${Text} {
+    color: ${RED_TEXT};
+  }
 `;
 
 const RepresentativeAddress = styled(LocationsInput)`
