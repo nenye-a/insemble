@@ -9,6 +9,9 @@ import Masthead from './LandingPage/Masthead';
 import LocationsInput from './LandingPage/LocationsInput';
 import Description from './LandingPage/Description';
 import Features from './LandingPage/Features';
+import SpeedUpLeasing from './LandingPage/SpeedUpLeasing';
+import Footer from './LandingPage/Footer';
+import Partners from './LandingPage/Partners';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import { WHITE } from '../constants/colors';
 import Button from '../core-ui/Button';
@@ -17,8 +20,6 @@ import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../graphql/queries/ser
 import asyncStorage from '../utils/asyncStorage';
 import { GetLandlordProfile } from '../generated/GetLandlordProfile';
 import { Role } from '../types/types';
-import SpeedUpLeasing from './LandingPage/SpeedUpLeasing';
-import Footer from './LandingPage/Footer';
 
 function Landing() {
   let { isLoading } = useGoogleMaps();
@@ -136,6 +137,7 @@ function Landing() {
           />
         </View>
       </Masthead>
+      <Partners />
       <Description />
       <Features />
       <SpeedUpLeasing />
@@ -146,9 +148,6 @@ function Landing() {
 
 export default Landing;
 
-const BottomContainer = styled(View)`
-  margin-top: 12px;
-`;
 const RowView = styled(View)`
   flex-direction: row;
   align-items: flex-end;
