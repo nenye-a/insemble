@@ -17,6 +17,7 @@ import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../graphql/queries/ser
 import asyncStorage from '../utils/asyncStorage';
 import { GetLandlordProfile } from '../generated/GetLandlordProfile';
 import { Role } from '../types/types';
+import SpeedUpLeasing from './LandingPage/SpeedUpLeasing';
 
 function Landing() {
   let { isLoading } = useGoogleMaps();
@@ -136,6 +137,7 @@ function Landing() {
       </Masthead>
       <Description />
       <Features />
+      <SpeedUpLeasing />
     </View>
   );
 }
