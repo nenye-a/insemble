@@ -5,6 +5,7 @@ export { default as dateFormatter } from './dateFormatter';
 export { default as formatGraphQLError } from './formatGraphQLError';
 export { default as formatSnakeCaseLabel } from './formatSnakeCaseLabel';
 export * from './isEqual';
+export { default as getBusinessAndFilterParams } from './getBusinessAndFilterParams';
 export { default as getImageBlob } from './getImageBlob';
 export { default as getKeyfactsValue } from './getKeyfactsValue';
 export { default as roundDecimal } from './roundDecimal';
