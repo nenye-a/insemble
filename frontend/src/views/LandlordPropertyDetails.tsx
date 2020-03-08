@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { useHistory, useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
@@ -45,6 +45,25 @@ export default function LandlordPropertyDetails() {
     GET_PROPERTY_MATCHES_DATA,
     { variables: { propertyId: params.propertyId } }
   );
+
+  let propertyMatches = useMemo(() => {
+    if (!data) {
+      return data;
+    }
+    return data.propertyMatches.sort(
+      (
+        { matchValue: matchValueA, numExistingLocations: numExistingLocationsA },
+        { matchValue: matchValueB, numExistingLocations: numExistingLocationsB }
+      ) => {
+        let sortValue = matchValueB - matchValueA;
+        if (sortValue === 0) {
+          sortValue = numExistingLocationsB - numExistingLocationsA;
+        }
+        return sortValue;
+      }
+    );
+  }, [data]);
+
   return (
     <View flex>
       {loading ? (
@@ -70,7 +89,7 @@ export default function LandlordPropertyDetails() {
             {isTenantMatchSelected ? (
               <ContentWrapper>
                 <LandlordTenantMatches
-                  matchResult={data?.propertyMatches}
+                  matchResult={propertyMatches}
                   onPress={(selectedBrandId, tenantPhoto) => {
                     setModalVisible(true),
                       setSelectedBrandId(selectedBrandId),
