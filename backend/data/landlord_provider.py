@@ -143,8 +143,8 @@ def build_location(lat, lng):
             '$maxDistance': utils.miles_to_meters(max_distance)
         }
     }})
-
-    if locations:
+    
+    if locations and locations.count() > 0:
         # return the closest location, as near returns the items sorted by distance
         return list(locations)[0]
 
