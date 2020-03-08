@@ -87,36 +87,23 @@ Brands:
         {
             last_update: ISODate(),
             year: string,                               -> year of update YYYY
-            average_sales_value: float,                  -> average sales across all the locations
-            # median_sales_value: float,                 -> median sales across all the locations (this will be added later)
+            average_sales_value: float,                 -> average sales across all the locations
+            # median_sales_value: float,                -> median sales across all the locations (this will be added later)
             source: string,                             -> source of the sales information
             recorded_sales_locations: string            -> number of locations with recorded sales
         }
         ... more sales
     ],
-    contacts: {
-        admin: {                                        -> admin of this brand
-            admin_id: string,                           -> postgres ID of the admin of this brand
-            name: string,
-            role: string,                               -> professional role of the user (added here for matching / sparseness purposes)
+    contacts: [
+        {
+            user_id: string,                            -> postgres ID of the user
+            name: string,                               
+            position: string,                           -> position of user in the company (None if no relation)
+            role: string,                               -> role of user in platform (owner, representative, admin, other)
+            email: string,                              -> email of user (only available for users input in the system)
         }
-        owners: [                                       -> users who are marked as owners of the platform
-            {
-                user_id: string,                        -> postgres ID of the user
-                name: string,                           -> name of the user associated with the brand
-                role: string,                           -> professional role of the user
-            },
-            ... more owners
-        ],
-        representatives: [                              -> users who are marked as representatives of this brand
-            {
-                user_id: string,                        -> postgres ID of the user
-                name: string,                           -> name of the user associated with the brand
-                role: string,                           -> professional role of the user 
-            },
-            ... more representatives
-        ]
-    },
+        ... other contacts
+    ],
     match_requests: {                                   -> all the requests for matches related to this brand
         active: {                                       -> the match schema that is currently active for the brand (perhaps enable different strategies for different regions)
             last_update: ISODate(),
