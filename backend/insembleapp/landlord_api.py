@@ -3,7 +3,7 @@ from .tenant_api import AsynchronousAPI, FastLocationDetailsAPI
 from rest_framework.response import Response
 from .landlord_serializers import PropertyTenantSerializer, PropertyDetailsSerializer, TenantDetailsSerializer
 from bson import ObjectId
-import data.api.goog as google
+import data.api.google as google
 import data.utils as utils
 import data.landlord_provider as landlord_provider
 import data.provider as provider

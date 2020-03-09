@@ -5,7 +5,7 @@ import ast
 import threading
 import data.matching as matching
 import data.provider as provider
-import data.api.goog as google
+import data.api.google as google
 import data.api.arcgis as arcgis
 from bson import ObjectId
 from rest_framework import status, generics, permissions, serializers
