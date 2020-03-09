@@ -173,7 +173,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
               <LocationDetail
                 visible
                 title={data?.locationPreview.targetAddress}
-                subTitle={data?.locationPreview.targetNeighborhood}
+                subTitle={data?.locationPreview.targetNeighborhood || ''}
                 income={data?.locationPreview.medianIncome.toString()}
                 population={data?.locationPreview.daytimePop3Mile.toString()}
                 age={data?.locationPreview.medianAge}
