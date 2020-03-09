@@ -41,6 +41,7 @@ const FormContainer = styled(View)`
   flex: 1;
   justify-content: center;
   background-color: ${WHITE};
+  padding: 10px 50px 0 50px;
 `;
 
 const TitleText = styled(Text)`
