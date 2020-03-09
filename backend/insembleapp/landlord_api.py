@@ -139,14 +139,17 @@ class PropertyTenantAPI(AsynchronousAPI):
             property_lng = round(google_location["geometry"]["location"]["lng"], 6)
 
             formatted_address = google_location["formatted_address"] if "formatted_address" in google_location else google_location["vicinity"]
-            already_exists = self.check_property_exists(formatted_address)
-            if already_exists:
-                return Response({
-                    'status': status.HTTP_409_CONFLICT,
-                    'status_detail': ["This property already exists. Please resubmit with a property_id to update."],
-                }, status=status.HTTP_409_CONFLICT)
 
-            # TODO: check if we already have an address here
+            # Check for address temporarily removed. In the future, we will do this earlier and then
+            # ask the user to confirm if they indeed want to use this address even though it exists.
+
+            # already_exists = self.check_property_exists(formatted_address)
+            # if already_exists:
+            #     return Response({
+            #         'status': status.HTTP_409_CONFLICT,
+            #         'status_detail': ["This property already exists. Please resubmit with a property_id to update."],
+            #     }, status=status.HTTP_409_CONFLICT)
+
             this_property = {
                 'address': formatted_address,
                 'location': {
