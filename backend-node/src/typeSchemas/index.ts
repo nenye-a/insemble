@@ -34,3 +34,7 @@ export * from './TenantDetailsResult';
 export * from './PropertyInput';
 export * from './SpaceInput';
 export * from './CreateSpaceInput';
+
+export * from './PaymentMethod';
+export * from './Subscription';
+export * from './Billing';

@@ -13,5 +13,6 @@ export let Tenant = objectType({
     t.model.title();
     t.model.tier();
     t.model.pendingEmail();
+    t.model.stripeCustomerId();
   },
 });
