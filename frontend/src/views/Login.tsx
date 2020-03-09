@@ -21,7 +21,9 @@ export default function Login() {
         titleProps={{ style: { fontSize: FONT_SIZE_MEDIUM, fontWeight: FONT_WEIGHT_NORMAL } }}
         titleBackground="purple"
       >
-        <LoginForm role={Role.TENANT} onboardingState={history.location.state.onboardingState} />
+        <FormContainer>
+          <LoginForm role={Role.TENANT} onboardingState={history.location.state?.onboardingState} />
+        </FormContainer>
       </LoginCard>
       <NoAccountContainer>
         <Text>{noAccount} </Text>
@@ -66,4 +68,8 @@ const Container = styled(View)`
 const LoginCard = styled(Card)`
   width: 400px;
   // padding: 20px;
+`;
+
+const FormContainer = styled(View)`
+  padding: 24px;
 `;
