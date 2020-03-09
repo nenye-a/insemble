@@ -20,6 +20,7 @@ import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../graphql/queries/ser
 import asyncStorage from '../utils/asyncStorage';
 import { GetLandlordProfile } from '../generated/GetLandlordProfile';
 import { Role } from '../types/types';
+import InsembleLogo from '../components/common/InsembleLogo';
 
 function Landing() {
   let { isLoading } = useGoogleMaps();
@@ -54,6 +55,9 @@ function Landing() {
   return (
     <View>
       <Masthead>
+        <LogoView>
+          <InsembleLogo color={'white'} />
+        </LogoView>
         <RowView>
           {id ? (
             <TouchableOpacity
@@ -176,4 +180,11 @@ const LogIn = styled(Button)`
   margin: 0 12px 0 0;
   border-color: ${WHITE};
   background-color: transparent;
+`;
+
+const LogoView = styled(View)`
+  align-item: flex-start;
+  position: absolute;
+  top: 16px;
+  left: 32px;
 `;
