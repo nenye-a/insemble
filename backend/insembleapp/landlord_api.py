@@ -195,6 +195,11 @@ class PropertyTenantAPI(AsynchronousAPI):
             'brands': brands,
         }, status=status.HTTP_200_OK)
 
+    def delete(self, request, property_id, format=None):
+        property_id = ObjectId(property_id)
+        utils.DB_PROPERTY.delete_one({"_id": property_id})
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def check_property_exists(self, address):
         existing_property = utils.DB_PROPERTY.find_one({'address': address}, {'_id': 1})
         # return the id if it exists, else None
