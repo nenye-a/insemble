@@ -2,7 +2,7 @@ from . import utils, matching
 from django.conf import settings
 import pandas as pd
 from s3fs import S3FileSystem
-import data.api.goog as google
+import data.api.google as google
 import data.api.spatial as spatial
 import data.api.arcgis as arcgis
 import data.api.environics as environics

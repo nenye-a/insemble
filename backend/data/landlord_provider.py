@@ -4,7 +4,7 @@ import numpy as np
 import pprint
 import re
 import pandas as pd
-import data.api.goog as google
+import data.api.google as google
 import data.api.foursquare as foursquare
 import data.api.arcgis as arcgis
 import data.api.environics as environics
@@ -143,7 +143,7 @@ def build_location(lat, lng):
             '$maxDistance': utils.miles_to_meters(max_distance)
         }
     }})
-    
+
     if locations and locations.count() > 0:
         # return the closest location, as near returns the items sorted by distance
         return list(locations)[0]

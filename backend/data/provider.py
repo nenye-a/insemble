@@ -1,10 +1,9 @@
 from . import utils, matching
 from bson import ObjectId
 import numpy as np
-import time
 import re
 import pandas as pd
-import data.api.goog as google
+import data.api.google as google
 import data.api.foursquare as foursquare
 import data.api.arcgis as arcgis
 import data.api.environics as environics
