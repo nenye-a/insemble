@@ -30,8 +30,11 @@ let paymentMethodList = queryField('paymentMethodList', {
             id: landlordUserId,
           },
         });
+    if (!user) {
+      throw new Error('Not Authorized');
+    }
     let paymentMethodList: PaymentMethodList = [];
-    if (user?.stripeCustomerId) {
+    if (user.stripeCustomerId) {
       let customerPaymentMethod = await stripeInstance.paymentMethods.list({
         customer: user.stripeCustomerId,
         type: 'card',
