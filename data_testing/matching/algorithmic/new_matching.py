@@ -1,21 +1,24 @@
-from . import utils
-from django.conf import settings
+import sys
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(BASE_DIR, 'data_aggregator'))
+from decouple import config
+import time
 import pandas as pd
-from bson import ObjectId
 from s3fs import S3FileSystem
-import data.api.google as google
-import data.api.spatial as spatial
-import data.api.arcgis as arcgis
-import data.api.environics as environics
+import environics
+import arcgis
+import spatial
+import google
+import utils
+
 
 '''
-
-Retailer focused matching algorithms, in addition to some general Insemble matching utility functions.
-
+Test file for matching algorithms.
 '''
 
-AWS_ACCESS_KEY_ID = settings.AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY = settings.AWS_SECRET_ACCESS_KEY
+AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
 
 S3_FILESYSTEM = S3FileSystem(
     key=AWS_ACCESS_KEY_ID, secret=AWS_SECRET_ACCESS_KEY)
@@ -139,73 +142,51 @@ FOURSQUARE_CATEGORIES = utils.DB_FOURSQUARE.find_one(
     {'name': 'foursquare_categories'})['foursquare_categories']
 
 
-def generate_matches(location_address, name=None, options={}):
+def generate_matches(location_address, name=None, my_place_type={}):
     """
     Given an address, will generate a ranking of addresses that are the most similar
     accross all aspects to this location.
-
-    Options is a dictionary of options that the user want's to impact the matching.
     """
 
     my_location_df = _generate_location_vector(location_address, name)
-
-    # OBTAIN USER OPTIONS
-    # unpack and ensure values
-    desired_min_income = options['income']['min'] if 'income' in options else None
-    desired_max_income = options['income']['max'] if 'income' in options and 'max' in options['income'] else None
-    desired_min_age = options['age']['min'] if 'age' in options else None
-    desired_max_age = options['age']['max'] if 'age' in options and 'max' in options['age'] else None
-    desired_personas = options['personas'] if 'personas' in options else []
-    desired_commute = options['commute'] if 'commute' in options else []
-    desired_education = options['education'] if 'education' in options else []
-    desired_ethnicity = options['ethnicity'] if 'ethnicity' in options else []
-
-    # re_package option values
-    options = {
-        'desired_min_income': desired_min_income,
-        'desired_max_income': desired_max_income,
-        'desired_min_age': desired_min_age,
-        'desired_max_age': desired_max_age,
-        'desired_personas': desired_personas,
-        'desired_commute': desired_commute,
-        'desired_education': desired_education,
-        'desired_ethnicity': desired_ethnicity
-    }
-
-    # MATCHING (Pre-process)
-    print("** Matching: Match Setup")
+    # get preprocessed vectors
     df = MATCHING_DF.copy()
+
+    # combine matching df & subtraction vector
     df2 = df.drop(columns=["_id", "lat", "lng", "loc_id"])
     df2 = df2.append(my_location_df)
     df2 = df2.fillna(0)
 
     print("** Matching: Pre-processing start.")
     df2 = preprocess_match_df(df2)
-    diff = df2.subtract(df2.iloc[-1]).iloc[:-1]
+
+    # # subtract vector from remaining matches
+    diff = df2.subtract(df2.iloc[-1])
+    diff = diff.iloc[:-1]
 
     print("** Matching: Post-processing start.")
-    processed_diff = postprocess_match_df(diff, options)
-    print("** Matching: Evaluation Ongoing.")
-    weighted_df = weight_and_evaluate(standardize(processed_diff))
-    # re-assign the important tracking information (location id & positioning)
-    weighted_df['lat'], weighted_df['lng'], weighted_df['loc_id'], weighted_df['_id'] = df['lat'], df['lng'], df['loc_id'], df['_id']
+    processed_diff = postprocess_match_df(diff)
+
+    print(processed_diff.columns)
+    processed_diff.to_csv('full.csv')
+    processed_diff.describe().to_csv('stats-v2.csv')
+
+    print("** Matching: Matching start.")
+    norm_df = weight_and_evaluate(processed_diff)
+
+    # # re-assign the important tracking information (location id & positioning)
+    norm_df['lat'], norm_df['lng'], norm_df['loc_id'] = df['lat'], df['lng'], df['loc_id']
+
     print("** Matching: Matching complete, results immenent.")
-    # calculate matches for all vectors
-    weighted_df["match_value"] = weighted_df["error_sum"].apply(_map_difference_to_match)
-    best = weighted_df[weighted_df['error_sum'] < .3].copy()
-    # Convert distance to match value, and convert any object ids to strings to allow JSON serialization
-    best["match"] = best["error_sum"].apply(_map_difference_to_heatmap)
+    # # Return only the top 1% of locations.
 
-    # RETURN VALUES AND UPDATE DATABASE
-    # "match" referes to the heatmap rating (hasn't been changed due to frontend dependency)
-    # "match_value" refers to the actual map value
-    weighted_df['match_value'] = weighted_df['match_value'].round()
-    all_dict = weighted_df.set_index('_id')['match_value'].to_dict()
+    best = norm_df.nsmallest(int(norm_df.shape[0] * 0.01), 'error_sum')
 
-    best_dict = best[['lat', 'lng', 'match']].to_dict(orient='records')
-    tenant_id = utils.DB_TENANT.insert({'match_values': all_dict})
+    # # Convert distance to match value, and convert any object ids to strings to allow JSON serialization
+    best["match"] = best["error_sum"].apply(_map_difference_to_match)
+    best["loc_id"] = best["loc_id"].apply(str)
 
-    return best_dict, str(tenant_id)
+    return best[['lat', 'lng', 'match', 'loc_id']].to_json(orient='records')
 
 
 def generate_vector_address(address, name):
@@ -224,8 +205,6 @@ def _generate_location_vector(address, name=None, lat=None, lng=None):
     if not (lat and lng):
         if name:
             location = google.find(address, name=name, allow_non_establishments=True)
-            if not location:
-                location = google.find(address, allow_non_establishments=True)
         else:
             location = google.find(address, allow_non_establishments=True)
         lat = location["geometry"]["location"]["lat"]
@@ -370,6 +349,7 @@ def preprocess_match_df(dataframe):
 
     # convert all tier break downs to percentage
     # TODO: Clean up pre processing code below
+
     income_sum = dataframe[INCOME_LIST].sum(axis=1)
     income_sum3 = dataframe[INCOME_LIST_3MILE].sum(axis=1)
     age_sum = dataframe[AGE_LIST].sum(axis=1)
@@ -424,66 +404,10 @@ def preprocess_match_df(dataframe):
 
 
 # given difference matrix, post proesses items into groups that work together
-def postprocess_match_df(difference_dataframe, options):
+def postprocess_match_df(difference_dataframe):
 
+    # POST PROCESS
     difference_dataframe = difference_dataframe.abs()
-    # we want to amplify the differences of importance categories
-    importance_factor = 2.5
-    # we want to make larger the difference of values that are outside of our ranges
-    difference_multiplier = 2.5
-
-    if options['desired_min_age']:
-        desired_range = [options['desired_min_age']]
-        if options['desired_max_age']:
-            desired_range.append(options['desired_max_age'])
-        else:
-            # ridiculously high number to allow allow all greater options.
-            desired_range.append(1000)
-        in_age_range = lambda x: utils.in_range(x, desired_range)
-
-        # process ages
-        for category in AGE_LIST:
-            eval_category = category[:-1] if "+" in category else category
-            category_range_list = [int(item) for item in eval_category.split(" ") if utils.is_number(item)]
-
-            if not utils.list_matches_condition(in_age_range, category_range_list):
-                # weight items that are in range higer than those that are not. (both 1 and 3 miles)
-                difference_dataframe[category] = difference_dataframe[category] * importance_factor
-                difference_dataframe[category + "3"] = difference_dataframe[category + "3"] * importance_factor
-
-    if options['desired_min_income']:
-
-        desired_range = [options['desired_min_income']]
-        if options['desired_max_income']:
-            desired_range.append(options['desired_max_income'])
-        else:
-            # ridiculously high number to allow greater incomes
-            desired_range.append(1000000)
-        in_income_range = lambda x: utils.in_range(x, desired_range)
-
-        below_range1 = difference_dataframe["MedHouseholdIncome1"] < desired_range[0]
-        above_range1 = difference_dataframe["MedHouseholdIncome1"] > desired_range[1]
-        below_range3 = difference_dataframe["MedHouseholdIncome13"] < desired_range[0]
-        above_range3 = difference_dataframe["MedHouseholdIncome13"] > desired_range[1]
-
-        difference_dataframe[below_range1] = difference_dataframe[below_range1] * difference_multiplier
-        difference_dataframe[above_range1] = difference_dataframe[above_range1] * difference_multiplier
-        difference_dataframe[below_range3] = difference_dataframe[below_range3] * difference_multiplier
-        difference_dataframe[above_range3] = difference_dataframe[below_range3] * difference_multiplier
-
-        # process incomes
-        for category in INCOME_LIST:
-            eval_category = category.replace("Current Year Households, Household Income ", "")
-            eval_category = eval_category[:-1] if "+" in eval_category else eval_category  # remove trailing "+"
-            category_range_list = [int("".join(item[1:].split(","))) for item in eval_category.split(" ") if "," in item]
-
-            if utils.list_matches_condition(in_income_range, category_range_list):
-                difference_dataframe[category] = difference_dataframe[category] * importance_factor
-                difference_dataframe[category + "3"] = difference_dataframe[category + "3"] * importance_factor
-
-    for category in options['desired_personas'] + options['desired_commute'] + options['desired_education'] + options['desired_education']:
-        difference_dataframe[category] = difference_dataframe[category] * importance_factor
-        difference_dataframe[category + "3"] = difference_dataframe[category] * importance_factor
 
     # group features that are evaluated & normalized together
     difference_dataframe["psycho"] = difference_dataframe[SPATIAL_LIST].sum(axis=1)
@@ -507,85 +431,48 @@ def postprocess_match_df(difference_dataframe, options):
     return difference_dataframe
 
 
-def standardize(processed_difference_df):
-    # standardize the differences so that you can more equivalently weight them.
-    # standardizes them between 0 and one.
-    return (processed_difference_df - processed_difference_df.min()) / \
-        (processed_difference_df.max() - processed_difference_df.min())
-
-
 # will normalize, weight, and evaluate the vectors
-def weight_and_evaluate(standardized_df):
+def weight_and_evaluate(processed_difference_df):
 
-    # ------
-    # old weighting
-    # weight and sum the differences
-    # weight = {
-    #     # 1 mile weights
-    #     'DaytimePop1': 5,
-    #     'MedHouseholdIncome1': 4.8,
-    #     'income': 4.6,
-    #     'TotalHouseholds1': 4.4,
-    #     'nearby_categories': 4.2,
-    #     'DaytimeResidentPop1': 4,
-    #     'psycho': 4,
-    #     'age': 4,
-    #     'transport': 3.8,
-    #     'travel_time': 3.6,
-    #     'education': 3.6,
-    #     'race': 3.6,
-    #     'gender': 3.6,
-    #     # 3 mile weights
-    #     'DaytimePop13': 3.5,
-    #     'MedHouseholdIncome13': 3.3,
-    #     'income3': 3.1,
-    #     'TotalHouseholds13': 3,
-    #     'DaytimeResidentPop13': 3,
-    #     'psycho3': 3,
-    #     'age3': 3,
-    #     'transport3': 2.9,
-    #     'travel_time3': 2.7,
-    #     'education3': 2.7,
-    #     'race3': 2.6,
-    #     'gender3': 2.6,
-    # }
+    # normalize between 0 and 1
+    normalized_dataframe = (processed_difference_df - processed_difference_df.min()) / \
+        (processed_difference_df.max() - processed_difference_df.min())
 
     # weight and sum the differences
     weight = {
         # 1 mile weights
-        'MedHouseholdIncome1': 5,
-        'income': 4.8,
-        'race': 4.6,
-        'DaytimePop1': 4.4,
-        'TotalHouseholds1': 4.2,
-        'nearby_categories': 4,
+        'DaytimePop1': 5,
+        'MedHouseholdIncome1': 4.8,
+        'income': 4.6,
+        'TotalHouseholds1': 4.4,
+        'nearby_categories': 4.2,
         'DaytimeResidentPop1': 4,
         'psycho': 4,
-        'age': 3.8,
-        'transport': 3.6,
+        'age': 4,
+        'transport': 3.8,
         'travel_time': 3.6,
         'education': 3.6,
+        'race': 3.6,
         'gender': 3.6,
         # 3 mile weights
-        'MedHouseholdIncome13': 3.5,
-        'income3': 3.3,
-        'race3': 3.1,
-        'DaytimePop13': 3,
+        'DaytimePop13': 3.5,
+        'MedHouseholdIncome13': 3.3,
+        'income3': 3.1,
         'TotalHouseholds13': 3,
         'DaytimeResidentPop13': 3,
         'psycho3': 3,
-        'age3': 2.9,
-        'transport3': 2.7,
+        'age3': 3,
+        'transport3': 2.9,
         'travel_time3': 2.7,
-        'education3': 2.6,
+        'education3': 2.7,
+        'race3': 2.6,
         'gender3': 2.6,
     }
-
     weight_df = pd.DataFrame([weight])
-    standardized_df["error_sum"] = standardized_df[list(weight.keys())].copy().dot(weight_df.transpose()) / \
+    normalized_dataframe["error_sum"] = normalized_dataframe[list(weight.keys())].dot(weight_df.transpose()) / \
         sum(weight.values())
 
-    return standardized_df
+    return normalized_dataframe
 
 
 def _map_difference_to_match(difference):
@@ -593,19 +480,15 @@ def _map_difference_to_match(difference):
     difference_max = 1
     difference_min_est = 0
 
+    # previous values
+    # difference_max = 88
+    # difference_min_est = 13
+
     return utils.translate(difference, difference_max, difference_min_est, 0, 100)
 
 
-def _map_difference_to_heatmap(difference):
+if __name__ == "__main__":
+    # print(_generate_location_vector("371 E 2nd Street, LA", name="Spitz"))
+    print(generate_matches("371 E 2nd Street", name="Spitz"))
 
-    # difference expected to be between 0 and 1
-
-    value = 1 - difference
-
-    if value < .7:
-        return 0.1
-    if value < .75:
-        return 0.3
-    if value < 0.8:
-        return 0.6
-    return 4
+    # print(generate_matches_v1("371 E 2nd Street, LA"))
