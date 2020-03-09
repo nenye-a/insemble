@@ -18,7 +18,7 @@ export default function LandlordLanding() {
       <LandingBackground />
       <RowView>
         <FindLocation
-          text="Find the perfect location"
+          text="Retailer/Restaurant Portal"
           mode="transparent"
           onPress={() => {
             history.push('/');

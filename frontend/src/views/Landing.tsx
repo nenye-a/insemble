@@ -92,7 +92,7 @@ function Landing() {
           )}
         </RowView>
         <Title style={{ maxWidth: 800 }}>
-          Find the next best locations for your retail or restaurant business
+          Find the best location for your retail or restaurant business
         </Title>
         {isLoading ? (
           <TextInput placeholder="Loading..." disabled={true} />
