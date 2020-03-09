@@ -67,4 +67,3 @@ In order to develop a new API endpoint for the django app, please follow the fol
 2. Ensure that you have correct serializers set up and connected to your API.
 3. Write API function methods following class based or function based Django Rest.
 4. Ensure that the desired url for the api is includedin the urls.py file within the `url_patterns` list. The structure for urls within the list either follow a `path` or `url` structure depending on whether or not you want to add keys to the url path. Example - `url(r'api/propertyTenants/', PropertyTenantAPI.as_view(), name='propertyTenants')` or `path(r'api/properties/<slug:_id>/', SearchAPI.as_view(), name='properties'),` where the path allows us to us the key `'_id'` in our API function.
-
