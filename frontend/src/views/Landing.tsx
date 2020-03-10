@@ -141,7 +141,7 @@ function Landing() {
           />
         </View>
       </Masthead>
-      <Partners />
+      {/* <Partners /> */}
       <Description />
       <Features />
       <SpeedUpLeasing />
