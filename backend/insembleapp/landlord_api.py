@@ -98,6 +98,8 @@ class PropertyTenantAPI(AsynchronousAPI):
 
     def get(self, request, *args, **kwargs):
 
+        self._register_tasks()
+
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
