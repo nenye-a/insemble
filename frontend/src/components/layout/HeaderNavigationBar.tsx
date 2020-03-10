@@ -111,11 +111,11 @@ export default function HeaderNavigationBar(props: Props) {
   );
 }
 
-const Container = styled('div')`
-  display: flex;
+const Container = styled(View)`
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
+  width: 100vw;
   height: ${NAVBAR_HEIGHT};
   background-color: ${WHITE};
   box-shadow: 0px 1px 1px 0px ${HEADER_BORDER_COLOR};
