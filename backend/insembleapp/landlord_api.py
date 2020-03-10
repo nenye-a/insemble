@@ -183,7 +183,7 @@ class PropertyTenantAPI(AsynchronousAPI):
 
         # Should do this in an other class that is made for updating and refetching
         # the matches for a space. Then this is just an automatic call.
-        brands = landlord_provider.get_matching_tenants_new(this_property, space_id)
+        brands = landlord_provider.get_matching_tenants(this_property, space_id)
 
         return Response({
             'status': status.HTTP_200_OK,
@@ -450,10 +450,10 @@ class TenantDetailsAPI(AsynchronousAPI):
         description = brand['description'] if brand['description'] else "No description provided."
 
         physical_requirements = {
-            'minimum sqft': brand['typical_squarefoot'][0]['min'] if len(brand['typical_squarefoot']) > 0 else None,
+            'minimum sqft': brand['typical_squarefoot'][0]['min'] if brand['typical_squarefoot'] and len(brand['typical_squarefoot']) > 0 else None,
             'frontage width': None,
             'condition': "",
-            'property_type': brand['typical_property_type']['type'] if len(brand['typical_property_type']) > 0 else None
+            'property_type': brand['typical_property_type']['type'] if brand['typical_property_type'] and len(brand['typical_property_type']) > 0 else None
         }
 
         key_facts = {
