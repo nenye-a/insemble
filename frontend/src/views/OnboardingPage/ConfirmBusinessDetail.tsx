@@ -2,7 +2,7 @@ import React, { useState, Dispatch, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
-import { useForm, FieldError } from 'react-hook-form';
+import { useForm, FieldError, FieldValues } from 'react-hook-form';
 
 import {
   TextInput,
@@ -39,9 +39,7 @@ export default function ConfirmBusinessDetail(props: Props) {
   let { confirmBusinessDetail } = onboardingState;
 
   let { register, errors, watch, handleSubmit } = useForm();
-  let otherBusinessRelation = watch('otherBusinessRelation');
-  let name = confirmBusinessDetail.name || watch('businessName');
-
+  let name = watch('businessName');
   let { data: categoriesData } = useQuery<Categories>(GET_CATEGORIES);
   let { data: autopopulateData, loading: autopopulateLoading } = useQuery<
     AutoPopulateFilter,
@@ -60,6 +58,7 @@ export default function ConfirmBusinessDetail(props: Props) {
   let [selectedCategories, setSelectedCategories] = useState<Array<string>>(
     confirmBusinessDetail.categories || []
   );
+  let [isSubmitted, setSubmitted] = useState(false);
   let history = useHistory<LocationState>();
 
   let iframeSource =
@@ -71,46 +70,51 @@ export default function ConfirmBusinessDetail(props: Props) {
         confirmBusinessDetail.location?.lng
       : '';
 
-  let businessRelationValid =
-    (selectedBusinessRelation && selectedBusinessRelation !== 'Other') ||
-    (selectedBusinessRelation === 'Other' && otherBusinessRelation);
-  let allValid = businessRelationValid && selectedCategories.length > 0 && name;
-
   useEffect(() => {
     if (autopopulateData?.autoPopulateFilter.categories) {
       setSelectedCategories(autopopulateData.autoPopulateFilter.categories);
     }
   }, [autopopulateData]);
 
-  let saveFormState = () => {
+  let saveFormState = (fieldValues: FieldValues) => {
     dispatch({
       type: 'SAVE_CHANGES_CONFIRM_BUSINESS_DETAIL',
       values: {
         confirmBusinessDetail: {
           ...onboardingState.confirmBusinessDetail,
-          name,
+          name: fieldValues.businessName,
           categories: selectedCategories,
-          userRelation: selectedBusinessRelation,
-          otherUserRelation: otherBusinessRelation,
+          userRelation: fieldValues.businessRelationship,
+          otherUserRelation: fieldValues.otherBusinessRelation,
         },
       },
     });
   };
 
-  let onSubmit = () => {
+  let onSubmit = (fieldValues: FieldValues) => {
+    let allValid = Object.keys(errors).length === 0 && selectedCategories.length > 0;
+
     if (allValid) {
-      saveFormState();
+      saveFormState(fieldValues);
       history.push('/verify/step-2');
     }
   };
 
   return (
-    <Form style={{ flex: 1 }} onSubmit={handleSubmit(onSubmit)}>
+    <Form
+      style={{ flex: 1 }}
+      onSubmit={() => {
+        if (!isSubmitted) {
+          setSubmitted(true);
+        }
+        handleSubmit(onSubmit)();
+      }}
+    >
       {iframeSource && <Iframe src={iframeSource} />}
       <FormContainer>
         <TextInput
           label="Business Name"
-          defaultValue={name}
+          defaultValue={confirmBusinessDetail.name}
           name="businessName"
           ref={register({
             required: 'Business Name should not be empty',
@@ -154,12 +158,14 @@ export default function ConfirmBusinessDetail(props: Props) {
               </PillButton>
             ))}
           </RowWrap>
-          {selectedCategories.length === 0 && <ErrorText>Please Select Categories</ErrorText>}
+          {isSubmitted && selectedCategories.length === 0 && (
+            <ErrorText>Please Select Categories</ErrorText>
+          )}
         </CategoryInput>
 
         <LabelText text="What is your relationship to this business?" />
         <RadioGroup
-          name="business-relationship"
+          name="businessRelationship"
           options={[
             'I am the owner of this business',
             'I am a development manager',
@@ -170,7 +176,13 @@ export default function ConfirmBusinessDetail(props: Props) {
           onSelect={(item) => {
             setBussinesRelation(item);
           }}
-          radioItemProps={{ style: { marginBottom: 8 } }}
+          radioItemProps={{
+            style: { marginBottom: 8 },
+            ref: register({
+              required: 'Please select your relation to this business',
+            }),
+          }}
+          errorMessage={(errors?.businessRelationship as FieldError)?.message || ''}
         />
         {/* TODO: put to constants */}
         {selectedBusinessRelation === 'Other' && (
@@ -192,7 +204,7 @@ export default function ConfirmBusinessDetail(props: Props) {
           type="submit"
           onPress={() => history.goBack()}
         />
-        <Button text="Next" disabled={!allValid} type="submit" />
+        <Button text="Next" type="submit" />
       </OnboardingFooter>
     </Form>
   );

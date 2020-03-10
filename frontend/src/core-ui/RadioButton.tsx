@@ -9,8 +9,8 @@ type ViewProps = ComponentProps<typeof View>;
 type Props = ViewProps & {
   name: string;
   title: string;
-  isSelected?: boolean;
-  onPress?: () => void;
+  isSelected: boolean;
+  onPress: () => void;
   disabled?: boolean;
 };
 
