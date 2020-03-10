@@ -52,7 +52,6 @@ export default function TenantTargetCustomers(props: Props) {
   });
   let [editCriteriaDisabled, toggleEditCriteria] = useState(true);
   let [noAgePreference, setNoAgePreference] = useState(targetCustomers.noAgePreference);
-  let [noIncomePreference, setNoIncomePreference] = useState(targetCustomers.noIncomePreference);
   let [noPersonasPreference, setNoPersonasPreference] = useState(
     targetCustomers.noPersonasPreference
   );
@@ -111,7 +110,6 @@ export default function TenantTargetCustomers(props: Props) {
           personas: selectedPersonas,
           educations: selectedEducations,
           noAgePreference,
-          noIncomePreference,
           noPersonasPreference,
           noEducationsPreference,
           minDaytimePopulation,
@@ -170,10 +168,6 @@ export default function TenantTargetCustomers(props: Props) {
           visible
           rangeSlide
           income
-          hasPreference={!noIncomePreference}
-          onNoPreferencePress={() => {
-            setNoIncomePreference(!noIncomePreference);
-          }}
           values={[minIncome, maxIncome]}
           minimum={0}
           maximum={200}

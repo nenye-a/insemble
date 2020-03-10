@@ -31,7 +31,6 @@ export type TargetCustomers = {
   noAgePreference?: boolean;
   minIncome?: number;
   maxIncome?: number;
-  noIncomePreference?: boolean;
   personas?: Array<string>;
   noPersonasPreference?: boolean;
   educations?: Array<string>;

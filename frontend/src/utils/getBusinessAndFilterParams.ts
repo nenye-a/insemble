@@ -23,7 +23,6 @@ export default function getBusinessAndFilterParams(
     noAgePreference,
     minAge,
     maxAge,
-    noIncomePreference,
     minIncome,
     maxIncome,
   } = targetCustomers;
@@ -46,8 +45,8 @@ export default function getBusinessAndFilterParams(
         : Number(minDaytimePopulation),
       minAge: noAgePreference ? undefined : Number(minAge),
       maxAge: noAgePreference ? undefined : Number(maxAge),
-      minIncome: noIncomePreference ? undefined : Number(minIncome) * 1000,
-      maxIncome: noIncomePreference ? undefined : Number(maxIncome) * 1000,
+      minIncome: Number(minIncome) * 1000,
+      maxIncome: Number(maxIncome) * 1000,
       minSize: Number(minSize),
       minFrontageWidth: Number(minFrontageWidth),
       spaceType,
