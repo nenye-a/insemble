@@ -12,6 +12,7 @@ let tenantVerificationResolver: FieldResolver<
     throw new Error('Invalid verification code');
   }
   let tenantVerificationId = Base64.decode(verifyId);
+  let tenantTokenQuery = Base64.decode(tokenQuery);
   let tenantVerification = await context.prisma.tenantRegisterVerification.findOne(
     {
       where: {
@@ -34,7 +35,7 @@ let tenantVerificationResolver: FieldResolver<
     throw new Error('User not found');
   }
 
-  if (tokenQuery !== tenantVerification.tokenQuery) {
+  if (tenantTokenQuery !== tenantVerification.tokenQuery) {
     throw new Error('Invalid token');
   }
 

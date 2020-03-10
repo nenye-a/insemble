@@ -41,7 +41,7 @@ let resetPasswordLandlordResolver: FieldResolver<
     verificationId:
       Base64.encodeURI(landlordRPVerification.id) +
       ':' +
-      landlordRPVerification.tokenQuery,
+      Base64.encodeURI(landlordRPVerification.tokenQuery),
   };
 };
 

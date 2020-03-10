@@ -41,7 +41,7 @@ let resetPasswordTenantResolver: FieldResolver<
     verificationId:
       Base64.encodeURI(tenantRPVerification.id) +
       ':' +
-      tenantRPVerification.tokenQuery,
+      Base64.encodeURI(tenantRPVerification.tokenQuery),
   };
 };
 

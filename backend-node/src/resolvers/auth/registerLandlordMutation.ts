@@ -62,7 +62,7 @@ export let registerLandlord = mutationField('registerLandlord', {
       verificationId:
         Base64.encodeURI(landlordVerification.id) +
         ':' +
-        landlordVerification.tokenQuery,
+        Base64.encodeURI(landlordVerification.tokenQuery),
     };
   },
 });
