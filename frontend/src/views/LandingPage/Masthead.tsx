@@ -11,14 +11,14 @@ const BackgroundContainer = styled(View)`
 `;
 
 const ContentContainer = styled.div`
-  background-color: rgba(32, 32, 32, 0);
+  background-color: rgba(0, 0, 0, 0.3);
   min-height: 60vh;
   justify-content: center;
   align-items: center;
 `;
 
 const TopGradien = styled.div`
-  background: linear-gradient(0deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 1) 90%);
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 1) 90%);
   height: 70px;
 `;
 const Content = styled.div`
