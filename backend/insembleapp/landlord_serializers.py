@@ -70,8 +70,11 @@ class PropertyTenantSerializer(serializers.Serializer):
 
 
 class PropertyDetailsSerializer(serializers.Serializer):
-
     property_id = serializers.CharField(max_length=24)
+
+
+class PropertyCheckSerializer(serializers.Serializer):
+    address = serializers.CharField(max_length=240)
 
 
 class TenantDetailsSerializer(serializers.Serializer):
