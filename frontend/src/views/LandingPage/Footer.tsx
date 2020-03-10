@@ -4,12 +4,12 @@ import styled from 'styled-components';
 import { View, Text, TouchableOpacity } from '../../core-ui';
 
 import { BLACK, WHITE } from '../../constants/colors';
+import { SUPPORT_EMAIL } from '../../constants/app';
 
 export default function Footer() {
   return (
     <Container>
-      {/* TODO: redirect on press */}
-      <TouchableOpacity href="">
+      <TouchableOpacity href={`mailto:${SUPPORT_EMAIL}`}>
         <WhiteText>Contact us!</WhiteText>
       </TouchableOpacity>
       <View>
