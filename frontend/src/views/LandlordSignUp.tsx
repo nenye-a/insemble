@@ -14,7 +14,7 @@ export default function LandlordSignUp() {
     <Container>
       <LandlordLanding />
       <RightContainer flex>
-        <TitleText>Sign Up</TitleText>
+        <TitleText>Landlord Sign Up</TitleText>
         <SignUpForm role={Role.LANDLORD} />
         <SignUpRowView>
           <Text>Already have an account? </Text>

@@ -15,7 +15,7 @@ export default function LandlordSignUp() {
     <Container>
       <LandlordLanding />
       <FormContainer>
-        <TitleText>Log In</TitleText>
+        <TitleText>Landlord Log In</TitleText>
         <LoginForm role={Role.LANDLORD} />
         <RowView>
           <Text>{noAccount} </Text>
