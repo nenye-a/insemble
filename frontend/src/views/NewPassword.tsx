@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useForm, FieldError } from 'react-hook-form';
+import { useHistory } from 'react-router-dom';
 
 import { Card, Text, View, Button, Form, TextInput } from '../core-ui';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
 import OnboardingFooter from '../components/layout/OnboardingFooter';
-import { useHistory } from 'react-router-dom';
 
 export default function NewPassword() {
   let history = useHistory();
@@ -76,7 +76,7 @@ export default function NewPassword() {
               </Text>
             </Content>
             <OnboardingFooter>
-              <Button text="Log In" type="submit" onPress={() => history.push('/login')} />
+              <Button text="Log In" onPress={() => history.push('/login')} />
             </OnboardingFooter>
           </>
         )}
