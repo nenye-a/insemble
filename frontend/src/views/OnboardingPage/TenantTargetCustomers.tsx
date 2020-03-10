@@ -170,7 +170,6 @@ export default function TenantTargetCustomers(props: Props) {
           visible
           rangeSlide
           income
-          noPreferenceButton
           hasPreference={!noIncomePreference}
           onNoPreferencePress={() => {
             setNoIncomePreference(!noIncomePreference);
@@ -189,7 +188,6 @@ export default function TenantTargetCustomers(props: Props) {
             noPreferenceButton
             hasPreference={!noEducationsPreference}
             onNoPreferencePress={() => {
-              styled;
               setNoEducationsPrefence(!noEducationsPreference);
             }}
             title="Education"
