@@ -983,7 +983,6 @@ def get_nearby_places(lat, lng, radius=1):
 def get_environics_demographics(lat, lng):
 
     demo1 = environics.get_demographics(lat, lng, 1)
-
     demo3 = environics.get_demographics(lat, lng, 3)
 
     return {

@@ -208,9 +208,6 @@ def standardize(processed_difference_df):
     min_index = 3
     max_index = 7
 
-    # return (processed_difference_df - COLUMN_MIN_MAX_DF.iloc[min_index]) / \
-    #     (COLUMN_MIN_MAX_DF.iloc[max_index] - COLUMN_MIN_MAX_DF.iloc[max_index])
-
     for column in processed_difference_df.columns:
         processed_difference_df[column] = (processed_difference_df[column] - COLUMN_MIN_MAX_DF.iloc[min_index][column]) / \
             (COLUMN_MIN_MAX_DF.iloc[max_index][column] - COLUMN_MIN_MAX_DF.iloc[min_index][column])

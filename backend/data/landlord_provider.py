@@ -48,9 +48,26 @@ def get_matching_tenants(eval_property, space_id):
         brand = tenant_dict[match['brand_name']]
         name = brand['alias']
 
-        category = brand['categories'][0]['categories'][0]['name']
+        # Get the right categories
+        category_dict = {
+            category["source"]: category for category in brand["categories"]
+        }
+        try:
+            if "Foursquare" in category_dict:
+                category = category_dict["Foursquare"]['categories'][0]['name']
+            elif "Crittenden" in category_dict:
+                category = category_dict["Crittenden"]['categories'][0]['name']
+            elif "Google" in category_dict:
+                # Clean up google categories
+                category = category_dict["Google"]['categories'][0]['name']
+                category = " ".join([word.capitlize() for word in category.split('_')]).strip()
+            else:
+                category = ""
+        except Exception:
+            category = ""
 
-        match_value = match['match_value']
+        # bound by 10 and 100%
+        match_value = min(max(match['match_value'], 10), 95)
         number_existing_locations = brand['number_found_locations']
 
         most_popular_store = utils.DB_PLACES.find({
@@ -67,11 +84,12 @@ def get_matching_tenants(eval_property, space_id):
 
         if brand['typical_squarefoot']:
             for ft in brand['typical_squarefoot']:
-                square_foot_range = [ft['min'], ft['max'] or 2000]
+                # chooseing an arbitrarily large integer
+                square_foot_range = [ft['min'], ft['max'] or 200000]
                 if utils.in_range(my_space['sqft'], square_foot_range):
                     match_value = min(match_value * 1.05, 99)
                 else:
-                    match_value = max(match_value * 0.75, 0)
+                    match_value = max(match_value * 0.50, 0)
 
         final_matches.append({
             'name': name,
