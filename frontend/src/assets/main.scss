@@ -19,11 +19,8 @@ $primary: $primary-purple !default;
 }
 
 .describe-store__categories::after {
-  content: "";
+  content: '';
   flex: 10 1 auto;
-}
-
-.category-badge {
 }
 
 .category-badge:hover {
@@ -44,20 +41,3 @@ $primary: $primary-purple !default;
 .bg-pink {
   background-color: pink;
 }
-
-// Main SDP Styles
-@import '../styles/shards-dashboards';
-@import '../styles/landing-template/scss/creative';
-
-// Variables
-@import './variables';
-
-// Plugin Styles
-@import './dropzone';
-@import './quill';
-@import './range-date-picker';
-@import './file-manager-list';
-@import './react-tagsinput';
-@import './react-big-calendar';
-
-@import '../styles/maps.scss';

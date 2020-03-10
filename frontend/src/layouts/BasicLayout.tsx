@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
+import { View } from '../core-ui';
 
 import HeaderNavigationBar from '../components/layout/HeaderNavigationBar';
 import FreeTrialBanner from '../components/layout/FreeTrialBanner';
@@ -13,10 +14,8 @@ type Props = {
   showBanner?: boolean;
 };
 
-const Container = styled.div`
+const Container = styled(View)`
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 `;
 
 // Layout with header and footer
