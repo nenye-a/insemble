@@ -23,36 +23,10 @@ between the actual api, and the actual underlying data infrastructure.
 '''
 
 
-def get_matching_tenants(address):  # , sqft, rent=None, tenant_type=None, exclusives=None):
-    """
-
-    Return the matching tenants for a landlord factoring all aspects of the match, including a
-    filter based on square footage, rent, and tenant_type
-
-    """
-
-    # get dataframe of the best tenants, including all contextual information
-    best_matches = landlord_matching.generate_matches(address)
-
-    # TODO: filter by square footage (when available)
-    # TODO: filter by rent (when available)
-    # TODO: mark as within tenant_type and exclusives (existing tenant category should be factored in)
-
-    # Spoof results until we have database connections to do real connections.
-    best_matches["name"] = "Test"
-    best_matches["category"] = "Mexican Restaurant"
-    best_matches["num_existing_locations"] = 10
-    best_matches["on_platform"] = True
-    best_matches["interested"] = False
-    best_matches["photo_url"] = best_matches["brand_id"].apply(get_photos)
-
-    return best_matches.to_dict(orient='records')
-
-
-def get_matching_tenants_new(eval_property, space_id):
+def get_matching_tenants(eval_property, space_id):
 
     # grab my location details
-    my_location = utils.DB_PROPERTY.find_one({'_id': eval_property['location_id']})
+    my_location = utils.DB_LOCATIONS.find_one({'_id': eval_property['location_id']})
     for item in eval_property['spaces']:
         if item['space_id'] == space_id:
             my_space = item
@@ -61,9 +35,9 @@ def get_matching_tenants_new(eval_property, space_id):
     tenants = utils.DB_BRANDS.find({
         "$or": [{'regions_present.regions': "California"}, {'regions_present.regions': "Nationwide"}],
         'number_found_locations': {'$gt': 1},
-        'average_arcgis_demographics': {'$exists': True},
-        'average_environics_demographics': {'$exists': True},
-        'average_spatial_psychographics': {'$exists': True}
+        'average_arcgis_demographics.1mile': {'$ne': None},
+        'average_environics_demographics.1mile': {'$ne': None},
+        'average_spatial_psychographics.1mile': {'$ne': None}
     })
     tenant_dict = {tenant['brand_name']: tenant for tenant in tenants}
     match_list = list(tenant_dict.values()) + [my_location]
