@@ -1,7 +1,8 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
+import { View } from '../../core-ui';
 
-const BackgroundContainer = styled.div`
+const BackgroundContainer = styled(View)`
   background-image: url('https://insemble-photos.s3.us-east-2.amazonaws.com/interactive-landing-background.jpg');
   background-size: cover;
   background-position-x: center;
@@ -9,10 +10,11 @@ const BackgroundContainer = styled.div`
   background-repeat: no-repeat;
 `;
 
-const ContentContainer = styled.div`
+const ContentContainer = styled(View)`
   background-color: rgba(32, 32, 32, 0.7);
   min-height: 60vh;
-  padding-top: 72px;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Content = styled.div`
