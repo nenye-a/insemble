@@ -182,6 +182,7 @@ export default function TenantTargetCustomers(props: Props) {
             noPreferenceButton
             hasPreference={!noEducationsPreference}
             onNoPreferencePress={() => {
+              setSelectedEducations([]);
               setNoEducationsPrefence(!noEducationsPreference);
             }}
             title="Education"
@@ -211,6 +212,7 @@ export default function TenantTargetCustomers(props: Props) {
             linkTitle="Psychographics"
             hasPreference={!noPersonasPreference}
             onNoPreferencePress={() => {
+              setSelectedPersonas([]);
               setNoPersonasPreference(!noPersonasPreference);
             }}
             title="Consumer Personas"
