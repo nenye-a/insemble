@@ -5,7 +5,7 @@ sys.path.append(BASE_DIR)  # include data_testing
 
 from decouple import config
 import utils
-import safe_request
+import api.safe_request as safe_request
 
 
 '''

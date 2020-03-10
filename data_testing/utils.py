@@ -4,7 +4,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)  # include data_insights_testing in path
 import gzip
 from mongo_connect import Connect
-import anmspatial
+import api.anmspatial as anmspatial
 import pandas as pd
 import math
 import geopy.distance
