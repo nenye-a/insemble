@@ -2,6 +2,7 @@ export * from './authorization';
 export { default as asyncStorage } from './asyncStorage';
 export { default as convertToKilos } from './convertToKilos';
 export { default as dateFormatter } from './dateFormatter';
+export * from './EventEmitter';
 export { default as formatGraphQLError } from './formatGraphQLError';
 export { default as formatSnakeCaseLabel } from './formatSnakeCaseLabel';
 export * from './isEqual';
