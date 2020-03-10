@@ -11,7 +11,15 @@ export type UserContent = {
 
 type UserState = { userState: { __typename: string } & UserContent };
 
-export type RootState = UserState;
+export type ErrorContent = {
+  locationPreview: boolean;
+};
+
+export type ErrorState = {
+  errorState: { __typename: string } & ErrorContent;
+};
+
+export type RootState = UserState & ErrorState;
 
 export const defaultState: RootState = {
   userState: {
@@ -24,5 +32,9 @@ export const defaultState: RootState = {
     company: '',
     tier: '',
     role: '',
+  },
+  errorState: {
+    __typename: 'ErrorState',
+    locationPreview: false,
   },
 };

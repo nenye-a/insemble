@@ -86,14 +86,19 @@ def get_address_neighborhood(lat, lng):
     """
 
     google_location = google.reverse_geocode(lat, lng, save=False)
-    address = google_location['formatted_address'].split(',')[0] if 'formatted_address' in google_location else ""
+    address = None
+    if google_location is not None and 'formatted_address' in google_location:
+        address = google_location['formatted_address'].split(',')[0]         
+    else:
+        address = ""
     neighborhood = None
     locality = None
-    for component in google_location['address_components']:
-        if 'neighborhood' in component['types']:
-            neighborhood = component['short_name']
-        if 'locality' in component['types']:
-            locality = component['short_name']
+    if google_location is not None:
+        for component in google_location['address_components']:
+            if 'neighborhood' in component['types']:
+                neighborhood = component['short_name']
+            if 'locality' in component['types']:
+                locality = component['short_name']
 
     # return both neighborhood and locality, but return None if neighther are present
     if neighborhood:

@@ -124,6 +124,7 @@ const TENANT_ROUTES = [
     component: MainMap,
     props: {
       showButton: true,
+      showBanner: true,
     },
     authorization: tenantAuthorization,
   },
