@@ -16,51 +16,47 @@ ReactGA.initialize(trackingID);
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './assets/main.scss';
 
-class App extends React.Component {
-  render() {
-    return (
-      <ApolloProvider client={apolloClient}>
-        <ClientContextProvider client={client}>
-          <Router basename={process.env.REACT_APP_BASENAME || ''}>
-            <Switch>
-              <>
-                {routes.map((route: RouteType, index) => {
-                  return (
-                    <Route
-                      key={index}
-                      path={route.path}
-                      exact={route.exact}
-                      component={withTracker((props: RouteType) => {
-                        if (
-                          route?.authorization?.isAuthorized &&
-                          !route.authorization.isAuthorized()
-                        ) {
-                          return (
-                            <Redirect
-                              to={{
-                                pathname: '/',
-                              }}
-                            />
-                          );
-                        }
-                        let Layout = route.layout;
-                        let Component = route.component;
+export default function App() {
+  return (
+    <ApolloProvider client={apolloClient}>
+      <ClientContextProvider client={client}>
+        <Router basename={process.env.REACT_APP_BASENAME || ''}>
+          <Switch>
+            <>
+              {routes.map((route: RouteType, index) => {
+                return (
+                  <Route
+                    key={index}
+                    path={route.path}
+                    exact={route.exact}
+                    component={withTracker((props: RouteType) => {
+                      if (
+                        route?.authorization?.isAuthorized &&
+                        !route.authorization.isAuthorized()
+                      ) {
                         return (
-                          <Layout {...props} {...route?.props}>
-                            <Component {...props} />
-                          </Layout>
+                          <Redirect
+                            to={{
+                              pathname: '/',
+                            }}
+                          />
                         );
-                      })}
-                    />
-                  );
-                })}
-              </>
-            </Switch>
-          </Router>
-        </ClientContextProvider>
-      </ApolloProvider>
-    );
-  }
+                      }
+                      let Layout = route.layout;
+                      let Component = route.component;
+                      return (
+                        <Layout {...props} {...route?.props}>
+                          <Component {...props} />
+                        </Layout>
+                      );
+                    })}
+                  />
+                );
+              })}
+            </>
+          </Switch>
+        </Router>
+      </ClientContextProvider>
+    </ApolloProvider>
+  );
 }
-
-export default App;
