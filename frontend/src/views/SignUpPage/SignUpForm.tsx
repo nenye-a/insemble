@@ -11,7 +11,7 @@ import { REGISTER_TENANT, REGISTER_LANDLORD } from '../../graphql/queries/server
 import { RegisterTenant, RegisterTenantVariables } from '../../generated/RegisterTenant';
 import { State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import { Role } from '../../types/types';
-import { formatGraphQLError } from '../../utils';
+import { formatGraphQLError, getBusinessAndFilterParams } from '../../utils';
 
 type Props = {
   role: Role;
@@ -33,50 +33,6 @@ export default function SignUpForm(props: Props) {
 
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
 
-  let getBussinessAndFilterParams = () => {
-    if (onboardingState) {
-      let {
-        confirmBusinessDetail,
-        tenantGoals,
-        targetCustomers,
-        physicalSiteCriteria,
-      } = onboardingState;
-      return {
-        business: {
-          name: confirmBusinessDetail.name,
-          userRelation:
-            confirmBusinessDetail.userRelation === 'Other'
-              ? confirmBusinessDetail.otherUserRelation || ''
-              : confirmBusinessDetail.userRelation,
-          location: confirmBusinessDetail.location,
-          locationCount: tenantGoals.locationCount ? Number(tenantGoals.locationCount) : null,
-          newLocationPlan: tenantGoals.newLocationPlan?.value,
-          nextLocations: tenantGoals.location,
-        },
-        filter: {
-          categories: confirmBusinessDetail.categories,
-          personas: targetCustomers.noPersonasPreference ? null : targetCustomers.personas,
-          education: targetCustomers.noEducationsPreference ? null : targetCustomers.educations,
-          minDaytimePopulation: targetCustomers.noMinDaytimePopulationPreference
-            ? null
-            : Number(targetCustomers.minDaytimePopulation),
-          minAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.minAge),
-          maxAge: targetCustomers.noAgePreference ? null : Number(targetCustomers.maxAge),
-          minIncome: targetCustomers.noIncomePreference
-            ? null
-            : Number(targetCustomers.minIncome) * 1000,
-          maxIncome: targetCustomers.noIncomePreference
-            ? null
-            : Number(targetCustomers.maxIncome) * 1000,
-          minSize: Number(physicalSiteCriteria.minSize),
-          minFrontageWidth: Number(physicalSiteCriteria.minFrontageWidth),
-          spaceType: physicalSiteCriteria.spaceType,
-          equipment: physicalSiteCriteria.equipments,
-        },
-      };
-    }
-  };
-
   let submitRegisterLandlord = (data: FieldValues) => {
     let { email, firstName, lastName, company, password } = data;
     registerLandlord({
@@ -90,12 +46,19 @@ export default function SignUpForm(props: Props) {
         },
       },
     });
-    // call be
   };
 
   let submitRegisterTenant = (data: FieldValues) => {
     let { email, firstName, lastName, company, password } = data;
 
+    let businessAndFilterParams =
+      onboardingState &&
+      getBusinessAndFilterParams(
+        onboardingState.confirmBusinessDetail,
+        onboardingState.tenantGoals,
+        onboardingState.targetCustomers,
+        onboardingState.physicalSiteCriteria
+      );
     registerTenant({
       variables: {
         tenant: {
@@ -105,7 +68,7 @@ export default function SignUpForm(props: Props) {
           company,
           password,
         },
-        ...getBussinessAndFilterParams(),
+        ...businessAndFilterParams,
       },
     });
   };

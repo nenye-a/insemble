@@ -52,7 +52,6 @@ export default function TenantTargetCustomers(props: Props) {
   });
   let [editCriteriaDisabled, toggleEditCriteria] = useState(true);
   let [noAgePreference, setNoAgePreference] = useState(targetCustomers.noAgePreference);
-  let [noIncomePreference, setNoIncomePreference] = useState(targetCustomers.noIncomePreference);
   let [noPersonasPreference, setNoPersonasPreference] = useState(
     targetCustomers.noPersonasPreference
   );
@@ -111,7 +110,6 @@ export default function TenantTargetCustomers(props: Props) {
           personas: selectedPersonas,
           educations: selectedEducations,
           noAgePreference,
-          noIncomePreference,
           noPersonasPreference,
           noEducationsPreference,
           minDaytimePopulation,
@@ -170,11 +168,6 @@ export default function TenantTargetCustomers(props: Props) {
           visible
           rangeSlide
           income
-          noPreferenceButton
-          hasPreference={!noIncomePreference}
-          onNoPreferencePress={() => {
-            setNoIncomePreference(!noIncomePreference);
-          }}
           values={[minIncome, maxIncome]}
           minimum={0}
           maximum={200}
@@ -189,7 +182,7 @@ export default function TenantTargetCustomers(props: Props) {
             noPreferenceButton
             hasPreference={!noEducationsPreference}
             onNoPreferencePress={() => {
-              styled;
+              setSelectedEducations([]);
               setNoEducationsPrefence(!noEducationsPreference);
             }}
             title="Education"
@@ -219,6 +212,7 @@ export default function TenantTargetCustomers(props: Props) {
             linkTitle="Psychographics"
             hasPreference={!noPersonasPreference}
             onNoPreferencePress={() => {
+              setSelectedPersonas([]);
               setNoPersonasPreference(!noPersonasPreference);
             }}
             title="Consumer Personas"

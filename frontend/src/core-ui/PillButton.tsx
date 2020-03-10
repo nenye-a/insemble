@@ -1,7 +1,7 @@
 import React, { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
 import { TEXT_COLOR, THEME_COLOR, WHITE } from '../constants/colors';
-import { FONT_FAMILY_NORMAL } from '../constants/theme';
+import { FONT_FAMILY_NORMAL, FONT_SIZE_NORMAL } from '../constants/theme';
 
 type PillButtonProps = {
   primary?: boolean;
@@ -17,6 +17,7 @@ const PillButton = styled(DefaultButton)`
   line-height: 1;
 
   text-align: center;
+  font-size: ${FONT_SIZE_NORMAL};
 
   /* So the size doesn't slightly change when purple border shows up when highlighted */
   border: 1px solid;
