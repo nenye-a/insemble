@@ -307,7 +307,6 @@ export default function BasicProfile() {
                 errorMessage={(errors?.jobTitle as FieldError)?.message || ''}
               />
             </RowedView>
-            <Title>Public Profile</Title>
             <TextInput
               label="Phone Number"
               placeholder="Phone Number"
@@ -326,7 +325,7 @@ export default function BasicProfile() {
             />
             <TextArea
               defaultValue={profile.description || ''}
-              label="About"
+              label="Public Description"
               disabled={!profileEditable}
               containerStyle={textInputContainerStyle}
               name="description"

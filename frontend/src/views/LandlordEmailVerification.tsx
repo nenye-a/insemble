@@ -44,7 +44,10 @@ export default function LandlordEmailVerification() {
       <OnboardingCard title="Verify your email" progress={1} buttons={[]}>
         <ContentContainer flex={true}>
           <InsembleLogo color="purple" />
-          <Description> Please verify your email to complete your registration</Description>
+          <Description>
+            We have sent an email with a verification link to you. Please follow the instructions to
+            complete your registration.
+          </Description>
         </ContentContainer>
       </OnboardingCard>
     </Container>

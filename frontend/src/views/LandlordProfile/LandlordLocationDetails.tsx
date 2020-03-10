@@ -51,7 +51,7 @@ export default function LandlordLocationDetails() {
         <>
           <Iframe src={location} />
           <KeyFacts keyFactsData={keyFactsData} commuteData={commuteData} withMargin={false} />
-          <ConsumerPersonaText>All Consumer Personas</ConsumerPersonaText>
+          <ConsumerPersonaText>Local Consumer Personas (Psychographics)</ConsumerPersonaText>
           <Container flex>
             <CardsContainer>
               {personasData &&
