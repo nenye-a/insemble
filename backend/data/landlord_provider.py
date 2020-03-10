@@ -1,15 +1,11 @@
 from . import utils, landlord_matching
 from bson import ObjectId
-import numpy as np
-import pprint
-import re
-import pandas as pd
 import data.api.google as google
-import data.api.foursquare as foursquare
 import data.api.arcgis as arcgis
 import data.api.environics as environics
 import data.api.anmspatial as anmspatial
 import data.api.spatial as spatial
+from fuzzywuzzy import process
 from bson import ObjectId
 
 
@@ -23,36 +19,10 @@ between the actual api, and the actual underlying data infrastructure.
 '''
 
 
-def get_matching_tenants(address):  # , sqft, rent=None, tenant_type=None, exclusives=None):
-    """
-
-    Return the matching tenants for a landlord factoring all aspects of the match, including a
-    filter based on square footage, rent, and tenant_type
-
-    """
-
-    # get dataframe of the best tenants, including all contextual information
-    best_matches = landlord_matching.generate_matches(address)
-
-    # TODO: filter by square footage (when available)
-    # TODO: filter by rent (when available)
-    # TODO: mark as within tenant_type and exclusives (existing tenant category should be factored in)
-
-    # Spoof results until we have database connections to do real connections.
-    best_matches["name"] = "Test"
-    best_matches["category"] = "Mexican Restaurant"
-    best_matches["num_existing_locations"] = 10
-    best_matches["on_platform"] = True
-    best_matches["interested"] = False
-    best_matches["photo_url"] = best_matches["brand_id"].apply(get_photos)
-
-    return best_matches.to_dict(orient='records')
-
-
-def get_matching_tenants_new(eval_property, space_id):
+def get_matching_tenants(eval_property, space_id):
 
     # grab my location details
-    my_location = utils.DB_PROPERTY.find_one({'_id': eval_property['location_id']})
+    my_location = utils.DB_LOCATIONS.find_one({'_id': eval_property['location_id']})
     for item in eval_property['spaces']:
         if item['space_id'] == space_id:
             my_space = item
@@ -61,9 +31,9 @@ def get_matching_tenants_new(eval_property, space_id):
     tenants = utils.DB_BRANDS.find({
         "$or": [{'regions_present.regions': "California"}, {'regions_present.regions': "Nationwide"}],
         'number_found_locations': {'$gt': 1},
-        'average_arcgis_demographics': {'$exists': True},
-        'average_environics_demographics': {'$exists': True},
-        'average_spatial_psychographics': {'$exists': True}
+        'average_arcgis_demographics.1mile': {'$ne': None},
+        'average_environics_demographics.1mile': {'$ne': None},
+        'average_spatial_psychographics.1mile': {'$ne': None}
     })
     tenant_dict = {tenant['brand_name']: tenant for tenant in tenants}
     match_list = list(tenant_dict.values()) + [my_location]
@@ -71,12 +41,46 @@ def get_matching_tenants_new(eval_property, space_id):
 
     final_matches = []
     for match in matches:
+
         brand = tenant_dict[match['brand_name']]
         name = brand['alias']
-
-        category = brand['categories'][0]['categories'][0]['name']
-
         match_value = match['match_value']
+
+        # Factor in exclusives and targets
+        categories = utils.flatten([[category['name'] for category in categories['categories']]
+                                    for categories in brand['categories']])
+        # break the loop if there's any exclusives.
+        exclusive = None
+        for eval_category in categories:
+            exclusive = process.extractOne(eval_category, eval_property["exclusives"], score_cutoff=85)
+            if exclusive:
+                break
+        if exclusive:
+            continue
+
+        for eval_category in categories:
+            target = process.extractBests(eval_category, eval_property['target_tenant_categories'])
+            if target:
+                match_value * 1.04
+
+        # Get the right categories
+        category_dict = {
+            category["source"]: category for category in brand["categories"]
+        }
+        try:
+            if "Foursquare" in category_dict:
+                category = category_dict["Foursquare"]['categories'][0]['name']
+            elif "Crittenden" in category_dict:
+                category = category_dict["Crittenden"]['categories'][0]['name']
+            elif "Google" in category_dict:
+                # Clean up google categories
+                category = category_dict["Google"]['categories'][0]['name']
+                category = " ".join([word.capitlize() for word in category.split('_')]).strip()
+            else:
+                category = ""
+        except Exception:
+            category = ""
+
         number_existing_locations = brand['number_found_locations']
 
         most_popular_store = utils.DB_PLACES.find({
@@ -92,13 +96,19 @@ def get_matching_tenants_new(eval_property, space_id):
         interested = False
 
         if brand['typical_squarefoot']:
+            matches_sqft = False
             for ft in brand['typical_squarefoot']:
-                square_foot_range = [ft['min'], ft['max'] or 2000]
+                # choosing an arbitrarily large integer
+                square_foot_range = [ft['min'], ft['max'] or 200000]
                 if utils.in_range(my_space['sqft'], square_foot_range):
-                    match_value = min(match_value * 1.05, 99)
-                else:
-                    match_value = max(match_value * 0.75, 0)
+                    matches_sqft = True
+            if matches_sqft:
+                match_value = match_value * 1.075
+            elif len(brand['typical_squarefoot']) > 0:
+                match_value = match_value * 0.80
 
+        # bound match value by 10 and 100%
+        match_value = min(max(match_value, 10), 95)
         final_matches.append({
             'name': name,
             'match_value': match_value,
