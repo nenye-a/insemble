@@ -1,4 +1,4 @@
-import React, { ComponentProps, useState } from 'react';
+import React, { ComponentProps, useState, forwardRef, Ref } from 'react';
 import styled, { css } from 'styled-components';
 import View from './View';
 import Text from './Text';
@@ -9,8 +9,8 @@ type ViewProps = ComponentProps<typeof View>;
 type Props = ViewProps & {
   name: string;
   title: string;
-  isSelected: boolean;
-  onPress: () => void;
+  isSelected?: boolean;
+  onPress?: () => void;
   disabled?: boolean;
 };
 
@@ -109,8 +109,8 @@ const TextLabel = styled(Text)`
   cursor: pointer;
 `;
 
-export default function RadioButton(props: Props) {
-  let { name, id, title, isSelected, onPress, disabled, ...otherProps } = props;
+export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) => {
+  let { name, value, id, title, isSelected, onPress, disabled, ...otherProps } = props;
   let [isFocused, setFocus] = useState(false);
   return (
     <Row {...otherProps}>
@@ -125,6 +125,8 @@ export default function RadioButton(props: Props) {
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
           disabled={disabled}
+          value={title}
+          ref={forwardedRef}
         />
       </RadioContainer>
       <TextLabel as="label" htmlFor={id}>
@@ -132,4 +134,4 @@ export default function RadioButton(props: Props) {
       </TextLabel>
     </Row>
   );
-}
+});
