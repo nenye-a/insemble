@@ -1,15 +1,11 @@
 from . import utils, landlord_matching
 from bson import ObjectId
-import numpy as np
-import pprint
-import re
-import pandas as pd
 import data.api.google as google
-import data.api.foursquare as foursquare
 import data.api.arcgis as arcgis
 import data.api.environics as environics
 import data.api.anmspatial as anmspatial
 import data.api.spatial as spatial
+from fuzzywuzzy import process
 from bson import ObjectId
 
 
@@ -45,8 +41,27 @@ def get_matching_tenants(eval_property, space_id):
 
     final_matches = []
     for match in matches:
+
         brand = tenant_dict[match['brand_name']]
         name = brand['alias']
+        match_value = match['match_value']
+
+        # Factor in exclusives and targets
+        categories = utils.flatten([[category['name'] for category in categories['categories']]
+                                    for categories in brand['categories']])
+        # break the loop if there's any exclusives.
+        exclusive = None
+        for eval_category in categories:
+            exclusive = process.extractOne(eval_category, eval_property["exclusives"], score_cutoff=85)
+            if exclusive:
+                break
+        if exclusive:
+            continue
+
+        for eval_category in categories:
+            target = process.extractBests(eval_category, eval_property['target_tenant_categories'])
+            if target:
+                match_value * 1.04
 
         # Get the right categories
         category_dict = {
@@ -66,8 +81,6 @@ def get_matching_tenants(eval_property, space_id):
         except Exception:
             category = ""
 
-        # bound by 10 and 100%
-        match_value = min(max(match['match_value'], 10), 95)
         number_existing_locations = brand['number_found_locations']
 
         most_popular_store = utils.DB_PLACES.find({
@@ -83,14 +96,19 @@ def get_matching_tenants(eval_property, space_id):
         interested = False
 
         if brand['typical_squarefoot']:
+            matches_sqft = False
             for ft in brand['typical_squarefoot']:
-                # chooseing an arbitrarily large integer
+                # choosing an arbitrarily large integer
                 square_foot_range = [ft['min'], ft['max'] or 200000]
                 if utils.in_range(my_space['sqft'], square_foot_range):
-                    match_value = min(match_value * 1.05, 99)
-                else:
-                    match_value = max(match_value * 0.50, 0)
+                    matches_sqft = True
+            if matches_sqft:
+                match_value = match_value * 1.075
+            elif len(brand['typical_squarefoot']) > 0:
+                match_value = match_value * 0.80
 
+        # bound match value by 10 and 100%
+        match_value = min(max(match_value, 10), 95)
         final_matches.append({
             'name': name,
             'match_value': match_value,
