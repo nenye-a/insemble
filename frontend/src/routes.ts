@@ -25,6 +25,7 @@ import LandlordProperties from './views/LandlordProperties';
 import LandlordPropertyDetails from './views/LandlordPropertyDetails';
 import ForgotPassword from './views/ForgotPassword';
 import ForgotPasswordSubmitted from './views/ForgotPasswordSubmitted';
+import NewPassword from './views/NewPassword';
 
 import { tenantAuthorization, landlordAuthorization } from './utils';
 
@@ -55,6 +56,21 @@ const COMMON_ROUTES = [
     path: '/verification-successful',
     layout: BasicLayout,
     component: VerificationSuccessful,
+  },
+  {
+    path: '/forgot-password',
+    layout: BasicLayout,
+    component: ForgotPassword,
+  },
+  {
+    path: '/forgot-password-submitted',
+    layout: BasicLayout,
+    component: ForgotPasswordSubmitted,
+  },
+  {
+    path: '/new-password',
+    layout: BasicLayout,
+    component: NewPassword,
   },
 ];
 
@@ -120,16 +136,6 @@ const TENANT_ROUTES = [
     path: '/signup',
     layout: BasicLayout,
     component: SignUp,
-  },
-  {
-    path: '/forgot-password',
-    layout: BasicLayout,
-    component: ForgotPassword,
-  },
-  {
-    path: '/forgot-password-submitted',
-    layout: BasicLayout,
-    component: ForgotPasswordSubmitted,
   },
   {
     path: '/verify/:formStep',
