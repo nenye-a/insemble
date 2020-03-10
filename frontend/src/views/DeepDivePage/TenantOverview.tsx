@@ -43,7 +43,7 @@ export default function TenantOverview({ keyFacts, tenantView }: Props) {
         </Container>
         <View>
           <Row flex>
-            <OverviewCard title="Overview" content={overview} />
+            <OverviewCard title="Expansion Plans" content={overview} />
             <OverviewCard title="Description" content={description} />
           </Row>
           <SpaceContainer>
