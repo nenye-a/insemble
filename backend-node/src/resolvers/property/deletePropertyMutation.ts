@@ -17,7 +17,7 @@ let deletePropertyResolver: FieldResolver<
   if (!property) {
     throw new Error('Property not found!');
   }
-  if (property.landlordUser?.id !== context.landlordUserId) {
+  if (property.landlordUser.id !== context.landlordUserId) {
     throw new Error('User not authorized to delete');
   }
   await context.prisma.property.delete({
