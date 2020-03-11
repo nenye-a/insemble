@@ -11,6 +11,7 @@ let resetPasswordLandlordResolver: FieldResolver<
   let [verifyId, tokenQuery] = verificationCode
     ? verificationCode.split(':')
     : [];
+  let landlordResetPasswordTokenQuery = Base64.decode(tokenQuery);
   if (!verifyId || !tokenQuery) {
     throw new Error('Invalid verification code');
   }
@@ -34,7 +35,7 @@ let resetPasswordLandlordResolver: FieldResolver<
     throw new Error('Verification code already used.');
   }
 
-  if (tokenQuery !== landlordRPVerification.tokenQuery) {
+  if (landlordResetPasswordTokenQuery !== landlordRPVerification.tokenQuery) {
     throw new Error('Invalid token');
   }
 
@@ -68,7 +69,7 @@ let resetPasswordLandlordResolver: FieldResolver<
     verificationId:
       Base64.encodeURI(landlordRPVerification.id) +
       ':' +
-      landlordRPVerification.tokenQuery,
+      Base64.encodeURI(landlordRPVerification.tokenQuery),
   };
 };
 

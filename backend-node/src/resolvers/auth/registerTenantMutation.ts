@@ -65,7 +65,7 @@ let registerTenantResolver: FieldResolver<
     verificationId:
       Base64.encodeURI(tenantVerification.id) +
       ':' +
-      tenantVerification.tokenQuery,
+      Base64.encodeURI(tenantVerification.tokenQuery),
   };
 };
 
