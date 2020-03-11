@@ -22,79 +22,77 @@ file.
 # TODO: implement api functions for the landlord api
 # PropertyTenantApi - referenced by api/propertyTenants/
 class PropertyTenantAPI(AsynchronousAPI):
-
     """
+
 
     This api endpoint will be used to populate the brands that a landlord sees for a specific space within a property.
     If the property already exists, a property_id must be provided to associate the space with the property. Otherwise,
     a new property will be generated.
 
-    Brands will contain a list of matching brands. These brands are organize as the following.
+    GET '/api/propertyTenants/':
+        parameters: {
+            # Property related fields
+            property_id: string                 (required -> not required if address and property type are added)
+            address: string,                    (required -> not required if property_id is provided)
+            property_type: list[string],        (required -> not required if property_id is provided)
+            logo: string (url),                 (ignored if property_id provided)
+            owning_organization: string,        (ignored if property_id provided)
+            target_categories: list[string],    (ignored if property_id provided)
+            exclusives: list[string],           (ignored if property_id provided)
 
-    - (Claimed or Verified) Brands interested in the landlords property.           -> (details known, and interest indicated)
-    - (Claimed or Verified) Brands on the platform, but not interested.            -> (details known, but interest not indicated)
-    - (Claimed or Verified) Brands not present on the platform.                    -> (details unknown, but can be approximated)
-
-    These different stages will serve as tiers, and each tier will be ranked by match to the landlord's location and property.
-    Only verified brands are shown to the landlord. A "Claimed" brand is a brand that a tenant-side user has indicated ownership
-    of, or that the Insemble team has pre-populated with user information. "Verified" brands are brands with ownership that has
-    been verified by the Insemble team. Verified brands do not have to be claimed. Tenant side users can claim verified brands
-    when they register for an account.
-
-    parameters: {
-        # Property related fields
-        property_id: string                 (required -> not required if address and property type are added)
-        address: string,                    (required -> not required if property_id is provided)
-        property_type: list[string],        (required -> not required if property_id is provided)
-        logo: string (url),                 (ignored if property_id provided)
-        owning_organization: string,        (ignored if property_id provided)
-        target_categories: list[string],    (ignored if property_id provided)
-        exclusives: list[string],           (ignored if property_id provided)
-
-        # Space related fields
-        sqft: int,                          (required)
-        tenant_type: list[string],          (required)
-        space_condition: list[string],
-        asking_rent: int,
-        divisible: boolean,
-        divisible_sqft: list[int],
-        pro: boolean,
-        visible: boolean,
-        media: {                           # NOTE: might be removed due to redundancy
-            photos: {
-                main: url_string,
-                other: list[url_string]
-            },
-            tour: url_string (matterport)
-        }
-    }
-
-    response: {
-        status: int (HTTP),                 (always provided)
-        status_detail: string or list,      (always provided)
-        property_id: string,
-        space_id: string,
-        brands: [
-            {
-                brand_id: string,
-                picture_url: url,
-                name: string,
-                category: string,
-                num_existing_locations: int,
-                onPlatform: boolean,
-                match_value: int,
-                contacts: [
-                    {
-                        name: string,
-                        phone: string,
-                        email: string,
-                        role: string
-                    }
-                ]
+            # Space related fields
+            space_id: string                    (optional)
+            sqft: int,                          (required)
+            tenant_type: list[string],          (required)
+            space_condition: list[string],
+            asking_rent: int,
+            divisible: boolean,
+            divisible_sqft: list[int],
+            pro: boolean,
+            visible: boolean,
+            media: {                           # NOTE: might be removed due to redundancy
+                photos: {
+                    main: url_string,
+                    other: list[url_string]
+                },
+                tour: url_string (matterport)
             }
-            ... many more
-        ]
-    }
+        }
+
+        response: {
+            status: int (HTTP),                 (always provided)
+            status_detail: string or list,      (always provided)
+            property_id: string,
+            space_id: string,
+            brands: [
+                {
+                    brand_id: string,
+                    picture_url: url,
+                    name: string,
+                    category: string,
+                    num_existing_locations: int,
+                    onPlatform: boolean,
+                    match_value: int,
+                    contacts: [
+                        {
+                            name: string,
+                            phone: string,
+                            email: string,
+                            role: string
+                        }
+                    ]
+                }
+                ... many more
+            ]
+        }
+
+    DELETE:
+        /api/propertyTenants/property_id
+        /api/propertyTenants/property_id/space_id
+
+        Provided a property id alone, will delete the property. Provided
+        a space_id in addition to the property_id, will delete the space
+        only.
 
     """
 
@@ -111,96 +109,45 @@ class PropertyTenantAPI(AsynchronousAPI):
         serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
 
-        # STORE THE PROPERTY & SPACE DETAILS
-        space_id = ObjectId()
-        space = {
-            'space_id': space_id,
-            'space_condition': validated_params['space_condition'] if 'space_condition' in validated_params else [],
-            'tenant_type': validated_params['tenant_type'] if 'tenant_type' in validated_params else [],
-            'asking_rent': validated_params['asking_rent'] if 'asking_rent' in validated_params else None,
-            'sqft': validated_params['sqft'],
-            # unused details
-            'divisible': validated_params['divisible'] if 'divisible' in validated_params else False,
-            'divisible_sqft': validated_params['divisible_sqft'] if 'divisible_sqft' in validated_params else [],
-            'pro': validated_params['pro'] if 'pro' in validated_params else False,
-            'visible': validated_params['visible'] if 'visible' in validated_params else False,
-            'media': {}  # redundant with front-end, might need to be removed.
-        }
-
-        # TODO: currently user is not inserted as this is hosted on the postgres side. Need to evaluate if there's a need
-        # to pull into the mongodb database.
+        this_property = None
         if 'property_id' in validated_params:
             this_property = landlord_provider.get_property(validated_params['property_id'])
             if not this_property:
-                # if the property does not exist, return no content response
                 return Response({
                     'status': status.HTTP_404_NOT_FOUND,
-                    'status_detail': ["Could not find a property that matches that Id."],
+                    'status_detail': ["Could not find a space that matches that Id."],
                 }, status=status.HTTP_404_NOT_FOUND)
-            this_property['spaces'].append(space)
-            # ignore all updates to the space if provided
-            utils.DB_PROPERTY.update_one({'_id': this_property['_id']}, {'$set': this_property})
-            property_id = this_property['_id']
-
+            this_property = self.update_property(validated_params, this_property)
         else:
-            google_location = google.find(validated_params['address'], allow_non_establishments=True, save=False)
-            property_lat = round(google_location["geometry"]["location"]["lat"], 6)
-            property_lng = round(google_location["geometry"]["location"]["lng"], 6)
+            this_property = self.update_property(validated_params)
 
-            formatted_address = google_location["formatted_address"] if "formatted_address" in google_location else google_location["vicinity"]
+        replace_index = None
+        space = None
+        if 'space_id' in validated_params:
+            print(this_property['spaces'])
+            for index, potential_space in enumerate(this_property['spaces']):
+                if ObjectId(validated_params['space_id']) == potential_space['space_id']:
+                    space = potential_space
+                    replace_index = index
+                    break
 
-            # Check for address temporarily removed. In the future, we will do this earlier and then
-            # ask the user to confirm if they indeed want to use this address even though it exists.
+        space = self.update_space(validated_params, space)
+        if replace_index:
+            # update the changed space if there was one
+            this_property['spaces'][replace_index] = space
+        else:
+            # otherwise simply add the space to the spaces list
+            this_property['spaces'].append(space)
 
-            # already_exists = self.check_property_exists(formatted_address)
-            # if already_exists:
-            #     return Response({
-            #         'status': status.HTTP_409_CONFLICT,
-            #         'status_detail': ["This property already exists. Please resubmit with a property_id to update."],
-            #     }, status=status.HTTP_409_CONFLICT)
+        this_property['_id'] = ObjectId() if '_id' not in this_property else this_property['_id']
+        utils.DB_PROPERTY.update_one({'_id': this_property['_id']}, {'$set': this_property}, upsert=True)
 
-            this_property = {
-                'address': formatted_address,
-                'location': {
-                    'type': "Point",
-                    'coordinates': [
-                        property_lng,
-                        property_lat
-                    ]
-                },
-                # NOTE: logo, and owning_organization unimplemented, null for now
-                'logo': validated_params['logo'] if 'logo' in validated_params else None,
-                'owning_organization': validated_params['logo'] if 'logo' in validated_params else None,
-                'property_type': validated_params['property_type'] if 'property_type' in validated_params else [],
-                'target_tenant_categories': validated_params['tenant_categories'] if 'tenant_categories' in validated_params else [],
-                'exclusives': validated_params['exclusives'] if 'exclusives' in validated_params else [],
-                'spaces': [space]
-            }
-
-            # grab the nearby stores asynchronously
-            n_process, nearby = self.get_nearby_places.delay(property_lat, property_lng), []
-            nearby_listener = self._celery_listener(n_process, nearby)
-            nearby_listener.start()
-
-            location = landlord_provider.build_location(property_lat, property_lng)
-            _, nearby = nearby_listener.join(), nearby[0]
-
-            location.update(nearby)
-            if '_id' in location:
-                utils.DB_LOCATIONS.update({"_id": location['_id']}, location)
-                this_property['location_id'] = location['_id']
-            else:
-                this_property['location_id'] = utils.DB_LOCATIONS.insert(location)
-            property_id = utils.DB_PROPERTY.insert(this_property)
-
-        # Should do this in an other class that is made for updating and refetching
-        # the matches for a space. Then this is just an automatic call.
-        brands = landlord_provider.get_matching_tenants(this_property, space_id)
+        brands = landlord_provider.get_matching_tenants(this_property, space['space_id'])
 
         return Response({
             'status': status.HTTP_200_OK,
-            'property_id': str(property_id),
-            'space_id': str(space_id),
+            'property_id': str(this_property["_id"]),
+            'space_id': str(space['space_id']),
             'brands': brands,
         }, status=status.HTTP_200_OK)
 
@@ -239,6 +186,95 @@ class PropertyTenantAPI(AsynchronousAPI):
             })
 
         return Response(status=status.HTTP_304_NOT_MODIFIED)
+
+    def update_space(self, params, space=None):
+
+        # set defaults based on whether there's a space provided or not.
+        space_id = space['space_id'] if space else ObjectId()
+        space_condition = space['space_condition'] if space else []
+        tenant_type = space['tenant_type'] if space else []
+        asking_rent = space['asking_rent'] if space else None
+        sqft = space['sqft'] if space else None
+        divisible = space['divisible'] if space else False,
+        divisible_sqft = space['divisible_sqft'] if space else []
+        pro = space['pro'] if space else False
+        visible = space['visible'] if space else False
+        media = space['media'] if space else {}
+
+        updated_space = space if space else {}
+
+        # update with any new params if there are any.
+        updated_space.update({
+            'space_id': space_id,
+            'space_condition': params['space_condition'] if 'space_condition' in params else space_condition,
+            'tenant_type': params['tenant_type'] if 'tenant_type' in params else tenant_type,
+            'asking_rent': params['asking_rent'] if 'asking_rent' in params else asking_rent,
+            'sqft': params['sqft'] if 'sqft' in params else sqft,
+            # unused details
+            'divisible': params['divisible'] if 'divisible' in params else divisible,
+            'divisible_sqft': params['divisible_sqft'] if 'divisible_sqft' in params else divisible_sqft,
+            'pro': params['pro'] if 'pro' in params else pro,
+            'visible': params['visible'] if 'visible' in params else visible,
+            'media': params['media'] if 'media' in params else media  # redundant with front-end, might need to be removed.
+        })
+
+        return updated_space
+
+    def update_property(self, params, prop=None):
+
+        address = prop['address'] if prop else None
+        location = prop['location'] if prop else None
+        logo = prop['logo'] if prop else None
+        owning_organization = prop['owning_organization'] if prop else None
+        property_type = prop['property_type'] if prop else []
+        target_tenant_categories = prop['target_tenant_categories'] if prop else []
+        exclusives = prop['exclusives'] if prop else []
+        spaces = prop['spaces'] if prop else []
+
+        updated_property = prop if prop else {}
+
+        if prop is None:
+            google_location = google.find(params['address'], allow_non_establishments=True, save=False)
+            property_lat = round(google_location["geometry"]["location"]["lat"], 6)
+            property_lng = round(google_location["geometry"]["location"]["lng"], 6)
+            formatted_address = google_location["formatted_address"] if "formatted_address" in google_location else google_location["vicinity"]
+
+            # grab the nearby stores asynchronously
+            n_process, nearby = self.get_nearby_places.delay(property_lat, property_lng), []
+            nearby_listener = self._celery_listener(n_process, nearby)
+            nearby_listener.start()
+
+        updated_property.update({
+            'address': address or formatted_address,
+            'location': location or {
+                'type': "Point",
+                'coordinates': [
+                    property_lng,
+                    property_lat
+                ]
+            },
+            # NOTE: logo, and owning_organization unimplemented, null for now
+            'logo': params['logo'] if 'logo' in params else logo,
+            'owning_organization': params['owning_organization'] if 'owning_organization' in params else owning_organization,
+            'property_type': params['property_type'] if 'property_type' in params else property_type,
+            'target_tenant_categories': params['tenant_categories'] if 'tenant_categories' in params else target_tenant_categories,
+            'exclusives': params['exclusives'] if 'exclusives' in params else exclusives,
+            'spaces': spaces
+        })
+
+        if 'location_id' not in updated_property:
+            location = landlord_provider.build_location(property_lat, property_lng)
+            _, nearby = nearby_listener.join(), nearby[0]
+            location.update(nearby)
+
+            if '_id' in location:
+                utils.DB_LOCATIONS.update({"_id": location['_id']}, location)
+                updated_property['location_id'] = location['_id']
+            else:
+                updated_property['location_id'] = utils.DB_LOCATIONS.insert(location)
+
+        # property_id = utils.DB_PROPERTY.insert(this_property)
+        return updated_property
 
     def check_property_exists(self, address):
         existing_property = utils.DB_PROPERTY.find_one({'address': address}, {'_id': 1})
