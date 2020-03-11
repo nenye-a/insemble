@@ -5,7 +5,7 @@ sys.path.append(BASE_DIR)  # include data_testing
 
 from decouple import config
 import utils
-import safe_request
+import api.safe_request as safe_request
 
 
 '''
@@ -116,7 +116,7 @@ if __name__ == "__main__":
         print(point_to_block_group(34.056180, -118.296855, state='CA', prune_leading_zero=False))
 
     def test_point_to_block():
-        print(point_to_block(34.057278, -118.286941, state='CA', prune_leading_zero=False))
+        print(point_to_block(31.057278, -118.286941, state='CA', prune_leading_zero=False))
         # 34.056180, -118.286855
 
     test_point_to_block()

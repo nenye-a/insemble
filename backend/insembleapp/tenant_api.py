@@ -3,6 +3,8 @@ import time
 import timeit
 import ast
 import threading
+import utils
+import mongo_connect
 import data.matching as matching
 import data.provider as provider
 import data.api.google as google
@@ -225,12 +227,12 @@ class TenantMatchAPI(AsynchronousAPI):
             nearby_listener.start()
 
             # obtain the 1, 3 mile demographic details asynchronously
-            d_process, demo = self.get_environics_demographics.delay(lat, lng), []
+            d_process, demo = self.get_environics_demographics.delay(lat, lng, True), []
             demo_listener = self._celery_listener(d_process, demo)
             demo_listener.start()
 
             # grab the 1, 3 mile psychographic deatils asynchronously
-            p_process, psycho = self.get_spatial_personas.delay(lat, lng), []
+            p_process, psycho = self.get_spatial_personas.delay(lat, lng, True), []
             psycho_listener = self._celery_listener(p_process, psycho)
             psycho_listener.start()
 
@@ -275,22 +277,34 @@ class TenantMatchAPI(AsynchronousAPI):
     @staticmethod
     @celery_app.task
     def generate_matches(address, name, options):
-        return matching.generate_matches(address, name=name, options=options)
+        connection = mongo_connect.Connect()
+        matches = matching.generate_matches(address, name=name, options=options, db_connection=connection)
+        connection.close()
+        return matches
 
     @staticmethod
     @celery_app.task
-    def get_spatial_personas(lat, lng):
-        return provider.get_spatial_personas(lat, lng)
+    def get_spatial_personas(lat, lng, parallel_process=False):
+        # open up new mongo connection if forking the process
+        connection = mongo_connect.Connect() if parallel_process else utils.SYSTEM_MONGO
+        personas = provider.get_spatial_personas(lat, lng, db_connection=connection)
+        connection.close() if connection != utils.SYSTEM_MONGO else None
+        return personas
 
     @staticmethod
     @celery_app.task
-    def get_environics_demographics(lat, lng):
-        return provider.get_environics_demographics(lat, lng)
+    def get_environics_demographics(lat, lng, parallel_process=False):
+        # open up new mongo connection if forking the process
+        connection = mongo_connect.Connect() if parallel_process else utils.SYSTEM_MONGO
+        demographics = provider.get_environics_demographics(lat, lng, db_connection=connection)
+        connection.close() if connection != utils.SYSTEM_MONGO else None
+        return demographics
 
     @staticmethod
     @celery_app.task
     def get_nearby_places(lat, lng):
-        return provider.get_nearby_places(lat, lng)
+        nearby = provider.get_nearby_places(lat, lng)
+        return nearby
 
     def _register_tasks(self) -> None:
         celery_app.register_task(self.generate_matches)
@@ -692,7 +706,6 @@ class FastLocationDetailsAPI(AsynchronousAPI):
     def get(self, request, *args, **kwargs):
 
         self._register_tasks()
-        # TODO: us tenant_id to grab the matches from the database.
 
         # validate request
         serializer = self.get_serializer(data=request.query_params)
@@ -723,10 +736,10 @@ class FastLocationDetailsAPI(AsynchronousAPI):
         location["vector_id"] = str(location["vector_id"]) if "vector_id" in location else None
 
         # GET THE DEMOGRAPHIC DETAILS (asyc)
-        d_process, tenant_demographics = self.obtain_demographics.delay(tenant), []
+        d_process, tenant_demographics = self.obtain_demographics.delay(tenant, parallel_process=True), []
         tenant_demo_listener = self._celery_listener(d_process, tenant_demographics)
         tenant_demo_listener.start()
-        d_process, location_demographics = self.obtain_demographics.delay(location), []
+        d_process, location_demographics = self.obtain_demographics.delay(location, parallel_process=True), []
         location_demo_listener = self._celery_listener(d_process, location_demographics)
         location_demo_listener.start()
 
@@ -743,7 +756,7 @@ class FastLocationDetailsAPI(AsynchronousAPI):
         location["nearby_metro"] = key_facts_nearby["nearby_metro"]
 
         # GET THE NEARBY LOCATIONS (async)
-        n_process, nearby = self.obtain_nearby.delay(tenant, location), []
+        n_process, nearby = self.obtain_nearby.delay(tenant, location, parallel_process=True), []
         nearby_listener = self._celery_listener(n_process, nearby)
         nearby_listener.start()
 
@@ -831,26 +844,29 @@ class FastLocationDetailsAPI(AsynchronousAPI):
 
     @staticmethod
     @celery_app.task
-    def obtain_demographics(place):
+    def obtain_demographics(place, parallel_process=False):
 
         lat = place['geometry']['location']['lat']
         lng = place['geometry']['location']['lng']
 
+        connection = mongo_connect.Connect() if parallel_process else utils.SYSTEM_MONGO
+
         try:
-            onemile_demo = provider.get_demographics(lat, lng, 1, demographic_dict=place["demo1"])
+            onemile_demo = provider.get_demographics(lat, lng, 1, demographic_dict=place["demo1"], db_connection=connection)
         except Exception:
             onemile_demo = None
 
         try:
-            threemile_demo = provider.get_demographics(lat, lng, 3, demographic_dict=place["demo3"])
+            threemile_demo = provider.get_demographics(lat, lng, 3, demographic_dict=place["demo3"], db_connection=connection)
         except Exception:
             threemile_demo = None
 
         try:
-            fivemile_demo = provider.get_demographics(lat, lng, 5)
+            fivemile_demo = provider.get_demographics(lat, lng, 5, db_connection=connection)
         except Exception:
             fivemile_demo = None
 
+        connection.close() if connection != utils.SYSTEM_MONGO else None
         # get demographics for 1, 3, and 5 mile
         return {
             "1mile": onemile_demo,
@@ -877,9 +893,12 @@ class FastLocationDetailsAPI(AsynchronousAPI):
 
     @staticmethod
     @celery_app.task
-    def obtain_nearby(tenant, location):
+    def obtain_nearby(tenant, location, parallel_process=False):
+        connection = mongo_connect.Connect() if parallel_process else utils.SYSTEM_MONGO
         categories = tenant['foursquare_categories'] if 'foursquare_categories' in tenant else []
-        return provider.obtain_nearby(location, categories)
+        nearby = provider.obtain_nearby(location, categories)
+        connection.close() if connection != utils.SYSTEM_MONGO else None
+        return nearby
 
     def _register_tasks(self) -> None:
         celery_app.register_task(self.obtain_demographics)
@@ -936,10 +955,7 @@ class LocationPreviewAPI(LocationDetailsAPI):
         target_lng = validated_params["target_location"]["lng"]
 
         # get demographic details asynchronously
-        d_process, preview_demographics = self._get_preview_demographics.delay(target_lat, target_lng, 3), []
-        demo_listener = self._celery_listener(d_process, preview_demographics)
-        demo_listener.start()
-
+        preview_demographics = self._get_preview_demographics(target_lat, target_lng, 3)
         location = provider.get_address_neighborhood(target_lat, target_lng)
         address = None
         neighborhood = None
@@ -950,16 +966,14 @@ class LocationPreviewAPI(LocationDetailsAPI):
 
         daytime_pop_3mile = provider.get_daytimepop(target_lat, target_lng, 3)
 
-        demo_listener.join()
-
         response = {
             'status': 200,
             'status_detail': "Success",
             'target_address': address,
             'target_neighborhood': neighborhood,
             'DaytimePop_3mile': daytime_pop_3mile,
-            'median_income': preview_demographics[0]['median_income'],
-            'median_age ': preview_demographics[0]['median_age']
+            'median_income': preview_demographics['median_income'],
+            'median_age ': preview_demographics['median_age']
         }
 
         return Response(response, status=status.HTTP_200_OK)
@@ -1018,9 +1032,7 @@ class AutoPopulateAPI(AsynchronousAPI):
         place_id = location['place_id']
 
         # get demographic details asynchronously
-        d_process, preview_demographics = self._get_preview_demographics.delay(my_lat, my_lng, 3), []
-        demo_listener = self._celery_listener(d_process, preview_demographics)
-        demo_listener.start()
+        preview_demographics = self._get_preview_demographics(my_lat, my_lng, 3)
 
         # Get categories (from foursquare)
         categories = provider.get_categories(place_id)
@@ -1028,9 +1040,8 @@ class AutoPopulateAPI(AsynchronousAPI):
         personas = provider.get_personas(categories)
 
         # get demographic_filters
-        demo_listener.join()
-        median_income = preview_demographics[0]['median_income']
-        median_age = preview_demographics[0]['median_age']
+        median_income = preview_demographics['median_income']
+        median_age = preview_demographics['median_age']
 
         # get income | TODO: actually do this using some sort of learning
         min_income = max(0, round(median_income - (median_income % 1000)) - 25000)  # only send in the thousands
