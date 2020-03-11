@@ -8,13 +8,13 @@ import { createUploadLink } from 'apollo-upload-client';
 import { API_URI } from '../constants/uris';
 import { defaultState } from './localState';
 import { loginSuccess } from './resolvers';
-import { getCredentials } from '../utils';
+import { useCredentials } from '../utils';
 import { Role } from '../types/types';
 
 const cache = new InMemoryCache();
 
 const authLink = setContext(async (_, { headers }) => {
-  let { role, tenantToken, landlordToken } = getCredentials();
+  let { role, tenantToken, landlordToken } = useCredentials();
   let token = null;
   if (role === Role.TENANT) {
     token = tenantToken;

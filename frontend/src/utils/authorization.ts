@@ -1,4 +1,3 @@
-import EventEmitter from './EventEmitter';
 import localStorage from './localStorage';
 import { Credentials } from '../types/types';
 
@@ -33,14 +32,11 @@ function isLandlordAuthorized() {
 }
 
 export function getCredentials() {
-  console.log(credentials);
   return credentials;
 }
 
 export function saveCredentials(newCredentials: Partial<Credentials>) {
-  console.log(credentials, newCredentials, '<<<');
   credentials = { ...credentials, ...newCredentials };
-  console.log('mutated', credentials);
   for (let [key, value] of Object.entries(newCredentials)) {
     if (key && value) {
       localStorage.writeToStorage(key, value);

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 
 import { ClientContextProvider } from 'react-fetching-library';
 import { ApolloProvider } from '@apollo/react-hooks';
+
 import client from './client';
 import apolloClient from './graphql/apolloClient';
 import routes, { RouteType } from './routes';
