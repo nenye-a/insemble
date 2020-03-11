@@ -216,13 +216,22 @@ class PropertyTenantAPI(AsynchronousAPI):
             updated_spaces = {
                 "spaces": [space for space in this_property["spaces"] if space["space_id"] != space_id]
             }
-            utils.DB_PROPERTY.update_one({"spaces.space_id": space_id}, {"$set": updated_spaces})
+            result_count = utils.DB_PROPERTY.update_one(
+                {"spaces.space_id": space_id},
+                {"$set": updated_spaces}
+            ).modified_count
         elif property_id:
             # delete the entire property if not property_id and space_id
             property_id = ObjectId(property_id)
-            utils.DB_PROPERTY.delete_one({"_id": property_id})
+            result_count = utils.DB_PROPERTY.delete_one({"_id": property_id}).deleted_count
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if result_count > 0:
+            return Response({
+                "status": status.HTTP_200_OK,
+                "status_detal": ["Success"],
+            })
+
+        return Response(status=status.HTTP_304_NOT_MODIFIED)
 
     def check_property_exists(self, address):
         existing_property = utils.DB_PROPERTY.find_one({'address': address}, {'_id': 1})
