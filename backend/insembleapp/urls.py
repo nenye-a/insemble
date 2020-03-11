@@ -28,24 +28,25 @@ urlpatterns = [
     url(r'^', include(router.urls)),
 
     # TENANT API ROUTES
-    url(r'api/tenantMatches/', TenantMatchAPI.as_view(), name='tenantMatch'),
-    url(r'api/filter/', FilterDetailAPI.as_view(), name='filterDetail'),
-    url(r'api/locationDetails/', LocationDetailsAPI.as_view(), name='locationDetails'),
-    url(r'api/locationPreview/', LocationPreviewAPI.as_view(), name='locationPreview'),
-    url(r'api/autoPopulate/', AutoPopulateAPI.as_view(), name="autoPopulate"),
-    url(r'api/fastLocationDetails/', FastLocationDetailsAPI.as_view(), name="fastLocationDetails"),
+    path(r'api/tenantMatches/', TenantMatchAPI.as_view(), name='tenantMatch'),
+    path(r'api/filter/', FilterDetailAPI.as_view(), name='filterDetail'),
+    path(r'api/locationDetails/', LocationDetailsAPI.as_view(), name='locationDetails'),
+    path(r'api/locationPreview/', LocationPreviewAPI.as_view(), name='locationPreview'),
+    path(r'api/autoPopulate/', AutoPopulateAPI.as_view(), name="autoPopulate"),
+    path(r'api/fastLocationDetails/', FastLocationDetailsAPI.as_view(), name="fastLocationDetails"),
 
     # LANDLORD API ROUTES
-    url(r'api/propertyTenants/', PropertyTenantAPI.as_view(), name='propertyTenants'),
-    url(r'api/propertyDetails/', PropertyDetailsAPI.as_view(), name='PropertyDetails'),
-    url(r'api/tenantDetails/', TenantDetailsAPI.as_view(), name='TenantDetails'),
+    path(r'api/propertyTenants/', PropertyTenantAPI.as_view(), name='propertyTenants'),
+    path(r'api/propertyTenants/<slug:property_id>', PropertyTenantAPI.as_view(), name='propertyTenants'),
+    path(r'api/propertyTenants/<slug:property_id>/<slug:space_id>', PropertyTenantAPI.as_view(), name='propertyTenants'),
+    path(r'api/propertyDetails/', PropertyDetailsAPI.as_view(), name='PropertyDetails'),
+    path(r'api/tenantDetails/', TenantDetailsAPI.as_view(), name='TenantDetails'),
     path(r'api/propertyCheck/<slug:address>', PropertyAddressCheck.as_view(), name='propertyCheck'),
 
     # LEGACY API ROUTES
     # TODO: remove the legacy api calls
-    url(r'api/category', CategoryMapAPI.as_view(), name='category'),
-    url(r'api/search', SearchAPI.as_view(), name='search'),
+    path(r'api/category/', CategoryMapAPI.as_view(), name='category'),
+    path(r'api/search/', SearchAPI.as_view(), name='search'),
     path(r'api/properties/<slug:_id>/', SearchAPI.as_view(), name='properties'),
-    path(r'api/matches/<slug:address>', MatchesAPI.as_view(), name='matches'),
-    url(r'^', include('feedback.feedback_urls'))
+    path(r'api/matches/<slug:address>/', MatchesAPI.as_view(), name='matches')
 ]
