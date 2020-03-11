@@ -39,4 +39,7 @@ export * from './PaymentMethod';
 export * from './Subscription';
 export * from './Billing';
 
+export * from './Message';
+export * from './Property';
+export * from './Conversation';
 export * from './MessageInput';
