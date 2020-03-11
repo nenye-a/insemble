@@ -1,6 +1,5 @@
-import React, { createContext, useMemo, useState, useEffect, ReactElement } from 'react';
-import { localStorage } from '../utils';
-import { authEmitter } from '../utils/authorization';
+import React, { createContext, ReactElement } from 'react';
+import { authEmitter, saveCredentials, getCredentials } from '../utils';
 import { Credentials } from '../types/types';
 
 type Props = {
@@ -12,32 +11,15 @@ let defaultContextValue = {};
 
 export let AuthContext = createContext<AuthContextType>(defaultContextValue);
 
+let onCredentialsUpdated = (newCredentials: Credentials) => {
+  saveCredentials(newCredentials);
+};
+
+authEmitter.on('credentialsUpdated', onCredentialsUpdated);
+
 export default function AuthorizationListener(props: Props) {
   let { children } = props;
-  let initialState = {
-    landlordToken: localStorage.getLandlordToken() || '',
-    tenantToken: localStorage.getTenantToken() || '',
-    role: localStorage.getRole() || '',
-  };
-  let [{ landlordToken, tenantToken, role }, setCredentials] = useState<AuthContextType>(
-    initialState
-  );
-
-  useEffect(() => {
-    let onCredentialsUpdated = (newCredential: Credentials) => {
-      setCredentials(newCredential);
-    };
-    authEmitter.on('credentialsUpdated', onCredentialsUpdated);
-    return () => {
-      authEmitter.remove('credentialsUpdated', onCredentialsUpdated);
-    };
-  }, []);
-
-  let value = useMemo(() => ({ landlordToken, tenantToken, role }), [
-    landlordToken,
-    tenantToken,
-    role,
-  ]);
+  let value = getCredentials();
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
