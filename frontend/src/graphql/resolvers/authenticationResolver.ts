@@ -1,5 +1,4 @@
 import { ApolloCache } from 'apollo-cache';
-import { asyncStorage } from '../../utils';
 import { UserContent } from '../localState';
 
 export let loginSuccess = async (
@@ -22,8 +21,6 @@ export let loginSuccess = async (
       role,
     },
   };
-  await asyncStorage.saveTenantToken(token);
-  await asyncStorage.saveRole(role);
   cache.writeData({ data });
   return null;
 };

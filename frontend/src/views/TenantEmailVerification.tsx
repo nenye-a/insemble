@@ -13,7 +13,8 @@ import {
   TenantRegisterVerification,
   TenantRegisterVerificationVariables,
 } from '../generated/TenantRegisterVerification';
-import { asyncStorage } from '../utils';
+import { saveCredentials } from '../utils';
+import { Role } from '../types/types';
 
 export default function TenantEmailVerification() {
   let history = useHistory();
@@ -33,9 +34,10 @@ export default function TenantEmailVerification() {
     } = data;
     if (verified && tenantAuth) {
       let { brandId, token } = tenantAuth;
-      asyncStorage.saveTenantToken(token);
-      asyncStorage.saveRole('Tenant');
-      asyncStorage.saveBrandId(brandId);
+      saveCredentials({
+        tenantToken: token,
+        role: Role.TENANT,
+      });
 
       if (brandId) {
         history.push(`/map/${brandId}`);
