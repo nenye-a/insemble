@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { useLazyQuery } from '@apollo/react-hooks';
@@ -11,7 +11,7 @@ import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../../graphql/queries/
 import { GetTenantProfile } from '../../generated/GetTenantProfile';
 import { GetLandlordProfile } from '../../generated/GetLandlordProfile';
 import { Role } from '../../types/types';
-import { AuthContext } from '../../core-ui/AuthorizationListener';
+import { useAuth } from '../../utils';
 
 type Props = {
   showButton?: boolean;
@@ -24,7 +24,7 @@ type Profile = {
 
 export default function HeaderNavigationBar(props: Props) {
   let history = useHistory();
-  let { role } = useContext(AuthContext);
+  let { role } = useAuth();
   let [profileInfo, setProfileInfo] = useState<Profile>({ id: '', avatar: '' });
 
   let onTenantCompleted = (tenantResult: GetTenantProfile) => {

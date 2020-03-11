@@ -7,7 +7,7 @@ type Props = {
 };
 type AuthContextType = Credentials;
 
-let defaultContextValue = {};
+let defaultContextValue = getCredentials();
 
 export let AuthContext = createContext<AuthContextType>(defaultContextValue);
 

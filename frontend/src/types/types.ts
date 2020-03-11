@@ -16,7 +16,7 @@ export enum Role {
 export type PhotoFile = FileWithPreview | null | string;
 
 export type Credentials = {
-  role?: string;
-  landlordToken?: string;
-  tenantToken?: string;
+  role: string;
+  landlordToken: string;
+  tenantToken: string;
 };

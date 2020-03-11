@@ -38,7 +38,7 @@ export function getCredentials() {
   return credentials;
 }
 
-export function saveCredentials(newCredentials: Credentials) {
+export function saveCredentials(newCredentials: Partial<Credentials>) {
   credentials = { ...credentials, ...newCredentials };
   for (let [key, value] of Object.entries(credentials)) {
     if (key && value) {
@@ -47,8 +47,8 @@ export function saveCredentials(newCredentials: Credentials) {
   }
   authEmitter.emit('credentialsUpdated', {
     role: credentials.role,
-    landlordToken: credentials?.landlordToken || undefined,
-    tenantToken: credentials?.tenantToken || undefined,
+    landlordToken: credentials.landlordToken,
+    tenantToken: credentials.tenantToken,
   });
 }
 
