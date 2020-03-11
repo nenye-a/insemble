@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 
 import { ClientContextProvider } from 'react-fetching-library';
 import { ApolloProvider } from '@apollo/react-hooks';
-import { AuthorizationProvider } from './core-ui';
 import client from './client';
 import apolloClient from './graphql/apolloClient';
 import routes, { RouteType } from './routes';
@@ -20,44 +19,42 @@ export default function App() {
   return (
     <ApolloProvider client={apolloClient}>
       <ClientContextProvider client={client}>
-        <AuthorizationProvider>
-          <Router basename={process.env.REACT_APP_BASENAME || ''}>
-            <Switch>
-              <>
-                {routes.map((route: RouteType, index) => {
-                  return (
-                    <Route
-                      key={index}
-                      path={route.path}
-                      exact={route.exact}
-                      component={withTracker((props: RouteType) => {
-                        if (
-                          route?.authorization?.isAuthorized &&
-                          !route.authorization.isAuthorized()
-                        ) {
-                          return (
-                            <Redirect
-                              to={{
-                                pathname: '/',
-                              }}
-                            />
-                          );
-                        }
-                        let Layout = route.layout;
-                        let Component = route.component;
+        <Router basename={process.env.REACT_APP_BASENAME || ''}>
+          <Switch>
+            <>
+              {routes.map((route: RouteType, index) => {
+                return (
+                  <Route
+                    key={index}
+                    path={route.path}
+                    exact={route.exact}
+                    component={withTracker((props: RouteType) => {
+                      if (
+                        route?.authorization?.isAuthorized &&
+                        !route.authorization.isAuthorized()
+                      ) {
                         return (
-                          <Layout {...props} {...route?.props}>
-                            <Component {...props} />
-                          </Layout>
+                          <Redirect
+                            to={{
+                              pathname: '/',
+                            }}
+                          />
                         );
-                      })}
-                    />
-                  );
-                })}
-              </>
-            </Switch>
-          </Router>
-        </AuthorizationProvider>
+                      }
+                      let Layout = route.layout;
+                      let Component = route.component;
+                      return (
+                        <Layout {...props} {...route?.props}>
+                          <Component {...props} />
+                        </Layout>
+                      );
+                    })}
+                  />
+                );
+              })}
+            </>
+          </Switch>
+        </Router>
       </ClientContextProvider>
     </ApolloProvider>
   );

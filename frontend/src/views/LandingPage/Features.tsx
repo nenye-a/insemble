@@ -55,12 +55,16 @@ function Feature(props: FeatureProp) {
   let { title, subtitle, img, isOdd, index } = props;
   let description = (
     // giving padding left 3% because the photo has its own margin. so we need to push the text a bit.
-    <DescriptionContainer flex style={isOdd ? { paddingLeft: '3%' } : undefined}>
+    <DescriptionContainer
+      key={`featureDescription${index.toString()}`}
+      flex
+      style={isOdd ? { paddingLeft: '3%' } : undefined}
+    >
       <Title>{title}</Title>
       <Subtitle>{subtitle}</Subtitle>
     </DescriptionContainer>
   );
-  let photo = <Image src={img} />;
+  let photo = <Image key={`featureImg${index.toString()}`} src={img} />;
 
   let feature = [description, photo];
   return <FeatureContainer index={index}>{isOdd ? feature : feature.reverse()}</FeatureContainer>;

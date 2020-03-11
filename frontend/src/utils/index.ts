@@ -1,7 +1,6 @@
 export * from './authorization';
 export { default as convertToKilos } from './convertToKilos';
 export { default as dateFormatter } from './dateFormatter';
-export * from './EventEmitter';
 export { default as formatGraphQLError } from './formatGraphQLError';
 export { default as formatSnakeCaseLabel } from './formatSnakeCaseLabel';
 export * from './isEqual';
@@ -11,7 +10,7 @@ export { default as getKeyfactsValue } from './getKeyfactsValue';
 export { default as localStorage } from './localStorage';
 export { default as roundDecimal } from './roundDecimal';
 export { default as urlEncode } from './urlEncode';
-export { default as useAuth } from './useAuth';
+export { default as useCredentials } from './useCredentials';
 export { default as useID } from './useID';
 export { default as useGoogleMaps } from './useGoogleMaps';
 export * from './validation';

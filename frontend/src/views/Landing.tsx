@@ -11,7 +11,7 @@ import Description from './LandingPage/Description';
 import Features from './LandingPage/Features';
 import SpeedUpLeasing from './LandingPage/SpeedUpLeasing';
 import Footer from './LandingPage/Footer';
-import { useGoogleMaps, useAuth } from '../utils';
+import { useGoogleMaps, useCredentials } from '../utils';
 import { WHITE } from '../constants/colors';
 import Button from '../core-ui/Button';
 import { GetTenantProfile } from '../generated/GetTenantProfile';
@@ -22,7 +22,7 @@ import InsembleLogo from '../components/common/InsembleLogo';
 
 function Landing() {
   let { isLoading } = useGoogleMaps();
-  let { role } = useAuth();
+  let { role } = useCredentials();
   let history = useHistory();
 
   let [getTenantProfile, { data: tenantData }] = useLazyQuery<GetTenantProfile>(

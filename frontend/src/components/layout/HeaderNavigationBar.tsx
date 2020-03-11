@@ -11,7 +11,7 @@ import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../../graphql/queries/
 import { GetTenantProfile } from '../../generated/GetTenantProfile';
 import { GetLandlordProfile } from '../../generated/GetLandlordProfile';
 import { Role } from '../../types/types';
-import { useAuth } from '../../utils';
+import { useCredentials } from '../../utils';
 
 type Props = {
   showButton?: boolean;
@@ -24,7 +24,7 @@ type Profile = {
 
 export default function HeaderNavigationBar(props: Props) {
   let history = useHistory();
-  let { role } = useAuth();
+  let { role } = useCredentials();
   let [profileInfo, setProfileInfo] = useState<Profile>({ id: '', avatar: '' });
 
   let onTenantCompleted = (tenantResult: GetTenantProfile) => {

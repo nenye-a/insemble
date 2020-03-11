@@ -19,7 +19,7 @@ import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
 import { Equipments } from '../../generated/Equipments';
 import { SPACES_TYPE } from '../../constants/spaces';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
-import { validateNumber, useAuth, getBusinessAndFilterParams } from '../../utils/';
+import { validateNumber, useCredentials, getBusinessAndFilterParams } from '../../utils/';
 import { CreateBrand, CreateBrandVariables } from '../../generated/CreateBrand';
 import { CREATE_BRAND, GET_BRANDS } from '../../graphql/queries/server/brand';
 
@@ -30,7 +30,7 @@ type Props = {
 
 export default function TenantPhysicalCriteria(props: Props) {
   let { dispatch, state } = props;
-  let { tenantToken } = useAuth();
+  let { tenantToken } = useCredentials();
   let signedIn = !!tenantToken;
   let history = useHistory();
   let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);

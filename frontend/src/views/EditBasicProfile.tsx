@@ -32,7 +32,7 @@ import {
 } from '../generated/EditLandlordProfile';
 import { GetTenantProfile } from '../generated/GetTenantProfile';
 import { GetLandlordProfile } from '../generated/GetLandlordProfile';
-import { useAuth } from '../utils';
+import { useCredentials } from '../utils';
 
 type Profile = {
   email: string;
@@ -46,7 +46,7 @@ type Profile = {
 
 export default function BasicProfile() {
   let history = useHistory();
-  let { role } = useAuth();
+  let { role } = useCredentials();
   let [profileEditable, setProfileEditable] = useState(false);
   let [passwordEditable, setPasswordEditable] = useState(false);
   let textInputContainerStyle = { marginTop: 12, marginBottom: 12 };

@@ -12,8 +12,6 @@ let credentials = {
   role: localStorage.getRole() || '',
 };
 
-export let authEmitter = EventEmitter.create<AuthEvents>();
-
 export let tenantAuthorization = {
   redirectPath: '/',
   isAuthorized: isTenantAuthorized,
@@ -35,24 +33,22 @@ function isLandlordAuthorized() {
 }
 
 export function getCredentials() {
+  console.log(credentials);
   return credentials;
 }
 
 export function saveCredentials(newCredentials: Partial<Credentials>) {
+  console.log(credentials, newCredentials, '<<<');
   credentials = { ...credentials, ...newCredentials };
-  for (let [key, value] of Object.entries(credentials)) {
+  console.log('mutated', credentials);
+  for (let [key, value] of Object.entries(newCredentials)) {
     if (key && value) {
       localStorage.writeToStorage(key, value);
     }
   }
-  authEmitter.emit('credentialsUpdated', {
-    role: credentials.role,
-    landlordToken: credentials.landlordToken,
-    tenantToken: credentials.tenantToken,
-  });
 }
 
 export function logout() {
   localStorage.clearAllFromStorage();
-  authEmitter.emit('credentialsUpdated', { role: '', landlordToken: '', tenantToken: '' });
+  credentials = { role: '', tenantToken: '', landlordToken: '' };
 }
