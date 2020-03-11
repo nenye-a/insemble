@@ -1,21 +1,62 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
-import { useForm, FieldError } from 'react-hook-form';
+import { useHistory, Redirect } from 'react-router-dom';
+import { useForm, FieldError, FieldValues } from 'react-hook-form';
+import { useMutation } from '@apollo/react-hooks';
 
 import { Card, Text, View, Button, Form, TextInput } from '../core-ui';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
 import { validateEmail } from '../utils/validation';
+import {
+  FORGOT_PASSWORD_TENANT,
+  FORGOT_PASSWORD_LANDLORD,
+} from '../graphql/queries/server/forgotPassword';
+import {
+  ForgotPasswordTenant,
+  ForgotPasswordTenantVariables,
+} from '../generated/ForgotPasswordTenant';
+import {
+  ForgotPasswordLandlord,
+  ForgotPasswordLandlordVariables,
+} from '../generated/ForgotPasswordLandlord';
+import { Role } from '../types/types';
 
 export default function ForgotPassword() {
   let history = useHistory();
+  let { role } = history.location.state;
+  let isTenant = role === Role.TENANT;
   let { register, handleSubmit, errors } = useForm();
+  let [hasSubmitted, setHasSubmitted] = useState(false);
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
+  let [forgotPasswordTenant, { loading: tenantLoading }] = useMutation<
+    ForgotPasswordTenant,
+    ForgotPasswordTenantVariables
+  >(FORGOT_PASSWORD_TENANT, {
+    onCompleted: () => setHasSubmitted(true),
+  });
 
-  let onSubmit = () => {
+  let [forgotPasswordLandlord, { loading: landlordLoading }] = useMutation<
+    ForgotPasswordLandlord,
+    ForgotPasswordLandlordVariables
+  >(FORGOT_PASSWORD_LANDLORD);
+
+  let onSubmit = (data: FieldValues) => {
+    let { email } = data;
+    if (isTenant) {
+      forgotPasswordTenant({
+        variables: { email },
+      });
+    } else {
+      forgotPasswordLandlord({
+        variables: { email },
+      });
+    }
     // TODO: Call forgot password BE
-    history.push('/forgot-password-submitted');
   };
+
+  if (!role) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <Container>
@@ -26,21 +67,32 @@ export default function ForgotPassword() {
         titleBackground="purple"
       >
         <Content>
-          <Form onSubmit={handleSubmit(onSubmit)}>
-            <Text>Please provide your email address to recover your password</Text>
-            <TextInput
-              name="email"
-              ref={register({
-                required: 'Email should not be empty',
-                validate: (val) => validateEmail(val) || 'Incorrect email format',
-              })}
-              label="Email Address"
-              placeholder="Your Email Address"
-              errorMessage={(errors?.email as FieldError)?.message || ''}
-              containerStyle={inputContainerStyle}
-            />
-            <SubmitButton text="Send Recovery Email" type="submit" />
-          </Form>
+          {!hasSubmitted ? (
+            <Form onSubmit={handleSubmit(onSubmit)}>
+              <Text>Please provide your email address to recover your password</Text>
+              <TextInput
+                name="email"
+                ref={register({
+                  required: 'Email should not be empty',
+                  validate: (val) => validateEmail(val) || 'Incorrect email format',
+                })}
+                label="Email Address"
+                placeholder="Your Email Address"
+                errorMessage={(errors?.email as FieldError)?.message || ''}
+                containerStyle={inputContainerStyle}
+              />
+              <SubmitButton
+                text="Send Recovery Email"
+                type="submit"
+                loading={tenantLoading || landlordLoading}
+              />
+            </Form>
+          ) : (
+            <Text>
+              If we found an account associated with that username, we’ve sent password reset
+              instructions to the primary email address on the account.
+            </Text>
+          )}
         </Content>
       </ContainerCard>
       <RowView>
