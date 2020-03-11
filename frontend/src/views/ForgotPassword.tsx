@@ -39,7 +39,9 @@ export default function ForgotPassword() {
   let [forgotPasswordLandlord, { loading: landlordLoading, error: landlordError }] = useMutation<
     ForgotPasswordLandlord,
     ForgotPasswordLandlordVariables
-  >(FORGOT_PASSWORD_LANDLORD);
+  >(FORGOT_PASSWORD_LANDLORD, {
+    onCompleted: () => setHasSubmitted(true),
+  });
 
   let errorMessage = tenantError?.message || landlordError?.message || '';
 
@@ -72,7 +74,6 @@ export default function ForgotPassword() {
           {!hasSubmitted ? (
             <Form onSubmit={handleSubmit(onSubmit)}>
               {errorMessage && <Alert visible={true} text={formatGraphQLError(errorMessage)} />}
-              <Text>Please provide your email address to recover your password</Text>
               <TextInput
                 name="email"
                 ref={register({

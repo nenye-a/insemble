@@ -43,7 +43,7 @@ type Params = {
 export default function ResetPasswordForm({ role }: Props) {
   let history = useHistory();
   let params = useParams<Params>();
-
+  let isTenant = role === Role.TENANT;
   let { register, handleSubmit, errors, watch } = useForm();
   let [passwordSubmitted, setPasswordSubmitted] = useState(false);
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
@@ -101,7 +101,7 @@ export default function ResetPasswordForm({ role }: Props) {
 
   let onSubmit = (data: FieldValues) => {
     let { newPassword } = data;
-    if (role === Role.TENANT) {
+    if (isTenant) {
       resetTenant({
         variables: {
           password: newPassword,
@@ -116,7 +116,6 @@ export default function ResetPasswordForm({ role }: Props) {
         },
       });
     }
-    setPasswordSubmitted(true);
   };
 
   let errorMessage =
@@ -127,7 +126,7 @@ export default function ResetPasswordForm({ role }: Props) {
     '';
 
   let redirectLogin = () => {
-    if (role === Role.TENANT) {
+    if (isTenant) {
       history.push('/login');
     } else {
       history.push('/landlord/login');
@@ -135,12 +134,12 @@ export default function ResetPasswordForm({ role }: Props) {
   };
 
   useEffect(() => {
-    if (role === Role.TENANT) {
+    if (isTenant) {
       verifyTenant();
     } else {
       verifyLandlord();
     }
-  }, [role, verifyLandlord, verifyTenant]);
+  }, [isTenant, verifyLandlord, verifyTenant]);
 
   if (tenantLoading || landlordLoading) {
     return <LoadingIndicator />;
