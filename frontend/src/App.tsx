@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 
 import { ClientContextProvider } from 'react-fetching-library';
 import { ApolloProvider } from '@apollo/react-hooks';
-
+import { AuthorizationListener } from './core-ui';
 import client from './client';
 import apolloClient from './graphql/apolloClient';
 import routes, { RouteType } from './routes';
@@ -20,42 +20,44 @@ export default function App() {
   return (
     <ApolloProvider client={apolloClient}>
       <ClientContextProvider client={client}>
-        <Router basename={process.env.REACT_APP_BASENAME || ''}>
-          <Switch>
-            <>
-              {routes.map((route: RouteType, index) => {
-                return (
-                  <Route
-                    key={index}
-                    path={route.path}
-                    exact={route.exact}
-                    component={withTracker((props: RouteType) => {
-                      if (
-                        route?.authorization?.isAuthorized &&
-                        !route.authorization.isAuthorized()
-                      ) {
+        <AuthorizationListener>
+          <Router basename={process.env.REACT_APP_BASENAME || ''}>
+            <Switch>
+              <>
+                {routes.map((route: RouteType, index) => {
+                  return (
+                    <Route
+                      key={index}
+                      path={route.path}
+                      exact={route.exact}
+                      component={withTracker((props: RouteType) => {
+                        if (
+                          route?.authorization?.isAuthorized &&
+                          !route.authorization.isAuthorized()
+                        ) {
+                          return (
+                            <Redirect
+                              to={{
+                                pathname: '/',
+                              }}
+                            />
+                          );
+                        }
+                        let Layout = route.layout;
+                        let Component = route.component;
                         return (
-                          <Redirect
-                            to={{
-                              pathname: '/',
-                            }}
-                          />
+                          <Layout {...props} {...route?.props}>
+                            <Component {...props} />
+                          </Layout>
                         );
-                      }
-                      let Layout = route.layout;
-                      let Component = route.component;
-                      return (
-                        <Layout {...props} {...route?.props}>
-                          <Component {...props} />
-                        </Layout>
-                      );
-                    })}
-                  />
-                );
-              })}
-            </>
-          </Switch>
-        </Router>
+                      })}
+                    />
+                  );
+                })}
+              </>
+            </Switch>
+          </Router>
+        </AuthorizationListener>
       </ClientContextProvider>
     </ApolloProvider>
   );
