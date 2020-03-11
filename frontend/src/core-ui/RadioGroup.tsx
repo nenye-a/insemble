@@ -3,9 +3,11 @@ import styled from 'styled-components';
 
 import View from './View';
 import RadioButton from './RadioButton';
-import useID from '../utils/useID';
+import Text from './Text';
 import Label from './Label';
-import { isEqual } from '../utils/isEqual';
+import { FONT_SIZE_SMALL } from '../constants/theme';
+import { RED_TEXT } from '../constants/colors';
+import { useID, isEqual } from '../utils';
 
 type ViewProps = ComponentProps<typeof View>;
 
@@ -19,6 +21,7 @@ type RadioGroupProps<T> = ViewProps & {
   radioItemProps?: ViewProps;
   label?: string;
   disabled?: boolean;
+  errorMessage?: string;
 };
 
 const defaultTitleExtractor = (item: unknown) => String(item);
@@ -35,6 +38,7 @@ export default function RadioGroup<T>(props: RadioGroupProps<T>) {
     radioItemProps,
     label,
     disabled = false,
+    errorMessage,
     ...otherProps
   } = props;
   let fallbackName = useID();
@@ -58,10 +62,16 @@ export default function RadioGroup<T>(props: RadioGroupProps<T>) {
           />
         );
       })}
+      {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
     </View>
   );
 }
 
 const LabelWrapper = styled(Label)`
   padding-bottom: 8px;
+`;
+
+const ErrorMessage = styled(Text)`
+  font-size: ${FONT_SIZE_SMALL};
+  color: ${RED_TEXT};
 `;
