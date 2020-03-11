@@ -75,7 +75,8 @@ let editProfileResolver: FieldResolver<
   }
   let { oldPassword, newPassword, email, avatar, ...updateData } = profile;
   let password = newPassword ? bcrypt.hashSync(newPassword, 10) : undefined;
-  let { Location: avatarUrl } = avatar && (await uploadS3(avatar, 'TENANT'));
+  let { Location: avatarUrl } = (avatar &&
+    (await uploadS3(avatar, 'TENANT'))) || { Location: undefined };
   let tenant = await context.prisma.tenantUser.update({
     data: {
       ...updateData,
