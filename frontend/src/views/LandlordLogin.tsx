@@ -18,7 +18,7 @@ export default function LandlordSignUp() {
       <FormContainer>
         <TitleText>Landlord Log In</TitleText>
         <LoginForm role={Role.LANDLORD} />
-        <RowView>
+        <NoAccountContainer>
           <Text>{noAccount} </Text>
           <Button
             mode="transparent"
@@ -27,7 +27,7 @@ export default function LandlordSignUp() {
               history.push('/landlord/signup');
             }}
           />
-        </RowView>
+        </NoAccountContainer>
         <RowView>
           <Text>{noPassword} </Text>
           <Button
@@ -68,5 +68,8 @@ const RowView = styled(View)`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+`;
+
+const NoAccountContainer = styled(RowView)`
   margin: 24px 0 0 0;
 `;

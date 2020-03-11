@@ -23,7 +23,7 @@ import { Role } from '../types/types';
 
 export default function ForgotPassword() {
   let history = useHistory();
-  let { role } = history.location.state;
+  let role = history.location?.state?.role;
   let isTenant = role === Role.TENANT;
   let { register, handleSubmit, errors } = useForm();
   let [hasSubmitted, setHasSubmitted] = useState(false);
@@ -51,7 +51,6 @@ export default function ForgotPassword() {
         variables: { email },
       });
     }
-    // TODO: Call forgot password BE
   };
 
   if (!role) {
