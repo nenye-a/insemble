@@ -1,4 +1,6 @@
 import { FieldResolver, stringArg, mutationField } from 'nexus';
+import axios from 'axios';
+import { LEGACY_API_URI } from '../../constants/host';
 
 import { Root, Context } from 'serverTypes';
 
@@ -20,6 +22,20 @@ let deletePropertyResolver: FieldResolver<
   if (property.landlordUser.id !== context.landlordUserId) {
     throw new Error('User not authorized to delete');
   }
+
+  let pyPropertyId = property.propertyId;
+
+  if (pyPropertyId) {
+    let resultStatus = (
+      await axios.delete(
+        `${LEGACY_API_URI}/api/propertyTenants/${pyPropertyId}/`,
+      )
+    ).status;
+    if (resultStatus !== 204) {
+      throw new Error('Cannot delete property!');
+    }
+  }
+
   await context.prisma.property.delete({
     where: {
       id: propertyId,
