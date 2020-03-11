@@ -17,6 +17,7 @@ export let landlordVerification = queryField('landlordRegisterVerification', {
       throw new Error('Invalid verification code');
     }
     let landlordVerificationId = Base64.decode(verifyId);
+    let landlordTokenQuery = Base64.decode(tokenQuery);
     let landlordVerification = await context.prisma.landlordRegisterVerification.findOne(
       {
         where: {
@@ -36,7 +37,7 @@ export let landlordVerification = queryField('landlordRegisterVerification', {
       throw new Error('User not found');
     }
 
-    if (tokenQuery !== landlordVerification.tokenQuery) {
+    if (landlordTokenQuery !== landlordVerification.tokenQuery) {
       throw new Error('Invalid token');
     }
     return {
