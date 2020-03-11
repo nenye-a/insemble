@@ -17,7 +17,7 @@ let onCredentialsUpdated = (newCredentials: Credentials) => {
 
 authEmitter.on('credentialsUpdated', onCredentialsUpdated);
 
-export default function AuthorizationListener(props: Props) {
+export default function AuthorizationProvider(props: Props) {
   let { children } = props;
   let value = getCredentials();
 

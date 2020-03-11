@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 
 import { ClientContextProvider } from 'react-fetching-library';
 import { ApolloProvider } from '@apollo/react-hooks';
-import { AuthorizationListener } from './core-ui';
+import { AuthorizationProvider } from './core-ui';
 import client from './client';
 import apolloClient from './graphql/apolloClient';
 import routes, { RouteType } from './routes';
@@ -20,7 +20,7 @@ export default function App() {
   return (
     <ApolloProvider client={apolloClient}>
       <ClientContextProvider client={client}>
-        <AuthorizationListener>
+        <AuthorizationProvider>
           <Router basename={process.env.REACT_APP_BASENAME || ''}>
             <Switch>
               <>
@@ -57,7 +57,7 @@ export default function App() {
               </>
             </Switch>
           </Router>
-        </AuthorizationListener>
+        </AuthorizationProvider>
       </ClientContextProvider>
     </ApolloProvider>
   );

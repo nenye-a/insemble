@@ -1,5 +1,5 @@
 export { default as Alert } from './Alert';
-export { default as AuthorizationListener } from './AuthorizationListener';
+export { default as AuthorizationProvider } from './AuthorizationProvider';
 export { default as Avatar } from './Avatar';
 export { default as Button } from './Button';
 export { default as Badge } from './Badge';
