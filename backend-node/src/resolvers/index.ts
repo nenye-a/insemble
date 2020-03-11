@@ -51,3 +51,6 @@ export * from './billing/billingQuery';
 export * from './billing/paymentMethodMutation';
 export * from './billing/paymentMethodQuery';
 export * from './billing/subscriptionMutation';
+
+export * from './message/sendMessageMutation';
+export * from './message/createConversationMutation';
