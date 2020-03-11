@@ -13,7 +13,7 @@ import SvgReply from '../components/icons/reply';
 export default function LandlordMessageDetail() {
   let history = useHistory();
   let { address, landlordAvatar, tenantSubject, tenantMessage } = MESSAGE_DETAIL;
-  let [description, setDescription] = useState('');
+  let [reply, setReply] = useState('');
 
   return (
     <Card flex>
@@ -21,13 +21,13 @@ export default function LandlordMessageDetail() {
         <Button
           mode="transparent"
           text="Back to Messages"
-          icon={<SvgArrowBack style={{ color: THEME_COLOR, marginLeft: 10 }} />}
+          icon={<SvgArrowBack style={{ color: THEME_COLOR }} />}
           onPress={() => history.push('/user/messages')}
           textProps={{ style: { marginLeft: 12 } }}
         />
         <Row>
           <SvgReply />
-          <SvgInfoFilled style={{ color: THEME_COLOR }} />
+          <SvgInfoFilled style={{ color: THEME_COLOR, marginLeft: 10 }} />
         </Row>
       </NavigationContainer>
       <HeaderContainer>
@@ -56,11 +56,10 @@ export default function LandlordMessageDetail() {
         </LandlordAvatarContainer>
         <View style={{ flex: 8 }}>
           <TextArea
-            label="Description"
-            placeholder="Enter Description"
-            values={description}
+            placeholder="Reply"
+            values={reply}
             onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-              setDescription(e.target.value);
+              setReply(e.target.value);
             }}
             showCharacterLimit
             containerStyle={{ marginTop: 12, marginBottom: 12 }}
