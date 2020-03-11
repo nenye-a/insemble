@@ -5,18 +5,19 @@ File for spatial analytics data processing
 '''
 
 import data.utils as utils
+import data.mongo_connect as mongo_connect
 # import pandas as pd
 
 # get psychographics given lat and lng
 
 
-def get_psychographics(lat, lng, radius):
+def get_psychographics(lat, lng, radius, db_connection=utils.SYSTEM_MONGO):
     """
     Given a location (lat, lng) and a radius will return all the psychographic details for
     this location.
     """
 
-    blockgroups = utils.DB_REGIONS.find({'type': 'blockgroup', 'location': {
+    blockgroups = db_connection.get_collection(mongo_connect.AD_REGIONS).find({'type': 'blockgroup', 'location': {
         '$near': {
             '$geometry': {
                 'type': "Point",

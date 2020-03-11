@@ -5,6 +5,7 @@ File for environics data processing.
 '''
 
 import data.utils as utils
+import data.mongo_connect as mongo_connect
 # import pandas as pd
 
 
@@ -13,12 +14,12 @@ WEIGHTED_CATEGORIES = ["Current Year Median Age", "Current Year Average Age", "C
                        "Five Year Median Household Income", "Five Year Average Household Income"]
 
 
-def get_demographics(lat, lng, radius):
+def get_demographics(lat, lng, radius, db_connection=utils.SYSTEM_MONGO):
     """
     Get all the environics data for a latitude and longitude and radius.
     """
 
-    blockgroups = utils.DB_REGIONS.find({'type': 'blockgroup', 'location': {
+    blockgroups = db_connection.get_collection(mongo_connect.AD_REGIONS).find({'type': 'blockgroup', 'location': {
         '$near': {
             '$geometry': {
                 'type': "Point",

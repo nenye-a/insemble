@@ -42,8 +42,8 @@ SD_VECTORS = "spaceData.preprocessed_vectors"
 SD_VECTORS_LA = "spaceData.LA_space_vectors"
 
 # legacy databaces - pending deletion
-AMD_TENANT = "tenant_details"
-AMD_PROPERTY_LEGACY = "property_details"
+AMD_TENANT = "appMatchData.tenant_details"
+AMD_PROPERTY_LEGACY = "appMatchData.property_details"
 SD_ZIP_CODES = "spaceData.zip_codes"
 SD_PROCESSED_SPACE = "spaceData.spaces"
 SD_OLD_SPACES = "spaceData.dataset2"

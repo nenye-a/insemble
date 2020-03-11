@@ -18,6 +18,12 @@ EARTHS_RADIUS_MILES = 3958.8
 # DATABASE CONNECTIONS
 SYSTEM_MONGO = mongo_connect.Connect()  # client, MongoDB connection
 
+# top level database connections
+DB_SPACE = SYSTEM_MONGO.get_collection(mongo_connect.DB_SPACE)
+DB_APP_LEGACY = SYSTEM_MONGO.get_collection(mongo_connect.DB_APP_LEGACY)
+DB_APP = SYSTEM_MONGO.get_collection(mongo_connect.DB_APP)
+DB_REQUESTS = SYSTEM_MONGO.get_collection(mongo_connect.DB_REQUESTS)
+
 # collection connections - categories
 DB_FOURSQUARE = SYSTEM_MONGO.get_collection(mongo_connect.SD_FOURSQUARE)
 DB_SPATIAL_TAXONOMY = SYSTEM_MONGO.get_collection(mongo_connect.SD_SPATIAL_TAXONOMY)
