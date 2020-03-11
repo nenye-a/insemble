@@ -13,8 +13,8 @@ export default function LandlordSignUp() {
   return (
     <Container>
       <LandlordLanding />
-      <RightContainer>
-        <TitleText>Sign Up</TitleText>
+      <RightContainer flex>
+        <TitleText>Landlord Sign Up</TitleText>
         <SignUpForm role={Role.LANDLORD} />
         <SignUpRowView>
           <Text>Already have an account? </Text>
@@ -43,6 +43,7 @@ const SignUpRowView = styled(View)`
 `;
 
 const RightContainer = styled(View)`
+  justify-content: center;
   padding: 10px 50px 0 50px;
   background-color: ${WHITE};
 `;

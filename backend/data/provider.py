@@ -1,10 +1,9 @@
 from . import utils, matching
 from bson import ObjectId
 import numpy as np
-import time
 import re
 import pandas as pd
-import data.api.goog as google
+import data.api.google as google
 import data.api.foursquare as foursquare
 import data.api.arcgis as arcgis
 import data.api.environics as environics
@@ -87,14 +86,19 @@ def get_address_neighborhood(lat, lng):
     """
 
     google_location = google.reverse_geocode(lat, lng, save=False)
-    address = google_location['formatted_address'].split(',')[0]
+    address = None
+    if google_location is not None and 'formatted_address' in google_location:
+        address = google_location['formatted_address'].split(',')[0]         
+    else:
+        address = ""
     neighborhood = None
     locality = None
-    for component in google_location['address_components']:
-        if 'neighborhood' in component['types']:
-            neighborhood = component['short_name']
-        if 'locality' in component['types']:
-            locality = component['short_name']
+    if google_location is not None:
+        for component in google_location['address_components']:
+            if 'neighborhood' in component['types']:
+                neighborhood = component['short_name']
+            if 'locality' in component['types']:
+                locality = component['short_name']
 
     # return both neighborhood and locality, but return None if neighther are present
     if neighborhood:
@@ -984,7 +988,6 @@ def get_nearby_places(lat, lng, radius=1):
 def get_environics_demographics(lat, lng):
 
     demo1 = environics.get_demographics(lat, lng, 1)
-
     demo3 = environics.get_demographics(lat, lng, 3)
 
     return {

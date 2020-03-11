@@ -27,7 +27,6 @@ dump.rdb
 # Node and npm stuff
 node_modules/**/*
 npm-debug.*
-/package-lock.json
 
 # Folders
 .DS_Store

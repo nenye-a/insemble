@@ -95,6 +95,7 @@ const Description = styled(Text)`
 `;
 
 const Footer = styled(View)`
+  flex: 1;
   background-color: ${SECONDARY_COLOR};
   padding: 6px 13px;
   min-height: 125px;

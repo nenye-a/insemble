@@ -158,7 +158,6 @@ export default function Login(props: Props) {
 }
 
 const Content = styled(View)`
-  padding: 24px;
   width: 100%;
 `;
 const SubmitButton = styled(Button)`

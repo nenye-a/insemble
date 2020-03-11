@@ -15,7 +15,7 @@ export default function LandlordSignUp() {
     <Container>
       <LandlordLanding />
       <FormContainer>
-        <TitleText>Log In</TitleText>
+        <TitleText>Landlord Log In</TitleText>
         <LoginForm role={Role.LANDLORD} />
         <RowView>
           <Text>{noAccount} </Text>
@@ -41,12 +41,13 @@ const FormContainer = styled(View)`
   flex: 1;
   justify-content: center;
   background-color: ${WHITE};
+  padding: 10px 50px 0 50px;
 `;
 
 const TitleText = styled(Text)`
   font-size: ${FONT_SIZE_LARGE};
   font-weight: ${FONT_WEIGHT_BOLD};
-  margin: 30px 0 0 24px;
+  margin: 30px 0 20px 0;
   color: ${THEME_COLOR};
 `;
 

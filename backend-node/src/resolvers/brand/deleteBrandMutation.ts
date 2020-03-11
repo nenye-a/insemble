@@ -11,9 +11,15 @@ let deleteBrandResolver: FieldResolver<'Mutation', 'deleteBrand'> = async (
     where: {
       id: brandId,
     },
+    include: {
+      tenantUser: true,
+    },
   });
   if (!brand) {
     throw new Error('Brand not found!');
+  }
+  if (brand.tenantUser?.id !== context.tenantUserId) {
+    throw new Error('User not authorized to delete');
   }
   await context.prisma.brand.delete({
     where: {

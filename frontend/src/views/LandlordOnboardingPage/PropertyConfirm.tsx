@@ -56,7 +56,7 @@ export default function PropertyConfirm(props: Props) {
       <ContentContainer flex>
         <LocationInput
           defaultValue={location.address}
-          label="Physical Address"
+          label="Address"
           placeholder="Property Address"
           onPlaceSelected={(location) => {
             setLocation(location);

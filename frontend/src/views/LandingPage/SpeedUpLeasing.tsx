@@ -13,7 +13,16 @@ export default function SpeedUpLeasing() {
         At Insemble, we believe in helping you open the best stores as fast as possible. We start by
         giving custom market insights, and followup with properties that work best for you.
       </CenteredText>
-      <FindLocationsButton text="Find Locations" textProps={{ fontSize: FONT_SIZE_LARGE }} />
+      <FindLocationsButton
+        text="Find Locations"
+        textProps={{ fontSize: FONT_SIZE_LARGE }}
+        onPress={() =>
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+          })
+        }
+      />
     </Container>
   );
 }

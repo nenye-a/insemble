@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
 import { useParams } from 'react-router-dom';
+import { useApolloClient, useLazyQuery } from '@apollo/react-hooks';
 
 import { GET_LOCATION_PREVIEW } from '../graphql/queries/server/preview';
 import { View, Alert, LoadingIndicator } from '../core-ui';
@@ -12,7 +13,6 @@ import {
   TenantMatches_tenantMatches_matchingLocations as TenantMatchesMatchingLocations,
   TenantMatches_tenantMatches_matchingProperties as TenantMatchesMatchingProperties,
 } from '../generated/TenantMatches';
-import { useLazyQuery } from '@apollo/react-hooks';
 import { LocationPreview, LocationPreviewVariables } from '../generated/LocationPreview';
 import { GOOGLE_MAPS_STYLE } from '../constants/googleMaps';
 import MapTour from './MapPage/MapTour';
@@ -34,6 +34,7 @@ const defaultCenter = {
 const defaultZoom = 10;
 
 function MapContainer({ onMarkerClick, matchingLocations }: Props) {
+  let apolloClient = useApolloClient();
   let { brandId = '' } = useParams();
   let [getLocation, { data, loading, error }] = useLazyQuery<
     LocationPreview,
@@ -54,6 +55,12 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
 
   let infoRef = useRef<Element | undefined>();
   let mapRef = useRef<GoogleMap | null>(null);
+
+  /**
+   * right now the be returns error 500 when the user hit outside the map bound
+   * TODO: change this to a better error handler
+   */
+  let outsideBoundError = error?.message.includes('Request failed with status code 500');
 
   // TODO: fix this. tried useCallback with all deps, still not working
   let onPreviewClick = () => {
@@ -99,6 +106,19 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
     }
   });
 
+  useEffect(() => {
+    if (outsideBoundError) {
+      apolloClient.writeData({
+        data: {
+          errorState: {
+            __typename: 'ErrorState',
+            locationPreview: true,
+          },
+        },
+      });
+    }
+  }, [error, apolloClient, outsideBoundError]);
+
   return (
     <div>
       <MapTour
@@ -108,7 +128,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         }}
       />
       <LoadingIndicator visible={loading} />
-      <Alert visible={!!error} text={error?.message || ''} />
+      <Alert visible={!!error && !outsideBoundError} text={error?.message || ''} />
       <GoogleMap
         ref={mapRef}
         defaultZoom={defaultZoom}
@@ -153,7 +173,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
               <LocationDetail
                 visible
                 title={data?.locationPreview.targetAddress}
-                subTitle={data?.locationPreview.targetNeighborhood}
+                subTitle={data?.locationPreview.targetNeighborhood || ''}
                 income={data?.locationPreview.medianIncome.toString()}
                 population={data?.locationPreview.daytimePop3Mile.toString()}
                 age={data?.locationPreview.medianAge}
@@ -161,7 +181,6 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
             </InfoBox>
           </Marker>
         )}
-        {showGuide && <div className="marker-example heat-map-example empty-container" />}
         {heatmapData && (
           <HeatMapLayer
             data={heatmapData}

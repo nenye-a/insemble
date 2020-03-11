@@ -98,7 +98,7 @@ const Subtitle = styled(Text)`
 `;
 
 const Image = styled.img`
-  width: min(100vw, 60%);
+  width: 60%;
   object-fit: contain;
 `;
 

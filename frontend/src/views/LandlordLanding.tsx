@@ -18,7 +18,7 @@ export default function LandlordLanding() {
       <LandingBackground />
       <RowView>
         <FindLocation
-          text="Find the perfect location"
+          text="Retailer/Restaurant Portal"
           mode="transparent"
           onPress={() => {
             history.push('/');
@@ -28,9 +28,8 @@ export default function LandlordLanding() {
       <TextWrapper>
         <DescriptionLargeText>Find the perfect tenant for your property</DescriptionLargeText>
         <DescriptionSmallText>
-          Insemble is the world’s first smart listing service. We connect clients to the best
-          tenants for your property. We match clients using customer fit & space compatibility,
-          saving time for brokers, owners, and retailers.
+          We help you find the best retailers for your property. We match clients using customer fit
+          & space compatibility,saving time for brokers, owners, and retailers.
         </DescriptionSmallText>
       </TextWrapper>
     </Description>

@@ -46,12 +46,9 @@ export default function LocationConfirm(props: Props) {
     confirmLocation?.physicalAddress
   );
   let [isDisabled, setIsDisabled] = useState(true);
-  let propertyName = selectedLocation?.name || confirmLocation?.physicalAddress?.name || '';
   let propertyAddress =
     selectedLocation?.address || confirmLocation?.physicalAddress?.address || '';
-  let mapURL = confirmLocation
-    ? MAPS_IFRAME_URL_SEARCH + '&q=' + urlEncode(propertyName + ', ' + propertyAddress)
-    : '';
+  let mapURL = confirmLocation ? MAPS_IFRAME_URL_SEARCH + '&q=' + urlEncode(propertyAddress) : '';
 
   let allValid = selectedMarketingPreference && selectedLocation;
 

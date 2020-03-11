@@ -1,9 +1,9 @@
-from rest_framework import status, permissions
+from rest_framework import generics, status, permissions, serializers
 from .tenant_api import AsynchronousAPI, FastLocationDetailsAPI
 from rest_framework.response import Response
-from .landlord_serializers import PropertyTenantSerializer, PropertyDetailsSerializer, TenantDetailsSerializer
+from .landlord_serializers import PropertyTenantSerializer, PropertyDetailsSerializer, TenantDetailsSerializer, PropertyCheckSerializer
 from bson import ObjectId
-import data.api.goog as google
+import data.api.google as google
 import data.utils as utils
 import data.landlord_provider as landlord_provider
 import data.provider as provider
@@ -139,14 +139,17 @@ class PropertyTenantAPI(AsynchronousAPI):
             property_lng = round(google_location["geometry"]["location"]["lng"], 6)
 
             formatted_address = google_location["formatted_address"] if "formatted_address" in google_location else google_location["vicinity"]
-            already_exists = self.check_property_exists(formatted_address)
-            if already_exists:
-                return Response({
-                    'status': status.HTTP_409_CONFLICT,
-                    'status_detail': ["This property already exists. Please resubmit with a property_id to update."],
-                }, status=status.HTTP_409_CONFLICT)
 
-            # TODO: check if we already have an address here
+            # Check for address temporarily removed. In the future, we will do this earlier and then
+            # ask the user to confirm if they indeed want to use this address even though it exists.
+
+            # already_exists = self.check_property_exists(formatted_address)
+            # if already_exists:
+            #     return Response({
+            #         'status': status.HTTP_409_CONFLICT,
+            #         'status_detail': ["This property already exists. Please resubmit with a property_id to update."],
+            #     }, status=status.HTTP_409_CONFLICT)
+
             this_property = {
                 'address': formatted_address,
                 'location': {
@@ -183,7 +186,7 @@ class PropertyTenantAPI(AsynchronousAPI):
 
         # Should do this in an other class that is made for updating and refetching
         # the matches for a space. Then this is just an automatic call.
-        brands = landlord_provider.get_matching_tenants_new(this_property, space_id)
+        brands = landlord_provider.get_matching_tenants(this_property, space_id)
 
         return Response({
             'status': status.HTTP_200_OK,
@@ -204,6 +207,39 @@ class PropertyTenantAPI(AsynchronousAPI):
 
     def _register_tasks(self) -> None:
         celery_app.register_task(self.get_nearby_places)
+
+
+class PropertyAddressCheck(generics.GenericAPIView):
+    """
+    API function that will check if an address is already registered as a property.
+    """
+
+    authentication_classes = []
+    serializer_class = PropertyCheckSerializer
+    permission_classes = [
+        permissions.AllowAny
+    ]
+
+    def get(self, request, *args, **kwargs):
+
+        address = kwargs.get("address", "")
+
+        # format address using google
+        google_location = google.find(address, allow_non_establishments=True, save=False)
+        address = google_location["formatted_address"] if google_location else ""
+
+        # search for the address in the database
+        existing_property = utils.DB_PROPERTY.find_one({'address': address}, {'_id': 1})
+        property_id = existing_property['_id'] if existing_property else False
+
+        return Response({
+            'status': 200,
+            'status_detail': ["Success"],
+            "result": {
+                'exists': True if property_id else False,
+                'property_id': str(property_id) if property_id else None
+            }
+        })
 
 
 # PropertyDetailsAPI - api/propertyDetails/
@@ -450,10 +486,10 @@ class TenantDetailsAPI(AsynchronousAPI):
         description = brand['description'] if brand['description'] else "No description provided."
 
         physical_requirements = {
-            'minimum sqft': brand['typical_squarefoot'][0]['min'] if len(brand['typical_squarefoot']) > 0 else None,
+            'minimum sqft': brand['typical_squarefoot'][0]['min'] if brand['typical_squarefoot'] and len(brand['typical_squarefoot']) > 0 else None,
             'frontage width': None,
             'condition': "",
-            'property_type': brand['typical_property_type']['type'] if len(brand['typical_property_type']) > 0 else None
+            'property_type': brand['typical_property_type']['type'] if brand['typical_property_type'] and len(brand['typical_property_type']) > 0 else None
         }
 
         key_facts = {

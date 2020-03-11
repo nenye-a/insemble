@@ -11,7 +11,6 @@ import Description from './LandingPage/Description';
 import Features from './LandingPage/Features';
 import SpeedUpLeasing from './LandingPage/SpeedUpLeasing';
 import Footer from './LandingPage/Footer';
-import Partners from './LandingPage/Partners';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import { WHITE } from '../constants/colors';
 import Button from '../core-ui/Button';
@@ -20,6 +19,7 @@ import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../graphql/queries/ser
 import asyncStorage from '../utils/asyncStorage';
 import { GetLandlordProfile } from '../generated/GetLandlordProfile';
 import { Role } from '../types/types';
+import InsembleLogo from '../components/common/InsembleLogo';
 
 function Landing() {
   let { isLoading } = useGoogleMaps();
@@ -54,6 +54,9 @@ function Landing() {
   return (
     <View>
       <Masthead>
+        <LogoView>
+          <InsembleLogo color={'white'} />
+        </LogoView>
         <RowView>
           {id ? (
             <TouchableOpacity
@@ -92,7 +95,7 @@ function Landing() {
           )}
         </RowView>
         <Title style={{ maxWidth: 800 }}>
-          Find the next best locations for your retail or restaurant business
+          Find the best location for your retail or restaurant business
         </Title>
         {isLoading ? (
           <TextInput placeholder="Loading..." disabled={true} />
@@ -137,7 +140,6 @@ function Landing() {
           />
         </View>
       </Masthead>
-      <Partners />
       <Description />
       <Features />
       <SpeedUpLeasing />
@@ -176,4 +178,11 @@ const LogIn = styled(Button)`
   margin: 0 12px 0 0;
   border-color: ${WHITE};
   background-color: transparent;
+`;
+
+const LogoView = styled(View)`
+  align-item: flex-start;
+  position: absolute;
+  top: 16px;
+  left: 32px;
 `;

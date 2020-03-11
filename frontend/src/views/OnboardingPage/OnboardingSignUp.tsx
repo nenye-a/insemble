@@ -37,7 +37,9 @@ export default function OnBoardingSignUp(props: Props) {
       </FormContainer>
       <Description>
         <InsembleLogo color="white" />
-        <DescriptionLargeText>Find the next best location for your business</DescriptionLargeText>
+        <DescriptionLargeText>
+          Find the best location for your retail or restaurant business
+        </DescriptionLargeText>
         <DescriptionSmallText>
           Insemble is the world’s first smart listing service. We find & connect you to the best
           locations for your business. And we cut through the clutter, presenting the pre- qualified

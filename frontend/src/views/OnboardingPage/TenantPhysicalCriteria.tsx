@@ -19,7 +19,7 @@ import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
 import { Equipments } from '../../generated/Equipments';
 import { SPACES_TYPE } from '../../constants/spaces';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
-import { validateNumber, asyncStorage } from '../../utils/';
+import { validateNumber, asyncStorage, getBusinessAndFilterParams } from '../../utils/';
 import { CreateBrand, CreateBrandVariables } from '../../generated/CreateBrand';
 import { CREATE_BRAND, GET_BRANDS } from '../../graphql/queries/server/brand';
 
@@ -56,45 +56,14 @@ export default function TenantPhysicalCriteria(props: Props) {
       });
       if (signedIn) {
         let { confirmBusinessDetail, tenantGoals, targetCustomers, physicalSiteCriteria } = state;
-        let { categories, name, userRelation, otherUserRelation, location } = confirmBusinessDetail;
-        let {
-          noPersonasPreference,
-          noAgePreference,
-          noIncomePreference,
-          noEducationsPreference,
-          personas,
-          minAge,
-          maxAge,
-          minIncome,
-          maxIncome,
-          educations,
-          minDaytimePopulation,
-        } = targetCustomers;
-        let { minSize, minFrontageWidth, spaceType, equipments } = physicalSiteCriteria;
         createBrand({
           variables: {
-            business: {
-              name,
-              userRelation: userRelation === 'Other' ? otherUserRelation || '' : userRelation,
-              location: location,
-              locationCount: tenantGoals.locationCount ? Number(tenantGoals.locationCount) : null,
-              newLocationPlan: tenantGoals.newLocationPlan?.value,
-              nextLocations: tenantGoals.location,
-            },
-            filter: {
-              categories,
-              personas: noPersonasPreference ? null : personas,
-              education: noEducationsPreference ? null : educations,
-              minDaytimePopulation: minDaytimePopulation ? null : Number(minDaytimePopulation),
-              minAge: noAgePreference ? null : Number(minAge),
-              maxAge: noAgePreference ? null : Number(maxAge),
-              minIncome: noIncomePreference ? null : Number(minIncome) * 1000,
-              maxIncome: noIncomePreference ? null : Number(maxIncome) * 1000,
-              minSize: Number(minSize),
-              minFrontageWidth: Number(minFrontageWidth),
-              spaceType,
-              equipment: equipments,
-            },
+            ...getBusinessAndFilterParams(
+              confirmBusinessDetail,
+              tenantGoals,
+              targetCustomers,
+              physicalSiteCriteria
+            ),
           },
           refetchQueries: [{ query: GET_BRANDS }],
           awaitRefetchQueries: true,

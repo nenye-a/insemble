@@ -2,7 +2,7 @@ from . import utils, matching
 from django.conf import settings
 import pandas as pd
 from s3fs import S3FileSystem
-import data.api.goog as google
+import data.api.google as google
 import data.api.spatial as spatial
 import data.api.arcgis as arcgis
 import data.api.environics as environics
@@ -73,7 +73,7 @@ def get_location_dictionary(location):
         demo_dict3 = location['environics_demographics']['3mile'] or {}
 
     nearby_store = location['nearby_store'] if 'nearby_store' in location else None
-    nearby_restaurant = location['nearby_resturant'] if 'nearby_restaurant' in location else None
+    nearby_restaurant = location['nearby_restaurant'] if 'nearby_restaurant' in location else None
     # CREATE ARRAY AS DATAFRAME (for 1 MILE)
     # create psychographic dataframe
 
@@ -141,14 +141,14 @@ def get_location_dictionary(location):
                 category_list = place.get("foursquare_categories", [{"category_name": None}])
                 if len(category_list) == 0:
                     continue
-                category = category_list[0]["category_name"]
+                category = category_list[0]["category_name"] if "category_name" in category_list[0] else None
                 if category:
                     categories[category] = categories.get(category, 0) + 1
 
     # add the categories to the dict
     vector_dict.update(categories)
     vector_dict['_id'] = location['_id']
-    vector_dict['brand_name'] = location['brand_name']
+    vector_dict['brand_name'] = location['brand_name'] if "brand_name" in location else ""
 
     return vector_dict
 
@@ -207,9 +207,6 @@ def standardize(processed_difference_df):
     # Pandas auto aligns items, but note that there is a risk if they ever change that feature
     min_index = 3
     max_index = 7
-
-    # return (processed_difference_df - COLUMN_MIN_MAX_DF.iloc[min_index]) / \
-    #     (COLUMN_MIN_MAX_DF.iloc[max_index] - COLUMN_MIN_MAX_DF.iloc[max_index])
 
     for column in processed_difference_df.columns:
         processed_difference_df[column] = (processed_difference_df[column] - COLUMN_MIN_MAX_DF.iloc[min_index][column]) / \

@@ -83,7 +83,7 @@ let tenantMatches = queryField('tenantMatches', {
             categories:
               categories.length > 0 ? JSON.stringify(categories) : undefined,
             income: minIncome && {
-              min: maxIncome,
+              min: minIncome,
               max: maxIncome,
             },
             age: minAge && {

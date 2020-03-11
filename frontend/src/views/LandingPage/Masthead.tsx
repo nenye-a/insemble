@@ -1,7 +1,8 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
+import { View } from '../../core-ui';
 
-const BackgroundContainer = styled.div`
+const BackgroundContainer = styled(View)`
   background-image: url('https://insemble-photos.s3.us-east-2.amazonaws.com/interactive-landing-background.jpg');
   background-size: cover;
   background-position-x: center;
@@ -10,11 +11,16 @@ const BackgroundContainer = styled.div`
 `;
 
 const ContentContainer = styled.div`
-  background-color: rgba(32, 32, 32, 0.7);
+  background-color: rgba(0, 0, 0, 0.3);
   min-height: 60vh;
-  padding-top: 72px;
+  justify-content: center;
+  align-items: center;
 `;
 
+const TopGradien = styled.div`
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 1) 90%);
+  height: 70px;
+`;
 const Content = styled.div`
   max-width: 740px;
   margin: 0 auto;
@@ -27,6 +33,7 @@ type Props = {
 export default (props: Props) => {
   return (
     <BackgroundContainer>
+      <TopGradien />
       <ContentContainer>
         <Content>{props.children}</Content>
       </ContentContainer>
