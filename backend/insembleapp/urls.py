@@ -38,6 +38,7 @@ urlpatterns = [
     # LANDLORD API ROUTES
     path(r'api/propertyTenants/', PropertyTenantAPI.as_view(), name='propertyTenants'),
     path(r'api/propertyTenants/<slug:property_id>', PropertyTenantAPI.as_view(), name='propertyTenants'),
+    path(r'api/propertyTenants/<slug:property_id>/<slug:space_id>', PropertyTenantAPI.as_view(), name='propertyTenants'),
     path(r'api/propertyDetails/', PropertyDetailsAPI.as_view(), name='PropertyDetails'),
     path(r'api/tenantDetails/', TenantDetailsAPI.as_view(), name='TenantDetails'),
     path(r'api/propertyCheck/<slug:address>', PropertyAddressCheck.as_view(), name='propertyCheck'),
@@ -47,6 +48,5 @@ urlpatterns = [
     path(r'api/category/', CategoryMapAPI.as_view(), name='category'),
     path(r'api/search/', SearchAPI.as_view(), name='search'),
     path(r'api/properties/<slug:_id>/', SearchAPI.as_view(), name='properties'),
-    path(r'api/matches/<slug:address>/', MatchesAPI.as_view(), name='matches'),
-    path(r'^', include('feedback.feedback_urls'))
+    path(r'api/matches/<slug:address>/', MatchesAPI.as_view(), name='matches')
 ]

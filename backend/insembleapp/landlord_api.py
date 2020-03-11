@@ -29,13 +29,13 @@ class PropertyTenantAPI(AsynchronousAPI):
     If the property already exists, a property_id must be provided to associate the space with the property. Otherwise,
     a new property will be generated.
 
-    Brands will contain a list of matching brands. These brands are organize as the following. 
+    Brands will contain a list of matching brands. These brands are organize as the following.
 
     - (Claimed or Verified) Brands interested in the landlords property.           -> (details known, and interest indicated)
     - (Claimed or Verified) Brands on the platform, but not interested.            -> (details known, but interest not indicated)
     - (Claimed or Verified) Brands not present on the platform.                    -> (details unknown, but can be approximated)
 
-    These different stages will serve as tiers, and each tier will be ranked by match to the landlord's location and property. 
+    These different stages will serve as tiers, and each tier will be ranked by match to the landlord's location and property.
     Only verified brands are shown to the landlord. A "Claimed" brand is a brand that a tenant-side user has indicated ownership
     of, or that the Insemble team has pre-populated with user information. "Verified" brands are brands with ownership that has
     been verified by the Insemble team. Verified brands do not have to be claimed. Tenant side users can claim verified brands
@@ -43,7 +43,7 @@ class PropertyTenantAPI(AsynchronousAPI):
 
     parameters: {
         # Property related fields
-        property_id: string                 (required -> not required if address and property type are added)       
+        property_id: string                 (required -> not required if address and property type are added)
         address: string,                    (required -> not required if property_id is provided)
         property_type: list[string],        (required -> not required if property_id is provided)
         logo: string (url),                 (ignored if property_id provided)
@@ -72,7 +72,7 @@ class PropertyTenantAPI(AsynchronousAPI):
     response: {
         status: int (HTTP),                 (always provided)
         status_detail: string or list,      (always provided)
-        property_id: string,                
+        property_id: string,
         space_id: string,
         brands: [
             {
@@ -197,9 +197,31 @@ class PropertyTenantAPI(AsynchronousAPI):
             'brands': brands,
         }, status=status.HTTP_200_OK)
 
-    def delete(self, request, property_id, format=None):
-        property_id = ObjectId(property_id)
-        utils.DB_PROPERTY.delete_one({"_id": property_id})
+    def delete(self, request, *args, **kwargs):
+        """
+        Will delete a property and or space.
+        If provided with only a property, will delete the entire property. If provided with a space_id will delete only the space
+        within the property
+
+        Delete Request: /api/propertyTenants/property_id/space_id
+        Pram
+        """
+        property_id = kwargs.get("property_id", None)
+        space_id = kwargs.get("space_id", None)
+
+        if space_id:
+            # delete space if it's in the database
+            space_id = ObjectId(space_id)
+            this_property = utils.DB_PROPERTY.find_one({"spaces.space_id": space_id}, {'spaces': 1})
+            updated_spaces = {
+                "spaces": [space for space in this_property["spaces"] if space["space_id"] != space_id]
+            }
+            utils.DB_PROPERTY.update_one({"spaces.space_id": space_id}, {"$set": updated_spaces})
+        elif property_id:
+            # delete the entire property if not property_id and space_id
+            property_id = ObjectId(property_id)
+            utils.DB_PROPERTY.delete_one({"_id": property_id})
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def check_property_exists(self, address):
@@ -262,7 +284,7 @@ class PropertyDetailsAPI(AsynchronousAPI):
     response: {
         status: int (HTTP),                     (always provided)
         status_detail: string or list,          (always provided)
-        result: {    
+        result: {
             key_facts: {
                 mile: int
                 DaytimePop: float,
