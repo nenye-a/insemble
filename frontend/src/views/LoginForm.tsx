@@ -11,7 +11,7 @@ import { CREATE_BRAND } from '../graphql/queries/server/brand';
 import { LoginTenant, LoginTenantVariables } from '../generated/LoginTenant';
 import { LoginLandlord, LoginLandlordVariables } from '../generated/LoginLandlord';
 import { CreateBrand, CreateBrandVariables } from '../generated/CreateBrand';
-import { asyncStorage, getBusinessAndFilterParams } from '../utils';
+import { getBusinessAndFilterParams, saveCredentials } from '../utils';
 import { Role } from '../types/types';
 import { State as OnboardingState } from '../reducers/tenantOnboardingReducer';
 
@@ -36,6 +36,7 @@ export default function Login(props: Props) {
     createBrand,
     { data: createBrandData, loading: createBrandLoading, error: createBrandError },
   ] = useMutation<CreateBrand, CreateBrandVariables>(CREATE_BRAND);
+
   let onSubmit = (data: FieldValues) => {
     let { email, password } = data;
     tenantLogin({
@@ -43,13 +44,7 @@ export default function Login(props: Props) {
     });
   };
 
-  let saveUserData = async (token: string, role: Role, brandId: string) => {
-    await asyncStorage.saveTenantToken(token);
-    await asyncStorage.saveRole(role);
-    await asyncStorage.saveBrandId(brandId);
-  };
-
-  let createNewBrand = async () => {
+  let createNewBrand = () => {
     if (onboardingState) {
       let {
         confirmBusinessDetail,
@@ -70,11 +65,17 @@ export default function Login(props: Props) {
       });
     }
   };
+
   useEffect(() => {
     if (!loading && data) {
       let { loginTenant } = data;
       let { token, brandId } = loginTenant;
-      saveUserData(token, Role.TENANT, brandId);
+
+      saveCredentials({
+        tenantToken: token,
+        role: Role.TENANT,
+      });
+
       if (brandId) {
         if (onboardingState) {
           createNewBrand();
@@ -105,15 +106,14 @@ export default function Login(props: Props) {
     });
   };
 
-  let saveLandlordData = async (token: string, role: Role) => {
-    await asyncStorage.saveLandlordToken(token);
-    await asyncStorage.saveRole(role);
-  };
   if (landlordData) {
     let { loginLandlord } = landlordData;
     let { token } = loginLandlord;
-    saveLandlordData(token, Role.LANDLORD);
-    history.push(`/landlord/properties`);
+    saveCredentials({
+      landlordToken: token,
+      role: Role.LANDLORD,
+    });
+    history.push('/landlord/properties');
   }
 
   return (
