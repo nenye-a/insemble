@@ -3,7 +3,7 @@ import math
 import gzip
 import pandas as pd
 import geopy.distance
-from mongo_connect import Connect
+import mongo_connect
 from data.api import anmspatial
 
 
@@ -18,48 +18,45 @@ efficient & powerful
 MILES_TO_METERS_FACTOR = 1609.34
 EARTHS_RADIUS_MILES = 3958.8
 
-# Database connections
-client = Connect.get_connection()
-
 # DATABASE CONNECTIONS
-client = Connect.get_connection()  # client, MongoDB connection
+SYSTEM_MONGO = mongo_connect.Connect()  # client, MongoDB connection
 
 # top level database connections
-DB_SPACE = client.spaceData  # database for legacy spatial information
-DB_APP_LEGACY = client.appMatchData  # legacy app database
-DB_APP = client.appData  # hosts the main data for the application
-DB_REQUESTS = client.requests  # database the hosts requests saved by safe_request
+DB_SPACE = SYSTEM_MONGO.get_collection(mongo_connect.DB_SPACE)
+DB_APP_LEGACY = SYSTEM_MONGO.get_collection(mongo_connect.DB_APP_LEGACY)
+DB_APP = SYSTEM_MONGO.get_collection(mongo_connect.DB_APP)
+DB_REQUESTS = SYSTEM_MONGO.get_collection(mongo_connect.DB_REQUESTS)
 
 # collection connections - categories
-DB_FOURSQUARE = DB_SPACE.foursquare_categories
-DB_SPATIAL_TAXONOMY = DB_SPACE.spatial_taxonomy
-DB_CATEGORIES = DB_SPACE.categories
+DB_FOURSQUARE = SYSTEM_MONGO.get_collection(mongo_connect.SD_FOURSQUARE)
+DB_SPATIAL_TAXONOMY = SYSTEM_MONGO.get_collection(mongo_connect.SD_SPATIAL_TAXONOMY)
+DB_CATEGORIES = SYSTEM_MONGO.get_collection(mongo_connect.SD_CATEGORIES)
 
 # collection connections - scraping
-DB_AGGREGATE = DB_SPACE.aggregate_records
-DB_COLLECT = DB_SPACE.collect_records
+DB_AGGREGATE = SYSTEM_MONGO.get_collection(mongo_connect.SD_AGGREGATE)
+DB_COLLECT = SYSTEM_MONGO.get_collection(mongo_connect.SD_COLLECT)
 
 # collection connections - application support
-DB_BRANDS = DB_APP.brands
-DB_PLACES = DB_APP.places
-DB_LOCATIONS = DB_APP.locations
-DB_LOCATION_MATCHES = DB_APP.location_matches
-DB_PROPERTY = DB_APP.properties
-DB_BRAND_SPACE = DB_APP.brand_space_matches
-DB_REGIONS = DB_APP.regions
+DB_BRANDS = SYSTEM_MONGO.get_collection(mongo_connect.AD_BRANDS)
+DB_PLACES = SYSTEM_MONGO.get_collection(mongo_connect.AD_PLACES)
+DB_LOCATIONS = SYSTEM_MONGO.get_collection(mongo_connect.AD_LOCATIONS)
+DB_LOCATION_MATCHES = SYSTEM_MONGO.get_collection(mongo_connect.AD_LOCATION_MATCHES)
+DB_PROPERTY = SYSTEM_MONGO.get_collection(mongo_connect.AD_PROPERTY)
+DB_BRAND_SPACE = SYSTEM_MONGO.get_collection(mongo_connect.AD_BRAND_SPACE)
+DB_REGIONS = SYSTEM_MONGO.get_collection(mongo_connect.AD_REGIONS)
 
 # collection connections - matching
-DB_VECTORS = DB_SPACE.preprocessed_vectors
-DB_VECTORS_LA = DB_SPACE.LA_space_vectors
+DB_VECTORS = SYSTEM_MONGO.get_collection(mongo_connect.SD_VECTORS)
+DB_VECTORS_LA = SYSTEM_MONGO.get_collection(mongo_connect.SD_VECTORS_LA)
 
 # legacy databaces - pending deletion
-DB_TENANT = DB_APP_LEGACY.tenant_details
-DB_PROPERTY_LEGACY = DB_APP_LEGACY.property_details
-DB_ZIP_CODES = DB_SPACE.zip_codes
-DB_PROCESSED_SPACE = DB_SPACE.spaces
-DB_OLD_SPACES = DB_SPACE.dataset2
-DB_SPATIAL_CATS = DB_SPACE.spatial_categories
-DB_DEMOGRAPHIC_CATS = DB_SPACE.demographic_categories
+DB_TENANT = SYSTEM_MONGO.get_collection(mongo_connect.AMD_TENANT)
+DB_PROPERTY_LEGACY = SYSTEM_MONGO.get_collection(mongo_connect.AMD_PROPERTY_LEGACY)
+DB_ZIP_CODES = SYSTEM_MONGO.get_collection(mongo_connect.SD_ZIP_CODES)
+DB_PROCESSED_SPACE = SYSTEM_MONGO.get_collection(mongo_connect.SD_PROCESSED_SPACE)
+DB_OLD_SPACES = SYSTEM_MONGO.get_collection(mongo_connect.SD_OLD_SPACES)
+DB_SPATIAL_CATS = SYSTEM_MONGO.get_collection(mongo_connect.SD_SPATIAL_CATS)
+DB_DEMOGRAPHIC_CATS = SYSTEM_MONGO.get_collection(mongo_connect.SD_DEMOGRAPHIC_CATS)
 
 
 # simple unique index of a pymongo database collection

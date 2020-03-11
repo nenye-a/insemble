@@ -1,7 +1,7 @@
 from . import utils
 from django.conf import settings
 import pandas as pd
-from bson import ObjectId
+import mongo_connect
 from s3fs import S3FileSystem
 import data.api.google as google
 import data.api.spatial as spatial
@@ -139,7 +139,7 @@ FOURSQUARE_CATEGORIES = utils.DB_FOURSQUARE.find_one(
     {'name': 'foursquare_categories'})['foursquare_categories']
 
 
-def generate_matches(location_address, name=None, options={}):
+def generate_matches(location_address, name=None, options={}, db_connection=utils.SYSTEM_MONGO):
     """
     Given an address, will generate a ranking of addresses that are the most similar
     accross all aspects to this location.
@@ -203,7 +203,9 @@ def generate_matches(location_address, name=None, options={}):
     all_dict = weighted_df.set_index('_id')['match_value'].to_dict()
 
     best_dict = best[['lat', 'lng', 'match']].to_dict(orient='records')
-    tenant_id = utils.DB_TENANT.insert({'match_values': all_dict})
+
+    # insert items into database
+    tenant_id = db_connection.get_collection(mongo_connect.AMD_TENANT).insert({'match_values': all_dict})
 
     return best_dict, str(tenant_id)
 

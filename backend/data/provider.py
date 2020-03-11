@@ -1,4 +1,4 @@
-from . import utils, matching
+from . import utils, matching, mongo_connect
 from bson import ObjectId
 import numpy as np
 import re
@@ -88,7 +88,7 @@ def get_address_neighborhood(lat, lng):
     google_location = google.reverse_geocode(lat, lng, save=False)
     address = None
     if google_location is not None and 'formatted_address' in google_location:
-        address = google_location['formatted_address'].split(',')[0]         
+        address = google_location['formatted_address'].split(',')[0]
     else:
         address = ""
     neighborhood = None
@@ -149,7 +149,7 @@ def get_key_facts_deprecated(lat, lng):
     }
 
 
-def get_demographics(lat, lng, radius, demographic_dict=None):
+def get_demographics(lat, lng, radius, demographic_dict=None, db_connection=utils.SYSTEM_MONGO):
     """
 
     Get demographics of a location. If no existing demographic vector it will grab demographics. If a demographic
@@ -160,7 +160,7 @@ def get_demographics(lat, lng, radius, demographic_dict=None):
     if demographic_dict:
         demographics = demographic_dict
     else:
-        demographics = environics.get_demographics(lat, lng, radius)
+        demographics = environics.get_demographics(lat, lng, radius, db_connection=utils.SYSTEM_MONGO)
 
     if not demographics:
         return None
@@ -390,7 +390,7 @@ def get_demographics(lat, lng, radius, demographic_dict=None):
     }
 
 
-def get_nearby(lat, lng, categories):
+def get_nearby(lat, lng, categories, db_connection=utils.SYSTEM_MONGO):
     """
     (Deprecated) Function to get all the nearby locations. This function is primarily used by the
     location details endpoint which is deprecated in favor of the FastLocationDetails methodology.
@@ -407,7 +407,7 @@ def get_nearby(lat, lng, categories):
     for place in similar_places:
         if place["place_id"] in nearby_dict:
             continue
-        detailed_place = _update_place(place["place_id"], lat, lng, categories)
+        detailed_place = _update_place(place["place_id"], lat, lng, categories, db_connection)
         if not detailed_place:
             # TODO: store the google ids of places we do not have to obtain later in the database
             # in the short term, will just ignore them
@@ -417,7 +417,7 @@ def get_nearby(lat, lng, categories):
     # TODO: add additional functions that better estimate if a store is similar to another
     for place in google.nearby(lat, lng, 'store', 1):
         if place["place_id"] not in nearby_dict:
-            detailed_place = _update_place(place["place_id"], lat, lng, categories)
+            detailed_place = _update_place(place["place_id"], lat, lng, categories, db_connection)
             if not detailed_place:
                 continue
             nearby_dict[place["place_id"]] = detailed_place
@@ -425,7 +425,7 @@ def get_nearby(lat, lng, categories):
 
     for place in google.nearby(lat, lng, 'restaurant', 1):
         if place["place_id"] not in nearby_dict:
-            detailed_place = _update_place(place["place_id"], lat, lng, categories)
+            detailed_place = _update_place(place["place_id"], lat, lng, categories, db_connection)
             if not detailed_place:
                 continue
             nearby_dict[place["place_id"]] = detailed_place
@@ -434,12 +434,12 @@ def get_nearby(lat, lng, categories):
     return list(nearby_dict.values())
 
 
-def _update_place(place_id, lat, lng, categories):
+def _update_place(place_id, lat, lng, categories, db_connection):
     """
     Function to update all the nearby places generated from the get_nearby function.
     """
 
-    place = utils.DB_PROCESSED_SPACE.find_one({'place_id': place_id}, {
+    place = db_connection.get_collection(mongo_connect.SD_PROCESSED_SPACE).find_one({'place_id': place_id}, {
         'name': 1, 'geometry': 1, 'rating': 1, 'user_ratings_total': 1, 'foursquare_categories': 1
     })
     if not place:
@@ -473,7 +473,7 @@ def _update_place(place_id, lat, lng, categories):
     }
 
 
-def obtain_nearby(target_location, categories):
+def obtain_nearby(target_location, categories, db_connection=utils.SYSTEM_MONGO):
     """
 
     Grab the details of all the nearby locations that are present within a target_location. The target_location
@@ -517,17 +517,17 @@ def obtain_nearby(target_location, categories):
             item_into_dict(nearby_dict, place)
         nearby_dict[place["place_id"]]["metro"] = True
 
-    places = _update_all_places(lat, lng, nearby_dict, categories)
+    places = _update_all_places(lat, lng, nearby_dict, categories, db_connection)
 
     return list(places.values())
 
 
-def _update_all_places(lat, lng, nearby_dict, categories):
+def _update_all_places(lat, lng, nearby_dict, categories, db_connection):
     """
     Function to update all nearby places that are generated from the obtain_nearby() function.
     """
 
-    places = utils.DB_PROCESSED_SPACE.find({'place_id': {'$in': list(nearby_dict.keys())}}, {
+    places = db_connection.get_collection(mongo_connect.SD_PROCESSED_SPACE).find({'place_id': {'$in': list(nearby_dict.keys())}}, {
         'place_id': 1, 'name': 1, 'geometry': 1, 'rating': 1, 'user_ratings_total': 1, 'foursquare_categories': 1
     })
     seen_ids = set()
@@ -556,7 +556,7 @@ def _update_all_places(lat, lng, nearby_dict, categories):
             'similar': similar
         })
 
-        if nearby_dict[place['place_id']]['distance'] == None:
+        if nearby_dict[place['place_id']]['distance'] is None:
             nearby_dict[place['place_id']]['distance'] = utils.distance((lat, lng), (this_location_lat, this_location_lng))
 
     # # Remove getting extra details that aren't here because it's slow
@@ -985,10 +985,10 @@ def get_nearby_places(lat, lng, radius=1):
     return nearby
 
 
-def get_environics_demographics(lat, lng):
+def get_environics_demographics(lat, lng, db_connection=utils.SYSTEM_MONGO):
 
-    demo1 = environics.get_demographics(lat, lng, 1)
-    demo3 = environics.get_demographics(lat, lng, 3)
+    demo1 = environics.get_demographics(lat, lng, 1, db_connection=db_connection)
+    demo3 = environics.get_demographics(lat, lng, 3, db_connection=db_connection)
 
     return {
         "demo1": demo1,
@@ -996,10 +996,10 @@ def get_environics_demographics(lat, lng):
     }
 
 
-def get_spatial_personas(lat, lng):
+def get_spatial_personas(lat, lng, db_connection=utils.SYSTEM_MONGO):
 
-    psycho1 = spatial.get_psychographics(lat, lng, 1)
-    psycho3 = spatial.get_psychographics(lat, lng, 3)
+    psycho1 = spatial.get_psychographics(lat, lng, 1, db_connection=db_connection)
+    psycho3 = spatial.get_psychographics(lat, lng, 3, db_connection=db_connection)
 
     return {
         "psycho1": psycho1,
