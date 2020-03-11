@@ -32,7 +32,7 @@ import {
 } from '../generated/EditLandlordProfile';
 import { GetTenantProfile } from '../generated/GetTenantProfile';
 import { GetLandlordProfile } from '../generated/GetLandlordProfile';
-import { asyncStorage } from '../utils';
+import { useAuth } from '../utils';
 
 type Profile = {
   email: string;
@@ -46,11 +46,11 @@ type Profile = {
 
 export default function BasicProfile() {
   let history = useHistory();
+  let { role } = useAuth();
   let [profileEditable, setProfileEditable] = useState(false);
   let [passwordEditable, setPasswordEditable] = useState(false);
   let textInputContainerStyle = { marginTop: 12, marginBottom: 12 };
   let { register, watch, handleSubmit, errors } = useForm();
-  let role = asyncStorage.getRole();
 
   let [profile, setProfileInfo] = useState<Profile | null>(null);
 

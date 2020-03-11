@@ -9,7 +9,7 @@ import { THEME_COLOR, RED_TEXT, BACKGROUND_COLOR } from '../../constants/colors'
 import ProfileMenuList from './ProfileMenuList';
 import { GetTenantProfile } from '../../generated/GetTenantProfile';
 import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../../graphql/queries/server/profile';
-import asyncStorage from '../../utils/asyncStorage';
+import { logout } from '../../utils/authorization';
 import { Role } from '../../types/types';
 import { GetLandlordProfile } from '../../generated/GetLandlordProfile';
 
@@ -102,10 +102,7 @@ export default function ProfileCard({ role }: Props) {
       <SignOutButton
         text="Sign Out"
         onPress={async () => {
-          await asyncStorage.removeRole();
-          await asyncStorage.removeLandlordToken();
-          await asyncStorage.removeTenantToken();
-          await asyncStorage.removeBrandId();
+          logout();
           history.push('/');
           await client.resetStore();
         }}

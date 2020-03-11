@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { useLazyQuery } from '@apollo/react-hooks';
@@ -10,8 +10,8 @@ import { NAVBAR_HEIGHT } from '../../constants/theme';
 import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../../graphql/queries/server/profile';
 import { GetTenantProfile } from '../../generated/GetTenantProfile';
 import { GetLandlordProfile } from '../../generated/GetLandlordProfile';
-import { asyncStorage } from '../../utils';
 import { Role } from '../../types/types';
+import { AuthContext } from '../../core-ui/AuthorizationListener';
 
 type Props = {
   showButton?: boolean;
@@ -24,12 +24,12 @@ type Profile = {
 
 export default function HeaderNavigationBar(props: Props) {
   let history = useHistory();
-
+  let { role } = useContext(AuthContext);
   let [profileInfo, setProfileInfo] = useState<Profile>({ id: '', avatar: '' });
 
   let onTenantCompleted = (tenantResult: GetTenantProfile) => {
-    let { profileTenant } = tenantResult;
-    if (profileTenant) {
+    if (tenantResult?.profileTenant) {
+      let { profileTenant } = tenantResult;
       let { id, avatar } = profileTenant;
       setProfileInfo({
         id,
@@ -39,8 +39,8 @@ export default function HeaderNavigationBar(props: Props) {
   };
 
   let onLandlordCompleted = (landlordResult: GetLandlordProfile) => {
-    let { profileLandlord } = landlordResult;
-    if (profileLandlord) {
+    if (landlordResult?.profileLandlord) {
+      let { profileLandlord } = landlordResult;
       let { id, avatar } = profileLandlord;
       setProfileInfo({
         id,
@@ -60,13 +60,12 @@ export default function HeaderNavigationBar(props: Props) {
   });
 
   useEffect(() => {
-    let role = asyncStorage.getRole();
     if (role === Role.TENANT) {
       getTenantProfile();
     } else if (role === Role.LANDLORD) {
       getLandlordProfile();
     }
-  }, [getTenantProfile, getLandlordProfile]);
+  }, [role, getTenantProfile, getLandlordProfile]);
 
   return (
     <Container>

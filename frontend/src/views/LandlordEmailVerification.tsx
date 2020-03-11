@@ -8,7 +8,7 @@ import InsembleLogo from '../components/common/InsembleLogo';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_LIGHT } from '../constants/theme';
 import { DARK_TEXT_COLOR } from '../constants/colors';
 import OnboardingCard from './OnboardingPage/OnboardingCard';
-import { asyncStorage } from '../utils';
+import { saveCredentials } from '../utils';
 import { LANDLORD_VERIFICATION } from '../graphql/queries/server/auth';
 import {
   LandlordRegisterVerification,
@@ -34,8 +34,7 @@ export default function LandlordEmailVerification() {
     } = data;
     if (verified && landlordAuth) {
       let { token } = landlordAuth;
-      asyncStorage.saveLandlordToken(token);
-      asyncStorage.saveRole(Role.LANDLORD);
+      saveCredentials({ landlordToken: token, role: Role.LANDLORD });
       history.push('/landlord/new-property/step-1');
     }
   }

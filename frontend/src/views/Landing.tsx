@@ -11,19 +11,18 @@ import Description from './LandingPage/Description';
 import Features from './LandingPage/Features';
 import SpeedUpLeasing from './LandingPage/SpeedUpLeasing';
 import Footer from './LandingPage/Footer';
-import useGoogleMaps from '../utils/useGoogleMaps';
+import { useGoogleMaps, useAuth } from '../utils';
 import { WHITE } from '../constants/colors';
 import Button from '../core-ui/Button';
 import { GetTenantProfile } from '../generated/GetTenantProfile';
 import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../graphql/queries/server/profile';
-import asyncStorage from '../utils/asyncStorage';
 import { GetLandlordProfile } from '../generated/GetLandlordProfile';
 import { Role } from '../types/types';
 import InsembleLogo from '../components/common/InsembleLogo';
 
 function Landing() {
   let { isLoading } = useGoogleMaps();
-  let role = asyncStorage.getRole();
+  let { role } = useAuth();
   let history = useHistory();
 
   let [getTenantProfile, { data: tenantData }] = useLazyQuery<GetTenantProfile>(

@@ -8,18 +8,18 @@ import { createUploadLink } from 'apollo-upload-client';
 import { API_URI } from '../constants/uris';
 import { defaultState } from './localState';
 import { loginSuccess } from './resolvers';
-import asyncStorage from '../utils/asyncStorage';
+import { localStorage } from '../utils';
 import { Role } from '../types/types';
 
 const cache = new InMemoryCache();
 
 const authLink = setContext(async (_, { headers }) => {
-  let role = asyncStorage.getRole();
+  let role = localStorage.getRole();
   let token = null;
   if (role === Role.TENANT) {
-    token = asyncStorage.getTenantToken();
+    token = localStorage.getTenantToken();
   } else if (role === Role.LANDLORD) {
-    token = asyncStorage.getLandlordToken();
+    token = localStorage.getLandlordToken();
   }
   return {
     headers: {
