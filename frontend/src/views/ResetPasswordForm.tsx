@@ -150,47 +150,51 @@ export default function ResetPasswordForm({ role }: Props) {
       {!passwordSubmitted ? (
         <Content>
           <Form onSubmit={handleSubmit(onSubmit)}>
-            {errorMessage && <Alert visible={true} text={formatGraphQLError(errorMessage)} />}
-            <Text>Please enter your new password</Text>
-            <TextInput
-              label="New Password"
-              placeholder="Enter Your New Password"
-              type="password"
-              name="newPassword"
-              containerStyle={inputContainerStyle}
-              ref={register({
-                required: watch('currentPassword') ? 'New password should not be empty' : false,
-                minLength: {
-                  value: 8,
-                  message: 'Password must be at least 8 characters',
-                },
-              })}
-              errorMessage={(errors?.newPassword as FieldError)?.message || ''}
-            />
-            <TextInput
-              label="Confirm New Password"
-              placeholder="Re-Enter Your New Password"
-              type="password"
-              containerStyle={inputContainerStyle}
-              name="confirmNewPassword"
-              ref={register({
-                required: watch('newPassword') ? 'Confirm password should not be empty' : false,
-                ...(watch('newPassword') && {
-                  validate: (val) =>
-                    val === watch('newPassword') || 'Confirm password does not match',
-                }),
-                minLength: {
-                  value: 8,
-                  message: 'Password must be at least 8 characters',
-                },
-              })}
-              errorMessage={(errors?.confirmNewPassword as FieldError)?.message || ''}
-            />
-            <SubmitButton
-              loading={resetLandlordLoading || resetTenantLoading}
-              text="Reset Password"
-              type="submit"
-            />
+            {errorMessage ? (
+              <Alert visible={true} text={formatGraphQLError(errorMessage)} />
+            ) : (
+              <>
+                <TextInput
+                  label="New Password"
+                  placeholder="Enter Your New Password"
+                  type="password"
+                  name="newPassword"
+                  containerStyle={inputContainerStyle}
+                  ref={register({
+                    required: watch('currentPassword') ? 'New password should not be empty' : false,
+                    minLength: {
+                      value: 8,
+                      message: 'Password must be at least 8 characters',
+                    },
+                  })}
+                  errorMessage={(errors?.newPassword as FieldError)?.message || ''}
+                />
+                <TextInput
+                  label="Confirm New Password"
+                  placeholder="Re-Enter Your New Password"
+                  type="password"
+                  containerStyle={inputContainerStyle}
+                  name="confirmNewPassword"
+                  ref={register({
+                    required: watch('newPassword') ? 'Confirm password should not be empty' : false,
+                    ...(watch('newPassword') && {
+                      validate: (val) =>
+                        val === watch('newPassword') || 'Confirm password does not match',
+                    }),
+                    minLength: {
+                      value: 8,
+                      message: 'Password must be at least 8 characters',
+                    },
+                  })}
+                  errorMessage={(errors?.confirmNewPassword as FieldError)?.message || ''}
+                />
+                <SubmitButton
+                  loading={resetLandlordLoading || resetTenantLoading}
+                  text="Reset Password"
+                  type="submit"
+                />
+              </>
+            )}
           </Form>
         </Content>
       ) : (

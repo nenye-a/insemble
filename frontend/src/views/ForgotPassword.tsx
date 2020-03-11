@@ -4,7 +4,7 @@ import { useHistory, Redirect } from 'react-router-dom';
 import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useMutation } from '@apollo/react-hooks';
 
-import { Card, Text, View, Button, Form, TextInput } from '../core-ui';
+import { Card, Text, View, Button, Form, TextInput, Alert } from '../core-ui';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
 import { validateEmail } from '../utils/validation';
 import {
@@ -20,6 +20,7 @@ import {
   ForgotPasswordLandlordVariables,
 } from '../generated/ForgotPasswordLandlord';
 import { Role } from '../types/types';
+import { formatGraphQLError } from '../utils';
 
 export default function ForgotPassword() {
   let history = useHistory();
@@ -28,17 +29,19 @@ export default function ForgotPassword() {
   let { register, handleSubmit, errors } = useForm();
   let [hasSubmitted, setHasSubmitted] = useState(false);
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
-  let [forgotPasswordTenant, { loading: tenantLoading }] = useMutation<
+  let [forgotPasswordTenant, { loading: tenantLoading, error: tenantError }] = useMutation<
     ForgotPasswordTenant,
     ForgotPasswordTenantVariables
   >(FORGOT_PASSWORD_TENANT, {
     onCompleted: () => setHasSubmitted(true),
   });
 
-  let [forgotPasswordLandlord, { loading: landlordLoading }] = useMutation<
+  let [forgotPasswordLandlord, { loading: landlordLoading, error: landlordError }] = useMutation<
     ForgotPasswordLandlord,
     ForgotPasswordLandlordVariables
   >(FORGOT_PASSWORD_LANDLORD);
+
+  let errorMessage = tenantError?.message || landlordError?.message || '';
 
   let onSubmit = (data: FieldValues) => {
     let { email } = data;
@@ -68,6 +71,7 @@ export default function ForgotPassword() {
         <Content>
           {!hasSubmitted ? (
             <Form onSubmit={handleSubmit(onSubmit)}>
+              {errorMessage && <Alert visible={true} text={formatGraphQLError(errorMessage)} />}
               <Text>Please provide your email address to recover your password</Text>
               <TextInput
                 name="email"
