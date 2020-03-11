@@ -9,6 +9,7 @@ export * from './isEqual';
 export { default as getBusinessAndFilterParams } from './getBusinessAndFilterParams';
 export { default as getImageBlob } from './getImageBlob';
 export { default as getKeyfactsValue } from './getKeyfactsValue';
+export { default as localStorage } from './localStorage';
 export { default as roundDecimal } from './roundDecimal';
 export { default as urlEncode } from './urlEncode';
 export { default as useID } from './useID';
