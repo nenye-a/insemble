@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useHistory, Redirect } from 'react-router-dom';
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 
 import { TextInput, Button, View, Form, Alert } from '../core-ui';
 import { validateEmail } from '../utils/validation';
@@ -14,8 +14,6 @@ import { CreateBrand, CreateBrandVariables } from '../generated/CreateBrand';
 import { getBusinessAndFilterParams, saveCredentials } from '../utils';
 import { Role } from '../types/types';
 import { State as OnboardingState } from '../reducers/tenantOnboardingReducer';
-import { GET_PROPERTIES } from '../graphql/queries/server/properties';
-import { GetProperties } from '../generated/GetProperties';
 
 type Props = {
   role: Role;
