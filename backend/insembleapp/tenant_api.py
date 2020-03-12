@@ -7,6 +7,7 @@ import utils
 import mongo_connect
 import data.matching as matching
 import data.provider as provider
+import data.landlord_provider as landlord_provider
 import data.api.google as google
 import data.api.arcgis as arcgis
 from bson import ObjectId
@@ -108,54 +109,54 @@ class TenantMatchAPI(AsynchronousAPI):
     Provided parameters describing a retail location, this endpoint will return the best matching locations within
     the los angeles region.
 
-    parameters: {
-        address: string,            (required -> not required if categories are provided)
-        brand_name: string,         (required -> not required if categories are provided)
-        categories: list[string],   (required -> not required if brand_name and address provided)
-        income: {                   (required -> not required if brand_name and address provided)
-            min: int,               (required if income provided)
-            max: int                (optional)
-        },
-        age: {
-            min: int,               (optional)
-            max: int                (optional)
-        },
-        personas: list[string],     (optional)
-        commute: list[string],      (optional)
-        education: list[string],    (optional)
-        ethnicity: list[string],    (optional)
-        rent: {                     (optional)
-            min: int,               (required if rent provided)
-            max: int                (optional)
-        }
-    }
-
-    response: {
-        status: int (HTTP),                 (always provided)
-        status_detail: string or list,      (always provided)
-        matching_locations: [               (not provided if error occurs)
-            {                               (all fields provided if matching locations provided)
-                lat: float,
-                lng: float,
-                match_score: float,
+    GET /api/tenantMatch/:
+        Parameters: {
+            address: string,            (required -> not required if categories are provided)
+            brand_name: string,         (required -> not required if categories are provided)
+            categories: list[string],   (required -> not required if brand_name and address provided)
+            income: {                   (required -> not required if brand_name and address provided)
+                min: int,               (required if income provided)
+                max: int                (optional)
             },
-            {
-                ... (same as above)
+            age: {
+                min: int,               (optional)
+                max: int                (optional)
+            },
+            personas: list[string],     (optional)
+            commute: list[string],      (optional)
+            education: list[string],    (optional)
+            ethnicity: list[string],    (optional)
+            rent: {                     (optional)
+                min: int,               (required if rent provided)
+                max: int                (optional)
             }
-        ],
-        matching_properties: [              (not provided if error occurs) - may be empty
-            {                               (all fields provided if matching properties provided)
-                property_id: string
-                address: string,
-                rent:  int,
-                sqft: int,
-                type: string,
-            }
-            ... many more
-        ],
-         tenant_id: string                   (always provided)
-    }
+        }
 
+        Response: {
+            status: int (HTTP),                 (always provided)
+            status_detail: string or list,      (always provided)
+            matching_locations: [               (not provided if error occurs)
+                {                               (all fields provided if matching locations provided)
+                    lat: float,
+                    lng: float,
+                    match_score: float,
+                },
+                {
+                    ... (same as above)
+                }
+            ],
+            matching_properties: [              (not provided if error occurs) - may be empty
+                {                               (all fields provided if matching properties provided)
+                    property_id: string
+                    address: string,
+                    rent:  int,
+                    sqft: int,
+                    type: string,
+                }
+                ... many more
+            ],
+            match_id: string                   (always provided)
+        }
     """
 
     permission_classes = [
@@ -171,6 +172,80 @@ class TenantMatchAPI(AsynchronousAPI):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
+
+        location_match = None
+        if 'match_id' in validated_params:
+            location_match = utils.DB_LOCATION_MATCHES.find({'_id': validated_params['match_id']})
+            if not location_match:
+                return Response({
+                    'status': status.HTTP_404_NOT_FOUND,
+                    'status_detail': ["Could not find a match record that matches that Id."]
+                }, status=status.HTTP_404_NOT_FOUND)
+            location_match = self.update_location_match(validated_params, location_match)
+        else:
+            location_match = self.update_location_match(validated_params)
+
+        params = location_match['params']
+        # OBTAIN DETAILS OF LOCATION
+        lat = None
+        lng = None
+        if 'address' in params:
+            address = params['address']
+            name = params['brand_name']
+            google_location = google.find(validated_params['address'], allow_non_establishments=True, save=False)
+            lat = round(google_location["geometry"]["location"]["lat"], 6)
+            lng = round(google_location["geometry"]["location"]["lng"], 6)
+        else:
+            categories = params['categories']
+            location = provider.get_representative_location(categories, params['income'])
+            if not location:
+                return Response({
+                    'status': 200,
+                    'status_detail': ["No matches found for that category with the specified income. "
+                                      "You should try increasing the income range or adjusting category."],
+                    'result': {}
+                })
+            lat = location['lat']
+            lng = location['lng']
+
+        n_process, nearby = self.get_nearby_places.delay(lat, lng), []
+        nearby_listener = self._celery_listener(n_process, nearby)
+        nearby_listener.start()
+
+        location = landlord_provider.build_location(lat, lng)
+        _, nearby = nearby_listener.join(), nearby[0]
+        location.update(nearby)
+
+        if '_id' in location:
+            utils.DB_LOCATIONS.update({"_id": location['_id']}, location)
+            params['location_id'] = location['_id']
+        else:
+            params['location_id'] = utils.DB_LOCATIONS.insert(location)
+
+        location_matches = provider.generate_matching_locations(location, params)
+        property_matches = provider.generate_matching_properties(location, params)
+
+        # grab location details from database
+        # generate new location details if not present in the database
+        # associate the search with a brand that can be searched with the landlords
+        # grab locations from an address if provideds
+        # if no address provided, grab locations from categories and income
+
+        # GENERATE MATCHES
+        # generate new match_values
+        # update the tenant match details
+
+        # STORE DETAILS & RETURN RESULT
+        # update the existing location match if updating
+        # insert new location match
+
+        # OLD PROCESS
+        #
+        #
+        #
+        #
+        #
+        # OLD PROCESS
 
         # PREPARE TO STORE THE REQUEST INFORMATION IN THE DATABASE
         database_update = {'search_details': validated_params}
@@ -273,6 +348,38 @@ class TenantMatchAPI(AsynchronousAPI):
 
     def build_location(self, address, brand_name=None):
         return provider.build_location(address, brand_name=brand_name)
+
+    def update_location_match(self, params, location_match=None):
+
+        existing_params = location_match['params']
+        address = existing_params['address'] if existing_params and 'address' in existing_params else None
+        brand_name = existing_params['brand_name'] if existing_params and 'brand_name' in existing_params else None
+        categories = existing_params['categories'] if existing_params and 'categories' in existing_params else []
+        income = existing_params['income'] if existing_params and 'income' in existing_params else {}
+        age = existing_params['age'] if existing_params and 'age' in existing_params else {}
+        personas = existing_params['personas'] if existing_params and 'personas' in existing_params else []
+        commute = existing_params['commute'] if existing_params and 'commute' in existing_params else []
+        education = existing_params['education'] if existing_params and 'education' in existing_params else []
+        ethnicity = existing_params['ethnicity'] if existing_params and 'ethnicity' in existing_params else []
+        rent = existing_params['rent'] if existing_params and 'rent' in existing_params else {}
+
+        updated_params = existing_params if existing_params else {}
+        updated_params.update({
+            'address': params['address'] if 'address' in params else address,
+            'brand_name': params['brand_name'] if 'brand_name' in params else brand_name,
+            'categories': params['categories'] if 'categories' in params else categories,
+            'income': params['income'] if 'income' in params else income,
+            'age': params['age'] if 'age' in params else age,
+            'personas': params['personas'] if 'personas' in params else personas,
+            'commute': params['commute'] if 'commute' in params else commute,
+            'education': params['education'] if 'education' in params else education,
+            'ethnicity': params['ethnicity'] if 'ethnicity' in params else ethnicity,
+            'rent': params['rent'] if 'rent' in params else rent
+        })
+
+        location_match['params'] = updated_params
+
+        return location_match
 
     @staticmethod
     @celery_app.task

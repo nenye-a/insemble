@@ -32,6 +32,21 @@ EQUIPMENT_LIST = ["Walk-in fridge", "Reach-in fridge", "Walk-in freezer", "Greas
 # {lat:float, lng:float, place_id:'place_id}
 
 
+def generate_matching_locations(location, params):
+    """
+    Generate matches for matches for a location. Given the location details of the object
+    vs. the actual details.
+    """
+
+    matches = matching.generate_matches(location, params)
+
+    pass
+
+
+def generate_matching_properties(location, params):
+    pass
+
+
 def get_location(address, name=None):
     """
 
@@ -53,6 +68,8 @@ def get_representative_location(categories, income_dict):
     detail matching. This heavily references the anmspatial blocking activities
 
     """
+
+    # TODO: convert to use either the Places or Brand table
 
     income_query = {'$gte': int(income_dict["min"]) * 0.90}
     income_query.update({'$lte': int(income_dict["max"]) * 1.10}) if 'max' in income_dict else None
