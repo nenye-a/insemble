@@ -44,7 +44,7 @@ export default function LandlordProperties() {
     }
   };
 
-  if (!loading && data && history.location.state?.signedIn && data.properties.length > 1) {
+  if (!loading && data && history.location.state?.signedIn && data.properties.length > 0) {
     return (
       <Redirect
         to={{
