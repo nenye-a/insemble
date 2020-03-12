@@ -89,7 +89,15 @@ export default function SideBarFilters() {
       properties: propertiesWithOptions,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [commuteData, spaceTypeData, educationData, personasData, ethnicityData]);
+  }, [
+    commuteData,
+    spaceTypeData,
+    educationData,
+    personasData,
+    ethnicityData,
+    demographicsInitialFilter,
+    propertyInitialFilter,
+  ]);
 
   let getFilterProps = (name: string | null) => {
     let found = [...demographics, ...properties].find((item) => item.name === name);
