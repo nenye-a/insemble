@@ -1,7 +1,7 @@
 import React, { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
 
-import { View, Text, TouchableOpacity } from '../../core-ui';
+import { View, Text, TouchableOpacity, LoadingIndicator } from '../../core-ui';
 import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
 import {
   FONT_WEIGHT_MEDIUM,
@@ -19,13 +19,16 @@ import { VIEWPORT_TYPE } from '../../constants/viewports';
 type Props = {
   onPress: (selectedBrandId: string, selectedTenantPhoto: string) => void;
   matchResult?: Array<PropertyMatchesProps>;
+  loading: boolean;
 };
 
-export default function LandlordTenantMatches({ onPress, matchResult }: Props) {
+export default function LandlordTenantMatches({ onPress, matchResult, loading }: Props) {
   let { viewportType } = useViewport();
   return (
     <Container flex>
-      {!matchResult ? (
+      {loading ? (
+        <LoadingIndicator size="large" text="Loading the matches for your space." />
+      ) : !matchResult ? (
         <EmptyDataComponent />
       ) : (
         matchResult?.map((item, index) => {
@@ -78,7 +81,8 @@ const RowedView = styled(View)`
 
 const Container = styled(RowedView)`
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: center;
+  align-items: center;
   overflow-y: scroll;
   overflow: visible;
 `;
