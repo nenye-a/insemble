@@ -16,6 +16,7 @@ let propertiesResolver: FieldResolver<'Query', 'properties'> = async (
       location: true,
       space: true,
     },
+    orderBy: { id: 'asc' },
     where: {
       landlordUser: {
         id: context.landlordUserId,
