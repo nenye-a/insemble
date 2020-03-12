@@ -58,18 +58,18 @@ export default function ProfileCard({ role }: Props) {
     }
   };
 
-  let [getTenant, { loading: tenantLoading }] = useLazyQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
-    onCompleted: onTenantCompleted,
-    notifyOnNetworkStatusChange: true,
-  });
-
-  let [getLandlord, { loading: landlordLoading }] = useLazyQuery<GetLandlordProfile>(
-    GET_LANDLORD_PROFILE,
+  let [getTenant, { loading: tenantLoading, data: tenantData }] = useLazyQuery<GetTenantProfile>(
+    GET_TENANT_PROFILE,
     {
-      onCompleted: onLandlordCompleted,
       notifyOnNetworkStatusChange: true,
     }
   );
+
+  let [getLandlord, { loading: landlordLoading, data: landlordData }] = useLazyQuery<
+    GetLandlordProfile
+  >(GET_LANDLORD_PROFILE, {
+    notifyOnNetworkStatusChange: true,
+  });
 
   useEffect(() => {
     if (role === Role.TENANT) {
@@ -79,6 +79,14 @@ export default function ProfileCard({ role }: Props) {
       getLandlord();
     }
   }, [getLandlord, getTenant, role]);
+
+  useEffect(() => {
+    if (role === Role.TENANT && tenantData) {
+      onTenantCompleted(tenantData);
+    } else if (role === Role.LANDLORD && landlordData) {
+      onLandlordCompleted(landlordData);
+    }
+  }, [role, landlordData, tenantData]);
 
   let history = useHistory();
   let client = useApolloClient();
