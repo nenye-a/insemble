@@ -38,8 +38,7 @@ export default function ConfirmBusinessDetail(props: Props) {
   let { dispatch, state: onboardingState } = props;
   let { confirmBusinessDetail } = onboardingState;
 
-  let { register, errors, watch, handleSubmit } = useForm();
-  let name = watch('businessName');
+  let { register, errors, handleSubmit } = useForm();
   let { data: categoriesData } = useQuery<Categories>(GET_CATEGORIES);
   let { data: autopopulateData, loading: autopopulateLoading } = useQuery<
     AutoPopulateFilter,
@@ -47,7 +46,7 @@ export default function ConfirmBusinessDetail(props: Props) {
   >(GET_AUTOPOPULATE_FILTER, {
     variables: {
       address: confirmBusinessDetail.location?.address || '',
-      brandName: name,
+      brandName: confirmBusinessDetail.name,
     },
     skip: !confirmBusinessDetail.location?.address || !confirmBusinessDetail.name,
   });
