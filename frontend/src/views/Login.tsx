@@ -17,7 +17,7 @@ export default function Login() {
     <Container>
       <LoginCard
         titleContainerProps={{ style: { textAlign: 'center', height: 54 } }}
-        title="Log In"
+        title="Tenant Log In"
         titleProps={{ style: { fontSize: FONT_SIZE_MEDIUM, fontWeight: FONT_WEIGHT_NORMAL } }}
         titleBackground="purple"
       >
