@@ -1,6 +1,7 @@
 import React, { ComponentProps } from 'react';
 import styled from 'styled-components';
-import { View, TouchableOpacity, Text, Card } from '../../core-ui';
+import { useHistory } from 'react-router-dom';
+import { View, TouchableOpacity, Text, Card, Button } from '../../core-ui';
 import {
   THEME_COLOR,
   BACKGROUND_COLOR,
@@ -10,6 +11,7 @@ import {
 } from '../../constants/colors';
 // import SvgPlus from '../../components/icons/plus';
 import { FONT_SIZE_MEDIUM } from '../../constants/theme';
+import SvgArrowBack from '../../components/icons/arrow-back';
 
 type Props = {
   spaces: Array<string>;
@@ -27,36 +29,46 @@ export default function PropertyDetailHeader({
   onPressSpace,
 }: // onPressAdd,
 Props) {
+  let history = useHistory();
   return (
-    <View style={{ marginBottom: 30 }}>
-      <Card>
-        <SpaceContainer flex>
+    <Card style={{ marginBottom: 30 }}>
+      <UpperHeader>
+        <BackButton
+          mode="transparent"
+          text="Back To Properties"
+          icon={<SvgArrowBack style={{ color: THEME_COLOR }} />}
+          onPress={() => {
+            history.goBack();
+          }}
+          textProps={{ style: { marginLeft: 8 } }}
+        />
+        <SpaceContainer>
           <AddressText>{address}</AddressText>
           {/* TODO */}
           {/* <NewRequestText>{request} new request</NewRequestText> */}
         </SpaceContainer>
-        <RowedView>
-          <Row>
-            {spaces.map((item, index) => {
-              return (
-                <TabSegment
-                  key={index}
-                  isActive={selectedSpaceIndex === index}
-                  onPress={() => onPressSpace(index)}
-                >
-                  <SegmentText isActive={selectedSpaceIndex === index}>{item}</SegmentText>
-                </TabSegment>
-              );
-            })}
-          </Row>
-          {/*
+      </UpperHeader>
+      <RowedView>
+        <Row>
+          {spaces.map((item, index) => {
+            return (
+              <TabSegment
+                key={index}
+                isActive={selectedSpaceIndex === index}
+                onPress={() => onPressSpace(index)}
+              >
+                <SegmentText isActive={selectedSpaceIndex === index}>{item}</SegmentText>
+              </TabSegment>
+            );
+          })}
+        </Row>
+        {/*
           TODO:
           <AddButton onPress={onPressAdd}>
             <SvgPlus style={{ color: THEME_COLOR }} />
           </AddButton> */}
-        </RowedView>
-      </Card>
-    </View>
+      </RowedView>
+    </Card>
   );
 }
 
@@ -84,8 +96,8 @@ const RowedView = styled(View)`
 `;
 
 const SpaceContainer = styled(RowedView)`
-  margin: 18px;
   background-color: ${WHITE};
+  margin: 4px 0;
 `;
 
 // const AddButton = styled(TouchableOpacity)`
@@ -106,4 +118,13 @@ const TabSegment = styled(TouchableOpacity)<SegmentProps>`
     outline: none;
   }
   background-color: ${(props) => (props.isActive ? WHITE : BACKGROUND_COLOR)};
+`;
+
+const UpperHeader = styled(View)`
+  padding: 6px 18px;
+  align-items: flex-start;
+`;
+const BackButton = styled(Button)`
+  /* margin: 4px 0;
+  padding: 0 18px; */
 `;

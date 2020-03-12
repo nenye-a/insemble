@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useApolloClient, useLazyQuery } from '@apollo/react-hooks';
 
 import { View, Card, Avatar, Text, Button, LoadingIndicator } from '../../core-ui';
@@ -12,7 +12,6 @@ import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../../graphql/queries/
 import { logout } from '../../utils/authorization';
 import { Role } from '../../types/types';
 import { GetLandlordProfile } from '../../generated/GetLandlordProfile';
-import SvgArrowBack from '../../components/icons/arrow-back';
 
 type Props = {
   role: Role;
@@ -25,15 +24,9 @@ type Profile = {
   avatar: string | null;
 };
 
-type Params = {
-  propertyId?: string;
-};
-
 export default function ProfileCard({ role }: Props) {
   let history = useHistory();
-  let params = useParams<Params>();
   let client = useApolloClient();
-  let isPropertyTabActive = history.location.pathname.includes('landlord/properties');
 
   let [{ name, company, title, avatar }, setProfileInfo] = useState<Profile>({
     name: '',
@@ -99,46 +92,30 @@ export default function ProfileCard({ role }: Props) {
   }, [role, landlordData, tenantData]);
 
   return (
-    <View>
-      <CardContainer>
-        {tenantLoading || landlordLoading ? (
-          <LoadingIndicator />
-        ) : (
-          <ProfileWrapper>
-            <ProfilePicture size="large" image={avatar} />
-            <ProfileText
-              fontSize={FONT_SIZE_LARGE}
-              fontWeight={FONT_WEIGHT_BOLD}
-              color={THEME_COLOR}
-            >
-              {name}
-            </ProfileText>
-            <ProfileText>{company}</ProfileText>
-            <ProfileText>{title}</ProfileText>
-          </ProfileWrapper>
-        )}
-
-        <ProfileMenuList role={role} />
-        <SignOutButton
-          text="Sign Out"
-          onPress={async () => {
-            logout();
-            history.push('/');
-            await client.resetStore();
-          }}
-        />
-      </CardContainer>
-      {params?.propertyId && isPropertyTabActive && (
-        <BackButton
-          mode="transparent"
-          text="Back To Properties"
-          icon={<SvgArrowBack style={{ color: THEME_COLOR }} />}
-          onPress={() => {
-            history.goBack();
-          }}
-        />
+    <CardContainer>
+      {tenantLoading || landlordLoading ? (
+        <LoadingIndicator />
+      ) : (
+        <ProfileWrapper>
+          <ProfilePicture size="large" image={avatar} />
+          <ProfileText fontSize={FONT_SIZE_LARGE} fontWeight={FONT_WEIGHT_BOLD} color={THEME_COLOR}>
+            {name}
+          </ProfileText>
+          <ProfileText>{company}</ProfileText>
+          <ProfileText>{title}</ProfileText>
+        </ProfileWrapper>
       )}
-    </View>
+
+      <ProfileMenuList role={role} />
+      <SignOutButton
+        text="Sign Out"
+        onPress={async () => {
+          logout();
+          history.push('/');
+          await client.resetStore();
+        }}
+      />
+    </CardContainer>
   );
 }
 
@@ -166,8 +143,4 @@ const SignOutButton = styled(Button)`
   ${Text} {
     color: ${RED_TEXT};
   }
-`;
-
-const BackButton = styled(Button)`
-  margin-top: 12px;
 `;
