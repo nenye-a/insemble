@@ -91,7 +91,14 @@ export default function Login(props: Props) {
 
   if (!createBrandLoading) {
     if (createBrandData) {
-      return <Redirect to={`/map/${createBrandData.createBrand}`} />;
+      return (
+        <Redirect
+          to={{
+            pathname: `/map/${createBrandData.createBrand}`,
+            state: { newBrand: true },
+          }}
+        />
+      );
     } else if (createBrandError && data) {
       // redirect to map with previous brandId
       return <Redirect to={`/map/${data.loginTenant.brandId}`} />;

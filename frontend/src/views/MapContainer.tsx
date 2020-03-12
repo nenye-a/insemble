@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { useApolloClient, useLazyQuery } from '@apollo/react-hooks';
 
 import { GET_LOCATION_PREVIEW } from '../graphql/queries/server/preview';
@@ -35,6 +35,7 @@ const defaultZoom = 10;
 
 function MapContainer({ onMarkerClick, matchingLocations }: Props) {
   let apolloClient = useApolloClient();
+  let history = useHistory();
   let { brandId = '' } = useParams();
   let [getLocation, { data, loading, error }] = useLazyQuery<
     LocationPreview,
@@ -49,7 +50,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
       : [];
 
   let [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
-  let [showGuide, setShowGuide] = useState(true);
+  let [showGuide, setShowGuide] = useState(history.location.state?.newBrand);
   let [infoBoxHeight, setInfoBoxHeight] = useState<number>(0);
   let [domReady, setDomReady] = useState(false);
 
