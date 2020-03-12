@@ -31,7 +31,7 @@ let deletePropertyResolver: FieldResolver<
         `${LEGACY_API_URI}/api/propertyTenants/${pyPropertyId}/`,
       )
     ).status;
-    if (resultStatus !== 204) {
+    if (resultStatus !== 304 && resultStatus !== 200) {
       throw new Error('Cannot delete property!');
     }
   }

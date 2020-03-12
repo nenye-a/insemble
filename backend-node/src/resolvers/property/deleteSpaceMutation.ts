@@ -42,7 +42,7 @@ export let deleteSpaceResolver: FieldResolver<
         `${LEGACY_API_URI}/api/propertyTenants/${pyPropertyId}/${pySpaceId}/`,
       )
     ).status;
-    if (resultStatus !== 204) {
+    if (resultStatus !== 304 && resultStatus !== 200) {
       throw new Error('Cannot delete space!');
     }
   }
