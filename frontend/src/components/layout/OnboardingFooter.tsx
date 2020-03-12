@@ -6,7 +6,7 @@ import { BACKGROUND_COLOR } from '../../constants/colors';
 import { DEFAULT_BORDER_RADIUS } from '../../constants/theme';
 
 type Props = {
-  children: ReactNode;
+  children?: ReactNode;
 };
 export default function OnboardingFooter({ children }: Props) {
   return <Footer>{children}</Footer>;
