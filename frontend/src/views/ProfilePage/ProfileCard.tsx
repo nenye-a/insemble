@@ -103,7 +103,11 @@ export default function ProfileCard({ role }: Props) {
         text="Sign Out"
         onPress={async () => {
           logout();
-          history.push('/');
+          if (role === Role.TENANT) {
+            history.push('/');
+          } else {
+            history.push('/landlord/login');
+          }
           await client.resetStore();
         }}
       />
