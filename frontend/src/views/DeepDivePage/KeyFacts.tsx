@@ -24,10 +24,9 @@ type Props = {
 
 function formatCommuteValue(value: number, totalValue: number) {
   let percentageValue = (value / totalValue) * 100;
-  // let convertedValue = convertToKilos(value);
-  // if (Number(convertedValue) < 1) {
-  //   return '<1%';
-  // }
+   if (Number(percentageValue) < 1) {
+     return '<1%';
+   }
   {
     let formattedValue = `${roundDecimal(percentageValue)}%`;
     return formattedValue;
