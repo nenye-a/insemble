@@ -1,4 +1,4 @@
-import { mutationField, FieldResolver, stringArg, intArg, arg } from 'nexus';
+import { mutationField, FieldResolver, stringArg, floatArg, arg } from 'nexus';
 
 import { Context } from 'serverTypes';
 import { sendMessageResolver } from './sendMessageMutation';
@@ -111,7 +111,7 @@ export let createConversation = mutationField('createConversation', {
   args: {
     brandId: stringArg({ required: true }),
     propertyId: stringArg({ required: true }),
-    matchScore: intArg({ required: true }),
+    matchScore: floatArg({ required: true }),
     messageInput: arg({ type: 'MessageInput', required: true }),
     header: stringArg({ required: true }),
   },

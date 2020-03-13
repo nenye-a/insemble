@@ -4,7 +4,7 @@ export const CREATE_CONVERSATION = gql`
   mutation CreateConversation(
     $brandId: String!
     $propertyId: String!
-    $matchScore: Int!
+    $matchScore: Float!
     $header: String!
     $messageInput: MessageInput!
   ) {
