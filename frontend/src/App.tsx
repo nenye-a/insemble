@@ -15,47 +15,50 @@ ReactGA.initialize(trackingID);
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './assets/main.scss';
+import ViewportListener from './core-ui/ViewportListener';
 
 export default function App() {
   return (
     <ApolloProvider client={apolloClient}>
       <ClientContextProvider client={client}>
-        <Router basename={process.env.REACT_APP_BASENAME || ''}>
-          <Switch>
-            <>
-              {routes.map((route: RouteType, index) => {
-                return (
-                  <Route
-                    key={index}
-                    path={route.path}
-                    exact={route.exact}
-                    component={withTracker((props: RouteType) => {
-                      if (
-                        route?.authorization?.isAuthorized &&
-                        !route.authorization.isAuthorized()
-                      ) {
+        <ViewportListener>
+          <Router basename={process.env.REACT_APP_BASENAME || ''}>
+            <Switch>
+              <>
+                {routes.map((route: RouteType, index) => {
+                  return (
+                    <Route
+                      key={index}
+                      path={route.path}
+                      exact={route.exact}
+                      component={withTracker((props: RouteType) => {
+                        if (
+                          route?.authorization?.isAuthorized &&
+                          !route.authorization.isAuthorized()
+                        ) {
+                          return (
+                            <Redirect
+                              to={{
+                                pathname: '/',
+                              }}
+                            />
+                          );
+                        }
+                        let Layout = route.layout;
+                        let Component = route.component;
                         return (
-                          <Redirect
-                            to={{
-                              pathname: '/',
-                            }}
-                          />
+                          <Layout {...props} {...route?.props}>
+                            <Component {...props} />
+                          </Layout>
                         );
-                      }
-                      let Layout = route.layout;
-                      let Component = route.component;
-                      return (
-                        <Layout {...props} {...route?.props}>
-                          <Component {...props} />
-                        </Layout>
-                      );
-                    })}
-                  />
-                );
-              })}
-            </>
-          </Switch>
-        </Router>
+                      })}
+                    />
+                  );
+                })}
+              </>
+            </Switch>
+          </Router>
+        </ViewportListener>
       </ClientContextProvider>
     </ApolloProvider>
   );
