@@ -31,6 +31,8 @@ let permissions = shield({
     deleteProperty: isLandlordAuthenticated,
     editSpace: isLandlordAuthenticated,
     editProperty: isLandlordAuthenticated,
+    createSpace: isLandlordAuthenticated,
+    deleteSpace: isLandlordAuthenticated,
   },
 });
 

@@ -8,6 +8,22 @@ export let editSpaceResolver: FieldResolver<'Mutation', 'editSpace'> = async (
   { space, spaceId },
   context: Context,
 ) => {
+  let properties = await context.prisma.property.findMany({
+    where: {
+      space: { some: { id: spaceId } },
+    },
+    include: {
+      landlordUser: true,
+    },
+  });
+
+  if (!properties.length) {
+    throw new Error('Property not found!');
+  }
+
+  if (properties[0].landlordUser.id !== context.landlordUserId) {
+    throw new Error('User not authorized to create new space');
+  }
   let {
     equipment = [],
     photoUrls = [],

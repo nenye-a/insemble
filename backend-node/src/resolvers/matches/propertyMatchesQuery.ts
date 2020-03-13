@@ -21,14 +21,13 @@ type MatchBrand = {
 
 let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
   _: Root,
-  { propertyId: prismaPropId },
+  { propertyId: prismaPropId, spaceId: prismaSpaceId },
   context: Context,
 ) => {
   let selectedProperty = await context.prisma.property.findOne({
     where: { id: prismaPropId },
     include: {
       location: true,
-      space: true,
     },
   });
   if (!selectedProperty) {
@@ -36,20 +35,33 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
   }
   let {
     propertyId,
-    space,
     location,
     categories,
     propertyType,
     exclusive,
     businessType,
   } = selectedProperty;
+  let selectedSpace = await context.prisma.space.findOne({
+    where: { id: prismaSpaceId },
+    include: {
+      property: true,
+    },
+  });
+
+  if (!selectedSpace) {
+    throw new Error('Property not found!');
+  }
+
+  if (selectedSpace.property?.id !== selectedProperty.id) {
+    throw new Error('Invalid spaceId');
+  }
+
   let {
-    id: prismaSpaceId,
     sqft,
     pricePerSqft,
     condition,
     matchingBrand: savedMatchingBrands,
-  } = space[0]; // TODO: Update after multispace
+  } = selectedSpace;
   let matchingBrands;
 
   if (savedMatchingBrands) {
@@ -58,7 +70,11 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
     );
     matchingBrands = existMatchingBrands;
   } else {
-    let { brands, property_id: newPropertyId }: PropertyMatchesType = (
+    let {
+      brands,
+      property_id: newPropertyId,
+      space_id: newSpaceId,
+    }: PropertyMatchesType = (
       await axios.get(`${LEGACY_API_URI}/api/propertyTenants/`, {
         params: {
           property_id: propertyId ? propertyId : undefined,
@@ -109,6 +125,7 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
           update: {
             where: { id: prismaSpaceId },
             data: {
+              spaceId: newSpaceId,
               matchingBrand: JSON.stringify(newMatchingBrands),
             },
           },
@@ -124,6 +141,7 @@ let propertyMatches = queryField('propertyMatches', {
   type: 'PropertyMatchesThumbnail',
   args: {
     propertyId: stringArg({ required: true }),
+    spaceId: stringArg({ required: true }),
   },
   resolve: propertyMatchesResolver,
   list: true,
