@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Redirect } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import { View, Card, Text, TouchableOpacity, LoadingIndicator, Alert } from '../core-ui';
@@ -43,6 +43,20 @@ export default function LandlordProperties() {
       setSelectedPropertyId('');
     }
   };
+
+  if (!loading && data && history.location.state?.signedIn && data.properties.length > 0) {
+    return (
+      <Redirect
+        to={{
+          pathname: `/landlord/properties/${data?.properties[0].id}`,
+          state: {
+            address: data?.properties[0].location.address,
+            spaces: data?.properties[0].space,
+          },
+        }}
+      />
+    );
+  }
 
   return (
     <View flex>
