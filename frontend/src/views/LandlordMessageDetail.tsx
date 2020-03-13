@@ -22,7 +22,7 @@ export default function LandlordMessageDetail() {
           mode="transparent"
           text="Back to Messages"
           icon={<SvgArrowBack style={{ color: THEME_COLOR }} />}
-          onPress={() => history.push('/user/messages')}
+          onPress={() => history.goBack()}
           textProps={{ style: { marginLeft: 12 } }}
         />
         <Row>

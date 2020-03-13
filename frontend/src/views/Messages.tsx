@@ -7,12 +7,12 @@ import MessageCard from './ProfilePage/MessageCard';
 import { THEME_COLOR } from '../constants/colors';
 import { FONT_WEIGHT_BOLD, FONT_SIZE_LARGE } from '../constants/theme';
 import { MESSAGE_LIST } from '../fixtures/dummyData';
-import { asyncStorage } from '../utils';
+import { useCredentials } from '../utils';
 import { Role } from '../types/types';
 
 export default function Messages() {
   let history = useHistory();
-  let role = asyncStorage.getRole();
+  let { role } = useCredentials();
   return (
     <Container flex>
       <Title> {role === Role.TENANT ? 'Messages' : 'Messages from Tenants'} </Title>
@@ -23,7 +23,8 @@ export default function Messages() {
           {...item}
           onPress={() => {
             role === Role.TENANT
-              ? history.push('/user/messages/' + index)
+              ? // TODO: use conversation id
+                history.push('/user/messages/' + index)
               : history.push('/landlord/messages/' + index);
           }}
         />
