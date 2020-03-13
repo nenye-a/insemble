@@ -7,18 +7,26 @@ import MessageCard from './ProfilePage/MessageCard';
 import { THEME_COLOR } from '../constants/colors';
 import { FONT_WEIGHT_BOLD, FONT_SIZE_LARGE } from '../constants/theme';
 import { MESSAGE_LIST } from '../fixtures/dummyData';
+import { useCredentials } from '../utils';
+import { Role } from '../types/types';
 
 export default function Messages() {
   let history = useHistory();
+  let { role } = useCredentials();
   return (
     <Container flex>
-      <Title>Messages</Title>
+      <Title> {role === Role.TENANT ? 'Messages' : 'Messages from Tenants'} </Title>
       {MESSAGE_LIST.map((item, index) => (
         <MessageCard
           key={index}
           isEven={(index + 1) % 2 === 0}
           {...item}
-          onPress={() => history.push('/user/messages/' + index)}
+          onPress={() => {
+            role === Role.TENANT
+              ? // TODO: use conversation id
+                history.push('/user/messages/' + index)
+              : history.push('/landlord/messages/' + index);
+          }}
         />
       ))}
     </Container>

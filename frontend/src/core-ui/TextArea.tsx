@@ -37,7 +37,7 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLTextAreaElement>)
   return (
     <View style={containerStyle}>
       <RowedView>
-        {label && <Label text={label} id={id} />}
+        {label ? <Label text={label} id={id} /> : <View />}
         {showCharacterLimit && (
           <RemainingCharacters text={`${remainingCharacters} characters left`} />
         )}
