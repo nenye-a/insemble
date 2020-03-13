@@ -15,7 +15,15 @@ export let createConversationResolver: FieldResolver<
   let convId;
   let existingConversation = await context.prisma.conversation.findMany({
     where: {
-      AND: [{ brand: { id: brandId } }, { property: { id: propertyId } }],
+      OR: [
+        { AND: [{ brand: { id: brandId } }, { property: { propertyId } }] },
+        {
+          AND: [
+            { brand: { tenantId: brandId } },
+            { property: { id: propertyId } },
+          ],
+        },
+      ], // Q: brandId is tenantId right?
     },
   });
   if (existingConversation.length) {
@@ -39,16 +47,28 @@ export let createConversationResolver: FieldResolver<
       throw new Error('Not Authorized');
     }
 
-    let userReceiver = context.tenantUserId
-      ? await context.prisma.property
-          .findOne({ where: { id: propertyId } })
-          .landlordUser()
-      : await context.prisma.brand
-          .findOne({ where: { id: brandId } })
-          .tenantUser();
+    let propertiesOrBrands = context.tenantUserId
+      ? await context.prisma.property.findMany({
+          where: { propertyId },
+          include: { landlordUser: true },
+        })
+      : await context.prisma.brand.findMany({
+          where: { tenantId: brandId },
+          include: { tenantUser: true },
+        });
 
-    if (!userReceiver) {
+    if (!propertiesOrBrands.length) {
       throw new Error('Receiver not found');
+    }
+    let userReceiver;
+    let propertyOrBrand = propertiesOrBrands[0];
+    if ('landlordUser' in propertyOrBrand) {
+      userReceiver = propertyOrBrand.landlordUser;
+    } else {
+      if (!propertyOrBrand.tenantUser) {
+        throw new Error('Tenant not found'); // Note: Brand can have tenant undefinded
+      }
+      userReceiver = propertyOrBrand.tenantUser;
     }
 
     let createdConversation = context.tenantUserId
