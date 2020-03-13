@@ -40,7 +40,9 @@ export default function TenantEmailVerification() {
       });
 
       if (brandId) {
-        history.push(`/map/${brandId}`);
+        history.push(`/map/${brandId}`, {
+          newBrand: true,
+        });
       } else {
         history.push('/'); // TODO: maybe redirect user to other screen
       }
@@ -73,7 +75,7 @@ const ContentContainer = styled(View)`
 
 const Description = styled(Text)`
   font-size: ${FONT_SIZE_MEDIUM};
-  font-weight: ${FONT_WEIGHT_LIGHT}
+  font-weight: ${FONT_WEIGHT_LIGHT};
   margin: 16px 0 0 0;
-  color:${DARK_TEXT_COLOR}
+  color: ${DARK_TEXT_COLOR};
 `;
