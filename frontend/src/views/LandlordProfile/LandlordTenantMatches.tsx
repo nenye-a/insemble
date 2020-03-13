@@ -1,5 +1,5 @@
 import React, { ComponentProps } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { View, Text, TouchableOpacity } from '../../core-ui';
 import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
@@ -13,7 +13,8 @@ import {
 import { DARK_TEXT_COLOR, WHITE, SECONDARY_COLOR, THEME_COLOR } from '../../constants/colors';
 import { PropertyMatches_propertyMatches as PropertyMatchesProps } from '../../generated/PropertyMatches';
 import { EmptyDataComponent } from '../../components';
-import { roundDecimal } from '../../utils';
+import { roundDecimal, useViewport } from '../../utils';
+import { VIEWPORT_TYPE } from '../../constants/viewports';
 
 type Props = {
   onPress: (selectedBrandId: string, selectedTenantPhoto: string) => void;
@@ -21,18 +22,19 @@ type Props = {
 };
 
 export default function LandlordTenantMatches({ onPress, matchResult }: Props) {
+  let { viewportType } = useViewport();
   return (
     <Container flex>
       {!matchResult ? (
         <EmptyDataComponent />
       ) : (
-        matchResult &&
-        matchResult.map((item, index) => {
+        matchResult?.map((item, index) => {
           return (
             <TenantCard
               key={index}
               isInterested={item.interested}
               onPress={() => onPress(item.brandId, item.pictureUrl)}
+              viewportType={viewportType}
             >
               {item.interested ? (
                 <InterestedContainer>
@@ -78,6 +80,7 @@ const Container = styled(RowedView)`
   flex-wrap: wrap;
   justify-content: flex-start;
   overflow-y: scroll;
+  overflow: visible;
 `;
 
 const InterestedText = styled(Text)`
@@ -87,32 +90,39 @@ const InterestedText = styled(Text)`
 
 type TenantCardProps = ComponentProps<typeof TouchableOpacity> & {
   isInterested: boolean;
+  viewportType: VIEWPORT_TYPE;
 };
 
 const TenantCard = styled(TouchableOpacity)<TenantCardProps>`
   border-radius: ${DEFAULT_BORDER_RADIUS};
   box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.1);
   background-color: ${WHITE};
-  overflow: hidden;
-  background-color: ${WHITE};
-  width: calc(33.33% - 11px);
-  margin: 12px 16px 12px 0;
-  &:nth-child(3n) {
-    margin-right: 0;
-  }
-  height:234px
-  box-shadow: ${(props) =>
-    props.isInterested ? `0px 0px 10px 0px ${SECONDARY_COLOR}` : undefined};
+  ${(props) =>
+    props.viewportType === VIEWPORT_TYPE.DESKTOP
+      ? css`
+          width: calc(33.33% - 11px);
+          margin: 12px 16px 12px 0;
+          &:nth-child(3n) {
+            margin-right: 0;
+          }
+        `
+      : css`
+          width: 100%;
+          margin: 6px 0;
+        `}
+  height: 234px;
+  box-shadow: ${(props) => props.isInterested && `0px 0px 10px 0px ${SECONDARY_COLOR}`};
 `;
 
 const InterestedContainer = styled(View)`
-  flex: 1;
   width: 100%;
   position: absolute;
   background-color: ${THEME_COLOR};
   align-items: center;
   justify-content: center;
   padding: 2px 0;
+  border-top-left-radius: ${DEFAULT_BORDER_RADIUS};
+  border-top-right-radius: ${DEFAULT_BORDER_RADIUS};
 `;
 
 const DescriptionContainer = styled(View)`
