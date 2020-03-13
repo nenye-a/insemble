@@ -14,4 +14,5 @@ export { default as urlEncode } from './urlEncode';
 export { default as useCredentials } from './useCredentials';
 export { default as useID } from './useID';
 export { default as useGoogleMaps } from './useGoogleMaps';
+export { default as useViewport } from './useViewport';
 export * from './validation';
