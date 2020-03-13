@@ -43,3 +43,5 @@ export * from './Message';
 export * from './Property';
 export * from './Conversation';
 export * from './MessageInput';
+
+export * from './GooglePlace';
