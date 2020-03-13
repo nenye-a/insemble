@@ -27,10 +27,8 @@ function formatCommuteValue(value: number, totalValue: number) {
   if (Number(percentageValue) < 1) {
     return '<1%';
   }
-  {
-    let formattedValue = `${roundDecimal(percentageValue)}%`;
-    return formattedValue;
-  }
+  let formattedValue = `${roundDecimal(percentageValue)}%`;
+  return formattedValue;
 }
 
 export default function KeyFacts(props: Props) {
