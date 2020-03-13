@@ -18,7 +18,10 @@ export let createConversationResolver: FieldResolver<
       OR: [
         { AND: [{ brand: { id: brandId } }, { property: { propertyId } }] },
         {
-          AND: [{ brand: { tenantId: brandId } }, { property: { propertyId } }],
+          AND: [
+            { brand: { tenantId: brandId } },
+            { property: { id: propertyId } },
+          ],
         },
       ], // Q: brandId is tenantId right?
     },
