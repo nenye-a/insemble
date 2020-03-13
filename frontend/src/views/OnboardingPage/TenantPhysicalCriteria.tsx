@@ -77,7 +77,14 @@ export default function TenantPhysicalCriteria(props: Props) {
 
   if (data && data.createBrand) {
     let brandId = data.createBrand;
-    return <Redirect to={`/map/${brandId}`} />;
+    return (
+      <Redirect
+        to={{
+          pathname: `/map/${brandId}`,
+          state: { newBrand: true },
+        }}
+      />
+    );
   }
 
   return (
