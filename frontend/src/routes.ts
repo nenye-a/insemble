@@ -26,6 +26,7 @@ import LandlordPropertyDetails from './views/LandlordPropertyDetails';
 import ForgotPassword from './views/ForgotPassword';
 import ForgotPasswordSubmitted from './views/ForgotPasswordSubmitted';
 import NewPassword from './views/NewPassword';
+import LandlordMessageDetail from './views/LandlordMessageDetail';
 
 import { tenantAuthorization, landlordAuthorization } from './utils';
 
@@ -122,6 +123,19 @@ const LANDLORD_ROUTES = [
     layout: BasicLayout,
     component: LandlordOnboarding,
     exact: true,
+    authorization: landlordAuthorization,
+  },
+  {
+    path: '/landlord/messages',
+    layout: LandlordProfileLayout,
+    component: Messages,
+    exact: true,
+    authorization: landlordAuthorization,
+  },
+  {
+    path: '/landlord/messages/:messageID',
+    layout: LandlordProfileLayout,
+    component: LandlordMessageDetail,
     authorization: landlordAuthorization,
   },
 ];
