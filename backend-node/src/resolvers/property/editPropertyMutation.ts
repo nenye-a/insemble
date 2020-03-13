@@ -6,6 +6,23 @@ export let editPropertyResolver: FieldResolver<
   'Mutation',
   'editProperty'
 > = async (_, { property, propertyId }, context: Context) => {
+  let existingProperty = await context.prisma.property.findOne({
+    where: {
+      id: propertyId,
+    },
+    include: {
+      landlordUser: true,
+    },
+  });
+
+  if (!existingProperty) {
+    throw new Error('Property not found!');
+  }
+
+  if (existingProperty.landlordUser.id !== context.landlordUserId) {
+    throw new Error('User not authorized to edit property');
+  }
+
   let {
     businessType = [],
     propertyType = [],
