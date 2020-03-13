@@ -19,7 +19,7 @@ let brandsResolver: FieldResolver<'Query', 'brands'> = async (
       newLocationPlan: true,
       location: true,
     },
-    orderBy: { id: 'asc' },
+    orderBy: { id: 'desc' },
     where: {
       tenantUser: {
         id: context.tenantUserId,

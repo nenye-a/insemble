@@ -32,11 +32,11 @@ export default function Login(props: Props) {
     landlordLogin,
     { data: landlordData, loading: landlordLoading, error: landlordError },
   ] = useMutation<LoginLandlord, LoginLandlordVariables>(LOGIN_LANDLORD);
+  // let { data: propertyData, loading: propertyLoading } = useQuery<GetProperties>(GET_PROPERTIES);
   let [
     createBrand,
     { data: createBrandData, loading: createBrandLoading, error: createBrandError },
   ] = useMutation<CreateBrand, CreateBrandVariables>(CREATE_BRAND);
-
   let onSubmit = (data: FieldValues) => {
     let { email, password } = data;
     tenantLogin({
@@ -113,7 +113,8 @@ export default function Login(props: Props) {
       landlordToken: token,
       role: Role.LANDLORD,
     });
-    history.push('/landlord/properties');
+
+    return <Redirect to={{ pathname: `/landlord/properties/`, state: { signedIn: true } }} />;
   }
 
   return (
