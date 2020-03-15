@@ -76,7 +76,7 @@ def generate_matching_properties(location, params):
                 'lat': lat,
                 'lng': lng,
                 'type': property_type,
-                'match_value': match['match_value']
+                'match_value': min(max(match['match_value'], 10), 95)
             })
             space['space_id'] = str(space['space_id'])
             result_spaces.append(space)
