@@ -32,19 +32,56 @@ EQUIPMENT_LIST = ["Walk-in fridge", "Reach-in fridge", "Walk-in freezer", "Greas
 # {lat:float, lng:float, place_id:'place_id}
 
 
-def generate_matching_locations(location, params):
-    """
-    Generate matches for matches for a location. Given the location details of the object
-    vs. the actual details.
-    """
-
-    matches = matching.generate_matches(location, params)
-
-    pass
+# def generate_matching_locations(location, params):
+#     """
+#     Generate matches for matches for a location. Given the location details of the object
+#     vs. the actual details.
+#     """
+#     matches, match_values = matching.generate_location_matches(location, params)
+#     return matches, match_values
 
 
 def generate_matching_properties(location, params):
-    pass
+    """
+    Generate matching properties for a location.
+    """
+
+    # Fetch all the properties that are eligible.
+
+    # SET QUERY PARAMS:
+    eval_properties = utils.DB_PROPERTY.find({})  # TODO: Query by region
+    locations_dict = {}
+    locations_list = []
+    for eval_property in eval_properties:
+        property_location = utils.DB_LOCATIONS.find_one({
+            "_id": eval_property['location_id']
+        })
+        locations_dict[str(eval_property["location_id"])] = eval_property
+        locations_list.append(property_location)
+
+    locations_list.append(location)
+    matches = matching.generate_matching_properties(locations_list, options=params)
+
+    result_spaces = []
+    for match in matches:
+
+        result_property = locations_dict[str(match['location_id'])]
+        address = result_property['address']
+        lat = result_property['location']['coordinates'][1]
+        lng = result_property['location']['coordinates'][0]
+        property_type = result_property['location']
+        for space in result_property['spaces']:
+            space.update({
+                'address': address,
+                'lat': lat,
+                'lng': lng,
+                'type': property_type,
+                'match_value': match['match_value']
+            })
+            space['space_id'] = str(space['space_id'])
+            result_spaces.append(space)
+
+    return result_spaces
 
 
 def get_location(address, name=None):

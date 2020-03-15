@@ -345,7 +345,7 @@ Location Matches:
     params: {
         ... varies significantly based on type          # TODO: document the parameters that influence location matches
     },
-    match_values: {                                     -> dictionary containing the match value of all the 
+    location_match_values: {                                     -> dictionary containing the match value of all the 
         <string(location_id)>: int,
         ... many more location_id to int pairs
     }

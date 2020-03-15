@@ -111,25 +111,32 @@ class TenantMatchAPI(AsynchronousAPI):
 
     GET /api/tenantMatch/:
         Parameters: {
-            address: string,            (required -> not required if categories are provided)
-            brand_name: string,         (required -> not required if categories are provided)
-            categories: list[string],   (required -> not required if brand_name and address provided)
-            income: {                   (required -> not required if brand_name and address provided)
-                min: int,               (required if income provided)
-                max: int                (optional)
+            address: string,                (required -> not required if categories are provided)
+            brand_name: string,             (required -> not required if categories are provided)
+            categories: list[string],       (required -> not required if brand_name and address provided)
+            income: {                       (required -> not required if brand_name and address provided)
+                min: int,                   (required if income provided)
+                max: int                    (optional)
             },
             age: {
-                min: int,               (optional)
-                max: int                (optional)
+                min: int,                   (optional)
+                max: int                    (optional)
             },
-            personas: list[string],     (optional)
-            commute: list[string],      (optional)
-            education: list[string],    (optional)
-            ethnicity: list[string],    (optional)
-            rent: {                     (optional)
-                min: int,               (required if rent provided)
-                max: int                (optional)
-            }
+            personas: list[string],         (optional)
+            commute: list[string],          (optional)
+            education: list[string],        (optional)
+            ethnicity: list[string],        (optional)
+            min_daytime_pop: int,           (optional)
+            rent: {                         (optional)
+                min: int,                   (required if rent provided)
+                max: int                    (optional)
+            },
+            sqft: {                         (optional)
+                min: int,                   (required if rent provided)
+                max: int
+            },
+            frontage_width: int,            (optional)
+            property_type: list[string]     (optional)
         }
 
         Response: {
@@ -192,7 +199,7 @@ class TenantMatchAPI(AsynchronousAPI):
         if 'address' in params:
             address = params['address']
             name = params['brand_name']
-            google_location = google.find(validated_params['address'], allow_non_establishments=True, save=False)
+            google_location = google.find(address, name=name, allow_non_establishments=True, save=False)
             lat = round(google_location["geometry"]["location"]["lat"], 6)
             lng = round(google_location["geometry"]["location"]["lng"], 6)
         else:
@@ -222,129 +229,148 @@ class TenantMatchAPI(AsynchronousAPI):
         else:
             params['location_id'] = utils.DB_LOCATIONS.insert(location)
 
-        location_matches = provider.generate_matching_locations(location, params)
+        # GENERATE LOCATION & PROPERTY MATCHES
+        best_matches, location_matches = matching.generate_matching_locations(location, params)
         property_matches = provider.generate_matching_properties(location, params)
 
-        # grab location details from database
-        # generate new location details if not present in the database
-        # associate the search with a brand that can be searched with the landlords
-        # grab locations from an address if provideds
-        # if no address provided, grab locations from categories and income
+        match_update = {
+            'params': params,
+            'location_match_values': location_matches
+        }
 
-        # GENERATE MATCHES
-        # generate new match_values
-        # update the tenant match details
+        match_id = utils.DB_LOCATION_MATCHES.insert(match_update)
 
-        # STORE DETAILS & RETURN RESULT
-        # update the existing location match if updating
-        # insert new location match
-
-        # OLD PROCESS
-        #
-        #
-        #
-        #
-        #
-        # OLD PROCESS
-
-        # PREPARE TO STORE THE REQUEST INFORMATION IN THE DATABASE
-        database_update = {'search_details': validated_params}
-
-        address = None
-        name = None
-        # ASYNCHRONOUSLY GENERATE MATCH DETAILS & OBTAIN OBJECT ID
-        if 'address' in validated_params:
-            address = validated_params['address']
-            name = validated_params['brand_name']
-
-            m_process, match_details = self.generate_matches.delay(address, name=name, options=validated_params), []
-            match_listener = self._celery_listener(m_process, match_details)
-            match_listener.start()
-
-        else:
-            categories = validated_params['categories']
-            location = provider.get_representative_location(categories, validated_params['income'])
-            if location:
-                address = location['address']
-                name = location['name']
-
-                m_process, match_details = self.generate_matches.delay(address, name=name, options=database_update), []
-                match_listener = self._celery_listener(m_process, match_details)
-                match_listener.start()
-            else:
-                return Response({
-                    'status': 200,
-                    'status_detail': ["No matches found for that category with the specified income. "
-                                      "You should try increasing the income range or adjusting category."],
-                    'result': {}
-                })
-                # match_listener = None
-                # match_details = [([], None)]
-
-        # TODO: GENERATE TENANT LOCATION DETAILS
-        tenant_details, rep_id = self.build_location(address, brand_name=name)
-        if rep_id:
-            database_update['rep_location'] = tenant_details
-            database_update['rep_id'] = rep_id
-        elif tenant_details:
-
-            lat = tenant_details['geometry']['location']['lat']
-            lng = tenant_details['geometry']['location']['lng']
-
-            # TODO: account for people that are outside our range of coverage (fail our calls)
-            # grab the 1 and 3 mile arcgis data
-            arcgis_details1 = provider.get_formatted_arcgisdetails(lat, lng, 1)
-            arcgis_details3 = provider.get_formatted_arcgisdetails(lat, lng, 3)
-
-            # grab the nearby locations
-            n_process, nearby = self.get_nearby_places.delay(lat, lng), []
-            nearby_listener = self._celery_listener(n_process, nearby)
-            nearby_listener.start()
-
-            # obtain the 1, 3 mile demographic details asynchronously
-            d_process, demo = self.get_environics_demographics.delay(lat, lng, True), []
-            demo_listener = self._celery_listener(d_process, demo)
-            demo_listener.start()
-
-            # grab the 1, 3 mile psychographic deatils asynchronously
-            p_process, psycho = self.get_spatial_personas.delay(lat, lng, True), []
-            psycho_listener = self._celery_listener(p_process, psycho)
-            psycho_listener.start()
-
-            _, nearby = nearby_listener.join(), nearby[0]
-            _, demo = demo_listener.join(), demo[0]
-            _, psycho = psycho_listener.join(), psycho[0]
-
-            tenant_details['arcgis_details1'] = arcgis_details1
-            tenant_details['arcgis_details3'] = arcgis_details3
-
-            tenant_details.update(nearby)
-            tenant_details.update(demo)
-            tenant_details.update(psycho)
-        else:
-            # TODO: no place found (return error more smartly)
-            pass
-
-        if match_listener:
-            match_listener.join()
-
-        match_details = match_details[0]
-        matches, tenant_id = match_details
-
-        database_update['tenant_details'] = tenant_details
-        database_update['rep_id'] = ObjectId(rep_id)
-
-        # UPDATE TENANT DATABASE AND RETURN RESULT
-        provider.update_tenant_details(tenant_id, database_update)
         response = {
             'status': status.HTTP_200_OK,
             'status_detail': "Success",
-            'tenant_id': tenant_id,
-            'matching_locations': matches,
-            'matching_properties': []  # TODO: implement determination of matching properties
+            'tenant_id': match_id,
+            'matching_locations': best_matches,
+            'matching_properties': property_matches
         }
         return Response(response, status=status.HTTP_200_OK)
-        # TODO: utilize the other parameters in the matching algorithms
+
+        # Update database and return matches
+
+        # # grab location details from database
+        # # generate new location details if not present in the database
+        # # associate the search with a brand that can be searched with the landlords
+        # # grab locations from an address if provideds
+        # # if no address provided, grab locations from categories and income
+
+        # # GENERATE MATCHES
+        # # generate new match_values
+        # # update the tenant match details
+
+        # # STORE DETAILS & RETURN RESULT
+        # # update the existing location match if updating
+        # # insert new location match
+
+        # # OLD PROCESS
+        # #
+        # #
+        # #
+        # #
+        # #
+        # # OLD PROCESS
+
+        # # PREPARE TO STORE THE REQUEST INFORMATION IN THE DATABASE
+        # database_update = {'search_details': validated_params}
+
+        # address = None
+        # name = None
+        # # ASYNCHRONOUSLY GENERATE MATCH DETAILS & OBTAIN OBJECT ID
+        # if 'address' in validated_params:
+        #     address = validated_params['address']
+        #     name = validated_params['brand_name']
+
+        #     m_process, match_details = self.generate_matches.delay(address, name=name, options=validated_params), []
+        #     match_listener = self._celery_listener(m_process, match_details)
+        #     match_listener.start()
+
+        # else:
+        #     categories = validated_params['categories']
+        #     location = provider.get_representative_location(categories, validated_params['income'])
+        #     if location:
+        #         address = location['address']
+        #         name = location['name']
+
+        #         m_process, match_details = self.generate_matches.delay(address, name=name, options=database_update), []
+        #         match_listener = self._celery_listener(m_process, match_details)
+        #         match_listener.start()
+        #     else:
+        #         return Response({
+        #             'status': 200,
+        #             'status_detail': ["No matches found for that category with the specified income. "
+        #                               "You should try increasing the income range or adjusting category."],
+        #             'result': {}
+        #         })
+        #         # match_listener = None
+        #         # match_details = [([], None)]
+
+        # # TODO: GENERATE TENANT LOCATION DETAILS
+        # tenant_details, rep_id = self.build_location(address, brand_name=name)
+        # if rep_id:
+        #     database_update['rep_location'] = tenant_details
+        #     database_update['rep_id'] = rep_id
+        # elif tenant_details:
+
+        #     lat = tenant_details['geometry']['location']['lat']
+        #     lng = tenant_details['geometry']['location']['lng']
+
+        #     # TODO: account for people that are outside our range of coverage (fail our calls)
+        #     # grab the 1 and 3 mile arcgis data
+        #     arcgis_details1 = provider.get_formatted_arcgisdetails(lat, lng, 1)
+        #     arcgis_details3 = provider.get_formatted_arcgisdetails(lat, lng, 3)
+
+        #     # grab the nearby locations
+        #     n_process, nearby = self.get_nearby_places.delay(lat, lng), []
+        #     nearby_listener = self._celery_listener(n_process, nearby)
+        #     nearby_listener.start()
+
+        #     # obtain the 1, 3 mile demographic details asynchronously
+        #     d_process, demo = self.get_environics_demographics.delay(lat, lng, True), []
+        #     demo_listener = self._celery_listener(d_process, demo)
+        #     demo_listener.start()
+
+        #     # grab the 1, 3 mile psychographic deatils asynchronously
+        #     p_process, psycho = self.get_spatial_personas.delay(lat, lng, True), []
+        #     psycho_listener = self._celery_listener(p_process, psycho)
+        #     psycho_listener.start()
+
+        #     _, nearby = nearby_listener.join(), nearby[0]
+        #     _, demo = demo_listener.join(), demo[0]
+        #     _, psycho = psycho_listener.join(), psycho[0]
+
+        #     tenant_details['arcgis_details1'] = arcgis_details1
+        #     tenant_details['arcgis_details3'] = arcgis_details3
+
+        #     tenant_details.update(nearby)
+        #     tenant_details.update(demo)
+        #     tenant_details.update(psycho)
+        # else:
+        #     # TODO: no place found (return error more smartly)
+        #     pass
+
+        # if match_listener:
+        #     match_listener.join()
+
+        # match_details = match_details[0]
+        # matches, tenant_id = match_details
+
+        # database_update['tenant_details'] = tenant_details
+        # database_update['rep_id'] = ObjectId(rep_id)
+
+        # # UPDATE TENANT DATABASE AND RETURN RESULT
+        # provider.update_tenant_details(tenant_id, database_update)
+        # response = {
+        #     'status': status.HTTP_200_OK,
+        #     'status_detail': "Success",
+        #     'tenant_id': tenant_id,
+        #     'matching_locations': matches,
+        #     'matching_properties': []  # TODO: implement determination of matching properties
+        # }
+        # return Response(response, status=status.HTTP_200_OK)
+        # # TODO: utilize the other parameters in the matching algorithms
 
     def build_location(self, address, brand_name=None):
         return provider.build_location(address, brand_name=brand_name)
@@ -361,7 +387,11 @@ class TenantMatchAPI(AsynchronousAPI):
         commute = existing_params['commute'] if existing_params and 'commute' in existing_params else []
         education = existing_params['education'] if existing_params and 'education' in existing_params else []
         ethnicity = existing_params['ethnicity'] if existing_params and 'ethnicity' in existing_params else []
+        min_daytime_pop = existing_params['min_daytime_pop'] if existing_params and 'min_daytime_pop' in existing_params else None
         rent = existing_params['rent'] if existing_params and 'rent' in existing_params else {}
+        sqft = existing_params['sqft'] if existing_params and 'sqft' in existing_params else {}
+        frontage_width = existing_params['frontage_width'] if 'frontage_width' in existing_params else None
+        property_type = existing_params['property_type'] if 'property_type' in existing_params else []
 
         updated_params = existing_params if existing_params else {}
         updated_params.update({
@@ -374,7 +404,11 @@ class TenantMatchAPI(AsynchronousAPI):
             'commute': params['commute'] if 'commute' in params else commute,
             'education': params['education'] if 'education' in params else education,
             'ethnicity': params['ethnicity'] if 'ethnicity' in params else ethnicity,
-            'rent': params['rent'] if 'rent' in params else rent
+            'min_daytime_pop': params['min_daytime_pop'] if 'min_daytime_pop' in params else min_daytime_pop,
+            'rent': params['rent'] if 'rent' in params else rent,
+            'sqft': params['sqft'] if 'sqft' in params else sqft,
+            'frontage_width': params['frontage_width'] if 'frontage_width' in params else frontage_width,
+            'property_type': params['property_type'] if 'property_type' in params else property_type
         })
 
         location_match['params'] = updated_params

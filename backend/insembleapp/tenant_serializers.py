@@ -12,26 +12,36 @@ These serializers are primarily utilized by the "tenant_api.py" file which field
 class TenantMatchSerializer(serializers.Serializer):
 
     """
-    parameters: {
-            address: string,            (required -> not required if categories are provided)
-            brand_name: string,         (required -> not required if categories are provided)
-            categories: list[string],   (required -> not required if brand_name and address provided)
-            income: {                   (required -> not required if brand_name and address provided)
-                min: int,               (required if income provided)
-                max: int                (optional)
-            },
-            age: {
-                min: int,               (optional)
-                max: int                (optional)
-            },
-            personas: list[string],     (optional)
-            commute: list[string],      (optional)
-            education: list[string],    (optional)
-            rent: {                     (optional)
-                min: int,               (required if rent provided)
-                max: int                (optional)
-            }
-        }
+    Parameters: {
+        address: string,                (required -> not required if categories are provided)
+        brand_name: string,             (required -> not required if categories are provided)
+        categories: list[string],       (required -> not required if brand_name and address provided)
+        income: {                       (required -> not required if brand_name and address provided)
+            min: int,                   (required if income provided)
+            max: int                    (optional)
+        },
+        age: {
+            min: int,                   (optional)
+            max: int                    (optional)
+        },
+        personas: list[string],         (optional)
+        commute: list[string],          (optional)
+        education: list[string],        (optional)
+        ethnicity: list[string],        (optional)
+        min_daytime_pop: int,
+        rent: {                         (optional)
+            min: int,                   (required if rent provided)
+            max: int                    (optional)
+        },
+        sqft: {                         (optional)
+            min: int,
+            max: int
+        },
+        frontage_width: int,            (optional)
+        property_type: list[string]     (optional)
+
+    }
+
     """
 
     address = serializers.CharField(required=False, max_length=300)
@@ -42,7 +52,12 @@ class TenantMatchSerializer(serializers.Serializer):
     personas = serializers.JSONField(required=False)
     commute = serializers.JSONField(required=False)
     education = serializers.JSONField(required=False)
+    ethnicity = serializers.JSONField(required=False)
+    min_daytime_pop = serializers.IntegerField(required=False)
     rent = serializers.JSONField(required=False)
+    sqft = serializers.JSONField(required=False)
+    frontage_width = serializers.IntegerField(required=False)
+    property_type = serializers.JSONField(required=False)
 
     # Validatator to ensure the rules mentioned above
     def validate(self, data):
@@ -53,6 +68,7 @@ class TenantMatchSerializer(serializers.Serializer):
         has_income = 'income' in data
         has_age = 'age' in data
         has_rent = 'rent' in data
+        has_sqft = 'sqft' in data
 
         error_message = {}
         if not ((has_address and has_brand_name) or (has_categories and has_income)):
@@ -67,6 +83,9 @@ class TenantMatchSerializer(serializers.Serializer):
         if has_rent and 'min' not in data['rent']:
             error_message['status_detail'] = error_message.get(
                 'status_detail', []) + ['min must be provided if rent provided']
+        if has_sqft and 'min' not in data['sqft']:
+            error_message['status_detail'] = error_message.get(
+                'status_detail', []) + ['min must be provided if sqft provided']
 
         if len(error_message) > 0:
             error_message['status'] = 400
