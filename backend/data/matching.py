@@ -20,12 +20,6 @@ AWS_SECRET_ACCESS_KEY = settings.AWS_SECRET_ACCESS_KEY
 S3_FILESYSTEM = S3FileSystem(
     key=AWS_ACCESS_KEY_ID, secret=AWS_SECRET_ACCESS_KEY)
 
-# BLOCK_DF = utils.read_dataframe_csv(
-#     'insemble-dataframes/block_df.csv.gz', file_system=S3_FILESYSTEM)
-# SPATIAL_DF = utils.read_dataframe_csv(
-#     'insemble-dataframes/spatial_df.csv.gz', file_system=S3_FILESYSTEM)
-# DEMO_DF = utils.read_dataframe_csv(
-#     'insemble-dataframes/demo_df.csv.gz', file_system=S3_FILESYSTEM)
 MATCHING_DF = utils.read_dataframe_csv(
     'insemble-dataframes/full_df_csv.csv.gz', file_system=S3_FILESYSTEM)
 SPATIAL_CATEGORIES = utils.DB_SPATIAL_CATS.find_one(
@@ -177,6 +171,12 @@ def generate_matching_locations(location, options={}, db_connection=utils.SYSTEM
     info_df = MATCHING_DF.copy()
     match_df = info_df.drop(columns=["_id", "lat", "lng", "loc_id"])
     match_df = match_df.append(my_location_df)
+
+    if "brand_name" in match_df.columns:
+        match_df = match_df.drop(columns=["brand_name"])
+    if "_id" in match_df.columns:
+        match_df = match_df.drop(columns=["_id"])
+
     match_df = match_df.fillna(0)
 
     print("** Matching: Pre-processing start.")
@@ -235,7 +235,7 @@ def generate_matching_properties(locations, options={}, db_connection=utils.SYST
     }
 
     info_df = landlord_matching.generate_match_df(locations)
-    match_df = info_df.drop(columns=['_id'])
+    match_df = info_df.drop(columns=['_id', 'brand_name'])
     print("** Matching (properties): Pre-processing start.")
     prepared_match_df = preprocess_match_df(match_df.fillna(0)).fillna(0)
     match_diff = prepared_match_df.subtract(prepared_match_df.iloc[-1]).iloc[:-1]
@@ -537,6 +537,11 @@ def postprocess_match_df(difference_dataframe, options):
     for category in options['desired_personas'] + options['desired_commute'] + options['desired_education'] + options['desired_education']:
         difference_dataframe[category] = difference_dataframe[category] * importance_factor
         difference_dataframe[category + "3"] = difference_dataframe[category] * importance_factor
+
+    category_set = set(difference_dataframe.columns)
+    for category in FOURSQUARE_CATEGORIES:
+        if category not in category_set:
+            difference_dataframe[category] = 0
 
     # group features that are evaluated & normalized together
     difference_dataframe["psycho"] = difference_dataframe[SPATIAL_LIST].sum(axis=1)

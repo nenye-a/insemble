@@ -180,7 +180,7 @@ class TenantMatchAPI(AsynchronousAPI):
         serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
 
-        location_match = None
+        params = None
         if 'match_id' in validated_params:
             location_match = utils.DB_LOCATION_MATCHES.find({'_id': validated_params['match_id']})
             if not location_match:
@@ -188,11 +188,11 @@ class TenantMatchAPI(AsynchronousAPI):
                     'status': status.HTTP_404_NOT_FOUND,
                     'status_detail': ["Could not find a match record that matches that Id."]
                 }, status=status.HTTP_404_NOT_FOUND)
-            location_match = self.update_location_match(validated_params, location_match)
+            params = location_match['params']
+            params = self.update_params(validated_params, params)
         else:
-            location_match = self.update_location_match(validated_params)
+            params = self.update_params(validated_params)
 
-        params = location_match['params']
         # OBTAIN DETAILS OF LOCATION
         lat = None
         lng = None
@@ -225,9 +225,9 @@ class TenantMatchAPI(AsynchronousAPI):
 
         if '_id' in location:
             utils.DB_LOCATIONS.update({"_id": location['_id']}, location)
-            params['location_id'] = location['_id']
+            params['location_id'] = str(location['_id'])
         else:
-            params['location_id'] = utils.DB_LOCATIONS.insert(location)
+            params['location_id'] = str(utils.DB_LOCATIONS.insert(location))
 
         # GENERATE LOCATION & PROPERTY MATCHES
         best_matches, location_matches = matching.generate_matching_locations(location, params)
@@ -238,12 +238,16 @@ class TenantMatchAPI(AsynchronousAPI):
             'location_match_values': location_matches
         }
 
-        match_id = utils.DB_LOCATION_MATCHES.insert(match_update)
+        try:
+            utils.DB_LOCATION_MATCHES.update({'_id': location_match['_id']}, {'$set': match_update})
+            match_id = location_match['_id']
+        except NameError:
+            match_id = utils.DB_LOCATION_MATCHES.insert(match_update)
 
         response = {
             'status': status.HTTP_200_OK,
             'status_detail': "Success",
-            'tenant_id': match_id,
+            'tenant_id': str(match_id),
             'matching_locations': best_matches,
             'matching_properties': property_matches
         }
@@ -375,9 +379,8 @@ class TenantMatchAPI(AsynchronousAPI):
     def build_location(self, address, brand_name=None):
         return provider.build_location(address, brand_name=brand_name)
 
-    def update_location_match(self, params, location_match=None):
+    def update_params(self, params, existing_params=None):
 
-        existing_params = location_match['params']
         address = existing_params['address'] if existing_params and 'address' in existing_params else None
         brand_name = existing_params['brand_name'] if existing_params and 'brand_name' in existing_params else None
         categories = existing_params['categories'] if existing_params and 'categories' in existing_params else []
@@ -390,8 +393,8 @@ class TenantMatchAPI(AsynchronousAPI):
         min_daytime_pop = existing_params['min_daytime_pop'] if existing_params and 'min_daytime_pop' in existing_params else None
         rent = existing_params['rent'] if existing_params and 'rent' in existing_params else {}
         sqft = existing_params['sqft'] if existing_params and 'sqft' in existing_params else {}
-        frontage_width = existing_params['frontage_width'] if 'frontage_width' in existing_params else None
-        property_type = existing_params['property_type'] if 'property_type' in existing_params else []
+        frontage_width = existing_params['frontage_width'] if existing_params and 'frontage_width' in existing_params else None
+        property_type = existing_params['property_type'] if existing_params and 'property_type' in existing_params else []
 
         updated_params = existing_params if existing_params else {}
         updated_params.update({
@@ -411,9 +414,7 @@ class TenantMatchAPI(AsynchronousAPI):
             'property_type': params['property_type'] if 'property_type' in params else property_type
         })
 
-        location_match['params'] = updated_params
-
-        return location_match
+        return updated_params
 
     @staticmethod
     @celery_app.task
