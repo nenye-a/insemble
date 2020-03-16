@@ -1,10 +1,10 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { useHistory, useParams } from 'react-router-dom';
 
-import { View, Text, Card, Avatar, Button, TextArea, LoadingIndicator } from '../core-ui';
-import { THEME_COLOR, BACKGROUND_COLOR } from '../constants/colors';
+import { View, Text, Card, Button, LoadingIndicator } from '../core-ui';
+import { THEME_COLOR } from '../constants/colors';
 import { FONT_WEIGHT_BOLD, FONT_SIZE_LARGE, FONT_WEIGHT_MEDIUM } from '../constants/theme';
 import imgPlaceholder from '../assets/images/image-placeholder.jpg';
 import SvgArrowBack from '../components/icons/arrow-back';
@@ -17,6 +17,7 @@ import {
   GET_CONVERSATIONS,
 } from '../graphql/queries/server/message';
 import { Conversation, ConversationVariables } from '../generated/Conversation';
+import { ReplyMessageBox, ReceivedMessage, SentMessage } from '../components/message';
 
 type Params = {
   conversationId: string;
@@ -87,73 +88,41 @@ export default function MessageDetail() {
               {conversation?.conversation.matchScore}% Match
             </Text>
           </HeaderContainer>
-          {conversation?.conversation.messages.map((item) => {
+          {conversation?.conversation.messages.map((item, index) => {
             let { message, sender } = item;
             return (
               <>
                 {sender === SenderRole.TENANT ? (
-                  <MessageContainer flex>
-                    <ReplyAvatarContainer flex>
-                      <Avatar
-                        size="medium"
-                        image={conversation?.conversation.tenant.avatar || imgPlaceholder}
-                      />
-                    </ReplyAvatarContainer>
-                    <TenantMessageContainer style={{ flex: 8 }}>
-                      <Text>{message}</Text>
-                    </TenantMessageContainer>
-                  </MessageContainer>
+                  <SentMessage
+                    avatar={conversation?.conversation.tenant.avatar}
+                    message={message}
+                    header={index === 0 ? conversation?.conversation.header : ''}
+                  />
                 ) : (
-                  <MessageContainer>
-                    <ReplyAvatarContainer flex />
-                    <RepliedMessage style={{ flex: 8 }}>
-                      <Text>{message}</Text>
-                      <AvatarContainer>
-                        <Avatar
-                          size="medium"
-                          image={conversation?.conversation.landlord.avatar || imgPlaceholder}
-                        />
-                      </AvatarContainer>
-                    </RepliedMessage>
-                  </MessageContainer>
+                  <ReceivedMessage
+                    avatar={conversation?.conversation.landlord.avatar}
+                    message={message}
+                  />
                 )}
               </>
             );
           })}
 
-          <ReplyMessageContainer>
-            <ReplyAvatarContainer flex>
-              <Avatar
-                size="medium"
-                image={conversation?.conversation.tenant.avatar || imgPlaceholder}
-              />
-            </ReplyAvatarContainer>
-            <View style={{ flex: 8 }}>
-              <TextArea
-                placeholder="Reply"
-                values={reply}
-                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-                  setReply(e.target.value);
-                }}
-                showCharacterLimit
-                containerStyle={{ marginTop: 12, marginBottom: 12 }}
-              />
-              <ButtonContainer>
-                <Button text="Send Reply" loading={loading} onPress={onReply} />
-              </ButtonContainer>
-            </View>
-          </ReplyMessageContainer>
+          <ReplyMessageBox
+            avatar={conversation?.conversation.tenant.avatar}
+            onChange={(e) => {
+              setReply(e.target.value);
+            }}
+            reply={reply}
+            loading={loading}
+            onReply={onReply}
+          />
         </>
       )}
     </Card>
   );
 }
 
-const ButtonContainer = styled(View)`
-  justify-content: flex-end;
-  flex-direction: row;
-  margin-bottom: 24px;
-`;
 const RowedView = styled(View)`
   flex-direction: row;
 `;
@@ -161,7 +130,7 @@ const RowedView = styled(View)`
 const HeaderContainer = styled(View)`
   flex-direction: row;
   justify-content: space-between;
-  padding: 12px 24px;
+  padding: 18px 24px;
 `;
 
 const NavigationContainer = styled(RowedView)`
@@ -170,39 +139,7 @@ const NavigationContainer = styled(RowedView)`
   justify-content: space-between;
 `;
 
-const MessageContainer = styled(RowedView)`
-  padding: 0 0 10px 0;
-  align-items: center;
-`;
-
-const ReplyMessageContainer = styled(RowedView)`
-  padding-right: 24px;
-`;
-
 const Image = styled.img`
   height: 160px;
   object-fit: cover;
-`;
-
-const AvatarContainer = styled(View)`
-  padding: 0 24px;
-`;
-
-const ReplyAvatarContainer = styled(AvatarContainer)`
-  justify-content: center;
-  align-items: center;
-`;
-
-const RepliedMessage = styled(View)`
-  padding: 16px 18px;
-  border-left: ${THEME_COLOR} 2px solid;
-  background-color: ${BACKGROUND_COLOR};
-  margin-top: 12px;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const TenantMessageContainer = styled(View)`
-  padding: 16px 0;
 `;
