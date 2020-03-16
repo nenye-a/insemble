@@ -18,13 +18,10 @@ import {
   GET_PROPERTY_TYPE_LIST,
   GET_ETHNICITY_LIST,
 } from '../../graphql/queries/server/filters';
-import { Personas } from '../../generated/Personas';
 import {
   DELETED_BASE64_STRING,
   getPropertyOptionsAndPrefilledValues,
 } from './helpers/getOptionsAndPrefilledValues';
-import { Commute } from '../../generated/Commute';
-import { Education } from '../../generated/Education';
 import { TenantMatchesContext } from '../MainMap';
 
 import SvgIncome from '../../components/icons/income';
@@ -35,9 +32,12 @@ import SvgEducation from '../../components/icons/education';
 import SvgRent from '../../components/icons/rent';
 import SvgSqft from '../../components/icons/sqft';
 import SvgPropertyType from '../../components/icons/property-type';
-import { NAVBAR_HEIGHT } from '../../constants/theme';
 import SvgEthnicity from '../../components/icons/ethnicity';
+import { NAVBAR_HEIGHT } from '../../constants/theme';
+import { Personas } from '../../generated/Personas';
 import { Ethnicity } from '../../generated/Ethnicity';
+import { Commute } from '../../generated/Commute';
+import { Education } from '../../generated/Education';
 
 export default function SideBarFilters() {
   let { filters, onFilterChange } = useContext(TenantMatchesContext);

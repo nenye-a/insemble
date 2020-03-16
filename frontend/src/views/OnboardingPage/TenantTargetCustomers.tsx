@@ -58,7 +58,7 @@ export default function TenantTargetCustomers(props: Props) {
   let [noMinDaytimePopulationPreference, setNoMinDaytimePopulationPreference] = useState(
     targetCustomers.noMinDaytimePopulationPreference
   );
-  let [noEducationsPreference, setNoEducationsPrefence] = useState(
+  let [noEducationsPreference, setNoEducationsPreference] = useState(
     targetCustomers.noEducationsPreference
   );
   let [selectedPersonas, setSelectedPersonas] = useState<Array<string>>(
@@ -183,7 +183,7 @@ export default function TenantTargetCustomers(props: Props) {
             hasPreference={!noEducationsPreference}
             onNoPreferencePress={() => {
               setSelectedEducations([]);
-              setNoEducationsPrefence(!noEducationsPreference);
+              setNoEducationsPreference(!noEducationsPreference);
             }}
             title="Education"
             allOptions={
@@ -193,6 +193,9 @@ export default function TenantTargetCustomers(props: Props) {
             }
             selectedOptions={selectedEducations}
             onSelect={(option: string) => {
+              if (noEducationsPreference) {
+                setNoEducationsPreference(false);
+              }
               setSelectedEducations([...selectedEducations, option]);
             }}
             onUnSelect={(option: string) => {
@@ -219,6 +222,9 @@ export default function TenantTargetCustomers(props: Props) {
             allOptions={personaData.personas}
             selectedOptions={selectedPersonas}
             onSelect={(option: string) => {
+              if (noPersonasPreference) {
+                setNoPersonasPreference(false);
+              }
               setSelectedPersonas([...selectedPersonas, option]);
             }}
             onUnSelect={(option: string) => {
