@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export const GET_PROPERTY_MATCHES_DATA = gql`
-  query PropertyMatches($propertyId: String!) {
-    propertyMatches(propertyId: $propertyId) {
+  query PropertyMatches($propertyId: String!, $spaceId: String!) {
+    propertyMatches(propertyId: $propertyId, spaceId: $spaceId) {
       brandId
       pictureUrl
       name

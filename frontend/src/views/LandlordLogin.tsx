@@ -11,19 +11,32 @@ import LandlordLanding from './LandlordLanding';
 export default function LandlordSignUp() {
   let history = useHistory();
   let noAccount = "Don't have an account?";
+  let noPassword = 'Forgot your password?';
   return (
     <Container>
       <LandlordLanding />
       <FormContainer>
         <TitleText>Landlord Log In</TitleText>
         <LoginForm role={Role.LANDLORD} />
-        <RowView>
+        <NoAccountContainer>
           <Text>{noAccount} </Text>
           <Button
             mode="transparent"
             text="Sign Up here"
             onPress={() => {
               history.push('/landlord/signup');
+            }}
+          />
+        </NoAccountContainer>
+        <RowView>
+          <Text>{noPassword} </Text>
+          <Button
+            mode="transparent"
+            text="Click here"
+            onPress={() => {
+              history.push('/forgot-password', {
+                role: Role.LANDLORD,
+              });
             }}
           />
         </RowView>
@@ -55,5 +68,8 @@ const RowView = styled(View)`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+`;
+
+const NoAccountContainer = styled(RowView)`
   margin: 24px 0 0 0;
 `;

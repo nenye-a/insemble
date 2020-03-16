@@ -2,11 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
-import { Card, Text, View, Button, TouchableOpacity } from '../core-ui';
+import { Card, Text, View, Button } from '../core-ui';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
 import LoginForm from './LoginForm';
 import { Role } from '../types/types';
-import { THEME_COLOR } from '../constants/colors';
 
 export default function Login() {
   let history = useHistory();
@@ -37,17 +36,19 @@ export default function Login() {
       </NoAccountContainer>
       <RowView>
         <Text>{noPassword} </Text>
-        <TouchableOpacity href="mailto:DELETED_EMAIL">
-          <Contact>Contact us</Contact>
-        </TouchableOpacity>
+        <Button
+          mode="transparent"
+          text="Click here"
+          onPress={() => {
+            history.push('/forgot-password', {
+              role: Role.TENANT,
+            });
+          }}
+        />
       </RowView>
     </Container>
   );
 }
-
-const Contact = styled(Text)`
-  color: ${THEME_COLOR};
-`;
 
 const RowView = styled(View)`
   flex-direction: row;
