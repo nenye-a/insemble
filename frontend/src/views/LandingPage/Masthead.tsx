@@ -24,6 +24,7 @@ const TopGradien = styled.div`
 const Content = styled.div`
   max-width: 740px;
   margin: 0 auto;
+  padding: 24px;
 `;
 
 type Props = {

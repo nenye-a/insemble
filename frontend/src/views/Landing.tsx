@@ -54,7 +54,7 @@ function Landing() {
     <View>
       <Masthead>
         <LogoView>
-          <InsembleLogo color={'white'} />
+          <InsembleLogo color="white" />
         </LogoView>
         <RowView>
           {id ? (
@@ -180,7 +180,6 @@ const LogIn = styled(Button)`
 `;
 
 const LogoView = styled(View)`
-  align-item: flex-start;
   position: absolute;
   top: 16px;
   left: 32px;
