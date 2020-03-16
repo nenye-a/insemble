@@ -51,7 +51,6 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
   let [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
   let [showGuide, setShowGuide] = useState(true);
   let [infoBoxHeight, setInfoBoxHeight] = useState<number>(0);
-  let [domReady, setDomReady] = useState(false);
 
   let infoRef = useRef<Element | undefined>();
   let mapRef = useRef<GoogleMap | null>(null);
@@ -74,8 +73,11 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
   };
 
   let onMapClick = async (latLng: LatLng) => {
+    // setMarkerPosition(null);
     let { lat, lng } = latLng;
-
+    // if (markerPosition) {
+    //   setMarkerPosition(null);
+    // }
     getLocation({
       variables: {
         brandId,
@@ -87,24 +89,12 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
       },
     });
     setMarkerPosition(latLng);
-    setDomReady(false);
   };
 
-  useEffect(() => {
-    let handlePreviewClickListener = (e: Event) => {
-      e.stopPropagation();
-      onPreviewClick();
-    };
-
-    if (infoRef.current && domReady) {
-      infoRef.current.addEventListener('click', handlePreviewClickListener);
-      return () => {
-        if (infoRef.current) {
-          infoRef.current.removeEventListener('click', handlePreviewClickListener);
-        }
-      };
-    }
-  });
+  let handlePreviewClickListener = (e: Event) => {
+    e.stopPropagation();
+    onPreviewClick();
+  };
 
   useEffect(() => {
     if (outsideBoundError) {
@@ -160,14 +150,17 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
               onDomReady={() => {
                 let infoBox = document.querySelector('.infoBox');
                 if (infoBox) {
-                  setDomReady(true);
                   infoRef.current = infoBox;
+                  infoRef.current.addEventListener('click', handlePreviewClickListener);
                   let infoBoxHeight = infoBox.getClientRects()[0].height;
                   setInfoBoxHeight(infoBoxHeight);
                 }
               }}
               onCloseClick={() => {
                 setMarkerPosition(null);
+              }}
+              onUnmount={() => {
+                infoRef.current?.removeEventListener('click', handlePreviewClickListener);
               }}
             >
               <LocationDetail
