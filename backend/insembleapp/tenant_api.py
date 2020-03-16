@@ -244,7 +244,7 @@ class TenantMatchAPI(AsynchronousAPI):
         response = {
             'status': status.HTTP_200_OK,
             'status_detail': "Success",
-            'tenant_id': str(match_id),
+            'match_id': str(match_id),
             'matching_properties': property_matches,
             'matching_locations': best_matches,
         }
@@ -500,186 +500,186 @@ class FastLocationDetailsAPI(AsynchronousAPI):
         match_id = validated_params['match_id']
         property_id = validated_params['property_id'] if 'property_id' in validated_params else None
 
-        if property_id:
-            this_property = utils.DB_PROPERTY.find_one({'_id': ObjectId(property_id)})
-            this_location = utils.DB_property.find_one({'_id': this_property['location_id']})
-            target_lat = this_location['location']['coordinates'][1]
-            target_lng = this_location['location']['coordinates'][0]
-        else:
-            target_lat = round(validated_params["target_location"]["lat"], 6)
-            target_lng = round(validated_params["target_location"]["lng"], 6)
-            # grab the nearby stores asynchronously
-            n_process, nearby = TenantMatchAPI.get_nearby_places.delay(target_lat, target_lng), []
+        # grab match record if exists. Grab from legacy database if not in latest database.
+        match = utils.DB_LOCATION_MATCHES.find_one({'_id': ObjectId(match_id)}, {'location_match_values': 0})
+
+        if match:  # if generating the details using the latest schema
+            if property_id:
+                this_property = utils.DB_PROPERTY.find_one({'_id': ObjectId(property_id)})
+                this_location = utils.DB_property.find_one({'_id': this_property['location_id']})
+                target_lat = this_location['location']['coordinates'][1]
+                target_lng = this_location['location']['coordinates'][0]
+            else:
+                target_lat = round(validated_params["target_location"]["lat"], 6)
+                target_lng = round(validated_params["target_location"]["lng"], 6)
+                # grab the nearby stores asynchronously
+                n_process, nearby = TenantMatchAPI.get_nearby_places.delay(target_lat, target_lng), []
+                nearby_listener = self._celery_listener(n_process, nearby)
+                nearby_listener.start()
+
+                this_location = landlord_provider.build_location(target_lat, target_lng)
+                _, nearby = nearby_listener.join(), nearby[0]
+
+                this_location.update(nearby)
+                if '_id' in this_location:
+                    utils.DB_LOCATIONS.update({"_id": this_location['_id']}, this_location)
+                else:
+                    utils.DB_LOCATIONS.insert(this_location)
+
+            location_id = ObjectId(match['params']['location_id'])
+            tenant_location = utils.DB_LOCATIONS.find_one({'_id': location_id})
+
+            top_personas = provider.get_matching_personas(tenant_location['spatial_psychographics']["1mile"],
+                                                          this_location['spatial_psychographics']["1mile"])
+
+            tenant_demographics = self.convert_demographics(tenant_location['environics_demographics'])
+            location_demographics = self.convert_demographics(this_location['environics_demographics'])
+
+            demographics = {}
+            demographics["1mile"] = provider.combine_demographics(tenant_demographics["1mile"], location_demographics["1mile"])
+            demographics["3mile"] = provider.combine_demographics(tenant_demographics["3mile"], location_demographics["3mile"])
+            demographics["5mile"] = provider.combine_demographics(tenant_demographics["5mile"], location_demographics["5mile"])
+
+            try:
+                commute = demographics["1mile"].pop("commute") if 'commute' in demographics["1mile"] else None
+                demographics["3mile"].pop("commute") if 'commute' in demographics["1mile"] else None
+                demographics["5mile"].pop("commute") if 'commute' in demographics["1mile"] else None
+            except Exception:
+                commute = None
+
+            # TODO: factor in similar categories
+            nearby = self.obtain_nearby({}, this_location, parallel_process=False)
+
+            key_facts = this_location['arcgis_demographics']['1mile'] or {}
+            if key_facts != {}:
+                key_facts.pop('DaytimeWorkingPop')
+                key_facts.pop('DaytimeResidentPop')
+
+            key_facts['num_metro'] = len(this_location['nearby_subway_station'] if 'neaby_subway_station' in this_location else google.nearby(
+                target_lat, target_lng, 'subway_station', radius=1))
+            key_facts['num_universities'] = len(this_location['nearby_university'] if 'nearby_university' in this_location else google.nearby(
+                target_lat, target_lng, 'university', radius=1))
+            key_facts['num_hospitals'] = len(this_location['nearby_hospitals'] if 'nearby_hospitals' in this_location else google.nearby(
+                target_lat, target_lng, 'hospital', radius=1))
+            key_facts['nearby_apartments'] = len(this_location['nearby_apartments'] if 'nearby_apartments' in this_location else google.search(
+                target_lat, target_lng, 'apartments', radius=1))
+
+            vector_id = provider.get_location_details({'lat': target_lat, 'lng': target_lng})['vector_id']
+            match_value = provider.get_match_value_from_id(match_id, vector_id)
+
+            response = {
+                'status': 200,
+                'status_detail': 'Success',
+                'result': {
+                    'match_value': match_value,
+                    'affinities': {
+                        # hardcoded false for now, will be made into values soon
+                        'growth': False,
+                        'demographics': False,
+                        'personas': False,
+                        'ecosystem': False
+                    },
+                    'key_facts': key_facts,
+                    'commute': commute,
+                    'top_personas': top_personas,
+                    'demographics1': demographics["1mile"],
+                    'demographics3': demographics["3mile"],
+                    'demographics5': demographics["5mile"],
+                    'nearby': nearby
+                }
+            }
+
+            return Response(response, status=status.HTTP_200_OK)
+        else:  # PROCESS THINGS WITH PREVIOUS META
+
+            # get the tenant details
+            tenant = provider.get_tenant_details(validated_params["match_id"])
+            if not tenant:
+                return Response({
+                    'status': status.HTTP_404_NOT_FOUND,
+                    'status_detail': ['Match was not found, please make sure to check the id.']
+                }, status=status.HTTP_404_NOT_FOUND)
+
+            # get the location and property detials
+            if 'property_id' in validated_params:
+                location = provider.get_property(validated_params["property_id"])
+            else:
+                print(validated_params)
+                location = provider.get_location_details(validated_params["target_location"])
+
+                if not location:
+                    pass
+
+            # get the match value
+            match_value = provider.get_match_value_from_id(validated_params["match_id"], location['vector_id'], latest=False)
+
+            # stringify the objectIds
+            tenant["_id"] = str(tenant["_id"]) if '_id' in tenant else None
+            location["_id"] = str(location["_id"]) if "_id" in location else None
+            location["vector_id"] = str(location["vector_id"]) if "vector_id" in location else None
+
+            # get the demographic details asynchronously
+            d_process, tenant_demographics = self.obtain_demographics.delay(tenant, parallel_process=True), []
+            tenant_demo_listener = self._celery_listener(d_process, tenant_demographics)
+            tenant_demo_listener.start()
+            d_process, location_demographics = self.obtain_demographics.delay(location, parallel_process=True), []
+            location_demo_listener = self._celery_listener(d_process, location_demographics)
+            location_demo_listener.start()
+
+            # obtain the key facts
+            key_facts_demo = self.obtain_key_demographics(location)
+            key_facts_nearby = self.obtain_key_nearby(location, key_facts_demo['mile'])
+            key_facts_demo.update({
+                "num_metro": len(key_facts_nearby["nearby_metro"]),
+                "num_universities": len(key_facts_nearby["nearby_university"]),
+                "num_hospitals": len(key_facts_nearby["nearby_hospitals"]),
+                "num_apartments": len(key_facts_nearby["nearby_apartments"])
+            })
+            key_facts = key_facts_demo
+            location["nearby_metro"] = key_facts_nearby["nearby_metro"]
+
+            # get the nearby locations
+            n_process, nearby = self.obtain_nearby.delay(tenant, location, parallel_process=True), []
             nearby_listener = self._celery_listener(n_process, nearby)
             nearby_listener.start()
 
-            this_location = landlord_provider.build_location(target_lat, target_lng)
+            # get the psychographics
+            top_personas = provider.get_matching_personas(location['psycho1'], tenant['psycho1'])
+
+            # process the demogrpahics
+            _, tenant_demographics = tenant_demo_listener.join(), tenant_demographics[0]
+            _, location_demographics = location_demo_listener.join(), location_demographics[0]
+
+            # get the commute details
+            commute = location_demographics[str(key_facts_demo['mile']) + 'mile']['commute']
+            demographics = self.combine_demographics(tenant_demographics, location_demographics)
+
+            # grab the nearby details
             _, nearby = nearby_listener.join(), nearby[0]
 
-            this_location.update(nearby)
-            if '_id' in this_location:
-                utils.DB_LOCATIONS.update({"_id": this_location['_id']}, this_location)
-            else:
-                utils.DB_LOCATIONS.insert(this_location)
-
-        match = utils.DB_LOCATION_MATCHES.find_one({'_id': ObjectId(match_id)}, {'location_match_values': 0})
-        if not match:
-            return Response({
-                'status': status.HTTP_404_NOT_FOUND,
-                'status_detail': ['Match was not found, please make sure to check the id.']
-            }, status=status.HTTP_404_NOT_FOUND)
-
-        location_id = ObjectId(match['params']['location_id'])
-        tenant_location = utils.DB_LOCATIONS.find_one({'_id': location_id})
-
-        top_personas = provider.get_matching_personas(tenant_location['spatial_psychographics']["1mile"],
-                                                      this_location['spatial_psychographics']["1mile"])
-
-        tenant_demographics = self.convert_demographics(tenant_location['environics_demographics'])
-        location_demographics = self.convert_demographics(this_location['environics_demographics'])
-
-        demographics = {}
-        demographics["1mile"] = provider.combine_demographics(tenant_demographics["1mile"], location_demographics["1mile"])
-        demographics["3mile"] = provider.combine_demographics(tenant_demographics["3mile"], location_demographics["3mile"])
-        demographics["5mile"] = provider.combine_demographics(tenant_demographics["5mile"], location_demographics["5mile"])
-
-        try:
-            commute = demographics["1mile"].pop("commute") if 'commute' in demographics["1mile"] else None
-            demographics["3mile"].pop("commute") if 'commute' in demographics["1mile"] else None
-            demographics["5mile"].pop("commute") if 'commute' in demographics["1mile"] else None
-        except Exception:
-            commute = None
-
-        # TODO: factor in similar categories
-        nearby = self.obtain_nearby({}, this_location, parallel_process=False)
-
-        key_facts = this_location['arcgis_demographics']['1mile'] or {}
-        if key_facts != {}:
-            key_facts.pop('DaytimeWorkingPop')
-            key_facts.pop('DaytimeResidentPop')
-
-        key_facts['num_metro'] = len(this_location['nearby_subway_station'] if 'neaby_subway_station' in this_location else google.nearby(
-            target_lat, target_lng, 'subway_station', radius=1))
-        key_facts['num_universities'] = len(this_location['nearby_university'] if 'nearby_university' in this_location else google.nearby(
-            target_lat, target_lng, 'university', radius=1))
-        key_facts['num_hospitals'] = len(this_location['nearby_hospitals'] if 'nearby_hospitals' in this_location else google.nearby(
-            target_lat, target_lng, 'hospital', radius=1))
-        key_facts['nearby_apartments'] = len(this_location['nearby_apartments'] if 'nearby_apartments' in this_location else google.search(
-            target_lat, target_lng, 'apartments', radius=1))
-
-        vector_id = provider.get_location_details({'lat': target_lat, 'lng': target_lng})['vector_id']
-        match_value = provider.get_match_value_from_id(match_id, vector_id)
-
-        response = {
-            'status': 200,
-            'status_detail': 'Success',
-            'result': {
-                'match_value': match_value,
-                'affinities': {
-                    # hardcoded false for now, will be made into values soon
-                    'growth': False,
-                    'demographics': False,
-                    'personas': False,
-                    'ecosystem': False
-                },
-                'key_facts': key_facts,
-                'commute': commute,
-                'top_personas': top_personas,
-                'demographics1': demographics["1mile"],
-                'demographics3': demographics["3mile"],
-                'demographics5': demographics["5mile"],
-                'nearby': nearby
+            response = {
+                'status': 200,
+                'status_detail': 'Success',
+                'result': {
+                    'match_value': match_value,
+                    'affinities': {
+                        # hardcoded false for now, will be made into values soon
+                        'growth': False,
+                        'demographics': False,
+                        'personas': False,
+                        'ecosystem': False
+                    },
+                    'key_facts': key_facts,
+                    'commute': commute,
+                    'top_personas': top_personas,
+                    'demographics1': demographics["1mile"],
+                    'demographics3': demographics["3mile"],
+                    'demographics5': demographics["5mile"],
+                    'nearby': nearby
+                }
             }
-        }
 
-        return Response(response, status=status.HTTP_200_OK)
-
-        # # OLDDDDDDDDDDDDDDD
-
-        # # GET THE TENANT DETAILS
-        # tenant = provider.get_tenant_details(validated_params["tenant_id"])
-
-        # # GET THE LOCATION OR PROPERTY DETAILS
-        # if 'property_id' in validated_params:
-        #     location = provider.get_property(validated_params["property_id"])
-        # else:
-        #     print(validated_params)
-        #     location = provider.get_location_details(validated_params["target_location"])
-
-        #     if not location:
-        #         # TODO: get_all_the_details anyway
-        #         # kick off our super slow function - ()
-        #         pass
-
-        # # GET THE MATCH VALUE
-        # match_value = provider.get_match_value_from_id(validated_params["tenant_id"], location['vector_id'])
-
-        # # stringify the objectIds
-        # tenant["_id"] = str(tenant["_id"]) if '_id' in tenant else None
-        # location["_id"] = str(location["_id"]) if "_id" in location else None
-        # location["vector_id"] = str(location["vector_id"]) if "vector_id" in location else None
-
-        # # GET THE DEMOGRAPHIC DETAILS (asyc)
-        # d_process, tenant_demographics = self.obtain_demographics.delay(tenant, parallel_process=True), []
-        # tenant_demo_listener = self._celery_listener(d_process, tenant_demographics)
-        # tenant_demo_listener.start()
-        # d_process, location_demographics = self.obtain_demographics.delay(location, parallel_process=True), []
-        # location_demo_listener = self._celery_listener(d_process, location_demographics)
-        # location_demo_listener.start()
-
-        # # Obtain the keyfacts
-        # key_facts_demo = self.obtain_key_demographics(location)
-        # key_facts_nearby = self.obtain_key_nearby(location, key_facts_demo['mile'])
-        # key_facts_demo.update({
-        #     "num_metro": len(key_facts_nearby["nearby_metro"]),
-        #     "num_universities": len(key_facts_nearby["nearby_university"]),
-        #     "num_hospitals": len(key_facts_nearby["nearby_hospitals"]),
-        #     "num_apartments": len(key_facts_nearby["nearby_apartments"])
-        # })
-        # key_facts = key_facts_demo
-        # location["nearby_metro"] = key_facts_nearby["nearby_metro"]
-
-        # # GET THE NEARBY LOCATIONS (async)
-        # n_process, nearby = self.obtain_nearby.delay(tenant, location, parallel_process=True), []
-        # nearby_listener = self._celery_listener(n_process, nearby)
-        # nearby_listener.start()
-
-        # # GET THE PSYCHOGRAPHICS
-        # top_personas = provider.get_matching_personas(location['psycho1'], tenant['psycho1'])
-
-        # # grab the demographic details
-        # _, tenant_demographics = tenant_demo_listener.join(), tenant_demographics[0]
-        # _, location_demographics = location_demo_listener.join(), location_demographics[0]
-        # # get the commute details breifly
-        # commute = location_demographics[str(key_facts_demo['mile']) + 'mile']['commute']
-        # demographics = self.combine_demographics(tenant_demographics, location_demographics)
-
-        # # grab the nearby details
-        # _, nearby = nearby_listener.join(), nearby[0]
-
-        # response = {
-        #     'status': 200,
-        #     'status_detail': 'Success',
-        #     'result': {
-        #         'match_value': match_value,
-        #         'affinities': {
-        #             # hardcoded false for now, will be made into values soon
-        #             'growth': False,
-        #             'demographics': False,
-        #             'personas': False,
-        #             'ecosystem': False
-        #         },
-        #         'key_facts': key_facts,
-        #         'commute': commute,
-        #         'top_personas': top_personas,
-        #         'demographics1': demographics["1mile"],
-        #         'demographics3': demographics["3mile"],
-        #         'demographics5': demographics["5mile"],
-        #         'nearby': nearby
-        #     }
-        # }
-
-        # return Response(response, status=status.HTTP_200_OK)
+            return Response(response, status=status.HTTP_200_OK)
 
     def obtain_key_demographics(self, place):
         """
