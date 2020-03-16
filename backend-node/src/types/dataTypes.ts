@@ -305,3 +305,25 @@ export type TenantDetail = {
     demographics3: Demographics<DemographicTenantDetailStat>;
   };
 };
+
+export type GooglePlace = {
+  formatted_address: string;
+  geometry: {
+    location: {
+      lat: number;
+      lng: number;
+    };
+    viewport: {
+      northeast: {
+        lat: number;
+        lng: number;
+      };
+      southwest: {
+        lat: number;
+        lng: number;
+      };
+    };
+  };
+  id: string;
+  name: string;
+};
