@@ -52,6 +52,7 @@ export default function RelevantConsumerCard(props: Props) {
 
 const Container = styled(Card)`
   margin: 0 4px;
+  -webkit-min-logical-width: 250px;
   &:first-child {
     margin-left: 0;
   }

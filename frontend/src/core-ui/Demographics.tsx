@@ -160,8 +160,8 @@ export default function Graphic(props: Props) {
       </RowedView> */}
       </RowedView>
       <ChartContainer>
-        <Chart
-          width={700}
+        <BarChart
+          width={900} // TODO: get width based on device's width
           height={400}
           data={dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey]}
         >
@@ -200,7 +200,7 @@ export default function Graphic(props: Props) {
             label={renderCustomSecondBarLabel}
             radius={[5, 5, 0, 0]}
           />
-        </Chart>
+        </BarChart>
       </ChartContainer>
 
       <CarouselFilter
@@ -242,10 +242,6 @@ const Segmented = styled(SegmentedControl)`
 const Title = styled(Text)`
   font-size: ${FONT_SIZE_MEDIUM};
   font-weight: ${FONT_WEIGHT_BOLD};
-`;
-
-const Chart = styled(BarChart)`
-  margin: 56px 0 0 0;
 `;
 
 const LabelText = styled.text`
