@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
 
 import { View, Text as BaseText } from '../../core-ui';
@@ -8,6 +8,8 @@ import keyDetailsImg from '../../assets/images/explore-key-details.png';
 import topLinePropertiesImg from '../../assets/images/top-line-properties.png';
 import { THEME_COLOR, WHITE } from '../../constants/colors';
 import { FONT_WEIGHT_BOLD } from '../../constants/theme';
+import { useViewport } from '../../utils';
+import { VIEWPORT_TYPE } from '../../constants/viewports';
 
 const FEATURES = [
   {
@@ -37,7 +39,19 @@ type FeatureProp = {
   index: number;
 };
 
-type FeatureContainerProps = ViewProps & {
+type ViewWithViewportType = {
+  isDesktop: boolean;
+};
+
+type ImageWithViewportType = ComponentProps<'img'> & {
+  isDesktop: boolean;
+};
+
+type TextWithViewportType = TextProps & {
+  isDesktop: boolean;
+};
+
+type FeatureContainerProps = ViewWithViewportType & {
   index: number;
 };
 
@@ -53,21 +67,29 @@ export default function Features() {
 
 function Feature(props: FeatureProp) {
   let { title, subtitle, img, isOdd, index } = props;
+  let { viewportType } = useViewport();
+  let isDesktop = viewportType === VIEWPORT_TYPE.DESKTOP;
   let description = (
     // giving padding left 3% because the photo has its own margin. so we need to push the text a bit.
     <DescriptionContainer
       key={`featureDescription${index.toString()}`}
       flex
       style={isOdd ? { paddingLeft: '3%' } : undefined}
+      isDesktop={isDesktop}
     >
-      <Title>{title}</Title>
-      <Subtitle>{subtitle}</Subtitle>
+      <Title isDesktop={isDesktop}>{title}</Title>
+      <Subtitle isDesktop={isDesktop}>{subtitle}</Subtitle>
     </DescriptionContainer>
   );
-  let photo = <Image key={`featureImg${index.toString()}`} src={img} />;
+  let photo = <Image key={`featureImg${index.toString()}`} src={img} isDesktop={isDesktop} />;
 
   let feature = [description, photo];
-  return <FeatureContainer index={index}>{isOdd ? feature : feature.reverse()}</FeatureContainer>;
+  let content = isDesktop && isOdd ? feature : feature.reverse();
+  return (
+    <FeatureContainer index={index} isDesktop={isDesktop}>
+      {content}
+    </FeatureContainer>
+  );
 }
 
 const Container = styled(View)`
@@ -76,13 +98,21 @@ const Container = styled(View)`
 `;
 
 const FeatureContainer = styled(View)<FeatureContainerProps>`
-  flex-direction: row;
+  ${(props) =>
+    !props.isDesktop
+      ? css`
+          align-items: center;
+          flex-direction: column;
+        `
+      : css`
+          flex-direction: row;
+        `}
   ${(props) =>
     props.index === 0
       ? css`
           margin-top: -100px;
         `
-      : props.index === 2
+      : props.index === 2 && props.isDesktop
       ? css`
           margin-bottom: -100px;
         `
@@ -92,20 +122,29 @@ const Text = styled(BaseText)`
   color: ${WHITE};
 `;
 
-const Title = styled(Text)`
+const Title = styled(Text)<TextWithViewportType>`
   font-size: 32px;
   font-weight: ${FONT_WEIGHT_BOLD};
+  text-align: ${(props) => !props.isDesktop && 'center'};
 `;
 
-const Subtitle = styled(Text)`
+const Subtitle = styled(Text)<TextWithViewportType>`
   font-size: 20px;
+  text-align: ${(props) => !props.isDesktop && 'center'};
 `;
 
-const Image = styled.img`
-  width: 60%;
+const Image = styled.img<ImageWithViewportType>`
+  width: ${(props) => (props.isDesktop ? '60%' : '80%')};
   object-fit: contain;
 `;
 
-const DescriptionContainer = styled(View)`
-  padding-top: 12%;
+const DescriptionContainer = styled(View)<ViewWithViewportType>`
+  ${(props) =>
+    props.isDesktop
+      ? css`
+          padding-top: 12%;
+        `
+      : css`
+          padding-bottom: 12%;
+        `}
 `;
