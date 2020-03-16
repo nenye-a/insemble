@@ -5,6 +5,7 @@ export let Property = objectType({
   definition(t) {
     t.model.id();
     t.model.businessType();
+    t.model.propertyId();
     t.model.categories();
     t.model.exclusive();
     t.model.location();
