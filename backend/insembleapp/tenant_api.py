@@ -469,18 +469,19 @@ class FastLocationDetailsAPI(AsynchronousAPI):
                     ... many more
                 ],
             },
-            property_details: {                                                 (only provided if property_details provided)
-                3D_tour: url, (matterport media)                                (provided only when available)
-                main_photo: url,
-                sqft: int,
-                photos: list[urls],
-                summary: {
-                    price/sqft: int,
-                    type: string,
-                    condition: string
-                },
-                description: string
-            }
+            ## FOllowing to be removed pending team answer
+            # property_details: {                                                 (only provided if property_details provided)
+            #     3D_tour: url, (matterport media)                                (provided only when available)
+            #     main_photo: url,
+            #     sqft: int,
+            #     photos: list[urls],
+            #     summary: {
+            #         price/sqft: int,
+            #         type: string,
+            #         condition: string
+            #     },
+            #     description: string
+            # }
         }
 
     """
