@@ -58,3 +58,5 @@ export * from './message/conversationsQuery';
 export * from './message/conversationQuery';
 export * from './message/sendMessageMutation';
 export * from './message/createConversationMutation';
+
+export * from './search/placeQuery';
