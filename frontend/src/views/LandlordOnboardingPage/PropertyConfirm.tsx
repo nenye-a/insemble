@@ -2,7 +2,7 @@ import React, { useState, Dispatch } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
-import { View, RadioGroup, Label, Checkbox, Form, Button } from '../../core-ui';
+import { View, Label, Checkbox, Form, Button } from '../../core-ui';
 import { LocationInput } from '../../components';
 import { SelectedLocation } from '../../components/LocationInput';
 import { FONT_SIZE_NORMAL } from '../../constants/theme';
@@ -15,11 +15,13 @@ type Props = {
   state: LandlordOnboardingState;
 };
 
+const USER_RELATIONS = ['Owner', 'Representative Agent'];
+
 export default function PropertyConfirm(props: Props) {
   let history = useHistory();
   let { state: landlordOnboardingState, dispatch } = props;
   let { confirmLocation } = landlordOnboardingState;
-  let [selectedRelation, setSelectedRelation] = useState(confirmLocation?.userRelation || '');
+  let [selectedRelation, setSelectedRelation] = useState(confirmLocation?.userRelations || []);
   let [location, setLocation] = useState<SelectedLocation>(
     confirmLocation?.physicalAddress || { lat: '', lng: '', address: '', id: '', name: '' }
   );
@@ -44,7 +46,7 @@ export default function PropertyConfirm(props: Props) {
         confirmLocation: {
           ...landlordOnboardingState.confirmLocation,
           physicalAddress: location,
-          userRelation: selectedRelation,
+          userRelations: selectedRelation,
           propertyType: selectedType,
         },
       },
@@ -64,16 +66,30 @@ export default function PropertyConfirm(props: Props) {
           containerStyle={containerStyle}
         />
 
-        <RadioGroup
-          label="What is your relation to this property?"
-          name="Marketing Preference"
-          options={['Owner', 'Representative Agent']}
-          selectedOption={selectedRelation}
-          onSelect={(item) => {
-            setSelectedRelation(item);
-          }}
-          radioItemProps={{ style: { marginBottom: 9 } }}
-        />
+        <LabelText text="What is your relation to this property?" />
+        {USER_RELATIONS.map((option, index) => {
+          let isChecked = selectedRelation.includes(option);
+          return (
+            <Checkbox
+              key={index}
+              size="18px"
+              title={option}
+              titleProps={{ style: { fontSize: FONT_SIZE_NORMAL } }}
+              isChecked={isChecked}
+              onPress={() => {
+                if (isChecked) {
+                  let newSelectedRelation = selectedRelation.filter(
+                    (item: string) => item !== option
+                  );
+                  setSelectedRelation(newSelectedRelation);
+                } else {
+                  setSelectedRelation([...selectedRelation, option]);
+                }
+              }}
+              style={{ lineHeight: 2 }}
+            />
+          );
+        })}
         <LabelText text="What type of property is this?" />
         {SPACES_TYPE.map((option, index) => {
           let isChecked = selectedType.includes(option);

@@ -3,7 +3,7 @@ import { FileWithPreview } from '../core-ui/Dropzone';
 import { MarketingPreference } from '../generated/globalTypes';
 
 type ConfirmLocation = {
-  userRelation: string;
+  userRelations: Array<string>;
   propertyType?: Array<string>;
   physicalAddress?: SelectedLocation;
   marketingPreference: MarketingPreference;
@@ -59,7 +59,7 @@ export type Action =
 export let landlordOnboardingInitialState = {
   canPressNext: false,
   confirmLocation: {
-    userRelation: '',
+    userRelations: [],
     marketingPreference: MarketingPreference.PUBLIC,
   },
   confirmTenant: {
