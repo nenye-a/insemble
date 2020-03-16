@@ -1,17 +1,25 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+
 import { View, Text, Button } from '../core-ui';
 import LandlordLanding from './LandlordLanding';
 import SignUpForm from './SignUpPage/SignUpForm';
 import { Role } from '../types/types';
 import { WHITE, THEME_COLOR } from '../constants/colors';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../constants/theme';
+import { useViewport } from '../utils';
+import { VIEWPORT_TYPE } from '../constants/viewports';
+
+type ViewWithViewportType = ViewProps & {
+  isDesktop: boolean;
+};
 
 export default function LandlordSignUp() {
   let history = useHistory();
+  let { viewportType } = useViewport();
   return (
-    <Container>
+    <Container isDesktop={viewportType === VIEWPORT_TYPE.DESKTOP}>
       <LandlordLanding />
       <RightContainer flex>
         <TitleText>Landlord Sign Up</TitleText>
@@ -31,9 +39,8 @@ export default function LandlordSignUp() {
   );
 }
 
-const Container = styled(View)`
-  flex-direction: row;
-  height: 100vh;
+const Container = styled(View)<ViewWithViewportType>`
+  flex-direction: ${(props) => (props.isDesktop ? 'row' : 'column')};
 `;
 
 const SignUpRowView = styled(View)`
@@ -44,7 +51,7 @@ const SignUpRowView = styled(View)`
 
 const RightContainer = styled(View)`
   justify-content: center;
-  padding: 10px 50px 0 50px;
+  padding: 10px 50px;
   background-color: ${WHITE};
 `;
 const TitleText = styled(Text)`

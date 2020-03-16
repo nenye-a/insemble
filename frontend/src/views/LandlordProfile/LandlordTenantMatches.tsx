@@ -110,7 +110,7 @@ const TenantCard = styled(TouchableOpacity)<TenantCardProps>`
           width: 100%;
           margin: 6px 0;
         `}
-  height: 234px;
+  height: fit-content;
   box-shadow: ${(props) => props.isInterested && `0px 0px 10px 0px ${SECONDARY_COLOR}`};
 `;
 
