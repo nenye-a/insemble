@@ -38,11 +38,15 @@ export function getDemographicsOptionsAndPrefilledValues(
   return demographics.map((item) => {
     switch (item.name) {
       case DEMOGRAPHICS_CATEGORIES.income: {
-        selectedValues = minIncome && maxIncome ? [minIncome.toString(), maxIncome.toString()] : [];
+        selectedValues =
+          minIncome != null && maxIncome != null
+            ? [minIncome.toString(), maxIncome.toString()]
+            : [];
         break;
       }
       case DEMOGRAPHICS_CATEGORIES.age: {
-        selectedValues = minAge && maxAge ? [minAge.toString(), maxAge.toString()] : [];
+        selectedValues =
+          minAge != null && maxAge != null ? [minAge.toString(), maxAge.toString()] : [];
         break;
       }
       case DEMOGRAPHICS_CATEGORIES.personas: {

@@ -147,21 +147,21 @@ export default function MainMap() {
         case DEMOGRAPHICS_CATEGORIES.income: {
           affectedDemographicsState = {
             minIncome: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[0]) : null,
-            maxIncome: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[1]) : null,
+            maxIncome: !isNaN(Number(selectedValues[1])) ? Number(selectedValues[1]) : null,
           };
           break;
         }
         case DEMOGRAPHICS_CATEGORIES.age: {
           affectedDemographicsState = {
             minAge: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[0]) : null,
-            maxAge: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[1]) : null,
+            maxAge: !isNaN(Number(selectedValues[1])) ? Number(selectedValues[1]) : null,
           };
           break;
         }
         case PROPERTIES_CATEGORIES.rent: {
           affectedPropertyState = {
             minRent: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[0]) : null,
-            maxRent: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[1]) : null,
+            maxRent: !isNaN(Number(selectedValues[1])) ? Number(selectedValues[1]) : null,
           };
 
           break;

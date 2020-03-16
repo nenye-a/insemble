@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { View, TouchableOpacity, Text } from '../../core-ui';
 import { THEME_COLOR, BACKGROUND_COLOR, WHITE, TEXT_COLOR } from '../../constants/colors';
+import { DEFAULT_BORDER_RADIUS } from '../../constants/theme';
 
 type Props = {
   selectedTabIndex: number;
@@ -50,7 +51,7 @@ type SegmentProps = ComponentProps<typeof TouchableOpacity> & {
 
 const HorizontalView = styled(View)`
   flex-direction: row;
-  widht: 100%;
+  width: 100%;
 `;
 
 const TenantMatchSegment = styled(TouchableOpacity)<SegmentProps>`
@@ -58,6 +59,7 @@ const TenantMatchSegment = styled(TouchableOpacity)<SegmentProps>`
   height: 36px;
   align-items: center;
   justify-content: center;
+  border-top-left-radius: ${DEFAULT_BORDER_RADIUS};
   &:focus {
     outline: none;
   }
@@ -75,6 +77,9 @@ const TabSegment = styled(TouchableOpacity)<SegmentProps>`
   justify-content: center;
   &:focus {
     outline: none;
+  }
+  &:last-child {
+    border-top-right-radius: ${DEFAULT_BORDER_RADIUS};
   }
   background-color: ${(props) => (props.isActive ? WHITE : BACKGROUND_COLOR)};
 `;
