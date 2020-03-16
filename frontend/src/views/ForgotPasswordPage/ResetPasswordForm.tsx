@@ -16,20 +16,20 @@ import {
 import {
   VerifyResetPasswordTenant,
   VerifyResetPasswordTenantVariables,
-} from '../generated/VerifyResetPasswordTenant';
+} from '../../generated/VerifyResetPasswordTenant';
 import {
   VerifyResetPasswordLandlord,
   VerifyResetPasswordLandlordVariables,
-} from '../generated/VerifyResetPasswordLandlord';
+} from '../../generated/VerifyResetPasswordLandlord';
 import {
   ResetPasswordTenant,
   ResetPasswordTenantVariables,
-} from '../generated/ResetPasswordTenant';
+} from '../../generated/ResetPasswordTenant';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
 import {
   ResetPasswordLandlord,
   ResetPasswordLandlordVariables,
-} from '../generated/ResetPasswordLandlord';
+} from '../../generated/ResetPasswordLandlord';
 
 type Props = {
   role: Role;
