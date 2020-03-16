@@ -161,7 +161,7 @@ export default function Graphic(props: Props) {
       </RowedView>
       <ChartContainer>
         <BarChart
-          width={900}
+          width={900} // TODO: get width based on device's width
           height={400}
           data={dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey]}
         >
