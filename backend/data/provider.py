@@ -69,7 +69,7 @@ def generate_matching_properties(location, params):
         address = result_property['address']
         lat = result_property['location']['coordinates'][1]
         lng = result_property['location']['coordinates'][0]
-        property_type = result_property['location']
+        property_type = result_property['property_type']
         for space in result_property['spaces']:
             space.update({
                 'address': address,
@@ -78,6 +78,10 @@ def generate_matching_properties(location, params):
                 'type': property_type,
                 'match_value': min(max(match['match_value'], 10), 95)
             })
+            space['rent'] = space.pop('asking_rent') if 'asking_rent' in space else None
+            space.pop('media') if 'media' in space else None
+            space.pop('divisible') if 'divisible' in space else None
+            space.pop('divisible_sqft') if 'divisible_sqft' in space else None
             space['space_id'] = str(space['space_id'])
             result_spaces.append(space)
 

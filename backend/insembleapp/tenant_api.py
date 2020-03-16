@@ -151,11 +151,18 @@ class TenantMatchAPI(AsynchronousAPI):
             ],
             matching_properties: [              (not provided if error occurs) - may be empty
                 {                               (all fields provided if matching properties provided)
-                    property_id: string
-                    address: string,
-                    rent:  int,
+                    space_id: string,
+                    space_condition: list[string],
+                    tenant_type: list[string],
+                    type: list[string],
+                    rent: 90000,
                     sqft: int,
-                    type: string,
+                    pro: boolean,
+                    visible: boolean,
+                    address: string,
+                    lat: float,
+                    lng: float,
+                    match_value: float
                 }
                 ... many more
             ],
