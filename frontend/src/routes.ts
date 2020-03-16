@@ -25,7 +25,6 @@ import LandlordProperties from './views/LandlordProperties';
 import LandlordPropertyDetails from './views/LandlordPropertyDetails';
 import ForgotPassword from './views/ForgotPassword';
 import ForgotPasswordSubmitted from './views/ForgotPasswordSubmitted';
-import NewPassword from './views/NewPassword';
 import LandlordMessageDetail from './views/LandlordMessageDetail';
 import ResetPasswordTenant from './views/ResetPasswordTenant';
 import ResetPasswordLandlord from './views/ResetPasswordLandlord';

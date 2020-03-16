@@ -4,14 +4,14 @@ import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
 import { useLazyQuery, useMutation } from '@apollo/react-hooks';
 
-import { Text, View, Button, Form, TextInput, LoadingIndicator, Alert } from '../core-ui';
-import { Role } from '../types/types';
+import { Text, View, Button, Form, TextInput, LoadingIndicator, Alert } from '../../core-ui';
+import { Role } from '../../types/types';
 import {
   VERIFY_RESET_PASSWORD_TENANT,
   VERIFY_RESET_PASSWORD_LANDLORD,
   RESET_PASSWORD_TENANT,
   RESET_PASSWORD_LANDLORD,
-} from '../graphql/queries/server/forgotPassword';
+} from '../../graphql/queries/server/forgotPassword';
 
 import {
   VerifyResetPasswordTenant,
@@ -25,7 +25,7 @@ import {
   ResetPasswordTenant,
   ResetPasswordTenantVariables,
 } from '../generated/ResetPasswordTenant';
-import OnboardingFooter from '../components/layout/OnboardingFooter';
+import OnboardingFooter from '../../components/layout/OnboardingFooter';
 import {
   ResetPasswordLandlord,
   ResetPasswordLandlordVariables,
