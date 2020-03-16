@@ -75,7 +75,7 @@ export let createConversationResolver: FieldResolver<
       ? await context.prisma.conversation.create({
           data: {
             brand: { connect: { id: brandId } },
-            property: { connect: { id: propertyId } },
+            property: { connect: { id: propertyOrBrand.id } },
             landlord: { connect: { id: userReceiver.id } },
             tenant: { connect: { id: userSender.id } },
             matchScore,
@@ -84,7 +84,7 @@ export let createConversationResolver: FieldResolver<
         })
       : await context.prisma.conversation.create({
           data: {
-            brand: { connect: { id: brandId } },
+            brand: { connect: { id: propertyOrBrand.id } },
             property: { connect: { id: propertyId } },
             landlord: { connect: { id: userSender.id } },
             tenant: { connect: { id: userReceiver.id } },
