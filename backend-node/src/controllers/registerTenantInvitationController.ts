@@ -29,19 +29,19 @@ export let emailRegisterTenantInvitationHandler = async (
     res.status(400).send('Invalid role');
     return;
   }
+  let targetBrands = await prisma.brand.findMany({
+    where: {
+      tenantId: pendingConversation.brandId,
+    },
+  });
+  if (targetBrands.length) {
+    res.status(400).send('Brand already exist');
+    return;
+  }
   let existUser = await prisma.tenantUser.findOne({
     where: { email: pendingConversation.receiverEmail },
   });
   if (existUser) {
-    let targetBrands = await prisma.brand.findMany({
-      where: {
-        tenantId: pendingConversation.brandId,
-      },
-    });
-    if (targetBrands.length) {
-      res.status(400).send('Brand already exist please reload your search');
-      return;
-    }
     // TODO: Auto complete brand Data
     let newBrand = await prisma.brand.create({
       data: {

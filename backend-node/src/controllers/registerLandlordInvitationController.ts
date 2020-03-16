@@ -29,20 +29,21 @@ export let emailRegisterLandlordInvitationHandler = async (
     res.status(400).send('Invalid role');
     return;
   }
+  let targetProperties = await prisma.property.findMany({
+    where: {
+      propertyId: pendingConversation.propertyId,
+    },
+  });
+
+  if (targetProperties.length) {
+    res.status(400).send('Property already exist');
+    return;
+  }
+
   let existUser = await prisma.landlordUser.findOne({
     where: { email: pendingConversation.receiverEmail },
   });
   if (existUser) {
-    let targetProperties = await prisma.property.findMany({
-      where: {
-        propertyId: pendingConversation.propertyId,
-      },
-    });
-
-    if (targetProperties.length) {
-      res.status(400).send('Property already exist');
-      return;
-    }
     // TODO: Auto complete property Data
     let newProperty = await prisma.property.create({
       data: {
