@@ -37,6 +37,12 @@ export default function LandlordLocationDetails() {
   ];
   let commuteData = data?.propertyDetails.commute;
   let personasData = data?.propertyDetails.topPersonas;
+  let totalValue = 0;
+  commuteData &&
+    commuteData.forEach((item) => {
+      totalValue = totalValue + item.value;
+    });
+
   return (
     <View>
       {loading ? (
@@ -50,7 +56,12 @@ export default function LandlordLocationDetails() {
         // {/* TODO: change to map */}
         <>
           <Iframe src={location} />
-          <KeyFacts keyFactsData={keyFactsData} commuteData={commuteData} withMargin={false} />
+          <KeyFacts
+            totalValue={totalValue}
+            keyFactsData={keyFactsData}
+            commuteData={commuteData}
+            withMargin={false}
+          />
           <ConsumerPersonaText>Local Consumer Personas (Psychographics)</ConsumerPersonaText>
           <Container flex>
             <CardsContainer>
