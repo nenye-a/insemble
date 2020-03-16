@@ -8,6 +8,7 @@ import { useGoogleMaps } from '../../utils';
 import LocationsInput from '../LandingPage/LocationsInput';
 import OnboardingCard from './OnboardingCard';
 import { TEXT_COLOR } from '../../constants/colors';
+import { FONT_WEIGHT_BOLD } from '../../constants/theme';
 
 export default function NewBrand() {
   let { isLoading } = useGoogleMaps();
@@ -71,6 +72,7 @@ const NoAddressButton = styled(Button)`
   align-self: flex-end;
   ${Text} {
     color: ${TEXT_COLOR};
+    font-weight: ${FONT_WEIGHT_BOLD};
   }
 `;
 const Container = styled(View)`
