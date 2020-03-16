@@ -5,7 +5,7 @@ export let PropertyInput = inputObjectType({
   definition(t) {
     t.string('name', { required: true });
     t.field('location', { type: 'LocationInput', required: true });
-    t.string('userRelation', { required: true });
+    t.string('userRelations', { required: true, list: true });
     t.string('propertyType', { list: true });
     t.field('marketingPreference', {
       type: 'MarketingPreference',

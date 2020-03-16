@@ -11,7 +11,7 @@ export let Property = objectType({
     t.model.marketingPreference();
     t.model.propertyType();
     t.model.name();
-    t.model.userRelation();
+    t.model.userRelations();
     t.model.space();
   },
 });
