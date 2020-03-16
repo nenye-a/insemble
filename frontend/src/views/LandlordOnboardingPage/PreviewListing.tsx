@@ -116,6 +116,7 @@ export default function PreviewListing(props: Props) {
       <PropertyDeepDiveHeader
         address={confirmLocation?.physicalAddress?.address || ''}
         // TODO: ask where to get this info
+        clickable={false}
         targetNeighborhood=""
       />
       <RowedView flex>
