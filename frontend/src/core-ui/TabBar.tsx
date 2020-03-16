@@ -27,7 +27,6 @@ export default function TabBar(props: Props) {
           </VerticalSegment>
         );
       })}
-      ;
     </VerticalView>
   ) : (
     <HorizontalView>

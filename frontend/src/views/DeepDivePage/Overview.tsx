@@ -18,10 +18,20 @@ export default function Overview() {
     data?.result?.demographics3,
     data?.result?.demographics5,
   ];
+  let totalValue = 0;
+  commuteData &&
+    commuteData.forEach((item) => {
+      totalValue = totalValue + item.value;
+    });
   return (
     <View>
       <MatchPercentageCard />
-      <KeyFacts commuteData={commuteData} keyFactsData={keyFactsData} withMargin />
+      <KeyFacts
+        totalValue={totalValue}
+        commuteData={commuteData}
+        keyFactsData={keyFactsData}
+        withMargin
+      />
       <RelevantConsumerPersonas personasData={personasData} />
       <Demographics demographicsData={demographicsData} withMargin={true} />
       <NearbyCard />

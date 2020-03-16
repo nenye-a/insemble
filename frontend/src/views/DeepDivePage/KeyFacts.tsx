@@ -9,7 +9,7 @@ import {
   FONT_SIZE_XXLARGE,
 } from '../../constants/theme';
 import { COMMUTE_CHART_COLORS, SECONDARY_COLOR } from '../../constants/colors';
-import { convertToKilos, roundDecimal, getKeyfactsValue } from '../../utils';
+import { roundDecimal, getKeyfactsValue } from '../../utils';
 import {
   LocationDetails_locationDetails_result_commute as LocationDetailsCommute,
   LocationDetails_locationDetails_result_keyFacts as LocationDetailsKeyFacts,
@@ -19,21 +19,20 @@ type Props = {
   withMargin?: boolean;
   keyFactsData?: LocationDetailsKeyFacts;
   commuteData?: Array<LocationDetailsCommute>;
+  totalValue: number;
 };
 
-function formatCommuteValue(value: number) {
-  let convertedValue = convertToKilos(value);
-  if (Number(convertedValue) < 1) {
+function formatCommuteValue(value: number, totalValue: number) {
+  let percentageValue = (value / totalValue) * 100;
+  if (Number(percentageValue) < 1) {
     return '<1%';
   }
-  {
-    let formattedValue = `${roundDecimal(convertedValue)}%`;
-    return formattedValue;
-  }
+  let formattedValue = `${roundDecimal(percentageValue)}%`;
+  return formattedValue;
 }
 
 export default function KeyFacts(props: Props) {
-  let { withMargin, keyFactsData, commuteData } = props;
+  let { withMargin, keyFactsData, commuteData, totalValue } = props;
   let [selectedIndex, setSelectedIndex] = useState<number>(0);
   let [pieSize, setPieSize] = useState<Array<number>>([]);
   let isCommuteSelected = selectedIndex === 1;
@@ -68,7 +67,7 @@ export default function KeyFacts(props: Props) {
       <>
         {commuteData && (
           <Value x={x} y={y} fill="black" textAnchor="middle" dominantBaseline="central">
-            {formatCommuteValue(commuteData[index].value)}
+            {formatCommuteValue(commuteData[index].value, totalValue)}
           </Value>
         )}
       </>
@@ -231,7 +230,7 @@ const Value = styled.text`
 const CommuteView = styled(View)`
   flex: 1;
   justify-content: space-between;
-  padding-left: 20px;
+  padding-left: 10px;
 `;
 
 const NumberText = styled(Text)`
