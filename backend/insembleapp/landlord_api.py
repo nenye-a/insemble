@@ -1,5 +1,5 @@
-from rest_framework import generics, status, permissions, serializers
-from .tenant_api import AsynchronousAPI, FastLocationDetailsAPI
+from rest_framework import generics, status, permissions
+from .tenant_api import AsynchronousAPI
 from rest_framework.response import Response
 from .landlord_serializers import PropertyTenantSerializer, PropertyDetailsSerializer, TenantDetailsSerializer, PropertyCheckSerializer
 from bson import ObjectId
