@@ -1,4 +1,4 @@
-from . import utils, matching, mongo_connect
+from . import utils, matching, mongo_connect, places
 from bson import ObjectId
 import numpy as np
 import re
@@ -1077,3 +1077,98 @@ def get_spatial_personas(lat, lng, db_connection=utils.SYSTEM_MONGO):
         "psycho1": psycho1,
         "psycho3": psycho3
     }
+
+
+def import_place_details(google_place):
+    """
+    Provided the place_id of a google place, will generate all the place details required.
+    """
+    return places.convert_place(google_place)
+
+
+def get_brand(name):
+    """
+    Provided a name, returns the most likely brand
+    """
+    return places.most_relevant_brand(name)
+
+
+def build_brand(name, categories, params):
+    """
+    Provided the name of an unknown brand, will build the brand all relevant details.
+
+    brand_name: string,             (required)
+    address: string,                (required -> not required if categories are provided)
+    categories: list[string],       (required -> not required if brand_name and address provided)
+    income: {                       (required -> not required if brand_name and address provided)
+        min: int,                   (required if income provided)
+        max: int                    (optional)
+    },
+    age: {
+        min: int,                   (optional)
+        max: int                    (optional)
+    },
+    personas: list[string],         (optional)
+    commute: list[string],          (optional)
+    education: list[string],        (optional)
+    ethnicity: list[string],        (optional)
+    min_daytime_pop: int,           (optional)
+    rent: {                         (optional)
+        min: int,                   (required if rent provided)
+        max: int                    (optional)
+    },
+    sqft: {                         (optional)
+        min: int,                   (required if rent provided)
+        max: int
+    },
+    frontage_width: int,            (optional)
+    property_type: list[string]     (optional)
+    match_id: string                (optional - only provide if wishing to update specific match)
+    """
+
+    brand = {}
+    brand['brand_name'] = name
+    brand['alias'] = brand['brand_name']
+    brand['parent_company'] = None
+    brand['headquarters_city'] = None
+    brand['categories'] = [{
+        'source': 'Insemble User',
+        'categories': [{
+            "name": category.strip(),
+            "short_name": category.strip(),
+        } for category in categories]
+    }]
+    brand['typical_property_type'] = {
+        'source': 'Insemble User',
+        'type': [property_type.strip() for property_type in params['property_type']]
+    } if 'property_type' in params else {}
+
+    brand['typical_squarefoot'] = []
+    if 'sqft' in params:
+        sqft = params['sqft']
+        sqft['max'] = None if 'max' not in sqft else sqft['max']
+        sqft['context'] = ""
+        brand['typical_squarefoot'].append(sqft)
+
+    brand['regions_present'] = {}
+    brand['logo'] = None
+    brand['headquarters_address'] = None
+    brand['domain'] = None
+    brand['number_locations'] = None
+    brand['number_found_locations'] = None
+    brand['average_popularity'] = []
+    brand['average_price'] = []
+    brand['years_operation'] = None
+    brand['similar_brands'] = []
+    brand['average_demographics'] = {}
+    brand['average_psychographics'] = {}
+    brand['average_sales'] = {}
+    brand['contacts'] = []
+    brand['match_requests'] = {}
+
+    if "_id" in brand:
+        utils.DB_BRANDS.update({'_id': brand['_id']}, {'$set': brand}, upsert=True)
+        return brand["_id"]
+    # otherwise, let's simply inser the new brand and return the id
+    else:
+        return utils.DB_BRANDS.insert(brand)

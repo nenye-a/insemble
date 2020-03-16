@@ -107,8 +107,8 @@ class TenantMatchAPI(AsynchronousAPI):
 
     GET /api/tenantMatch/:
         Parameters: {
+            brand_name: string,             (required)
             address: string,                (required -> not required if categories are provided)
-            brand_name: string,             (required -> not required if categories are provided)
             categories: list[string],       (required -> not required if brand_name and address provided)
             income: {                       (required -> not required if brand_name and address provided)
                 min: int,                   (required if income provided)
@@ -167,6 +167,7 @@ class TenantMatchAPI(AsynchronousAPI):
                 ... many more
             ],
             match_id: string                   (always provided)
+            brand_id: string                   (always provided)
         }
     """
 
@@ -198,14 +199,20 @@ class TenantMatchAPI(AsynchronousAPI):
             params = self.update_params(validated_params)
 
         # OBTAIN DETAILS OF LOCATION
-        lat = None
-        lng = None
+        name = params['brand_name']
         if 'address' in params:
             address = params['address']
-            name = params['brand_name']
             google_location = google.find(address, name=name, allow_non_establishments=True, save=False)
             lat = round(google_location["geometry"]["location"]["lat"], 6)
             lng = round(google_location["geometry"]["location"]["lng"], 6)
+
+            # associate this location with a place and then a brand (assign one if exists already)
+            place = utils.DB_PLACES.find_one({'google_place_id': google_location['place_id']})
+            if place:
+                brand_id = place['brand_id']
+            else:
+                place = provider.import_place_details(google_location['place_id'])
+                brand_id = place['brand_id'] if place else None
         else:
             categories = params['categories']
             location = provider.get_representative_location(categories, params['income'])
@@ -218,6 +225,13 @@ class TenantMatchAPI(AsynchronousAPI):
                 })
             lat = location['lat']
             lng = location['lng']
+
+            # associate this location with a brand and updae the brand
+            brand = provider.get_brand(name)
+            if brand:
+                brand_id = brand['brand_id']
+            else:
+                brand_id = provider.build_brand(name, categories, params)
 
         n_process, nearby = self.get_nearby_places.delay(lat, lng), []
         nearby_listener = self._celery_listener(n_process, nearby)
@@ -252,6 +266,7 @@ class TenantMatchAPI(AsynchronousAPI):
             'status': status.HTTP_200_OK,
             'status_detail': "Success",
             'match_id': str(match_id),
+            'brand_id': str(brand_id),
             'matching_properties': property_matches,
             'matching_locations': best_matches,
         }
@@ -476,7 +491,7 @@ class FastLocationDetailsAPI(AsynchronousAPI):
                     ... many more
                 ],
             },
-            ## FOllowing to be removed pending team answer
+            ## Following to be removed pending team answer
             # property_details: {                                                 (only provided if property_details provided)
             #     3D_tour: url, (matterport media)                                (provided only when available)
             #     main_photo: url,
