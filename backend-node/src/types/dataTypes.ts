@@ -351,3 +351,12 @@ export type GooglePlace = {
   id: string;
   name: string;
 };
+
+export type PendingDataType = {
+  matchScore: number;
+  header: string;
+  messageInput: {
+    message: string;
+    senderRole: 'LANDLORD' | 'TENANT';
+  };
+};
