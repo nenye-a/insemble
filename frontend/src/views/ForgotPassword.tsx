@@ -20,7 +20,6 @@ import {
   ForgotPasswordLandlordVariables,
 } from '../generated/ForgotPasswordLandlord';
 import { Role } from '../types/types';
-import { formatGraphQLError } from '../utils';
 
 export default function ForgotPassword() {
   let history = useHistory();
@@ -73,7 +72,7 @@ export default function ForgotPassword() {
         <Content>
           {!hasSubmitted ? (
             <Form onSubmit={handleSubmit(onSubmit)}>
-              {errorMessage && <Alert visible={true} text={formatGraphQLError(errorMessage)} />}
+              {errorMessage && <Alert visible={true} text={errorMessage} />}
               <TextInput
                 name="email"
                 ref={register({

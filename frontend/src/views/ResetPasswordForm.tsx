@@ -25,7 +25,6 @@ import {
   ResetPasswordTenant,
   ResetPasswordTenantVariables,
 } from '../generated/ResetPasswordTenant';
-import { formatGraphQLError } from '../utils';
 import OnboardingFooter from '../components/layout/OnboardingFooter';
 import {
   ResetPasswordLandlord,
@@ -150,7 +149,7 @@ export default function ResetPasswordForm({ role }: Props) {
         <Content>
           <Form onSubmit={handleSubmit(onSubmit)}>
             {errorMessage ? (
-              <Alert visible={true} text={formatGraphQLError(errorMessage)} />
+              <Alert visible={true} text={errorMessage} />
             ) : (
               <>
                 <TextInput
