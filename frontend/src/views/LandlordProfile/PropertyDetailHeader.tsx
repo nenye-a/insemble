@@ -33,7 +33,7 @@ Props) {
   return (
     <Card style={{ marginBottom: 30 }}>
       <UpperHeader>
-        <BackButton
+        <Button
           mode="transparent"
           text="Back To Properties"
           icon={<SvgArrowBack style={{ color: THEME_COLOR }} />}
@@ -123,8 +123,4 @@ const TabSegment = styled(TouchableOpacity)<SegmentProps>`
 const UpperHeader = styled(View)`
   padding: 6px 18px;
   align-items: flex-start;
-`;
-const BackButton = styled(Button)`
-  /* margin: 4px 0;
-  padding: 0 18px; */
 `;
