@@ -58,6 +58,7 @@ class TenantMatchSerializer(serializers.Serializer):
     sqft = serializers.JSONField(required=False)
     frontage_width = serializers.IntegerField(required=False)
     property_type = serializers.JSONField(required=False)
+    match_id = serializers.CharField(required=False, max_length=24)
 
     # Validatator to ensure the rules mentioned above
     def validate(self, data):
@@ -177,9 +178,9 @@ class FastLocationDetailSerializer(serializers.Serializer):
 
     """
 
-    tenant_id = serializers.CharField(required=True, max_length=500)
+    match_id = serializers.CharField(required=True, max_length=24)
     target_location = serializers.JSONField(required=True)
-    property_id = serializers.CharField(required=False)
+    property_id = serializers.CharField(required=False, max_length=24)
 
     def validate(self, data):
         has_lat = 'lat' in data['target_location']

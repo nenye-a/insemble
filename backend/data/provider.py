@@ -543,8 +543,14 @@ def obtain_nearby(target_location, categories, db_connection=utils.SYSTEM_MONGO)
             'distance': place['distance'] if place['distance'] else None
         }
 
-    lat = target_location['geometry']['location']['lat']
-    lng = target_location['geometry']['location']['lng']
+    if 'geometry' in target_location:
+        # Old way of obtainining coordinates
+        lat = target_location['geometry']['location']['lat']
+        lng = target_location['geometry']['location']['lng']
+    else:
+        # Latest way of obtaining coordinates
+        lat = target_location['location']['coordinates'][1]
+        lng = target_location['location']['coordinates'][0]
 
     for place in target_location['nearby_store']:
         if place["place_id"] not in nearby_dict:
@@ -566,7 +572,8 @@ def obtain_nearby(target_location, categories, db_connection=utils.SYSTEM_MONGO)
             item_into_dict(nearby_dict, place)
         nearby_dict[place["place_id"]]["hospital"] = True
 
-    for place in target_location['nearby_metro']:
+    metro_tag = 'nearby_metro' if 'nearby_metro' in target_location else 'nearby_subway_station'
+    for place in target_location[metro_tag]:
         if place["place_id"] not in nearby_dict:
             item_into_dict(nearby_dict, place)
         nearby_dict[place["place_id"]]["metro"] = True
@@ -900,11 +907,17 @@ def get_location_details(location):
         return None
 
 
-def get_match_value_from_id(tenant_id, vector_id):
+def get_match_value_from_id(match_id, vector_id, latest=True):
     string_id = str(vector_id)
-    query = 'match_values.' + string_id
-    match_doc = utils.DB_TENANT.find_one({'_id': ObjectId(tenant_id)}, {query: 1})
-    return match_doc['match_values'][string_id]
+
+    if latest:
+        query = 'location_match_values.' + string_id
+        match_doc = utils.DB_LOCATION_MATCHES.find_one({'_id': ObjectId(match_id)}, {query: 1})
+        return match_doc['location_match_values'][string_id]
+    else:
+        query = 'match_values.' + string_id
+        match_doc = utils.DB_TENANT.find_one({'_id': ObjectId(match_id)}, {query: 1})
+        return match_doc['match_values'][string_id]
 
 
 def get_nearest_space(lat, lng, database='spaces'):
@@ -1008,6 +1021,7 @@ def get_nearby_places(lat, lng, radius=1):
             nearby_places = google.nearby(
                 lat, lng, query, radius=radius)  # need to add categories
         if not nearby_places:
+            nearby[nearby_tag] = []
             continue
 
         # update the dictionary with this search details
@@ -1035,7 +1049,6 @@ def get_nearby_places(lat, lng, radius=1):
                 if not details:
                     continue
                 nearby_place['foursquare_categories'] = details['foursquare_categories']
-
     return nearby
 
 

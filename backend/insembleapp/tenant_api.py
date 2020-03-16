@@ -2,6 +2,7 @@ import json
 import time
 import timeit
 import ast
+import pprint
 import threading
 import utils
 import mongo_connect
@@ -137,6 +138,7 @@ class TenantMatchAPI(AsynchronousAPI):
             },
             frontage_width: int,            (optional)
             property_type: list[string]     (optional)
+            match_id: string                (optional - only provide if wishing to update specific match)
         }
 
         Response: {
@@ -709,14 +711,13 @@ class FastLocationDetailsAPI(AsynchronousAPI):
     Refer to LocationDetailsAPI for the definition. (Temporary)
 
     parameters: {
-        tenant_id: string,                      (required)
+        match_id: string,                      (required)
         target_location: {                      (required, not used if property_id is provided)
             lat: int,
             lng: int,
         },
         property_id: string                     (optional)
     }
-
 
     """
 
@@ -731,66 +732,79 @@ class FastLocationDetailsAPI(AsynchronousAPI):
         serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
 
-        # GET THE TENANT DETAILS
-        tenant = provider.get_tenant_details(validated_params["tenant_id"])
+        # Obtain representative locations
+        match_id = validated_params['match_id']
+        property_id = validated_params['property_id'] if 'property_id' in validated_params else None
 
-        # GET THE LOCATION OR PROPERTY DETAILS
-        if 'property_id' in validated_params:
-            location = provider.get_property(validated_params["property_id"])
+        if property_id:
+            this_property = utils.DB_PROPERTY.find_one({'_id': ObjectId(property_id)})
+            this_location = utils.DB_property.find_one({'_id': this_property['location_id']})
+            target_lat = this_location['location']['coordinates'][1]
+            target_lng = this_location['location']['coordinates'][0]
         else:
-            print(validated_params)
-            location = provider.get_location_details(validated_params["target_location"])
+            target_lat = round(validated_params["target_location"]["lat"], 6)
+            target_lng = round(validated_params["target_location"]["lng"], 6)
+            # grab the nearby stores asynchronously
+            n_process, nearby = TenantMatchAPI.get_nearby_places.delay(target_lat, target_lng), []
+            nearby_listener = self._celery_listener(n_process, nearby)
+            nearby_listener.start()
 
-            if not location:
-                # TODO: get_all_the_details anyway
-                # kick off our super slow function - ()
-                pass
+            this_location = landlord_provider.build_location(target_lat, target_lng)
+            _, nearby = nearby_listener.join(), nearby[0]
 
-        # GET THE MATCH VALUE
-        match_value = provider.get_match_value_from_id(validated_params["tenant_id"], location['vector_id'])
+            this_location.update(nearby)
+            if '_id' in this_location:
+                utils.DB_LOCATIONS.update({"_id": this_location['_id']}, this_location)
+            else:
+                utils.DB_LOCATIONS.insert(this_location)
 
-        # stringify the objectIds
-        tenant["_id"] = str(tenant["_id"]) if '_id' in tenant else None
-        location["_id"] = str(location["_id"]) if "_id" in location else None
-        location["vector_id"] = str(location["vector_id"]) if "vector_id" in location else None
+        match = utils.DB_LOCATION_MATCHES.find_one({'_id': ObjectId(match_id)}, {'location_match_values': 0})
+        if not match:
+            return Response({
+                'status': status.HTTP_404_NOT_FOUND,
+                'status_detail': ['Match was not found, please make sure to check the id.']
+            }, status=status.HTTP_404_NOT_FOUND)
 
-        # GET THE DEMOGRAPHIC DETAILS (asyc)
-        d_process, tenant_demographics = self.obtain_demographics.delay(tenant, parallel_process=True), []
-        tenant_demo_listener = self._celery_listener(d_process, tenant_demographics)
-        tenant_demo_listener.start()
-        d_process, location_demographics = self.obtain_demographics.delay(location, parallel_process=True), []
-        location_demo_listener = self._celery_listener(d_process, location_demographics)
-        location_demo_listener.start()
+        location_id = ObjectId(match['params']['location_id'])
+        tenant_location = utils.DB_LOCATIONS.find_one({'_id': location_id})
 
-        # Obtain the keyfacts
-        key_facts_demo = self.obtain_key_demographics(location)
-        key_facts_nearby = self.obtain_key_nearby(location, key_facts_demo['mile'])
-        key_facts_demo.update({
-            "num_metro": len(key_facts_nearby["nearby_metro"]),
-            "num_universities": len(key_facts_nearby["nearby_university"]),
-            "num_hospitals": len(key_facts_nearby["nearby_hospitals"]),
-            "num_apartments": len(key_facts_nearby["nearby_apartments"])
-        })
-        key_facts = key_facts_demo
-        location["nearby_metro"] = key_facts_nearby["nearby_metro"]
+        top_personas = provider.get_matching_personas(tenant_location['spatial_psychographics']["1mile"],
+                                                      this_location['spatial_psychographics']["1mile"])
 
-        # GET THE NEARBY LOCATIONS (async)
-        n_process, nearby = self.obtain_nearby.delay(tenant, location, parallel_process=True), []
-        nearby_listener = self._celery_listener(n_process, nearby)
-        nearby_listener.start()
+        tenant_demographics = self.convert_demographics(tenant_location['environics_demographics'])
+        location_demographics = self.convert_demographics(this_location['environics_demographics'])
 
-        # GET THE PSYCHOGRAPHICS
-        top_personas = provider.get_matching_personas(location['psycho1'], tenant['psycho1'])
+        demographics = {}
+        demographics["1mile"] = provider.combine_demographics(tenant_demographics["1mile"], location_demographics["1mile"])
+        demographics["3mile"] = provider.combine_demographics(tenant_demographics["3mile"], location_demographics["3mile"])
+        demographics["5mile"] = provider.combine_demographics(tenant_demographics["5mile"], location_demographics["5mile"])
 
-        # grab the demographic details
-        _, tenant_demographics = tenant_demo_listener.join(), tenant_demographics[0]
-        _, location_demographics = location_demo_listener.join(), location_demographics[0]
-        # get the commute details breifly
-        commute = location_demographics[str(key_facts_demo['mile']) + 'mile']['commute']
-        demographics = self.combine_demographics(tenant_demographics, location_demographics)
+        try:
+            commute = demographics["1mile"].pop("commute") if 'commute' in demographics["1mile"] else None
+            demographics["3mile"].pop("commute") if 'commute' in demographics["1mile"] else None
+            demographics["5mile"].pop("commute") if 'commute' in demographics["1mile"] else None
+        except Exception:
+            commute = None
 
-        # grab the nearby details
-        _, nearby = nearby_listener.join(), nearby[0]
+        # TODO: factor in similar categories
+        nearby = self.obtain_nearby({}, this_location, parallel_process=False)
+
+        key_facts = this_location['arcgis_demographics']['1mile'] or {}
+        if key_facts != {}:
+            key_facts.pop('DaytimeWorkingPop')
+            key_facts.pop('DaytimeResidentPop')
+
+        key_facts['num_metro'] = len(this_location['nearby_subway_station'] if 'neaby_subway_station' in this_location else google.nearby(
+            target_lat, target_lng, 'subway_station', radius=1))
+        key_facts['num_universities'] = len(this_location['nearby_university'] if 'nearby_university' in this_location else google.nearby(
+            target_lat, target_lng, 'university', radius=1))
+        key_facts['num_hospitals'] = len(this_location['nearby_hospitals'] if 'nearby_hospitals' in this_location else google.nearby(
+            target_lat, target_lng, 'hospital', radius=1))
+        key_facts['nearby_apartments'] = len(this_location['nearby_apartments'] if 'nearby_apartments' in this_location else google.search(
+            target_lat, target_lng, 'apartments', radius=1))
+
+        vector_id = provider.get_location_details({'lat': target_lat, 'lng': target_lng})['vector_id']
+        match_value = provider.get_match_value_from_id(match_id, vector_id)
 
         response = {
             'status': 200,
@@ -815,6 +829,93 @@ class FastLocationDetailsAPI(AsynchronousAPI):
         }
 
         return Response(response, status=status.HTTP_200_OK)
+
+        # # OLDDDDDDDDDDDDDDD
+
+        # # GET THE TENANT DETAILS
+        # tenant = provider.get_tenant_details(validated_params["tenant_id"])
+
+        # # GET THE LOCATION OR PROPERTY DETAILS
+        # if 'property_id' in validated_params:
+        #     location = provider.get_property(validated_params["property_id"])
+        # else:
+        #     print(validated_params)
+        #     location = provider.get_location_details(validated_params["target_location"])
+
+        #     if not location:
+        #         # TODO: get_all_the_details anyway
+        #         # kick off our super slow function - ()
+        #         pass
+
+        # # GET THE MATCH VALUE
+        # match_value = provider.get_match_value_from_id(validated_params["tenant_id"], location['vector_id'])
+
+        # # stringify the objectIds
+        # tenant["_id"] = str(tenant["_id"]) if '_id' in tenant else None
+        # location["_id"] = str(location["_id"]) if "_id" in location else None
+        # location["vector_id"] = str(location["vector_id"]) if "vector_id" in location else None
+
+        # # GET THE DEMOGRAPHIC DETAILS (asyc)
+        # d_process, tenant_demographics = self.obtain_demographics.delay(tenant, parallel_process=True), []
+        # tenant_demo_listener = self._celery_listener(d_process, tenant_demographics)
+        # tenant_demo_listener.start()
+        # d_process, location_demographics = self.obtain_demographics.delay(location, parallel_process=True), []
+        # location_demo_listener = self._celery_listener(d_process, location_demographics)
+        # location_demo_listener.start()
+
+        # # Obtain the keyfacts
+        # key_facts_demo = self.obtain_key_demographics(location)
+        # key_facts_nearby = self.obtain_key_nearby(location, key_facts_demo['mile'])
+        # key_facts_demo.update({
+        #     "num_metro": len(key_facts_nearby["nearby_metro"]),
+        #     "num_universities": len(key_facts_nearby["nearby_university"]),
+        #     "num_hospitals": len(key_facts_nearby["nearby_hospitals"]),
+        #     "num_apartments": len(key_facts_nearby["nearby_apartments"])
+        # })
+        # key_facts = key_facts_demo
+        # location["nearby_metro"] = key_facts_nearby["nearby_metro"]
+
+        # # GET THE NEARBY LOCATIONS (async)
+        # n_process, nearby = self.obtain_nearby.delay(tenant, location, parallel_process=True), []
+        # nearby_listener = self._celery_listener(n_process, nearby)
+        # nearby_listener.start()
+
+        # # GET THE PSYCHOGRAPHICS
+        # top_personas = provider.get_matching_personas(location['psycho1'], tenant['psycho1'])
+
+        # # grab the demographic details
+        # _, tenant_demographics = tenant_demo_listener.join(), tenant_demographics[0]
+        # _, location_demographics = location_demo_listener.join(), location_demographics[0]
+        # # get the commute details breifly
+        # commute = location_demographics[str(key_facts_demo['mile']) + 'mile']['commute']
+        # demographics = self.combine_demographics(tenant_demographics, location_demographics)
+
+        # # grab the nearby details
+        # _, nearby = nearby_listener.join(), nearby[0]
+
+        # response = {
+        #     'status': 200,
+        #     'status_detail': 'Success',
+        #     'result': {
+        #         'match_value': match_value,
+        #         'affinities': {
+        #             # hardcoded false for now, will be made into values soon
+        #             'growth': False,
+        #             'demographics': False,
+        #             'personas': False,
+        #             'ecosystem': False
+        #         },
+        #         'key_facts': key_facts,
+        #         'commute': commute,
+        #         'top_personas': top_personas,
+        #         'demographics1': demographics["1mile"],
+        #         'demographics3': demographics["3mile"],
+        #         'demographics5': demographics["5mile"],
+        #         'nearby': nearby
+        #     }
+        # }
+
+        # return Response(response, status=status.HTTP_200_OK)
 
     def obtain_key_demographics(self, place):
         """
@@ -891,6 +992,13 @@ class FastLocationDetailsAPI(AsynchronousAPI):
             "1mile": onemile_demo,
             "3mile": threemile_demo,
             "5mile": fivemile_demo
+        }
+
+    def convert_demographics(self, demographic_dict):
+        return {
+            '1mile': provider.get_demographics(1, 1, 1, demographic_dict=demographic_dict['1mile']),
+            '3mile': provider.get_demographics(1, 1, 1, demographic_dict=demographic_dict['3mile']),
+            '5mile': provider.get_demographics(1, 1, 1, demographic_dict=demographic_dict['5mile'])
         }
 
     def combine_demographics(self, tenant_demographics, landlord_demographics):
