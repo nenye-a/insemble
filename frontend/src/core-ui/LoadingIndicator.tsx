@@ -3,12 +3,15 @@ import styled from 'styled-components';
 import View from './View';
 import loadingWhite from '../assets/images/loading-white.gif';
 import loadingPurple from '../assets/images/loading-purple.gif';
+import Text from './Text';
+import { SECONDARY_COLOR } from '../constants/colors';
 
 type IconSize = keyof typeof ICON_SIZES;
 type Props = ViewProps & {
   color?: 'purple' | 'white';
   visible?: boolean;
   size?: IconSize;
+  text?: string;
 };
 
 type IconProps = {
@@ -16,12 +19,17 @@ type IconProps = {
 };
 
 export default function LoadingIndicator(props: Props) {
-  let { color = 'purple', visible = true, size = 'small' as IconSize, ...otherProps } = props;
+  let { color = 'purple', visible = true, size = 'small' as IconSize, text, ...otherProps } = props;
 
   if (visible) {
     return (
       <LoadingIndicatorContainer {...otherProps}>
         <Icon src={color === 'white' ? loadingWhite : loadingPurple} size={ICON_SIZES[size]} />
+        {text ? (
+          <Text style={{ marginTop: 10 }} color={SECONDARY_COLOR}>
+            {text}
+          </Text>
+        ) : null}
       </LoadingIndicatorContainer>
     );
   }

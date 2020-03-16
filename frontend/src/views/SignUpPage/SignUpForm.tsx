@@ -178,7 +178,7 @@ export default function SignUpForm(props: Props) {
           containerStyle={inputContainerStyle}
         />
         <SubmitButton
-          text="Create and Submit"
+          text="Create and Find Tenants"
           type="submit"
           loading={loading || registerLandlordLoading}
         />
