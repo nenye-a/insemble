@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Card, View } from '../core-ui';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
-import ResetPasswordForm from './ResetPasswordForm';
+import ResetPasswordForm from './ForgotPasswordPage/ResetPasswordForm';
 import { Role } from '../types/types';
 
 export default function ResetPasswordLandlord() {
