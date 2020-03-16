@@ -25,8 +25,9 @@ import LandlordProperties from './views/LandlordProperties';
 import LandlordPropertyDetails from './views/LandlordPropertyDetails';
 import ForgotPassword from './views/ForgotPassword';
 import ForgotPasswordSubmitted from './views/ForgotPasswordSubmitted';
-import NewPassword from './views/NewPassword';
 import LandlordMessageDetail from './views/LandlordMessageDetail';
+import ResetPasswordTenant from './views/ResetPasswordTenant';
+import ResetPasswordLandlord from './views/ResetPasswordLandlord';
 
 import { tenantAuthorization, landlordAuthorization } from './utils';
 
@@ -67,11 +68,6 @@ const COMMON_ROUTES = [
     path: '/forgot-password-submitted',
     layout: BasicLayout,
     component: ForgotPasswordSubmitted,
-  },
-  {
-    path: '/new-password',
-    layout: BasicLayout,
-    component: NewPassword,
   },
 ];
 
@@ -137,6 +133,11 @@ const LANDLORD_ROUTES = [
     layout: LandlordProfileLayout,
     component: LandlordMessageDetail,
     authorization: landlordAuthorization,
+  },
+  {
+    path: '/reset-password-landlord/:verificationId',
+    layout: BasicLayout,
+    component: ResetPasswordLandlord,
   },
 ];
 
@@ -208,6 +209,11 @@ const TENANT_ROUTES = [
     path: '/email-verification/:verificationId',
     layout: BasicLayout,
     component: TenantEmailVerification,
+  },
+  {
+    path: '/reset-password-tenant/:verificationId',
+    layout: BasicLayout,
+    component: ResetPasswordTenant,
   },
 ];
 
