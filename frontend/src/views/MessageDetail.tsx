@@ -81,12 +81,8 @@ export default function MessageDetail() {
         <>
           <Image src={conversation?.conversation.property.space[0].mainPhoto || imgPlaceholder} />
           <HeaderContainer>
-            <Text color={THEME_COLOR} fontWeight={FONT_WEIGHT_BOLD} fontSize={FONT_SIZE_LARGE}>
-              {conversation?.conversation.property.location.address}
-            </Text>
-            <Text color={THEME_COLOR} fontWeight={FONT_WEIGHT_MEDIUM} fontSize={FONT_SIZE_LARGE}>
-              {conversation?.conversation.matchScore}% Match
-            </Text>
+            <Address>{conversation?.conversation.property.location.address}</Address>
+            <MatchScore>{conversation?.conversation.matchScore}% Match</MatchScore>
           </HeaderContainer>
           {conversation?.conversation.messages.map((item, index) => {
             let { message, sender } = item;
@@ -142,4 +138,16 @@ const NavigationContainer = styled(RowedView)`
 const Image = styled.img`
   height: 160px;
   object-fit: cover;
+`;
+
+const HeaderText = styled(Text)`
+  font-size: ${FONT_SIZE_LARGE};
+  color: ${THEME_COLOR};
+`;
+const Address = styled(HeaderText)`
+  font-weight: ${FONT_WEIGHT_BOLD};
+`;
+
+const MatchScore = styled(HeaderText)`
+  font-weight: ${FONT_WEIGHT_MEDIUM};
 `;

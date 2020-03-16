@@ -83,9 +83,7 @@ export default function LandlordMessageDetail() {
       ) : (
         <>
           <HeaderContainer>
-            <Text color={THEME_COLOR} fontWeight={FONT_WEIGHT_BOLD} fontSize={FONT_SIZE_LARGE}>
-              {conversation?.conversation.brand.name}
-            </Text>
+            <BrandName>{conversation?.conversation.brand.name}</BrandName>
           </HeaderContainer>
           {conversation?.conversation.messages.map((item, index) => {
             let { message, sender } = item;
@@ -140,4 +138,10 @@ const HeaderContainer = styled(View)`
 const NavigationContainer = styled(RowedView)`
   padding: 12px 24px 12px 12px;
   align-items: center;
+`;
+
+const BrandName = styled(Text)`
+  font-size: ${FONT_SIZE_LARGE};
+  color: ${THEME_COLOR};
+  font-weight: ${FONT_WEIGHT_BOLD};
 `;
