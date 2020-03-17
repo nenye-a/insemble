@@ -15,17 +15,20 @@ const FEATURES = [
   {
     img: seeBestLocationImg,
     title: 'Instantly see the best locations for your brand.',
+    mobileTitle: 'Instantly see the best\nlocations for your brand.',
     subtitle: 'Instantly survey the market for the best locations for your brand and customers.',
   },
   {
     img: topLinePropertiesImg,
     title: 'Find top line properties within your best areas.',
+    mobileTitle: 'Find top line properties\nwithin your best areas.',
     subtitle:
-      'Skip pounding the pavement.  See the best matching properties for site criteria, ranked by relevance.',
+      'Skip pounding the pavement.\nSee the best matching properties for site criteria, ranked by relevance.',
   },
   {
     img: keyDetailsImg,
     title: 'Explore key details about your matches.',
+    mobileTitle: 'Explore key details\nabout your matches.',
     subtitle:
       'Use psychographics, demographics, nearby analysis, mobile data, and trade area insights and compare directly with your store portfolio. ',
   },
@@ -34,6 +37,7 @@ const FEATURES = [
 type FeatureProp = {
   img: string;
   title: string;
+  mobileTitle: string;
   subtitle: string;
   isOdd: boolean;
   index: number;
@@ -66,7 +70,7 @@ export default function Features() {
 }
 
 function Feature(props: FeatureProp) {
-  let { title, subtitle, img, isOdd, index } = props;
+  let { title, mobileTitle, subtitle, img, isOdd, index } = props;
   let { viewportType } = useViewport();
   let isDesktop = viewportType === VIEWPORT_TYPE.DESKTOP;
   let description = (
@@ -77,7 +81,7 @@ function Feature(props: FeatureProp) {
       style={isOdd ? { paddingLeft: '3%' } : undefined}
       isDesktop={isDesktop}
     >
-      <Title isDesktop={isDesktop}>{title}</Title>
+      <Title isDesktop={isDesktop}>{isDesktop ? title : mobileTitle}</Title>
       <Subtitle isDesktop={isDesktop}>{subtitle}</Subtitle>
     </DescriptionContainer>
   );

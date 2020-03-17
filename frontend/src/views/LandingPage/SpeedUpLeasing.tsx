@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { View, Text, Button } from '../../core-ui';
 import { useViewport } from '../../utils';
-import { FONT_WEIGHT_HEAVY, FONT_SIZE_LARGE } from '../../constants/theme';
+import { FONT_WEIGHT_HEAVY, FONT_SIZE_LARGE, FONT_SIZE_XLARGE } from '../../constants/theme';
 import { VIEWPORT_TYPE } from '../../constants/viewports';
 
 type ContainerProps = ViewProps & {
@@ -15,7 +15,7 @@ export default function SpeedUpLeasing() {
 
   return (
     <Container isDesktop={isDesktop}>
-      <CenteredText fontSize="32px" fontWeight={FONT_WEIGHT_HEAVY}>
+      <CenteredText fontSize={isDesktop ? '32px' : FONT_SIZE_XLARGE} fontWeight={FONT_WEIGHT_HEAVY}>
         Speed up your leasing
       </CenteredText>
       <CenteredText fontSize="20px" style={{ marginTop: 32, marginBottom: 32 }}>
