@@ -1164,7 +1164,7 @@ def build_brand(name, categories, params):
     brand['average_psychographics'] = {}
     brand['average_sales'] = {}
     brand['contacts'] = []
-    brand['match_requests'] = {}
+    brand['match_requests'] = []
 
     if "_id" in brand:
         utils.DB_BRANDS.update({'_id': brand['_id']}, {'$set': brand}, upsert=True)

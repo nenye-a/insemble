@@ -1,5 +1,6 @@
 import time
 import threading
+import datetime
 import utils
 import mongo_connect
 import data.matching as matching
@@ -187,7 +188,7 @@ class TenantMatchAPI(AsynchronousAPI):
 
         params = None
         if 'match_id' in validated_params:
-            location_match = utils.DB_LOCATION_MATCHES.find({'_id': validated_params['match_id']})
+            location_match = utils.DB_LOCATION_MATCHES.find_one({'_id': ObjectId(validated_params['match_id'])})
             if not location_match:
                 return Response({
                     'status': status.HTTP_404_NOT_FOUND,
@@ -200,7 +201,7 @@ class TenantMatchAPI(AsynchronousAPI):
 
         # OBTAIN DETAILS OF LOCATION
         name = params['brand_name']
-        if 'address' in params:
+        if 'address' in params and params['address']:
             address = params['address']
             google_location = google.find(address, name=name, allow_non_establishments=True, save=False)
             lat = round(google_location["geometry"]["location"]["lat"], 6)
@@ -229,7 +230,7 @@ class TenantMatchAPI(AsynchronousAPI):
             # associate this location with a brand and updae the brand
             brand = provider.get_brand(name)
             if brand:
-                brand_id = brand['brand_id']
+                brand_id = brand['_id']
             else:
                 brand_id = provider.build_brand(name, categories, params)
 
@@ -259,8 +260,22 @@ class TenantMatchAPI(AsynchronousAPI):
         try:
             utils.DB_LOCATION_MATCHES.update({'_id': location_match['_id']}, {'$set': match_update})
             match_id = location_match['_id']
+
+            # update the mongodb match_request time of update
+            utils.DB_BRANDS.update_one({'_id': brand_id}, {'$set': {
+                'match_requests.$[element].last_update': datetime.datetime.utcnow().replace(microsecond=0).isoformat()
+            }}, array_filters=[{'element.match_id': ObjectId(match_id)}])
         except NameError:
             match_id = utils.DB_LOCATION_MATCHES.insert(match_update)
+            utils.DB_BRANDS.update({'_id': brand_id}, {'$push': {
+                'match_requests': {
+                    'last_update': datetime.datetime.utcnow().replace(microsecond=0).isoformat(),
+                    'match_id': ObjectId(match_id),
+                    'region_id': None,
+                    'type': None,
+                    'status': "Active User"
+                }
+            }})
 
         response = {
             'status': status.HTTP_200_OK,
