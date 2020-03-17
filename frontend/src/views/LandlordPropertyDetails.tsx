@@ -34,13 +34,13 @@ export default function LandlordPropertyDetails() {
   let params = useParams<Params>();
   let [selectedBrandId, setSelectedBrandId] = useState('');
   let { address, spaces } = history.location.state;
-  let [selectedTabIndex, setSelectedTabIndex] = useState(3);
+  let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [selectedSpaceIndex, setSelectedSpaceIndex] = useState(0);
   let [selectedSpaceId, setSelectedSpaceId] = useState(spaces[spaces.length - 1].id);
   let [selectedTenantPhoto, setSelectedTenantPhoto] = useState('');
   let isTenantMatchSelected = selectedTabIndex === Tab.TENANT_MATCH_INDEX;
   let isLocationDetailSelected = selectedTabIndex === Tab.LOCATION_DETAIL_INDEX;
-  let isManagePropertySelected = (selectedTabIndex = Tab.MANAGE_PROPERTY_INDEX);
+  let isManagePropertySelected = selectedTabIndex === Tab.MANAGE_PROPERTY_INDEX;
   let isManageSpaceSelected = selectedTabIndex === Tab.MANAGE_SPACE_INDEX;
   let [modalVisible, setModalVisible] = useState(false);
   let { data, loading } = useQuery<PropertyMatches, PropertyMatchesVariables>(
