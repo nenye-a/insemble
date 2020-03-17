@@ -6,7 +6,6 @@ import data.api.environics as environics
 import data.api.anmspatial as anmspatial
 import data.api.spatial as spatial
 from fuzzywuzzy import process
-from bson import ObjectId
 
 
 '''
@@ -27,7 +26,7 @@ def get_matching_tenants(eval_property, space_id):
         if item['space_id'] == space_id:
             my_space = item
 
-    # fetch the tenants that we will use for matching and kick off matching.
+    # fetch the tenants that we will use for matching and kick off matching. # TODO: temporarily force the inclusion
     tenants = utils.DB_BRANDS.find({
         "$or": [{'regions_present.regions': "California"}, {'regions_present.regions': "Nationwide"}],
         'number_found_locations': {'$gt': 1},
@@ -35,6 +34,19 @@ def get_matching_tenants(eval_property, space_id):
         'average_environics_demographics.1mile': {'$ne': None},
         'average_spatial_psychographics.1mile': {'$ne': None}
     })
+
+    # tenants = utils.DB_BRANDS.find({
+    #     "$or": [{
+    #         "$or": [{'regions_present.regions': "California"}, {'regions_present.regions': "Nationwide"}],
+    #     }, {
+    #         "match_request": {'$ne': []},
+    #     }],
+    #     'number_found_locations': {'$gt': 1},
+    #     'average_arcgis_demographics.1mile': {'$ne': None},
+    #     'average_environics_demographics.1mile': {'$ne': None},
+    #     'average_spatial_psychographics.1mile': {'$ne': None}
+    # })
+
     tenant_dict = {tenant['brand_name']: tenant for tenant in tenants}
     match_list = list(tenant_dict.values()) + [my_location]
     matches = landlord_matching.generate_matches(match_list)
@@ -93,6 +105,8 @@ def get_matching_tenants(eval_property, space_id):
             if photo_url:
                 break
 
+        contacts = brand['contacts'] if 'contacts' in brand and brand['contacts'] != [] else None
+
         interested = False
 
         if brand['typical_squarefoot']:
@@ -117,7 +131,8 @@ def get_matching_tenants(eval_property, space_id):
             'number_existing_locations': number_existing_locations,
             'photo_url': photo_url,
             'brand_id': match['brand_id'],
-            'onPlatform': False             # TODO: add more details to onPlatform
+            'onPlatform': False,          # TODO: add more details to onPlatform
+            'contacts': contacts
         })
 
     return final_matches
