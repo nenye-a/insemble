@@ -28,6 +28,7 @@ import ForgotPasswordSubmitted from './views/ForgotPasswordSubmitted';
 import LandlordMessageDetail from './views/LandlordMessageDetail';
 import ResetPasswordTenant from './views/ResetPasswordTenant';
 import ResetPasswordLandlord from './views/ResetPasswordLandlord';
+import NewBrand from './views/OnboardingPage/NewBrand';
 
 import { tenantAuthorization, landlordAuthorization } from './utils';
 
@@ -156,6 +157,12 @@ const TENANT_ROUTES = [
     path: '/verify/:formStep',
     layout: BasicLayout,
     component: Onboarding,
+  },
+  {
+    path: '/new-brand',
+    layout: BasicLayout,
+    component: NewBrand,
+    authorization: tenantAuthorization,
   },
   {
     path: '/map/:brandId',
