@@ -7,7 +7,7 @@ import django_js_reverse.views
 
 from rest_framework import routers
 from .legacy_api import CategoryMapAPI, SearchAPI, MatchesAPI
-from .tenant_api import TenantMatchAPI, FilterDetailAPI, LocationDetailsAPI, LocationPreviewAPI, AutoPopulateAPI, FastLocationDetailsAPI
+from .tenant_api import TenantMatchAPI, FilterDetailAPI, LocationPreviewAPI, AutoPopulateAPI, FastLocationDetailsAPI
 from .landlord_api import PropertyTenantAPI, PropertyDetailsAPI, TenantDetailsAPI, PropertyAddressCheck
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -30,7 +30,6 @@ urlpatterns = [
     # TENANT API ROUTES
     path(r'api/tenantMatches/', TenantMatchAPI.as_view(), name='tenantMatch'),
     path(r'api/filter/', FilterDetailAPI.as_view(), name='filterDetail'),
-    path(r'api/locationDetails/', LocationDetailsAPI.as_view(), name='locationDetails'),
     path(r'api/locationPreview/', LocationPreviewAPI.as_view(), name='locationPreview'),
     path(r'api/autoPopulate/', AutoPopulateAPI.as_view(), name="autoPopulate"),
     path(r'api/fastLocationDetails/', FastLocationDetailsAPI.as_view(), name="fastLocationDetails"),

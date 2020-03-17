@@ -1,18 +1,16 @@
-import json
 import time
-import timeit
-import ast
 import threading
+import datetime
 import utils
 import mongo_connect
 import data.matching as matching
 import data.provider as provider
+import data.landlord_provider as landlord_provider
 import data.api.google as google
-import data.api.arcgis as arcgis
 from bson import ObjectId
 from rest_framework import status, generics, permissions, serializers
 from rest_framework.response import Response
-from .tenant_serializers import TenantMatchSerializer, LocationDetailSerializer, LocationSerializer, FastLocationDetailSerializer
+from .tenant_serializers import TenantMatchSerializer, LocationSerializer, FastLocationDetailSerializer
 from .celery import app as celery_app
 
 
@@ -108,54 +106,70 @@ class TenantMatchAPI(AsynchronousAPI):
     Provided parameters describing a retail location, this endpoint will return the best matching locations within
     the los angeles region.
 
-    parameters: {
-        address: string,            (required -> not required if categories are provided)
-        brand_name: string,         (required -> not required if categories are provided)
-        categories: list[string],   (required -> not required if brand_name and address provided)
-        income: {                   (required -> not required if brand_name and address provided)
-            min: int,               (required if income provided)
-            max: int                (optional)
-        },
-        age: {
-            min: int,               (optional)
-            max: int                (optional)
-        },
-        personas: list[string],     (optional)
-        commute: list[string],      (optional)
-        education: list[string],    (optional)
-        ethnicity: list[string],    (optional)
-        rent: {                     (optional)
-            min: int,               (required if rent provided)
-            max: int                (optional)
-        }
-    }
-
-    response: {
-        status: int (HTTP),                 (always provided)
-        status_detail: string or list,      (always provided)
-        matching_locations: [               (not provided if error occurs)
-            {                               (all fields provided if matching locations provided)
-                lat: float,
-                lng: float,
-                match_score: float,
+    GET /api/tenantMatch/:
+        Parameters: {
+            brand_name: string,             (required)
+            address: string,                (required -> not required if categories are provided)
+            categories: list[string],       (required -> not required if brand_name and address provided)
+            income: {                       (required -> not required if brand_name and address provided)
+                min: int,                   (required if income provided)
+                max: int                    (optional)
             },
-            {
-                ... (same as above)
-            }
-        ],
-        matching_properties: [              (not provided if error occurs) - may be empty
-            {                               (all fields provided if matching properties provided)
-                property_id: string
-                address: string,
-                rent:  int,
-                sqft: int,
-                type: string,
-            }
-            ... many more
-        ],
-         tenant_id: string                   (always provided)
-    }
+            age: {
+                min: int,                   (optional)
+                max: int                    (optional)
+            },
+            personas: list[string],         (optional)
+            commute: list[string],          (optional)
+            education: list[string],        (optional)
+            ethnicity: list[string],        (optional)
+            min_daytime_pop: int,           (optional)
+            rent: {                         (optional)
+                min: int,                   (required if rent provided)
+                max: int                    (optional)
+            },
+            sqft: {                         (optional)
+                min: int,                   (required if rent provided)
+                max: int
+            },
+            frontage_width: int,            (optional)
+            property_type: list[string]     (optional)
+            match_id: string                (optional - only provide if wishing to update specific match)
+        }
 
+        Response: {
+            status: int (HTTP),                 (always provided)
+            status_detail: string or list,      (always provided)
+            matching_locations: [               (not provided if error occurs)
+                {                               (all fields provided if matching locations provided)
+                    lat: float,
+                    lng: float,
+                    match_score: float,
+                },
+                {
+                    ... (same as above)
+                }
+            ],
+            matching_properties: [              (not provided if error occurs) - may be empty
+                {                               (all fields provided if matching properties provided)
+                    space_id: string,
+                    space_condition: list[string],
+                    tenant_type: list[string],
+                    type: list[string],
+                    rent: 90000,
+                    sqft: int,
+                    pro: boolean,
+                    visible: boolean,
+                    address: string,
+                    lat: float,
+                    lng: float,
+                    match_value: float
+                }
+                ... many more
+            ],
+            match_id: string                   (always provided)
+            brand_id: string                   (always provided)
+        }
     """
 
     permission_classes = [
@@ -172,107 +186,146 @@ class TenantMatchAPI(AsynchronousAPI):
         serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
 
-        # PREPARE TO STORE THE REQUEST INFORMATION IN THE DATABASE
-        database_update = {'search_details': validated_params}
-
-        address = None
-        name = None
-        # ASYNCHRONOUSLY GENERATE MATCH DETAILS & OBTAIN OBJECT ID
-        if 'address' in validated_params:
-            address = validated_params['address']
-            name = validated_params['brand_name']
-
-            m_process, match_details = self.generate_matches.delay(address, name=name, options=validated_params), []
-            match_listener = self._celery_listener(m_process, match_details)
-            match_listener.start()
-
+        params = None
+        if 'match_id' in validated_params:
+            location_match = utils.DB_LOCATION_MATCHES.find_one({'_id': ObjectId(validated_params['match_id'])})
+            if not location_match:
+                return Response({
+                    'status': status.HTTP_404_NOT_FOUND,
+                    'status_detail': ["Could not find a match record that matches that Id."]
+                }, status=status.HTTP_404_NOT_FOUND)
+            params = location_match['params']
+            params = self.update_params(validated_params, params)
         else:
-            categories = validated_params['categories']
-            location = provider.get_representative_location(categories, validated_params['income'])
-            if location:
-                address = location['address']
-                name = location['name']
+            params = self.update_params(validated_params)
 
-                m_process, match_details = self.generate_matches.delay(address, name=name, options=database_update), []
-                match_listener = self._celery_listener(m_process, match_details)
-                match_listener.start()
+        # OBTAIN DETAILS OF LOCATION
+        name = params['brand_name']
+        if 'address' in params and params['address']:
+            address = params['address']
+            google_location = google.find(address, name=name, allow_non_establishments=True, save=False)
+            lat = round(google_location["geometry"]["location"]["lat"], 6)
+            lng = round(google_location["geometry"]["location"]["lng"], 6)
+
+            # associate this location with a place and then a brand (assign one if exists already)
+            place = utils.DB_PLACES.find_one({'google_place_id': google_location['place_id']})
+            if place:
+                brand_id = place['brand_id']
             else:
+                place = provider.import_place_details(google_location['place_id'])
+                brand_id = place['brand_id'] if place else None
+        else:
+            categories = params['categories']
+            location = provider.get_representative_location(categories, params['income'])
+            if not location:
                 return Response({
                     'status': 200,
                     'status_detail': ["No matches found for that category with the specified income. "
                                       "You should try increasing the income range or adjusting category."],
                     'result': {}
                 })
-                # match_listener = None
-                # match_details = [([], None)]
+            lat = location['lat']
+            lng = location['lng']
 
-        # TODO: GENERATE TENANT LOCATION DETAILS
-        tenant_details, rep_id = self.build_location(address, brand_name=name)
-        if rep_id:
-            database_update['rep_location'] = tenant_details
-            database_update['rep_id'] = rep_id
-        elif tenant_details:
+            # associate this location with a brand and updae the brand
+            brand = provider.get_brand(name)
+            if brand:
+                brand_id = brand['_id']
+            else:
+                brand_id = provider.build_brand(name, categories, params)
 
-            lat = tenant_details['geometry']['location']['lat']
-            lng = tenant_details['geometry']['location']['lng']
+        n_process, nearby = self.get_nearby_places.delay(lat, lng), []
+        nearby_listener = self._celery_listener(n_process, nearby)
+        nearby_listener.start()
 
-            # TODO: account for people that are outside our range of coverage (fail our calls)
-            # grab the 1 and 3 mile arcgis data
-            arcgis_details1 = provider.get_formatted_arcgisdetails(lat, lng, 1)
-            arcgis_details3 = provider.get_formatted_arcgisdetails(lat, lng, 3)
+        location = landlord_provider.build_location(lat, lng)
+        _, nearby = nearby_listener.join(), nearby[0]
+        location.update(nearby)
 
-            # grab the nearby locations
-            n_process, nearby = self.get_nearby_places.delay(lat, lng), []
-            nearby_listener = self._celery_listener(n_process, nearby)
-            nearby_listener.start()
-
-            # obtain the 1, 3 mile demographic details asynchronously
-            d_process, demo = self.get_environics_demographics.delay(lat, lng, True), []
-            demo_listener = self._celery_listener(d_process, demo)
-            demo_listener.start()
-
-            # grab the 1, 3 mile psychographic deatils asynchronously
-            p_process, psycho = self.get_spatial_personas.delay(lat, lng, True), []
-            psycho_listener = self._celery_listener(p_process, psycho)
-            psycho_listener.start()
-
-            _, nearby = nearby_listener.join(), nearby[0]
-            _, demo = demo_listener.join(), demo[0]
-            _, psycho = psycho_listener.join(), psycho[0]
-
-            tenant_details['arcgis_details1'] = arcgis_details1
-            tenant_details['arcgis_details3'] = arcgis_details3
-
-            tenant_details.update(nearby)
-            tenant_details.update(demo)
-            tenant_details.update(psycho)
+        if '_id' in location:
+            utils.DB_LOCATIONS.update({"_id": location['_id']}, location)
+            params['location_id'] = str(location['_id'])
         else:
-            # TODO: no place found (return error more smartly)
-            pass
+            params['location_id'] = str(utils.DB_LOCATIONS.insert(location))
 
-        if match_listener:
-            match_listener.join()
+        # GENERATE LOCATION & PROPERTY MATCHES
+        best_matches, location_matches = matching.generate_matching_locations(location, params)
+        property_matches = provider.generate_matching_properties(location, params)
 
-        match_details = match_details[0]
-        matches, tenant_id = match_details
+        match_update = {
+            'params': params,
+            'location_match_values': location_matches
+        }
 
-        database_update['tenant_details'] = tenant_details
-        database_update['rep_id'] = ObjectId(rep_id)
+        try:
+            utils.DB_LOCATION_MATCHES.update({'_id': location_match['_id']}, {'$set': match_update})
+            match_id = location_match['_id']
 
-        # UPDATE TENANT DATABASE AND RETURN RESULT
-        provider.update_tenant_details(tenant_id, database_update)
+            # update the mongodb match_request time of update
+            utils.DB_BRANDS.update_one({'_id': brand_id}, {'$set': {
+                'match_requests.$[element].last_update': datetime.datetime.utcnow().replace(microsecond=0).isoformat()
+            }}, array_filters=[{'element.match_id': ObjectId(match_id)}])
+        except NameError:
+            match_id = utils.DB_LOCATION_MATCHES.insert(match_update)
+            utils.DB_BRANDS.update({'_id': brand_id}, {'$push': {
+                'match_requests': {
+                    'last_update': datetime.datetime.utcnow().replace(microsecond=0).isoformat(),
+                    'match_id': ObjectId(match_id),
+                    'region_id': None,
+                    'type': None,
+                    'status': "Active User"
+                }
+            }})
+
         response = {
             'status': status.HTTP_200_OK,
             'status_detail': "Success",
-            'tenant_id': tenant_id,
-            'matching_locations': matches,
-            'matching_properties': []  # TODO: implement determination of matching properties
+            'match_id': str(match_id),
+            'brand_id': str(brand_id),
+            'matching_properties': property_matches,
+            'matching_locations': best_matches,
         }
         return Response(response, status=status.HTTP_200_OK)
-        # TODO: utilize the other parameters in the matching algorithms
 
     def build_location(self, address, brand_name=None):
         return provider.build_location(address, brand_name=brand_name)
+
+    def update_params(self, params, existing_params=None):
+
+        address = existing_params['address'] if existing_params and 'address' in existing_params else None
+        brand_name = existing_params['brand_name'] if existing_params and 'brand_name' in existing_params else None
+        categories = existing_params['categories'] if existing_params and 'categories' in existing_params else []
+        income = existing_params['income'] if existing_params and 'income' in existing_params else {}
+        age = existing_params['age'] if existing_params and 'age' in existing_params else {}
+        personas = existing_params['personas'] if existing_params and 'personas' in existing_params else []
+        commute = existing_params['commute'] if existing_params and 'commute' in existing_params else []
+        education = existing_params['education'] if existing_params and 'education' in existing_params else []
+        ethnicity = existing_params['ethnicity'] if existing_params and 'ethnicity' in existing_params else []
+        min_daytime_pop = existing_params['min_daytime_pop'] if existing_params and 'min_daytime_pop' in existing_params else None
+        rent = existing_params['rent'] if existing_params and 'rent' in existing_params else {}
+        sqft = existing_params['sqft'] if existing_params and 'sqft' in existing_params else {}
+        frontage_width = existing_params['frontage_width'] if existing_params and 'frontage_width' in existing_params else None
+        property_type = existing_params['property_type'] if existing_params and 'property_type' in existing_params else []
+
+        updated_params = existing_params if existing_params else {}
+        updated_params.update({
+            'address': params['address'] if 'address' in params else address,
+            'brand_name': params['brand_name'] if 'brand_name' in params else brand_name,
+            'categories': params['categories'] if 'categories' in params else categories,
+            'income': params['income'] if 'income' in params else income,
+            'age': params['age'] if 'age' in params else age,
+            'personas': params['personas'] if 'personas' in params else personas,
+            'commute': params['commute'] if 'commute' in params else commute,
+            'education': params['education'] if 'education' in params else education,
+            'ethnicity': params['ethnicity'] if 'ethnicity' in params else ethnicity,
+            'min_daytime_pop': params['min_daytime_pop'] if 'min_daytime_pop' in params else min_daytime_pop,
+            'rent': params['rent'] if 'rent' in params else rent,
+            'sqft': params['sqft'] if 'sqft' in params else sqft,
+            'frontage_width': params['frontage_width'] if 'frontage_width' in params else frontage_width,
+            'property_type': params['property_type'] if 'property_type' in params else property_type
+        })
+
+        return updated_params
 
     @staticmethod
     @celery_app.task
@@ -313,391 +366,160 @@ class TenantMatchAPI(AsynchronousAPI):
         celery_app.register_task(self.get_nearby_places)
 
 
-# LocationDetailsApi - referenced by api/locationDetails/
-
-
-class LocationDetailsAPI(AsynchronousAPI):
-
-    """
-
-    Provided two locations to compare, this api will generate the match details between each.
-
-    parameters: {
-        my_location: {                          (required)
-            address: string,                    (required -> not required if categories are provided)
-            brand_name: string,                 (required -> not required if categories are provided)
-            categories: list[string],           (required)
-            income: {                           (required -> not required if brand_name and address provided)
-                min: int,                       (required if income provided)
-                max: int,
-            }
-        },
-        target_location: {                      (required, not used if property_id is provided)
-            lat: int,
-            lng: int,
-        },
-        property_id: string,                    (optional)
-    }
-
-    response: {
-        status: int (HTTP),                     (always provided)
-        status_detail: string or list,          (always provided)
-        overview: {                               (not provided if error occurs)
-            match_value: float,
-            affinities: {
-                growth: boolean,
-                personas: boolean,
-                demographics: boolean,
-                ecosystem: boolean,
-            },
-            key_facts: {
-                mile: int
-                DaytimePop: float,
-                MediumHouseholdIncome: float,
-                TotalHousholds: float,
-                HouseholdGrowth2017-2022: float,
-                num_metro: int,                       (will never exceed 60)
-                num_universities: int,                (will never exceed 60)
-                num_hospitals: int,                   (will never exceed 60)
-                num_apartments: int                   (will never exceed 60)
-            },
-            commute: {
-                Public Transport: int,
-                Bicycle: int,
-                Carpooled: int,
-                Drove Alone: int,
-                Walked: int,
-                Worked at Home: int
-            },
-            top_personas: [
-                {
-                    percentile: float,
-                    photo: url,
-                    name: string,
-                    description: string,
-                    tags: List[string]
-                },
-                { ... same as above },
-                { ... same as above }
-            ],
-            demographics1: {
-                age: {
-                    <18: {
-                        my_location: float,                                 (only provided if address is provided)
-                        target_location: float,
-                        growth: float
-                    },
-                    18-24: { ... same as above },
-                    25-34: { ... same as above },
-                    35-54: { ... same as above },
-                    45-54: { ... same as above },
-                    55-64: { ... same as above },
-                    65+ : { ... same as above}
-                    }
-                },
-                income: {
-                    <$50K: {
-                        my_location: float,                                 (only provided if address is provided)
-                        target_location: float,
-                        growth: float
-                    },
-                    $50K-$74K: { ... same as above },
-                    $75K-$124K: { ... same as above },
-                    $125K-$199K: { ... same as above },
-                    $200K: { ... same as above}
-                },
-                ethnicity: {                                                (no subcategory will contain growth)
-                    white: {
-                        my_location: float,                                 (only provided if address is provided)
-                        target_location: float,
-                        growth: float
-                    },
-                    black: { ... same as above },
-                    indian: { ... same as above },
-                    asian: { ... same as above},
-                    pacific_islander: { ... same as above },
-                    other: { ... same as above }
-                },
-                education: {                                                (no subcategory will contain growth)
-                    some_highschool: {
-                        my_location: float,                                 (only provided if address is provided)
-                        target_location: float,
-                        growth: float
-                    },
-                    highschool: { ... same as above },
-                    some_college: { ... same as above },
-                    associate: { ... same as above },
-                    bachelor: { ... same as above },
-                    masters: { ... same as above },
-                    professional: { ... same as above },
-                    doctorate: { ... same as above }
-                },
-                gender: {
-                    male: {
-                        my_location: float,                                 (only provided if address is provided)
-                        target_location: float,
-                        growth: float
-                    },
-                    female: { ... same as above }
-                }
-            },
-            demographics3: ... same as demographics,
-            demographics5: ... same as demographics,
-            nearby : [
-                {
-                    lat: float,
-                    lng: float,
-                    name: string,
-                    rating: float,                                          (only provided if available)
-                    number_rating: float,                                   (only provided if available)
-                    category: string,                                       (may be null)
-                    distance: float,
-                    restaurant: boolean,                                    (only provided if True)
-                    retail: boolean,                                        (only provided if True)
-                    similar: boolean,
-                    hospital: boolean,
-                    apartment: boolean,
-                    metro: boolean,
-                },
-                ... many more
-            ],
-        },
-        property_details: {                                                 (only provided if property_details provided)
-            3D_tour: url, (matterport media)                                (provided only when available)
-            main_photo: url,
-            sqft: int,
-            photos: list[urls],
-            summary: {
-                price/sqft: int,
-                type: string,
-                condition: string
-            },
-            description: string
-        }
-    }
-
-    """
-
-    permission_classes = [
-        permissions.AllowAny
-    ]
-    serializer_class = LocationDetailSerializer
-
-    def get(self, request, *args, **kwargs):
-
-        # indempotently register all celery tasks
-        self._register_tasks()
-
-        # validate request
-        serializer = self.get_serializer(data=request.query_params)
-        serializer.is_valid(raise_exception=True)
-        validated_params = serializer.validated_data
-
-        if 'address' in validated_params['my_location']:
-
-            # TODO: clean up the listener pattern (relatively repetative)
-
-            # get location match details asynchronously
-            l_process, my_location = self._get_location_details.delay(validated_params['my_location']), []
-            my_location_listener = self._celery_listener(l_process, my_location)
-            my_location_listener.start()
-
-            location = provider.get_location(validated_params['my_location']['address'], validated_params['my_location']['brand_name'])
-            my_lat = location['lat']
-            my_lng = location['lng']
-
-            # obtain the 1, 3, & 5 mile demographic details asynchronously
-            d_process, my_demo1 = self._get_demographics.delay(my_lat, my_lng, 1), []
-            my_demo1_listener = self._celery_listener(d_process, my_demo1)
-            my_demo1_listener.start()
-
-            d_process, my_demo3 = self._get_demographics.delay(my_lat, my_lng, 3), []
-            my_demo3_listener = self._celery_listener(d_process, my_demo3)
-            my_demo3_listener.start()
-
-            d_process, my_demo5 = self._get_demographics.delay(my_lat, my_lng, 5), []
-            my_demo5_listener = self._celery_listener(d_process, my_demo5)
-            my_demo5_listener.start()
-
-        else:
-
-            categories = validated_params['my_location']['categories']
-            income = validated_params['my_location']['income']
-            print(categories)
-            my_location = provider.get_representative_location(categories, income)
-            # TODO: fix to still execute even if no categories are found
-            if not my_location:
-                return Response({
-                    'status': 501,
-                    'status_detail': ['Details for when no categories found unimplemented.']
-                }, status=status.HTTP_501_NOT_IMPLEMENTED)
-
-            l_process, my_location = self._get_location_details.delay(my_location, False), []
-            my_location_listener = self._celery_listener(l_process, my_location)
-            my_location_listener.start()
-
-        # KO data request for target location. If target location is an existing
-        # property, we will provide the details here.
-        if 'property_id' in validated_params:
-            # TODO: get all the infromation from property database (pending completion and organization of property databas)
-            pass
-        else:
-            target_lat = validated_params['target_location']['lat']
-            target_lng = validated_params['target_location']['lng']
-
-            # get location match details asynchronously
-            l_process, target_location = self._get_location_details.delay(validated_params["target_location"], False), []
-            target_location_listener = self._celery_listener(l_process, target_location)
-            target_location_listener.start()
-
-            # obtain key facts asynchronously
-            kf_process, key_facts = self._get_key_facts.delay(target_lat, target_lng), []
-            key_facts_listener = self._celery_listener(kf_process, key_facts)
-            key_facts_listener.start()
-
-            # obtain the 1, 3, & 5 mile demographic details asynchronously
-            d_process, target_demo1 = self._get_demographics.delay(target_lat, target_lng, 1), []
-            target_demo1_listener = self._celery_listener(d_process, target_demo1)
-            target_demo1_listener.start()
-
-            d_process, target_demo3 = self._get_demographics.delay(target_lat, target_lng, 3), []
-            target_demo3_listener = self._celery_listener(d_process, target_demo3)
-            target_demo3_listener.start()
-
-            d_process, target_demo5 = self._get_demographics.delay(target_lat, target_lng, 5), []
-            target_demo5_listener = self._celery_listener(d_process, target_demo5)
-            target_demo5_listener.start()
-
-            # obtain the nearby details asynchronously
-            n_process, target_nearby = self._get_nearby.delay(target_lat, target_lng, validated_params['my_location']['categories']), []
-            target_nearby_listener = self._celery_listener(n_process, target_nearby)
-            target_nearby_listener.start()
-
-        my_location_listener.join()
-        target_location_listener.join()
-
-        # obtain the match values asynchronously
-        m_process, match_values = self._get_match_value.delay(target_location[0], my_location[0]), []
-        match_value_listener = self._celery_listener(m_process, match_values)
-        match_value_listener.start()
-
-        # obtain the top personas asynchronously - TODO: fix to not rely on categories
-        p_process, top_personas = self._get_personas.delay(target_location[0], my_location[0]), []
-        personas_nearby_listener = self._celery_listener(p_process, top_personas)
-        personas_nearby_listener.start()
-
-        target_demo1_listener.join()
-        target_demo3_listener.join()
-        target_demo5_listener.join()
-
-        # remove commute from 1 and 5 mile (will use the 3 mile to fill)
-        target_demo1[0].pop('commute')
-        commute = target_demo3[0].pop('commute')
-        target_demo5[0].pop('commute')
-
-        # combine demographics if comparing against existing address.
-        if 'address' in validated_params['my_location']:
-            my_demo1_listener.join()
-            my_demo3_listener.join()
-            my_demo5_listener.join()
-
-            my_demo1[0].pop('commute')
-            my_demo3[0].pop('commute')
-            my_demo5[0].pop('commute')
-
-            demographics1 = provider.combine_demographics(my_demo1[0], target_demo1[0])
-            demographics3 = provider.combine_demographics(my_demo3[0], target_demo3[0])
-            demographics5 = provider.combine_demographics(my_demo5[0], target_demo5[0])
-        else:
-            demographics1 = target_demo1[0]
-            demographics3 = target_demo3[0]
-            demographics5 = target_demo5[0]
-
-        key_facts_listener.join()
-        target_nearby_listener.join()
-        match_value_listener.join()
-        personas_nearby_listener.join()
-
-        response = {
-            'status': 200,
-            'status_detail': 'Success',
-            'result': {
-                'match_value': match_values[0]['match'],
-                'affinities': match_values[0]['affinities'],
-                'key_facts': key_facts[0],
-                'commute': commute,
-                'top_personas': top_personas[0],
-                'demographics1': demographics1,
-                'demographics3': demographics3,
-                'demographics5': demographics5,
-                'nearby': target_nearby[0]
-            }
-        }
-
-        return Response(response, status=status.HTTP_200_OK)
-
-    # location assumed to be the same structure as "my_location", and target_location assumed to be the
-    # same structure as "target_location"
-    @staticmethod
-    @celery_app.task
-    def _get_match_value(target_location, location):
-        return provider.get_match_value(location, target_location)
-
-    # location expected to either have address & brand_name, otherwise it's assumed to have a latitude
-    # longitude pair
-    @staticmethod
-    @celery_app.task
-    def _get_location_details(location, has_address_and_brand_name=True):
-        if has_address_and_brand_name:
-            return dict(matching.generate_vector_address(location["address"], location["brand_name"]).iloc[0])
-        else:
-            return dict(matching.generate_vector_location(location["lat"], location["lng"]).iloc[0])
-
-    @staticmethod
-    @celery_app.task
-    def _get_key_facts(lat, lng):
-        return provider.get_key_facts_deprecated(lat, lng)
-
-    @staticmethod
-    @celery_app.task
-    def _get_personas(target, location):
-        return provider.get_matching_personas(target, location)
-
-    @staticmethod
-    @celery_app.task
-    def _get_demographics(lat, lng, radius, demographic_vector=None):
-        return provider.get_demographics(lat, lng, radius, demographic_vector)
-
-    @staticmethod
-    @celery_app.task
-    def _get_nearby(lat, lng, categories):
-        return provider.get_nearby(lat, lng, categories)
-
-    def _register_tasks(self) -> None:
-        celery_app.register_task(self._get_nearby)
-        celery_app.register_task(self._get_demographics)
-        celery_app.register_task(self._get_match_value)
-        celery_app.register_task(self._get_location_details)
-        celery_app.register_task(self._get_personas)
-        celery_app.register_task(self._get_key_facts)
-
-
-# FastLocationDetailsAPI (modified) = referenced by api/fastLocationDetails (temporary, to replace the locationDetail API)
 class FastLocationDetailsAPI(AsynchronousAPI):
 
     """
 
-    Refer to LocationDetailsAPI for the definition. (Temporary)
+    /api/fastLocationDetails
 
-    parameters: {
-        tenant_id: string,                      (required)
-        target_location: {                      (required, not used if property_id is provided)
-            lat: int,
-            lng: int,
-        },
-        property_id: string                     (optional)
-    }
+    Parameters:
+        {
+            match_id: string,                      (required)
+            target_location: {                      (required, not used if property_id is provided)
+                lat: int,
+                lng: int,
+            },
+            property_id: string                     (optional)
+        }
 
+    Response:
+        {
+            status: int (HTTP),                     (always provided)
+            status_detail: string or list,          (always provided)
+            overview: {                               (not provided if error occurs)
+                match_value: float,
+                affinities: {
+                    growth: boolean,
+                    personas: boolean,
+                    demographics: boolean,
+                    ecosystem: boolean,
+                },
+                key_facts: {
+                    mile: int
+                    DaytimePop: float,
+                    MediumHouseholdIncome: float,
+                    TotalHousholds: float,
+                    HouseholdGrowth2017-2022: float,
+                    num_metro: int,                       (will never exceed 60)
+                    num_universities: int,                (will never exceed 60)
+                    num_hospitals: int,                   (will never exceed 60)
+                    num_apartments: int                   (will never exceed 60)
+                },
+                commute: {
+                    Public Transport: int,
+                    Bicycle: int,
+                    Carpooled: int,
+                    Drove Alone: int,
+                    Walked: int,
+                    Worked at Home: int
+                },
+                top_personas: [
+                    {
+                        percentile: float,
+                        photo: url,
+                        name: string,
+                        description: string,
+                        tags: List[string]
+                    },
+                    { ... same as above },
+                    { ... same as above }
+                ],
+                demographics1: {
+                    age: {
+                        <18: {
+                            my_location: float,                                 (only provided if address is provided)
+                            target_location: float,
+                            growth: float
+                        },
+                        18-24: { ... same as above },
+                        25-34: { ... same as above },
+                        35-54: { ... same as above },
+                        45-54: { ... same as above },
+                        55-64: { ... same as above },
+                        65+ : { ... same as above}
+                        }
+                    },
+                    income: {
+                        <$50K: {
+                            my_location: float,                                 (only provided if address is provided)
+                            target_location: float,
+                            growth: float
+                        },
+                        $50K-$74K: { ... same as above },
+                        $75K-$124K: { ... same as above },
+                        $125K-$199K: { ... same as above },
+                        $200K: { ... same as above}
+                    },
+                    ethnicity: {                                                (no subcategory will contain growth)
+                        white: {
+                            my_location: float,                                 (only provided if address is provided)
+                            target_location: float,
+                            growth: float
+                        },
+                        black: { ... same as above },
+                        indian: { ... same as above },
+                        asian: { ... same as above},
+                        pacific_islander: { ... same as above },
+                        other: { ... same as above }
+                    },
+                    education: {                                                (no subcategory will contain growth)
+                        some_highschool: {
+                            my_location: float,                                 (only provided if address is provided)
+                            target_location: float,
+                            growth: float
+                        },
+                        highschool: { ... same as above },
+                        some_college: { ... same as above },
+                        associate: { ... same as above },
+                        bachelor: { ... same as above },
+                        masters: { ... same as above },
+                        professional: { ... same as above },
+                        doctorate: { ... same as above }
+                    },
+                    gender: {
+                        male: {
+                            my_location: float,                                 (only provided if address is provided)
+                            target_location: float,
+                            growth: float
+                        },
+                        female: { ... same as above }
+                    }
+                },
+                demographics3: ... same as demographics,
+                demographics5: ... same as demographics,
+                nearby : [
+                    {
+                        lat: float,
+                        lng: float,
+                        name: string,
+                        rating: float,                                          (only provided if available)
+                        number_rating: float,                                   (only provided if available)
+                        category: string,                                       (may be null)
+                        distance: float,
+                        restaurant: boolean,                                    (only provided if True)
+                        retail: boolean,                                        (only provided if True)
+                        similar: boolean,
+                        hospital: boolean,
+                        apartment: boolean,
+                        metro: boolean,
+                    },
+                    ... many more
+                ],
+            },
+            ## Following to be removed pending team answer
+            # property_details: {                                                 (only provided if property_details provided)
+            #     3D_tour: url, (matterport media)                                (provided only when available)
+            #     main_photo: url,
+            #     sqft: int,
+            #     photos: list[urls],
+            #     summary: {
+            #         price/sqft: int,
+            #         type: string,
+            #         condition: string
+            #     },
+            #     description: string
+            # }
+        }
 
     """
 
@@ -712,90 +534,190 @@ class FastLocationDetailsAPI(AsynchronousAPI):
         serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
 
-        # GET THE TENANT DETAILS
-        tenant = provider.get_tenant_details(validated_params["tenant_id"])
+        # Obtain representative locations
+        match_id = validated_params['match_id']
+        property_id = validated_params['property_id'] if 'property_id' in validated_params else None
 
-        # GET THE LOCATION OR PROPERTY DETAILS
-        if 'property_id' in validated_params:
-            location = provider.get_property(validated_params["property_id"])
-        else:
-            print(validated_params)
-            location = provider.get_location_details(validated_params["target_location"])
+        # grab match record if exists. Grab from legacy database if not in latest database.
+        match = utils.DB_LOCATION_MATCHES.find_one({'_id': ObjectId(match_id)}, {'location_match_values': 0})
 
-            if not location:
-                # TODO: get_all_the_details anyway
-                # kick off our super slow function - ()
-                pass
+        if match:  # if generating the details using the latest schema
+            if property_id:
+                this_property = utils.DB_PROPERTY.find_one({'_id': ObjectId(property_id)})
+                this_location = utils.DB_property.find_one({'_id': this_property['location_id']})
+                target_lat = this_location['location']['coordinates'][1]
+                target_lng = this_location['location']['coordinates'][0]
+            else:
+                target_lat = round(validated_params["target_location"]["lat"], 6)
+                target_lng = round(validated_params["target_location"]["lng"], 6)
+                # grab the nearby stores asynchronously
+                n_process, nearby = TenantMatchAPI.get_nearby_places.delay(target_lat, target_lng), []
+                nearby_listener = self._celery_listener(n_process, nearby)
+                nearby_listener.start()
 
-        # GET THE MATCH VALUE
-        match_value = provider.get_match_value_from_id(validated_params["tenant_id"], location['vector_id'])
+                this_location = landlord_provider.build_location(target_lat, target_lng)
+                _, nearby = nearby_listener.join(), nearby[0]
 
-        # stringify the objectIds
-        tenant["_id"] = str(tenant["_id"]) if '_id' in tenant else None
-        location["_id"] = str(location["_id"]) if "_id" in location else None
-        location["vector_id"] = str(location["vector_id"]) if "vector_id" in location else None
+                this_location.update(nearby)
+                if '_id' in this_location:
+                    utils.DB_LOCATIONS.update({"_id": this_location['_id']}, this_location)
+                else:
+                    utils.DB_LOCATIONS.insert(this_location)
 
-        # GET THE DEMOGRAPHIC DETAILS (asyc)
-        d_process, tenant_demographics = self.obtain_demographics.delay(tenant, parallel_process=True), []
-        tenant_demo_listener = self._celery_listener(d_process, tenant_demographics)
-        tenant_demo_listener.start()
-        d_process, location_demographics = self.obtain_demographics.delay(location, parallel_process=True), []
-        location_demo_listener = self._celery_listener(d_process, location_demographics)
-        location_demo_listener.start()
+            location_id = ObjectId(match['params']['location_id'])
+            tenant_location = utils.DB_LOCATIONS.find_one({'_id': location_id})
 
-        # Obtain the keyfacts
-        key_facts_demo = self.obtain_key_demographics(location)
-        key_facts_nearby = self.obtain_key_nearby(location, key_facts_demo['mile'])
-        key_facts_demo.update({
-            "num_metro": len(key_facts_nearby["nearby_metro"]),
-            "num_universities": len(key_facts_nearby["nearby_university"]),
-            "num_hospitals": len(key_facts_nearby["nearby_hospitals"]),
-            "num_apartments": len(key_facts_nearby["nearby_apartments"])
-        })
-        key_facts = key_facts_demo
-        location["nearby_metro"] = key_facts_nearby["nearby_metro"]
+            top_personas = provider.get_matching_personas(tenant_location['spatial_psychographics']["1mile"],
+                                                          this_location['spatial_psychographics']["1mile"])
 
-        # GET THE NEARBY LOCATIONS (async)
-        n_process, nearby = self.obtain_nearby.delay(tenant, location, parallel_process=True), []
-        nearby_listener = self._celery_listener(n_process, nearby)
-        nearby_listener.start()
+            tenant_demographics = self.convert_demographics(tenant_location['environics_demographics'])
+            location_demographics = self.convert_demographics(this_location['environics_demographics'])
 
-        # GET THE PSYCHOGRAPHICS
-        top_personas = provider.get_matching_personas(location['psycho1'], tenant['psycho1'])
+            demographics = {}
+            demographics["1mile"] = provider.combine_demographics(tenant_demographics["1mile"], location_demographics["1mile"])
+            demographics["3mile"] = provider.combine_demographics(tenant_demographics["3mile"], location_demographics["3mile"])
+            demographics["5mile"] = provider.combine_demographics(tenant_demographics["5mile"], location_demographics["5mile"])
 
-        # grab the demographic details
-        _, tenant_demographics = tenant_demo_listener.join(), tenant_demographics[0]
-        _, location_demographics = location_demo_listener.join(), location_demographics[0]
-        # get the commute details breifly
-        commute = location_demographics[str(key_facts_demo['mile']) + 'mile']['commute']
-        demographics = self.combine_demographics(tenant_demographics, location_demographics)
+            try:
+                commute = demographics["1mile"].pop("commute") if 'commute' in demographics["1mile"] else None
+                demographics["3mile"].pop("commute") if 'commute' in demographics["1mile"] else None
+                demographics["5mile"].pop("commute") if 'commute' in demographics["1mile"] else None
+            except Exception:
+                commute = None
 
-        # grab the nearby details
-        _, nearby = nearby_listener.join(), nearby[0]
+            # TODO: factor in similar categories
+            nearby = self.obtain_nearby({}, this_location, parallel_process=False)
 
-        response = {
-            'status': 200,
-            'status_detail': 'Success',
-            'result': {
-                'match_value': match_value,
-                'affinities': {
-                    # hardcoded false for now, will be made into values soon
-                    'growth': False,
-                    'demographics': False,
-                    'personas': False,
-                    'ecosystem': False
-                },
-                'key_facts': key_facts,
-                'commute': commute,
-                'top_personas': top_personas,
-                'demographics1': demographics["1mile"],
-                'demographics3': demographics["3mile"],
-                'demographics5': demographics["5mile"],
-                'nearby': nearby
+            key_facts = this_location['arcgis_demographics']['1mile'] or {}
+            if key_facts != {}:
+                key_facts.pop('DaytimeWorkingPop')
+                key_facts.pop('DaytimeResidentPop')
+
+            key_facts['num_metro'] = len(this_location['nearby_subway_station'] if 'neaby_subway_station' in this_location else google.nearby(
+                target_lat, target_lng, 'subway_station', radius=1))
+            key_facts['num_universities'] = len(this_location['nearby_university'] if 'nearby_university' in this_location else google.nearby(
+                target_lat, target_lng, 'university', radius=1))
+            key_facts['num_hospitals'] = len(this_location['nearby_hospitals'] if 'nearby_hospitals' in this_location else google.nearby(
+                target_lat, target_lng, 'hospital', radius=1))
+            key_facts['nearby_apartments'] = len(this_location['nearby_apartments'] if 'nearby_apartments' in this_location else google.search(
+                target_lat, target_lng, 'apartments', radius=1))
+
+            vector_id = provider.get_location_details({'lat': target_lat, 'lng': target_lng})['vector_id']
+            match_value = provider.get_match_value_from_id(match_id, vector_id)
+
+            response = {
+                'status': 200,
+                'status_detail': 'Success',
+                'result': {
+                    'match_value': match_value,
+                    'affinities': {
+                        # hardcoded false for now, will be made into values soon
+                        'growth': False,
+                        'demographics': False,
+                        'personas': False,
+                        'ecosystem': False
+                    },
+                    'key_facts': key_facts,
+                    'commute': commute,
+                    'top_personas': top_personas,
+                    'demographics1': demographics["1mile"],
+                    'demographics3': demographics["3mile"],
+                    'demographics5': demographics["5mile"],
+                    'nearby': nearby
+                }
             }
-        }
 
-        return Response(response, status=status.HTTP_200_OK)
+            return Response(response, status=status.HTTP_200_OK)
+        else:  # PROCESS THINGS WITH PREVIOUS META
+
+            # get the tenant details
+            tenant = provider.get_tenant_details(validated_params["match_id"])
+            if not tenant:
+                return Response({
+                    'status': status.HTTP_404_NOT_FOUND,
+                    'status_detail': ['Match was not found, please make sure to check the id.']
+                }, status=status.HTTP_404_NOT_FOUND)
+
+            # get the location and property detials
+            if 'property_id' in validated_params:
+                location = provider.get_property(validated_params["property_id"])
+            else:
+                print(validated_params)
+                location = provider.get_location_details(validated_params["target_location"])
+
+                if not location:
+                    pass
+
+            # get the match value
+            match_value = provider.get_match_value_from_id(validated_params["match_id"], location['vector_id'], latest=False)
+
+            # stringify the objectIds
+            tenant["_id"] = str(tenant["_id"]) if '_id' in tenant else None
+            location["_id"] = str(location["_id"]) if "_id" in location else None
+            location["vector_id"] = str(location["vector_id"]) if "vector_id" in location else None
+
+            # get the demographic details asynchronously
+            d_process, tenant_demographics = self.obtain_demographics.delay(tenant, parallel_process=True), []
+            tenant_demo_listener = self._celery_listener(d_process, tenant_demographics)
+            tenant_demo_listener.start()
+            d_process, location_demographics = self.obtain_demographics.delay(location, parallel_process=True), []
+            location_demo_listener = self._celery_listener(d_process, location_demographics)
+            location_demo_listener.start()
+
+            # obtain the key facts
+            key_facts_demo = self.obtain_key_demographics(location)
+            key_facts_nearby = self.obtain_key_nearby(location, key_facts_demo['mile'])
+            key_facts_demo.update({
+                "num_metro": len(key_facts_nearby["nearby_metro"]),
+                "num_universities": len(key_facts_nearby["nearby_university"]),
+                "num_hospitals": len(key_facts_nearby["nearby_hospitals"]),
+                "num_apartments": len(key_facts_nearby["nearby_apartments"])
+            })
+            key_facts = key_facts_demo
+            location["nearby_metro"] = key_facts_nearby["nearby_metro"]
+
+            # get the nearby locations
+            n_process, nearby = self.obtain_nearby.delay(tenant, location, parallel_process=True), []
+            nearby_listener = self._celery_listener(n_process, nearby)
+            nearby_listener.start()
+
+            # get the psychographics
+            top_personas = provider.get_matching_personas(location['psycho1'], tenant['psycho1'])
+
+            # process the demogrpahics
+            _, tenant_demographics = tenant_demo_listener.join(), tenant_demographics[0]
+            _, location_demographics = location_demo_listener.join(), location_demographics[0]
+
+            # get the commute details
+            commute = location_demographics[str(key_facts_demo['mile']) + 'mile']['commute']
+            demographics = self.combine_demographics(tenant_demographics, location_demographics)
+
+            # grab the nearby details
+            _, nearby = nearby_listener.join(), nearby[0]
+
+            response = {
+                'status': 200,
+                'status_detail': 'Success',
+                'result': {
+                    'match_value': match_value,
+                    'affinities': {
+                        # hardcoded false for now, will be made into values soon
+                        'growth': False,
+                        'demographics': False,
+                        'personas': False,
+                        'ecosystem': False
+                    },
+                    'key_facts': key_facts,
+                    'commute': commute,
+                    'top_personas': top_personas,
+                    'demographics1': demographics["1mile"],
+                    'demographics3': demographics["3mile"],
+                    'demographics5': demographics["5mile"],
+                    'nearby': nearby
+                }
+            }
+
+            return Response(response, status=status.HTTP_200_OK)
 
     def obtain_key_demographics(self, place):
         """
@@ -874,6 +796,13 @@ class FastLocationDetailsAPI(AsynchronousAPI):
             "5mile": fivemile_demo
         }
 
+    def convert_demographics(self, demographic_dict):
+        return {
+            '1mile': provider.get_demographics(1, 1, 1, demographic_dict=demographic_dict['1mile']),
+            '3mile': provider.get_demographics(1, 1, 1, demographic_dict=demographic_dict['3mile']),
+            '5mile': provider.get_demographics(1, 1, 1, demographic_dict=demographic_dict['5mile'])
+        }
+
     def combine_demographics(self, tenant_demographics, landlord_demographics):
 
         demographic_radius = ["1mile", "3mile", "5mile"]
@@ -906,7 +835,7 @@ class FastLocationDetailsAPI(AsynchronousAPI):
 
 
 # LocationPreviewAPI - referenced by api/locationPreview/ | inherits from LocationDetailsAPI
-class LocationPreviewAPI(LocationDetailsAPI):
+class LocationPreviewAPI(AsynchronousAPI):
     """
 
     Provided the latitude and longitude of a location, will provide details for a preview.
