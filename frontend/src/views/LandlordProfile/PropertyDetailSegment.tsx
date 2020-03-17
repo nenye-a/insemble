@@ -13,7 +13,8 @@ type Props = {
 enum Tab {
   TENANT_MATCH_INDEX,
   LOCATION_DETAIL_INDEX,
-  MANAGE_INDEX,
+  MANAGE_SPACE_INDEX,
+  MANAGE_PROPERTY_INDEX,
 }
 
 export default function PropertyDetailSegment({ selectedTabIndex, onPress }: Props) {
@@ -36,10 +37,20 @@ export default function PropertyDetailSegment({ selectedTabIndex, onPress }: Pro
         </SegmentText>
       </TabSegment>
       <TabSegment
-        isActive={selectedTabIndex === Tab.MANAGE_INDEX}
-        onPress={() => onPress(Tab.MANAGE_INDEX)}
+        isActive={selectedTabIndex === Tab.MANAGE_SPACE_INDEX}
+        onPress={() => onPress(Tab.MANAGE_SPACE_INDEX)}
       >
-        <SegmentText isActive={selectedTabIndex === Tab.MANAGE_INDEX}>Manage</SegmentText>
+        <SegmentText isActive={selectedTabIndex === Tab.MANAGE_SPACE_INDEX}>
+          Manage Space
+        </SegmentText>
+      </TabSegment>
+      <TabSegment
+        isActive={selectedTabIndex === Tab.MANAGE_PROPERTY_INDEX}
+        onPress={() => onPress(Tab.MANAGE_PROPERTY_INDEX)}
+      >
+        <SegmentText isActive={selectedTabIndex === Tab.MANAGE_PROPERTY_INDEX}>
+          Manage Property
+        </SegmentText>
       </TabSegment>
     </HorizontalView>
   );

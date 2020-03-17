@@ -1,80 +1,65 @@
-import React, { useState, Dispatch } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
 import {
-  TextInput,
   View,
+  TextInput,
   Label,
-  Checkbox,
-  ClickAway,
-  TouchableOpacity,
   Form,
   Button,
+  Checkbox,
+  TouchableOpacity,
+  ClickAway,
 } from '../../core-ui';
-import { FONT_SIZE_NORMAL } from '../../constants/theme';
-import { Categories } from '../../generated/Categories';
-import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
-import { Filter } from '../../components';
-import { Action, State as LandlordOnboardingState } from '../../reducers/landlordOnboardingReducer';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
+import { FONT_SIZE_NORMAL } from '../../constants/theme';
+import { WHITE } from '../../constants/colors';
+import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
+import { SPACES_TYPE } from '../../constants/spaces';
+import { SERVICE_OPTIONS } from '../LandlordOnboardingPage/TenantConfirm';
+import { Categories } from '../../generated/Categories';
+import { Filter } from '../../components';
 
 type Props = {
-  dispatch: Dispatch<Action>;
-  state: LandlordOnboardingState;
+  spaceId: string;
 };
 
-export const SERVICE_OPTIONS = ['Retail', 'Restaurant', 'Fitness', 'Entertainment', 'Others'];
-
-export default function TenantConfirm(props: Props) {
-  let history = useHistory();
-  let { dispatch, state } = props;
-  let { confirmTenant } = state;
+export default function LandlordManageProperty() {
+  let [selectedType, setSelectedType] = useState<Array<string>>([]);
+  let [selectedBusinessService, setSelectedBusinessService] = useState<Array<string>>([]);
   let { data: categoriesData } = useQuery<Categories>(GET_CATEGORIES);
-  let [selectedBusinessService, setSelectedBusinessService] = useState<Array<string>>(
-    confirmTenant?.businessType || []
-  );
-  let [otherService, setOtherService] = useState(confirmTenant?.otherBusinessType || '');
-
   let [categorySelectionVisible, toggleCategorySelection] = useState(false);
-  let [selectedCategories, setSelectedCategories] = useState<Array<string>>(
-    confirmTenant?.selectedRetailCategories || []
-  );
-
+  let [selectedCategories, setSelectedCategories] = useState<Array<string>>([]);
   let [existingCategorySelectionVisible, toggleExistingCategorySelectionVisible] = useState(false);
-  let [selectedExistingCategories, setExistingSelectedCategories] = useState<Array<string>>(
-    confirmTenant?.existingExclusives || []
-  );
-
-  let allValid =
-    !selectedBusinessService?.includes('Others') ||
-    (selectedBusinessService?.includes('Others') && otherService !== '');
-
-  let saveFormState = () => {
-    dispatch({
-      type: 'SAVE_CHANGES_CONFIRM_TENANT',
-      values: {
-        confirmTenant: {
-          businessType: selectedBusinessService,
-          selectedRetailCategories: selectedCategories,
-          existingExclusives: selectedExistingCategories,
-          otherBusinessType: otherService,
-        },
-      },
-    });
-  };
-
-  let handleSubmit = () => {
-    if (allValid) {
-      saveFormState();
-      history.push('/landlord/new-property/step-4');
-    }
-  };
-
+  let [selectedExistingCategories, setExistingSelectedCategories] = useState<Array<string>>([]);
+  let [otherService, setOtherService] = useState('');
   return (
-    <Form style={{ flex: 1 }} onSubmit={handleSubmit}>
-      <FormContainer flex>
+    <Form>
+      <Container>
+        <LabelText text="What type of property is this?" />
+        {SPACES_TYPE.map((option, index) => {
+          let isChecked = selectedType.includes(option);
+          return (
+            <Checkbox
+              key={index}
+              size="18px"
+              title={option}
+              titleProps={{ style: { fontSize: FONT_SIZE_NORMAL } }}
+              isChecked={isChecked}
+              onPress={() => {
+                if (isChecked) {
+                  let newSelectedType = selectedType.filter((item: string) => item !== option);
+                  setSelectedType(newSelectedType);
+                } else {
+                  setSelectedType([...selectedType, option]);
+                }
+              }}
+              style={{ lineHeight: 2 }}
+            />
+          );
+        })}
+
         <LabelText text="What type of business can your property serve?" />
         {SERVICE_OPTIONS.map((option, index) => {
           let isChecked = selectedBusinessService.includes(option);
@@ -99,6 +84,7 @@ export default function TenantConfirm(props: Props) {
             />
           );
         })}
+
         <OtherTextInput
           placeholder="Coffee"
           disabled={!selectedBusinessService.includes(SERVICE_OPTIONS[SERVICE_OPTIONS.length - 1])}
@@ -169,38 +155,21 @@ export default function TenantConfirm(props: Props) {
             </ClickAway>
           </>
         )}
-      </FormContainer>
+      </Container>
       <OnboardingFooter>
-        <TransparentButton
-          mode="transparent"
-          text="Back"
-          onPress={() => {
-            saveFormState();
-            history.goBack();
-          }}
-          disabled={!allValid}
-        />
-        <Button type="submit" text="Next" disabled={!allValid} />
+        <Button text="Done" type="submit" />
       </OnboardingFooter>
     </Form>
   );
 }
-
-const FormContainer = styled(View)`
-  padding: 24px 48px;
+const Container = styled(View)`
+  padding: 12px 24px;
   z-index: 1;
-`;
-const FilterContainer = styled(Filter)`
-  position: absolute;
-  z-index: 3;
+  background-color: ${WHITE};
 `;
 
 const LabelText = styled(Label)`
-  margin-top: 24px;
-`;
-const OtherTextInput = styled(TextInput)`
-  margin: 9px 0 9px 30px;
-  width: 130px;
+  margin: 12px 0 8px 0;
 `;
 
 const SelectCategories = styled(TextInput)`
@@ -209,7 +178,12 @@ const SelectCategories = styled(TextInput)`
   }
 `;
 
-const TransparentButton = styled(Button)`
-  margin-right: 8px;
-  padding: 0 12px;
+const FilterContainer = styled(Filter)`
+  position: absolute;
+  z-index: 3;
+`;
+
+const OtherTextInput = styled(TextInput)`
+  margin: 9px 0 9px 30px;
+  width: 130px;
 `;
