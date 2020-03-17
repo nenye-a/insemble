@@ -33,7 +33,7 @@ export default function LandlordManageProperty() {
   let [selectedCategories, setSelectedCategories] = useState<Array<string>>([]);
   let [existingCategorySelectionVisible, toggleExistingCategorySelectionVisible] = useState(false);
   let [selectedExistingCategories, setExistingSelectedCategories] = useState<Array<string>>([]);
-
+  let [otherService, setOtherService] = useState('');
   return (
     <Form>
       <Container>
@@ -85,6 +85,14 @@ export default function LandlordManageProperty() {
           );
         })}
 
+        <OtherTextInput
+          placeholder="Coffee"
+          disabled={!selectedBusinessService.includes(SERVICE_OPTIONS[SERVICE_OPTIONS.length - 1])}
+          value={otherService}
+          onChange={(event) => {
+            setOtherService(event.target.value);
+          }}
+        />
         {categoriesData && (
           <>
             <LabelText text="Are you looking for any specific retail categories?" />
@@ -173,4 +181,9 @@ const SelectCategories = styled(TextInput)`
 const FilterContainer = styled(Filter)`
   position: absolute;
   z-index: 3;
+`;
+
+const OtherTextInput = styled(TextInput)`
+  margin: 9px 0 9px 30px;
+  width: 130px;
 `;
