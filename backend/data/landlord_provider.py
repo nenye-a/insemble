@@ -6,7 +6,6 @@ import data.api.environics as environics
 import data.api.anmspatial as anmspatial
 import data.api.spatial as spatial
 from fuzzywuzzy import process
-from bson import ObjectId
 
 
 '''
@@ -106,6 +105,8 @@ def get_matching_tenants(eval_property, space_id):
             if photo_url:
                 break
 
+        contacts = brand['contacts'] if 'contacts' in brand and brand['contacts'] != [] else None
+
         interested = False
 
         if brand['typical_squarefoot']:
@@ -130,7 +131,8 @@ def get_matching_tenants(eval_property, space_id):
             'number_existing_locations': number_existing_locations,
             'photo_url': photo_url,
             'brand_id': match['brand_id'],
-            'onPlatform': False             # TODO: add more details to onPlatform
+            'onPlatform': False,          # TODO: add more details to onPlatform
+            'contacts': contacts
         })
 
     return final_matches

@@ -83,7 +83,14 @@ class PropertyTenantAPI(AsynchronousAPI):
                 num_existing_locations: int,
                 onPlatform: boolean,
                 match_value: int,
-                interested: boolean,
+                contacts: [
+                    {
+                        name: string,
+                        phone: string,
+                        email: string,
+                        role: string
+                    }
+                ]
             }
             ... many more
         ]
