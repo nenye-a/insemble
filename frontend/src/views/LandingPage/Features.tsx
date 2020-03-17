@@ -7,7 +7,7 @@ import seeBestLocationImg from '../../assets/images/see-best-location.png';
 import keyDetailsImg from '../../assets/images/explore-key-details.png';
 import topLinePropertiesImg from '../../assets/images/top-line-properties.png';
 import { THEME_COLOR, WHITE } from '../../constants/colors';
-import { FONT_WEIGHT_BOLD } from '../../constants/theme';
+import { FONT_WEIGHT_BOLD, FONT_SIZE_XLARGE, FONT_WEIGHT_LIGHT } from '../../constants/theme';
 import { useViewport } from '../../utils';
 import { VIEWPORT_TYPE } from '../../constants/viewports';
 
@@ -106,6 +106,7 @@ const FeatureContainer = styled(View)<FeatureContainerProps>`
         `
       : css`
           flex-direction: row;
+          padding: 23px 0;
         `}
   ${(props) =>
     props.index === 0
@@ -123,18 +124,27 @@ const Text = styled(BaseText)`
 `;
 
 const Title = styled(Text)<TextWithViewportType>`
-  font-size: 32px;
   font-weight: ${FONT_WEIGHT_BOLD};
-  text-align: ${(props) => !props.isDesktop && 'center'};
+  ${(props) =>
+    props.isDesktop
+      ? css`
+          font-size: 32px;
+        `
+      : css`
+          font-size: ${FONT_SIZE_XLARGE};
+          text-align: center;
+        `}
 `;
 
 const Subtitle = styled(Text)<TextWithViewportType>`
   font-size: 20px;
   text-align: ${(props) => !props.isDesktop && 'center'};
+  font-family: ${FONT_WEIGHT_LIGHT};
+  margin-top: 22px;
 `;
 
 const Image = styled.img<ImageWithViewportType>`
-  width: ${(props) => (props.isDesktop ? '60%' : '80%')};
+  width: ${(props) => (props.isDesktop ? '60%' : '100%')};
   object-fit: contain;
 `;
 
@@ -145,6 +155,6 @@ const DescriptionContainer = styled(View)<ViewWithViewportType>`
           padding-top: 12%;
         `
       : css`
-          padding-bottom: 12%;
+          padding: 0 12px 12% 12px;
         `}
 `;
