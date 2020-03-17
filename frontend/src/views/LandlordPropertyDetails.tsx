@@ -31,7 +31,7 @@ export default function LandlordPropertyDetails() {
   let history = useHistory();
   let params = useParams<Params>();
   let [selectedBrandId, setSelectedBrandId] = useState('');
-  let { address, spaces } = history.location.state;
+  let { property, spaces } = history.location.state;
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [selectedSpaceIndex, setSelectedSpaceIndex] = useState(0);
   let [selectedSpaceId, setSelectedSpaceId] = useState(spaces[spaces.length - 1].id);
