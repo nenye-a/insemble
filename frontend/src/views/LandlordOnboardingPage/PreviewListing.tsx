@@ -32,8 +32,9 @@ export default function PreviewListing(props: Props) {
     createProperty,
     { loading: createPropertyLoading, data: createPropertyData, error: createPropertyError },
   ] = useMutation<CreateProperty, CreatePropertyVariables>(CREATE_PROPERTY);
+
   let onSubmit = () => {
-    let { userRelation, propertyType, physicalAddress, marketingPreference } = confirmLocation;
+    let { userRelations, propertyType, physicalAddress, marketingPreference } = confirmLocation;
     let {
       businessType,
       otherBusinessType,
@@ -80,7 +81,7 @@ export default function PreviewListing(props: Props) {
             marketingPreference,
             name: physicalAddress?.name || '',
             propertyType,
-            userRelation,
+            userRelations,
           },
           space: {
             available: availableDate,

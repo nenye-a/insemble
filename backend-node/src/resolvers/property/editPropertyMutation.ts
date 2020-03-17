@@ -28,6 +28,7 @@ export let editPropertyResolver: FieldResolver<
     propertyType = [],
     categories = [],
     exclusive = [],
+    userRelations = [],
     location,
     ...propertyInput
   } = property;
@@ -49,6 +50,10 @@ export let editPropertyResolver: FieldResolver<
       propertyType: {
         set: propertyType,
       },
+      userRelations: {
+        set: userRelations,
+      },
+      userRelation: '', //TODO: remove this after userRelation successfully migrated
       space: {
         updateMany: {
           where: { matchingBrand: { not: { equals: '0' } } },

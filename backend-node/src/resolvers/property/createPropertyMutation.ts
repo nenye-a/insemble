@@ -12,6 +12,7 @@ export let createPropertyResolver: FieldResolver<
     propertyType = [],
     categories = [],
     exclusive = [],
+    userRelations = [],
     location,
     ...propertyInput
   } = property;
@@ -53,6 +54,10 @@ export let createPropertyResolver: FieldResolver<
       propertyType: {
         set: propertyType,
       },
+      userRelations: {
+        set: userRelations,
+      },
+      userRelation: '', //TODO: remove this after userRelation successfully migrated
       space: {
         create: {
           ...spaceInput,
