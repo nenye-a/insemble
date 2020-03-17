@@ -22,6 +22,10 @@ import { WHITE } from '../constants/colors';
 import { VIEWPORT_TYPE } from '../constants/viewports';
 import { FONT_SIZE_XXLARGE } from '../constants/theme';
 
+type LogoViewProps = ViewProps & {
+  isDesktop?: boolean;
+};
+
 function Landing() {
   let { isLoading } = useGoogleMaps();
   let { role } = useCredentials();
@@ -57,8 +61,8 @@ function Landing() {
   return (
     <View>
       <Masthead>
-        <LogoView>
-          <InsembleLogo color="white" />
+        <LogoView isDesktop={isDesktop}>
+          <InsembleLogo color="white" size={isDesktop ? 'default' : 'small'} />
         </LogoView>
         <RowView>
           {id ? (
@@ -183,8 +187,8 @@ const LogIn = styled(Button)`
   background-color: transparent;
 `;
 
-const LogoView = styled(View)`
+const LogoView = styled(View)<LogoViewProps>`
   position: absolute;
-  top: 16px;
+  top: ${(props) => (props.isDesktop ? '16px' : '25px')};
   left: 32px;
 `;
