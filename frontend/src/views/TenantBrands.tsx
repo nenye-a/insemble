@@ -69,7 +69,7 @@ export default () => {
       )}
       <AddButton
         onPress={() => {
-          history.push('/');
+          history.push('/new-brand');
         }}
       >
         <SvgPlus style={{ marginRight: 8, color: THEME_COLOR }} />
