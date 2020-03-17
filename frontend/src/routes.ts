@@ -16,6 +16,7 @@ import MessageDetail from './views/MessageDetail';
 import BrandDetail from './views/BrandDetail';
 import SignUp from './views/SignUp';
 import LandlordOnboarding from './views/LandlordOnboarding';
+import LandlordAddSpace from './views/LandlordAddSpace';
 import LandlordSignUp from './views/LandlordSignUp';
 import LandlordLogin from './views/LandlordLogin';
 import TenantEmailVerification from './views/TenantEmailVerification';
@@ -139,6 +140,12 @@ const LANDLORD_ROUTES = [
     path: '/reset-password-landlord/:verificationId',
     layout: BasicLayout,
     component: ResetPasswordLandlord,
+  },
+  {
+    path: '/landlord/add-space/:formStep',
+    layout: BasicLayout,
+    component: LandlordAddSpace,
+    authorization: landlordAuthorization,
   },
 ];
 
