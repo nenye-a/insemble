@@ -12,11 +12,13 @@ type ContainerProps = ViewProps & {
 export default function Description() {
   let { viewportType } = useViewport();
   let isDesktop = viewportType === VIEWPORT_TYPE.DESKTOP;
-
+  let title = isDesktop
+    ? 'Find top line locations. Increase speed to market.'
+    : 'Find top line locations.\nIncrease speed to market.';
   return (
     <Container isDesktop={isDesktop}>
       <CenteredText fontSize={isDesktop ? '32px' : FONT_SIZE_XLARGE} fontWeight={FONT_WEIGHT_HEAVY}>
-        Find top line locations. Increase speed to market.
+        {title}
       </CenteredText>
       <CenteredText fontSize="20px" style={{ marginTop: 32 }}>
         We instantly find the right customers and locations for your brand, backed by powerful data.
@@ -29,7 +31,6 @@ export default function Description() {
 const Container = styled(View)<ContainerProps>`
   justify-content: center;
   align-items: center;
-
   padding: ${(props) => (props.isDesktop ? '75px 20% 180px 20%' : '75px 24px 120px 24px')};
 `;
 
