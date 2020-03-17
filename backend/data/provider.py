@@ -1,4 +1,4 @@
-from . import utils, matching, mongo_connect
+from . import utils, matching, mongo_connect, places
 from bson import ObjectId
 import numpy as np
 import re
@@ -32,6 +32,62 @@ EQUIPMENT_LIST = ["Walk-in fridge", "Reach-in fridge", "Walk-in freezer", "Greas
 # {lat:float, lng:float, place_id:'place_id}
 
 
+# def generate_matching_locations(location, params):
+#     """
+#     Generate matches for matches for a location. Given the location details of the object
+#     vs. the actual details.
+#     """
+#     matches, match_values = matching.generate_location_matches(location, params)
+#     return matches, match_values
+
+
+def generate_matching_properties(location, params):
+    """
+    Generate matching properties for a location.
+    """
+
+    # Fetch all the properties that are eligible.
+
+    # SET QUERY PARAMS:
+    eval_properties = utils.DB_PROPERTY.find({})  # TODO: Query by region
+    locations_dict = {}
+    locations_list = []
+    for eval_property in eval_properties:
+        property_location = utils.DB_LOCATIONS.find_one({
+            "_id": eval_property['location_id']
+        })
+        locations_dict[str(eval_property["location_id"])] = eval_property
+        locations_list.append(property_location)
+
+    locations_list.append(location)
+    matches = matching.generate_matching_properties(locations_list, options=params)
+
+    result_spaces = []
+    for match in matches:
+
+        result_property = locations_dict[str(match['location_id'])]
+        address = result_property['address']
+        lat = result_property['location']['coordinates'][1]
+        lng = result_property['location']['coordinates'][0]
+        property_type = result_property['property_type']
+        for space in result_property['spaces']:
+            space.update({
+                'address': address,
+                'lat': lat,
+                'lng': lng,
+                'type': property_type,
+                'match_value': min(max(match['match_value'], 10), 95)
+            })
+            space['rent'] = space.pop('asking_rent') if 'asking_rent' in space else None
+            space.pop('media') if 'media' in space else None
+            space.pop('divisible') if 'divisible' in space else None
+            space.pop('divisible_sqft') if 'divisible_sqft' in space else None
+            space['space_id'] = str(space['space_id'])
+            result_spaces.append(space)
+
+    return result_spaces
+
+
 def get_location(address, name=None):
     """
 
@@ -53,6 +109,8 @@ def get_representative_location(categories, income_dict):
     detail matching. This heavily references the anmspatial blocking activities
 
     """
+
+    # TODO: convert to use either the Places or Brand table
 
     income_query = {'$gte': int(income_dict["min"]) * 0.90}
     income_query.update({'$lte': int(income_dict["max"]) * 1.10}) if 'max' in income_dict else None
@@ -489,8 +547,14 @@ def obtain_nearby(target_location, categories, db_connection=utils.SYSTEM_MONGO)
             'distance': place['distance'] if place['distance'] else None
         }
 
-    lat = target_location['geometry']['location']['lat']
-    lng = target_location['geometry']['location']['lng']
+    if 'geometry' in target_location:
+        # Old way of obtainining coordinates
+        lat = target_location['geometry']['location']['lat']
+        lng = target_location['geometry']['location']['lng']
+    else:
+        # Latest way of obtaining coordinates
+        lat = target_location['location']['coordinates'][1]
+        lng = target_location['location']['coordinates'][0]
 
     for place in target_location['nearby_store']:
         if place["place_id"] not in nearby_dict:
@@ -512,7 +576,8 @@ def obtain_nearby(target_location, categories, db_connection=utils.SYSTEM_MONGO)
             item_into_dict(nearby_dict, place)
         nearby_dict[place["place_id"]]["hospital"] = True
 
-    for place in target_location['nearby_metro']:
+    metro_tag = 'nearby_metro' if 'nearby_metro' in target_location else 'nearby_subway_station'
+    for place in target_location[metro_tag]:
         if place["place_id"] not in nearby_dict:
             item_into_dict(nearby_dict, place)
         nearby_dict[place["place_id"]]["metro"] = True
@@ -846,11 +911,18 @@ def get_location_details(location):
         return None
 
 
-def get_match_value_from_id(tenant_id, vector_id):
+def get_match_value_from_id(match_id, vector_id, latest=True):
     string_id = str(vector_id)
-    query = 'match_values.' + string_id
-    match_doc = utils.DB_TENANT.find_one({'_id': ObjectId(tenant_id)}, {query: 1})
-    return match_doc['match_values'][string_id]
+
+    if latest:
+        query = 'location_match_values.' + string_id
+        match_doc = utils.DB_LOCATION_MATCHES.find_one({'_id': ObjectId(match_id)}, {query: 1})
+        return match_doc['location_match_values'][string_id]
+    else:
+        query = 'match_values.' + string_id
+        match_doc = utils.DB_TENANT.find_one({'_id': ObjectId(match_id)}, {query: 1})
+        print(match_doc)
+        return match_doc['match_values'][string_id]
 
 
 def get_nearest_space(lat, lng, database='spaces'):
@@ -954,6 +1026,7 @@ def get_nearby_places(lat, lng, radius=1):
             nearby_places = google.nearby(
                 lat, lng, query, radius=radius)  # need to add categories
         if not nearby_places:
+            nearby[nearby_tag] = []
             continue
 
         # update the dictionary with this search details
@@ -981,7 +1054,6 @@ def get_nearby_places(lat, lng, radius=1):
                 if not details:
                     continue
                 nearby_place['foursquare_categories'] = details['foursquare_categories']
-
     return nearby
 
 
@@ -1005,3 +1077,98 @@ def get_spatial_personas(lat, lng, db_connection=utils.SYSTEM_MONGO):
         "psycho1": psycho1,
         "psycho3": psycho3
     }
+
+
+def import_place_details(google_place):
+    """
+    Provided the place_id of a google place, will generate all the place details required.
+    """
+    return places.convert_place(google_place)
+
+
+def get_brand(name):
+    """
+    Provided a name, returns the most likely brand
+    """
+    return places.most_relevant_brand(name)
+
+
+def build_brand(name, categories, params):
+    """
+    Provided the name of an unknown brand, will build the brand all relevant details.
+
+    brand_name: string,             (required)
+    address: string,                (required -> not required if categories are provided)
+    categories: list[string],       (required -> not required if brand_name and address provided)
+    income: {                       (required -> not required if brand_name and address provided)
+        min: int,                   (required if income provided)
+        max: int                    (optional)
+    },
+    age: {
+        min: int,                   (optional)
+        max: int                    (optional)
+    },
+    personas: list[string],         (optional)
+    commute: list[string],          (optional)
+    education: list[string],        (optional)
+    ethnicity: list[string],        (optional)
+    min_daytime_pop: int,           (optional)
+    rent: {                         (optional)
+        min: int,                   (required if rent provided)
+        max: int                    (optional)
+    },
+    sqft: {                         (optional)
+        min: int,                   (required if rent provided)
+        max: int
+    },
+    frontage_width: int,            (optional)
+    property_type: list[string]     (optional)
+    match_id: string                (optional - only provide if wishing to update specific match)
+    """
+
+    brand = {}
+    brand['brand_name'] = name
+    brand['alias'] = brand['brand_name']
+    brand['parent_company'] = None
+    brand['headquarters_city'] = None
+    brand['categories'] = [{
+        'source': 'Insemble User',
+        'categories': [{
+            "name": category.strip(),
+            "short_name": category.strip(),
+        } for category in categories]
+    }]
+    brand['typical_property_type'] = {
+        'source': 'Insemble User',
+        'type': [property_type.strip() for property_type in params['property_type']]
+    } if 'property_type' in params else {}
+
+    brand['typical_squarefoot'] = []
+    if 'sqft' in params:
+        sqft = params['sqft']
+        sqft['max'] = None if 'max' not in sqft else sqft['max']
+        sqft['context'] = ""
+        brand['typical_squarefoot'].append(sqft)
+
+    brand['regions_present'] = {}
+    brand['logo'] = None
+    brand['headquarters_address'] = None
+    brand['domain'] = None
+    brand['number_locations'] = None
+    brand['number_found_locations'] = None
+    brand['average_popularity'] = []
+    brand['average_price'] = []
+    brand['years_operation'] = None
+    brand['similar_brands'] = []
+    brand['average_demographics'] = {}
+    brand['average_psychographics'] = {}
+    brand['average_sales'] = {}
+    brand['contacts'] = []
+    brand['match_requests'] = []
+
+    if "_id" in brand:
+        utils.DB_BRANDS.update({'_id': brand['_id']}, {'$set': brand}, upsert=True)
+        return brand["_id"]
+    # otherwise, let's simply inser the new brand and return the id
+    else:
+        return utils.DB_BRANDS.insert(brand)

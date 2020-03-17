@@ -1,4 +1,4 @@
-from . import utils
+from . import utils, landlord_matching
 from django.conf import settings
 import pandas as pd
 import mongo_connect
@@ -20,12 +20,6 @@ AWS_SECRET_ACCESS_KEY = settings.AWS_SECRET_ACCESS_KEY
 S3_FILESYSTEM = S3FileSystem(
     key=AWS_ACCESS_KEY_ID, secret=AWS_SECRET_ACCESS_KEY)
 
-# BLOCK_DF = utils.read_dataframe_csv(
-#     'insemble-dataframes/block_df.csv.gz', file_system=S3_FILESYSTEM)
-# SPATIAL_DF = utils.read_dataframe_csv(
-#     'insemble-dataframes/spatial_df.csv.gz', file_system=S3_FILESYSTEM)
-# DEMO_DF = utils.read_dataframe_csv(
-#     'insemble-dataframes/demo_df.csv.gz', file_system=S3_FILESYSTEM)
 MATCHING_DF = utils.read_dataframe_csv(
     'insemble-dataframes/full_df_csv.csv.gz', file_system=S3_FILESYSTEM)
 SPATIAL_CATEGORIES = utils.DB_SPATIAL_CATS.find_one(
@@ -139,7 +133,7 @@ FOURSQUARE_CATEGORIES = utils.DB_FOURSQUARE.find_one(
     {'name': 'foursquare_categories'})['foursquare_categories']
 
 
-def generate_matches(location_address, name=None, options={}, db_connection=utils.SYSTEM_MONGO):
+def generate_matching_locations(location, options={}, db_connection=utils.SYSTEM_MONGO):
     """
     Given an address, will generate a ranking of addresses that are the most similar
     accross all aspects to this location.
@@ -147,7 +141,7 @@ def generate_matches(location_address, name=None, options={}, db_connection=util
     Options is a dictionary of options that the user want's to impact the matching.
     """
 
-    my_location_df = _generate_location_vector(location_address, name)
+    my_location_df = landlord_matching.generate_match_df(location)
 
     # OBTAIN USER OPTIONS
     # unpack and ensure values
@@ -174,21 +168,26 @@ def generate_matches(location_address, name=None, options={}, db_connection=util
 
     # MATCHING (Pre-process)
     print("** Matching: Match Setup")
-    df = MATCHING_DF.copy()
-    df2 = df.drop(columns=["_id", "lat", "lng", "loc_id"])
-    df2 = df2.append(my_location_df)
-    df2 = df2.fillna(0)
+    info_df = MATCHING_DF.copy()
+    match_df = info_df.drop(columns=["_id", "lat", "lng", "loc_id"])
+    match_df = match_df.append(my_location_df)
+
+    if "brand_name" in match_df.columns:
+        match_df = match_df.drop(columns=["brand_name"])
+    if "_id" in match_df.columns:
+        match_df = match_df.drop(columns=["_id"])
+
+    match_df = match_df.fillna(0)
 
     print("** Matching: Pre-processing start.")
-    df2 = preprocess_match_df(df2)
-    diff = df2.subtract(df2.iloc[-1]).iloc[:-1]
-
+    prepared_match_df = preprocess_match_df(match_df)
+    diff = prepared_match_df.subtract(prepared_match_df.iloc[-1]).iloc[:-1]
     print("** Matching: Post-processing start.")
     processed_diff = postprocess_match_df(diff, options)
     print("** Matching: Evaluation Ongoing.")
     weighted_df = weight_and_evaluate(standardize(processed_diff))
     # re-assign the important tracking information (location id & positioning)
-    weighted_df['lat'], weighted_df['lng'], weighted_df['loc_id'], weighted_df['_id'] = df['lat'], df['lng'], df['loc_id'], df['_id']
+    weighted_df['lat'], weighted_df['lng'], weighted_df['loc_id'], weighted_df['_id'] = info_df['lat'], info_df['lng'], info_df['loc_id'], info_df['_id']
     print("** Matching: Matching complete, results immenent.")
     # calculate matches for all vectors
     weighted_df["match_value"] = weighted_df["error_sum"].apply(_map_difference_to_match)
@@ -200,14 +199,59 @@ def generate_matches(location_address, name=None, options={}, db_connection=util
     # "match" referes to the heatmap rating (hasn't been changed due to frontend dependency)
     # "match_value" refers to the actual map value
     weighted_df['match_value'] = weighted_df['match_value'].round()
-    all_dict = weighted_df.set_index('_id')['match_value'].to_dict()
+    match_values = weighted_df.set_index('_id')['match_value'].to_dict()
 
-    best_dict = best[['lat', 'lng', 'match']].to_dict(orient='records')
+    best_values = best[['lat', 'lng', 'match']].to_dict(orient='records')
 
     # insert items into database
-    tenant_id = db_connection.get_collection(mongo_connect.AMD_TENANT).insert({'match_values': all_dict})
+    # tenant_id = db_connection.get_collection(mongo_connect.AMD_TENANT).insert({'match_values': all_dict})
 
-    return best_dict, str(tenant_id)
+    return best_values, match_values
+
+
+def generate_matching_properties(locations, options={}, db_connection=utils.SYSTEM_MONGO):
+
+    # OBTAIN USER OPTIONS
+    # unpack and ensure values
+    desired_min_income = options['income']['min'] if 'income' in options else None
+    desired_max_income = options['income']['max'] if 'income' in options and 'max' in options['income'] else None
+    desired_min_age = options['age']['min'] if 'age' in options else None
+    desired_max_age = options['age']['max'] if 'age' in options and 'max' in options['age'] else None
+    desired_personas = options['personas'] if 'personas' in options else []
+    desired_commute = options['commute'] if 'commute' in options else []
+    desired_education = options['education'] if 'education' in options else []
+    desired_ethnicity = options['ethnicity'] if 'ethnicity' in options else []
+
+    # re_package option values
+    options = {
+        'desired_min_income': desired_min_income,
+        'desired_max_income': desired_max_income,
+        'desired_min_age': desired_min_age,
+        'desired_max_age': desired_max_age,
+        'desired_personas': desired_personas,
+        'desired_commute': desired_commute,
+        'desired_education': desired_education,
+        'desired_ethnicity': desired_ethnicity
+    }
+
+    info_df = landlord_matching.generate_match_df(locations)
+    match_df = info_df.drop(columns=['_id', 'brand_name'])
+    print("** Matching (properties): Pre-processing start.")
+    prepared_match_df = preprocess_match_df(match_df.fillna(0)).fillna(0)
+    match_diff = prepared_match_df.subtract(prepared_match_df.iloc[-1]).iloc[:-1]
+    print("** Matching (properties): Post-processing start.")
+    match_diff = postprocess_match_df(match_diff, options)
+    print("** Matching (properties): Evaluation Ongoing.")
+    weighted_df = weight_and_evaluate(landlord_matching.standardize(match_diff))
+
+    weighted_df['location_id'] = info_df['_id']
+    print("** Matching (properties): Matching complete, results immenent.")
+
+    # Showing all, no need to take the best
+    weighted_df['location_id'] = weighted_df['location_id'].apply(str)
+    weighted_df['match_value'] = weighted_df['error_sum'].apply(_map_difference_to_match)
+
+    return weighted_df[['match_value', 'location_id']].to_dict(orient='records')
 
 
 def generate_vector_address(address, name):
@@ -430,7 +474,7 @@ def postprocess_match_df(difference_dataframe, options):
 
     difference_dataframe = difference_dataframe.abs()
     # we want to amplify the differences of importance categories
-    importance_factor = 2.5
+    importance_factor = 10
     # we want to make larger the difference of values that are outside of our ranges
     difference_multiplier = 2.5
 
@@ -448,10 +492,14 @@ def postprocess_match_df(difference_dataframe, options):
             eval_category = category[:-1] if "+" in category else category
             category_range_list = [int(item) for item in eval_category.split(" ") if utils.is_number(item)]
 
-            if not utils.list_matches_condition(in_age_range, category_range_list):
-                # weight items that are in range higer than those that are not. (both 1 and 3 miles)
+            if utils.list_matches_condition(in_age_range, category_range_list):
+                # weight items that are in range higher than those that are not. (both 1 and 3 miles)
                 difference_dataframe[category] = difference_dataframe[category] * importance_factor
                 difference_dataframe[category + "3"] = difference_dataframe[category + "3"] * importance_factor
+            else:
+                # reduce the impact of non matching items by a reduced factor
+                difference_dataframe[category] = difference_dataframe[category] / (importance_factor / 3)
+                difference_dataframe[category + "3"] = difference_dataframe[category + "3"] / (importance_factor / 3)
 
     if options['desired_min_income']:
 
@@ -482,10 +530,18 @@ def postprocess_match_df(difference_dataframe, options):
             if utils.list_matches_condition(in_income_range, category_range_list):
                 difference_dataframe[category] = difference_dataframe[category] * importance_factor
                 difference_dataframe[category + "3"] = difference_dataframe[category + "3"] * importance_factor
+            else:
+                difference_dataframe[category] = difference_dataframe[category] / (importance_factor / 3)
+                difference_dataframe[category + "3"] = difference_dataframe[category + "3"] / (importance_factor / 3)
 
     for category in options['desired_personas'] + options['desired_commute'] + options['desired_education'] + options['desired_education']:
         difference_dataframe[category] = difference_dataframe[category] * importance_factor
         difference_dataframe[category + "3"] = difference_dataframe[category] * importance_factor
+
+    category_set = set(difference_dataframe.columns)
+    for category in FOURSQUARE_CATEGORIES:
+        if category not in category_set:
+            difference_dataframe[category] = 0
 
     # group features that are evaluated & normalized together
     difference_dataframe["psycho"] = difference_dataframe[SPATIAL_LIST].sum(axis=1)
