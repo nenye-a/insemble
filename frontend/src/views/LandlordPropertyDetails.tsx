@@ -24,7 +24,7 @@ enum Tab {
 }
 
 type Params = {
-  propertyId: string;
+  paramsId: string;
 };
 
 export default function LandlordPropertyDetails() {
@@ -36,13 +36,14 @@ export default function LandlordPropertyDetails() {
   let [selectedSpaceIndex, setSelectedSpaceIndex] = useState(0);
   let [selectedSpaceId, setSelectedSpaceId] = useState(spaces[spaces.length - 1].id);
   let [selectedTenantPhoto, setSelectedTenantPhoto] = useState('');
+  let [selectedMatchScore, setSelectedMatchScore] = useState(0);
   let isTenantMatchSelected = selectedTabIndex === Tab.TENANT_MATCH_INDEX;
   let isLocationDetailSelected = selectedTabIndex === Tab.LOCATION_DETAIL_INDEX;
   let isManageSpaceSelected = selectedTabIndex === Tab.MANAGE_SPACE_INDEX;
   let [modalVisible, setModalVisible] = useState(false);
   let { data, loading } = useQuery<PropertyMatches, PropertyMatchesVariables>(
     GET_PROPERTY_MATCHES_DATA,
-    { variables: { propertyId: params.propertyId, spaceId: selectedSpaceId } }
+    { variables: { propertyId: params.paramsId, spaceId: selectedSpaceId } }
   );
 
   let propertyMatches = useMemo(() => {
@@ -86,10 +87,11 @@ export default function LandlordPropertyDetails() {
             <LandlordTenantMatches
               loading={loading}
               matchResult={propertyMatches}
-              onPress={(selectedBrandId, tenantPhoto) => {
+              onPress={(selectedBrandId, tenantPhoto, matchScore) => {
                 setModalVisible(true),
                   setSelectedBrandId(selectedBrandId),
                   setSelectedTenantPhoto(tenantPhoto);
+                setSelectedMatchScore(matchScore);
               }}
             />
           </ContentWrapper>
@@ -101,7 +103,8 @@ export default function LandlordPropertyDetails() {
       </PropertyDetailsCard>
       <TenantDeepDiveModal
         brandId={selectedBrandId}
-        propertyId={params.propertyId}
+        matchScore={selectedMatchScore}
+        propertyId={params.paramsId}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         tenantPhoto={selectedTenantPhoto}

@@ -1,19 +1,67 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 
-import { View, Text, Card, Avatar, Button, TextArea } from '../core-ui';
-import { THEME_COLOR, BACKGROUND_COLOR } from '../constants/colors';
-import { FONT_WEIGHT_BOLD, FONT_SIZE_LARGE, FONT_WEIGHT_MEDIUM } from '../constants/theme';
-import { MESSAGE_DETAIL } from '../fixtures/dummyData';
+import { View, Text, Card, Button, LoadingIndicator } from '../core-ui';
+import { THEME_COLOR } from '../constants/colors';
+import { FONT_WEIGHT_BOLD, FONT_SIZE_LARGE } from '../constants/theme';
 import SvgArrowBack from '../components/icons/arrow-back';
 import SvgInfoFilled from '../components/icons/info-filled';
 import SvgReply from '../components/icons/reply';
+import { Conversation, ConversationVariables } from '../generated/Conversation';
+import {
+  GET_CONVERSATION,
+  CREATE_CONVERSATION,
+  GET_CONVERSATIONS,
+} from '../graphql/queries/server/message';
+import { CreateConversation, CreateConversationVariables } from '../generated/CreateConversation';
+import { SenderRole } from '../generated/globalTypes';
+import { ReceivedMessage, SentMessage, ReplyMessageBox } from '../components/message';
+
+type Params = {
+  conversationId: string;
+};
 
 export default function LandlordMessageDetail() {
   let history = useHistory();
-  let { address, landlordAvatar, tenantSubject, tenantMessage } = MESSAGE_DETAIL;
   let [reply, setReply] = useState('');
+  let params = useParams<Params>();
+
+  let { data: conversation, loading: conversationLoading } = useQuery<
+    Conversation,
+    ConversationVariables
+  >(GET_CONVERSATION, {
+    variables: {
+      conversationId: params.conversationId,
+    },
+  });
+
+  let [createConversation, { loading }] = useMutation<
+    CreateConversation,
+    CreateConversationVariables
+  >(CREATE_CONVERSATION, {
+    refetchQueries: [
+      { query: GET_CONVERSATION, variables: { conversationId: conversation?.conversation.id } },
+      { query: GET_CONVERSATIONS },
+    ],
+  });
+
+  let onReply = () => {
+    createConversation({
+      variables: {
+        brandId: conversation?.conversation.brand.tenantId || '',
+        propertyId: conversation?.conversation.property.id || '',
+        matchScore: conversation?.conversation.matchScore || 0,
+        header: conversation?.conversation.header || '',
+        messageInput: {
+          message: reply,
+          senderRole: SenderRole.LANDLORD,
+        },
+      },
+    });
+    setReply('');
+  };
 
   return (
     <Card flex>
@@ -30,63 +78,49 @@ export default function LandlordMessageDetail() {
           <SvgInfoFilled style={{ color: THEME_COLOR, marginLeft: 10 }} />
         </Row>
       </NavigationContainer>
-      <HeaderContainer>
-        <Text color={THEME_COLOR} fontWeight={FONT_WEIGHT_BOLD} fontSize={FONT_SIZE_LARGE}>
-          {address}
-        </Text>
-      </HeaderContainer>
-      <RowedView>
-        <View flex />
-        <MessageFromTenant style={{ flex: 8 }}>
-          <View flex>
-            <View style={{ paddingRight: 24 }}>
-              <Text fontWeight={FONT_WEIGHT_MEDIUM}>{tenantSubject}</Text>
-              <Text>{tenantMessage}</Text>
-            </View>
-          </View>
-          <AvatarContainer>
-            <Avatar size="medium" image={landlordAvatar} />
-          </AvatarContainer>
-        </MessageFromTenant>
-      </RowedView>
+      {!conversation && conversationLoading ? (
+        <LoadingIndicator />
+      ) : (
+        <>
+          <HeaderContainer>
+            <BrandName>{conversation?.conversation.brand.name}</BrandName>
+          </HeaderContainer>
+          {conversation?.conversation.messages.map((item, index) => {
+            let { message, sender } = item;
+            return (
+              <>
+                {sender === SenderRole.TENANT ? (
+                  <ReceivedMessage
+                    avatar={conversation?.conversation.landlord.avatar}
+                    message={message}
+                  />
+                ) : (
+                  <SentMessage
+                    avatar={conversation?.conversation.tenant.avatar}
+                    message={message}
+                    header={index === 0 ? conversation?.conversation.header : ''}
+                  />
+                )}
+              </>
+            );
+          })}
 
-      <LandlordMessageContainer>
-        <LandlordAvatarContainer flex>
-          <Avatar size="medium" image={landlordAvatar} />
-        </LandlordAvatarContainer>
-        <View style={{ flex: 8 }}>
-          <TextArea
-            placeholder="Reply"
-            values={reply}
-            onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+          <ReplyMessageBox
+            avatar={conversation?.conversation.landlord.avatar}
+            onChange={(e) => {
               setReply(e.target.value);
             }}
-            showCharacterLimit
-            containerStyle={{ marginTop: 12, marginBottom: 12 }}
+            reply={reply}
+            loading={loading}
+            onReply={onReply}
           />
-          <ButtonContainer>
-            <Button text="Send Reply" />
-          </ButtonContainer>
-        </View>
-      </LandlordMessageContainer>
+        </>
+      )}
     </Card>
   );
 }
 
 const Row = styled(View)`
-  flex-direction: row;
-`;
-
-const MessageFromTenant = styled(View)`
-  padding: 16px 18px;
-  border-left: ${THEME_COLOR} 2px solid;
-  background-color: ${BACKGROUND_COLOR};
-  margin-top: 12px;
-  flex-direction: row;
-`;
-
-const ButtonContainer = styled(View)`
-  justify-content: flex-end;
   flex-direction: row;
 `;
 
@@ -96,13 +130,9 @@ const RowedView = styled(View)`
   padding: 10px 0 24px;
 `;
 
-const LandlordMessageContainer = styled(RowedView)`
-  padding-right: 24px;
-`;
-
 const HeaderContainer = styled(View)`
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 18px 24px;
 `;
 
 const NavigationContainer = styled(RowedView)`
@@ -110,12 +140,8 @@ const NavigationContainer = styled(RowedView)`
   align-items: center;
 `;
 
-const AvatarContainer = styled(View)`
-  padding: 0 0px;
-  justify-content: center;
-`;
-
-const LandlordAvatarContainer = styled(AvatarContainer)`
-  justify-content: center;
-  align-items: center;
+const BrandName = styled(Text)`
+  font-size: ${FONT_SIZE_LARGE};
+  color: ${THEME_COLOR};
+  font-weight: ${FONT_WEIGHT_BOLD};
 `;

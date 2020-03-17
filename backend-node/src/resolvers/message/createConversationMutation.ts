@@ -1,4 +1,4 @@
-import { mutationField, FieldResolver, stringArg, intArg, arg } from 'nexus';
+import { mutationField, FieldResolver, stringArg, floatArg, arg } from 'nexus';
 
 import { Context } from 'serverTypes';
 import { sendMessageResolver } from './sendMessageMutation';
@@ -75,7 +75,7 @@ export let createConversationResolver: FieldResolver<
       ? await context.prisma.conversation.create({
           data: {
             brand: { connect: { id: brandId } },
-            property: { connect: { id: propertyId } },
+            property: { connect: { id: propertyOrBrand.id } },
             landlord: { connect: { id: userReceiver.id } },
             tenant: { connect: { id: userSender.id } },
             matchScore,
@@ -84,7 +84,7 @@ export let createConversationResolver: FieldResolver<
         })
       : await context.prisma.conversation.create({
           data: {
-            brand: { connect: { id: brandId } },
+            brand: { connect: { id: propertyOrBrand.id } },
             property: { connect: { id: propertyId } },
             landlord: { connect: { id: userSender.id } },
             tenant: { connect: { id: userReceiver.id } },
@@ -111,7 +111,7 @@ export let createConversation = mutationField('createConversation', {
   args: {
     brandId: stringArg({ required: true }),
     propertyId: stringArg({ required: true }),
-    matchScore: intArg({ required: true }),
+    matchScore: floatArg({ required: true }),
     messageInput: arg({ type: 'MessageInput', required: true }),
     header: stringArg({ required: true }),
   },

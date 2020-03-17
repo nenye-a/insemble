@@ -17,12 +17,13 @@ type Props = {
   brandId: string;
   propertyId: string;
   tenantPhoto: string;
+  matchScore: number;
 };
 
 const SHRINK_HEIGHT = 160;
 
 export default function TenantDeepDiveModal(props: Props) {
-  let { visible, onClose, brandId, tenantPhoto } = props;
+  let { visible, onClose, brandId, tenantPhoto, matchScore } = props;
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [headerShrink, setHeaderShrink] = useState(false);
   let isOverviewSelected = selectedTabIndex === 0;
@@ -65,6 +66,8 @@ export default function TenantDeepDiveModal(props: Props) {
               <PropertyDeepDiveHeader
                 isLiked
                 onLikePress={() => {}}
+                brandId={brandId}
+                matchScore={matchScore}
                 address={data?.tenantDetail.name || ''}
                 targetNeighborhood={data?.tenantDetail.category || ''}
               />

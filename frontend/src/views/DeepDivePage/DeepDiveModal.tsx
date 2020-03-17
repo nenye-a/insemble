@@ -112,8 +112,8 @@ export default function LocationDeepDiveModal(props: Props) {
                 //  onScroll={handleOnScroll}
               >
                 <PropertyDeepDiveHeader
-                  isLiked={isLiked}
-                  onLikePress={toggleIsLiked}
+                  showConnect={false}
+                  matchScore={0}
                   address={address}
                   targetNeighborhood={targetNeighborhood}
                 />
@@ -133,12 +133,13 @@ export default function LocationDeepDiveModal(props: Props) {
                   // onScroll={handleOnScroll}
                 >
                   <PropertyDeepDiveHeader
+                    matchScore={data?.locationDetails.result.matchValue || 0}
+                    brandId={brandId}
                     isLiked={isLiked}
                     onLikePress={toggleIsLiked}
                     address={address}
                     targetNeighborhood={targetNeighborhood}
                   />
-
                   {isOverviewSelected ? <Overview /> : <PropertyDetailView />}
                 </ScrollView>
               </>

@@ -99,7 +99,7 @@ const LANDLORD_ROUTES = [
     authorization: landlordAuthorization,
   },
   {
-    path: '/landlord/properties/:propertyId',
+    path: '/landlord/properties/:paramsId',
     layout: LandlordProfileLayout,
     component: LandlordPropertyDetails,
     authorization: landlordAuthorization,
@@ -130,7 +130,7 @@ const LANDLORD_ROUTES = [
     authorization: landlordAuthorization,
   },
   {
-    path: '/landlord/messages/:messageID',
+    path: '/landlord/messages/:conversationId',
     layout: LandlordProfileLayout,
     component: LandlordMessageDetail,
     authorization: landlordAuthorization,
@@ -201,7 +201,7 @@ const TENANT_ROUTES = [
     authorization: tenantAuthorization,
   },
   {
-    path: '/user/messages/:messageID',
+    path: '/user/messages/:conversationId',
     layout: UserProfileLayout,
     component: MessageDetail,
     authorization: tenantAuthorization,

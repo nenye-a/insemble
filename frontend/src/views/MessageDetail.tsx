@@ -1,26 +1,68 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
-import { View, Text, Card, Avatar, Button } from '../core-ui';
-import { THEME_COLOR, BACKGROUND_COLOR } from '../constants/colors';
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useHistory, useParams } from 'react-router-dom';
+
+import { View, Text, Card, Button, LoadingIndicator } from '../core-ui';
+import { THEME_COLOR } from '../constants/colors';
 import { FONT_WEIGHT_BOLD, FONT_SIZE_LARGE, FONT_WEIGHT_MEDIUM } from '../constants/theme';
-import { MESSAGE_DETAIL } from '../fixtures/dummyData';
 import imgPlaceholder from '../assets/images/image-placeholder.jpg';
 import SvgArrowBack from '../components/icons/arrow-back';
 import SvgInfoFilled from '../components/icons/info-filled';
+import { SenderRole } from '../generated/globalTypes';
+import { CreateConversation, CreateConversationVariables } from '../generated/CreateConversation';
+import {
+  CREATE_CONVERSATION,
+  GET_CONVERSATION,
+  GET_CONVERSATIONS,
+} from '../graphql/queries/server/message';
+import { Conversation, ConversationVariables } from '../generated/Conversation';
+import { ReplyMessageBox, ReceivedMessage, SentMessage } from '../components/message';
+
+type Params = {
+  conversationId: string;
+};
 
 export default function MessageDetail() {
   let history = useHistory();
-  let {
-    photo,
-    address,
-    matchPercentage,
-    landlordAvatar,
-    landlordMessage,
-    tenantSubject,
-    tenantMessage,
-    numberOfSpace,
-  } = MESSAGE_DETAIL;
+  let [reply, setReply] = useState('');
+  let params = useParams<Params>();
+
+  let { data: conversation, loading: conversationLoading } = useQuery<
+    Conversation,
+    ConversationVariables
+  >(GET_CONVERSATION, {
+    variables: {
+      conversationId: params.conversationId,
+    },
+  });
+
+  let [createConversation, { loading }] = useMutation<
+    CreateConversation,
+    CreateConversationVariables
+  >(CREATE_CONVERSATION, {
+    refetchQueries: [
+      { query: GET_CONVERSATION, variables: { conversationId: conversation?.conversation.id } },
+      { query: GET_CONVERSATIONS },
+    ],
+  });
+
+  let onReply = () => {
+    createConversation({
+      variables: {
+        brandId: conversation?.conversation.brand.id || '',
+        propertyId: conversation?.conversation.property.propertyId || '',
+        matchScore: conversation?.conversation.matchScore || 0,
+        header: conversation?.conversation.header || '',
+        messageInput: {
+          message: reply,
+          senderRole: SenderRole.TENANT,
+        },
+      },
+    });
+    setReply('');
+  };
+
   return (
     <Card flex>
       <NavigationContainer>
@@ -33,50 +75,64 @@ export default function MessageDetail() {
         />
         <SvgInfoFilled style={{ color: THEME_COLOR }} />
       </NavigationContainer>
-      <Image src={photo || imgPlaceholder} />
-      <HeaderContainer>
-        <View>
-          <Text color={THEME_COLOR} fontWeight={FONT_WEIGHT_BOLD} fontSize={FONT_SIZE_LARGE}>
-            {address}
-          </Text>
-          <Text color={THEME_COLOR}>{numberOfSpace} space(s)</Text>
-        </View>
-        <Text color={THEME_COLOR} fontWeight={FONT_WEIGHT_MEDIUM} fontSize={FONT_SIZE_LARGE}>
-          {matchPercentage}% Match
-        </Text>
-      </HeaderContainer>
-      <RowedView>
-        <AvatarContainer>
-          <Avatar size="medium" image={landlordAvatar} />
-        </AvatarContainer>
-        <View flex>
-          <View style={{ paddingRight: 24 }}>
-            <Text fontWeight={FONT_WEIGHT_MEDIUM}>{tenantSubject}</Text>
-            <Text>{tenantMessage}</Text>
-          </View>
-          <RepliedMessage>
-            <Text>{landlordMessage}</Text>
-          </RepliedMessage>
-        </View>
-      </RowedView>
+      {!conversation && conversationLoading ? (
+        <LoadingIndicator />
+      ) : (
+        <>
+          <Image src={conversation?.conversation.property.space[0].mainPhoto || imgPlaceholder} />
+          <HeaderContainer>
+            <Address>{conversation?.conversation.property.location.address}</Address>
+            <MatchScore>{conversation?.conversation.matchScore}% Match</MatchScore>
+          </HeaderContainer>
+          {conversation?.conversation.messages.map((item, index) => {
+            let { message, sender } = item;
+            return (
+              <>
+                {sender === SenderRole.TENANT ? (
+                  <SentMessage
+                    avatar={conversation?.conversation.tenant.avatar}
+                    message={message}
+                    header={index === 0 ? conversation?.conversation.header : ''}
+                  />
+                ) : (
+                  <ReceivedMessage
+                    avatar={conversation?.conversation.landlord.avatar}
+                    message={message}
+                  />
+                )}
+              </>
+            );
+          })}
+
+          <ReplyMessageBox
+            avatar={conversation?.conversation.tenant.avatar}
+            onChange={(e) => {
+              setReply(e.target.value);
+            }}
+            reply={reply}
+            loading={loading}
+            onReply={onReply}
+          />
+        </>
+      )}
     </Card>
   );
 }
 
 const RowedView = styled(View)`
   flex-direction: row;
-  justify-content: space-between;
 `;
 
 const HeaderContainer = styled(View)`
   flex-direction: row;
   justify-content: space-between;
-  padding: 24px;
+  padding: 18px 24px;
 `;
 
 const NavigationContainer = styled(RowedView)`
   padding: 12px 24px 12px 12px;
   align-items: center;
+  justify-content: space-between;
 `;
 
 const Image = styled.img`
@@ -84,13 +140,14 @@ const Image = styled.img`
   object-fit: cover;
 `;
 
-const AvatarContainer = styled(View)`
-  padding: 0 24px;
+const HeaderText = styled(Text)`
+  font-size: ${FONT_SIZE_LARGE};
+  color: ${THEME_COLOR};
+`;
+const Address = styled(HeaderText)`
+  font-weight: ${FONT_WEIGHT_BOLD};
 `;
 
-const RepliedMessage = styled(View)`
-  padding: 16px 18px;
-  border-left: ${THEME_COLOR} 2px solid;
-  background-color: ${BACKGROUND_COLOR};
-  margin-top: 12px;
+const MatchScore = styled(HeaderText)`
+  font-weight: ${FONT_WEIGHT_MEDIUM};
 `;

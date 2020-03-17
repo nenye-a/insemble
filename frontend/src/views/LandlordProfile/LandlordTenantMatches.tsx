@@ -17,7 +17,7 @@ import { roundDecimal, useViewport } from '../../utils';
 import { VIEWPORT_TYPE } from '../../constants/viewports';
 
 type Props = {
-  onPress: (selectedBrandId: string, selectedTenantPhoto: string) => void;
+  onPress: (selectedBrandId: string, selectedTenantPhoto: string, matchScore: number) => void;
   matchResult?: Array<PropertyMatchesProps>;
   loading: boolean;
 };
@@ -31,13 +31,15 @@ export default function LandlordTenantMatches({ onPress, matchResult, loading }:
       ) : !matchResult ? (
         <EmptyDataComponent />
       ) : (
-        matchResult?.map((item, index) => {
+        matchResult &&
+        matchResult.map((item, index) => {
+          let matchScore = roundDecimal(item.matchValue);
           return (
             <TenantCard
               key={index}
               isInterested={item.interested}
-              onPress={() => onPress(item.brandId, item.pictureUrl)}
               viewportType={viewportType}
+              onPress={() => onPress(item.brandId, item.pictureUrl, Number(matchScore))}
             >
               {item.interested ? (
                 <InterestedContainer>
@@ -52,7 +54,7 @@ export default function LandlordTenantMatches({ onPress, matchResult, loading }:
                     <CardCategoryText>{item.category}</CardCategoryText>
                   </View>
                   <View>
-                    <CardPercentage>{roundDecimal(item.matchValue)}%</CardPercentage>
+                    <CardPercentage>{matchScore}%</CardPercentage>
                     <Text>Match</Text>
                   </View>
                 </RowedView>

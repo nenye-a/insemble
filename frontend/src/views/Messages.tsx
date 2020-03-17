@@ -1,34 +1,45 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
 
-import { Card, Text } from '../core-ui';
+import { Card, Text, LoadingIndicator } from '../core-ui';
 import MessageCard from './ProfilePage/MessageCard';
 import { THEME_COLOR } from '../constants/colors';
 import { FONT_WEIGHT_BOLD, FONT_SIZE_LARGE } from '../constants/theme';
-import { MESSAGE_LIST } from '../fixtures/dummyData';
 import { useCredentials } from '../utils';
 import { Role } from '../types/types';
+import { GET_CONVERSATIONS } from '../graphql/queries/server/message';
+import { Conversations } from '../generated/Conversations';
 
 export default function Messages() {
   let history = useHistory();
   let { role } = useCredentials();
+
+  let { data, loading } = useQuery<Conversations>(GET_CONVERSATIONS);
+
   return (
     <Container flex>
-      <Title> {role === Role.TENANT ? 'Messages' : 'Messages from Tenants'} </Title>
-      {MESSAGE_LIST.map((item, index) => (
-        <MessageCard
-          key={index}
-          isEven={(index + 1) % 2 === 0}
-          {...item}
-          onPress={() => {
-            role === Role.TENANT
-              ? // TODO: use conversation id
-                history.push('/user/messages/' + index)
-              : history.push('/landlord/messages/' + index);
-          }}
-        />
-      ))}
+      {loading ? (
+        <LoadingIndicator />
+      ) : (
+        <>
+          <Title> {role === Role.TENANT ? 'Messages' : 'Messages from Tenants'} </Title>
+          {data &&
+            data.conversations.map((item, index) => (
+              <MessageCard
+                key={index}
+                isEven={(index + 1) % 2 === 0}
+                conversation={item}
+                onPress={() => {
+                  role === Role.TENANT
+                    ? history.push('/user/messages/' + item.id)
+                    : history.push('/landlord/messages/' + item.id);
+                }}
+              />
+            ))}
+        </>
+      )}
     </Container>
   );
 }
