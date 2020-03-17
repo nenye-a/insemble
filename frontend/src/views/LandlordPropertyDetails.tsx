@@ -14,6 +14,7 @@ import {
 } from './LandlordProfile';
 import { PropertyMatches, PropertyMatchesVariables } from '../generated/PropertyMatches';
 import { GET_PROPERTY_MATCHES_DATA } from '../graphql/queries/server/matches';
+import LandlordManageProperty from './LandlordProfile/LandlordManageProperty';
 
 const SPACES = ['Space 1'];
 
@@ -21,6 +22,7 @@ enum Tab {
   TENANT_MATCH_INDEX,
   LOCATION_DETAIL_INDEX,
   MANAGE_SPACE_INDEX,
+  MANAGE_PROPERTY_INDEX,
 }
 
 type Params = {
@@ -39,6 +41,7 @@ export default function LandlordPropertyDetails() {
   let [selectedMatchScore, setSelectedMatchScore] = useState(0);
   let isTenantMatchSelected = selectedTabIndex === Tab.TENANT_MATCH_INDEX;
   let isLocationDetailSelected = selectedTabIndex === Tab.LOCATION_DETAIL_INDEX;
+  let isManagePropertySelected = selectedTabIndex === Tab.MANAGE_PROPERTY_INDEX;
   let isManageSpaceSelected = selectedTabIndex === Tab.MANAGE_SPACE_INDEX;
   let [modalVisible, setModalVisible] = useState(false);
   let { data, loading } = useQuery<PropertyMatches, PropertyMatchesVariables>(
@@ -99,6 +102,8 @@ export default function LandlordPropertyDetails() {
           <LandlordLocationDetails />
         ) : isManageSpaceSelected ? (
           <LandlordManageSpace spaceId={selectedSpaceId} />
+        ) : isManagePropertySelected ? (
+          <LandlordManageProperty />
         ) : null}
       </PropertyDetailsCard>
       <TenantDeepDiveModal
