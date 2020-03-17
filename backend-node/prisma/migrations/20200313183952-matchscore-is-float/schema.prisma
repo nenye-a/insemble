@@ -1,7 +1,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://prisma:prisma@localhost:5432/insemble?schema=public"
+  url = "***"
 }
 
 
@@ -162,7 +162,6 @@ model Property {
   location            Location
   landlordUser        LandlordUser
   userRelation        String
-  userRelations       String[]
   propertyType        String[]
   marketingPreference MarketingPreference
   categories          String[]

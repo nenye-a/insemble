@@ -105,12 +105,11 @@ const TENANT_PROFILE_MENU: Array<MenuObj> = [
     icon: <SvgBusiness />,
     path: '/user/brands',
   },
-  // Disabling this for now until landlord is ready
-  // {
-  //   menu: 'Messages',
-  //   icon: <SvgMessage />,
-  //   path: '/user/messages',
-  // },
+  {
+    menu: 'Messages',
+    icon: <SvgMessage />,
+    path: '/user/messages',
+  },
   // {
   //   menu: 'Saved Properties',
   //   icon: <SvgFullHeart />,

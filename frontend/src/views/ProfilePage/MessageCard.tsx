@@ -9,15 +9,12 @@ import SvgInfoFilled from '../../components/icons/info-filled';
 import { useCredentials } from '../../utils';
 import { Role } from '../../types/types';
 import SvgReply from '../../components/icons/reply';
+import { Conversations_conversations as ConversationMessages } from '../../generated/Conversations';
 
 type Props = {
   isEven: boolean;
-  subject: string;
-  message: string;
-  avatar: string;
-  address: string;
-  photo: string;
   onPress: () => void;
+  conversation: ConversationMessages;
 };
 
 type ContainerProps = ComponentProps<typeof TouchableOpacity> & {
@@ -25,22 +22,29 @@ type ContainerProps = ComponentProps<typeof TouchableOpacity> & {
 };
 
 export default function MessageCard(props: Props) {
-  let { isEven, subject, message, avatar, photo, address, onPress } = props;
+  let { isEven, conversation, onPress } = props;
+  let {
+    tenant: { avatar },
+    property: { name: propertyName, space },
+    messages,
+    header,
+  } = conversation;
+  let lastMessage = messages.length - 1;
   let { role } = useCredentials();
   return (
     <Container isEven={isEven} onPress={onPress}>
       <Avatar size="medium" image={avatar} />
       <MessageContent flex>
         <Text fontSize={FONT_SIZE_MEDIUM} color={THEME_COLOR}>
-          {address}
+          {propertyName}
         </Text>
-        <Text fontWeight={FONT_WEIGHT_MEDIUM}>{subject}</Text>
-        <MessageText>{message}</MessageText>
+        <Text fontWeight={FONT_WEIGHT_MEDIUM}>{header}</Text>
+        <MessageText>{messages[lastMessage].message}</MessageText>
       </MessageContent>
       <View>
         {role === Role.TENANT ? (
           <>
-            <Image src={photo || imgPlaceholder} />
+            <Image src={space[0].mainPhoto || imgPlaceholder} />
             <IconContainer>
               <SvgInfoFilled style={{ color: WHITE }} />
             </IconContainer>
@@ -79,6 +83,7 @@ const Image = styled.img`
   border-radius: ${DEFAULT_BORDER_RADIUS};
   object-fit: cover;
   width: 120px;
+  height: 90px;
 `;
 
 const MessageText = styled(Text)`

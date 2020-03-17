@@ -9,8 +9,8 @@ export type IconProps = {
 };
 
 export enum Role {
-  TENANT = 'Tenant',
-  LANDLORD = 'Landlord',
+  TENANT = 'TENANT',
+  LANDLORD = 'LANDLORD',
 }
 
 export type PhotoFile = FileWithPreview | null | string;
