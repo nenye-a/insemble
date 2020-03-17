@@ -8,15 +8,10 @@ let propertiesResolver: FieldResolver<'Query', 'properties'> = async (
   context: Context,
 ) => {
   let properties = await context.prisma.property.findMany({
-    select: {
-      id: true,
-      propertyId: true,
-      name: true,
-      categories: true,
-      location: true,
+    orderBy: { id: 'desc' },
+    include: {
       space: true,
     },
-    orderBy: { id: 'desc' },
     where: {
       landlordUser: {
         id: context.landlordUserId,
