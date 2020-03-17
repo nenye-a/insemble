@@ -9,5 +9,11 @@ export let PropertyThumbnail = objectType({
     t.model('Property').categories();
     t.model('Property').location();
     t.field('space', { type: 'Space', list: true });
+    t.model('Property').businessType();
+    t.model('Property').propertyType();
+    t.model('Property').exclusive();
+    t.model('Property').marketingPreference();
+    t.model('Property').userRelations();
+    t.model('Property').userRelation();
   },
 });
