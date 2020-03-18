@@ -39,6 +39,7 @@ export * from './property/spacesQuery';
 export * from './property/deletePropertyMutation';
 export * from './property/createSpaceMutation';
 export * from './property/deleteSpaceMutation';
+export * from './property/propertyQuery';
 export * from './details/propertyDetailsQuery';
 
 export * from './auth/forgotPasswordTenantMutation';
