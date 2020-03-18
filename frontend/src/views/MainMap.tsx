@@ -396,19 +396,21 @@ export default function MainMap() {
           )}
           {tenantMatchesData?.tenantMatches.matchingProperties &&
             tenantMatchesData.tenantMatches.matchingProperties.length > 0 && (
-              <AvailableProperties
-                visible={propertyRecommendationVisible}
-                onHideClick={() => togglePropertyRecommendation(false)}
-                matchingProperties={tenantMatchesData?.tenantMatches.matchingProperties}
-              />
+              <>
+                <ShowPropertyButton
+                  visible={!propertyRecommendationVisible}
+                  mode="secondary"
+                  onPress={() => togglePropertyRecommendation(true)}
+                  text="Show Property List"
+                  icon={<SvgPropertyLocation />}
+                />
+                <AvailableProperties
+                  visible={propertyRecommendationVisible}
+                  onHideClick={() => togglePropertyRecommendation(false)}
+                  matchingProperties={tenantMatchesData?.tenantMatches.matchingProperties}
+                />
+              </>
             )}
-          <ShowPropertyButton
-            visible={!propertyRecommendationVisible}
-            mode="secondary"
-            onPress={() => togglePropertyRecommendation(true)}
-            text="Show Property List"
-            icon={<SvgPropertyLocation />}
-          />
         </Container>
       </View>
     </TenantMatchesContext.Provider>

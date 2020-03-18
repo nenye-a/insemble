@@ -29,23 +29,17 @@ export default function AvailablePropertyCard(props: Props) {
             <Icon src={insembleIcon} alt="insemble-icon" />
           </UpperDescriptionContainer>
           <LowerDescriptionContainer flex>
-            <RowedFlex flex>
-              <Text fontSize={FONT_SIZE_SMALL} fontWeight={FONT_WEIGHT_MEDIUM}>
-                {price ? `$ ${price}` : 'NA'}
-              </Text>
+            <RowedFlexTwo>
+              <Text fontWeight={FONT_WEIGHT_MEDIUM}>{price ? `$ ${price}` : 'NA'}</Text>
               <Text fontSize={FONT_SIZE_XSMALL}>/sqft yearly</Text>
-            </RowedFlex>
-            <RowedFlex flex>
-              <Text fontSize={FONT_SIZE_SMALL} fontWeight={FONT_WEIGHT_MEDIUM}>
-                {area}
-              </Text>
+            </RowedFlexTwo>
+            <RowedFlex>
+              <Text fontWeight={FONT_WEIGHT_MEDIUM}>{area}</Text>
               <Text fontSize={FONT_SIZE_XSMALL}>sqft</Text>
             </RowedFlex>
-            <RowedFlex flex>
-              <Text fontSize={FONT_SIZE_SMALL} fontWeight={FONT_WEIGHT_MEDIUM}>
-                {propertyType}
-              </Text>
-            </RowedFlex>
+            <RowedFlexTwo>
+              <Text fontWeight={FONT_WEIGHT_MEDIUM}>{propertyType}</Text>
+            </RowedFlexTwo>
           </LowerDescriptionContainer>
         </DescriptionContainer>
       </TouchableOpacity>
@@ -87,4 +81,9 @@ const UpperDescriptionContainer = styled(View)`
 const RowedFlex = styled(View)`
   flex-direction: row;
   align-items: baseline;
+  flex: 1;
+`;
+
+const RowedFlexTwo = styled(RowedFlex)`
+  flex: 2;
 `;
