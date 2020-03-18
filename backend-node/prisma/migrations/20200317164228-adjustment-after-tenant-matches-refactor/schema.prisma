@@ -39,15 +39,6 @@ enum MessageRole {
   LANDLORD
 }
 
-model MatchingProperty {
-  id         String @id @default(cuid())
-  propertyId String
-  address    String
-  rent       Int
-  sqft       Int
-  type       String
-}
-
 model Location {
   id      String @id @default(cuid())
   address String
@@ -126,23 +117,22 @@ model Brand {
   ethnicity              String[]
   minDaytimePopulation   Int?
   minSize                Int?
+  maxSize                Int?
   minFrontageWidth       Int?
   equipment              String[]
   spaceType              String[]
   locationAndPerformance LocationAndPerformance[]
   matchingLocations      String?
-  matchingProperties     MatchingProperty[]
-  //Tenant Id from tenantMatches django api
-  tenantId               String
+  matchingProperties     String?
+  //Tenant Id(brandId) from tenantMatches django api
+  tenantId               String?                  @unique
+  matchId                String?                  @unique
   createdAt              DateTime                 @default(now())
 }
 
-
-
-
 model Space {
   id            String   @id @default(cuid())
-  spaceId       String?
+  spaceId       String?  @unique
   mainPhoto     String
   photos        String[]
   description   String
@@ -162,6 +152,7 @@ model Property {
   location            Location
   landlordUser        LandlordUser
   userRelation        String
+  userRelations       String[]
   propertyType        String[]
   marketingPreference MarketingPreference
   categories          String[]
@@ -268,7 +259,7 @@ model PendingConversation {
   id                       String       @default(cuid()) @id
   pendingConversationData  String
   brandId                  String
-  propertyId               String
+  spaceId                  String
   senderRole               MessageRole
   receiverEmail            String
 }

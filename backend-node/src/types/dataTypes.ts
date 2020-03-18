@@ -30,11 +30,18 @@ type MatchingLocationType = {
 };
 
 type MatchingPropertyType = {
-  property_id: string;
-  address: string;
+  space_id: string;
+  space_condition: Array<string>;
+  tenant_type: Array<string>;
+  type: Array<string>;
   rent: number;
   sqft: number;
-  type: string;
+  pro: boolean;
+  visible: boolean;
+  address: string;
+  lat: number;
+  lng: number;
+  match_value: number;
 };
 
 type Personas = {
@@ -165,7 +172,8 @@ export type TenantMatchesType = {
   status_detail: string;
   matching_locations?: Array<MatchingLocationType>;
   matching_properties?: Array<MatchingPropertyType>;
-  tenant_id: string;
+  brand_id: string;
+  match_id: string;
 };
 
 export type LocationPreviewType = {
