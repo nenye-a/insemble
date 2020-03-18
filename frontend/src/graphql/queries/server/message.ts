@@ -3,14 +3,14 @@ import gql from 'graphql-tag';
 export const CREATE_CONVERSATION = gql`
   mutation CreateConversation(
     $brandId: String!
-    $propertyId: String!
+    $spaceId: String!
     $matchScore: Float!
     $header: String!
     $messageInput: MessageInput!
   ) {
     createConversation(
       brandId: $brandId
-      propertyId: $propertyId
+      spaceId: $spaceId
       matchScore: $matchScore
       header: $header
       messageInput: $messageInput
