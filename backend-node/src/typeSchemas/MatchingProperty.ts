@@ -4,7 +4,7 @@ export let MatchingProperty = objectType({
   name: 'MatchingProperty',
   definition(t) {
     t.string('address');
-    t.int('rent');
+    t.int('rent', { nullable: true });
     t.int('sqft');
     t.string('type', { list: true });
     t.string('spaceId');
