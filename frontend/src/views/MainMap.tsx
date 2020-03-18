@@ -46,6 +46,10 @@ export type PropertyFilter = {
   spaceType: Array<string>;
 };
 
+type ShowPropertyButtonProps = {
+  visible: boolean;
+};
+
 type TenantMatchesContextFilter = {
   demographics: DemographicsFilter;
   property: PropertyFilter;
@@ -391,21 +395,20 @@ export default function MainMap() {
             />
           )}
           {tenantMatchesData?.tenantMatches.matchingProperties &&
-            tenantMatchesData.tenantMatches.matchingProperties.length > 0 &&
-            (propertyRecommendationVisible ? (
+            tenantMatchesData.tenantMatches.matchingProperties.length > 0 && (
               <AvailableProperties
                 visible={propertyRecommendationVisible}
                 onHideClick={() => togglePropertyRecommendation(false)}
                 matchingProperties={tenantMatchesData?.tenantMatches.matchingProperties}
               />
-            ) : (
-              <ShowPropertyButton
-                mode="secondary"
-                onPress={() => togglePropertyRecommendation(true)}
-                text="Show Property List"
-                icon={<SvgPropertyLocation />}
-              />
-            ))}
+            )}
+          <ShowPropertyButton
+            visible={!propertyRecommendationVisible}
+            mode="secondary"
+            onPress={() => togglePropertyRecommendation(true)}
+            text="Show Property List"
+            icon={<SvgPropertyLocation />}
+          />
         </Container>
       </View>
     </TenantMatchesContext.Provider>
@@ -417,7 +420,7 @@ const Container = styled(View)`
   overflow: hidden;
 `;
 
-const ShowPropertyButton = styled(Button)`
+const ShowPropertyButton = styled(Button)<ShowPropertyButtonProps>`
   position: fixed;
   bottom: 30px;
   left: 50%;
@@ -427,6 +430,8 @@ const ShowPropertyButton = styled(Button)`
   border-radius: 18px;
   border: none;
   box-shadow: 0px 0px 6px 0px ${HEADER_BORDER_COLOR};
+  transition: opacity 200ms linear;
+  opacity: ${(props) => (props.visible ? 1 : 0)};
   ${Text} {
     color: ${THEME_COLOR};
     font-weight: ${FONT_WEIGHT_MEDIUM};
