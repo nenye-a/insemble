@@ -22,6 +22,9 @@ S3_FILESYSTEM = S3FileSystem(
 
 MATCHING_DF = utils.read_dataframe_csv(
     'insemble-dataframes/full_df_csv.csv.gz', file_system=S3_FILESYSTEM)
+## use matching df below on development to speed up celery
+# MATCHING_DF = utils.read_dataframe_csv(
+#     'insemble-dataframes/test_matching.csv.gz', file_system=S3_FILESYSTEM)
 SPATIAL_CATEGORIES = utils.DB_SPATIAL_CATS.find_one(
     {'name': 'spatial_categories'})['spatial_categories']
 DEMO_CATEGORIES = utils.DB_DEMOGRAPHIC_CATS.find_one(
@@ -145,9 +148,9 @@ def generate_matching_locations(location, options={}, db_connection=utils.SYSTEM
 
     # OBTAIN USER OPTIONS
     # unpack and ensure values
-    desired_min_income = options['income']['min'] if 'income' in options else None
+    desired_min_income = options['income']['min'] if 'income' in options and 'min' in options['income'] else None
     desired_max_income = options['income']['max'] if 'income' in options and 'max' in options['income'] else None
-    desired_min_age = options['age']['min'] if 'age' in options else None
+    desired_min_age = options['age']['min'] if 'age' in options and 'min' in options['age'] else None
     desired_max_age = options['age']['max'] if 'age' in options and 'max' in options['age'] else None
     desired_personas = options['personas'] if 'personas' in options else []
     desired_commute = options['commute'] if 'commute' in options else []
@@ -213,9 +216,9 @@ def generate_matching_properties(locations, options={}, db_connection=utils.SYST
 
     # OBTAIN USER OPTIONS
     # unpack and ensure values
-    desired_min_income = options['income']['min'] if 'income' in options else None
+    desired_min_income = options['income']['min'] if 'income' in options and 'min' in options['income'] else None
     desired_max_income = options['income']['max'] if 'income' in options and 'max' in options['income'] else None
-    desired_min_age = options['age']['min'] if 'age' in options else None
+    desired_min_age = options['age']['min'] if 'age' in options and 'min' in options['age'] else None
     desired_max_age = options['age']['max'] if 'age' in options and 'max' in options['age'] else None
     desired_personas = options['personas'] if 'personas' in options else []
     desired_commute = options['commute'] if 'commute' in options else []

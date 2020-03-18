@@ -189,7 +189,7 @@ def upload_brand(this_place, place):
             sales_object['average_sales_value'] = sales_object.pop('value')
             sales_object['recorded_sales_locations'] = 1
 
-        match_requests = {}
+        match_requests = []
         contacts = {}
         number_found_locations = 1
         number_locations = None
