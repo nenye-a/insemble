@@ -30,15 +30,21 @@ export default function AvailablePropertyCard(props: Props) {
           </UpperDescriptionContainer>
           <LowerDescriptionContainer flex>
             <RowedFlex flex>
-              <Text fontWeight={FONT_WEIGHT_MEDIUM}>${price}</Text>
+              <Text fontSize={FONT_SIZE_SMALL} fontWeight={FONT_WEIGHT_MEDIUM}>
+                {price ? `$ ${price}` : 'NA'}
+              </Text>
               <Text fontSize={FONT_SIZE_XSMALL}>/sqft yearly</Text>
             </RowedFlex>
             <RowedFlex flex>
-              <Text fontWeight={FONT_WEIGHT_MEDIUM}>{area}</Text>
+              <Text fontSize={FONT_SIZE_SMALL} fontWeight={FONT_WEIGHT_MEDIUM}>
+                {area}
+              </Text>
               <Text fontSize={FONT_SIZE_XSMALL}>sqft</Text>
             </RowedFlex>
             <RowedFlex flex>
-              <Text fontWeight={FONT_WEIGHT_MEDIUM}>{propertyType}</Text>
+              <Text fontSize={FONT_SIZE_SMALL} fontWeight={FONT_WEIGHT_MEDIUM}>
+                {propertyType}
+              </Text>
             </RowedFlex>
           </LowerDescriptionContainer>
         </DescriptionContainer>
@@ -69,6 +75,7 @@ const Container = styled(Card)`
 const LowerDescriptionContainer = styled(View)`
   margin-top: 6px;
   flex-direction: row;
+  align-items: center;
 `;
 
 const UpperDescriptionContainer = styled(View)`
