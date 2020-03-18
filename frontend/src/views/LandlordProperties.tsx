@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useHistory, Redirect } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 
-import { View, Card, Text, TouchableOpacity, LoadingIndicator, Alert } from '../core-ui';
+import { View, Card, Text, TouchableOpacity, LoadingIndicator, Alert, Button } from '../core-ui';
 import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
 import { WHITE, THEME_COLOR } from '../constants/colors';
 
@@ -101,6 +101,16 @@ export default function LandlordProperties() {
                         <Text>Number of Spaces</Text>
                         <Text>{item.space.length}</Text>
                       </RowedView>
+                      <AddSpace
+                        text="Add Space"
+                        onPress={() => {
+                          history.push(`/landlord/add-space/step-1`, {
+                            propertyId: item.id,
+                            address: item.location.address,
+                          });
+                        }}
+                        onStopPropagation={true}
+                      />
                     </LeftContainer>
                     <Iframe src={iframeSource} />
                   </Row>
@@ -152,6 +162,10 @@ const RowedView = styled(View)`
 const LeftContainer = styled(View)`
   padding: 12px 24px;
   height: 150px;
+`;
+
+const AddSpace = styled(Button)`
+  zindex: 5;
 `;
 
 const AddButton = styled(TouchableOpacity)`
