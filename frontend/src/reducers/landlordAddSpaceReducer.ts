@@ -52,12 +52,6 @@ export default function landlordAddSpaceReducer(state: State, action: Action): S
         canPressNext: false,
       };
     }
-    case 'ENABLE_NEXT_BUTTON': {
-      return { ...state, canPressNext: true };
-    }
-    case 'SAVE_CHANGES_ADD_SPACE': {
-      return { ...state, ...action.values };
-    }
     default:
       return state;
   }

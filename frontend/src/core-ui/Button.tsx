@@ -21,7 +21,7 @@ type Props = ComponentProps<typeof TouchableOpacity> & {
   icon?: ReactNode;
   badgeText?: string;
   loading?: boolean;
-  onStopPropagation?: boolean;
+  stopPropagation?: boolean;
 };
 
 export default function Button(props: Props) {
@@ -33,7 +33,7 @@ export default function Button(props: Props) {
     badgeText,
     loading,
     disabled,
-    onStopPropagation,
+    stopPropagation,
     ...otherProps
   } = props;
   return (
@@ -42,7 +42,7 @@ export default function Button(props: Props) {
       type="button"
       disabled={loading || disabled}
       mode={mode}
-      onStopPropagation={onStopPropagation}
+      onStopPropagation={stopPropagation}
       {...otherProps}
     >
       {loading ? (
