@@ -1003,7 +1003,7 @@ def update_tenant_details(_id, update):
         return False
 
 
-def get_nearby_places(lat, lng, radius=1):
+def get_nearby_places(lat, lng, radius=1, db_connection=utils.SYSTEM_MONGO):
 
     queries = [
         'store', 'restaurant',  # general categories
@@ -1045,7 +1045,7 @@ def get_nearby_places(lat, lng, radius=1):
 
         if query == 'restaurant' or query == 'store':
             for nearby_place in nearby[nearby_tag]:
-                details = utils.DB_PROCESSED_SPACE.find_one({
+                details = db_connection.get_collection(mongo_connect.SD_PROCESSED_SPACE).find_one({
                     "place_id": nearby_place['place_id'],
                     "foursquare_categories.category_name": {'$exists': True}
                 }, {
