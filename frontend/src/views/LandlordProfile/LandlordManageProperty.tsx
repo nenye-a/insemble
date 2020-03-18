@@ -50,26 +50,30 @@ export default function LandlordManageProperty() {
   let { paramsId } = useParams();
   let history = useHistory<PropertyState>();
   let { property } = history.location.state;
-  let { data: categoriesData, error, loading } = useQuery<Categories>(GET_CATEGORIES);
+  let { propertyType, businessType, userRelations, categories, exclusive } = property;
+  let { data: categoriesData } = useQuery<Categories>(GET_CATEGORIES);
   let [
     editProperty,
     { data: editPropertyData, loading: editPropertyLoading, error: editPropertyError },
   ] = useMutation<EditProperty, EditPropertyVariables>(EDIT_PROPERTY);
-  let [selectedType, setSelectedType] = useState<Array<string>>(property.propertyType || []);
-  let [selectedBusinessService, setSelectedBusinessService] = useState<Array<string>>(
-    property.businessType || []
-  );
+
+  let [selectedType, setSelectedType] = useState<Array<string>>(propertyType || []);
+
   let [selectedRelationType, setSelectedRelationType] = useState<Array<string>>(
-    property.userRelations || []
+    userRelations || []
   );
   let [categorySelectionVisible, toggleCategorySelection] = useState(false);
-  let [selectedCategories, setSelectedCategories] = useState<Array<string>>(
-    property.categories || []
-  );
+  let [selectedCategories, setSelectedCategories] = useState<Array<string>>(categories || []);
   let [existingCategorySelectionVisible, toggleExistingCategorySelectionVisible] = useState(false);
-  let [selectedExistingCategories, setExistingSelectedCategories] = useState<Array<string>>([]);
+  let [selectedExistingCategories, setExistingSelectedCategories] = useState<Array<string>>(
+    exclusive || []
+  );
   let [otherService, setOtherService] = useState(
-    property.businessType.find((service: string) => !SERVICE_OPTIONS.includes(service)) || ''
+    businessType.find((service: string) => !SERVICE_OPTIONS.includes(service)) || ''
+  );
+  let defaultBusinessType = otherService ? businessType : [...businessType, 'Other'];
+  let [selectedBusinessService, setSelectedBusinessService] = useState<Array<string>>(
+    defaultBusinessType || []
   );
 
   let onSubmit = () => {
