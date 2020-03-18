@@ -11,19 +11,27 @@ import Description from './LandingPage/Description';
 import Features from './LandingPage/Features';
 import SpeedUpLeasing from './LandingPage/SpeedUpLeasing';
 import Footer from './LandingPage/Footer';
-import { useGoogleMaps, useCredentials } from '../utils';
-import { WHITE } from '../constants/colors';
+import { useGoogleMaps, useCredentials, useViewport } from '../utils';
 import Button from '../core-ui/Button';
 import { GetTenantProfile } from '../generated/GetTenantProfile';
 import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../graphql/queries/server/profile';
 import { GetLandlordProfile } from '../generated/GetLandlordProfile';
 import { Role } from '../types/types';
 import InsembleLogo from '../components/common/InsembleLogo';
+import { WHITE } from '../constants/colors';
+import { VIEWPORT_TYPE } from '../constants/viewports';
+import { FONT_SIZE_XXLARGE } from '../constants/theme';
+
+type LogoViewProps = ViewProps & {
+  isDesktop?: boolean;
+};
 
 function Landing() {
   let { isLoading } = useGoogleMaps();
   let { role } = useCredentials();
   let history = useHistory();
+  let { viewportType } = useViewport();
+  let isDesktop = viewportType === VIEWPORT_TYPE.DESKTOP;
 
   let [getTenantProfile, { data: tenantData }] = useLazyQuery<GetTenantProfile>(
     GET_TENANT_PROFILE,
@@ -53,8 +61,8 @@ function Landing() {
   return (
     <View>
       <Masthead>
-        <LogoView>
-          <InsembleLogo color={'white'} />
+        <LogoView isDesktop={isDesktop}>
+          <InsembleLogo color="white" size={isDesktop ? 'default' : 'small'} />
         </LogoView>
         <RowView>
           {id ? (
@@ -93,15 +101,15 @@ function Landing() {
             </>
           )}
         </RowView>
-        <Title style={{ maxWidth: 800 }}>
+        <Title style={{ maxWidth: 800, ...(!isDesktop && { fontSize: FONT_SIZE_XXLARGE }) }}>
           Find the best location for your retail or restaurant business
         </Title>
         {isLoading ? (
           <TextInput placeholder="Loading..." disabled={true} />
         ) : (
           <LocationsInput
-            placeholder="Enter the name or address of your top performing location"
-            buttonText="Find locations"
+            placeholder="Enter your top retail address"
+            buttonText="Go"
             onSubmit={(place: google.maps.places.PlaceResult) => {
               let {
                 geometry,
@@ -179,9 +187,8 @@ const LogIn = styled(Button)`
   background-color: transparent;
 `;
 
-const LogoView = styled(View)`
-  align-item: flex-start;
+const LogoView = styled(View)<LogoViewProps>`
   position: absolute;
-  top: 16px;
+  top: ${(props) => (props.isDesktop ? '16px' : '25px')};
   left: 32px;
 `;
