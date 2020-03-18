@@ -50,7 +50,7 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
       : [];
 
   let [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
-  let [showGuide, setShowGuide] = useState(history.location.state?.newBrand);
+  let [showGuide, setShowGuide] = useState(!!history.location.state?.newBrand);
   let [infoBoxHeight, setInfoBoxHeight] = useState<number>(0);
   let [domReady, setDomReady] = useState(false);
 

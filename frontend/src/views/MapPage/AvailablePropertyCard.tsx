@@ -4,6 +4,7 @@ import { View, Text, Card, TouchableOpacity } from '../../core-ui';
 import { THEME_COLOR } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_SIZE_XSMALL, FONT_WEIGHT_MEDIUM } from '../../constants/theme';
 import insembleIcon from '../../assets/images/insemble-i-logo.svg';
+import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
 
 type Props = {
   photo: string;
@@ -19,7 +20,7 @@ export default function AvailablePropertyCard(props: Props) {
   return (
     <Container>
       <TouchableOpacity onPress={onPress}>
-        <Photo src={photo} alt="property-photo" />
+        <Photo src={photo || imgPlaceholder} alt="property-photo" />
         <DescriptionContainer flex>
           <UpperDescriptionContainer flex>
             <Text color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
