@@ -21,3 +21,14 @@ export const EDIT_SPACE = gql`
     editSpace(space: $space, spaceId: $spaceId)
   }
 `;
+
+export const CREATE_SPACE = gql`
+  mutation CreateSpace($space: CreateSpaceInput!, $propertyId: String!) {
+    createSpace(space: $space, propertyId: $propertyId)
+  }
+`;
+export const DELETE_SPACE = gql`
+  mutation DeleteSpace($spaceId: String!) {
+    deleteSpace(spaceId: $spaceId)
+  }
+`;

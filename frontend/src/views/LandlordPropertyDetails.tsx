@@ -16,8 +16,6 @@ import { PropertyMatches, PropertyMatchesVariables } from '../generated/Property
 import { GET_PROPERTY_MATCHES_DATA } from '../graphql/queries/server/matches';
 import LandlordManageProperty from './LandlordProfile/LandlordManageProperty';
 
-const SPACES = ['Space 1'];
-
 enum Tab {
   TENANT_MATCH_INDEX,
   LOCATION_DETAIL_INDEX,
@@ -70,7 +68,7 @@ export default function LandlordPropertyDetails() {
   return (
     <View flex>
       <PropertyDetailHeader
-        spaces={SPACES}
+        spaces={spaces}
         address={address}
         request="1" // TODO
         selectedSpaceIndex={selectedSpaceIndex}
@@ -78,7 +76,12 @@ export default function LandlordPropertyDetails() {
           setSelectedSpaceId(spaces[index].id);
           setSelectedSpaceIndex(index);
         }}
-        onPressAdd={() => {}} // TODO
+        onPressAdd={() => {
+          history.push(`/landlord/add-space/step-1`, {
+            propertyId: params.paramsId,
+            address,
+          });
+        }}
       />
       <PropertyDetailsCard>
         <PropertyDetailSegment

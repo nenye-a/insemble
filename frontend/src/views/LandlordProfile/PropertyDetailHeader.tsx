@@ -9,12 +9,24 @@ import {
   TEXT_COLOR,
   // SECONDARY_COLOR,
 } from '../../constants/colors';
-// import SvgPlus from '../../components/icons/plus';
+import SvgPlus from '../../components/icons/plus';
 import { FONT_SIZE_MEDIUM } from '../../constants/theme';
 import SvgArrowBack from '../../components/icons/arrow-back';
 
+type Space = {
+  id: string;
+  available: string;
+  equipment: Array<string>;
+  photos: Array<string>;
+  condition: string;
+  sqft: number;
+  pricePerSqft: number;
+  mainPhoto: string;
+  description: string;
+};
+
 type Props = {
-  spaces: Array<string>;
+  spaces: Array<Space>;
   address: string;
   request: string;
   selectedSpaceIndex: number;
@@ -27,8 +39,8 @@ export default function PropertyDetailHeader({
   // request,
   selectedSpaceIndex,
   onPressSpace,
-}: // onPressAdd,
-Props) {
+  onPressAdd,
+}: Props) {
   let history = useHistory();
   return (
     <Card style={{ marginBottom: 30 }}>
@@ -57,16 +69,14 @@ Props) {
                 isActive={selectedSpaceIndex === index}
                 onPress={() => onPressSpace(index)}
               >
-                <SegmentText isActive={selectedSpaceIndex === index}>{item}</SegmentText>
+                <SegmentText isActive={selectedSpaceIndex === index}>Space {index + 1}</SegmentText>
               </TabSegment>
             );
           })}
         </Row>
-        {/*
-          TODO:
-          <AddButton onPress={onPressAdd}>
-            <SvgPlus style={{ color: THEME_COLOR }} />
-          </AddButton> */}
+        <AddButton onPress={onPressAdd}>
+          <SvgPlus style={{ color: THEME_COLOR }} />
+        </AddButton>
       </RowedView>
     </Card>
   );
@@ -100,10 +110,10 @@ const SpaceContainer = styled(RowedView)`
   margin: 4px 0;
 `;
 
-// const AddButton = styled(TouchableOpacity)`
-//   justify-content: center;
-//   margin: 0 5px;
-// `;
+const AddButton = styled(TouchableOpacity)`
+  justify-content: center;
+  margin: 0 5px;
+`;
 
 const SegmentText = styled(Text)<SegmentProps>`
   color: ${(props) => (props.isActive ? THEME_COLOR : TEXT_COLOR)};

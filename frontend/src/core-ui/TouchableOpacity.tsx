@@ -6,10 +6,11 @@ type PressHandler = () => void;
 
 type Props = Omit<ViewProps, 'onClick'> & {
   onPress?: PressHandler;
+  onStopPropagation?: boolean;
 };
 
 function Touchable(props: Props) {
-  let { onPress, href, ...otherProps } = props;
+  let { onPress, href, onStopPropagation, ...otherProps } = props;
   let isLink = href != null;
   let isLocalLink = isLink && isLocalURL(href);
   return (
@@ -19,6 +20,9 @@ function Touchable(props: Props) {
       target={isLink && !isLocalLink ? '_blank' : undefined}
       {...otherProps}
       onClick={(event: MouseEvent) => {
+        if (onStopPropagation) {
+          event.stopPropagation();
+        }
         if (isLocalLink && !(event.metaKey || event.ctrlKey)) {
           event.preventDefault();
         }
