@@ -3,14 +3,11 @@ import { queryField, arg } from 'nexus';
 
 import { Root, Context } from 'serverTypes';
 import { LEGACY_API_URI } from '../../constants/host';
-import { TenantMatchesType } from 'dataTypes';
-
-export type MatchingLocation = {
-  loc_id: string;
-  lat: number;
-  lng: number;
-  match: number;
-};
+import {
+  TenantMatchesType,
+  MatchingLocation,
+  MatchingProperty,
+} from 'dataTypes';
 
 let tenantMatches = queryField('tenantMatches', {
   type: 'Brand',
@@ -22,7 +19,6 @@ let tenantMatches = queryField('tenantMatches', {
       where: { id: brandId },
       include: {
         location: true,
-        matchingProperties: true,
         nextLocations: true,
       },
     });
@@ -30,6 +26,8 @@ let tenantMatches = queryField('tenantMatches', {
       throw new Error('Brand not found!');
     }
     let {
+      matchId,
+      tenantId,
       categories,
       location,
       name,
@@ -43,18 +41,19 @@ let tenantMatches = queryField('tenantMatches', {
       minRent,
       maxRent,
       matchingLocations: matchingLocationsJSON,
-      matchingProperties,
+      matchingProperties: matchingPropertiesJSON,
+      minSize,
+      maxSize,
+      minDaytimePopulation,
+      minFrontageWidth,
+      spaceType, // NOTE: This actually propertyType(inline, pedestrian etc)
 
       // NOTE: Unused filter params, will use later!
       equipment,
       ethnicity,
-      minDaytimePopulation,
       locationCount,
-      minSize,
       newLocationPlan,
-      spaceType,
       userRelation,
-      minFrontageWidth,
       nextLocations,
     } = selectedBrand;
 
@@ -64,19 +63,25 @@ let tenantMatches = queryField('tenantMatches', {
       );
     }
     let matchingLocations;
+    let matchingProperties;
 
     if (matchingLocationsJSON) {
       let existMatchingLocations: Array<MatchingLocation> = JSON.parse(
         matchingLocationsJSON,
       );
+      let existMatchingProperties: Array<MatchingProperty> = matchingPropertiesJSON
+        ? JSON.parse(matchingPropertiesJSON)
+        : [];
+      matchingProperties = existMatchingProperties;
       matchingLocations = existMatchingLocations;
     } else {
       let {
-        tenant_id: tenantId,
+        brand_id: newTenantId,
+        match_id: newMatchId,
         matching_locations: newMatchingLocations,
         matching_properties: rawMatchingProperties,
       }: TenantMatchesType = (
-        await axios.get(`${LEGACY_API_URI}/api/tenantMatches`, {
+        await axios.get(`${LEGACY_API_URI}/api/tenantMatches/`, {
           params: {
             address: location?.address,
             brand_name: name,
@@ -95,33 +100,66 @@ let tenantMatches = queryField('tenantMatches', {
             commute: commute.length > 0 ? JSON.stringify(commute) : undefined,
             education:
               education.length > 0 ? JSON.stringify(education) : undefined,
+            ethnicity:
+              ethnicity.length > 0 ? JSON.stringify(ethnicity) : undefined,
             rent: minRent && {
               min: minRent,
               max: maxRent,
             },
+            sqft: minSize && {
+              min: minSize,
+              max: maxSize,
+            },
+            frontage_width: minFrontageWidth,
+            propertyType:
+              spaceType.length > 0 ? JSON.stringify(spaceType) : undefined,
+            min_daytime_pop: minDaytimePopulation,
+            match_id: matchId,
           },
         })
       ).data;
       let newMatchingProperties = rawMatchingProperties?.map(
-        ({ property_id: propertyId, ...other }) => {
-          return { propertyId, ...other };
+        ({
+          space_id: spaceId,
+          space_condition: spaceCondition,
+          tenant_type: tenantType,
+          match_value: matchValue,
+          lng: numberLng,
+          lat: numberLat,
+          type,
+          ...other
+        }) => {
+          return {
+            spaceId,
+            spaceCondition,
+            tenantType,
+            type,
+            matchValue,
+            lng: numberLng.toString(),
+            lat: numberLat.toString(),
+            ...other,
+          };
         },
       );
+      tenantId = newTenantId;
+      matchId = newMatchId;
       matchingLocations = newMatchingLocations;
-      matchingProperties = await context.prisma.brand
-        .update({
-          where: { id: brandId },
-          data: {
-            matchingLocations: JSON.stringify(newMatchingLocations),
-            matchingProperties: { create: newMatchingProperties },
-            tenantId,
-          },
-        })
-        .matchingProperties();
+      matchingProperties = newMatchingProperties;
+      await context.prisma.brand.update({
+        where: { id: brandId },
+        data: {
+          matchingLocations: JSON.stringify(newMatchingLocations),
+          matchingProperties: JSON.stringify(newMatchingProperties),
+          tenantId,
+          matchId,
+        },
+      });
     }
 
     return {
       id: brandId,
+      matchId,
+      tenantId,
       matchingLocations,
       matchingProperties,
       categories,
@@ -159,6 +197,7 @@ let tenantMatches = queryField('tenantMatches', {
       minDaytimePopulation,
       locationCount,
       minSize,
+      maxSize,
       newLocationPlan,
       spaceType,
       userRelation,
