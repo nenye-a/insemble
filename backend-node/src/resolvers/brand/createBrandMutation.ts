@@ -43,7 +43,6 @@ export let createBrandResolver: FieldResolver<
     data: {
       ...businessInput,
       ...filterInput,
-      tenantId: '',
       nextLocations: {
         create: nextLocations,
       },

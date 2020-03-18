@@ -5,6 +5,7 @@ export let Brand = objectType({
   definition(t) {
     t.model.id();
     t.model.tenantId();
+    t.model.matchId();
     t.model.name();
     t.field('location', { type: 'Location', nullable: true });
     t.model.userRelation();
@@ -17,6 +18,7 @@ export let Brand = objectType({
     t.model.minAge();
     t.model.maxAge();
     t.model.minSize();
+    t.model.maxSize();
     t.model.minRent();
     t.model.maxRent();
     t.model.minFrontageWidth();

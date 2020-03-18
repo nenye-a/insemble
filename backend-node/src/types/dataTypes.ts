@@ -22,11 +22,27 @@ export type AutoPopulateResponse = {
     max: number;
   };
 };
-type MatchingLocationType = {
+
+export type MatchingLocation = {
   lat: number;
   lng: number;
   match: number;
   loc_id: string;
+};
+
+export type MatchingProperty = {
+  rent: number;
+  sqft: number;
+  pro: boolean;
+  visible: boolean;
+  address: string;
+  spaceId: string;
+  spaceCondition: Array<string>;
+  tenantType: Array<string>;
+  type: Array<string>;
+  matchValue: number;
+  lng: string;
+  lat: string;
 };
 
 type MatchingPropertyType = {
@@ -170,7 +186,7 @@ type DemographicsProperty = {
 export type TenantMatchesType = {
   status: number;
   status_detail: string;
-  matching_locations?: Array<MatchingLocationType>;
+  matching_locations?: Array<MatchingLocation>;
   matching_properties?: Array<MatchingPropertyType>;
   brand_id: string;
   match_id: string;
