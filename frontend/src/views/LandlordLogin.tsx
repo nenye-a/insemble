@@ -4,16 +4,24 @@ import styled from 'styled-components';
 import { View, Text, Button } from '../core-ui';
 import { FONT_WEIGHT_BOLD, FONT_SIZE_LARGE } from '../constants/theme';
 import { WHITE, THEME_COLOR } from '../constants/colors';
+import { VIEWPORT_TYPE } from '../constants/viewports';
 import LoginForm from '../views/LoginForm';
-import { Role } from '../types/types';
 import LandlordLanding from './LandlordLanding';
+import { Role } from '../types/types';
+import { useViewport } from '../utils';
+
+type ContainerProps = ViewProps & {
+  isDesktop: boolean;
+};
 
 export default function LandlordSignUp() {
   let history = useHistory();
+  let { viewportType } = useViewport();
+  let isDesktop = viewportType === VIEWPORT_TYPE.DESKTOP;
   let noAccount = "Don't have an account?";
   let noPassword = 'Forgot your password?';
   return (
-    <Container>
+    <Container isDesktop={isDesktop}>
       <LandlordLanding />
       <FormContainer>
         <TitleText>Landlord Log In</TitleText>
@@ -45,16 +53,15 @@ export default function LandlordSignUp() {
   );
 }
 
-const Container = styled(View)`
-  flex-direction: row;
-  height: 100vh;
+const Container = styled(View)<ContainerProps>`
+  flex-direction: ${(props) => (props.isDesktop ? 'row' : 'column')};
 `;
 
 const FormContainer = styled(View)`
   flex: 1;
   justify-content: center;
   background-color: ${WHITE};
-  padding: 10px 50px 0 50px;
+  padding: 10px 50px;
 `;
 
 const TitleText = styled(Text)`

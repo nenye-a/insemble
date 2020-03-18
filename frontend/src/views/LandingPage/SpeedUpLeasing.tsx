@@ -1,12 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
 import { View, Text, Button } from '../../core-ui';
-import { FONT_WEIGHT_HEAVY, FONT_SIZE_LARGE } from '../../constants/theme';
+import { useViewport } from '../../utils';
+import { FONT_WEIGHT_HEAVY, FONT_SIZE_LARGE, FONT_SIZE_XLARGE } from '../../constants/theme';
+import { VIEWPORT_TYPE } from '../../constants/viewports';
+
+type ContainerProps = ViewProps & {
+  isDesktop: boolean;
+};
 
 export default function SpeedUpLeasing() {
+  let { viewportType } = useViewport();
+  let isDesktop = viewportType === VIEWPORT_TYPE.DESKTOP;
+
   return (
-    <Container>
-      <CenteredText fontSize="32px" fontWeight={FONT_WEIGHT_HEAVY}>
+    <Container isDesktop={isDesktop}>
+      <CenteredText fontSize={isDesktop ? '32px' : FONT_SIZE_XLARGE} fontWeight={FONT_WEIGHT_HEAVY}>
         Speed up your leasing
       </CenteredText>
       <CenteredText fontSize="20px" style={{ marginTop: 32, marginBottom: 32 }}>
@@ -27,10 +36,10 @@ export default function SpeedUpLeasing() {
   );
 }
 
-const Container = styled(View)`
+const Container = styled(View)<ContainerProps>`
   justify-content: center;
   align-items: center;
-  padding: 75px 20%;
+  padding: ${({ isDesktop }) => (isDesktop ? '75px 20%' : '42px 24px 84px 24px')};
 `;
 
 const CenteredText = styled(Text)`
@@ -38,7 +47,7 @@ const CenteredText = styled(Text)`
 `;
 
 const FindLocationsButton = styled(Button)`
-  border-radius: 20px;
+  border-radius: 30px;
   padding: 0 10%;
-  height: 40px;
+  height: 60px;
 `;
