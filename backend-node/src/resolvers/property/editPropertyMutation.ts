@@ -56,7 +56,7 @@ export let editPropertyResolver: FieldResolver<
       userRelation: '', //TODO: remove this after userRelation successfully migrated
       space: {
         updateMany: {
-          where: { matchingBrand: { not: { equals: '0' } } },
+          where: { matchingBrand: { not: '0' } },
           data: {
             matchingBrand: null,
           },
