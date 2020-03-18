@@ -1,7 +1,7 @@
 import { queryField, FieldResolver } from 'nexus';
 
 import { Root, Context } from 'serverTypes';
-import { MatchingLocation } from '../matches/tenantMatchesQuery';
+import { MatchingLocation } from 'dataTypes';
 
 let brandsResolver: FieldResolver<'Query', 'brands'> = async (
   _: Root,

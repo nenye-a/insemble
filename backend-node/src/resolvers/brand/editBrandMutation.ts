@@ -85,9 +85,7 @@ export let editBrandResolver: FieldResolver<'Mutation', 'editBrand'> = async (
         update: location,
       },
       matchingLocations: null,
-      matchingProperties: {
-        set: [],
-      },
+      matchingProperties: null,
     },
     where: {
       id: brandId,
