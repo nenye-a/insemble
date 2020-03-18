@@ -234,7 +234,7 @@ class TenantMatchAPI(AsynchronousAPI):
             else:
                 brand_id = provider.build_brand(name, categories, params)
 
-        n_process, nearby = self.get_nearby_places.delay(lat, lng), []
+        n_process, nearby = self.get_nearby_places.delay(lat, lng, parallel_process=True), []
         nearby_listener = self._celery_listener(n_process, nearby)
         nearby_listener.start()
 
@@ -355,8 +355,10 @@ class TenantMatchAPI(AsynchronousAPI):
 
     @staticmethod
     @celery_app.task
-    def get_nearby_places(lat, lng):
-        nearby = provider.get_nearby_places(lat, lng)
+    def get_nearby_places(lat, lng, parallel_process=False):
+        connection = mongo_connect.Connect() if parallel_process else utils.SYSTEM_MONGO
+        nearby = provider.get_nearby_places(lat, lng, db_connection=connection)
+        connection.close() if connection != utils.SYSTEM_MONGO else None
         return nearby
 
     def _register_tasks(self) -> None:
@@ -551,7 +553,7 @@ class FastLocationDetailsAPI(AsynchronousAPI):
                 target_lat = round(validated_params["target_location"]["lat"], 6)
                 target_lng = round(validated_params["target_location"]["lng"], 6)
                 # grab the nearby stores asynchronously
-                n_process, nearby = TenantMatchAPI.get_nearby_places.delay(target_lat, target_lng), []
+                n_process, nearby = TenantMatchAPI.get_nearby_places.delay(target_lat, target_lng, parallel_process=True), []
                 nearby_listener = self._celery_listener(n_process, nearby)
                 nearby_listener.start()
 
