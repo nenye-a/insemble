@@ -22,10 +22,9 @@ import { SPACES_TYPE } from '../../constants/spaces';
 import { SERVICE_OPTIONS } from '../LandlordOnboardingPage/TenantConfirm';
 import { Categories } from '../../generated/Categories';
 import { Filter } from '../../components';
-import { EDIT_PROPERTY } from '../../graphql/queries/server/properties';
+import { EDIT_PROPERTY, GET_PROPERTIES } from '../../graphql/queries/server/properties';
 import { EditProperty, EditPropertyVariables } from '../../generated/EditProperty';
 import { MarketingPreference, LocationInput } from '../../generated/globalTypes';
-import omitTypename from '../../utils/omitTypename';
 
 type Props = {
   spaceId: string;
@@ -78,13 +77,15 @@ export default function LandlordManageProperty() {
 
   let onSubmit = () => {
     let { name, location, marketingPreference } = property;
+    let { lat, lng, address } = location;
+
     if (paramsId) {
       editProperty({
         variables: {
           property: {
             name,
             categories: selectedCategories,
-            location: omitTypename(location) as LocationInput,
+            location: { lat, lng, address },
             businessType: selectedBusinessService,
             propertyType: selectedType,
             exclusive: selectedExistingCategories,
@@ -93,14 +94,15 @@ export default function LandlordManageProperty() {
           },
           propertyId: paramsId,
         },
+        refetchQueries: [{ query: GET_PROPERTIES }],
       });
     }
   };
   return (
     <Form onSubmit={onSubmit}>
-      {editPropertyData && <Alert text="Property succesfully updated" />}
-      {editPropertyError && <Alert text={editPropertyError.message || ''} />}
       <Container>
+        {<Alert visible={!!editPropertyData} text="Property succesfully updated" />}
+        {<Alert visible={!!editPropertyError} text={editPropertyError?.message || ''} />}
         <InputWrapper>
           <LabelText text="What type of property is this?" />
           {SPACES_TYPE.map((option, index) => {
@@ -188,7 +190,7 @@ export default function LandlordManageProperty() {
         </InputWrapper>
         {categoriesData && (
           <>
-            <InputWrapper>
+            <InputWrapper style={{ zIndex: 1 }}>
               <LabelText text="Are you looking for any specific retail categories?" />
               <TouchableOpacity onPress={() => toggleCategorySelection(!categorySelectionVisible)}>
                 <SelectCategories
@@ -278,6 +280,7 @@ const SelectCategories = styled(TextInput)`
 const FilterContainer = styled(Filter)`
   position: absolute;
   z-index: 3;
+  background-color: ${WHITE};
 `;
 
 const OtherTextInput = styled(TextInput)`
