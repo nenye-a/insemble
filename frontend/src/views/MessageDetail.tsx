@@ -51,7 +51,7 @@ export default function MessageDetail() {
     createConversation({
       variables: {
         brandId: conversation?.conversation.brand.id || '',
-        propertyId: conversation?.conversation.property.propertyId || '',
+        spaceId: conversation?.conversation.space.spaceId || '',
         matchScore: conversation?.conversation.matchScore || 0,
         header: conversation?.conversation.header || '',
         messageInput: {

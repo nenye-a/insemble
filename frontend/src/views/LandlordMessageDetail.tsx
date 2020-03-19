@@ -51,7 +51,7 @@ export default function LandlordMessageDetail() {
     createConversation({
       variables: {
         brandId: conversation?.conversation.brand.tenantId || '',
-        propertyId: conversation?.conversation.property.id || '',
+        spaceId: conversation?.conversation.space.id || '',
         matchScore: conversation?.conversation.matchScore || 0,
         header: conversation?.conversation.header || '',
         messageInput: {

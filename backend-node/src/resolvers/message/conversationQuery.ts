@@ -33,6 +33,7 @@ let conversationResolver: FieldResolver<'Query', 'conversation'> = async (
       messages: true,
       property: true,
       tenant: true,
+      space: true,
     },
   });
   if (!conversation) {

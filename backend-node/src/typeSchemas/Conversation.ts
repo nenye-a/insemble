@@ -6,6 +6,7 @@ export let Conversation = objectType({
     t.model.id();
     t.model.brand();
     t.model.landlord();
+    t.model.space();
     t.model.header();
     t.model.tenant();
     t.model.messages();
