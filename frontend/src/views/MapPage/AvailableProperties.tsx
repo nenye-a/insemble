@@ -53,6 +53,7 @@ export default function AvailableProperties(props: Props) {
               price={rent}
               area={sqft}
               propertyType={tenantType.join(', ')}
+              // TODO: open deep dive
               onPress={() => {}}
             />
           ))}
