@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 import { Context } from 'serverTypes';
 import { createSession } from '../../helpers/auth';
-import { PendingDataType } from 'dataTypes';
+import { PendingDataType, ReceiverContact } from 'dataTypes';
 
 export let registerTenantInvitationResolver: FieldResolver<
   'Mutation',
@@ -22,9 +22,19 @@ export let registerTenantInvitationResolver: FieldResolver<
     throw new Error('Invalid role');
   }
 
-  // TODO: Auto complete user data
+  let { email: receiverEmail, name, role, phone }: ReceiverContact = JSON.parse(
+    pendingConversation.receiverContact,
+  );
   let cryptPassword = bcrypt.hashSync(password, 10);
-  let lowerCasedEmail = pendingConversation.receiverEmail.toLocaleLowerCase();
+  let lowerCasedEmail = receiverEmail.toLocaleLowerCase();
+  let firstName = name
+    .split(' ')
+    .slice(0, -1)
+    .join(' ');
+  let lastName = name
+    .split(' ')
+    .slice(-1)
+    .join(' ');
 
   let exist = await context.prisma.tenantUser.findOne({
     where: {
@@ -38,11 +48,13 @@ export let registerTenantInvitationResolver: FieldResolver<
   let tenantUser = await context.prisma.tenantUser.create({
     data: {
       email: lowerCasedEmail,
-      firstName: 'Dummy',
-      lastName: 'Tenant',
+      firstName,
+      lastName,
       password: cryptPassword,
       tier: 'FREE',
-      company: 'Dummy Fried Chicken',
+      company: `${name}'s Company`,
+      title: role,
+      phoneNumber: phone,
     },
   });
 
@@ -66,7 +78,7 @@ export let registerTenantInvitationResolver: FieldResolver<
     throw new Error('Brand failed to be created');
   }
 
-  let { brandId, pendingConversationData, propertyId } = pendingConversation;
+  let { brandId, pendingConversationData, spaceId } = pendingConversation;
   let { header, matchScore, messageInput }: PendingDataType = JSON.parse(
     pendingConversationData,
   );
@@ -74,27 +86,33 @@ export let registerTenantInvitationResolver: FieldResolver<
   let convId;
   let existingConversation = await context.prisma.conversation.findMany({
     where: {
-      AND: [{ brand: { tenantId: brandId } }, { property: { id: propertyId } }],
+      AND: [{ brand: { tenantId: brandId } }, { space: { id: spaceId } }],
     },
   });
   if (existingConversation.length) {
     convId = existingConversation[0].id;
   } else {
-    let property = await context.prisma.property.findOne({
-      where: { id: propertyId },
-      include: { landlordUser: true },
+    let space = await context.prisma.space.findOne({
+      where: { id: spaceId },
+      include: { property: { include: { landlordUser: true } } },
     });
-    if (!property) {
-      throw new Error('Brand not found');
+    if (!space) {
+      throw new Error('Space not found or deleted');
     }
-    let userSender = property.landlordUser;
+    if (!space.property) {
+      throw new Error(
+        'Property not found or deleted or disconnected from space',
+      );
+    }
+    let userSender = space.property.landlordUser;
 
     let createdConversation = await context.prisma.conversation.create({
       data: {
         brand: { connect: { id: newBrand.id } },
-        property: { connect: { id: propertyId } },
+        property: { connect: { id: space.property.id } },
         landlord: { connect: { id: userSender.id } },
         tenant: { connect: { id: tenantUser.id } },
+        space: { connect: { id: space.id } },
         matchScore,
         header,
       },

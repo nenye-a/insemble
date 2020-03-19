@@ -85,6 +85,13 @@ export type DemographicStatProperty = {
   growth?: number;
 };
 
+export type ReceiverContact = {
+  email: string;
+  name: string;
+  phone: string;
+  role: string;
+};
+
 type NearbyObject = {
   lat: number;
   lng: number;

@@ -13,7 +13,7 @@ export let createPendingConversationResolver: FieldResolver<
   'createPendingConversation'
 > = async (
   _,
-  { brandId, propertyId, matchScore, messageInput, header, receiverEmail },
+  { brandId, spaceId, matchScore, messageInput, header, receiverContact },
   context: Context,
 ) => {
   let userSender = context.tenantUserId
@@ -42,47 +42,50 @@ export let createPendingConversationResolver: FieldResolver<
     throw new Error('Wrong sender role');
   }
 
-  let propertyOrBrand = context.tenantUserId
+  let spaceOrBrand = context.tenantUserId
     ? await context.prisma.brand.findOne({
         where: { id: brandId },
         include: { tenantUser: true },
       })
     : context.landlordUserId
-    ? await context.prisma.property.findOne({
-        where: { id: propertyId },
-        include: { landlordUser: true },
+    ? await context.prisma.space.findOne({
+        where: { id: spaceId },
+        include: { property: { include: { landlordUser: true } } },
       })
     : null;
 
-  if (!propertyOrBrand) {
-    throw new Error('Property or brand not found!');
+  if (!spaceOrBrand) {
+    throw new Error('Space or brand not found!');
   }
-  if ('landlordUser' in propertyOrBrand) {
-    if (propertyOrBrand.landlordUser.id !== context.landlordUserId) {
+  if ('tenantUser' in spaceOrBrand) {
+    if (!spaceOrBrand.tenantUser) {
+      throw new Error('Tenant not found'); // Note: Brand can have tenant undefinded
+    }
+    if (spaceOrBrand.tenantUser.id !== context.tenantUserId) {
+      throw new Error('This is not your brand');
+    }
+    let targetSpace = await context.prisma.space.findOne({
+      where: {
+        spaceId,
+      },
+    });
+    if (targetSpace) {
+      throw new Error('Space already exist please reload your search');
+    }
+  } else {
+    if (!spaceOrBrand.property) {
+      throw new Error('Property not found or delete or disconected from space');
+    }
+    if (spaceOrBrand.property.landlordUser.id !== context.landlordUserId) {
       throw new Error('This is not your property');
     }
-    let targetBrands = await context.prisma.brand.findMany({
+    let targetBrands = await context.prisma.brand.findOne({
       where: {
         tenantId: brandId,
       },
     });
-    if (targetBrands.length) {
+    if (targetBrands) {
       throw new Error('Brand already exist please reload your search');
-    }
-  } else {
-    if (!propertyOrBrand.tenantUser) {
-      throw new Error('Tenant not found'); // Note: Brand can have tenant undefinded
-    }
-    if (propertyOrBrand.tenantUser.id !== context.tenantUserId) {
-      throw new Error('This is not your brand');
-    }
-    let targetProperties = await context.prisma.property.findMany({
-      where: {
-        propertyId,
-      },
-    });
-    if (targetProperties.length) {
-      throw new Error('Property already exist please reload your search');
     }
   }
 
@@ -95,8 +98,8 @@ export let createPendingConversationResolver: FieldResolver<
   let pendingConversation = await context.prisma.pendingConversation.create({
     data: {
       brandId,
-      propertyId,
-      receiverEmail,
+      spaceId,
+      receiverContact: JSON.stringify(receiverContact),
       senderRole,
       pendingConversationData: JSON.stringify(pendingConversationData),
     },
@@ -107,8 +110,8 @@ export let createPendingConversationResolver: FieldResolver<
     senderRole === 'LANDLORD'
       ? sendLandlordMessageEmail(
           {
-            email: `${receiverEmail}`,
-            name: `Property Landlord`,
+            email: `${receiverContact.email}`,
+            name: `${receiverContact.name}`,
           },
           `${HOST}/register-landlord-via-invitation-verification/${emailPendingConvCode}`,
           {
@@ -118,8 +121,8 @@ export let createPendingConversationResolver: FieldResolver<
         )
       : sendTenantMessageEmail(
           {
-            email: `${receiverEmail}`,
-            name: `Product owner`,
+            email: `${receiverContact.email}`,
+            name: `${receiverContact.name}`,
           },
           `${HOST}/register-tenant-via-invitation-verification/${emailPendingConvCode}`,
           {
@@ -142,8 +145,8 @@ export let createPendingConversation = mutationField(
     type: 'String',
     args: {
       brandId: stringArg({ required: true }),
-      propertyId: stringArg({ required: true }),
-      receiverEmail: stringArg({ required: true }),
+      spaceId: stringArg({ required: true }),
+      receiverContact: arg({ type: 'ReceiverContact', required: true }),
       matchScore: intArg({ required: true }),
       messageInput: arg({ type: 'MessageInput', required: true }),
       header: stringArg({ required: true }),

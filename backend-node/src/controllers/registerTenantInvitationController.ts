@@ -3,7 +3,7 @@ import { Base64 } from 'js-base64';
 
 import { prisma } from '../prisma';
 import { FRONTEND_HOST } from '../constants/constants';
-import { PendingDataType } from 'dataTypes';
+import { PendingDataType, ReceiverContact } from 'dataTypes';
 import { createSession } from '../helpers/auth';
 
 export let emailRegisterTenantInvitationHandler = async (
@@ -38,8 +38,13 @@ export let emailRegisterTenantInvitationHandler = async (
     res.status(400).send('Brand already exist');
     return;
   }
+
+  let { email: receiverEmail }: ReceiverContact = JSON.parse(
+    pendingConversation.receiverContact,
+  );
+
   let existUser = await prisma.tenantUser.findOne({
-    where: { email: pendingConversation.receiverEmail },
+    where: { email: receiverEmail.toLocaleLowerCase() },
   });
   if (existUser) {
     // TODO: Auto complete brand Data
@@ -62,7 +67,7 @@ export let emailRegisterTenantInvitationHandler = async (
       throw new Error('Brand failed to be created');
     }
 
-    let { brandId, pendingConversationData, propertyId } = pendingConversation;
+    let { brandId, pendingConversationData, spaceId } = pendingConversation;
     let { header, matchScore, messageInput }: PendingDataType = JSON.parse(
       pendingConversationData,
     );
@@ -70,30 +75,33 @@ export let emailRegisterTenantInvitationHandler = async (
     let convId;
     let existingConversation = await prisma.conversation.findMany({
       where: {
-        AND: [
-          { brand: { tenantId: brandId } },
-          { property: { id: propertyId } },
-        ],
+        AND: [{ brand: { tenantId: brandId } }, { space: { id: spaceId } }],
       },
     });
     if (existingConversation.length) {
       convId = existingConversation[0].id;
     } else {
-      let property = await prisma.property.findOne({
-        where: { id: propertyId },
-        include: { landlordUser: true },
+      let space = await prisma.space.findOne({
+        where: { id: spaceId },
+        include: { property: { include: { landlordUser: true } } },
       });
-      if (!property) {
-        throw new Error('Brand not found');
+      if (!space) {
+        throw new Error('Space not found or deleted');
       }
-      let userSender = property.landlordUser;
+      if (!space.property) {
+        throw new Error(
+          'Property not found or deleted or disconnected from space',
+        );
+      }
+      let userSender = space.property.landlordUser;
 
       let createdConversation = await prisma.conversation.create({
         data: {
           brand: { connect: { id: newBrand.id } },
-          property: { connect: { id: propertyId } },
+          property: { connect: { id: space.property.id } },
           landlord: { connect: { id: userSender.id } },
           tenant: { connect: { id: existUser.id } },
+          space: { connect: { id: space.id } },
           matchScore,
           header,
         },

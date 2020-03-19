@@ -3,7 +3,7 @@ import { Base64 } from 'js-base64';
 
 import { prisma } from '../prisma';
 import { FRONTEND_HOST } from '../constants/constants';
-import { PendingDataType } from 'dataTypes';
+import { PendingDataType, ReceiverContact } from 'dataTypes';
 import { createSession } from '../helpers/auth';
 
 export let emailRegisterLandlordInvitationHandler = async (
@@ -29,9 +29,9 @@ export let emailRegisterLandlordInvitationHandler = async (
     res.status(400).send('Invalid role');
     return;
   }
-  let targetProperties = await prisma.property.findMany({
+  let targetProperties = await prisma.space.findMany({
     where: {
-      propertyId: pendingConversation.propertyId,
+      spaceId: pendingConversation.spaceId,
     },
   });
 
@@ -39,22 +39,27 @@ export let emailRegisterLandlordInvitationHandler = async (
     res.status(400).send('Property already exist');
     return;
   }
+  let { email: receiverEmail }: ReceiverContact = JSON.parse(
+    pendingConversation.receiverContact,
+  );
 
   let existUser = await prisma.landlordUser.findOne({
-    where: { email: pendingConversation.receiverEmail },
+    where: { email: receiverEmail.toLocaleLowerCase() },
   });
   if (existUser) {
-    // TODO: Auto complete property Data
-    let newProperty = await prisma.property.create({
+    // TODO: Auto complete property Data expecting sending spaceId return whole property
+    // TODO: If propertyId from above already exist just create Space else create whole property
+    let linkedProperty = await prisma.property.create({
       data: {
         name: 'Dummy property',
-        propertyId: pendingConversation.propertyId,
+        propertyId: `From auto complete ${Math.random()}`,
         location: {
           create: { address: 'Dummy', lat: '1', lng: '1' },
         },
         userRelation: 'Owner',
         space: {
           create: {
+            spaceId: pendingConversation.spaceId,
             mainPhoto:
               'https://tvip-raykf.s3-ap-southeast-1.amazonaws.com/space-main-photos/zi5KcXdBt',
             available: new Date(),
@@ -71,19 +76,22 @@ export let emailRegisterLandlordInvitationHandler = async (
         },
         marketingPreference: 'PUBLIC',
       },
+      include: {
+        space: true,
+      },
     });
-    if (!newProperty) {
+    if (!linkedProperty) {
       throw new Error('Property failed to be created');
     }
 
-    let { brandId, pendingConversationData, propertyId } = pendingConversation;
+    let { brandId, pendingConversationData, spaceId } = pendingConversation;
     let { header, matchScore, messageInput }: PendingDataType = JSON.parse(
       pendingConversationData,
     );
     let convId;
     let existingConversation = await prisma.conversation.findMany({
       where: {
-        AND: [{ brand: { id: brandId } }, { property: { propertyId } }],
+        AND: [{ brand: { id: brandId } }, { space: { spaceId } }],
       },
     });
     if (existingConversation.length) {
@@ -104,9 +112,10 @@ export let emailRegisterLandlordInvitationHandler = async (
       let createdConversation = await prisma.conversation.create({
         data: {
           brand: { connect: { id: brandId } },
-          property: { connect: { id: newProperty.id } },
+          property: { connect: { id: linkedProperty.id } },
           landlord: { connect: { id: existUser.id } },
           tenant: { connect: { id: userSender.id } },
+          space: { connect: { id: linkedProperty.space[0].id } },
           matchScore,
           header,
         },

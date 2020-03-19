@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 import { Context } from 'serverTypes';
 import { createSession } from '../../helpers/auth';
-import { PendingDataType } from 'dataTypes';
+import { PendingDataType, ReceiverContact } from 'dataTypes';
 
 export let registerLandlordInvitationResolver: FieldResolver<
   'Mutation',
@@ -22,9 +22,19 @@ export let registerLandlordInvitationResolver: FieldResolver<
     throw new Error('Invalid role');
   }
 
-  // TODO: Auto complete user data
+  let { email: receiverEmail, name, role, phone }: ReceiverContact = JSON.parse(
+    pendingConversation.receiverContact,
+  );
   let cryptPassword = bcrypt.hashSync(password, 10);
-  let lowerCasedEmail = pendingConversation.receiverEmail.toLocaleLowerCase();
+  let lowerCasedEmail = receiverEmail.toLocaleLowerCase();
+  let firstName = name
+    .split(' ')
+    .slice(0, -1)
+    .join(' ');
+  let lastName = name
+    .split(' ')
+    .slice(-1)
+    .join(' ');
 
   let exist = await context.prisma.landlordUser.findOne({
     where: {
@@ -38,25 +48,29 @@ export let registerLandlordInvitationResolver: FieldResolver<
   let landlordUser = await context.prisma.landlordUser.create({
     data: {
       email: lowerCasedEmail,
-      firstName: 'Dummy',
-      lastName: 'Landlord',
+      firstName,
+      lastName,
       password: cryptPassword,
       tier: 'FREE',
-      company: 'Dummy Property Loan',
+      company: `${name}'s Company`,
+      title: role,
+      phoneNumber: phone,
     },
   });
 
-  // TODO: Auto complete property Data
+  // TODO: Auto complete property Data expecting sending spaceId return whole property
+  // TODO: Handle what if 1 property have 2 space that have 2 different contact
   let newProperty = await context.prisma.property.create({
     data: {
       name: 'Dummy property',
-      propertyId: pendingConversation.propertyId,
+      propertyId: `From auto complete ${Math.random()}`,
       location: {
         create: { address: 'Dummy', lat: '1', lng: '1' },
       },
       userRelation: 'Owner',
       space: {
         create: {
+          spaceId: pendingConversation.spaceId,
           mainPhoto:
             'https://tvip-raykf.s3-ap-southeast-1.amazonaws.com/space-main-photos/zi5KcXdBt',
           available: new Date(),
@@ -73,19 +87,22 @@ export let registerLandlordInvitationResolver: FieldResolver<
       },
       marketingPreference: 'PUBLIC',
     },
+    include: {
+      space: true,
+    },
   });
   if (!newProperty) {
     throw new Error('Property failed to be created');
   }
 
-  let { brandId, pendingConversationData, propertyId } = pendingConversation;
+  let { brandId, pendingConversationData, spaceId } = pendingConversation;
   let { header, matchScore, messageInput }: PendingDataType = JSON.parse(
     pendingConversationData,
   );
   let convId;
   let existingConversation = await context.prisma.conversation.findMany({
     where: {
-      AND: [{ brand: { id: brandId } }, { property: { propertyId } }],
+      AND: [{ brand: { id: brandId } }, { space: { spaceId } }],
     },
   });
   if (existingConversation.length) {
@@ -109,6 +126,7 @@ export let registerLandlordInvitationResolver: FieldResolver<
         property: { connect: { id: newProperty.id } },
         landlord: { connect: { id: landlordUser.id } },
         tenant: { connect: { id: userSender.id } },
+        space: { connect: { id: newProperty.space[0].id } },
         matchScore,
         header,
       },
