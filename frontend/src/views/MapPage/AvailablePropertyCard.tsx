@@ -9,7 +9,7 @@ import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
 type Props = {
   photo: string;
   address: string;
-  price: number;
+  price: number | null;
   area: number;
   propertyType: string;
   onPress: () => void;
