@@ -4,6 +4,8 @@ export * from './auth/tenantVerificationQuery';
 export * from './auth/registerLandlordMutation';
 export * from './auth/loginLandlordMutation';
 export * from './auth/landlordVerificationQuery';
+export * from '.DELETED_BASE64_STRING';
+export * from './auth/registerTenantInvitationMutation';
 
 export * from './filter/categoryQuery';
 export * from './filter/personaQuery';
@@ -59,5 +61,6 @@ export * from './message/conversationsQuery';
 export * from './message/conversationQuery';
 export * from './message/sendMessageMutation';
 export * from './message/createConversationMutation';
+export * from '.DELETED_BASE64_STRING';
 
 export * from './search/placeQuery';

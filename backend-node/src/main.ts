@@ -12,6 +12,8 @@ import { registerTenantHandler } from './controllers/registerTenantController';
 import { emailVerificationTenantHandler } from '.DELETED_BASE64_STRING';
 import { emailVerificationLandlordHandler } from '.DELETED_BASE64_STRING';
 import { registerLandlordHandler } from './controllers/registerLandlordController';
+import { emailRegisterLandlordInvitationHandler } from '.DELETED_BASE64_STRING';
+import { emailRegisterTenantInvitationHandler } from '.DELETED_BASE64_STRING';
 
 const server = new GraphQLServer({
   schema,
@@ -64,6 +66,16 @@ server.express.get(
 server.express.get(
   '/email-landlord-verification/:token',
   emailVerificationLandlordHandler,
+);
+
+server.express.get(
+  '/register-landlord-via-invitation-verification/:token',
+  emailRegisterLandlordInvitationHandler,
+);
+
+server.express.get(
+  '/register-tenant-via-invitation-verification/:token',
+  emailRegisterTenantInvitationHandler,
 );
 
 server.start({}, () => {
