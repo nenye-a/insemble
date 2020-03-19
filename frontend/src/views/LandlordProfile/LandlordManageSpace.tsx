@@ -2,6 +2,7 @@ import React, { useState, ChangeEvent, useEffect } from 'react';
 import styled from 'styled-components';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useForm, FieldError, FieldValues } from 'react-hook-form';
+import { useHistory } from 'react-router-dom';
 
 import {
   View,
@@ -19,21 +20,64 @@ import {
 import { FileWithPreview } from '../../core-ui/Dropzone';
 import PhotosPicker from '../LandlordOnboardingPage/PhotosPicker';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
-import { FONT_SIZE_LARGE } from '../../constants/theme';
-import { WHITE } from '../../constants/colors';
+import {
+  FONT_SIZE_LARGE,
+  FONT_WEIGHT_LIGHT,
+  FONT_SIZE_SMALL,
+  FONT_WEIGHT_BOLD,
+} from '../../constants/theme';
+import { WHITE, THEME_COLOR } from '../../constants/colors';
 import { getImageBlob, dateFormatter } from '../../utils';
-import { GET_SPACE, EDIT_SPACE } from '../../graphql/queries/server/space';
+import { GET_SPACE, EDIT_SPACE, DELETE_SPACE } from '../../graphql/queries/server/space';
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
 import { Equipments } from '../../generated/Equipments';
 import { GetSpace, GetSpaceVariables } from '../../generated/GetSpace';
 import { PhotoFile } from '../../types/types';
+import { Popup } from '../../components';
+import { GET_PROPERTY } from '../../graphql/queries/server/properties';
+import { Property_property as PropertyProperty, PropertyVariables } from '../../generated/Property';
 
 type Props = {
-  spaceId: string;
+  spaceIndex: number;
+  propertyId: string;
 };
 
 export default function LandlordManageSpace(props: Props) {
-  let { spaceId } = props;
+  let { spaceIndex, propertyId } = props;
+  let history = useHistory();
+  let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
+  let { register, errors, handleSubmit } = useForm();
+  let [removeConfirmationVisible, setRemoveConfirmationVisible] = useState(false);
+  let [selectedCondition, setSelectedCondition] = useState('');
+  let [description, setDescription] = useState('');
+  let [selectedEquipment, setSelectedEquipment] = useState<Array<string>>([]);
+  let [mainPhoto, setMainPhoto] = useState<string | FileWithPreview | null>('');
+  let [additionalPhotos, setAdditionalPhotos] = useState<Array<string | FileWithPreview | null>>(
+    []
+  );
+  let { data: propertyData, error: propertyError, loading: propertyLoading } = useQuery<
+    PropertyProperty,
+    PropertyVariables
+  >(GET_PROPERTY, {
+    variables: { propertyId },
+  });
+  // let [
+  //   getProperty,
+  //   { data: propertyData, error: propertyError, loading: propertyLoading },
+  // ] = useLazyQuery<Property_property, PropertyVariables>(GET_PROPERTY, {
+  //   variables: { propertyId },
+  //   notifyOnNetworkStatusChange: true,
+  // });
+  let spacesLength;
+  let spaceId = '';
+  if (!propertyLoading && propertyData) {
+    //ts ignore because of propertyData return object of property
+    // @ts-ignore:disable-next-line
+    spaceId = propertyData.property?.space[spaceIndex].id || '';
+
+    // @ts-ignore:disable-next-line
+    spacesLength = propertyData.property?.space.length || '';
+  }
   let {
     data: spaceData,
     error: spaceError,
@@ -42,19 +86,12 @@ export default function LandlordManageSpace(props: Props) {
   } = useQuery<GetSpace, GetSpaceVariables>(GET_SPACE, {
     variables: { spaceId },
   });
-
   let [
     editSpace,
     { data: editSpaceData, loading: editSpaceLoading, error: editSpaceError },
   ] = useMutation(EDIT_SPACE);
-  let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
-  let { register, errors, handleSubmit } = useForm();
-  let [selectedCondition, setSelectedCondition] = useState('');
-  let [description, setDescription] = useState('');
-  let [selectedEquipment, setSelectedEquipment] = useState<Array<string>>([]);
-  let [mainPhoto, setMainPhoto] = useState<string | FileWithPreview | null>('');
-  let [additionalPhotos, setAdditionalPhotos] = useState<Array<string | FileWithPreview | null>>(
-    []
+  let [removeSpace, { loading: removeSpaceLoading, error: removeSpaceError }] = useMutation(
+    DELETE_SPACE
   );
 
   let today = new Date().toISOString().slice(0, 10);
@@ -79,7 +116,7 @@ export default function LandlordManageSpace(props: Props) {
 
     let newPhotoUrls = spaceData?.space.photos.filter((item) => additionalPhotos.includes(item));
 
-    if (allValid) {
+    if (allValid && spaceId) {
       editSpace({
         variables: {
           spaceId,
@@ -99,6 +136,7 @@ export default function LandlordManageSpace(props: Props) {
         refetchQueries: [
           {
             query: GET_SPACE,
+            variables: { spaceId },
           },
         ],
       });
@@ -130,15 +168,59 @@ export default function LandlordManageSpace(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spaceLoading]);
 
+  let onRemoveSpace = () => {
+    if (spaceId) {
+      removeSpace({
+        variables: {
+          spaceId,
+        },
+        refetchQueries: [
+          {
+            query: GET_PROPERTY,
+            variables: { propertyId },
+          },
+        ],
+      });
+      setRemoveConfirmationVisible(false);
+      history.push('/landlord/properties');
+    }
+  };
+
+  let closeDeleteConfirmation = () => {
+    setRemoveConfirmationVisible(false);
+  };
+
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Container>
+        <Popup
+          visible={removeConfirmationVisible}
+          title="Remove Space"
+          bodyText="Are you sure you want to remove this space?"
+          buttons={[
+            { text: 'Yes', onPress: onRemoveSpace },
+            { text: 'No', onPress: closeDeleteConfirmation },
+          ]}
+          onClose={closeDeleteConfirmation}
+        />
         <Alert visible={!!editSpaceData} text="Your profile has been updated" />
         <Alert visible={!!editSpaceError} text={errorMessage} />
-        {spaceLoading ? (
+        <Alert visible={!!removeSpaceError} text={removeSpaceError?.message || ''} />
+        <Alert visible={!!propertyError} text={propertyError?.message || ''} />
+        {spaceLoading || removeSpaceLoading || propertyLoading ? (
           <LoadingIndicator />
         ) : spaceData?.space ? (
           <>
+            <RowView flex>
+              <SpaceText>Space {spaceIndex + 1}</SpaceText>
+              <TotalSpace>of {spacesLength}</TotalSpace>
+              <RemoveButton
+                text="Remove Space"
+                onPress={() => {
+                  setRemoveConfirmationVisible(true);
+                }}
+              />
+            </RowView>
             <PhotosPicker
               mainPhoto={mainPhoto}
               onMainPhotoChange={(file: PhotoFile) => {
@@ -227,6 +309,7 @@ export default function LandlordManageSpace(props: Props) {
     </Form>
   );
 }
+
 const Container = styled(View)`
   padding: 12px 24px;
   z-index: 1;
@@ -248,7 +331,32 @@ const Features = styled(MultiSelectInput)`
 const DatePicker = styled(TextInput)`
   width: 300px;
 `;
+
 const CenteredView = styled(View)`
   justify-content: center;
   align-items: center;
+`;
+
+const RowView = styled(View)`
+  flex-direction: row;
+  align-items: center;
+  margin: 10px 0;
+`;
+
+const SpaceText = styled(Text)`
+  color: ${THEME_COLOR};
+  font-weight: ${FONT_WEIGHT_BOLD};
+  font-size: ${FONT_SIZE_LARGE};
+`;
+
+const TotalSpace = styled(Text)`
+  margin: 0 0 0 8px;
+  font-style: italic;
+  font-weight: ${FONT_WEIGHT_LIGHT};
+  font-size: ${FONT_SIZE_SMALL};
+`;
+
+const RemoveButton = styled(Button)`
+  position: absolute;
+  right: 0;
 `;

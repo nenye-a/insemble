@@ -16,19 +16,12 @@ export type State = {
   addSpace: AddSpace;
 };
 
-export type Action =
-  | {
-      type: 'DISABLE_NEXT_BUTTON';
-    }
-  | {
-      type: 'ENABLE_NEXT_BUTTON';
-    }
-  | {
-      type: 'SAVE_CHANGES_ADD_SPACE';
-      values: {
-        addSpace: AddSpace;
-      };
-    };
+export type Action = {
+  type: 'SAVE_CHANGES_ADD_SPACE';
+  values: {
+    addSpace: AddSpace;
+  };
+};
 
 export let landlordAddSpacelInitialState = {
   canPressNext: false,
@@ -46,11 +39,8 @@ export let landlordAddSpacelInitialState = {
 
 export default function landlordAddSpaceReducer(state: State, action: Action): State {
   switch (action.type) {
-    case 'DISABLE_NEXT_BUTTON': {
-      return {
-        ...state,
-        canPressNext: false,
-      };
+    case 'SAVE_CHANGES_ADD_SPACE': {
+      return { ...state, ...action.values };
     }
     default:
       return state;

@@ -32,7 +32,7 @@ export default function LandlordPropertyDetails() {
   let params = useParams<Params>();
   let [selectedBrandId, setSelectedBrandId] = useState('');
   let { property, spaces } = history.location.state;
-  let [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  let [selectedTabIndex, setSelectedTabIndex] = useState(spaces.length > 0 ? 0 : 1);
   let [selectedSpaceIndex, setSelectedSpaceIndex] = useState(0);
   let [selectedSpaceId, setSelectedSpaceId] = useState(spaces[spaces.length - 1].id);
   let [selectedTenantPhoto, setSelectedTenantPhoto] = useState('');
@@ -104,7 +104,7 @@ export default function LandlordPropertyDetails() {
         ) : isLocationDetailSelected ? (
           <LandlordLocationDetails />
         ) : isManageSpaceSelected ? (
-          <LandlordManageSpace spaceId={selectedSpaceId} />
+          <LandlordManageSpace spaceIndex={selectedSpaceIndex} propertyId={params.paramsId} />
         ) : isManagePropertySelected ? (
           <LandlordManageProperty />
         ) : null}
