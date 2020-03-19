@@ -4,11 +4,12 @@ import { View, Text, Card, TouchableOpacity } from '../../core-ui';
 import { THEME_COLOR } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_SIZE_XSMALL, FONT_WEIGHT_MEDIUM } from '../../constants/theme';
 import insembleIcon from '../../assets/images/insemble-i-logo.svg';
+import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
 
 type Props = {
   photo: string;
   address: string;
-  price: number;
+  price: number | null;
   area: number;
   propertyType: string;
   onPress: () => void;
@@ -19,7 +20,7 @@ export default function AvailablePropertyCard(props: Props) {
   return (
     <Container>
       <TouchableOpacity onPress={onPress}>
-        <Photo src={photo} alt="property-photo" />
+        <Photo src={photo || imgPlaceholder} alt="property-photo" />
         <DescriptionContainer flex>
           <UpperDescriptionContainer flex>
             <Text color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
@@ -28,17 +29,17 @@ export default function AvailablePropertyCard(props: Props) {
             <Icon src={insembleIcon} alt="insemble-icon" />
           </UpperDescriptionContainer>
           <LowerDescriptionContainer flex>
-            <RowedFlex flex>
-              <Text fontWeight={FONT_WEIGHT_MEDIUM}>${price}</Text>
+            <RowedFlexTwo>
+              <Text fontWeight={FONT_WEIGHT_MEDIUM}>{price ? `$ ${price}` : 'NA'}</Text>
               <Text fontSize={FONT_SIZE_XSMALL}>/sqft yearly</Text>
-            </RowedFlex>
-            <RowedFlex flex>
+            </RowedFlexTwo>
+            <RowedFlex>
               <Text fontWeight={FONT_WEIGHT_MEDIUM}>{area}</Text>
               <Text fontSize={FONT_SIZE_XSMALL}>sqft</Text>
             </RowedFlex>
-            <RowedFlex flex>
+            <RowedFlexTwo>
               <Text fontWeight={FONT_WEIGHT_MEDIUM}>{propertyType}</Text>
-            </RowedFlex>
+            </RowedFlexTwo>
           </LowerDescriptionContainer>
         </DescriptionContainer>
       </TouchableOpacity>
@@ -68,6 +69,7 @@ const Container = styled(Card)`
 const LowerDescriptionContainer = styled(View)`
   margin-top: 6px;
   flex-direction: row;
+  align-items: center;
 `;
 
 const UpperDescriptionContainer = styled(View)`
@@ -79,4 +81,9 @@ const UpperDescriptionContainer = styled(View)`
 const RowedFlex = styled(View)`
   flex-direction: row;
   align-items: baseline;
+  flex: 1;
+`;
+
+const RowedFlexTwo = styled(RowedFlex)`
+  flex: 2;
 `;

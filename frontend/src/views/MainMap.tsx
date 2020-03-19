@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
 
-import { View, Text, LoadingIndicator, Alert } from '../core-ui';
+import { View, Text, LoadingIndicator, Alert, Button } from '../core-ui';
 import SideBarFilters, {
   DEMOGRAPHICS_CATEGORIES,
   PROPERTIES_CATEGORIES,
@@ -11,16 +11,18 @@ import SideBarFilters, {
 import HeaderFilterBar from './MapPage/HeaderFilterBar';
 import MapContainer from './MapContainer';
 import DeepDiveModal from './DeepDivePage/DeepDiveModal';
+import AvailableProperties from './MapPage/AvailableProperties';
 import { GET_TENANT_MATCHES_DATA } from '../graphql/queries/server/matches';
 import { EDIT_BRAND } from '../graphql/queries/server/brand';
-import { WHITE } from '../constants/colors';
-import { FONT_SIZE_LARGE } from '../constants/theme';
+import { WHITE, HEADER_BORDER_COLOR, THEME_COLOR } from '../constants/colors';
+import { FONT_SIZE_LARGE, FONT_WEIGHT_MEDIUM } from '../constants/theme';
 import { TenantMatches, TenantMatchesVariables } from '../generated/TenantMatches';
 
 import { useGoogleMaps, isEqual } from '../utils';
 import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer';
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 import { LocationInput } from '../generated/globalTypes';
+import SvgPropertyLocation from '../components/icons/property-location';
 
 type BrandId = {
   brandId: string;
@@ -43,6 +45,10 @@ export type PropertyFilter = {
   minSize: number | null;
   maxSize: number | null;
   spaceType: Array<string>;
+};
+
+type ShowPropertyButtonProps = {
+  visible: boolean;
 };
 
 type TenantMatchesContextFilter = {
@@ -97,7 +103,7 @@ export const TenantMatchesContext = createContext<TenantMatchesContextType>(tena
 
 export default function MainMap() {
   let [filters, setFilters] = useState<TenantMatchesContextFilter>(tenantMatchesInit.filters);
-  // let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
+  let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
   let [deepDiveModalVisible, toggleDeepDiveModal] = useState(false);
   let { isLoading } = useGoogleMaps();
   let params = useParams<BrandId>();
@@ -372,13 +378,6 @@ export default function MainMap() {
         <Alert visible={!!tenantMatchesError} text={tenantMatchesError?.message || ''} />
         <Alert visible={!!editBrandError} text={editBrandError?.message || ''} />
         <Container flex>
-          {/* hiding this until data is ready */}
-          {/* <ShowPropertyButton
-            mode="secondary"
-            onPress={() => togglePropertyRecommendation(true)}
-            text="Show Property List"
-            icon={<SvgPropertyLocation />}
-          /> */}
           <SideBarFilters />
           {!isLoading && (
             <MapContainer
@@ -400,11 +399,23 @@ export default function MainMap() {
               matchingProperties={tenantMatchesData?.tenantMatches.matchingProperties}
             />
           )}
-          {/* hiding this until data is ready */}
-          {/* <AvailableProperties
-            visible={propertyRecommendationVisible}
-            onHideClick={() => togglePropertyRecommendation(false)}
-          /> */}
+          {tenantMatchesData?.tenantMatches.matchingProperties &&
+            tenantMatchesData.tenantMatches.matchingProperties.length > 0 && (
+              <>
+                <ShowPropertyButton
+                  visible={!propertyRecommendationVisible}
+                  mode="secondary"
+                  onPress={() => togglePropertyRecommendation(true)}
+                  text="Show Property List"
+                  icon={<SvgPropertyLocation />}
+                />
+                <AvailableProperties
+                  visible={propertyRecommendationVisible}
+                  onHideClick={() => togglePropertyRecommendation(false)}
+                  matchingProperties={tenantMatchesData?.tenantMatches.matchingProperties}
+                />
+              </>
+            )}
         </Container>
       </View>
     </TenantMatchesContext.Provider>
@@ -416,21 +427,23 @@ const Container = styled(View)`
   overflow: hidden;
 `;
 
-// const ShowPropertyButton = styled(Button)`
-//   position: fixed;
-//   bottom: 30px;
-//   left: 50%;
-//   transform: translate(-50%, 0);
-//   z-index: 5;
-//   background-color: ${WHITE};
-//   border-radius: 18px;
-//   border: none;
-//   box-shadow: 0px 0px 6px 0px ${HEADER_BORDER_COLOR};
-//   ${Text} {
-//     color: ${THEME_COLOR};
-//     font-weight: ${FONT_WEIGHT_MEDIUM};
-//   }
-// `;
+const ShowPropertyButton = styled(Button)<ShowPropertyButtonProps>`
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 5;
+  background-color: ${WHITE};
+  border-radius: 18px;
+  border: none;
+  box-shadow: 0px 0px 6px 0px ${HEADER_BORDER_COLOR};
+  transition: opacity 200ms linear;
+  opacity: ${(props) => (props.visible ? 1 : 0)};
+  ${Text} {
+    color: ${THEME_COLOR};
+    font-weight: ${FONT_WEIGHT_MEDIUM};
+  }
+`;
 
 const LoadingOverlay = styled(View)`
   position: absolute;

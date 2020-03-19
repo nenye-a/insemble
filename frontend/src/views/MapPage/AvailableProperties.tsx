@@ -2,17 +2,15 @@ import React, { ComponentProps } from 'react';
 import styled from 'styled-components';
 import { Text, View, Button } from '../../core-ui';
 import { FONT_SIZE_SMALL, FONT_SIZE_MEDIUM } from '../../constants/theme';
-// import AvailablePropertyCard from './AvailablePropertyCard';
-import {
-  // AVAILABLE_PROPERTIES,
-  TOTAL_RECOMMENDED_PROPERTY,
-  TOTAL_AVAILABLE_PROPERTY,
-} from '../../fixtures/dummyData';
+import AvailablePropertyCard from './AvailablePropertyCard';
 import { THEME_COLOR } from '../../constants/colors';
+import { TenantMatches_tenantMatches_matchingProperties as MatchingProperties } from '../../generated/TenantMatches';
+import { EmptyDataComponent } from '../../components';
 
 type Props = {
   visible: boolean;
   onHideClick: () => void;
+  matchingProperties: Array<MatchingProperties>;
 };
 
 type ContainerProps = ComponentProps<typeof View> & {
@@ -20,8 +18,8 @@ type ContainerProps = ComponentProps<typeof View> & {
 };
 
 export default function AvailableProperties(props: Props) {
-  let { visible, onHideClick } = props;
-
+  let { visible, onHideClick, matchingProperties } = props;
+  let visibleProperties = matchingProperties.filter((property) => property.visible);
   return (
     <Container flex visible={visible}>
       <UpperTextContainer>
@@ -30,32 +28,39 @@ export default function AvailableProperties(props: Props) {
         </View>
         <Button
           text="Hide"
+          mode="transparent"
           onPress={onHideClick}
           textProps={{ style: { color: THEME_COLOR, fontStyle: 'italic' } }}
-          style={{ padding: 0, backgroundColor: 'transparent', height: 0 }}
         />
       </UpperTextContainer>
-      <RowedFlex>
-        <ItalicText
-          fontSize={FONT_SIZE_SMALL}
-        >{`${TOTAL_AVAILABLE_PROPERTY} available`}</ItalicText>
-        <ItalicText color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
+      {visibleProperties.length > 0 ? (
+        <>
+          <RowedFlex>
+            <ItalicText
+              fontSize={FONT_SIZE_SMALL}
+            >{`${visibleProperties.length} available`}</ItalicText>
+            {/* hiding this until BE ready */}
+            {/* <ItalicText color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
           {` (${TOTAL_RECOMMENDED_PROPERTY} recommended)`}
-        </ItalicText>
-      </RowedFlex>
-      {/* TODO: hidden until properties are ready */}
-      {/* {AVAILABLE_PROPERTIES.map(({ photo, address, price, area, propertyType }, index) => (
-        <AvailablePropertyCard
-          key={index}
-          photo={photo}
-          address={address}
-          price={price}
-          area={area}
-          propertyType={propertyType}
-          onPress={() => {}}
-        />
-      ))}
-      */}
+        </ItalicText> */}
+          </RowedFlex>
+          {visibleProperties.map(({ address, rent, sqft, tenantType }, index) => (
+            <AvailablePropertyCard
+              key={index}
+              // TODO: pass photo when BE is ready
+              photo=""
+              address={address}
+              price={rent}
+              area={sqft}
+              propertyType={tenantType.join(', ')}
+              // TODO: open deep dive
+              onPress={() => {}}
+            />
+          ))}
+        </>
+      ) : (
+        <EmptyDataComponent text="No Matching Property Found" />
+      )}
     </Container>
   );
 }
@@ -69,6 +74,7 @@ const Container = styled(View)<ContainerProps>`
   transition: transform 500ms linear;
   transform: translateX(${(props) => (props.visible ? '0px' : '350px')});
   height: 100%;
+  overflow-y: scroll;
 `;
 
 const UpperTextContainer = styled(View)`
