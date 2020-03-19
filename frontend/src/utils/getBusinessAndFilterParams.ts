@@ -26,7 +26,7 @@ export default function getBusinessAndFilterParams(
     minIncome,
     maxIncome,
   } = targetCustomers;
-  let { minSize, minFrontageWidth, spaceType, equipments } = physicalSiteCriteria;
+  let { minSize, maxSize, minFrontageWidth, spaceType, equipments } = physicalSiteCriteria;
   return {
     business: {
       name,
@@ -48,6 +48,7 @@ export default function getBusinessAndFilterParams(
       minIncome: Number(minIncome) * 1000,
       maxIncome: Number(maxIncome) * 1000,
       minSize: Number(minSize),
+      maxSize: Number(maxSize),
       minFrontageWidth: Number(minFrontageWidth),
       spaceType,
       equipment: equipments,

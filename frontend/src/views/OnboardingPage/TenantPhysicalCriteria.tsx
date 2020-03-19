@@ -1,4 +1,4 @@
-import React, { useState, Dispatch } from 'react';
+import React, { useState, Dispatch, useMemo } from 'react';
 import styled from 'styled-components';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useHistory, Redirect } from 'react-router-dom';
@@ -13,6 +13,7 @@ import {
   Form as BaseForm,
   Button,
   TextInput,
+  Text,
 } from '../../core-ui';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
@@ -22,6 +23,9 @@ import OnboardingFooter from '../../components/layout/OnboardingFooter';
 import { validateNumber, useCredentials, getBusinessAndFilterParams } from '../../utils/';
 import { CreateBrand, CreateBrandVariables } from '../../generated/CreateBrand';
 import { CREATE_BRAND, GET_BRANDS } from '../../graphql/queries/server/brand';
+import { FONT_SIZE_SMALL } from '../../constants/theme';
+import { RED_TEXT } from '../../constants/colors';
+import { RangeInput } from '../../components';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -39,39 +43,47 @@ export default function TenantPhysicalCriteria(props: Props) {
   );
   let [selectedSpaceOptions, setSelectedSpaceOptions] = useState<Array<string>>([]);
   let [selectedEquipmentOptions, setSelectedEquipmentOptions] = useState<Array<string>>([]);
+  let [minSqft, setMinSqft] = useState('');
+  let [maxSqft, setMaxSqft] = useState('');
+  let sqftError = useMemo(() => getRangeInputError(minSqft, maxSqft), [minSqft, maxSqft]);
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
   let { register, errors, handleSubmit } = useForm();
 
   let onSubmit = (fieldValues: FieldValues) => {
-    if (Object.keys(errors).length === 0) {
-      dispatch({
-        type: 'SAVE_CHANGES_PHYSICAL_SITE_CRITERIA',
-        values: {
-          physicalSiteCriteria: {
-            minSize: fieldValues.minSqft,
-            minFrontageWidth: fieldValues.minFrontageWidth,
-            equipments: selectedEquipmentOptions,
-            spaceType: selectedSpaceOptions,
+    if (!sqftError) {
+      if (Object.keys(errors).length === 0) {
+        dispatch({
+          type: 'SAVE_CHANGES_PHYSICAL_SITE_CRITERIA',
+          values: {
+            physicalSiteCriteria: {
+              minSize: minSqft,
+              maxSize: maxSqft,
+              minFrontageWidth: fieldValues.minFrontageWidth,
+              equipments: selectedEquipmentOptions,
+              spaceType: selectedSpaceOptions,
+            },
           },
-        },
-      });
-      if (signedIn) {
-        let { confirmBusinessDetail, tenantGoals, targetCustomers, physicalSiteCriteria } = state;
-        createBrand({
-          variables: {
-            ...getBusinessAndFilterParams(
-              confirmBusinessDetail,
-              tenantGoals,
-              targetCustomers,
-              physicalSiteCriteria
-            ),
-          },
-          refetchQueries: [{ query: GET_BRANDS }],
-          awaitRefetchQueries: true,
         });
-      } else {
-        history.push('/verify/step-5');
+        if (signedIn) {
+          let { confirmBusinessDetail, tenantGoals, targetCustomers, physicalSiteCriteria } = state;
+          createBrand({
+            variables: {
+              ...getBusinessAndFilterParams(
+                confirmBusinessDetail,
+                tenantGoals,
+                targetCustomers,
+                physicalSiteCriteria
+              ),
+            },
+            refetchQueries: [{ query: GET_BRANDS }],
+            awaitRefetchQueries: true,
+          });
+        } else {
+          history.push('/verify/step-5');
+        }
       }
+    } else {
+      dispatch({ type: 'DISABLE_NEXT_BUTTON' });
     }
   };
 
@@ -94,15 +106,14 @@ export default function TenantPhysicalCriteria(props: Props) {
           visible
           text="Customer criteria has been pre-populated based on your store's location."
         />
-        <NumberTextInput
-          label="Minimum Sqft"
-          name="minSqft"
-          ref={register({
-            validate: (val) => validateNumber(val) || 'Input should be number',
-          })}
-          containerStyle={inputContainerStyle}
-          errorMessage={(errors?.minSqft as FieldError)?.message || ''}
+        <LabelText text="Sqft" />
+        <RangeInputContainer
+          lowValue={minSqft}
+          onLowRangeInputChange={setMinSqft}
+          highValue={maxSqft}
+          onHighRangeInputChange={setMaxSqft}
         />
+        {sqftError ? <ErrorMessage>{sqftError}</ErrorMessage> : null}
         <NumberTextInput
           label="Minimum Frontage Width (ft)"
           name="minFrontageWidth"
@@ -159,6 +170,18 @@ export default function TenantPhysicalCriteria(props: Props) {
   );
 }
 
+function getRangeInputError(minValue: string, maxValue: string) {
+  if (minValue && maxValue) {
+    if (!validateNumber(minValue) || !validateNumber(maxValue)) {
+      return 'Input should number';
+    } else if (Number(minValue) >= Number(maxValue)) {
+      return 'Minimum value should be lower than maximum value';
+    }
+    return '';
+  }
+  return '';
+}
+
 const Form = styled(BaseForm)`
   flex: 1;
 `;
@@ -183,4 +206,15 @@ const Description = styled(Alert)`
 const TransparentButton = styled(Button)`
   margin-right: 8px;
   padding: 0 12px;
+`;
+
+const ErrorMessage = styled(Text)`
+  color: ${RED_TEXT};
+  font-size: ${FONT_SIZE_SMALL};
+  padding-bottom: 12px;
+`;
+
+const RangeInputContainer = styled(RangeInput)`
+  width: 108px;
+  margin: 0 0 6px 0;
 `;

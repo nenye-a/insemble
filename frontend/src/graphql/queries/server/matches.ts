@@ -37,6 +37,7 @@ export const GET_TENANT_MATCHES_DATA = gql`
       minAge
       maxAge
       minSize
+      maxSize
       minRent
       maxRent
       minFrontageWidth
