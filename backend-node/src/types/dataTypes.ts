@@ -85,6 +85,13 @@ export type DemographicStatProperty = {
   growth?: number;
 };
 
+export type ReceiverContact = {
+  email: string;
+  name: string;
+  phone: string;
+  role: string;
+};
+
 type NearbyObject = {
   lat: number;
   lng: number;
@@ -350,4 +357,13 @@ export type GooglePlace = {
   };
   id: string;
   name: string;
+};
+
+export type PendingDataType = {
+  matchScore: number;
+  header: string;
+  messageInput: {
+    message: string;
+    senderRole: 'LANDLORD' | 'TENANT';
+  };
 };
