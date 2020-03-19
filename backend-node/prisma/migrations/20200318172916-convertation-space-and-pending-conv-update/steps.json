@@ -1,0 +1,24 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "Conversation",
+      "field": "space",
+      "type": "Space",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "PendingConversation",
+      "field": "receiverContact",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "PendingConversation",
+      "field": "receiverEmail"
+    }
+  ]
+}
