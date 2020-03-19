@@ -48,7 +48,7 @@ export default function ContactModal(props: Props) {
     createConversation({
       variables: {
         brandId: isLandlord ? brandId : 'id brand', // TODO TENANT
-        propertyId: isLandlord ? params.paramsId : 'property id', // TODO TENANT
+        spaceId: isLandlord ? params.paramsId : 'property id', // TODO TENANT
         matchScore: matchScore || 0,
         header: selectedSubject,
         messageInput: {

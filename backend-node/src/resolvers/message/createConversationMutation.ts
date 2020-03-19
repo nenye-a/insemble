@@ -8,7 +8,7 @@ export let createConversationResolver: FieldResolver<
   'createConversation'
 > = async (
   _,
-  { brandId, propertyId, matchScore, messageInput, header },
+  { brandId, spaceId, matchScore, messageInput, header },
   context: Context,
   info,
 ) => {
@@ -16,12 +16,9 @@ export let createConversationResolver: FieldResolver<
   let existingConversation = await context.prisma.conversation.findMany({
     where: {
       OR: [
-        { AND: [{ brand: { id: brandId } }, { property: { propertyId } }] },
+        { AND: [{ brand: { id: brandId } }, { space: { spaceId } }] },
         {
-          AND: [
-            { brand: { tenantId: brandId } },
-            { property: { id: propertyId } },
-          ],
+          AND: [{ brand: { tenantId: brandId } }, { space: { id: spaceId } }],
         },
       ], // Q: brandId is tenantId right?
     },
@@ -47,47 +44,88 @@ export let createConversationResolver: FieldResolver<
       throw new Error('Not Authorized');
     }
 
-    let propertiesOrBrands = context.tenantUserId
-      ? await context.prisma.property.findMany({
-          where: { propertyId },
-          include: { landlordUser: true },
+    let spaceOrBrand = context.tenantUserId
+      ? await context.prisma.space.findOne({
+          where: { spaceId },
+          include: { property: { include: { landlordUser: true } } },
         })
-      : await context.prisma.brand.findMany({
+      : await context.prisma.brand.findOne({
           where: { tenantId: brandId },
           include: { tenantUser: true },
         });
-
-    if (!propertiesOrBrands.length) {
+    if (!spaceOrBrand) {
       throw new Error('Receiver not found');
     }
     let userReceiver;
-    let propertyOrBrand = propertiesOrBrands[0];
-    if ('landlordUser' in propertyOrBrand) {
-      userReceiver = propertyOrBrand.landlordUser;
-    } else {
-      if (!propertyOrBrand.tenantUser) {
+    let linkedPropertyId;
+    if ('tenantUser' in spaceOrBrand) {
+      if (!spaceOrBrand.tenantUser) {
         throw new Error('Tenant not found'); // Note: Brand can have tenant undefinded
       }
-      userReceiver = propertyOrBrand.tenantUser;
+      let spaceSender = await context.prisma.space.findOne({
+        where: { id: spaceId },
+        include: { property: { include: { landlordUser: true } } },
+      });
+      if (!spaceSender) {
+        throw new Error('Space not found or deleted');
+      }
+      if (!spaceSender.property) {
+        throw new Error('Property not found or deleted');
+      }
+      if (spaceSender.property.landlordUser.id !== context.landlordUserId) {
+        throw new Error('This is not your property');
+      }
+      userReceiver = spaceOrBrand.tenantUser;
+      let linkedProperty = await context.prisma.space
+        .findOne({
+          where: { id: spaceId },
+        })
+        .property();
+      if (!linkedProperty) {
+        throw new Error('Property not found or deleted');
+      }
+      linkedPropertyId = linkedProperty.id;
+    } else {
+      let brandSender = await context.prisma.brand.findOne({
+        where: { id: brandId },
+        include: { tenantUser: true },
+      });
+
+      if (!brandSender) {
+        throw new Error('Brand not found or deleted');
+      }
+      if (!brandSender.tenantUser) {
+        throw new Error('Tenant not found'); // Note: Brand can have tenant undefinded
+      }
+      if (brandSender.tenantUser.id !== context.tenantUserId) {
+        throw new Error('This is not your property');
+      }
+      if (!spaceOrBrand.property) {
+        throw new Error('Property not found or deleted');
+      }
+      userReceiver = spaceOrBrand.property.landlordUser;
+      linkedPropertyId = spaceOrBrand.property.id;
     }
 
     let createdConversation = context.tenantUserId
       ? await context.prisma.conversation.create({
           data: {
             brand: { connect: { id: brandId } },
-            property: { connect: { id: propertyOrBrand.id } },
+            property: { connect: { id: linkedPropertyId } },
             landlord: { connect: { id: userReceiver.id } },
             tenant: { connect: { id: userSender.id } },
+            space: { connect: { id: spaceOrBrand.id } },
             matchScore,
             header,
           },
         })
       : await context.prisma.conversation.create({
           data: {
-            brand: { connect: { id: propertyOrBrand.id } },
-            property: { connect: { id: propertyId } },
+            brand: { connect: { id: spaceOrBrand.id } },
+            property: { connect: { id: linkedPropertyId } },
             landlord: { connect: { id: userSender.id } },
             tenant: { connect: { id: userReceiver.id } },
+            space: { connect: { id: spaceId } },
             matchScore,
             header,
           },
@@ -110,7 +148,7 @@ export let createConversation = mutationField('createConversation', {
   type: 'String',
   args: {
     brandId: stringArg({ required: true }),
-    propertyId: stringArg({ required: true }),
+    spaceId: stringArg({ required: true }),
     matchScore: floatArg({ required: true }),
     messageInput: arg({ type: 'MessageInput', required: true }),
     header: stringArg({ required: true }),

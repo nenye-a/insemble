@@ -4,6 +4,7 @@ export let Space = objectType({
   name: 'Space',
   definition(t) {
     t.model.id();
+    t.model.spaceId();
     t.model.available();
     t.model.equipment();
     t.model.photos();

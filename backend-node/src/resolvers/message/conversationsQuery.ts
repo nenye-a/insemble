@@ -34,6 +34,7 @@ let conversationsResolver: FieldResolver<'Query', 'conversations'> = async (
           messages: true,
           property: true,
           tenant: true,
+          space: true,
         },
       })
     : context.landlordUserId
