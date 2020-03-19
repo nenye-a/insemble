@@ -66,6 +66,11 @@ export const GET_CONVERSATION = gql`
           mainPhoto
         }
       }
+      space {
+        id
+        spaceId
+        mainPhoto
+      }
       createdAt
     }
   }
