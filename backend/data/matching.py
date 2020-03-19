@@ -20,11 +20,11 @@ AWS_SECRET_ACCESS_KEY = settings.AWS_SECRET_ACCESS_KEY
 S3_FILESYSTEM = S3FileSystem(
     key=AWS_ACCESS_KEY_ID, secret=AWS_SECRET_ACCESS_KEY)
 
-MATCHING_DF = utils.read_dataframe_csv(
-    'insemble-dataframes/full_df_csv.csv.gz', file_system=S3_FILESYSTEM)
-## use matching df below on development to speed up celery
 # MATCHING_DF = utils.read_dataframe_csv(
-#     'insemble-dataframes/test_matching.csv.gz', file_system=S3_FILESYSTEM)
+#     'insemble-dataframes/full_df_csv.csv.gz', file_system=S3_FILESYSTEM)
+## use matching df below on development to speed up celery
+MATCHING_DF = utils.read_dataframe_csv(
+    'insemble-dataframes/test_matching.csv.gz', file_system=S3_FILESYSTEM)
 SPATIAL_CATEGORIES = utils.DB_SPATIAL_CATS.find_one(
     {'name': 'spatial_categories'})['spatial_categories']
 DEMO_CATEGORIES = utils.DB_DEMOGRAPHIC_CATS.find_one(

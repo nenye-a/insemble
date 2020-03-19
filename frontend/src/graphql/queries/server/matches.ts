@@ -59,6 +59,14 @@ export const GET_TENANT_MATCHES_DATA = gql`
         rent
         sqft
         type
+        spaceId
+        spaceCondition
+        tenantType
+        pro
+        visible
+        lat
+        lng
+        matchValue
       }
       matchingLocations {
         match
