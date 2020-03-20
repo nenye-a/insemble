@@ -22,7 +22,7 @@ export const CREATE_PENDING_CONVERSATION = gql`
   mutation CreatePendingConversation(
     $brandId: String!
     $spaceId: String!
-    $receiverContact: ReceiverContact!
+    $receiverContact: ReceiverContactInput!
     $matchScore: Float!
     $header: String!
     $messageInput: MessageInput!

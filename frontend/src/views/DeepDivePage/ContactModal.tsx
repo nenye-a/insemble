@@ -19,6 +19,7 @@ import {
   CreatePendingConversation,
   CreatePendingConversationVariables,
 } from '../../generated/CreatePendingConversation';
+import { PropertyMatches_propertyMatches_contacts as Contacts } from '../../generated/PropertyMatches';
 
 type Props = {
   visible: boolean;
@@ -26,6 +27,7 @@ type Props = {
   brandId: string;
   matchScore?: number;
   spaceId: string;
+  contacts: Contacts;
 };
 
 type Params = {
@@ -33,7 +35,7 @@ type Params = {
 };
 
 export default function ContactModal(props: Props) {
-  let { visible, onClose, brandId, matchScore, spaceId } = props;
+  let { visible, onClose, brandId, matchScore, spaceId, contacts } = props;
   let [selectedSubject, setSelectedSubject] = useState('');
   let [message, setMessage] = useState('');
   let { role } = useCredentials();
@@ -61,12 +63,7 @@ export default function ContactModal(props: Props) {
         createPendingConversation({
           variables: {
             ...variables,
-            receiverContact: {
-              email: 'dummy@mailsky.com',
-              name: 'dummyvsky',
-              phone: '08',
-              role: 'Manager',
-            },
+            receiverContact: contacts,
           },
         });
       }

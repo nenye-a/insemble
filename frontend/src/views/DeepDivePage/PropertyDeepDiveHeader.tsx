@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { View, Text, Button } from '../../core-ui';
 import ContactModal from './ContactModal';
 import { FONT_SIZE_LARGE } from '../../constants/theme';
+import { PropertyMatches_propertyMatches_contacts as Contacts } from '../../generated/PropertyMatches';
 
 type Props = {
   address: string;
@@ -12,6 +13,7 @@ type Props = {
   spaceId?: string;
   clickable?: boolean;
   showConnect?: boolean;
+  contacts?: Contacts;
 };
 
 export default function PropertyDeepDiveHeader({
@@ -20,6 +22,7 @@ export default function PropertyDeepDiveHeader({
   brandId,
   matchScore,
   spaceId,
+  contacts,
   clickable = true,
   showConnect = true,
 }: Props) {
@@ -36,11 +39,12 @@ export default function PropertyDeepDiveHeader({
             text="Connect"
             onPress={clickable ? () => toggleContactModalVisibility(true) : undefined}
           />
-          {brandId && spaceId && (
+          {brandId && spaceId && contacts && (
             <ContactModal
               matchScore={matchScore}
               brandId={brandId}
               spaceId={spaceId}
+              contacts={contacts}
               visible={contactModalVisible}
               onClose={() => toggleContactModalVisibility(false)}
             />
