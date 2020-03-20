@@ -66,6 +66,7 @@ def generate_matching_properties(location, params):
     for match in matches:
 
         result_property = locations_dict[str(match['location_id'])]
+        property_id = result_property['_id']
         address = result_property['address']
         lat = result_property['location']['coordinates'][1]
         lng = result_property['location']['coordinates'][0]
@@ -83,6 +84,7 @@ def generate_matching_properties(location, params):
             space.pop('divisible') if 'divisible' in space else None
             space.pop('divisible_sqft') if 'divisible_sqft' in space else None
             space['space_id'] = str(space['space_id'])
+            space['property_id'] = str(property_id)
             result_spaces.append(space)
 
     return result_spaces
