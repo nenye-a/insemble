@@ -2,7 +2,6 @@ import React, { useState, ChangeEvent, useEffect } from 'react';
 import styled from 'styled-components';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useForm, FieldError, FieldValues } from 'react-hook-form';
-import { useHistory } from 'react-router-dom';
 
 import {
   View,
@@ -28,14 +27,14 @@ import {
 } from '../../constants/theme';
 import { WHITE, THEME_COLOR } from '../../constants/colors';
 import { getImageBlob, dateFormatter } from '../../utils';
-import { GET_SPACE, EDIT_SPACE, DELETE_SPACE } from '../../graphql/queries/server/space';
+import { EDIT_SPACE, DELETE_SPACE } from '../../graphql/queries/server/space';
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
 import { Equipments } from '../../generated/Equipments';
-import { GetSpace, GetSpaceVariables } from '../../generated/GetSpace';
 import { PhotoFile } from '../../types/types';
 import { Popup } from '../../components';
-import { GET_PROPERTY } from '../../graphql/queries/server/properties';
-import { Property_property as PropertyProperty, PropertyVariables } from '../../generated/Property';
+import { GET_PROPERTY, GET_PROPERTIES } from '../../graphql/queries/server/properties';
+import { Property, PropertyVariables } from '../../generated/Property';
+import { DeleteSpace, DeleteSpaceVariables } from '../../generated/DeleteSpace';
 
 type Props = {
   spaceIndex: number;
@@ -44,9 +43,8 @@ type Props = {
 
 export default function LandlordManageSpace(props: Props) {
   let { spaceIndex, propertyId } = props;
-  let history = useHistory();
   let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
-  let { register, errors, handleSubmit } = useForm();
+  let { register, errors, handleSubmit, reset } = useForm();
   let [removeConfirmationVisible, setRemoveConfirmationVisible] = useState(false);
   let [selectedCondition, setSelectedCondition] = useState('');
   let [description, setDescription] = useState('');
@@ -55,44 +53,23 @@ export default function LandlordManageSpace(props: Props) {
   let [additionalPhotos, setAdditionalPhotos] = useState<Array<string | FileWithPreview | null>>(
     []
   );
-  let { data: propertyData, error: propertyError, loading: propertyLoading } = useQuery<
-    PropertyProperty,
-    PropertyVariables
-  >(GET_PROPERTY, {
+  let {
+    data: propertyData,
+    error: propertyError,
+    loading: propertyLoading,
+    refetch: propertyRefetch,
+  } = useQuery<Property, PropertyVariables>(GET_PROPERTY, {
     variables: { propertyId },
   });
-  // let [
-  //   getProperty,
-  //   { data: propertyData, error: propertyError, loading: propertyLoading },
-  // ] = useLazyQuery<Property_property, PropertyVariables>(GET_PROPERTY, {
-  //   variables: { propertyId },
-  //   notifyOnNetworkStatusChange: true,
-  // });
-  let spacesLength;
-  let spaceId = '';
-  if (!propertyLoading && propertyData) {
-    //ts ignore because of propertyData return object of property
-    // @ts-ignore:disable-next-line
-    spaceId = propertyData.property?.space[spaceIndex].id || '';
 
-    // @ts-ignore:disable-next-line
-    spacesLength = propertyData.property?.space.length || '';
-  }
-  let {
-    data: spaceData,
-    error: spaceError,
-    loading: spaceLoading,
-    refetch: spaceRefetch,
-  } = useQuery<GetSpace, GetSpaceVariables>(GET_SPACE, {
-    variables: { spaceId },
-  });
   let [
     editSpace,
     { data: editSpaceData, loading: editSpaceLoading, error: editSpaceError },
   ] = useMutation(EDIT_SPACE);
-  let [removeSpace, { loading: removeSpaceLoading, error: removeSpaceError }] = useMutation(
-    DELETE_SPACE
-  );
+  let [removeSpace, { loading: removeSpaceLoading, error: removeSpaceError }] = useMutation<
+    DeleteSpace,
+    DeleteSpaceVariables
+  >(DELETE_SPACE);
 
   let today = new Date().toISOString().slice(0, 10);
   let errorMessage = editSpaceError ? editSpaceError.message : '';
@@ -112,11 +89,17 @@ export default function LandlordManageSpace(props: Props) {
       }
     }
     let newMainPhotoUrl =
-      typeof mainPhoto === 'string' && mainPhoto === spaceData?.space.mainPhoto ? mainPhoto : null;
+      typeof mainPhoto === 'string' &&
+      mainPhoto === propertyData?.property.space[spaceIndex].mainPhoto
+        ? mainPhoto
+        : null;
 
-    let newPhotoUrls = spaceData?.space.photos.filter((item) => additionalPhotos.includes(item));
+    let newPhotoUrls = propertyData?.property.space[spaceIndex].photos.filter((item) =>
+      additionalPhotos.includes(item)
+    );
 
-    if (allValid && spaceId) {
+    if (allValid) {
+      let spaceId = propertyData?.property.space[spaceIndex].id;
       editSpace({
         variables: {
           spaceId,
@@ -135,26 +118,34 @@ export default function LandlordManageSpace(props: Props) {
         },
         refetchQueries: [
           {
-            query: GET_SPACE,
-            variables: { spaceId },
+            query: GET_PROPERTY,
+            variables: {
+              propertyId,
+            },
+          },
+          {
+            query: GET_PROPERTIES,
           },
         ],
+        awaitRefetchQueries: true,
       });
     }
   };
 
   useEffect(() => {
-    // populate state with previous values when fetching is finished
-    if (!spaceLoading && spaceData) {
+    // reset form input
+    reset();
+    // populate state with previous values when fetching is finished or spaceIndex changed
+    if (!propertyLoading && propertyData) {
+      let { space } = propertyData.property;
       let {
-        space: {
-          photos: prevPhotos,
-          mainPhoto: prevMainPhoto,
-          condition: prevCondition,
-          description: prevDescription,
-          equipment: prevEquipment,
-        },
-      } = spaceData;
+        photos: prevPhotos,
+        mainPhoto: prevMainPhoto,
+        condition: prevCondition,
+        description: prevDescription,
+        equipment: prevEquipment,
+      } = space[spaceIndex];
+
       let newPhotos: Array<string | null> = [...prevPhotos];
       while (newPhotos.length < 4) {
         newPhotos.push(null);
@@ -166,9 +157,11 @@ export default function LandlordManageSpace(props: Props) {
       setSelectedEquipment(prevEquipment);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spaceLoading]);
+  }, [propertyLoading, spaceIndex]);
 
   let onRemoveSpace = () => {
+    let spaceId = propertyData?.property.space[spaceIndex].id;
+
     if (spaceId) {
       removeSpace({
         variables: {
@@ -177,12 +170,17 @@ export default function LandlordManageSpace(props: Props) {
         refetchQueries: [
           {
             query: GET_PROPERTY,
-            variables: { propertyId },
+            variables: {
+              propertyId,
+            },
+          },
+          {
+            query: GET_PROPERTIES,
           },
         ],
+        awaitRefetchQueries: true,
       });
       setRemoveConfirmationVisible(false);
-      history.push('/landlord/properties');
     }
   };
 
@@ -207,13 +205,13 @@ export default function LandlordManageSpace(props: Props) {
         <Alert visible={!!editSpaceError} text={errorMessage} />
         <Alert visible={!!removeSpaceError} text={removeSpaceError?.message || ''} />
         <Alert visible={!!propertyError} text={propertyError?.message || ''} />
-        {spaceLoading || removeSpaceLoading || propertyLoading ? (
+        {removeSpaceLoading || propertyLoading ? (
           <LoadingIndicator />
-        ) : spaceData?.space ? (
+        ) : propertyData?.property.space && propertyData.property.space.length > 0 ? (
           <>
             <RowView flex>
               <SpaceText>Space {spaceIndex + 1}</SpaceText>
-              <TotalSpace>of {spacesLength}</TotalSpace>
+              <TotalSpace>of {propertyData.property.space.length}</TotalSpace>
               <RemoveButton
                 text="Remove Space"
                 onPress={() => {
@@ -255,7 +253,7 @@ export default function LandlordManageSpace(props: Props) {
               label="Sqft"
               name="sqft"
               placeholder="0"
-              defaultValue={spaceData?.space.sqft}
+              defaultValue={propertyData.property.space[spaceIndex]?.sqft}
               ref={register({
                 required: 'Sqft should not be empty',
               })}
@@ -266,7 +264,7 @@ export default function LandlordManageSpace(props: Props) {
               label="Price/Sqft"
               name="price"
               placeholder="$0"
-              defaultValue={spaceData?.space.pricePerSqft}
+              defaultValue={propertyData.property.space[spaceIndex]?.pricePerSqft}
               ref={register({
                 required: 'Price/Sqft should not be empty',
               })}
@@ -289,7 +287,9 @@ export default function LandlordManageSpace(props: Props) {
               type="date"
               name="date"
               min={today.slice(0, 10)}
-              defaultValue={spaceData?.space.available.slice(0, 10) || today}
+              defaultValue={
+                propertyData?.property.space[spaceIndex]?.available.slice(0, 10) || today
+              }
               ref={register({
                 required: 'Date should not be empty',
               })}
@@ -298,8 +298,8 @@ export default function LandlordManageSpace(props: Props) {
           </>
         ) : (
           <CenteredView flex>
-            <Text fontSize={FONT_SIZE_LARGE}>{spaceError?.message || ''}</Text>
-            <Button text="Try Again" onPress={spaceRefetch} />
+            <Text fontSize={FONT_SIZE_LARGE}>{propertyError?.message || ''}</Text>
+            <Button text="Try Again" onPress={propertyRefetch} />
           </CenteredView>
         )}
       </Container>
