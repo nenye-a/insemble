@@ -146,3 +146,63 @@ class FastLocationDetailSerializer(serializers.Serializer):
             raise serializers.ValidationError(error_message)
 
         return data
+
+
+class LocationPreviewSerializer(serializers.Serializer):
+
+    """
+    parameters: {
+        my_location: {                          (required)
+            address: string,                    (required -> not required if categories are provided)
+            brand_name: string,                 (required -> not required if categories are provided)
+            categories: list[string],           (required)
+            income: {                           (required -> not required if brand_name and address provided)
+                min: int,                       (required if income provided)
+                max: int,
+            }
+        },
+        target_location: {                      (required, not used if property_id is provided)
+            lat: int,
+            lng: int,
+        },
+        property_id: string,                    (optional)
+    }
+    """
+
+    my_location = serializers.JSONField(required=True)
+    target_location = serializers.JSONField(required=True)
+    property_id = serializers.CharField(required=False, max_length=500)
+
+    def validate(self, data):
+
+        has_address = 'address' in data['my_location']
+        has_brand_name = 'brand_name' in data['my_location']
+        has_categories = 'categories' in data['my_location']
+        has_income = 'income' in data['my_location']
+
+        error_message = {}
+        if not ((has_address and has_brand_name and has_categories) or (has_categories and has_income)):
+            error_message['status'] = 400
+            error_message['status_detail'] = [
+                "Please provide either (address, brand_name, and categories) or (categories and income) in my_location"]
+            raise serializers.ValidationError(error_message)
+
+        has_lat = 'lat' in data['target_location']
+        has_lng = 'lng' in data['target_location']
+
+        error_message = {}
+        if not (has_lat and has_lng):
+            error_message['status'] = 400
+            error_message['status_detail'] = ["Please provide lat and lng in the request"]
+            raise serializers.ValidationError(error_message)
+
+        try:
+            data['target_location']['lat'] = float(data['target_location']['lat'])
+            data['target_location']['lng'] = float(data['target_location']['lng'])
+        except Exception:
+            error_message['status'] = 400
+            error_message['status_detail'] = [
+                "Please make sure the latitude and longitude are either floats or string representations of floats"]
+            raise serializers.ValidationError(error_message)
+
+        return data
