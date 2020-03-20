@@ -10,7 +10,7 @@ import data.api.google as google
 from bson import ObjectId
 from rest_framework import status, generics, permissions, serializers
 from rest_framework.response import Response
-from .tenant_serializers import TenantMatchSerializer, LocationSerializer, FastLocationDetailSerializer
+from .tenant_serializers import TenantMatchSerializer, LocationSerializer, FastLocationDetailSerializer, LocationPreviewSerializer
 from .celery import app as celery_app
 
 
@@ -32,6 +32,7 @@ class AsynchronousAPI(generics.GenericAPIView):
     permission_classes = [
         permissions.AllowAny
     ]
+    serializer_class = serializers.Serializer()
 
     # Takes a celery process and returns a threading task that will update
     # result pool with the final items when the process completes.
@@ -853,7 +854,7 @@ class LocationPreviewAPI(AsynchronousAPI):
                 max: int,
             }
         },
-        target_location: {                      (required, not used if property_id is provided)
+        target_location: {                      
             lat: int,
             lng: int,
         },
@@ -871,6 +872,8 @@ class LocationPreviewAPI(AsynchronousAPI):
     }
 
     """
+
+    serializer_class = LocationPreviewSerializer
 
     def get(self, request, *args, **kwargs):
 
