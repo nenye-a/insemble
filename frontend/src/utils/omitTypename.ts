@@ -1,9 +1,16 @@
-export default function omitTypename<T extends ObjectKey>(data: Array<T>) {
-  return data.map((item) => {
-    if (item.hasOwnProperty('__typename')) {
-      let { __typename, ...otherEntries } = item;
+export default function omitTypename<T extends ObjectKey>(data: Array<T> | T) {
+  let omitTypenameFromObject = (obj: T) => {
+    if (obj.hasOwnProperty('__typename')) {
+      let { __typename, ...otherEntries } = obj;
       return { ...otherEntries };
     }
-    return item;
-  });
+    return obj;
+  };
+  if (Array.isArray(data)) {
+    return data.map((item) => {
+      return omitTypenameFromObject(item);
+    });
+  }
+
+  return omitTypenameFromObject(data);
 }
