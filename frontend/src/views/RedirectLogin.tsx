@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useHistory, useParams } from 'react-router-dom';
 
 import { LoadingIndicator, View } from '../core-ui';
-import { useHistory, useParams } from 'react-router-dom';
 import { saveCredentials } from '../utils';
 import { Role } from '../types/types';
 

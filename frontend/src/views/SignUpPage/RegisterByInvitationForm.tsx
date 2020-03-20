@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-
-import { View, TextInput, Alert, Button, Form } from '../../core-ui';
-import { Role } from '../../types/types';
 import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useParams, Redirect, useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';
+
+import { View, TextInput, Alert, Button, Form } from '../../core-ui';
+import { Role } from '../../types/types';
 import {
   REGISTER_LANDLORD_INVITATION,
   REGISTER_TENANT_INVITATION,

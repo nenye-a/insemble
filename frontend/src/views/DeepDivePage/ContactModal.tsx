@@ -1,6 +1,5 @@
 import React, { useState, ChangeEvent } from 'react';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';
 
 import { Text, Button, Card, Label, RadioGroup, TextArea, Modal, Alert } from '../../core-ui';
@@ -38,7 +37,6 @@ export default function ContactModal(props: Props) {
   let [selectedSubject, setSelectedSubject] = useState('');
   let [message, setMessage] = useState('');
   let { role } = useCredentials();
-  let params = useParams<Params>();
   let [messageSent, setMessageSent] = useState(false);
 
   let isLandlord = role === SenderRole.LANDLORD;
@@ -91,16 +89,7 @@ export default function ContactModal(props: Props) {
 
   let onSubmit = () => {
     createConversation({
-      variables: {
-        brandId: isLandlord ? brandId : 'id brand', // TODO TENANT
-        spaceId: isLandlord ? params.paramsId : 'property id', // TODO TENANT
-        matchScore: matchScore || 0,
-        header: selectedSubject,
-        messageInput: {
-          message,
-          senderRole: isLandlord ? SenderRole.LANDLORD : SenderRole.TENANT,
-        },
-      },
+      variables,
     });
   };
 
