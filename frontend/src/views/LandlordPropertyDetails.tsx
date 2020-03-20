@@ -113,6 +113,7 @@ export default function LandlordPropertyDetails() {
         <PropertyDetailSegment
           selectedTabIndex={selectedTabIndex}
           onPress={(index: number) => setSelectedTabIndex(index)}
+          noSpaces={propertyData?.property.space.length === 0}
         />
         {isTenantMatchSelected ? (
           <ContentWrapper>
