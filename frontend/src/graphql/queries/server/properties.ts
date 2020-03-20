@@ -63,6 +63,7 @@ export const GET_PROPERTY = gql`
       location {
         lat
         lng
+        address
       }
       marketingPreference
       propertyType
