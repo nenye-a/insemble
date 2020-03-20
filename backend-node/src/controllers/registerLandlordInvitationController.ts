@@ -52,9 +52,13 @@ export let emailRegisterLandlordInvitationHandler = async (
     let linkedProperty = await prisma.property.create({
       data: {
         name: 'Dummy property',
-        propertyId: `From auto complete ${Math.random()}`,
+        // propertyId: `From auto complete ${Math.random()}`, suppose to be from auto complete
         location: {
-          create: { address: 'Dummy', lat: '1', lng: '1' },
+          create: {
+            address: '19317 Sherman Way, Reseda, CA',
+            lat: '1',
+            lng: '1',
+          },
         },
         userRelation: 'Owner',
         space: {
