@@ -146,7 +146,7 @@ export let createPendingConversation = mutationField(
     args: {
       brandId: stringArg({ required: true }),
       spaceId: stringArg({ required: true }),
-      receiverContact: arg({ type: 'ReceiverContact', required: true }),
+      receiverContact: arg({ type: 'ReceiverContactInput', required: true }),
       matchScore: intArg({ required: true }),
       messageInput: arg({ type: 'MessageInput', required: true }),
       header: stringArg({ required: true }),

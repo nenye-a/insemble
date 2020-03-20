@@ -11,5 +11,9 @@ export let PropertyMatchesThumbnail = objectType({
     t.float('matchValue');
     t.boolean('interested');
     t.boolean('onPlatform');
+    t.field('contacts', {
+      type: 'ReceiverContact',
+      list: true,
+    });
   },
 });
