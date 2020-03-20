@@ -140,6 +140,7 @@ export default function LandlordPropertyDetails() {
         brandId={selectedBrandId}
         matchScore={selectedMatchScore}
         propertyId={params.paramsId}
+        spaceId={selectedSpaceId}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         tenantPhoto={selectedTenantPhoto}

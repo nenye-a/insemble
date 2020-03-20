@@ -6,19 +6,27 @@ import { useMutation } from '@apollo/react-hooks';
 import { Text, Button, Card, Label, RadioGroup, TextArea, Modal, Alert } from '../../core-ui';
 import { THEME_COLOR } from '../../constants/colors';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
-import { CREATE_CONVERSATION } from '../../graphql/queries/server/message';
+import {
+  CREATE_CONVERSATION,
+  CREATE_PENDING_CONVERSATION,
+} from '../../graphql/queries/server/message';
 import {
   CreateConversation,
   CreateConversationVariables,
 } from '../../generated/CreateConversation';
 import { SenderRole } from '../../generated/globalTypes';
-import { useCredentials } from '../../utils';
+import { useCredentials, formatGraphQLError } from '../../utils';
+import {
+  CreatePendingConversation,
+  CreatePendingConversationVariables,
+} from '../../generated/CreatePendingConversation';
 
 type Props = {
   visible: boolean;
   onClose: () => void;
   brandId: string;
   matchScore?: number;
+  spaceId: string;
 };
 
 type Params = {
@@ -26,7 +34,7 @@ type Params = {
 };
 
 export default function ContactModal(props: Props) {
-  let { visible, onClose, brandId, matchScore } = props;
+  let { visible, onClose, brandId, matchScore, spaceId } = props;
   let [selectedSubject, setSelectedSubject] = useState('');
   let [message, setMessage] = useState('');
   let { role } = useCredentials();
@@ -34,15 +42,52 @@ export default function ContactModal(props: Props) {
   let [messageSent, setMessageSent] = useState(false);
 
   let isLandlord = role === SenderRole.LANDLORD;
+  let variables = {
+    brandId: isLandlord ? brandId : 'id brand', // TODO TENANT
+    spaceId: isLandlord ? spaceId : 'space id', // TODO TENANT
+    matchScore: matchScore || 0,
+    header: selectedSubject,
+    messageInput: {
+      message,
+      senderRole: isLandlord ? SenderRole.LANDLORD : SenderRole.TENANT,
+    },
+  };
 
   let [createConversation, { loading, error }] = useMutation<
     CreateConversation,
     CreateConversationVariables
   >(CREATE_CONVERSATION, {
     onCompleted: () => setMessageSent(true),
+    onError: (error) => {
+      if (formatGraphQLError(error.message) === 'Receiver not found') {
+        createPendingConversation({
+          variables: {
+            ...variables,
+            receiverContact: {
+              email: 'dummy@mailsky.com',
+              name: 'dummyvsky',
+              phone: '08',
+              role: 'Manager',
+            },
+          },
+        });
+      }
+    },
   });
 
-  let errorMessage = error?.message || '';
+  let [
+    createPendingConversation,
+    { loading: createPendingLoading, error: createPendingError },
+  ] = useMutation<CreatePendingConversation, CreatePendingConversationVariables>(
+    CREATE_PENDING_CONVERSATION,
+    {
+      onCompleted: () => {
+        setMessageSent(true);
+      },
+    }
+  );
+
+  let errorMessage = error?.message || createPendingError?.message || '';
 
   let onSubmit = () => {
     createConversation({
@@ -106,7 +151,11 @@ export default function ContactModal(props: Props) {
               }}
               showCharacterLimit
             />
-            <SendMessageButton loading={loading} text="Send Message" onPress={onSubmit} />
+            <SendMessageButton
+              loading={loading || createPendingLoading}
+              text="Send Message"
+              onPress={onSubmit}
+            />
           </>
         )}
       </Card>

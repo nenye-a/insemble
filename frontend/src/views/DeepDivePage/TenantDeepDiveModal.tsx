@@ -16,6 +16,7 @@ type Props = {
   onClose: () => void;
   brandId: string;
   propertyId: string;
+  spaceId: string;
   tenantPhoto: string;
   matchScore: number;
 };
@@ -23,7 +24,7 @@ type Props = {
 const SHRINK_HEIGHT = 160;
 
 export default function TenantDeepDiveModal(props: Props) {
-  let { visible, onClose, brandId, tenantPhoto, matchScore } = props;
+  let { visible, onClose, brandId, tenantPhoto, matchScore, spaceId } = props;
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [headerShrink, setHeaderShrink] = useState(false);
   let isOverviewSelected = selectedTabIndex === 0;
@@ -65,6 +66,7 @@ export default function TenantDeepDiveModal(props: Props) {
             <View style={{ backgroundColor: WHITE }}>
               <PropertyDeepDiveHeader
                 brandId={brandId}
+                spaceId={spaceId}
                 matchScore={matchScore}
                 address={data?.tenantDetail.name || ''}
                 targetNeighborhood={data?.tenantDetail.category || ''}

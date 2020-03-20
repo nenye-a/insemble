@@ -9,6 +9,7 @@ type Props = {
   targetNeighborhood: string;
   brandId?: string;
   matchScore?: number;
+  spaceId?: string;
   clickable?: boolean;
   showConnect?: boolean;
 };
@@ -18,11 +19,11 @@ export default function PropertyDeepDiveHeader({
   targetNeighborhood,
   brandId,
   matchScore,
+  spaceId,
   clickable = true,
   showConnect = true,
 }: Props) {
   let [contactModalVisible, toggleContactModalVisibility] = useState(false);
-
   return (
     <Container>
       <View flex>
@@ -35,10 +36,11 @@ export default function PropertyDeepDiveHeader({
             text="Connect"
             onPress={clickable ? () => toggleContactModalVisibility(true) : undefined}
           />
-          {brandId && (
+          {brandId && spaceId && (
             <ContactModal
               matchScore={matchScore}
               brandId={brandId}
+              spaceId={spaceId}
               visible={contactModalVisible}
               onClose={() => toggleContactModalVisibility(false)}
             />
