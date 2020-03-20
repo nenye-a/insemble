@@ -14,11 +14,13 @@ import {
   PropertyLocationDetails,
   PropertyLocationDetailsVariables,
 } from '../../generated/PropertyLocationDetails';
+import { MAPS_IFRAME_URL_SEARCH } from '../../constants/googleMaps';
 
 export default function LandlordLocationDetails() {
   let history = useHistory();
-  let location = history.location.state.iframeSource;
   let { paramsId: propertyId = '' } = useParams();
+  let { lat, lng } = history.location.state.property.location;
+  let iframeSource = MAPS_IFRAME_URL_SEARCH + '&q=' + lat + ', ' + lng;
   let { data, loading, error, refetch } = useQuery<
     PropertyLocationDetails,
     PropertyLocationDetailsVariables
@@ -55,7 +57,7 @@ export default function LandlordLocationDetails() {
       ) : (
         // {/* TODO: change to map */}
         <>
-          <Iframe src={location} />
+          <Iframe src={iframeSource} />
           <KeyFacts
             totalValue={totalValue}
             keyFactsData={keyFactsData}

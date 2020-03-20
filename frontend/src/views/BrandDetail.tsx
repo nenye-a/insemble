@@ -206,7 +206,7 @@ export default function BrandDetail() {
             onSelected={(locations) => {
               setSelectedLocations(locations);
             }}
-            defaultSelected={omitTypename(nextLocations || [])}
+            defaultSelected={omitTypename(nextLocations || []) as Array<LocationInput>}
             containerStyle={inputContainerStyle}
           />
         )}

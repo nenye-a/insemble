@@ -13,6 +13,12 @@ export const GET_PROPERTIES = gql`
       propertyId
       name
       categories
+      userRelations
+      businessType
+      propertyType
+      exclusive
+      marketingPreference
+      userRelations
       location {
         id
         address
@@ -37,5 +43,11 @@ export const GET_PROPERTIES = gql`
 export const DELETE_PROPERTY = gql`
   mutation DeleteProperty($propertyId: String!) {
     deleteProperty(propertyId: $propertyId)
+  }
+`;
+
+export const EDIT_PROPERTY = gql`
+  mutation EditProperty($property: PropertyInput!, $propertyId: String!) {
+    editProperty(property: $property, propertyId: $propertyId)
   }
 `;

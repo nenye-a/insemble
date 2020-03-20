@@ -5,7 +5,7 @@ import Label from './Label';
 import Text from './Text';
 import SvgCheck from '../components/icons/check';
 import { THEME_COLOR, SECONDARY_CHECKBOX, WHITE, TEXT_COLOR } from '../constants/colors';
-import { FONT_SIZE_SMALL } from '../constants/theme';
+import { FONT_SIZE_NORMAL } from '../constants/theme';
 import useID from '../utils/useID';
 
 type ViewProps = ComponentProps<typeof View>;
@@ -30,7 +30,7 @@ type CheckProps = ComponentProps<typeof SvgCheck> & {
   color: string;
 };
 
-const SIZE = '24px';
+const SIZE = '18px';
 const BORDER_RADIUS = '5px';
 
 const fillContainer = css`
@@ -89,7 +89,7 @@ const NativeCheckbox = styled.input.attrs(() => ({ type: 'checkbox' }))`
 
 const LabelText = styled(Label)`
   margin-left: 12px;
-  font-size: ${FONT_SIZE_SMALL};
+  font-size: ${FONT_SIZE_NORMAL};
   color: ${TEXT_COLOR};
 `;
 
