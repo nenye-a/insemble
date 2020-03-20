@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, Dispatch, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
-import { useForm, FieldError } from 'react-hook-form';
+import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 
 import {
@@ -36,9 +36,9 @@ export default function LandlordListing(props: Props) {
   let { state, dispatch } = props;
   let { confirmLocation, spaceListing } = state;
   let { register, errors, handleSubmit, watch } = useForm();
-  let sqft = watch('sqft');
-  let price = watch('price');
-  let date = watch('date');
+  let sqft = spaceListing.sqft || watch('sqft');
+  let price = spaceListing.pricePerSqft || watch('price');
+  let date = spaceListing.availability || watch('date');
   let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
   let [mainPhoto, setMainPhoto] = useState<string | FileWithPreview | null>(spaceListing.mainPhoto);
   let [additionalPhotos, setAdditionalPhotos] = useState<Array<string | FileWithPreview | null>>(
@@ -51,40 +51,43 @@ export default function LandlordListing(props: Props) {
 
   let allValid = mainPhoto && selectedCondition && Object.keys(errors).length === 0;
 
-  let saveFormState = useCallback(() => {
-    if (allValid && mainPhoto) {
-      dispatch({
-        type: 'SAVE_CHANGES_NEW_LISTING',
-        values: {
-          spaceListing: {
-            mainPhoto,
-            propertyPhotos: additionalPhotos,
-            description,
-            condition: selectedCondition,
-            sqft,
-            pricePerSqft: price,
-            equipments: selectedEquipments,
-            availability: date,
+  let saveFormState = useCallback(
+    (fieldValues?: FieldValues) => {
+      if (allValid && mainPhoto) {
+        dispatch({
+          type: 'SAVE_CHANGES_NEW_LISTING',
+          values: {
+            spaceListing: {
+              mainPhoto,
+              propertyPhotos: additionalPhotos,
+              description,
+              condition: selectedCondition,
+              sqft,
+              pricePerSqft: price,
+              equipments: selectedEquipments,
+              availability: fieldValues ? fieldValues.date : date,
+            },
           },
-        },
-      });
-    }
-  }, [
-    dispatch,
-    allValid,
-    mainPhoto,
-    additionalPhotos,
-    description,
-    selectedCondition,
-    sqft,
-    price,
-    selectedEquipments,
-    date,
-  ]);
+        });
+      }
+    },
+    [
+      dispatch,
+      allValid,
+      mainPhoto,
+      additionalPhotos,
+      description,
+      selectedCondition,
+      sqft,
+      price,
+      selectedEquipments,
+      date,
+    ]
+  );
 
-  let onSubmit = async () => {
+  let onSubmit = (fieldValues: FieldValues) => {
     if (allValid) {
-      saveFormState();
+      saveFormState(fieldValues);
       history.push('/landlord/new-property/step-5');
     }
   };
@@ -152,7 +155,7 @@ export default function LandlordListing(props: Props) {
             required: 'Sqft should not be empty',
             validate: (val) => validateNumber(val) || 'Input should be number',
           })}
-          defaultValue={spaceListing.sqft}
+          defaultValue={sqft}
           containerStyle={{ marginTop: 12, marginBottom: 12 }}
           errorMessage={(errors?.sqft as FieldError)?.message || ''}
         />
@@ -164,7 +167,7 @@ export default function LandlordListing(props: Props) {
             required: 'Price/Sqft should not be empty',
             validate: (val) => validateNumber(val) || 'Input should be number',
           })}
-          defaultValue={spaceListing.pricePerSqft}
+          defaultValue={price}
           containerStyle={{ marginTop: 12, marginBottom: 12 }}
           errorMessage={(errors?.price as FieldError)?.message || ''}
         />
@@ -176,6 +179,7 @@ export default function LandlordListing(props: Props) {
               options={equipmentData.equipments}
               onChange={setSelectedEquipment}
               inputContainerStyle={{ flex: 1 }}
+              defaultSelected={selectedEquipments}
             />
           )}
         </View>
@@ -185,7 +189,7 @@ export default function LandlordListing(props: Props) {
             name="date"
             label="Availability"
             min={today}
-            defaultValue={spaceListing.availability.slice(0, 10) || today}
+            defaultValue={date || today}
             ref={register({
               required: 'Date should not be empty',
             })}

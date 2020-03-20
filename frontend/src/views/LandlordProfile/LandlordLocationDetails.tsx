@@ -18,7 +18,7 @@ import {
 export default function LandlordLocationDetails() {
   let history = useHistory();
   let location = history.location.state.iframeSource;
-  let { propertyId = '' } = useParams();
+  let { paramsId: propertyId = '' } = useParams();
   let { data, loading, error, refetch } = useQuery<
     PropertyLocationDetails,
     PropertyLocationDetailsVariables
