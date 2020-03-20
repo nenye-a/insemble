@@ -271,6 +271,7 @@ type PropertyMatchesBrand = {
   claimed: boolean;
   matches_tenant_type: boolean;
   photo_url: string;
+  contacts: Array<ReceiverContact>;
 };
 
 export type PropertyMatchesType = {

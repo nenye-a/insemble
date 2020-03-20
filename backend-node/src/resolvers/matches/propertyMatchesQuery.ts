@@ -3,7 +3,7 @@ import { queryField, FieldResolver, stringArg } from 'nexus';
 
 import { Root, Context } from 'serverTypes';
 import { LEGACY_API_URI } from '../../constants/host';
-import { PropertyMatchesType } from 'dataTypes';
+import { PropertyMatchesType, ReceiverContact } from 'dataTypes';
 
 type MatchBrand = {
   brandId: string;
@@ -17,6 +17,7 @@ type MatchBrand = {
   claimed: boolean;
   matchesTenantType: boolean;
   onPlatform: boolean;
+  contacts: Array<ReceiverContact>;
 };
 
 let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
@@ -79,11 +80,9 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
         params: {
           property_id: propertyId ? propertyId : undefined,
           address: location.address,
-          property_type:
-            propertyType.length > 0 ? JSON.stringify(propertyType) : undefined,
-          space_condition: JSON.stringify([condition]),
-          tenant_type:
-            businessType.length > 0 ? JSON.stringify(businessType) : undefined,
+          property_type: JSON.stringify(propertyType),
+          space_type: JSON.stringify([condition]),
+          tenant_type: JSON.stringify(businessType),
           sqft,
           asking_rent: sqft * pricePerSqft,
           target_categories:
