@@ -69,7 +69,7 @@ export default function LandlordPropertyDetails() {
     <View flex>
       <PropertyDetailHeader
         spaces={spaces}
-        address={address}
+        address={property.location.address}
         request="1" // TODO
         selectedSpaceIndex={selectedSpaceIndex}
         onPressSpace={(index: number) => {
@@ -79,7 +79,7 @@ export default function LandlordPropertyDetails() {
         onPressAdd={() => {
           history.push(`/landlord/add-space/step-1`, {
             propertyId: params.paramsId,
-            address,
+            address: property.location.address,
           });
         }}
       />
