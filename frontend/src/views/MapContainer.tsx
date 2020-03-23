@@ -68,6 +68,10 @@ function MapContainer({ onMarkerClick, matchingLocations, matchingProperties }: 
    */
   let outsideBoundError = error?.message.includes('Request failed with status code 500');
 
+  let visibleMatchingProperties = matchingProperties
+    ? matchingProperties.filter((property) => property.visible)
+    : [];
+
   let onPreviewClick = () => {
     if (markerPosition) {
       onMarkerClick &&
@@ -165,9 +169,8 @@ function MapContainer({ onMarkerClick, matchingLocations, matchingProperties }: 
         }}
         onClick={(event) => onMapClick(event.latLng)}
       >
-        {matchingProperties &&
-          matchingProperties.length > 0 &&
-          matchingProperties.map((property, index) => {
+        {visibleMatchingProperties.length > 0 &&
+          visibleMatchingProperties.map((property, index) => {
             let latLng = new google.maps.LatLng(Number(property.lat), Number(property.lng));
 
             let previewVisible = selectedPropertyLatLng
@@ -181,7 +184,7 @@ function MapContainer({ onMarkerClick, matchingLocations, matchingProperties }: 
                 onClick={() => onPropertyMarkerClick(latLng, property.propertyId)}
                 icon={availablePropertyPin}
               >
-                {selectedPropertyLatLng && (
+                {selectedPropertyLatLng && !loading && data && (
                   <LocationDetail
                     visible={previewVisible}
                     title={data?.locationPreview.targetAddress || ''}
