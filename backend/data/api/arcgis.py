@@ -10,7 +10,7 @@ from decouple import config
 
 # TODO: get permanent token. This may fail eventually
 url = "https://geoenrich.arcgis.DELETED_BASE64_STRING"
-TOKEN = conifg('ARCGIS_TOKEN')
+TOKEN = config('ARCGIS_TOKEN')
 
 
 def details(lat, lng, radius):
