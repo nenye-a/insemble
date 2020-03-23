@@ -1,0 +1,36 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "DeleteDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Brand",
+          "field": "tenantId"
+        },
+        "directive": "unique"
+      }
+    },
+    {
+      "tag": "DeleteField",
+      "model": "SavedProperty",
+      "field": "address"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "SavedProperty",
+      "field": "thumbnail"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "SavedProperty",
+      "field": "rent"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "SavedProperty",
+      "field": "sqft"
+    }
+  ]
+}

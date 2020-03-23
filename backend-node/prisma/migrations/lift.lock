@@ -38,3 +38,4 @@
 20200317164228-adjustment-after-tenant-matches-refactor
 20200318172916-convertation-space-and-pending-conv-update
 20200319175639-tenant-saved-properties
+20200323160437-remove-unique-on-brand-id-and-remove-several-fields-from-saved-property
