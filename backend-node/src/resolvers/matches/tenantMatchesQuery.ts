@@ -132,6 +132,7 @@ let tenantMatches = queryField('tenantMatches', {
         }) => {
           return {
             spaceId,
+            propertyId,
             spaceCondition,
             tenantType,
             type,
