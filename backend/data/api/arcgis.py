@@ -6,10 +6,11 @@ File for ArcGIS & ESRI data processing
 
 import requests
 import json
+from decouple import config
 
 # TODO: get permanent token. This may fail eventually
 url = "https://geoenrich.arcgis.DELETED_BASE64_STRING"
-TOKEN = "DELETED_BASE64_STRING--7iGzT_yYmxntkde_DELETED_BASE64_STRING_jTEwTJE."
+TOKEN = conifg('ARCGIS_TOKEN')
 
 
 def details(lat, lng, radius):
