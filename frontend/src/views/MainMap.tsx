@@ -68,6 +68,7 @@ type SelectedLatLng = {
   lng: string;
   address: string;
   targetNeighborhood: string;
+  propertyId?: string;
 };
 
 export type TenantMatchesContextType = {
@@ -355,6 +356,7 @@ export default function MainMap() {
             address={selectedLatLng.address}
             categories={tenantMatchesData?.tenantMatches.categories}
             targetNeighborhood={selectedLatLng.targetNeighborhood}
+            propertyId={selectedLatLng.propertyId || undefined}
             visible={deepDiveModalVisible}
             onClose={() => toggleDeepDiveModal(!deepDiveModalVisible)}
           />
@@ -384,7 +386,8 @@ export default function MainMap() {
               onMarkerClick={(
                 latLng: google.maps.LatLng,
                 address: string,
-                targetNeighborhood: string
+                targetNeighborhood: string,
+                propertyId?: string
               ) => {
                 let { lat, lng } = latLng;
                 setSelectedLatLng({
@@ -392,6 +395,7 @@ export default function MainMap() {
                   lng: lng().toString(),
                   address,
                   targetNeighborhood,
+                  propertyId,
                 });
                 toggleDeepDiveModal(true);
               }}

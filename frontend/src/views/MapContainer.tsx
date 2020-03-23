@@ -7,7 +7,6 @@ import { useApolloClient, useLazyQuery } from '@apollo/react-hooks';
 import { GET_LOCATION_PREVIEW } from '../graphql/queries/server/preview';
 import { View, Alert, LoadingIndicator } from '../core-ui';
 import LocationDetail from '../components/location-detail/LocationDetail';
-import InfoBox from 'react-google-maps/lib/components/addons/InfoBox';
 import MapPin from '../components/icons/map-pin.svg';
 import availablePropertyPin from '../assets/images/available-property-pin.svg';
 import {
@@ -23,7 +22,12 @@ type LatLngLiteral = google.maps.LatLngLiteral;
 
 type Props = {
   markers?: Array<LatLngLiteral>;
-  onMarkerClick?: (markerPosition: LatLng, address: string, targetNeighborhood: string) => void;
+  onMarkerClick?: (
+    markerPosition: LatLng,
+    address: string,
+    targetNeighborhood: string,
+    propertyId?: string
+  ) => void;
   matchingLocations?: Array<TenantMatchesMatchingLocations> | null;
   matchingProperties?: Array<TenantMatchesMatchingProperties> | null;
 };
@@ -32,6 +36,7 @@ const defaultCenter = {
   lat: 34.0522342,
   lng: -118.2436849,
 };
+
 const defaultZoom = 10;
 
 function MapContainer({ onMarkerClick, matchingLocations, matchingProperties }: Props) {
@@ -52,6 +57,7 @@ function MapContainer({ onMarkerClick, matchingLocations, matchingProperties }: 
 
   let [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
   let [selectedPropertyLatLng, setSelectedPropertyLatLng] = useState<LatLng | null>(null);
+  let [selectedPropertyId, setSelectedPropertyId] = useState('');
   let [showGuide, setShowGuide] = useState(!!history.location.state?.newBrand);
 
   let mapRef = useRef<GoogleMap | null>(null);
@@ -62,15 +68,23 @@ function MapContainer({ onMarkerClick, matchingLocations, matchingProperties }: 
    */
   let outsideBoundError = error?.message.includes('Request failed with status code 500');
 
-  // TODO: fix this. tried useCallback with all deps, still not working
   let onPreviewClick = () => {
-    markerPosition &&
+    if (markerPosition) {
       onMarkerClick &&
-      onMarkerClick(
-        markerPosition,
-        data?.locationPreview.targetAddress || '',
-        data?.locationPreview.targetNeighborhood || ''
-      );
+        onMarkerClick(
+          markerPosition,
+          data?.locationPreview.targetAddress || '',
+          data?.locationPreview.targetNeighborhood || ''
+        );
+    } else if (selectedPropertyLatLng) {
+      onMarkerClick &&
+        onMarkerClick(
+          selectedPropertyLatLng,
+          data?.locationPreview.targetAddress || '',
+          data?.locationPreview.targetNeighborhood || '',
+          selectedPropertyId
+        );
+    }
   };
 
   let onMapClick = async (latLng: LatLng) => {
@@ -112,6 +126,7 @@ function MapContainer({ onMarkerClick, matchingLocations, matchingProperties }: 
       setMarkerPosition(null);
     }
     setSelectedPropertyLatLng(latLng);
+    setSelectedPropertyId(propertyId);
   };
 
   useEffect(() => {
@@ -126,7 +141,7 @@ function MapContainer({ onMarkerClick, matchingLocations, matchingProperties }: 
       });
     }
   }, [error, apolloClient, outsideBoundError]);
-  console.log(selectedPropertyLatLng, '<<<<');
+
   return (
     <div>
       <MapTour
@@ -163,8 +178,7 @@ function MapContainer({ onMarkerClick, matchingLocations, matchingProperties }: 
               <Marker
                 key={index}
                 position={latLng}
-                // TODO: change to propertyId
-                onClick={() => onPropertyMarkerClick(latLng, property.spaceId)}
+                onClick={() => onPropertyMarkerClick(latLng, property.propertyId)}
                 icon={availablePropertyPin}
               >
                 {selectedPropertyLatLng && (

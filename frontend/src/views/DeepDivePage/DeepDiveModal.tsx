@@ -37,12 +37,13 @@ type Props = {
   address: string;
   targetNeighborhood: string;
   categories?: Array<string>;
+  propertyId?: string;
 };
 
 // const SHRINK_HEIGHT = 160;
 export default function LocationDeepDiveModal(props: Props) {
   let { brandId = '' } = useParams();
-  let { visible, onClose, lat, lng, address, targetNeighborhood, categories } = props;
+  let { visible, onClose, lat, lng, address, targetNeighborhood, categories, propertyId } = props;
   let [isLiked, toggleIsLiked] = useState(false); // get value from backend
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   // let [headerShrink, setHeaderShrink] = useState(false);
@@ -57,6 +58,7 @@ export default function LocationDeepDiveModal(props: Props) {
           lat,
           lng,
         },
+        selectedPropertyId: propertyId ? propertyId : null,
       },
       notifyOnNetworkStatusChange: true,
     }
