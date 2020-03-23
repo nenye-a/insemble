@@ -33,13 +33,10 @@ let locationDetails = queryField('locationDetails', {
     }
 
     try {
-      let {
-        property_details: rawPropertyDetails,
-        result,
-      }: LocationDetailsType = (
+      let { result }: LocationDetailsType = (
         await axios.get(`${LEGACY_API_URI}/api/fastLocationDetails/`, {
           params: {
-            tenant_id: selectedBrand.tenantId,
+            match_id: selectedBrand.matchId,
             target_location: selectedLocation && {
               lat: selectedLocation.lat,
               lng: selectedLocation.lng,
@@ -121,6 +118,39 @@ let locationDetails = queryField('locationDetails', {
         return { photo: '', ...persona }; // TODO: change to real photoURL
       });
 
+      let property = selectedPropertyId
+        ? await context.prisma.property.findOne({
+            where: { propertyId: selectedPropertyId },
+            include: { space: true },
+          })
+        : undefined;
+
+      let propertySpacesDetails = property
+        ? property.space.map(
+            ({
+              mainPhoto,
+              sqft,
+              photos,
+              pricePerSqft,
+              condition,
+              description,
+            }) => {
+              return {
+                tour3D: '', // TODO: add real tour3D
+                mainPhoto,
+                sqft,
+                photos,
+                summary: {
+                  pricePerSqft,
+                  type: property ? property.propertyType : [],
+                  condition,
+                },
+                description,
+              };
+            },
+          )
+        : [];
+
       return {
         result: {
           matchValue,
@@ -175,20 +205,7 @@ let locationDetails = queryField('locationDetails', {
           },
           nearby: tsNearby,
         },
-        propertyDetails: rawPropertyDetails
-          ? {
-              tour3D: rawPropertyDetails['3D_tour'],
-              mainPhoto: rawPropertyDetails.main_photo,
-              sqft: rawPropertyDetails.sqft,
-              photos: rawPropertyDetails.photos,
-              summary: {
-                pricePerSqft: rawPropertyDetails.summary['price/sqft'],
-                type: rawPropertyDetails.summary.type,
-                condition: rawPropertyDetails.summary.condition,
-              },
-              description: rawPropertyDetails.description,
-            }
-          : undefined,
+        spaceDetails: propertySpacesDetails,
       };
     } catch (e) {
       throw new Error(e);

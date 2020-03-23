@@ -167,13 +167,13 @@ export let SummaryPropDetails = objectType({
   name: 'SummaryPropDetails',
   definition(t) {
     t.int('pricePerSqft');
-    t.string('type');
+    t.string('type', { list: true });
     t.string('condition');
   },
 });
 
-export let PropertyDetails = objectType({
-  name: 'PropertyDetails',
+export let SpaceDetails = objectType({
+  name: 'SpaceDetails',
   definition(t) {
     t.string('tour3D', { nullable: true });
     t.string('mainPhoto');
@@ -192,9 +192,9 @@ export let LocationDetailsResult = objectType({
     t.field('result', {
       type: 'DeepDiveResultType',
     });
-    t.field('propertyDetails', {
-      type: 'PropertyDetails',
-      nullable: true,
+    t.field('spaceDetails', {
+      type: 'SpaceDetails',
+      list: true,
     });
   },
 });
