@@ -118,7 +118,27 @@ let tenantMatches = queryField('tenantMatches', {
           },
         })
       ).data;
-      let newMatchingProperties = rawMatchingProperties?.map(
+
+      let rawMatchingPropertiesIds = rawMatchingProperties?.map(
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        ({ space_id }) => space_id,
+      );
+
+      let prismaSpaceIds = (
+        await context.prisma.space.findMany({
+          where: {
+            spaceId: {
+              in: rawMatchingPropertiesIds,
+            },
+          },
+        })
+      ).map(({ spaceId }) => spaceId);
+      let filteredMatchingProperties = rawMatchingProperties?.filter(
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        ({ space_id }) => prismaSpaceIds.includes(space_id),
+      );
+
+      let newMatchingProperties = filteredMatchingProperties?.map(
         ({
           space_id: spaceId,
           property_id: propertyId,
