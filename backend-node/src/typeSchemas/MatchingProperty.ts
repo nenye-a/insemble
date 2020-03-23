@@ -8,6 +8,7 @@ export let MatchingProperty = objectType({
     t.int('sqft');
     t.string('type', { list: true });
     t.string('spaceId');
+    t.string('propertyId');
     t.string('spaceCondition', { list: true });
     t.string('tenantType', { list: true });
     t.boolean('pro');
