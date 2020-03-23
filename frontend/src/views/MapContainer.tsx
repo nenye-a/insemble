@@ -29,7 +29,7 @@ type Props = {
     propertyId?: string
   ) => void;
   matchingLocations?: Array<TenantMatchesMatchingLocations> | null;
-  matchingProperties?: Array<TenantMatchesMatchingProperties> | null;
+  matchingProperties?: Array<TenantMatchesMatchingProperties>;
 };
 
 const defaultCenter = {
@@ -67,10 +67,6 @@ function MapContainer({ onMarkerClick, matchingLocations, matchingProperties }: 
    * TODO: change this to a better error handler
    */
   let outsideBoundError = error?.message.includes('Request failed with status code 500');
-
-  let visibleMatchingProperties = matchingProperties
-    ? matchingProperties.filter((property) => property.visible)
-    : [];
 
   let onPreviewClick = () => {
     if (markerPosition) {
@@ -169,8 +165,9 @@ function MapContainer({ onMarkerClick, matchingLocations, matchingProperties }: 
         }}
         onClick={(event) => onMapClick(event.latLng)}
       >
-        {visibleMatchingProperties.length > 0 &&
-          visibleMatchingProperties.map((property, index) => {
+        {matchingProperties &&
+          matchingProperties.length > 0 &&
+          matchingProperties.map((property, index) => {
             let latLng = new google.maps.LatLng(Number(property.lat), Number(property.lng));
 
             let previewVisible = selectedPropertyLatLng

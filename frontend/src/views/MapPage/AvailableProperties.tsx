@@ -19,7 +19,6 @@ type ContainerProps = ComponentProps<typeof View> & {
 
 export default function AvailableProperties(props: Props) {
   let { visible, onHideClick, matchingProperties } = props;
-  let visibleProperties = matchingProperties.filter((property) => property.visible);
   return (
     <Container flex visible={visible}>
       <UpperTextContainer>
@@ -33,18 +32,18 @@ export default function AvailableProperties(props: Props) {
           textProps={{ style: { color: THEME_COLOR, fontStyle: 'italic' } }}
         />
       </UpperTextContainer>
-      {visibleProperties.length > 0 ? (
+      {matchingProperties.length > 0 ? (
         <>
           <RowedFlex>
             <ItalicText
               fontSize={FONT_SIZE_SMALL}
-            >{`${visibleProperties.length} available`}</ItalicText>
+            >{`${matchingProperties.length} available`}</ItalicText>
             {/* hiding this until BE ready */}
             {/* <ItalicText color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
           {` (${TOTAL_RECOMMENDED_PROPERTY} recommended)`}
         </ItalicText> */}
           </RowedFlex>
-          {visibleProperties.map(({ address, rent, sqft, tenantType }, index) => (
+          {matchingProperties.map(({ address, rent, sqft, tenantType }, index) => (
             <AvailablePropertyCard
               key={index}
               // TODO: pass photo when BE is ready
