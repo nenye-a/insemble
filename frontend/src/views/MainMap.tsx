@@ -68,6 +68,7 @@ type SelectedLatLng = {
   lng: string;
   address: string;
   targetNeighborhood: string;
+  propertyId?: string;
 };
 
 export type TenantMatchesContextType = {
@@ -127,6 +128,10 @@ export default function MainMap() {
   >(EDIT_BRAND);
 
   let [selectedLatLng, setSelectedLatLng] = useState<SelectedLatLng | null>(null);
+
+  let visibleMatchingProperties = tenantMatchesData?.tenantMatches.matchingProperties
+    ? tenantMatchesData.tenantMatches.matchingProperties.filter((property) => property.visible)
+    : [];
   let onFilterChange = (state: SideBarFiltersState) => {
     let { demographics, properties, openFilterName } = state;
     let foundObj = [...demographics, ...properties].find((item) => item.name === openFilterName);
@@ -355,6 +360,7 @@ export default function MainMap() {
             address={selectedLatLng.address}
             categories={tenantMatchesData?.tenantMatches.categories}
             targetNeighborhood={selectedLatLng.targetNeighborhood}
+            propertyId={selectedLatLng.propertyId || undefined}
             visible={deepDiveModalVisible}
             onClose={() => toggleDeepDiveModal(!deepDiveModalVisible)}
           />
@@ -384,7 +390,8 @@ export default function MainMap() {
               onMarkerClick={(
                 latLng: google.maps.LatLng,
                 address: string,
-                targetNeighborhood: string
+                targetNeighborhood: string,
+                propertyId?: string
               ) => {
                 let { lat, lng } = latLng;
                 setSelectedLatLng({
@@ -392,30 +399,30 @@ export default function MainMap() {
                   lng: lng().toString(),
                   address,
                   targetNeighborhood,
+                  propertyId,
                 });
                 toggleDeepDiveModal(true);
               }}
               matchingLocations={tenantMatchesData?.tenantMatches.matchingLocations}
-              matchingProperties={tenantMatchesData?.tenantMatches.matchingProperties}
+              matchingProperties={visibleMatchingProperties}
             />
           )}
-          {tenantMatchesData?.tenantMatches.matchingProperties &&
-            tenantMatchesData.tenantMatches.matchingProperties.length > 0 && (
-              <>
-                <ShowPropertyButton
-                  visible={!propertyRecommendationVisible}
-                  mode="secondary"
-                  onPress={() => togglePropertyRecommendation(true)}
-                  text="Show Property List"
-                  icon={<SvgPropertyLocation />}
-                />
-                <AvailableProperties
-                  visible={propertyRecommendationVisible}
-                  onHideClick={() => togglePropertyRecommendation(false)}
-                  matchingProperties={tenantMatchesData?.tenantMatches.matchingProperties}
-                />
-              </>
-            )}
+          {visibleMatchingProperties.length > 0 && (
+            <>
+              <ShowPropertyButton
+                visible={!propertyRecommendationVisible}
+                mode="secondary"
+                onPress={() => togglePropertyRecommendation(true)}
+                text="Show Property List"
+                icon={<SvgPropertyLocation />}
+              />
+              <AvailableProperties
+                visible={propertyRecommendationVisible}
+                onHideClick={() => togglePropertyRecommendation(false)}
+                matchingProperties={visibleMatchingProperties}
+              />
+            </>
+          )}
         </Container>
       </View>
     </TenantMatchesContext.Provider>

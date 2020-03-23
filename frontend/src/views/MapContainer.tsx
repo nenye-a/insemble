@@ -7,8 +7,8 @@ import { useApolloClient, useLazyQuery } from '@apollo/react-hooks';
 import { GET_LOCATION_PREVIEW } from '../graphql/queries/server/preview';
 import { View, Alert, LoadingIndicator } from '../core-ui';
 import LocationDetail from '../components/location-detail/LocationDetail';
-import InfoBox from 'react-google-maps/lib/components/addons/InfoBox';
 import MapPin from '../components/icons/map-pin.svg';
+import availablePropertyPin from '../assets/images/available-property-pin.svg';
 import {
   TenantMatches_tenantMatches_matchingLocations as TenantMatchesMatchingLocations,
   TenantMatches_tenantMatches_matchingProperties as TenantMatchesMatchingProperties,
@@ -22,18 +22,24 @@ type LatLngLiteral = google.maps.LatLngLiteral;
 
 type Props = {
   markers?: Array<LatLngLiteral>;
-  onMarkerClick?: (markerPosition: LatLng, address: string, targetNeighborhood: string) => void;
+  onMarkerClick?: (
+    markerPosition: LatLng,
+    address: string,
+    targetNeighborhood: string,
+    propertyId?: string
+  ) => void;
   matchingLocations?: Array<TenantMatchesMatchingLocations> | null;
-  matchingProperties?: Array<TenantMatchesMatchingProperties> | null;
+  matchingProperties?: Array<TenantMatchesMatchingProperties>;
 };
 
 const defaultCenter = {
   lat: 34.0522342,
   lng: -118.2436849,
 };
+
 const defaultZoom = 10;
 
-function MapContainer({ onMarkerClick, matchingLocations }: Props) {
+function MapContainer({ onMarkerClick, matchingLocations, matchingProperties }: Props) {
   let apolloClient = useApolloClient();
   let history = useHistory();
   let { brandId = '' } = useParams();
@@ -50,10 +56,10 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
       : [];
 
   let [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
+  let [selectedPropertyLatLng, setSelectedPropertyLatLng] = useState<LatLng | null>(null);
+  let [selectedPropertyId, setSelectedPropertyId] = useState('');
   let [showGuide, setShowGuide] = useState(!!history.location.state?.newBrand);
-  let [infoBoxHeight, setInfoBoxHeight] = useState<number>(0);
 
-  let infoRef = useRef<Element | undefined>();
   let mapRef = useRef<GoogleMap | null>(null);
 
   /**
@@ -62,23 +68,28 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
    */
   let outsideBoundError = error?.message.includes('Request failed with status code 500');
 
-  // TODO: fix this. tried useCallback with all deps, still not working
   let onPreviewClick = () => {
-    markerPosition &&
+    if (markerPosition) {
       onMarkerClick &&
-      onMarkerClick(
-        markerPosition,
-        data?.locationPreview.targetAddress || '',
-        data?.locationPreview.targetNeighborhood || ''
-      );
+        onMarkerClick(
+          markerPosition,
+          data?.locationPreview.targetAddress || '',
+          data?.locationPreview.targetNeighborhood || ''
+        );
+    } else if (selectedPropertyLatLng) {
+      onMarkerClick &&
+        onMarkerClick(
+          selectedPropertyLatLng,
+          data?.locationPreview.targetAddress || '',
+          data?.locationPreview.targetNeighborhood || '',
+          selectedPropertyId
+        );
+    }
   };
 
   let onMapClick = async (latLng: LatLng) => {
-    // setMarkerPosition(null);
     let { lat, lng } = latLng;
-    // if (markerPosition) {
-    //   setMarkerPosition(null);
-    // }
+
     getLocation({
       variables: {
         brandId,
@@ -89,12 +100,33 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         },
       },
     });
+    // so only 1 InfoBox will be opened
+    if (selectedPropertyLatLng) {
+      setSelectedPropertyLatLng(null);
+    }
     setMarkerPosition(latLng);
   };
 
-  let handlePreviewClickListener = (e: Event) => {
-    e.stopPropagation();
-    onPreviewClick();
+  let onPropertyMarkerClick = (latLng: LatLng, propertyId: string) => {
+    let { lat, lng } = latLng;
+
+    getLocation({
+      variables: {
+        brandId,
+        selectedLocation: {
+          address: '',
+          lat: lat().toString(),
+          lng: lng().toString(),
+        },
+        selectedPropertyId: propertyId,
+      },
+    });
+    // so only 1 InfoBox will be opened
+    if (markerPosition) {
+      setMarkerPosition(null);
+    }
+    setSelectedPropertyLatLng(latLng);
+    setSelectedPropertyId(propertyId);
   };
 
   useEffect(() => {
@@ -133,46 +165,51 @@ function MapContainer({ onMarkerClick, matchingLocations }: Props) {
         }}
         onClick={(event) => onMapClick(event.latLng)}
       >
+        {matchingProperties &&
+          matchingProperties.length > 0 &&
+          matchingProperties.map((property, index) => {
+            let latLng = new google.maps.LatLng(Number(property.lat), Number(property.lng));
+
+            let previewVisible = selectedPropertyLatLng
+              ? selectedPropertyLatLng.lat() === Number(property.lat) &&
+                selectedPropertyLatLng.lng() === Number(property.lng)
+              : false;
+            return (
+              <Marker
+                key={index}
+                position={latLng}
+                onClick={() => onPropertyMarkerClick(latLng, property.propertyId)}
+                icon={availablePropertyPin}
+              >
+                {selectedPropertyLatLng && !loading && data && (
+                  <LocationDetail
+                    visible={previewVisible}
+                    title={data?.locationPreview.targetAddress || ''}
+                    subTitle={data?.locationPreview.targetNeighborhood || ''}
+                    income={data?.locationPreview.medianIncome.toString() || ''}
+                    population={data?.locationPreview.daytimePop3Mile.toString() || ''}
+                    age={data?.locationPreview.medianAge || 0}
+                    markerPosition={selectedPropertyLatLng || ''}
+                    onPreviewPress={onPreviewClick}
+                    onClose={() => setSelectedPropertyLatLng(null)}
+                  />
+                )}
+              </Marker>
+            );
+          })}
         {markerPosition && !loading && data && (
           <Marker position={markerPosition} onClick={onPreviewClick} icon={MapPin}>
-            <InfoBox
-              defaultPosition={markerPosition}
-              defaultVisible={true}
-              options={{
-                disableAutoPan: false,
-                pixelOffset: new google.maps.Size(-150, -45 - infoBoxHeight),
-                infoBoxClearance: new google.maps.Size(1, 1),
-                isHidden: false,
-                pane: 'floatPane',
-                enableEventPropagation: true,
-                closeBoxMargin: '10px 0 2px 2px',
-                maxWidth: 400,
-              }}
-              onDomReady={() => {
-                let infoBox = document.querySelector('.infoBox');
-                if (infoBox) {
-                  infoRef.current = infoBox;
-                  infoRef.current.addEventListener('click', handlePreviewClickListener);
-                  let infoBoxHeight = infoBox.getClientRects()[0].height;
-                  setInfoBoxHeight(infoBoxHeight);
-                }
-              }}
-              onCloseClick={() => {
-                setMarkerPosition(null);
-              }}
-              onUnmount={() => {
-                infoRef.current?.removeEventListener('click', handlePreviewClickListener);
-              }}
-            >
-              <LocationDetail
-                visible
-                title={data?.locationPreview.targetAddress}
-                subTitle={data?.locationPreview.targetNeighborhood || ''}
-                income={data?.locationPreview.medianIncome.toString()}
-                population={data?.locationPreview.daytimePop3Mile.toString()}
-                age={data?.locationPreview.medianAge}
-              />
-            </InfoBox>
+            <LocationDetail
+              visible
+              title={data?.locationPreview.targetAddress}
+              subTitle={data?.locationPreview.targetNeighborhood || ''}
+              income={data?.locationPreview.medianIncome.toString()}
+              population={data?.locationPreview.daytimePop3Mile.toString()}
+              age={data?.locationPreview.medianAge}
+              markerPosition={markerPosition}
+              onPreviewPress={onPreviewClick}
+              onClose={() => setMarkerPosition(null)}
+            />
           </Marker>
         )}
         {heatmapData && (
