@@ -78,7 +78,6 @@ const Image = styled.img`
 const RowedView = styled(View)`
   flex-direction: row;
   justify-content: space-between;
-  margin: 6px 0;
 `;
 
 const Container = styled(RowedView)`
@@ -112,6 +111,14 @@ const TenantCard = styled(TouchableOpacity)<TenantCardProps>`
             margin-right: 0;
           }
         `
+      : props.viewportType === VIEWPORT_TYPE.TABLET
+      ? css`
+          width: 45%;
+          margin: 6px 12px 6px 0;
+          &:nth-child(2n) {
+            margin-right: 0;
+          }
+        `
       : css`
           width: 100%;
           margin: 6px 0;
@@ -133,6 +140,7 @@ const InterestedContainer = styled(View)`
 
 const DescriptionContainer = styled(View)`
   padding: 12px;
+  min-height: 130px;
 `;
 
 const CardTitle = styled(Text)`
