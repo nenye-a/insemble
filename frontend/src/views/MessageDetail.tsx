@@ -92,12 +92,12 @@ export default function MessageDetail() {
                   <SentMessage
                     avatar={conversation?.conversation.tenant.avatar}
                     message={message}
-                    header={index === 0 ? conversation?.conversation.header : ''}
                   />
                 ) : (
                   <ReceivedMessage
                     avatar={conversation?.conversation.landlord.avatar}
                     message={message}
+                    header={index === 0 ? conversation?.conversation.header : ''}
                   />
                 )}
               </>

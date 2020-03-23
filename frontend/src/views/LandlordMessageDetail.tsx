@@ -93,12 +93,12 @@ export default function LandlordMessageDetail() {
                   <ReceivedMessage
                     avatar={conversation?.conversation.landlord.avatar}
                     message={message}
+                    header={index === 0 ? conversation?.conversation.header : ''}
                   />
                 ) : (
                   <SentMessage
                     avatar={conversation?.conversation.tenant.avatar}
                     message={message}
-                    header={index === 0 ? conversation?.conversation.header : ''}
                   />
                 )}
               </>
