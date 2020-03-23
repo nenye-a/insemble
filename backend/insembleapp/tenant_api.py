@@ -548,7 +548,7 @@ class FastLocationDetailsAPI(AsynchronousAPI):
         if match:  # if generating the details using the latest schema
             if property_id:
                 this_property = utils.DB_PROPERTY.find_one({'_id': ObjectId(property_id)})
-                this_location = utils.DB_property.find_one({'_id': this_property['location_id']})
+                this_location = utils.DB_LOCATIONS.find_one({'_id': this_property['location_id']})
                 target_lat = this_location['location']['coordinates'][1]
                 target_lng = this_location['location']['coordinates'][0]
             else:
@@ -886,8 +886,15 @@ class LocationPreviewAPI(AsynchronousAPI):
 
         # TODO: determine match value (for next generation preview)
 
-        target_lat = validated_params["target_location"]["lat"]
-        target_lng = validated_params["target_location"]["lng"]
+        property_id = validated_params['property_id'] if 'property_id' in validated_params else None
+        if property_id:
+            this_property = utils.DB_PROPERTY.find_one({'_id': ObjectId(property_id)})
+            this_location = utils.DB_LOCATIONS.find_one({'_id': this_property['location_id']})
+            target_lat = this_location['location']['coordinates'][1]
+            target_lng = this_location['location']['coordinates'][0]
+        else:
+            target_lat = validated_params["target_location"]["lat"]
+            target_lng = validated_params["target_location"]["lng"]
 
         # get demographic details asynchronously
         preview_demographics = self._get_preview_demographics(target_lat, target_lng, 3)
