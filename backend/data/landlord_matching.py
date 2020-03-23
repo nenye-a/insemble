@@ -79,8 +79,9 @@ def get_location_dictionary(location):
 
     # arcgis - num households, daytime pop, daytime working pop, income, etc.
     arcgis_dict = {key + "1": value for key, value in arcgis_dict.items()}
-    arcgis_dict["HouseholdGrowth2017-2022-1"] = arcgis_dict.pop(
-        "HouseholdGrowth2017-20221")
+    if arcgis_dict != {}:
+        arcgis_dict["HouseholdGrowth2017-2022-1"] = arcgis_dict.pop(
+            "HouseholdGrowth2017-20221")
 
     # demo - gender, race, age, travel time, transport methods
     if demo_dict != {}:
@@ -107,8 +108,9 @@ def get_location_dictionary(location):
     # CREATE ARRAY AS DATAFRAME (for 3 MILE)
     psycho_dict3 = {key + "3": value for key, value in psycho_dict3.items()}
     arcgis_dict3 = {key + "13": value for key, value in arcgis_dict3.items()}
-    arcgis_dict3["HouseholdGrowth2017-2022-13"] = arcgis_dict3.pop(
-        "HouseholdGrowth2017-202213")
+    if arcgis_dict3 != {}:
+        arcgis_dict3["HouseholdGrowth2017-2022-13"] = arcgis_dict3.pop(
+            "HouseholdGrowth2017-202213")
     # demo - gender, race, age, travel time, transport methods
 
     if demo_dict != {}:
