@@ -43,6 +43,7 @@ export * from './property/deletePropertyMutation';
 export * from './property/createSpaceMutation';
 export * from './property/editSpaceMutation';
 export * from './property/deleteSpaceMutation';
+export * from './property/savedPropertiesQuery';
 export * from './property/savePropertyMutation';
 
 export * from './auth/forgotPasswordTenantMutation';
