@@ -121,6 +121,7 @@ let tenantMatches = queryField('tenantMatches', {
       let newMatchingProperties = rawMatchingProperties?.map(
         ({
           space_id: spaceId,
+          property_id: propertyId,
           space_condition: spaceCondition,
           tenant_type: tenantType,
           match_value: matchValue,

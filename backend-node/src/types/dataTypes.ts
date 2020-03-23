@@ -37,6 +37,7 @@ export type MatchingProperty = {
   visible: boolean;
   address: string;
   spaceId: string;
+  propertyId: string;
   spaceCondition: Array<string>;
   tenantType: Array<string>;
   type: Array<string>;
@@ -47,6 +48,7 @@ export type MatchingProperty = {
 
 type MatchingPropertyType = {
   space_id: string;
+  property_id: string;
   space_condition: Array<string>;
   tenant_type: Array<string>;
   type: Array<string>;
