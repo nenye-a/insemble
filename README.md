@@ -129,9 +129,9 @@ Start the frontend process
 To re-run the latest code:
 
 Ensure that you have the latest code and updates:
-1. In `backend` folder ensure that you've recently updated your python environment. If you haven't or run into dependency issues, either make sure you have your virtual environment enabled, or re-run the `pip install -r requirements.txt && pip install -r dev-requirements.txt`
-2. In `backend-node` folder run `yarn install` to ensure that the latest node dependencies have been updated. Please note that current backend is not compatible with node v13. If you have node v13, you are suggested to download nvm to switch to v12.
-3. In `insemble` folder run `npm install` to ensure that you have the latest code.
+1. Unless you've recently downloaded your python environment, re-run the `pip install -r requirements.txt && pip install -r dev-requirements.txt` in the `insemble` folder.
+2. In `insemble` folder run `npm install` to ensure that you have the latest code.
+3. In `backend-node` folder run `yarn install` to ensure that the latest node dependencies have been updated. Please note that current backend is not compatible with node v13. If you have node v13, you are suggested to download nvm to switch to v12.
 4. Start the python backend (refer either to the backend text above "Start the python backend", or the `backend` ReadMe)
 5. Start the node backend (refer to the backend-node text above "Start the node backend")
 6. Start the frontend process
