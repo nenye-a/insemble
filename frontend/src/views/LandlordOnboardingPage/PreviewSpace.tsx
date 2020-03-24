@@ -15,6 +15,7 @@ import { CREATE_SPACE } from '../../graphql/queries/server/space';
 import { getImageBlob } from '../../utils';
 import { CreateSpace, CreateSpaceVariables } from '../../generated/CreateSpace';
 import { Action, State as LandlordAddSpaceState } from '../../reducers/landlordAddSpaceReducer';
+import { GET_PROPERTIES, GET_PROPERTY } from '../../graphql/queries/server/properties';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -71,6 +72,11 @@ export default function PreviewSpace(props: Props) {
               sqft: Number(sqft),
             },
           },
+          refetchQueries: [
+            { query: GET_PROPERTIES },
+            { query: GET_PROPERTY, variables: { propertyId } },
+          ],
+          awaitRefetchQueries: true,
         });
       }
     }

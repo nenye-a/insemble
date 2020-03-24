@@ -8,6 +8,7 @@ import { DEFAULT_BORDER_RADIUS } from '../../constants/theme';
 type Props = {
   selectedTabIndex: number;
   onPress: (index: number) => void;
+  noSpaces: boolean;
 };
 
 enum Tab {
@@ -17,12 +18,13 @@ enum Tab {
   MANAGE_PROPERTY_INDEX,
 }
 
-export default function PropertyDetailSegment({ selectedTabIndex, onPress }: Props) {
+export default function PropertyDetailSegment({ selectedTabIndex, onPress, noSpaces }: Props) {
   return (
     <HorizontalView>
       <TenantMatchSegment
         isActive={selectedTabIndex === Tab.TENANT_MATCH_INDEX}
         onPress={() => onPress(Tab.TENANT_MATCH_INDEX)}
+        disabled={noSpaces}
       >
         <TenantMatchText isActive={selectedTabIndex === Tab.TENANT_MATCH_INDEX}>
           Tenant Matches
@@ -39,6 +41,7 @@ export default function PropertyDetailSegment({ selectedTabIndex, onPress }: Pro
       <TabSegment
         isActive={selectedTabIndex === Tab.MANAGE_SPACE_INDEX}
         onPress={() => onPress(Tab.MANAGE_SPACE_INDEX)}
+        disabled={noSpaces}
       >
         <SegmentText isActive={selectedTabIndex === Tab.MANAGE_SPACE_INDEX}>
           Manage Space
@@ -47,6 +50,7 @@ export default function PropertyDetailSegment({ selectedTabIndex, onPress }: Pro
       <TabSegment
         isActive={selectedTabIndex === Tab.MANAGE_PROPERTY_INDEX}
         onPress={() => onPress(Tab.MANAGE_PROPERTY_INDEX)}
+        disabled={noSpaces}
       >
         <SegmentText isActive={selectedTabIndex === Tab.MANAGE_PROPERTY_INDEX}>
           Manage Property

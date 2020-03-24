@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory, useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
@@ -12,9 +12,11 @@ import {
   LandlordLocationDetails,
   LandlordManageSpace,
 } from './LandlordProfile';
-import { PropertyMatches, PropertyMatchesVariables } from '../generated/PropertyMatches';
-import { GET_PROPERTY_MATCHES_DATA } from '../graphql/queries/server/matches';
 import LandlordManageProperty from './LandlordProfile/LandlordManageProperty';
+import { GET_PROPERTY_MATCHES_DATA } from '../graphql/queries/server/matches';
+import { GET_PROPERTY } from '../graphql/queries/server/properties';
+import { PropertyMatches, PropertyMatchesVariables } from '../generated/PropertyMatches';
+import { Property, PropertyVariables } from '../generated/Property';
 
 enum Tab {
   TENANT_MATCH_INDEX,
@@ -31,10 +33,9 @@ export default function LandlordPropertyDetails() {
   let history = useHistory();
   let params = useParams<Params>();
   let [selectedBrandId, setSelectedBrandId] = useState('');
-  let { property, spaces } = history.location.state;
-  let [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  let [selectedTabIndex, setSelectedTabIndex] = useState(Tab.TENANT_MATCH_INDEX);
   let [selectedSpaceIndex, setSelectedSpaceIndex] = useState(0);
-  let [selectedSpaceId, setSelectedSpaceId] = useState(spaces[spaces.length - 1].id);
+  let [selectedSpaceId, setSelectedSpaceId] = useState('');
   let [selectedTenantPhoto, setSelectedTenantPhoto] = useState('');
   let [selectedMatchScore, setSelectedMatchScore] = useState(0);
   let isTenantMatchSelected = selectedTabIndex === Tab.TENANT_MATCH_INDEX;
@@ -42,6 +43,14 @@ export default function LandlordPropertyDetails() {
   let isManagePropertySelected = selectedTabIndex === Tab.MANAGE_PROPERTY_INDEX;
   let isManageSpaceSelected = selectedTabIndex === Tab.MANAGE_SPACE_INDEX;
   let [modalVisible, setModalVisible] = useState(false);
+  let { data: propertyData, loading: propertyLoading } = useQuery<Property, PropertyVariables>(
+    GET_PROPERTY,
+    {
+      variables: {
+        propertyId: params.paramsId,
+      },
+    }
+  );
   let { data, loading } = useQuery<PropertyMatches, PropertyMatchesVariables>(
     GET_PROPERTY_MATCHES_DATA,
     { variables: { propertyId: params.paramsId, spaceId: selectedSpaceId } }
@@ -65,28 +74,46 @@ export default function LandlordPropertyDetails() {
     );
   }, [data]);
 
+  useEffect(() => {
+    if (propertyData) {
+      let { space } = propertyData.property;
+      if (space.length === 0) {
+        setSelectedTabIndex(Tab.LOCATION_DETAIL_INDEX);
+      }
+      if (space.length <= selectedSpaceIndex) {
+        setSelectedSpaceIndex(selectedSpaceIndex - 1 || 0);
+      }
+    }
+  }, [propertyData, selectedSpaceIndex]);
+
   return (
     <View flex>
-      <PropertyDetailHeader
-        spaces={spaces}
-        address={property.location.address}
-        request="1" // TODO
-        selectedSpaceIndex={selectedSpaceIndex}
-        onPressSpace={(index: number) => {
-          setSelectedSpaceId(spaces[index].id);
-          setSelectedSpaceIndex(index);
-        }}
-        onPressAdd={() => {
-          history.push(`/landlord/add-space/step-1`, {
-            propertyId: params.paramsId,
-            address: property.location.address,
-          });
-        }}
-      />
+      {!propertyLoading && propertyData && (
+        <PropertyDetailHeader
+          spaces={propertyData.property.space}
+          address={propertyData.property.location.address}
+          request="1" // TODO
+          selectedSpaceIndex={selectedSpaceIndex}
+          onPressSpace={(index: number) => {
+            if (propertyData?.property.space[index].id) {
+              setSelectedSpaceId(propertyData.property.space[index].id);
+            }
+            setSelectedSpaceIndex(index);
+          }}
+          onPressAdd={() => {
+            history.push(`/landlord/add-space/step-1`, {
+              propertyId: params.paramsId,
+              address: propertyData?.property.location.address || '',
+            });
+          }}
+        />
+      )}
+
       <PropertyDetailsCard>
         <PropertyDetailSegment
           selectedTabIndex={selectedTabIndex}
           onPress={(index: number) => setSelectedTabIndex(index)}
+          noSpaces={propertyData?.property.space.length === 0}
         />
         {isTenantMatchSelected ? (
           <ContentWrapper>
@@ -104,7 +131,7 @@ export default function LandlordPropertyDetails() {
         ) : isLocationDetailSelected ? (
           <LandlordLocationDetails />
         ) : isManageSpaceSelected ? (
-          <LandlordManageSpace spaceId={selectedSpaceId} />
+          <LandlordManageSpace spaceIndex={selectedSpaceIndex} propertyId={params.paramsId} />
         ) : isManagePropertySelected ? (
           <LandlordManageProperty />
         ) : null}
