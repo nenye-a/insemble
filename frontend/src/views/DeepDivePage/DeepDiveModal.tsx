@@ -73,7 +73,7 @@ export default function LocationDeepDiveModal(props: Props) {
   //   }
   // };
 
-  let noPropertyDetail = !data?.locationDetails.propertyDetails;
+  let noPropertyDetail = !data?.locationDetails.spaceDetails;
 
   return (
     <DeepDiveContext.Provider
