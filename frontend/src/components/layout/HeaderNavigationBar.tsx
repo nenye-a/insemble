@@ -71,7 +71,12 @@ export default function HeaderNavigationBar(props: Props) {
     <Container>
       <TouchableOpacity
         onPress={() => {
-          history.push('/');
+          if (role === Role.TENANT) {
+            history.push('/');
+          }
+          if (role === Role.LANDLORD) {
+            history.push('/landlord/signup');
+          }
         }}
       >
         <InsembleLogo color="purple" />
@@ -79,7 +84,12 @@ export default function HeaderNavigationBar(props: Props) {
       {profileInfo.id ? (
         <TouchableOpacity
           onPress={() => {
-            history.push('/user/edit-profile');
+            if (role === Role.TENANT) {
+              history.push('/user/edit-profile');
+            }
+            if (role === Role.LANDLORD) {
+              history.push('/landlord/edit-profile');
+            }
           }}
         >
           <Avatar size="small" image={profileInfo.avatar || ''} />
