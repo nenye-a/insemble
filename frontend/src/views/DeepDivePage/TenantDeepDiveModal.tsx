@@ -64,8 +64,6 @@ export default function TenantDeepDiveModal(props: Props) {
           <ScrollView flex onScroll={handleOnScroll}>
             <View style={{ backgroundColor: WHITE }}>
               <PropertyDeepDiveHeader
-                isLiked
-                onLikePress={() => {}}
                 brandId={brandId}
                 matchScore={matchScore}
                 address={data?.tenantDetail.name || ''}

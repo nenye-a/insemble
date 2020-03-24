@@ -22,7 +22,7 @@ type SelectedLocation = { lat: string; lng: string; address: string; targetNeigh
 type DeepDiveContextType =
   | {
       result?: LocationDetailsLocationDetailsResult;
-      spaceDetails?: LocationDetailsLocationDetailsSpaceDetails | null;
+      spaceDetails?: Array<LocationDetailsLocationDetailsSpaceDetails>;
       selectedLocation?: SelectedLocation;
       categories?: Array<string>;
     }
@@ -44,7 +44,6 @@ type Props = {
 export default function LocationDeepDiveModal(props: Props) {
   let { brandId = '' } = useParams();
   let { visible, onClose, lat, lng, address, targetNeighborhood, categories, propertyId } = props;
-  let [isLiked, toggleIsLiked] = useState(false); // get value from backend
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   // let [headerShrink, setHeaderShrink] = useState(false);
   let isOverviewSelected = selectedTabIndex === 0;
@@ -75,13 +74,14 @@ export default function LocationDeepDiveModal(props: Props) {
   //   }
   // };
 
-  let noPropertyDetail = !data?.locationDetails.spaceDetails;
+  let noPropertyDetail =
+    !data?.locationDetails.spaceDetails || data?.locationDetails.spaceDetails.length === 0;
 
   return (
     <DeepDiveContext.Provider
       value={{
         ...data?.locationDetails,
-        spaceDetails: data?.locationDetails.spaceDetails[0],
+        spaceDetails: data?.locationDetails.spaceDetails,
         selectedLocation: {
           lat,
           lng,
@@ -138,8 +138,6 @@ export default function LocationDeepDiveModal(props: Props) {
                   <PropertyDeepDiveHeader
                     matchScore={data?.locationDetails.result.matchValue || 0}
                     brandId={brandId}
-                    isLiked={isLiked}
-                    onLikePress={toggleIsLiked}
                     address={address}
                     targetNeighborhood={targetNeighborhood}
                   />
