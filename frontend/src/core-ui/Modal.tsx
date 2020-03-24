@@ -28,7 +28,7 @@ export default function Modal({
 }: Props) {
   if (visible) {
     return ReactDOM.createPortal(
-      <Overlay style={overlayStyle} onClick={onClose}>
+      <Overlay style={overlayStyle}>
         <ModalDialog backgroundColor={backgroundColor} aria-modal role="dialog" {...otherProps}>
           <CloseIcon onPress={onClose} style={iconContainerStyle}>
             <SvgClose {...svgCloseProps} />
