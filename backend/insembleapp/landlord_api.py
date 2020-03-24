@@ -35,28 +35,21 @@ class PropertyTenantAPI(AsynchronousAPI):
             property_id: string                 (required -> not required if address and property type are added)
             address: string,                    (required -> not required if property_id is provided)
             property_type: list[string],        (required -> not required if property_id is provided)
-            logo: string (url),                 (ignored if property_id provided)
-            owning_organization: string,        (ignored if property_id provided)
-            target_categories: list[string],    (ignored if property_id provided)
-            exclusives: list[string],           (ignored if property_id provided)
+            logo: string (url),                 (will update property associated with propety_id if property_id is provided)
+            owning_organization: string,        (will update property associated with propety_id if property_id is provided)
+            target_categories: list[string],    (will update property associated with propety_id if property_id is provided)
+            exclusives: list[string],           (will update property associated with propety_id if property_id is provided)
 
             # Space related fields
             space_id: string                    (optional)
             sqft: int,                          (required)
             tenant_type: list[string],          (required)
-            space_condition: list[string],
-            asking_rent: int,
-            divisible: boolean,
-            divisible_sqft: list[int],
-            pro: boolean,
-            visible: boolean,
-            media: {                           # NOTE: might be removed due to redundancy
-                photos: {
-                    main: url_string,
-                    other: list[url_string]
-                },
-                tour: url_string (matterport)
-            }
+            space_condition: list[string],      (will update space associated with space_id if space_id is provided)
+            asking_rent: int,                   (will update space associated with space_id if space_id is provided)
+            divisible: boolean,                 (will update space associated with space_id if space_id is provided)
+            divisible_sqft: list[int],          (will update space associated with space_id if space_id is provided)
+            pro: boolean,                       (will update space associated with space_id if space_id is provided)
+            visible: boolean
         }
 
         response: {
@@ -609,22 +602,3 @@ class TenantDetailsAPI(AsynchronousAPI):
             '3mile': provider.get_demographics(1, 1, 1, demographic_dict=demographic_dict['3mile']),
             '5mile': provider.get_demographics(1, 1, 1, demographic_dict=demographic_dict['5mile'])
         }
-
-
-class UpdateSpaceBrandsAPI(AsynchronousAPI):
-    """
-
-    This endpoint will return an updated list of brands for a particular space.
-
-    parameters: {
-        property_id: string,                (required)
-        space_id: string,                   (required)
-    }
-
-    response: {
-    }
-
-
-    """
-
-    pass
