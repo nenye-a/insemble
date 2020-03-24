@@ -79,6 +79,7 @@ export default function LocationDeepDiveModal(props: Props) {
     <DeepDiveContext.Provider
       value={{
         ...data?.locationDetails,
+        spaceDetails:data?.locationDetails.spaceDetails[0],
         selectedLocation: {
           lat,
           lng,

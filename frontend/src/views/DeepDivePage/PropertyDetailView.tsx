@@ -10,8 +10,8 @@ import { DeepDiveContext } from './DeepDiveModal';
 
 export default function PropertyDetailView() {
   let contextValue = useContext(DeepDiveContext);
-  if (contextValue?.spaceDetails[0]) {
-    let { mainPhoto, photos, sqft, summary, description } = contextValue.spaceDetails[0];
+  if (contextValue?.spaceDetails) {
+    let { mainPhoto, photos, sqft, summary, description } = contextValue.spaceDetails;
     return (
       <RowedView flex>
         <PhotoGallery images={[...mainPhoto, ...photos]} />
