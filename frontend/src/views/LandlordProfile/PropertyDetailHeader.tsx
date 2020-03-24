@@ -50,7 +50,7 @@ export default function PropertyDetailHeader({
           text="Back To Properties"
           icon={<SvgArrowBack style={{ color: THEME_COLOR }} />}
           onPress={() => {
-            history.goBack();
+            history.push('/landlord/properties');
           }}
           textProps={{ style: { marginLeft: 8 } }}
         />

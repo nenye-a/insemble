@@ -2,24 +2,29 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { View, Text, Avatar } from '../../core-ui';
-import { THEME_COLOR, BACKGROUND_COLOR } from '../../constants/colors';
 import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
+import { FONT_WEIGHT_MEDIUM } from '../../constants/theme';
 
 type Props = {
   avatar?: string | null;
   message: string;
+  header?: string;
 };
 
-export default function ReceivedMessage({ avatar, message }: Props) {
+export default function SentMessage({ avatar, message, header }: Props) {
   return (
-    <MessageContainer>
-      <ReplyAvatarContainer flex />
-      <ReceivedMessageContainer style={{ flex: 8 }}>
+    <MessageContainer flex>
+      <ReplyAvatarContainer flex>
+        <Avatar size="medium" image={avatar || imgPlaceholder} />
+      </ReplyAvatarContainer>
+      <SentMessageContainer style={{ flex: 8 }}>
+        {header ? (
+          <Text style={{ marginBottom: 12 }} fontWeight={FONT_WEIGHT_MEDIUM}>
+            {header}
+          </Text>
+        ) : null}
         <Text>{message}</Text>
-        <AvatarContainer>
-          <Avatar size="medium" image={avatar || imgPlaceholder} />
-        </AvatarContainer>
-      </ReceivedMessageContainer>
+      </SentMessageContainer>
     </MessageContainer>
   );
 }
@@ -33,16 +38,6 @@ const MessageContainer = styled(RowedView)`
   align-items: center;
 `;
 
-const ReceivedMessageContainer = styled(View)`
-  padding: 16px 18px;
-  border-left: ${THEME_COLOR} 2px solid;
-  background-color: ${BACKGROUND_COLOR};
-  margin: 12px 0;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-
 const AvatarContainer = styled(View)`
   padding: 0 24px;
 `;
@@ -50,4 +45,8 @@ const AvatarContainer = styled(View)`
 const ReplyAvatarContainer = styled(AvatarContainer)`
   justify-content: center;
   align-items: center;
+`;
+
+const SentMessageContainer = styled(View)`
+  padding: 12px 18px 12px 0;
 `;

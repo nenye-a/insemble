@@ -101,6 +101,7 @@ const CardsContainer = styled(View)`
 
 const GraphicContainer = styled(View)`
   margin: 0 14px;
+  overflow: scroll;
 `;
 const Iframe = styled.iframe`
   display: block;
