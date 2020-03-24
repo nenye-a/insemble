@@ -9,15 +9,16 @@ type Props = Omit<ViewProps, 'onClick'> & {
   onStopPropagation?: boolean;
 };
 
-function Touchable(props: Props) {
-  let { onPress, href, onStopPropagation, ...otherProps } = props;
+export default function TouchableOpacity(props: Props) {
+  let { onPress, href, onStopPropagation, disabled, ...otherProps } = props;
   let isLink = href != null;
   let isLocalLink = isLink && isLocalURL(href);
   return (
-    <View
+    <Touchable
       as={isLink ? 'a' : undefined}
       href={href}
       target={isLink && !isLocalLink ? '_blank' : undefined}
+      disabled={disabled}
       {...otherProps}
       onClick={(event: MouseEvent) => {
         if (onStopPropagation) {
@@ -26,7 +27,7 @@ function Touchable(props: Props) {
         if (isLocalLink && !(event.metaKey || event.ctrlKey)) {
           event.preventDefault();
         }
-        if (onPress) {
+        if (onPress && !disabled) {
           onPress();
         }
       }}
@@ -46,19 +47,21 @@ let linkStyles = css`
   }
 `;
 
-export default styled(Touchable)`
+const Touchable = styled(View)<ViewProps>`
   touch-action: manipulation;
   cursor: pointer;
   user-select: none;
   transition-property: opacity;
   transition-duration: 0.15s;
   ${(props) => (props.href == null ? undefined : linkStyles)}
+  ${(props) =>
+    props.disabled &&
+    css`
+      pointer-events: none;
+      cursor: default;
+    `}
   &:active {
     opacity: 0.5;
-  }
-  &:disabled {
-    opacity: 1;
-    cursor: default;
   }
 `;
 

@@ -51,3 +51,35 @@ export const EDIT_PROPERTY = gql`
     editProperty(property: $property, propertyId: $propertyId)
   }
 `;
+
+export const GET_PROPERTY = gql`
+  query Property($propertyId: String!) {
+    property(propertyId: $propertyId) {
+      id
+      businessType
+      propertyId
+      categories
+      exclusive
+      location {
+        lat
+        lng
+        address
+      }
+      marketingPreference
+      propertyType
+      name
+      userRelations
+      space {
+        id
+        available
+        equipment
+        photos
+        condition
+        sqft
+        pricePerSqft
+        mainPhoto
+        description
+      }
+    }
+  }
+`;

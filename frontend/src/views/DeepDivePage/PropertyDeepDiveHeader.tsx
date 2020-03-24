@@ -45,7 +45,7 @@ export default function PropertyDeepDiveHeader({
           </TouchableOpacity>
           <Button
             text="Connect"
-            onPress={clickable ? () => toggleContactModalVisibility(true) : null}
+            onPress={clickable ? () => toggleContactModalVisibility(true) : undefined}
           />
           {brandId && (
             <ContactModal

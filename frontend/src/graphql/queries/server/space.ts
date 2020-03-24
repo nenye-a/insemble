@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const GET_SPACE = gql`
-  query GetSpace($spaceId: ID!) {
+  query GetSpace($spaceId: String!) {
     space(spaceId: $spaceId) {
       id
       available

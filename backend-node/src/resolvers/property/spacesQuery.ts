@@ -1,4 +1,4 @@
-import { queryField, FieldResolver, idArg } from 'nexus';
+import { queryField, FieldResolver, stringArg } from 'nexus';
 import { Context } from 'serverTypes';
 
 let spaceResolver: FieldResolver<'Query', 'space'> = async (
@@ -21,7 +21,7 @@ let space = queryField('space', {
   type: 'Space',
   resolve: spaceResolver,
   args: {
-    spaceId: idArg({ required: true }),
+    spaceId: stringArg({ required: true }),
   },
 });
 

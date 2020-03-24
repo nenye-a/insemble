@@ -19,36 +19,33 @@ import {
 import { FileWithPreview } from '../../core-ui/Dropzone';
 import PhotosPicker from '../LandlordOnboardingPage/PhotosPicker';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
-import { FONT_SIZE_LARGE } from '../../constants/theme';
-import { WHITE } from '../../constants/colors';
+import {
+  FONT_SIZE_LARGE,
+  FONT_WEIGHT_LIGHT,
+  FONT_SIZE_SMALL,
+  FONT_WEIGHT_BOLD,
+} from '../../constants/theme';
+import { WHITE, THEME_COLOR } from '../../constants/colors';
 import { getImageBlob, dateFormatter } from '../../utils';
-import { GET_SPACE, EDIT_SPACE } from '../../graphql/queries/server/space';
+import { EDIT_SPACE, DELETE_SPACE } from '../../graphql/queries/server/space';
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
 import { Equipments } from '../../generated/Equipments';
-import { GetSpace, GetSpaceVariables } from '../../generated/GetSpace';
 import { PhotoFile } from '../../types/types';
+import { Popup } from '../../components';
+import { GET_PROPERTY, GET_PROPERTIES } from '../../graphql/queries/server/properties';
+import { Property, PropertyVariables } from '../../generated/Property';
+import { DeleteSpace, DeleteSpaceVariables } from '../../generated/DeleteSpace';
 
 type Props = {
-  spaceId: string;
+  spaceIndex: number;
+  propertyId: string;
 };
 
 export default function LandlordManageSpace(props: Props) {
-  let { spaceId } = props;
-  let {
-    data: spaceData,
-    error: spaceError,
-    loading: spaceLoading,
-    refetch: spaceRefetch,
-  } = useQuery<GetSpace, GetSpaceVariables>(GET_SPACE, {
-    variables: { spaceId },
-  });
-
-  let [
-    editSpace,
-    { data: editSpaceData, loading: editSpaceLoading, error: editSpaceError },
-  ] = useMutation(EDIT_SPACE);
+  let { spaceIndex, propertyId } = props;
   let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
-  let { register, errors, handleSubmit } = useForm();
+  let { register, errors, handleSubmit, reset } = useForm();
+  let [removeConfirmationVisible, setRemoveConfirmationVisible] = useState(false);
   let [selectedCondition, setSelectedCondition] = useState('');
   let [description, setDescription] = useState('');
   let [selectedEquipment, setSelectedEquipment] = useState<Array<string>>([]);
@@ -56,6 +53,23 @@ export default function LandlordManageSpace(props: Props) {
   let [additionalPhotos, setAdditionalPhotos] = useState<Array<string | FileWithPreview | null>>(
     []
   );
+  let {
+    data: propertyData,
+    error: propertyError,
+    loading: propertyLoading,
+    refetch: propertyRefetch,
+  } = useQuery<Property, PropertyVariables>(GET_PROPERTY, {
+    variables: { propertyId },
+  });
+
+  let [
+    editSpace,
+    { data: editSpaceData, loading: editSpaceLoading, error: editSpaceError },
+  ] = useMutation(EDIT_SPACE);
+  let [removeSpace, { loading: removeSpaceLoading, error: removeSpaceError }] = useMutation<
+    DeleteSpace,
+    DeleteSpaceVariables
+  >(DELETE_SPACE);
 
   let today = new Date().toISOString().slice(0, 10);
   let errorMessage = editSpaceError ? editSpaceError.message : '';
@@ -75,11 +89,17 @@ export default function LandlordManageSpace(props: Props) {
       }
     }
     let newMainPhotoUrl =
-      typeof mainPhoto === 'string' && mainPhoto === spaceData?.space.mainPhoto ? mainPhoto : null;
+      typeof mainPhoto === 'string' &&
+      mainPhoto === propertyData?.property.space[spaceIndex].mainPhoto
+        ? mainPhoto
+        : null;
 
-    let newPhotoUrls = spaceData?.space.photos.filter((item) => additionalPhotos.includes(item));
+    let newPhotoUrls = propertyData?.property.space[spaceIndex].photos.filter((item) =>
+      additionalPhotos.includes(item)
+    );
 
     if (allValid) {
+      let spaceId = propertyData?.property.space[spaceIndex].id;
       editSpace({
         variables: {
           spaceId,
@@ -98,25 +118,34 @@ export default function LandlordManageSpace(props: Props) {
         },
         refetchQueries: [
           {
-            query: GET_SPACE,
+            query: GET_PROPERTY,
+            variables: {
+              propertyId,
+            },
+          },
+          {
+            query: GET_PROPERTIES,
           },
         ],
+        awaitRefetchQueries: true,
       });
     }
   };
 
   useEffect(() => {
-    // populate state with previous values when fetching is finished
-    if (!spaceLoading && spaceData) {
+    // reset form input
+    reset();
+    // populate state with previous values when fetching is finished or spaceIndex changed
+    if (!propertyLoading && propertyData) {
+      let { space } = propertyData.property;
       let {
-        space: {
-          photos: prevPhotos,
-          mainPhoto: prevMainPhoto,
-          condition: prevCondition,
-          description: prevDescription,
-          equipment: prevEquipment,
-        },
-      } = spaceData;
+        photos: prevPhotos,
+        mainPhoto: prevMainPhoto,
+        condition: prevCondition,
+        description: prevDescription,
+        equipment: prevEquipment,
+      } = space[spaceIndex];
+
       let newPhotos: Array<string | null> = [...prevPhotos];
       while (newPhotos.length < 4) {
         newPhotos.push(null);
@@ -128,17 +157,68 @@ export default function LandlordManageSpace(props: Props) {
       setSelectedEquipment(prevEquipment);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spaceLoading]);
+  }, [propertyLoading, spaceIndex]);
+
+  let onRemoveSpace = () => {
+    let spaceId = propertyData?.property.space[spaceIndex].id;
+
+    if (spaceId) {
+      removeSpace({
+        variables: {
+          spaceId,
+        },
+        refetchQueries: [
+          {
+            query: GET_PROPERTY,
+            variables: {
+              propertyId,
+            },
+          },
+          {
+            query: GET_PROPERTIES,
+          },
+        ],
+        awaitRefetchQueries: true,
+      });
+      setRemoveConfirmationVisible(false);
+    }
+  };
+
+  let closeDeleteConfirmation = () => {
+    setRemoveConfirmationVisible(false);
+  };
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Container>
+        <Popup
+          visible={removeConfirmationVisible}
+          title="Remove Space"
+          bodyText="Are you sure you want to remove this space?"
+          buttons={[
+            { text: 'Yes', onPress: onRemoveSpace },
+            { text: 'No', onPress: closeDeleteConfirmation },
+          ]}
+          onClose={closeDeleteConfirmation}
+        />
         <Alert visible={!!editSpaceData} text="Your profile has been updated" />
         <Alert visible={!!editSpaceError} text={errorMessage} />
-        {spaceLoading ? (
+        <Alert visible={!!removeSpaceError} text={removeSpaceError?.message || ''} />
+        <Alert visible={!!propertyError} text={propertyError?.message || ''} />
+        {removeSpaceLoading || propertyLoading ? (
           <LoadingIndicator />
-        ) : spaceData?.space ? (
+        ) : propertyData?.property.space && propertyData.property.space.length > 0 ? (
           <>
+            <RowView flex>
+              <SpaceText>Space {spaceIndex + 1}</SpaceText>
+              <TotalSpace>of {propertyData.property.space.length}</TotalSpace>
+              <RemoveButton
+                text="Remove Space"
+                onPress={() => {
+                  setRemoveConfirmationVisible(true);
+                }}
+              />
+            </RowView>
             <PhotosPicker
               mainPhoto={mainPhoto}
               onMainPhotoChange={(file: PhotoFile) => {
@@ -173,7 +253,7 @@ export default function LandlordManageSpace(props: Props) {
               label="Sqft"
               name="sqft"
               placeholder="0"
-              defaultValue={spaceData?.space.sqft}
+              defaultValue={propertyData.property.space[spaceIndex]?.sqft}
               ref={register({
                 required: 'Sqft should not be empty',
               })}
@@ -184,7 +264,7 @@ export default function LandlordManageSpace(props: Props) {
               label="Price/Sqft"
               name="price"
               placeholder="$0"
-              defaultValue={spaceData?.space.pricePerSqft}
+              defaultValue={propertyData.property.space[spaceIndex]?.pricePerSqft}
               ref={register({
                 required: 'Price/Sqft should not be empty',
               })}
@@ -207,7 +287,9 @@ export default function LandlordManageSpace(props: Props) {
               type="date"
               name="date"
               min={today.slice(0, 10)}
-              defaultValue={spaceData?.space.available.slice(0, 10) || today}
+              defaultValue={
+                propertyData?.property.space[spaceIndex]?.available.slice(0, 10) || today
+              }
               ref={register({
                 required: 'Date should not be empty',
               })}
@@ -216,8 +298,8 @@ export default function LandlordManageSpace(props: Props) {
           </>
         ) : (
           <CenteredView flex>
-            <Text fontSize={FONT_SIZE_LARGE}>{spaceError?.message || ''}</Text>
-            <Button text="Try Again" onPress={spaceRefetch} />
+            <Text fontSize={FONT_SIZE_LARGE}>{propertyError?.message || ''}</Text>
+            <Button text="Try Again" onPress={propertyRefetch} />
           </CenteredView>
         )}
       </Container>
@@ -227,6 +309,7 @@ export default function LandlordManageSpace(props: Props) {
     </Form>
   );
 }
+
 const Container = styled(View)`
   padding: 12px 24px;
   z-index: 1;
@@ -248,7 +331,32 @@ const Features = styled(MultiSelectInput)`
 const DatePicker = styled(TextInput)`
   width: 300px;
 `;
+
 const CenteredView = styled(View)`
   justify-content: center;
   align-items: center;
+`;
+
+const RowView = styled(View)`
+  flex-direction: row;
+  align-items: center;
+  margin: 10px 0;
+`;
+
+const SpaceText = styled(Text)`
+  color: ${THEME_COLOR};
+  font-weight: ${FONT_WEIGHT_BOLD};
+  font-size: ${FONT_SIZE_LARGE};
+`;
+
+const TotalSpace = styled(Text)`
+  margin: 0 0 0 8px;
+  font-style: italic;
+  font-weight: ${FONT_WEIGHT_LIGHT};
+  font-size: ${FONT_SIZE_SMALL};
+`;
+
+const RemoveButton = styled(Button)`
+  position: absolute;
+  right: 0;
 `;

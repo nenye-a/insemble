@@ -39,7 +39,7 @@ export let deleteSpaceResolver: FieldResolver<
   if (pySpaceId && pyPropertyId) {
     let resultStatus = (
       await axios.delete(
-        `${LEGACY_API_URI}/api/propertyTenants/${pyPropertyId}/${pySpaceId}/`,
+        `${LEGACY_API_URI}/api/propertyTenants/${pyPropertyId}/${pySpaceId}`,
       )
     ).status;
     if (resultStatus !== 304 && resultStatus !== 200) {
