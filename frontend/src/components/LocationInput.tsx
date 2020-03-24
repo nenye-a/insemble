@@ -6,7 +6,9 @@ import React, {
   RefObject,
   CSSProperties,
 } from 'react';
+import { useLazyQuery } from '@apollo/react-hooks';
 
+import { GOOGLE_PLACE } from '../graphql/queries/server/place';
 import { TextInput } from '../core-ui';
 import { useGoogleMaps } from '../utils';
 
@@ -34,11 +36,31 @@ export default function LocationInput(props: Props) {
   let { placeholder, onPlaceSelected, label, containerStyle, ...otherProps } = props;
   let inputRef = useRef<HTMLInputElement | null>(null);
   let selectedPlace = useRef<PlaceResult | null>(null);
+
+  let [getPlace] = useLazyQuery(GOOGLE_PLACE, {
+    variables: {
+      address: inputRef.current?.value,
+    },
+    onCompleted: (data) => {
+      let { id, formattedAddress, name, location } = data;
+      let { lat, lng } = location;
+      onPlaceSelected &&
+        onPlaceSelected({
+          id: id || '',
+          name,
+          address: formattedAddress || '',
+          lat,
+          lng,
+        });
+    },
+  });
+
   let submitHandler = useCallback(() => {
     if (selectedPlace.current) {
       let { formatted_address: formattedAddress, geometry, name, id } = selectedPlace.current;
       if (geometry) {
         let { lat, lng } = geometry.location;
+
         onPlaceSelected &&
           onPlaceSelected({
             id: id || '',
@@ -47,9 +69,11 @@ export default function LocationInput(props: Props) {
             lat: lat().toString() || '',
             lng: lng().toString() || '',
           });
+      } else {
+        getPlace();
       }
     }
-  }, [onPlaceSelected]);
+  }, [onPlaceSelected, getPlace]);
 
   useEffect(() => {
     if (!isLoading && inputRef.current) {
