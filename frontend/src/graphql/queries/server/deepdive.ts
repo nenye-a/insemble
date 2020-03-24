@@ -150,7 +150,7 @@ export const GET_LOCATION_DETAILS = gql`
           similar
         }
       }
-      propertyDetails {
+      spaceDetails {
         tour3D
         mainPhoto
         sqft
