@@ -12,12 +12,12 @@ import SvgReply from '../components/icons/reply';
 import { Conversation, ConversationVariables } from '../generated/Conversation';
 import {
   GET_CONVERSATION,
-  CREATE_CONVERSATION,
+  SEND_MESSAGE,
   GET_CONVERSATIONS,
 } from '../graphql/queries/server/message';
-import { CreateConversation, CreateConversationVariables } from '../generated/CreateConversation';
 import { SenderRole } from '../generated/globalTypes';
 import { ReceivedMessage, SentMessage, ReplyMessageBox } from '../components/message';
+import { SendMessage, SendMessageVariables } from '../generated/SendMessage';
 
 type Params = {
   conversationId: string;
@@ -37,23 +37,17 @@ export default function LandlordMessageDetail() {
     },
   });
 
-  let [createConversation, { loading }] = useMutation<
-    CreateConversation,
-    CreateConversationVariables
-  >(CREATE_CONVERSATION, {
+  let [sendMessage, { loading }] = useMutation<SendMessage, SendMessageVariables>(SEND_MESSAGE, {
     refetchQueries: [
-      { query: GET_CONVERSATION, variables: { conversationId: conversation?.conversation.id } },
-      { query: GET_CONVERSATIONS },
+      {
+        query: GET_CONVERSATIONS,
+      },
     ],
   });
-
   let onReply = () => {
-    createConversation({
+    sendMessage({
       variables: {
-        brandId: conversation?.conversation.brand.tenantId || '',
-        spaceId: conversation?.conversation.space.id || '',
-        matchScore: conversation?.conversation.matchScore || 0,
-        header: conversation?.conversation.header || '',
+        conversationId: params.conversationId,
         messageInput: {
           message: reply,
           senderRole: SenderRole.LANDLORD,

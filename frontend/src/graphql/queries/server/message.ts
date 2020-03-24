@@ -18,6 +18,26 @@ export const CREATE_CONVERSATION = gql`
   }
 `;
 
+export const CREATE_PENDING_CONVERSATION = gql`
+  mutation CreatePendingConversation(
+    $brandId: String!
+    $spaceId: String!
+    $receiverContact: ReceiverContactInput!
+    $matchScore: Float!
+    $header: String!
+    $messageInput: MessageInput!
+  ) {
+    createPendingConversation(
+      brandId: $brandId
+      spaceId: $spaceId
+      receiverContact: $receiverContact
+      matchScore: $matchScore
+      header: $header
+      messageInput: $messageInput
+    )
+  }
+`;
+
 export const SEND_MESSAGE = gql`
   mutation SendMessage($conversationId: String!, $messageInput: MessageInput!) {
     sendMessage(conversationId: $conversationId, messageInput: $messageInput)
