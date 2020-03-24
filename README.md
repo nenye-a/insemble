@@ -75,6 +75,8 @@ insemble
 
 ### Installation & Running
 
+If you've already installed the system, please skip this section and go to the **Re-running** section.
+
 To set-up and platform on your system
 
 - Clone repository
@@ -113,14 +115,26 @@ Start the python backend:
 Start the node backend (refer to backend-node folder readme for more information):
 
 - go to the backend node folder:`cd backend-node`
-- Ensure that you have your docker process running: `docker-compose up -d` (you may have to kill any existing docker processes running on the port).
+- Ensure that you have your docker process running: `docker-compose up -d` (you may have to kill any existing docker processes running on the port). If you already have this process running, there's no need to re-run this command.
 - Migrate your database to local: `prisma2 migrate up --experimental`
 - Start the backend server: `yarn start:watch`
 
-Start the front-end process
+Start the frontend process
 - In the insemble root folder:
 - After node backend process has started, generate code using `npm run apollo:generate`
 - In seperate command line run `npm start`
+
+#### Re-Running
+
+To re-run the latest code:
+
+Ensure that you have the latest code and updates:
+1. In `backend` folder ensure that you've recently updated your python environment. If you haven't or run into dependency issues, either make sure you have your virtual environment enabled, or re-run the `pip install -r requirements.txt && pip install -r dev-requirements.txt`
+2. In `backend-node` folder run `yarn install` to ensure that the latest node dependencies have been updated. Please note that current backend is not compatible with node v13. If you have node v13, you are suggested to download nvm to switch to v12.
+3. In `insemble` folder run `npm install` to ensure that you have the latest code.
+4. Start the python backend (refer either to the backend text above "Start the python backend", or the `backend` ReadMe)
+5. Start the node backend (refer to the backend-node text above "Start the node backend")
+6. Start the frontend process
 
 ### Key Branches
 
