@@ -6,9 +6,12 @@ const BREAKPOINTS = {
 };
 
 export default function getViewportType(width: number) {
-  let { mobile } = BREAKPOINTS;
+  let { mobile, desktop } = BREAKPOINTS;
   if (width <= mobile.width) {
     return VIEWPORT_TYPE.MOBILE;
+  }
+  if (width > mobile.width && width < desktop.width) {
+    return VIEWPORT_TYPE.TABLET;
   } else {
     return VIEWPORT_TYPE.DESKTOP;
   }

@@ -1,8 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 
-import { View, Button, TextArea, Avatar } from '../../core-ui';
-import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
+import { View, Button, TextArea } from '../../core-ui';
 
 type Props = {
   avatar?: string | null;
@@ -12,12 +11,10 @@ type Props = {
   onReply: () => void;
 };
 
-export default function ReplyMessageBox({ avatar, onChange, reply, loading, onReply }: Props) {
+export default function ReplyMessageBox({ onChange, reply, loading, onReply }: Props) {
   return (
     <ReplyMessageContainer>
-      <ReplyAvatarContainer flex>
-        <Avatar size="medium" image={avatar || imgPlaceholder} />
-      </ReplyAvatarContainer>
+      <ReplyAvatarContainer flex />
       <View style={{ flex: 8 }}>
         <TextArea
           placeholder="Reply"
