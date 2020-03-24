@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { View, Text, TouchableOpacity, Button } from '../../core-ui';
+import { View, Text, Button } from '../../core-ui';
 import ContactModal from './ContactModal';
 import { FONT_SIZE_LARGE } from '../../constants/theme';
-import { THEME_COLOR } from '../../constants/colors';
-import SvgHeart from '../../components/icons/heart';
 
 type Props = {
-  isLiked?: boolean;
-  onLikePress?: (isLiked: boolean) => void;
   address: string;
   targetNeighborhood: string;
   brandId?: string;
@@ -18,8 +14,6 @@ type Props = {
 };
 
 export default function PropertyDeepDiveHeader({
-  isLiked,
-  onLikePress,
   address,
   targetNeighborhood,
   brandId,
@@ -37,12 +31,6 @@ export default function PropertyDeepDiveHeader({
       </View>
       {showConnect ? (
         <>
-          <TouchableOpacity
-            onPress={() => onLikePress && onLikePress(!isLiked)}
-            style={{ marginRight: 14 }}
-          >
-            <SvgHeart fill={isLiked ? THEME_COLOR : 'transparent'} />
-          </TouchableOpacity>
           <Button
             text="Connect"
             onPress={clickable ? () => toggleContactModalVisibility(true) : undefined}
