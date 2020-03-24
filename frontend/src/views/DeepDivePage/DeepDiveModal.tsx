@@ -12,7 +12,7 @@ import {
   LocationDetails,
   LocationDetailsVariables,
   LocationDetails_locationDetails_result as LocationDetailsLocationDetailsResult,
-  LocationDetails_locationDetails_spaceDetails as LocationDetailsLocationSpacePropertyDetails,
+  LocationDetails_locationDetails_spaceDetails as LocationDetailsLocationDetailsSpaceDetails,
 } from '../../generated/LocationDetails';
 import { THEME_COLOR } from '../../constants/colors';
 import { FONT_SIZE_LARGE } from '../../constants/theme';
@@ -22,7 +22,7 @@ type SelectedLocation = { lat: string; lng: string; address: string; targetNeigh
 type DeepDiveContextType =
   | {
       result?: LocationDetailsLocationDetailsResult;
-      spaceDetails?: LocationDetailsLocationSpacePropertyDetails | null;
+      spaceDetails?: LocationDetailsLocationDetailsSpaceDetails | null;
       selectedLocation?: SelectedLocation;
       categories?: Array<string>;
     }
