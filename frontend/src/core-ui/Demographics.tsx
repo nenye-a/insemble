@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
 import SvgGreenArrow from '../components/icons/green-arrow';
 import SvgRedArrow from '../components/icons/red-arrow';
-import Card from './Card';
 import Legend from '../views/MapPage/Legend';
 import {
   HOVERED_LIST_ITEM_BG,
@@ -20,7 +19,9 @@ import {
   FONT_SIZE_NORMAL,
 } from '../constants/theme';
 import SegmentedControl from './SegmentedControl';
-import { View, Text } from '../core-ui';
+import View from './View';
+import Text from './Text';
+import Card from './Card';
 import { CarouselFilter } from '../components';
 import { roundDecimal, convertToKilos, formatSnakeCaseLabel } from '../utils';
 import { LocationDetails_locationDetails_result_demographics1 as LocationDetailsDemographics } from '../generated/LocationDetails';
@@ -145,11 +146,14 @@ export default function Graphic(props: Props) {
     <>
       <RowedView>
         <Title>Demographics</Title>
-        <Segmented
-          onPress={(index: number) => setActiveIndex(index)}
-          options={['1 mile', '3 miles', '5 miles']}
-          selectedIndex={activeIndex}
-        />
+        <RightTitleContainer>
+          <Text>Radius</Text>
+          <Segmented
+            onPress={(index: number) => setActiveIndex(index)}
+            options={['1 mile', '3 miles', '5 miles']}
+            selectedIndex={activeIndex}
+          />
+        </RightTitleContainer>
       </RowedView>
       <RowedView>
         <Legend barGraph={true} />
@@ -235,7 +239,12 @@ const ChartContainer = styled(View)`
   align-items: center;
 `;
 
+const RightTitleContainer = styled(View)`
+  flex-direction: row;
+  align-items: center;
+`;
 const Segmented = styled(SegmentedControl)`
+  margin-left: 12px;
   width: 230px;
 `;
 
