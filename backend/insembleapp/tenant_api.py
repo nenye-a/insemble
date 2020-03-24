@@ -265,7 +265,7 @@ class TenantMatchAPI(AsynchronousAPI):
             brand['average_environics_demographics'] = location['environics_demographics']
         if brand['average_spatial_psychographics'] == {}:
             brand['average_spatial_psychographics'] = location['spatial_psychographics']
-        if brand['average_arcgis_demographics'] == location['average_arcgis_demographics']:
+        if brand['average_arcgis_demographics'] == {}:
             brand['average_arcgis_demographics'] = location['arcgis_demographics']
         utils.DB_BRANDS.update_one({'_id': brand_id}, {'$set': brand})
 
