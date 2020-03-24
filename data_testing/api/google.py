@@ -1,11 +1,12 @@
 import sys
 import os
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)  # include data_testing
-
+import api.safe_request as safe_request
 from decouple import config
 import utils
-import safe_request
+
 import pprint
 import urllib
 
