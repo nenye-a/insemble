@@ -6,11 +6,11 @@ import React, {
   RefObject,
   CSSProperties,
 } from 'react';
+import { useLazyQuery } from '@apollo/react-hooks';
 
+import { GOOGLE_PLACE } from '../graphql/queries/server/place';
 import { TextInput } from '../core-ui';
 import { useGoogleMaps } from '../utils';
-import { PLACE } from '../graphql/queries/server/place';
-import { useLazyQuery } from '@apollo/react-hooks';
 
 type PlaceResult = google.maps.places.PlaceResult;
 type InputProps = ComponentProps<'input'>;
@@ -37,7 +37,7 @@ export default function LocationInput(props: Props) {
   let inputRef = useRef<HTMLInputElement | null>(null);
   let selectedPlace = useRef<PlaceResult | null>(null);
 
-  let [getPlace] = useLazyQuery(PLACE, {
+  let [getPlace] = useLazyQuery(GOOGLE_PLACE, {
     variables: {
       address: inputRef.current?.value,
     },

@@ -7,13 +7,13 @@ import React, {
   ChangeEvent,
 } from 'react';
 import styled from 'styled-components';
+import { useLazyQuery } from '@apollo/react-hooks';
 
+import { GOOGLE_PLACE } from '../../graphql/queries/server/place';
+import { Place } from '../../generated/Place';
 import TextInput from '../../core-ui/ContainedTextInput';
 import { Label } from '../../core-ui';
 import { TEXT_INPUT_BORDER_COLOR } from '../../constants/colors';
-import { useLazyQuery } from '@apollo/react-hooks';
-import { PLACE } from '../../graphql/queries/server/place';
-import { Place } from '../../generated/Place';
 
 type PlaceResult = google.maps.places.PlaceResult;
 type InputProps = ComponentProps<'input'>;
@@ -32,7 +32,7 @@ function LocationsInput(props: Props) {
   let inputRef = useRef<HTMLInputElement | null>(null);
   let selectedPlace = useRef<PlaceResult | null>(null);
 
-  let [getPlace] = useLazyQuery<Place>(PLACE, {
+  let [getPlace] = useLazyQuery<Place>(GOOGLE_PLACE, {
     variables: {
       address: inputRef.current?.value,
     },
