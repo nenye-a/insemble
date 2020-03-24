@@ -72,11 +72,9 @@ export default function HeaderNavigationBar(props: Props) {
       <TouchableOpacity
         onPress={() => {
           if (role === Role.TENANT) {
-            console.log('tenant');
             history.push('/');
           }
           if (role === Role.LANDLORD) {
-            console.log('landlord');
             history.push('/landlord/signup');
           }
         }}
@@ -87,11 +85,9 @@ export default function HeaderNavigationBar(props: Props) {
         <TouchableOpacity
           onPress={() => {
             if (role === Role.TENANT) {
-              console.log('tenant');
               history.push('/user/edit-profile');
             }
             if (role === Role.LANDLORD) {
-              console.log('landlord');
               history.push('/landlord/edit-profile');
             }
           }}
