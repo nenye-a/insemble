@@ -3,14 +3,17 @@ import styled from 'styled-components';
 import { View, Text, Button } from '../../core-ui';
 import ContactModal from './ContactModal';
 import { FONT_SIZE_LARGE } from '../../constants/theme';
+import { PropertyMatches_propertyMatches_contacts as Contacts } from '../../generated/PropertyMatches';
 
 type Props = {
   address: string;
   targetNeighborhood: string;
   brandId?: string;
   matchScore?: number;
+  spaceId?: string;
   clickable?: boolean;
   showConnect?: boolean;
+  contacts?: Contacts;
 };
 
 export default function PropertyDeepDiveHeader({
@@ -18,11 +21,12 @@ export default function PropertyDeepDiveHeader({
   targetNeighborhood,
   brandId,
   matchScore,
+  spaceId,
+  contacts,
   clickable = true,
   showConnect = true,
 }: Props) {
   let [contactModalVisible, toggleContactModalVisibility] = useState(false);
-
   return (
     <Container>
       <View flex>
@@ -35,10 +39,12 @@ export default function PropertyDeepDiveHeader({
             text="Connect"
             onPress={clickable ? () => toggleContactModalVisibility(true) : undefined}
           />
-          {brandId && (
+          {brandId && spaceId && contacts && (
             <ContactModal
               matchScore={matchScore}
               brandId={brandId}
+              spaceId={spaceId}
+              contacts={contacts}
               visible={contactModalVisible}
               onClose={() => toggleContactModalVisibility(false)}
             />

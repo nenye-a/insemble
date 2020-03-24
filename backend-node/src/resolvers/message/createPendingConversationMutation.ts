@@ -1,4 +1,4 @@
-import { mutationField, FieldResolver, stringArg, intArg, arg } from 'nexus';
+import { mutationField, FieldResolver, stringArg, floatArg, arg } from 'nexus';
 
 import { Context } from 'serverTypes';
 import { NODE_ENV, HOST } from '../../constants/constants';
@@ -147,7 +147,7 @@ export let createPendingConversation = mutationField(
       brandId: stringArg({ required: true }),
       spaceId: stringArg({ required: true }),
       receiverContact: arg({ type: 'ReceiverContactInput', required: true }),
-      matchScore: intArg({ required: true }),
+      matchScore: floatArg({ required: true }),
       messageInput: arg({ type: 'MessageInput', required: true }),
       header: stringArg({ required: true }),
     },

@@ -102,3 +102,44 @@ export const REGISTER_LANDLORD = gql`
     }
   }
 `;
+
+export const REGISTER_LANDLORD_INVITATION = gql`
+  mutation RegisterLandlordInvitation($password: String!, $invitationCode: String!) {
+    registerLandlordInvitation(password: $password, invitationCode: $invitationCode) {
+      token
+      landlord {
+        id
+        email
+        firstName
+        lastName
+        avatar
+        company
+        tier
+        title
+        description
+      }
+    }
+  }
+`;
+
+export const REGISTER_TENANT_INVITATION = gql`
+  mutation RegisterTenantInvitation($password: String!, $invitationCode: String!) {
+    registerTenantInvitation(password: $password, invitationCode: $invitationCode) {
+      token
+      brandId
+      tenant {
+        id
+        email
+        firstName
+        lastName
+        avatar
+        company
+        description
+        title
+        tier
+        pendingEmail
+        stripeCustomerId
+      }
+    }
+  }
+`;

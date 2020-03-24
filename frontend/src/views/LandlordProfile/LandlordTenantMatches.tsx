@@ -11,13 +11,23 @@ import {
   DEFAULT_BORDER_RADIUS,
 } from '../../constants/theme';
 import { DARK_TEXT_COLOR, WHITE, SECONDARY_COLOR, THEME_COLOR } from '../../constants/colors';
-import { PropertyMatches_propertyMatches as PropertyMatchesProps } from '../../generated/PropertyMatches';
+import {
+  PropertyMatches_propertyMatches as PropertyMatchesProps,
+  PropertyMatches_propertyMatches_contacts as Contacts,
+} from '../../generated/PropertyMatches';
 import { EmptyDataComponent } from '../../components';
 import { roundDecimal, useViewport } from '../../utils';
 import { VIEWPORT_TYPE } from '../../constants/viewports';
 
+export type SelectedBrand = {
+  brandId: string;
+  tenantPhoto: string;
+  matchScore: number;
+  contacts: Contacts;
+};
+
 type Props = {
-  onPress: (selectedBrandId: string, selectedTenantPhoto: string, matchScore: number) => void;
+  onPress: (selectedData: SelectedBrand) => void;
   matchResult?: Array<PropertyMatchesProps>;
   loading: boolean;
 };
@@ -39,7 +49,14 @@ export default function LandlordTenantMatches({ onPress, matchResult, loading }:
               key={index}
               isInterested={item.interested}
               viewportType={viewportType}
-              onPress={() => onPress(item.brandId, item.pictureUrl, Number(matchScore))}
+              onPress={() =>
+                onPress({
+                  brandId: item.brandId,
+                  tenantPhoto: item.pictureUrl,
+                  matchScore: Number(matchScore),
+                  contacts: item.contacts[0],
+                })
+              }
             >
               {item.interested ? (
                 <InterestedContainer>

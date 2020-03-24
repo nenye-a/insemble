@@ -30,6 +30,10 @@ import LandlordMessageDetail from './views/LandlordMessageDetail';
 import ResetPasswordTenant from './views/ResetPasswordTenant';
 import ResetPasswordLandlord from './views/ResetPasswordLandlord';
 import NewBrand from './views/OnboardingPage/NewBrand';
+import RegisterByInvitationLandlord from './views/RegisterByInvitationLandlord';
+import RegisterByInvitationTenant from './views/RegisterByInvitationTenant';
+import RedirectLoginTenant from './views/RedirectLoginTenant';
+import RedirectLoginLandlord from './views/RedirectLoginLandlord';
 
 import { tenantAuthorization, landlordAuthorization } from './utils';
 
@@ -70,6 +74,26 @@ const COMMON_ROUTES = [
     path: '/forgot-password-submitted',
     layout: BasicLayout,
     component: ForgotPasswordSubmitted,
+  },
+  {
+    path: '/create-landlord-user-invitation/:pendConvId',
+    layout: BasicLayout,
+    component: RegisterByInvitationLandlord,
+  },
+  {
+    path: '/create-tenant-user-invitation/:pendConvId',
+    layout: BasicLayout,
+    component: RegisterByInvitationTenant,
+  },
+  {
+    path: '/redirect-login-tenant/:token',
+    layout: BasicLayout,
+    component: RedirectLoginTenant,
+  },
+  {
+    path: '/redirect-login-landlord/:token',
+    layout: BasicLayout,
+    component: RedirectLoginLandlord,
   },
 ];
 

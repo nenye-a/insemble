@@ -17,6 +17,7 @@ import { GET_PROPERTY_MATCHES_DATA } from '../graphql/queries/server/matches';
 import { GET_PROPERTY } from '../graphql/queries/server/properties';
 import { PropertyMatches, PropertyMatchesVariables } from '../generated/PropertyMatches';
 import { Property, PropertyVariables } from '../generated/Property';
+import { SelectedBrand } from './LandlordProfile/LandlordTenantMatches';
 
 enum Tab {
   TENANT_MATCH_INDEX,
@@ -32,12 +33,15 @@ type Params = {
 export default function LandlordPropertyDetails() {
   let history = useHistory();
   let params = useParams<Params>();
-  let [selectedBrandId, setSelectedBrandId] = useState('');
   let [selectedTabIndex, setSelectedTabIndex] = useState(Tab.TENANT_MATCH_INDEX);
   let [selectedSpaceIndex, setSelectedSpaceIndex] = useState(0);
   let [selectedSpaceId, setSelectedSpaceId] = useState('');
-  let [selectedTenantPhoto, setSelectedTenantPhoto] = useState('');
-  let [selectedMatchScore, setSelectedMatchScore] = useState(0);
+  let [selectedBrand, setSelectedBrand] = useState<SelectedBrand>({
+    tenantPhoto: '',
+    matchScore: 0,
+    brandId: '',
+    contacts: { __typename: 'ReceiverContact', name: '', email: '', phone: '', role: '' },
+  });
   let isTenantMatchSelected = selectedTabIndex === Tab.TENANT_MATCH_INDEX;
   let isLocationDetailSelected = selectedTabIndex === Tab.LOCATION_DETAIL_INDEX;
   let isManagePropertySelected = selectedTabIndex === Tab.MANAGE_PROPERTY_INDEX;
@@ -120,11 +124,8 @@ export default function LandlordPropertyDetails() {
             <LandlordTenantMatches
               loading={loading}
               matchResult={propertyMatches}
-              onPress={(selectedBrandId, tenantPhoto, matchScore) => {
-                setModalVisible(true),
-                  setSelectedBrandId(selectedBrandId),
-                  setSelectedTenantPhoto(tenantPhoto);
-                setSelectedMatchScore(matchScore);
+              onPress={(selectedBrand) => {
+                setModalVisible(true), setSelectedBrand(selectedBrand);
               }}
             />
           </ContentWrapper>
@@ -137,12 +138,11 @@ export default function LandlordPropertyDetails() {
         ) : null}
       </PropertyDetailsCard>
       <TenantDeepDiveModal
-        brandId={selectedBrandId}
-        matchScore={selectedMatchScore}
+        brand={selectedBrand}
+        spaceId={selectedSpaceId}
         propertyId={params.paramsId}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        tenantPhoto={selectedTenantPhoto}
       />
     </View>
   );

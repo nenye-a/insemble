@@ -10,20 +10,25 @@ import { GET_TENANT_DETAILS } from '../../graphql/queries/server/deepdive';
 import { useQuery } from '@apollo/react-hooks';
 import { TenantDetail, TenantDetailVariables } from '../../generated/TenantDetail';
 import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
+import { SelectedBrand } from '../LandlordProfile/LandlordTenantMatches';
 
 type Props = {
   visible: boolean;
   onClose: () => void;
-  brandId: string;
   propertyId: string;
-  tenantPhoto: string;
-  matchScore: number;
+  spaceId: string;
+  brand: SelectedBrand;
 };
 
 const SHRINK_HEIGHT = 160;
 
 export default function TenantDeepDiveModal(props: Props) {
-  let { visible, onClose, brandId, tenantPhoto, matchScore } = props;
+  let {
+    visible,
+    onClose,
+    spaceId,
+    brand: { brandId, tenantPhoto, matchScore, contacts },
+  } = props;
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [headerShrink, setHeaderShrink] = useState(false);
   let isOverviewSelected = selectedTabIndex === 0;
@@ -65,6 +70,8 @@ export default function TenantDeepDiveModal(props: Props) {
             <View style={{ backgroundColor: WHITE }}>
               <PropertyDeepDiveHeader
                 brandId={brandId}
+                spaceId={spaceId}
+                contacts={contacts}
                 matchScore={matchScore}
                 address={data?.tenantDetail.name || ''}
                 targetNeighborhood={data?.tenantDetail.category || ''}
