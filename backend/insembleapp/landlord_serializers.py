@@ -16,6 +16,7 @@ class PropertyTenantSerializer(serializers.Serializer):
         exclusives: list[string],           (ignored if property_id provided)
 
         # Space related fields
+        space_id
         space_condition: list[string],
         tenant_type: list[string],
         asking_rent: int,
@@ -37,14 +38,15 @@ class PropertyTenantSerializer(serializers.Serializer):
     """
 
     property_id = serializers.CharField(max_length=24, required=False)
+    space_id = serializers.CharField(max_length=24, required=False)
     address = serializers.CharField(max_length=300, required=False)
     property_type = serializers.JSONField(required=False)
     logo = serializers.CharField(max_length=500, required=False)
     owning_organization = serializers.CharField(max_length=500, required=False)
     target_categories = serializers.JSONField(required=False)
     exclusives = serializers.JSONField(required=False)
-    sqft = serializers.IntegerField()
-    tenant_type = serializers.JSONField()
+    sqft = serializers.IntegerField(required=False)
+    tenant_type = serializers.JSONField(required=False)
     space_condition = serializers.JSONField(required=False)
     asking_rent = serializers.IntegerField(required=False)
     divisible = serializers.BooleanField(required=False)
@@ -58,12 +60,23 @@ class PropertyTenantSerializer(serializers.Serializer):
         has_property_id = 'property_id' in data
         has_address = 'address' in data
         has_property_type = 'property_type' in data
+        has_space_id = 'space_id' in data
+        has_sqft = 'sqft' in data
+        has_tenant_type = 'tenant_type' in data
 
         error_message = {}
         if not (has_property_id or (has_address and has_property_type)):
             error_message['status'] = 400
-            error_message['status_detail'] = [
-                "Please provide either property_id or (address and property_type)"]
+            error_message['status_detail'] = error_message.get('status_detail', []).append(
+                "Please provide either property_id or (address and property_type)"
+            )
+
+        if not (has_space_id or (has_sqft and has_tenant_type)):
+            error_message['status_detail'] = error_message.get('status_detail', []).append(
+                "Please provide either space_id or (sqft and tenant_type)"
+            )
+
+        if len(error_message) > 0:
             raise serializers.ValidationError(error_message)
 
         return data
