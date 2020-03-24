@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
+
+import SegmentedControl from './SegmentedControl';
+import View from './View';
+import Text from './Text';
+import Card from './Card';
 import SvgGreenArrow from '../components/icons/green-arrow';
 import SvgRedArrow from '../components/icons/red-arrow';
 import Legend from '../views/MapPage/Legend';
@@ -18,10 +22,6 @@ import {
   FONT_FAMILY_NORMAL,
   FONT_SIZE_NORMAL,
 } from '../constants/theme';
-import SegmentedControl from './SegmentedControl';
-import View from './View';
-import Text from './Text';
-import Card from './Card';
 import { CarouselFilter } from '../components';
 import { roundDecimal, convertToKilos, formatSnakeCaseLabel } from '../utils';
 import { LocationDetails_locationDetails_result_demographics1 as LocationDetailsDemographics } from '../generated/LocationDetails';

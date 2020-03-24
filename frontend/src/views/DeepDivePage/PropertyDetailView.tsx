@@ -1,7 +1,7 @@
 import React, { useContext, useState, useMemo } from 'react';
 import styled from 'styled-components';
 
-import { View, SegmentedControl, Text, TabBar, TouchableOpacity } from '../../core-ui';
+import { View, SegmentedControl, TouchableOpacity } from '../../core-ui';
 import PhotoGallery from './PhotoGallery';
 import DescriptionCard from './DescriptionCard';
 import SummaryCard from './SummaryCard';
@@ -22,8 +22,6 @@ export default function PropertyDetailView() {
   }, [selectedTabIndex, contextValue]);
 
   if (contextValue?.spaceDetails) {
-    // let { mainPhoto, photos, sqft, summary, description } = contextValue.spaceDetails;
-
     let getSpaceTab = () => {
       if (contextValue?.spaceDetails) {
         return contextValue.spaceDetails.map((_, index) => `Space ${index + 1}`);
@@ -55,7 +53,6 @@ export default function PropertyDetailView() {
               <SummaryCard
                 priceSqft={selectedData.summary.pricePerSqft.toString() || ''}
                 sqft={selectedData.sqft.toString() || ''}
-                // giving and empty string since no backend data match
                 type={selectedData.summary.type.join(', ')}
                 tenacy=""
                 condition={selectedData.summary.condition}
