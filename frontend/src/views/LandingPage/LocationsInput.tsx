@@ -7,7 +7,10 @@ import React, {
   ChangeEvent,
 } from 'react';
 import styled from 'styled-components';
+import { useLazyQuery } from '@apollo/react-hooks';
 
+import { GOOGLE_PLACE } from '../../graphql/queries/server/place';
+import { Place } from '../../generated/Place';
 import TextInput from '../../core-ui/ContainedTextInput';
 import { Label } from '../../core-ui';
 import { TEXT_INPUT_BORDER_COLOR } from '../../constants/colors';
@@ -28,11 +31,27 @@ function LocationsInput(props: Props) {
   let { placeholder, buttonText, onSubmit, label, ...otherProps } = props;
   let inputRef = useRef<HTMLInputElement | null>(null);
   let selectedPlace = useRef<PlaceResult | null>(null);
+
+  let [getPlace] = useLazyQuery<Place>(GOOGLE_PLACE, {
+    variables: {
+      address: inputRef.current?.value,
+    },
+    onCompleted: (data) => {
+      let newData = (data as unknown) as PlaceResult;
+      onSubmit && onSubmit(newData);
+    },
+  });
+
   let submitHandler = useCallback(() => {
     if (selectedPlace.current) {
-      onSubmit && onSubmit(selectedPlace.current);
+      if (selectedPlace.current.geometry) {
+        onSubmit && onSubmit(selectedPlace.current);
+      } else {
+        getPlace();
+      }
     }
-  }, [onSubmit]);
+  }, [onSubmit, getPlace]);
+
   useEffect(() => {
     if (inputRef.current) {
       let autocomplete = new window.google.maps.places.Autocomplete(inputRef.current);

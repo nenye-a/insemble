@@ -21,6 +21,7 @@ import InsembleLogo from '../components/common/InsembleLogo';
 import { WHITE } from '../constants/colors';
 import { VIEWPORT_TYPE } from '../constants/viewports';
 import { FONT_SIZE_XXLARGE } from '../constants/theme';
+import { Place } from '../generated/Place';
 
 type LogoViewProps = ViewProps & {
   isDesktop?: boolean;
@@ -110,7 +111,7 @@ function Landing() {
           <LocationsInput
             placeholder="Enter your top retail address"
             buttonText="Go"
-            onSubmit={(place: google.maps.places.PlaceResult) => {
+            onSubmit={(place) => {
               let {
                 geometry,
                 formatted_address: formattedAddress,
@@ -131,6 +132,17 @@ function Landing() {
                     lng: longitude.toString(),
                   });
                 }
+              } else {
+                let newPlace = (place as unknown) as Place;
+                let { location, id, formattedAddress, name } = newPlace.place;
+                let { lat, lng } = location;
+                history.push('/verify/step-1', {
+                  id,
+                  name,
+                  formattedAddress,
+                  lat,
+                  lng,
+                });
               }
             }}
           />
