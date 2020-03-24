@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, ReactNode } from 'react';
+import View from './View';
 
-type Props = {
+type Props = ViewProps & {
   onClickAway: () => void;
   children: ReactNode;
 };
 
 export default function ClickAway(props: Props) {
-  let { children, onClickAway } = props;
+  let { children, onClickAway, ...otherProps } = props;
   let node = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -25,5 +26,9 @@ export default function ClickAway(props: Props) {
     };
   });
 
-  return <div ref={node}>{children}</div>;
+  return (
+    <View ref={node} {...otherProps}>
+      {children}
+    </View>
+  );
 }
