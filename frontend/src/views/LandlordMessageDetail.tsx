@@ -10,7 +10,11 @@ import SvgArrowBack from '../components/icons/arrow-back';
 import SvgInfoFilled from '../components/icons/info-filled';
 import SvgReply from '../components/icons/reply';
 import { Conversation, ConversationVariables } from '../generated/Conversation';
-import { GET_CONVERSATION, SEND_MESSAGE } from '../graphql/queries/server/message';
+import {
+  GET_CONVERSATION,
+  SEND_MESSAGE,
+  GET_CONVERSATIONS,
+} from '../graphql/queries/server/message';
 import { SenderRole } from '../generated/globalTypes';
 import { ReceivedMessage, SentMessage, ReplyMessageBox } from '../components/message';
 import { SendMessage, SendMessageVariables } from '../generated/SendMessage';
@@ -33,8 +37,13 @@ export default function LandlordMessageDetail() {
     },
   });
 
-  let [sendMessage, { loading }] = useMutation<SendMessage, SendMessageVariables>(SEND_MESSAGE);
-
+  let [sendMessage, { loading }] = useMutation<SendMessage, SendMessageVariables>(SEND_MESSAGE, {
+    refetchQueries: [
+      {
+        query: GET_CONVERSATIONS,
+      },
+    ],
+  });
   let onReply = () => {
     sendMessage({
       variables: {

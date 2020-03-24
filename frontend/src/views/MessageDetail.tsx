@@ -10,7 +10,11 @@ import imgPlaceholder from '../assets/images/image-placeholder.jpg';
 import SvgArrowBack from '../components/icons/arrow-back';
 import SvgInfoFilled from '../components/icons/info-filled';
 import { SenderRole } from '../generated/globalTypes';
-import { GET_CONVERSATION, SEND_MESSAGE } from '../graphql/queries/server/message';
+import {
+  GET_CONVERSATION,
+  SEND_MESSAGE,
+  GET_CONVERSATIONS,
+} from '../graphql/queries/server/message';
 import { Conversation, ConversationVariables } from '../generated/Conversation';
 import { ReplyMessageBox, ReceivedMessage, SentMessage } from '../components/message';
 import { SendMessage, SendMessageVariables } from '../generated/SendMessage';
@@ -32,7 +36,9 @@ export default function MessageDetail() {
       conversationId: params.conversationId,
     },
   });
-  let [sendMessage, { loading }] = useMutation<SendMessage, SendMessageVariables>(SEND_MESSAGE);
+  let [sendMessage, { loading }] = useMutation<SendMessage, SendMessageVariables>(SEND_MESSAGE, {
+    refetchQueries: [{ query: GET_CONVERSATIONS }],
+  });
 
   let onReply = () => {
     sendMessage({
