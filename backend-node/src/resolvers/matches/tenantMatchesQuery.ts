@@ -79,7 +79,7 @@ let tenantMatches = queryField('tenantMatches', {
         brand_id: newTenantId,
         match_id: newMatchId,
         matching_locations: newMatchingLocations,
-        matching_properties: rawMatchingProperties,
+        matching_properties: rawMatchingProperties = [],
       }: TenantMatchesType = (
         await axios.get(`${LEGACY_API_URI}/api/tenantMatches/`, {
           params: {
@@ -118,7 +118,39 @@ let tenantMatches = queryField('tenantMatches', {
           },
         })
       ).data;
-      let newMatchingProperties = rawMatchingProperties?.map(
+
+      let rawMatchingPropertiesIds = rawMatchingProperties?.map(
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        ({ space_id }) => space_id,
+      );
+
+      let prismaSpaceIds = (
+        await context.prisma.space.findMany({
+          where: {
+            spaceId: {
+              in: rawMatchingPropertiesIds,
+            },
+          },
+        })
+      ).map(({ spaceId }) => spaceId);
+      let filteredMatchingProperties = rawMatchingProperties?.filter(
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        ({ space_id }) => prismaSpaceIds.includes(space_id),
+      );
+
+      let savedPropertySpaceIds = (
+        await context.prisma.savedProperty.findMany({
+          where: {
+            tenantUser: {
+              id: context.tenantUserId,
+            },
+          },
+        })
+      ).map(({ spaceId }) => {
+        return spaceId;
+      });
+
+      let newMatchingProperties = filteredMatchingProperties?.map(
         ({
           space_id: spaceId,
           property_id: propertyId,
@@ -140,6 +172,7 @@ let tenantMatches = queryField('tenantMatches', {
             lng: numberLng.toString(),
             lat: numberLat.toString(),
             ...other,
+            liked: savedPropertySpaceIds.includes(spaceId),
           };
         },
       );
