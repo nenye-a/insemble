@@ -117,7 +117,6 @@ class PropertyTenantAPI(AsynchronousAPI):
         replace_index = None
         space = None
         if 'space_id' in validated_params:
-            print(this_property['spaces'])
             for index, potential_space in enumerate(this_property['spaces']):
                 if ObjectId(validated_params['space_id']) == potential_space['space_id']:
                     space = potential_space
@@ -191,7 +190,7 @@ class PropertyTenantAPI(AsynchronousAPI):
         divisible = space['divisible'] if space else False,
         divisible_sqft = space['divisible_sqft'] if space else []
         pro = space['pro'] if space else False
-        visible = space['visible'] if space else False
+        visible = space['visible'] if space else True
         media = space['media'] if space else {}
 
         updated_space = space if space else {}

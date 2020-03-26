@@ -928,7 +928,6 @@ def get_match_value_from_id(match_id, vector_id, latest=True):
     else:
         query = 'match_values.' + string_id
         match_doc = utils.DB_TENANT.find_one({'_id': ObjectId(match_id)}, {query: 1})
-        print(match_doc)
         return match_doc['match_values'][string_id]
 
 
