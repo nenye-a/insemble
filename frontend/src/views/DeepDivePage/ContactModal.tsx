@@ -27,11 +27,7 @@ type Props = {
   brandId: string;
   matchScore?: number;
   spaceId: string;
-  contacts: Contacts;
-};
-
-type Params = {
-  paramsId: string;
+  contacts?: Contacts;
 };
 
 export default function ContactModal(props: Props) {
@@ -43,8 +39,8 @@ export default function ContactModal(props: Props) {
 
   let isLandlord = role === SenderRole.LANDLORD;
   let variables = {
-    brandId: isLandlord ? brandId : 'id brand', // TODO TENANT
-    spaceId: isLandlord ? spaceId : 'space id', // TODO TENANT
+    brandId,
+    spaceId,
     matchScore: matchScore || 0,
     header: selectedSubject,
     messageInput: {
@@ -59,7 +55,8 @@ export default function ContactModal(props: Props) {
   >(CREATE_CONVERSATION, {
     onCompleted: () => setMessageSent(true),
     onError: (error) => {
-      if (formatGraphQLError(error.message) === 'Receiver not found') {
+      // TODO: Currently email message only works for landlord messaging tenant.
+      if (formatGraphQLError(error.message) === 'Receiver not found' && contacts) {
         createPendingConversation({
           variables: {
             ...variables,
