@@ -16,6 +16,7 @@ import {
 import { LocationPreview, LocationPreviewVariables } from '../generated/LocationPreview';
 import { GOOGLE_MAPS_STYLE } from '../constants/googleMaps';
 import MapTour from './MapPage/MapTour';
+import { getGroupedMatchingPropertiesByKey } from '../utils';
 
 type LatLng = google.maps.LatLng;
 type LatLngLiteral = google.maps.LatLngLiteral;
@@ -61,7 +62,10 @@ function MapContainer({ onMarkerClick, matchingLocations, matchingProperties }: 
   let [showGuide, setShowGuide] = useState(!!history.location.state?.newBrand);
 
   let mapRef = useRef<GoogleMap | null>(null);
-
+  let groupedMatchingProperties = getGroupedMatchingPropertiesByKey(
+    matchingProperties || [],
+    'propertyId'
+  );
   /**
    * right now the be returns error 500 when the user hit outside the map bound
    * TODO: change this to a better error handler
@@ -165,9 +169,9 @@ function MapContainer({ onMarkerClick, matchingLocations, matchingProperties }: 
         }}
         onClick={(event) => onMapClick(event.latLng)}
       >
-        {matchingProperties &&
-          matchingProperties.length > 0 &&
-          matchingProperties.map((property, index) => {
+        {groupedMatchingProperties &&
+          groupedMatchingProperties.length > 0 &&
+          groupedMatchingProperties.map((property, index) => {
             let latLng = new google.maps.LatLng(Number(property.lat), Number(property.lng));
 
             let previewVisible = selectedPropertyLatLng
