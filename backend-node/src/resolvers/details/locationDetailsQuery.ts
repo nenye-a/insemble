@@ -26,10 +26,17 @@ let locationDetails = queryField('locationDetails', {
       where: { id: brandId },
       include: {
         location: true,
+        tenantUser: { include: { savedProperties: true } },
       },
     });
     if (!selectedBrand) {
       throw new Error('Brand not found!');
+    }
+    if (!selectedBrand.tenantUser) {
+      throw new Error('Tenant in this brand is not found!');
+    }
+    if (selectedBrand.tenantUser.id !== context.tenantUserId) {
+      throw new Error('This not your brand. Not authorized!');
     }
 
     try {
@@ -125,6 +132,12 @@ let locationDetails = queryField('locationDetails', {
           })
         : undefined;
 
+      let savedPropertySpaceIds = selectedBrand.tenantUser.savedProperties.map(
+        ({ spaceId }) => {
+          return spaceId;
+        },
+      );
+
       let propertySpacesDetails = property
         ? property.space.map(
             ({
@@ -148,6 +161,9 @@ let locationDetails = queryField('locationDetails', {
                   condition,
                 },
                 description,
+                liked: spaceId
+                  ? savedPropertySpaceIds.includes(spaceId)
+                  : false,
               };
             },
           )
