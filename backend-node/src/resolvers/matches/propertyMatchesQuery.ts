@@ -79,6 +79,7 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
       await axios.get(`${LEGACY_API_URI}/api/propertyTenants/`, {
         params: {
           property_id: propertyId ? propertyId : undefined,
+          space_id: selectedSpace.spaceId ? selectedSpace.spaceId : undefined,
           address: location.address,
           property_type: JSON.stringify(propertyType),
           space_type: JSON.stringify([condition]),
