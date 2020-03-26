@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import axios from 'axios';
 import { queryField, arg } from 'nexus';
 
@@ -120,21 +121,22 @@ let tenantMatches = queryField('tenantMatches', {
       ).data;
 
       let rawMatchingPropertiesIds = rawMatchingProperties?.map(
-        // eslint-disable-next-line @typescript-eslint/camelcase
         ({ space_id }) => space_id,
       );
 
-      let prismaSpaceIds = (
-        await context.prisma.space.findMany({
-          where: {
-            spaceId: {
-              in: rawMatchingPropertiesIds,
-            },
+      let spaces = await context.prisma.space.findMany({
+        where: {
+          spaceId: {
+            in: rawMatchingPropertiesIds,
           },
-        })
-      ).map(({ spaceId }) => spaceId);
+        },
+      });
+
+      let spacesMap = new Map(
+        spaces.map(({ spaceId, ...rest }) => [spaceId, rest]),
+      );
+      let prismaSpaceIds = [...spacesMap.keys()];
       let filteredMatchingProperties = rawMatchingProperties?.filter(
-        // eslint-disable-next-line @typescript-eslint/camelcase
         ({ space_id }) => prismaSpaceIds.includes(space_id),
       );
 
@@ -169,6 +171,7 @@ let tenantMatches = queryField('tenantMatches', {
             tenantType,
             type,
             matchValue,
+            thumbnail: spacesMap.get(spaceId)?.mainPhoto || '',
             lng: numberLng.toString(),
             lat: numberLat.toString(),
             ...other,
