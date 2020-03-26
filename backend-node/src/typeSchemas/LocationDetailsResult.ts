@@ -175,6 +175,7 @@ export let SummaryPropDetails = objectType({
 export let SpaceDetails = objectType({
   name: 'SpaceDetails',
   definition(t) {
+    t.string('spaceId');
     t.string('tour3D', { nullable: true });
     t.string('mainPhoto');
     t.int('sqft');

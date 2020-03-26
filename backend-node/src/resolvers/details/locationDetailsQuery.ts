@@ -128,6 +128,7 @@ let locationDetails = queryField('locationDetails', {
       let propertySpacesDetails = property
         ? property.space.map(
             ({
+              spaceId,
               mainPhoto,
               sqft,
               photos,
@@ -136,6 +137,7 @@ let locationDetails = queryField('locationDetails', {
               description,
             }) => {
               return {
+                spaceId: spaceId ? spaceId : '',
                 tour3D: '', // TODO: add real tour3D
                 mainPhoto,
                 sqft,
