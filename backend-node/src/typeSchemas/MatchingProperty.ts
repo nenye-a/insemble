@@ -16,5 +16,6 @@ export let MatchingProperty = objectType({
     t.string('lat');
     t.string('lng');
     t.float('matchValue');
+    t.boolean('liked');
   },
 });

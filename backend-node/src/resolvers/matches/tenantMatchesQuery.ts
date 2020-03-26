@@ -138,6 +138,18 @@ let tenantMatches = queryField('tenantMatches', {
         ({ space_id }) => prismaSpaceIds.includes(space_id),
       );
 
+      let savedPropertySpaceIds = (
+        await context.prisma.savedProperty.findMany({
+          where: {
+            tenantUser: {
+              id: context.tenantUserId,
+            },
+          },
+        })
+      ).map(({ spaceId }) => {
+        return spaceId;
+      });
+
       let newMatchingProperties = filteredMatchingProperties?.map(
         ({
           space_id: spaceId,
@@ -160,6 +172,7 @@ let tenantMatches = queryField('tenantMatches', {
             lng: numberLng.toString(),
             lat: numberLat.toString(),
             ...other,
+            liked: savedPropertySpaceIds.includes(spaceId),
           };
         },
       );
