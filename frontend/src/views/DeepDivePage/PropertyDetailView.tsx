@@ -1,19 +1,26 @@
 import React, { useContext, useState, useMemo } from 'react';
 import styled from 'styled-components';
+import { useParams } from 'react-router-dom';
 
-import { View, SegmentedControl, TouchableOpacity } from '../../core-ui';
+import { View, SegmentedControl, TouchableOpacity, Button } from '../../core-ui';
 import PhotoGallery from './PhotoGallery';
 import DescriptionCard from './DescriptionCard';
 import SummaryCard from './SummaryCard';
-import { BACKGROUND_COLOR, TEXT_COLOR, THEME_COLOR } from '../../constants/colors';
+import { TEXT_COLOR, THEME_COLOR } from '../../constants/colors';
 import { DeepDiveContext } from './DeepDiveModal';
 import { LocationDetails_locationDetails_spaceDetails as SpaceDetails } from '../../generated/LocationDetails';
 import { FONT_WEIGHT_MEDIUM } from '../../constants/theme';
 import SvgHeart from '../../components/icons/heart';
+import ContactModal from './ContactModal';
 
+type Params = {
+  brandId: string;
+};
 export default function PropertyDetailView() {
   let contextValue = useContext(DeepDiveContext);
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  let [contactModalVisible, toggleContactModalVisibility] = useState(false);
+  let params = useParams<Params>();
   let selectedData: SpaceDetails | null = useMemo(() => {
     if (contextValue?.spaceDetails) {
       return contextValue?.spaceDetails[selectedTabIndex];
@@ -44,6 +51,7 @@ export default function PropertyDetailView() {
             <TouchableOpacity onPress={() => {}} style={{ marginRight: 14 }}>
               <SvgHeart fill={THEME_COLOR} />
             </TouchableOpacity>
+            <Button text="Connect" onPress={() => toggleContactModalVisibility(true)} />
           </RowedView>
         </HeaderContainer>
         {selectedData && (
@@ -62,6 +70,13 @@ export default function PropertyDetailView() {
             </CardsContainer>
           </RowedView>
         )}
+        <ContactModal
+          matchScore={contextValue.result?.matchValue}
+          brandId={params.brandId}
+          spaceId={selectedData?.spaceId || ''}
+          visible={contactModalVisible}
+          onClose={() => toggleContactModalVisibility(false)}
+        />
       </View>
     );
   }
@@ -78,8 +93,7 @@ const Spacing = styled(View)`
 
 const RowedView = styled(View)`
   flex-direction: row;
-  align-items: flex-start;
-  background-color: ${BACKGROUND_COLOR};
+  align-items: center;
 `;
 
 const HeaderContainer = styled(RowedView)`

@@ -140,6 +140,7 @@ export default function LocationDeepDiveModal(props: Props) {
                     brandId={brandId}
                     address={address}
                     targetNeighborhood={targetNeighborhood}
+                    showConnect={false}
                   />
                   {isOverviewSelected ? <Overview /> : <PropertyDetailView />}
                 </ScrollView>
