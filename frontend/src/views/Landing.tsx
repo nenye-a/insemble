@@ -109,8 +109,12 @@ function Landing() {
           <TextInput placeholder="Loading..." disabled={true} />
         ) : (
           <LocationsInput
-            placeholder="Enter your top retail address"
-            buttonText="Go"
+            placeholder={
+              isDesktop
+                ? 'Enter the name or address of your top performing location'
+                : 'Enter your top retail address'
+            }
+            buttonText={isDesktop ? 'Find locations' : 'Go'}
             onSubmit={(place) => {
               let {
                 geometry,
