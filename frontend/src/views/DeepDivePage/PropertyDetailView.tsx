@@ -13,15 +13,15 @@ import { TEXT_COLOR, THEME_COLOR, WHITE } from '../../constants/colors';
 import { FONT_WEIGHT_MEDIUM } from '../../constants/theme';
 import SvgHeart from '../../components/icons/heart';
 import { SAVE_SPACE } from '../../graphql/queries/server/space';
-import { SaveProperty, SavePropertyVariables } from '../../generated/SaveProperty';
 import { LocationDetails_locationDetails_spaceDetails as SpaceDetails } from '../../generated/LocationDetails';
+import { SaveSpace, SaveSpaceVariables } from '../../generated/SaveSpace';
 
 type Params = {
   brandId: string;
 };
 export default function PropertyDetailView() {
   let contextValue = useContext(DeepDiveContext);
-  let [saveSpace, { data }] = useMutation<SaveProperty, SavePropertyVariables>(SAVE_SPACE);
+  let [saveSpace, { data }] = useMutation<SaveSpace, SaveSpaceVariables>(SAVE_SPACE);
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [contactModalVisible, toggleContactModalVisibility] = useState(false);
   let params = useParams<Params>();

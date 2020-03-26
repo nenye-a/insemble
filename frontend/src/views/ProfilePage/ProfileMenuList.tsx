@@ -8,6 +8,7 @@ import { DEFAULT_BORDER_RADIUS } from '../../constants/theme';
 import SvgPerson from '../../components/icons/person';
 import SvgBusiness from '../../components/icons/business';
 import SvgMessage from '../../components/icons/message';
+import SvgFullHeart from '../../components/icons/full-heart';
 import { Role } from '../../types/types';
 
 type Props = {
@@ -110,11 +111,11 @@ const TENANT_PROFILE_MENU: Array<MenuObj> = [
     icon: <SvgMessage />,
     path: '/user/messages',
   },
-  // {
-  //   menu: 'Saved Properties',
-  //   icon: <SvgFullHeart />,
-  //   path: '/user/saved-properties',
-  // },
+  {
+    menu: 'Saved Properties',
+    icon: <SvgFullHeart />,
+    path: '/user/saved-properties',
+  },
 ];
 
 const LANDLORD_PROFILE_MENU: Array<MenuObj> = [
