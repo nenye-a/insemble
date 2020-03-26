@@ -18,6 +18,7 @@ type Props = DropzoneProps & {
   loading?: boolean;
   onPhotoRemove?: () => void;
   showCloseIcon?: boolean;
+  mainPhoto?: boolean;
 };
 
 export default function Dropzone(props: Props) {
@@ -27,6 +28,7 @@ export default function Dropzone(props: Props) {
     loading,
     onPhotoRemove,
     showCloseIcon = true,
+    mainPhoto = false,
     ...dropzoneProps
   } = props;
 
@@ -50,9 +52,9 @@ export default function Dropzone(props: Props) {
           if (loading) {
             content = <LoadingIndicator />;
           } else if (source) {
-            content = <Image src={source} />;
+            content = <Image src={source} mainPhoto={mainPhoto} />;
           } else {
-            content = <Image src={placeholder} />;
+            content = <Image src={placeholder} mainPhoto={mainPhoto} />;
           }
           return (
             <View {...getRootProps()}>
@@ -70,9 +72,12 @@ export default function Dropzone(props: Props) {
     </View>
   );
 }
+type ImageProps = {
+  mainPhoto: boolean;
+};
 
-const Image = styled.img`
-  height: 160px;
+const Image = styled('img')<ImageProps>`
+  height: ${(props) => (props.mainPhoto === true ? '320px' : '160px')};
   object-fit: cover;
   border: 1px solid ${BORDER_COLOR};
   border-radius: ${DEFAULT_BORDER_RADIUS};

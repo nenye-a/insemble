@@ -46,6 +46,7 @@ export default function PhotosPicker(props: Props) {
         source={typeof mainPhoto === 'string' ? mainPhoto : mainPhoto?.preview}
         getPreview={onMainPhotoChange}
         onPhotoRemove={() => onPhotoRemove(0)}
+        mainPhoto={true}
       />
       <LabelText text="Additional Property Photos" />
       <PhotosContainer flex>
