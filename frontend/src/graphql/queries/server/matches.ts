@@ -62,6 +62,7 @@ export const GET_TENANT_MATCHES_DATA = gql`
       spaceType
       matchingProperties {
         propertyId
+        spaceId
         address
         rent
         sqft
