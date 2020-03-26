@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
 
-import SegmentedControl from '../../core-ui/SegmentedControl';
-import View from '../../core-ui/View';
-import Text from '../../core-ui/Text';
-import Card from '../../core-ui/Card';
+import { View, Text, Card, SegmentedControl } from '../../core-ui';
+import { CarouselFilter } from '../../components';
 import SvgGreenArrow from '../../components/icons/green-arrow';
 import SvgRedArrow from '../../components/icons/red-arrow';
 import Legend from '../MapPage/Legend';
@@ -22,7 +20,6 @@ import {
   FONT_FAMILY_NORMAL,
   FONT_SIZE_NORMAL,
 } from '../../constants/theme';
-import { CarouselFilter } from '../../components';
 import { roundDecimal, convertToKilos, formatSnakeCaseLabel } from '../../utils';
 import { LocationDetails_locationDetails_result_demographics1 as LocationDetailsDemographics } from '../../generated/LocationDetails';
 import { PropertyLocationDetails_propertyDetails_demographics1 as PropertyDetailsDemographics } from '../../generated/PropertyLocationDetails';
