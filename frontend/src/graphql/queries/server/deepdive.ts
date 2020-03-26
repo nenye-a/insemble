@@ -151,6 +151,7 @@ export const GET_LOCATION_DETAILS = gql`
         }
       }
       spaceDetails {
+        spaceId
         tour3D
         mainPhoto
         sqft
