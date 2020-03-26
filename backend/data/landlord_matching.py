@@ -78,13 +78,13 @@ def get_location_dictionary(location):
     # create psychographic dataframe
 
     # arcgis - num households, daytime pop, daytime working pop, income, etc.
-    arcgis_dict = {key + "1": value for key, value in arcgis_dict.items()}
-    if arcgis_dict != {}:
+    if arcgis_dict and arcgis_dict != {}:
+        arcgis_dict = {key + "1": value for key, value in arcgis_dict.items()}
         arcgis_dict["HouseholdGrowth2017-2022-1"] = arcgis_dict.pop(
             "HouseholdGrowth2017-20221")
 
     # demo - gender, race, age, travel time, transport methods
-    if demo_dict != {}:
+    if demo_dict and demo_dict != {}:
         gender_dict = demo_dict["Current Year Population, Gender"] or {}
         race_dict = demo_dict["Current Year Population, Race"] or {}
         age_dict = demo_dict["Current Year Population, Age"] or {}
@@ -106,14 +106,15 @@ def get_location_dictionary(location):
                        **education_dict, **transport_dict, **travel_time_dict, **income_dict)
 
     # CREATE ARRAY AS DATAFRAME (for 3 MILE)
-    psycho_dict3 = {key + "3": value for key, value in psycho_dict3.items()}
-    arcgis_dict3 = {key + "13": value for key, value in arcgis_dict3.items()}
-    if arcgis_dict3 != {}:
+    if psycho_dict3 and psycho_dict3 != {}:
+        psycho_dict3 = {key + "3": value for key, value in psycho_dict3.items()}
+    if arcgis_dict3 and arcgis_dict3 != {}:
+        arcgis_dict3 = {key + "13": value for key, value in arcgis_dict3.items()}
         arcgis_dict3["HouseholdGrowth2017-2022-13"] = arcgis_dict3.pop(
             "HouseholdGrowth2017-202213")
     # demo - gender, race, age, travel time, transport methods
 
-    if demo_dict != {}:
+    if demo_dict and demo_dict != {}:
         gender_dict3 = {key + "3": value for key, value in demo_dict3["Current Year Population, Gender"].items()}
         race_dict3 = {key + "3": value for key, value in demo_dict3["Current Year Population, Race"].items()}
         age_dict3 = {key + "3": value for key, value in demo_dict3["Current Year Population, Age"].items()}

@@ -919,7 +919,12 @@ def get_match_value_from_id(match_id, vector_id, latest=True):
     if latest:
         query = 'location_match_values.' + string_id
         match_doc = utils.DB_LOCATION_MATCHES.find_one({'_id': ObjectId(match_id)}, {query: 1})
-        return match_doc['location_match_values'][string_id]
+        if matching.MATCHING_DF_PATH == matching.PRODUCTION_DF_PATH:
+            return match_doc['location_match_values'][string_id]
+        else:
+            # purposefully made this a number that can't be achieved in reality
+            return 102  # Random match value due to test_df not having all possible values
+
     else:
         query = 'match_values.' + string_id
         match_doc = utils.DB_TENANT.find_one({'_id': ObjectId(match_id)}, {query: 1})
