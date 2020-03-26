@@ -6,10 +6,11 @@ File for ArcGIS & ESRI data processing
 
 import requests
 import json
+from decouple import config
 
 # TODO: get permanent token. This may fail eventually
 url = "https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/GeoEnrichment/enrich"
-TOKEN = "p5iiQNm6L7FBEz65aVJrvjkU4MrY1qH6pXzN6Xe6fV7IfkGHLvkXQyPRcfthVu9biojEkqg6nmvqfbYCOU55KzhCA6ZqNGxEdMMjWGQ6CLnUkRANnJj3LF--7iGzT_yYmxntkde_iANC26vbVaLIi1JiOPYC6YlYznxk6R9gBnw0fFZjpJCzWJwQSxQxmW5OTEmohip2TgFvEA0SA6TAqPSkqnZGuG8qiPu_jTEwTJE."
+TOKEN = config("ARCGIS_TOKEN")
 
 
 def details(lat, lng, radius):
