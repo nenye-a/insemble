@@ -1,37 +1,50 @@
-import React, { useContext, useState, useMemo } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
+import { useMutation } from '@apollo/react-hooks';
 
 import { View, SegmentedControl, TouchableOpacity, Button } from '../../core-ui';
 import PhotoGallery from './PhotoGallery';
 import DescriptionCard from './DescriptionCard';
 import SummaryCard from './SummaryCard';
-import { TEXT_COLOR, THEME_COLOR } from '../../constants/colors';
+import ContactModal from './ContactModal';
 import { DeepDiveContext } from './DeepDiveModal';
-import { LocationDetails_locationDetails_spaceDetails as SpaceDetails } from '../../generated/LocationDetails';
+import { TEXT_COLOR, THEME_COLOR, WHITE } from '../../constants/colors';
 import { FONT_WEIGHT_MEDIUM } from '../../constants/theme';
 import SvgHeart from '../../components/icons/heart';
-import ContactModal from './ContactModal';
+import { SAVE_SPACE } from '../../graphql/queries/server/space';
+import { SaveProperty, SavePropertyVariables } from '../../generated/SaveProperty';
+import { LocationDetails_locationDetails_spaceDetails as SpaceDetails } from '../../generated/LocationDetails';
 
 type Params = {
   brandId: string;
 };
 export default function PropertyDetailView() {
   let contextValue = useContext(DeepDiveContext);
+  let [saveSpace, { data }] = useMutation<SaveProperty, SavePropertyVariables>(SAVE_SPACE);
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [contactModalVisible, toggleContactModalVisibility] = useState(false);
   let params = useParams<Params>();
-  let selectedData: SpaceDetails | null = useMemo(() => {
-    if (contextValue?.spaceDetails) {
-      return contextValue?.spaceDetails[selectedTabIndex];
-    }
-    return null;
-  }, [selectedTabIndex, contextValue]);
+  let [spaceDetails, setSpaceDetails] = useState<Array<SpaceDetails>>(
+    contextValue?.spaceDetails || []
+  );
 
-  if (contextValue?.spaceDetails) {
+  useEffect(() => {
+    let newSpaceDetails = spaceDetails.map((space) => {
+      if (space.spaceId === data?.saveProperty.spaceId) {
+        return { ...space, liked: !space.liked };
+      }
+      return space;
+    });
+    setSpaceDetails(newSpaceDetails);
+  }, [data, spaceDetails]);
+
+  let selectedData = spaceDetails[selectedTabIndex];
+
+  if (spaceDetails) {
     let getSpaceTab = () => {
-      if (contextValue?.spaceDetails) {
-        return contextValue.spaceDetails.map((_, index) => `Space ${index + 1}`);
+      if (spaceDetails) {
+        return spaceDetails.map((_, index) => `Space ${index + 1}`);
       }
       return [];
     };
@@ -48,15 +61,25 @@ export default function PropertyDetailView() {
             textStyle={{ fontWeight: FONT_WEIGHT_MEDIUM, color: TEXT_COLOR }}
           />
           <RowedView>
-            <TouchableOpacity onPress={() => {}} style={{ marginRight: 14 }}>
-              <SvgHeart fill={THEME_COLOR} />
+            <TouchableOpacity
+              onPress={() => {
+                saveSpace({
+                  variables: {
+                    spaceId: selectedData.spaceId,
+                    matchValue: contextValue?.result?.matchValue || 0,
+                  },
+                });
+              }}
+              style={{ marginRight: 14 }}
+            >
+              <SvgHeart fill={selectedData.liked ? THEME_COLOR : WHITE} />
             </TouchableOpacity>
             <Button text="Connect" onPress={() => toggleContactModalVisibility(true)} />
           </RowedView>
         </HeaderContainer>
         {selectedData && (
           <RowedView flex>
-            <PhotoGallery images={[...selectedData.mainPhoto, ...selectedData.photos]} />
+            <PhotoGallery images={[selectedData.mainPhoto, ...selectedData.photos]} />
             <CardsContainer flex>
               <SummaryCard
                 priceSqft={selectedData.summary.pricePerSqft.toString() || ''}
@@ -71,7 +94,7 @@ export default function PropertyDetailView() {
           </RowedView>
         )}
         <ContactModal
-          matchScore={contextValue.result?.matchValue}
+          matchScore={contextValue?.result?.matchValue}
           brandId={params.brandId}
           spaceId={selectedData?.spaceId || ''}
           visible={contactModalVisible}
