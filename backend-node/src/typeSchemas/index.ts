@@ -1,3 +1,4 @@
+//TODO: group export for readability
 export * from './Tenant';
 export * from './TenantAuth';
 export * from './TenantRegisterInput';
@@ -46,3 +47,5 @@ export * from './MessageInput';
 export * from './ReceiverContact';
 
 export * from './GooglePlace';
+
+export * from './SavedProperty';

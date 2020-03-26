@@ -9,6 +9,16 @@ let placeResolver: FieldResolver<'Query', 'place'> = async (
   _: Root,
   { address },
 ) => {
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  let { place_id }: { place_id: string } = (
+    await axios.get(`${GOOGLE_API}/maps/api/place/autocomplete/json`, {
+      params: {
+        input: address,
+        key: GOOGLE_API_KEY,
+      },
+    })
+  ).data.predictions[0];
+
   let {
     // eslint-disable-next-line @typescript-eslint/camelcase
     formatted_address,
@@ -19,13 +29,14 @@ let placeResolver: FieldResolver<'Query', 'place'> = async (
     },
     name,
   }: GooglePlace = (
-    await axios.get(`${GOOGLE_API}/maps/api/place/textsearch/json`, {
+    await axios.get(`${GOOGLE_API}/maps/api/place/details/json`, {
       params: {
-        query: address,
+        placeid: place_id,
         key: GOOGLE_API_KEY,
       },
     })
-  ).data.results[0];
+  ).data.result;
+
   return {
     id,
     name,

@@ -20,6 +20,7 @@ export * from './matches/propertyMatchesQuery';
 export * from './matches/tenantMatchesQuery';
 export * from './preview/locationPreview';
 export * from './details/locationDetailsQuery';
+export * from './details/propertyDetailsQuery';
 
 export * from './tenant/profileTenantQuery';
 export * from './tenant/editProfileTenantMutation';
@@ -34,15 +35,16 @@ export * from './brand/brandsQuery';
 export * from './brand/deleteBrandMutation';
 
 export * from './property/propertiesQuery';
+export * from './property/spacesQuery';
+export * from './property/propertyQuery';
 export * from './property/createPropertyMutation';
 export * from './property/editPropertyMutation';
-export * from './property/editSpaceMutation';
-export * from './property/spacesQuery';
 export * from './property/deletePropertyMutation';
 export * from './property/createSpaceMutation';
+export * from './property/editSpaceMutation';
 export * from './property/deleteSpaceMutation';
-export * from './property/propertyQuery';
-export * from './details/propertyDetailsQuery';
+export * from './property/savedPropertiesQuery';
+export * from './property/savePropertyMutation';
 
 export * from './auth/forgotPasswordTenantMutation';
 export * from './auth/resetPasswordTenantMutation';

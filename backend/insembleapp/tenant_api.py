@@ -548,7 +548,7 @@ class FastLocationDetailsAPI(AsynchronousAPI):
         if match:  # if generating the details using the latest schema
             if property_id:
                 this_property = utils.DB_PROPERTY.find_one({'_id': ObjectId(property_id)})
-                this_location = utils.DB_property.find_one({'_id': this_property['location_id']})
+                this_location = utils.DB_LOCATIONS.find_one({'_id': this_property['location_id']})
                 target_lat = this_location['location']['coordinates'][1]
                 target_lng = this_location['location']['coordinates'][0]
             else:

@@ -1,7 +1,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://prisma:prisma@localhost:5432/insemble?schema=public"
+  url = "***"
 }
 
 
@@ -126,7 +126,7 @@ model Brand {
   matchingLocations      String?
   matchingProperties     String?
   //Tenant Id(brandId) from tenantMatches django api
-  tenantId               String?
+  tenantId               String?                  @unique
   matchId                String?                  @unique
   createdAt              DateTime                 @default(now())
 }
@@ -166,7 +166,11 @@ model Property {
 model SavedProperty {
   id         String   @id @default(cuid())
   spaceId    String
+  address    String
+  thumbnail  String
   matchValue Float
+  rent       Int?
+  sqft       Int
   createdAt  DateTime @default(now())
 }
 
