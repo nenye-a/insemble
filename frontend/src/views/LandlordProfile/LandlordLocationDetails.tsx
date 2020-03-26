@@ -8,7 +8,7 @@ import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD, FONT_SIZE_LARGE } from '../../const
 import { LIGHTEST_GREY } from '../../constants/colors';
 import KeyFacts from '../DeepDivePage/KeyFacts';
 import RelevantConsumerCard from '../DeepDivePage/RelevantConsumerCard';
-import DemographicCard from '../../core-ui/Demographics';
+import DemographicCard from '../DeepDivePage/Demographics';
 import { GET_PROPERTY_LOCATION_DETAILS } from '../../graphql/queries/server/deepdive';
 import {
   PropertyLocationDetails,

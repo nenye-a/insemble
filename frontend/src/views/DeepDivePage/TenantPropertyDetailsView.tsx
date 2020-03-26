@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { View, Card, Text } from '../../core-ui';
-import DemographicCard from '../../core-ui/Demographics';
+import DemographicCard from './Demographics';
 import RelevantConsumerCard from './RelevantConsumerCard';
 import { LIGHTEST_GREY } from '../../constants/colors';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD } from '../../constants/theme';

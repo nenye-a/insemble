@@ -4,7 +4,7 @@ import { View } from '../../core-ui';
 import MatchPercentageCard from './MatchPercentageCard';
 import RelevantConsumerPersonas from './RelevantConsumerPersonas';
 import NearbyCard from './NearbyCard';
-import Demographics from '../../core-ui/Demographics';
+import Demographics from './Demographics';
 import KeyFacts from './KeyFacts';
 import { DeepDiveContext } from './DeepDiveModal';
 
