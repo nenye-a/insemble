@@ -22,7 +22,7 @@ S3_FILESYSTEM = S3FileSystem(
 
 MATCHING_DF = utils.read_dataframe_csv(
     'insemble-dataframes/full_df_csv.csv.gz', file_system=S3_FILESYSTEM)
-## use matching df below on development to speed up celery
+# use matching df below on development to speed up celery
 # MATCHING_DF = utils.read_dataframe_csv(
 #     'insemble-dataframes/test_matching.csv.gz', file_system=S3_FILESYSTEM)
 SPATIAL_CATEGORIES = utils.DB_SPATIAL_CATS.find_one(
