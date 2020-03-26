@@ -184,6 +184,7 @@ export let SpaceDetails = objectType({
       type: 'SummaryPropDetails',
     });
     t.string('description');
+    t.boolean('liked');
   },
 });
 
