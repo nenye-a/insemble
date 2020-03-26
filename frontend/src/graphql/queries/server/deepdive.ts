@@ -162,6 +162,7 @@ export const GET_LOCATION_DETAILS = gql`
           condition
         }
         description
+        liked
       }
     }
   }
