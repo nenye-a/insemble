@@ -129,7 +129,7 @@ export default function ConfirmBusinessDetail(props: Props) {
               onPress={() => toggleCategorySelection(!categorySelectionVisible)}
             />
           </RowedView>
-          <ClickAway onClickAway={() => toggleCategorySelection(false)}>
+          <ClickAway onClickAway={() => toggleCategorySelection(false)} style={{ zIndex: 1 }}>
             {categoriesData && (
               <FilterContainer
                 search
