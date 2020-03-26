@@ -79,7 +79,7 @@ let tenantMatches = queryField('tenantMatches', {
         brand_id: newTenantId,
         match_id: newMatchId,
         matching_locations: newMatchingLocations,
-        matching_properties: rawMatchingProperties,
+        matching_properties: rawMatchingProperties = [],
       }: TenantMatchesType = (
         await axios.get(`${LEGACY_API_URI}/api/tenantMatches/`, {
           params: {
