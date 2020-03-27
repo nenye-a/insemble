@@ -1,19 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-import { useApolloClient, useQuery } from '@apollo/react-hooks';
+import { useApolloClient, useLazyQuery, useMutation, useQuery } from '@apollo/react-hooks';
+import ReactDropzone, { DropzoneProps } from 'react-dropzone';
 
 import { View, Card, Avatar, Text, Button, LoadingIndicator } from '../../core-ui';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
-import { THEME_COLOR, RED_TEXT, BACKGROUND_COLOR } from '../../constants/colors';
+import {
+  THEME_COLOR,
+  RED_TEXT,
+  BACKGROUND_COLOR,
+  WHITE,
+  BUTTON_BORDER_COLOR,
+} from '../../constants/colors';
 import ProfileMenuList from './ProfileMenuList';
 import { GetTenantProfile } from '../../generated/GetTenantProfile';
-import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../../graphql/queries/server/profile';
+import {
+  GET_TENANT_PROFILE,
+  GET_LANDLORD_PROFILE,
+  EDIT_TENANT_PROFILE,
+  EDIT_LANDLORD_PROFILE,
+} from '../../graphql/queries/server/profile';
 import { logout } from '../../utils/authorization';
 import { Role } from '../../types/types';
 import { GetLandlordProfile } from '../../generated/GetLandlordProfile';
+import SvgEdit from '../../components/icons/Edit';
+import { getImageBlob } from '../../utils';
+import { EditTenantProfile, EditTenantProfileVariables } from '../../generated/EditTenantProfile';
+import {
+  EditLandlordProfile,
+  EditLandlordProfileVariables,
+} from '../../generated/EditLandlordProfile';
 
-type Props = {
+type Props = DropzoneProps & {
   role: Role;
 };
 
@@ -24,7 +43,8 @@ type Profile = {
   avatar: string | null;
 };
 
-export default function ProfileCard({ role }: Props) {
+export default function ProfileCard(props: Props) {
+  let { role, ...dropzoneProps } = props;
   let history = useHistory();
   let client = useApolloClient();
 
@@ -61,14 +81,37 @@ export default function ProfileCard({ role }: Props) {
     }
   };
 
-  let { loading: tenantLoading, data: tenantData } = useQuery(GET_TENANT_PROFILE, {
-    notifyOnNetworkStatusChange: true,
-    skip: role === Role.LANDLORD,
+  let { loading: tenantLoading, data: tenantData, refetch: refetchTenantProfile } = useQuery(
+    GET_TENANT_PROFILE,
+    {
+      notifyOnNetworkStatusChange: true,
+      skip: role === Role.LANDLORD,
+    }
+  );
+
+  let { loading: landlordLoading, data: landlordData, refetch: refetchLandlordProfile } = useQuery(
+    GET_LANDLORD_PROFILE,
+    {
+      notifyOnNetworkStatusChange: true,
+      skip: role === Role.TENANT,
+    }
+  );
+  let [editTenantProfile, { loading: editTenantLoading }] = useMutation<
+    EditTenantProfile,
+    EditTenantProfileVariables
+  >(EDIT_TENANT_PROFILE, {
+    onCompleted: () => {
+      refetchTenantProfile();
+    },
   });
 
-  let { loading: landlordLoading, data: landlordData } = useQuery(GET_LANDLORD_PROFILE, {
-    notifyOnNetworkStatusChange: true,
-    skip: role === Role.TENANT,
+  let [editLandlordProfile, { loading: editLandlordLoading }] = useMutation<
+    EditLandlordProfile,
+    EditLandlordProfileVariables
+  >(EDIT_LANDLORD_PROFILE, {
+    onCompleted: () => {
+      refetchLandlordProfile();
+    },
   });
 
   useEffect(() => {
@@ -86,6 +129,64 @@ export default function ProfileCard({ role }: Props) {
       ) : (
         <ProfileWrapper>
           <ProfilePicture size="large" image={avatar} />
+          <ReactDropzone
+            accept="image/*"
+            multiple={false}
+            preventDropOnDocument
+            onDrop={(acceptedFiles) => {
+              let files = acceptedFiles.map((file) => ({
+                file,
+                preview: URL.createObjectURL(file),
+              }));
+              if (files[0] && typeof files[0] !== 'string') {
+                let avatarBlob = getImageBlob(files[0].file);
+
+                if (role === Role.TENANT) {
+                  editTenantProfile({
+                    variables: {
+                      profile: {
+                        avatar: avatarBlob,
+                      },
+                    },
+                    refetchQueries: [
+                      {
+                        query: GET_TENANT_PROFILE,
+                      },
+                    ],
+                  });
+                } else if (role === Role.LANDLORD && landlordData) {
+                  editLandlordProfile({
+                    variables: {
+                      profile: {
+                        avatar: avatarBlob,
+                      },
+                    },
+                    refetchQueries: [
+                      {
+                        query: GET_LANDLORD_PROFILE,
+                      },
+                    ],
+                  });
+                }
+              }
+            }}
+            {...dropzoneProps}
+          >
+            {({ getRootProps, getInputProps }) => {
+              let content;
+              if (editLandlordLoading || editTenantLoading) {
+                content = <LoadingIndicator />;
+              } else {
+                content = <SvgEdit />;
+              }
+              return (
+                <Dropzone {...getRootProps()}>
+                  <input {...getInputProps()} />
+                  {content}
+                </Dropzone>
+              );
+            }}
+          </ReactDropzone>
           <ProfileText fontSize={FONT_SIZE_LARGE} fontWeight={FONT_WEIGHT_BOLD} color={THEME_COLOR}>
             {name}
           </ProfileText>
@@ -135,4 +236,18 @@ const SignOutButton = styled(Button)`
   ${Text} {
     color: ${RED_TEXT};
   }
+`;
+
+const Dropzone = styled(View)`
+  position: absolute;
+  height: 35px;
+  width: 35px;
+  justify-content: center;
+  align-items: center;
+  top: 117px;
+  right: 55px;
+  border-radius: 50%;
+  background-color: ${WHITE};
+  border: 0.3px solid ${BUTTON_BORDER_COLOR};
+  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.3);
 `;
