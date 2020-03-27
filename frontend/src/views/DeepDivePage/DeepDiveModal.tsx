@@ -142,7 +142,11 @@ export default function LocationDeepDiveModal(props: Props) {
                     targetNeighborhood={targetNeighborhood}
                     showConnect={false}
                   />
-                  {isOverviewSelected ? <Overview /> : <PropertyDetailView />}
+                  {isOverviewSelected ? (
+                    <Overview />
+                  ) : (
+                    <PropertyDetailView propertyId={propertyId} />
+                  )}
                 </ScrollView>
               </>
             )}

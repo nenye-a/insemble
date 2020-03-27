@@ -19,7 +19,13 @@ import { SaveSpace, SaveSpaceVariables } from '../../generated/SaveSpace';
 type Params = {
   brandId: string;
 };
-export default function PropertyDetailView() {
+
+type Props = {
+  propertyId?: string;
+};
+
+export default function PropertyDetailView(props: Props) {
+  let { propertyId = '' } = props;
   let contextValue = useContext(DeepDiveContext);
   let [saveSpace, { data }] = useMutation<SaveSpace, SaveSpaceVariables>(SAVE_SPACE);
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -66,6 +72,8 @@ export default function PropertyDetailView() {
                 saveSpace({
                   variables: {
                     spaceId: selectedData.spaceId,
+                    brandId: params.brandId,
+                    propertyId,
                     matchValue: contextValue?.result?.matchValue || 0,
                   },
                 });
