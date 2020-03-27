@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, Dispatch, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
-import { useForm, FieldError } from 'react-hook-form';
+import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 
 import {
@@ -36,9 +36,9 @@ export default function AddSpace(props: Props) {
   let { state, dispatch } = props;
   let { addSpace } = state;
   let { register, errors, handleSubmit, watch } = useForm();
-  let sqft = watch('sqft');
-  let price = watch('price');
-  let date = watch('date');
+  let sqft = addSpace.sqft || watch('sqft');
+  let price = addSpace.pricePerSqft || watch('price');
+  let date = addSpace.availability || watch('date');
   let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
   let [mainPhoto, setMainPhoto] = useState<string | FileWithPreview | null>(addSpace.mainPhoto);
   let [additionalPhotos, setAdditionalPhotos] = useState<Array<string | FileWithPreview | null>>(
@@ -51,39 +51,42 @@ export default function AddSpace(props: Props) {
   let allValid = mainPhoto && selectedCondition && Object.keys(errors).length === 0;
   let { propertyId, address } = history.location.state;
 
-  let saveFormState = useCallback(() => {
-    if (allValid && mainPhoto) {
-      dispatch({
-        type: 'SAVE_CHANGES_ADD_SPACE',
-        values: {
-          addSpace: {
-            mainPhoto,
-            propertyPhotos: additionalPhotos,
-            description,
-            condition: selectedCondition,
-            sqft,
-            pricePerSqft: price,
-            equipments: selectedEquipments,
-            availability: date,
+  let saveFormState = useCallback(
+    (fieldValues?: FieldValues) => {
+      if (allValid && mainPhoto) {
+        dispatch({
+          type: 'SAVE_CHANGES_ADD_SPACE',
+          values: {
+            addSpace: {
+              mainPhoto,
+              propertyPhotos: additionalPhotos,
+              description,
+              condition: selectedCondition,
+              sqft,
+              pricePerSqft: price,
+              equipments: selectedEquipments,
+              availability: fieldValues ? fieldValues.date : date,
+            },
           },
-        },
-      });
-    }
-  }, [
-    dispatch,
-    allValid,
-    mainPhoto,
-    additionalPhotos,
-    description,
-    selectedCondition,
-    sqft,
-    price,
-    selectedEquipments,
-    date,
-  ]);
+        });
+      }
+    },
+    [
+      dispatch,
+      allValid,
+      mainPhoto,
+      additionalPhotos,
+      description,
+      selectedCondition,
+      sqft,
+      price,
+      selectedEquipments,
+      date,
+    ]
+  );
 
-  let onSubmit = async () => {
-    saveFormState();
+  let onSubmit = async (fieldValues: FieldValues) => {
+    saveFormState(fieldValues);
     if (propertyId) {
       history.push('/landlord/add-space/step-2', { propertyId: propertyId, address: address });
     }
@@ -152,7 +155,7 @@ export default function AddSpace(props: Props) {
             required: 'Sqft should not be empty',
             validate: (val) => validateNumber(val) || 'Input should be number',
           })}
-          defaultValue={addSpace.sqft}
+          defaultValue={sqft}
           containerStyle={{ marginTop: 12, marginBottom: 12 }}
           errorMessage={(errors?.sqft as FieldError)?.message || ''}
         />
@@ -164,7 +167,7 @@ export default function AddSpace(props: Props) {
             required: 'Price/Sqft should not be empty',
             validate: (val) => validateNumber(val) || 'Input should be number',
           })}
-          defaultValue={addSpace.pricePerSqft}
+          defaultValue={price}
           containerStyle={{ marginTop: 12, marginBottom: 12 }}
           errorMessage={(errors?.price as FieldError)?.message || ''}
         />
@@ -176,6 +179,7 @@ export default function AddSpace(props: Props) {
               options={equipmentData.equipments}
               onChange={setSelectedEquipment}
               inputContainerStyle={{ flex: 1 }}
+              defaultSelected={selectedEquipments}
             />
           )}
         </View>
@@ -185,7 +189,7 @@ export default function AddSpace(props: Props) {
             name="date"
             label="Availability"
             min={today}
-            defaultValue={addSpace.availability.slice(0, 10) || today}
+            defaultValue={date || today}
             ref={register({
               required: 'Date should not be empty',
             })}
@@ -203,9 +207,8 @@ export default function AddSpace(props: Props) {
           mode="transparent"
           text="Back"
           onPress={() => {
-            history.push('/landlord/properties');
+            history.goBack();
           }}
-          disabled={!allValid || history.location.state.addSpace}
         />
         <Button text="Next" disabled={!allValid} type="submit" />
       </OnboardingFooter>
