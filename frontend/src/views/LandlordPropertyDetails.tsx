@@ -87,8 +87,11 @@ export default function LandlordPropertyDetails() {
       if (space.length <= selectedSpaceIndex) {
         setSelectedSpaceIndex(selectedSpaceIndex - 1 || 0);
       }
+      if (space.length > 0 && !selectedSpaceId) {
+        setSelectedSpaceId(space[0].id);
+      }
     }
-  }, [propertyData, selectedSpaceIndex]);
+  }, [propertyData, selectedSpaceIndex, selectedSpaceId]);
 
   return (
     <View flex>

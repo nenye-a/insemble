@@ -32,3 +32,25 @@ export const DELETE_SPACE = gql`
     deleteSpace(spaceId: $spaceId)
   }
 `;
+
+export const SAVE_SPACE = gql`
+  mutation SaveSpace($spaceId: String!, $matchValue: Float!) {
+    saveProperty(spaceId: $spaceId, matchValue: $matchValue) {
+      spaceId
+    }
+  }
+`;
+
+export const GET_SAVED_SPACES = gql`
+  query SavedSpaces {
+    savedProperties {
+      id
+      matchValue
+      spaceId
+      address
+      rent
+      sqft
+      thumbnail
+    }
+  }
+`;
