@@ -265,6 +265,7 @@ export type LocationDetailsType = {
 type PropertyMatchesBrand = {
   match_value: number;
   brand_id: string;
+  match_id: string;
   name: string;
   category: string;
   number_existing_locations: number;

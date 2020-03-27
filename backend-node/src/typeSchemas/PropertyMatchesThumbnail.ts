@@ -4,6 +4,7 @@ export let PropertyMatchesThumbnail = objectType({
   name: 'PropertyMatchesThumbnail',
   definition(t) {
     t.string('brandId');
+    t.string('matchId');
     t.string('name');
     t.string('pictureUrl');
     t.string('category');
