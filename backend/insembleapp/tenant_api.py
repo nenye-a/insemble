@@ -259,6 +259,16 @@ class TenantMatchAPI(AsynchronousAPI):
             'location_match_values': location_matches
         }
 
+        # update brand with the provided location details if none are currently had
+        brand = utils.DB_BRANDS.find_one({"_id": brand_id})
+        if brand['average_environics_demographics'] == {}:
+            brand['average_environics_demographics'] = location['environics_demographics']
+        if brand['average_spatial_psychographics'] == {}:
+            brand['average_spatial_psychographics'] = location['spatial_psychographics']
+        if brand['average_arcgis_demographics'] == {}:
+            brand['average_arcgis_demographics'] = location['arcgis_demographics']
+        utils.DB_BRANDS.update_one({'_id': brand_id}, {'$set': brand})
+
         try:
             utils.DB_LOCATION_MATCHES.update({'_id': location_match['_id']}, {'$set': match_update})
             match_id = location_match['_id']

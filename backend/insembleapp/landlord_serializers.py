@@ -92,5 +92,6 @@ class PropertyCheckSerializer(serializers.Serializer):
 
 class TenantDetailsSerializer(serializers.Serializer):
 
-    tenant_id = serializers.CharField(max_length=24)
+    brand_id = serializers.CharField(max_length=24)
     property_id = serializers.CharField(max_length=24)
+    match_id = serializers.CharField(max_length=24, required=False)

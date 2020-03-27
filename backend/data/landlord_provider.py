@@ -27,26 +27,27 @@ def get_matching_tenants(eval_property, space_id):
             my_space = item
 
     # fetch the tenants that we will use for matching and kick off matching. # TODO: temporarily force the inclusion
-    tenants = utils.DB_BRANDS.find({
-        "$or": [{'regions_present.regions': "California"}, {'regions_present.regions': "Nationwide"}],
-        'number_found_locations': {'$gt': 1},
-        'average_arcgis_demographics.1mile': {'$ne': None},
-        'average_environics_demographics.1mile': {'$ne': None},
-        'average_spatial_psychographics.1mile': {'$ne': None}
-    })
-
     # tenants = utils.DB_BRANDS.find({
-    #     "$or": [{
-    #         "$or": [{'regions_present.regions': "California"}, {'regions_present.regions': "Nationwide"}],
-    #     }, {
-    #         "match_request": {'$ne': []},
-    #     }],
+    #     "$or": [{'regions_present.regions': "California"}, {'regions_present.regions': "Nationwide"}],
     #     'number_found_locations': {'$gt': 1},
     #     'average_arcgis_demographics.1mile': {'$ne': None},
     #     'average_environics_demographics.1mile': {'$ne': None},
     #     'average_spatial_psychographics.1mile': {'$ne': None}
     # })
 
+    print("Got HEre")
+
+    tenants = utils.DB_BRANDS.find({
+        "$or": [{
+            "$or": [{'regions_present.regions': "California"}, {'regions_present.regions': "Nationwide"}],
+        }, {
+            "match_requests": {'$ne': []},
+        }],
+        'number_found_locations': {'$gt': 1},
+        'average_arcgis_demographics.1mile': {'$ne': None},
+        'average_environics_demographics.1mile': {'$ne': None},
+        'average_spatial_psychographics.1mile': {'$ne': None}
+    })
     tenant_dict = {tenant['brand_name']: tenant for tenant in tenants}
     match_list = list(tenant_dict.values()) + [my_location]
     matches = landlord_matching.generate_matches(match_list)
@@ -109,31 +110,63 @@ def get_matching_tenants(eval_property, space_id):
 
         interested = False
 
-        if brand['typical_squarefoot']:
-            matches_sqft = False
-            for ft in brand['typical_squarefoot']:
-                # choosing an arbitrarily large integer
-                square_foot_range = [ft['min'], ft['max'] or 200000]
-                if utils.in_range(my_space['sqft'], square_foot_range):
-                    matches_sqft = True
-            if matches_sqft:
-                match_value = match_value * 1.075
-            elif len(brand['typical_squarefoot']) > 0:
-                match_value = match_value * 0.80
+        if 'match_requests' in brand and len(brand['match_requests']) > 0:
+            for match_request in brand['match_requests']:
+                temp_match_value = match_value
+                match_request = utils.DB_LOCATION_MATCHES.find_one({"_id": match_request['match_id']})
+                sqft = match_request['params']['sqft']
+                matches_sqft = False
+                for ft in sqft:
+                    # choosing an arbitrarily large integer
+                    square_foot_range = [ft['min'], ft['max'] or 200000]
+                    if utils.in_range(my_space['sqft'], square_foot_range):
+                        matches_sqft = True
+                if matches_sqft:
+                    temp_match_value = temp_match_value * 1.075
+                elif len(sqft) > 0:
+                    # match_value = match_value * 0.80 (instead of downranking the match, just eliminating it)
+                    continue
 
-        # bound match value by 10 and 100%
-        match_value = min(max(match_value, 10), 95)
-        final_matches.append({
-            'name': name,
-            'match_value': match_value,
-            'category': category,
-            'interested': interested,
-            'number_existing_locations': number_existing_locations,
-            'photo_url': photo_url,
-            'brand_id': match['brand_id'],
-            'onPlatform': False,          # TODO: add more details to onPlatform
-            'contacts': contacts
-        })
+                temp_match_value = min(max(temp_match_value, 10), 95)
+                final_matches.append({
+                    'name': name,
+                    'match_value': temp_match_value,
+                    'match_id': str(match_request['_id']),
+                    'category': category,
+                    'interested': interested,
+                    'number_existing_locations': number_existing_locations,
+                    'photo_url': photo_url,
+                    'brand_id': match['brand_id'],
+                    'onPlatform': False,          # TODO: add more details to onPlatform
+                    'contacts': contacts
+                })
+        else:
+            if brand['typical_squarefoot']:
+                matches_sqft = False
+                for ft in brand['typical_squarefoot']:
+                    # choosing an arbitrarily large integer
+                    square_foot_range = [ft['min'], ft['max'] or 200000]
+                    if utils.in_range(my_space['sqft'], square_foot_range):
+                        matches_sqft = True
+                if matches_sqft:
+                    match_value = match_value * 1.075
+                elif len(brand['typical_squarefoot']) > 0:
+                    # match_value = match_value * 0.80 (instead of downranking the match, just eliminating it)
+                    continue
+
+            # bound match value by 10 and 100%
+            match_value = min(max(match_value, 10), 95)
+            final_matches.append({
+                'name': name,
+                'match_value': match_value,
+                'category': category,
+                'interested': interested,
+                'number_existing_locations': number_existing_locations,
+                'photo_url': photo_url,
+                'brand_id': match['brand_id'],
+                'onPlatform': False,          # TODO: add more details to onPlatform
+                'contacts': contacts
+            })
 
     return final_matches
 

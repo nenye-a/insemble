@@ -117,7 +117,6 @@ class PropertyTenantAPI(AsynchronousAPI):
         replace_index = None
         space = None
         if 'space_id' in validated_params:
-            print(this_property['spaces'])
             for index, potential_space in enumerate(this_property['spaces']):
                 if ObjectId(validated_params['space_id']) == potential_space['space_id']:
                     space = potential_space
@@ -191,7 +190,7 @@ class PropertyTenantAPI(AsynchronousAPI):
         divisible = space['divisible'] if space else False,
         divisible_sqft = space['divisible_sqft'] if space else []
         pro = space['pro'] if space else False
-        visible = space['visible'] if space else False
+        visible = space['visible'] if space else True
         media = space['media'] if space else {}
 
         updated_space = space if space else {}
@@ -499,8 +498,9 @@ class TenantDetailsAPI(AsynchronousAPI):
     Provided both the tenant_id and the property_id, will return the deep dive details.
 
     params: {
-        tenant_id: string,
-        property_id: string
+        brand_id: string,           (required)
+        property_id: string,        (required)
+        match_id: string            (optional)
     }
 
     response: {
@@ -517,10 +517,11 @@ class TenantDetailsAPI(AsynchronousAPI):
         serializer.is_valid(raise_exception=True)
         validated_params = serializer.validated_data
 
-        tenant_id = validated_params['tenant_id']
+        brand_id = validated_params['brand_id']
         property_id = validated_params['property_id']
+        match_id = validated_params['match_id'] if 'match_id' in validated_params else None
 
-        brand = utils.DB_BRANDS.find_one({'_id': ObjectId(tenant_id)})
+        brand = utils.DB_BRANDS.find_one({'_id': ObjectId(brand_id)})
         this_property = utils.DB_PROPERTY.find_one({'_id': ObjectId(property_id)}, {'location_id': 1})
 
         if not brand:
@@ -565,6 +566,11 @@ class TenantDetailsAPI(AsynchronousAPI):
             'condition': "",
             'property_type': brand['typical_property_type']['type'] if brand['typical_property_type'] and len(brand['typical_property_type']) > 0 else None
         }
+
+        if match_id:
+            match = utils.DB_LOCATION_MATCHES.find_one({"_id": ObjectId(match_id)})
+            sqft = match['params']['sqft']
+            physical_requirements['minimum sqft'] = sqft['min'] if 'min' in sqft else physical_requirements['minimum sqft']
 
         key_facts = {
             'num_stores': brand["number_found_locations"],
