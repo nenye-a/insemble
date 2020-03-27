@@ -9,6 +9,7 @@ import SignUpForm from '../SignUpPage/SignUpForm';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import InsembleLogo from '../../components/common/InsembleLogo';
 import { Role } from '../../types/types';
+import { useViewport } from '../../utils';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -17,6 +18,7 @@ type Props = {
 
 export default function OnBoardingSignUp(props: Props) {
   let { state: onboardingState } = props;
+  let { isDesktop } = useViewport();
   let history = useHistory();
   return (
     <Container>
@@ -35,17 +37,19 @@ export default function OnBoardingSignUp(props: Props) {
           />
         </RowView>
       </FormContainer>
-      <Description>
-        <InsembleLogo color="white" />
-        <DescriptionLargeText>
-          Find the best location for your retail or restaurant business
-        </DescriptionLargeText>
-        <DescriptionSmallText>
-          Insemble is the world’s first smart listing service. We find & connect you to the best
-          locations for your business. And we cut through the clutter, presenting the pre- qualified
-          properties that matter the most.
-        </DescriptionSmallText>
-      </Description>
+      {isDesktop && (
+        <Description>
+          <InsembleLogo color="white" />
+          <DescriptionLargeText>
+            Find the best location for your retail or restaurant business
+          </DescriptionLargeText>
+          <DescriptionSmallText>
+            Insemble is the world’s first smart listing service. We find & connect you to the best
+            locations for your business. And we cut through the clutter, presenting the pre-
+            qualified properties that matter the most.
+          </DescriptionSmallText>
+        </Description>
+      )}
     </Container>
   );
 }
