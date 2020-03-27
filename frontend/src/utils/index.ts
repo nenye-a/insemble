@@ -5,6 +5,7 @@ export { default as formatGraphQLError } from './formatGraphQLError';
 export { default as formatSnakeCaseLabel } from './formatSnakeCaseLabel';
 export * from './isEqual';
 export { default as getBusinessAndFilterParams } from './getBusinessAndFilterParams';
+export { default as getGroupedMatchingPropertiesByKey } from './getGroupedMatchingPropertiesByKey';
 export { default as getImageBlob } from './getImageBlob';
 export { default as getKeyfactsValue } from './getKeyfactsValue';
 export { default as getViewportType } from './getViewportType';

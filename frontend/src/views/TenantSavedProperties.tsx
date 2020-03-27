@@ -1,46 +1,63 @@
 import React from 'react';
 import styled from 'styled-components';
-import { View, Text, Card } from '../core-ui';
+import { useQuery } from '@apollo/react-hooks';
+
+import { View, Text, Card, LoadingIndicator } from '../core-ui';
+import { EmptyDataComponent, ErrorComponent } from '../components';
 import { FONT_WEIGHT_BOLD, FONT_SIZE_LARGE, FONT_SIZE_SMALL } from '../constants/theme';
 import { THEME_COLOR } from '../constants/colors';
-import { SAVED_PROPERTIES } from '../fixtures/dummyData';
 import imgPlaceholder from '../assets/images/image-placeholder.jpg';
 import SvgRent from '../components/icons/rent';
 import SvgSqft from '../components/icons/sqft';
+import { SavedSpaces } from '../generated/SavedSpaces';
+import { GET_SAVED_SPACES } from '../graphql/queries/server/space';
 
 export default function TenantSavedProperties() {
+  let { data, loading, refetch } = useQuery<SavedSpaces>(GET_SAVED_SPACES);
   return (
     <Container flex>
       <Title>Saved Properties</Title>
-      <TenantCardContainer>
-        {SAVED_PROPERTIES.map((item, index) => (
-          <TenantCard key={index}>
-            <Image src={item.photo || imgPlaceholder} />
-            <DescriptionContainer>
-              <Text color={THEME_COLOR}>{item.address}</Text>
-              <MatchPercentage color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
-                {item.matchPercentage}% customer match
-              </MatchPercentage>
-              <RowedView flex>
-                <RowedView flex>
-                  <SvgRent />
-                  <Text fontSize={FONT_SIZE_SMALL}>${item.price}</Text>
-                </RowedView>
-                <RowedView flex>
-                  <SvgSqft />
-                  <Text fontSize={FONT_SIZE_SMALL}>{item.sqft}sqft</Text>
-                </RowedView>
-              </RowedView>
-            </DescriptionContainer>
-          </TenantCard>
-        ))}
-      </TenantCardContainer>
+      {loading ? (
+        <LoadingIndicator />
+      ) : data?.savedProperties ? (
+        data.savedProperties.length > 0 ? (
+          <TenantCardContainer>
+            {data.savedProperties.map((item, index) => (
+              <TenantCard key={index}>
+                <Image src={item.thumbnail || imgPlaceholder} />
+                <DescriptionContainer>
+                  <Text color={THEME_COLOR}>{item.address}</Text>
+                  <MatchPercentage color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
+                    {item.matchValue}% customer match
+                  </MatchPercentage>
+                  <RowedView flex>
+                    <RowedView flex>
+                      <SvgRent />
+                      <Text fontSize={FONT_SIZE_SMALL}>${item.rent}</Text>
+                    </RowedView>
+                    <RowedView flex>
+                      <SvgSqft />
+                      <Text fontSize={FONT_SIZE_SMALL}>{item.sqft}sqft</Text>
+                    </RowedView>
+                  </RowedView>
+                </DescriptionContainer>
+              </TenantCard>
+            ))}
+          </TenantCardContainer>
+        ) : (
+          <EmptyDataComponent />
+        )
+      ) : (
+        <ErrorComponent onRetry={refetch} />
+      )}
     </Container>
   );
 }
 
 const Container = styled(Card)`
   padding: 12px 24px;
+  height: 80vh;
+  overflow: scroll;
 `;
 const Title = styled(Text)`
   color: ${THEME_COLOR};
