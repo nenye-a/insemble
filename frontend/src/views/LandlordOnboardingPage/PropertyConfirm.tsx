@@ -28,7 +28,7 @@ export default function PropertyConfirm(props: Props) {
   let [selectedType, setSelectedType] = useState<Array<string>>(
     confirmLocation?.propertyType || []
   );
-  let containerStyle = { marginBottom: 24 };
+  let containerStyle = { paddingTop: 12, paddingBottom: 12 };
 
   let allValid = location.id && selectedRelation;
 
@@ -65,53 +65,55 @@ export default function PropertyConfirm(props: Props) {
           }}
           containerStyle={containerStyle}
         />
-
-        <LabelText text="What is your relation to this property?" />
-        {USER_RELATIONS.map((option, index) => {
-          let isChecked = selectedRelation.includes(option);
-          return (
-            <Checkbox
-              key={index}
-              size="18px"
-              title={option}
-              titleProps={{ style: { fontSize: FONT_SIZE_NORMAL } }}
-              isChecked={isChecked}
-              onPress={() => {
-                if (isChecked) {
-                  let newSelectedRelation = selectedRelation.filter(
-                    (item: string) => item !== option
-                  );
-                  setSelectedRelation(newSelectedRelation);
-                } else {
-                  setSelectedRelation([...selectedRelation, option]);
-                }
-              }}
-              style={{ lineHeight: 2 }}
-            />
-          );
-        })}
-        <LabelText text="What type of property is this?" />
-        {SPACES_TYPE.map((option, index) => {
-          let isChecked = selectedType.includes(option);
-          return (
-            <Checkbox
-              key={index}
-              size="18px"
-              title={option}
-              titleProps={{ style: { fontSize: FONT_SIZE_NORMAL } }}
-              isChecked={isChecked}
-              onPress={() => {
-                if (isChecked) {
-                  let newSelectedType = selectedType.filter((item: string) => item !== option);
-                  setSelectedType(newSelectedType);
-                } else {
-                  setSelectedType([...selectedType, option]);
-                }
-              }}
-              style={{ lineHeight: 2 }}
-            />
-          );
-        })}
+        <FieldInput>
+          <LabelText text="What is your relation to this property?" />
+          {USER_RELATIONS.map((option, index) => {
+            let isChecked = selectedRelation.includes(option);
+            return (
+              <Checkbox
+                key={index}
+                title={option}
+                titleProps={{ style: { fontSize: FONT_SIZE_NORMAL } }}
+                isChecked={isChecked}
+                onPress={() => {
+                  if (isChecked) {
+                    let newSelectedRelation = selectedRelation.filter(
+                      (item: string) => item !== option
+                    );
+                    setSelectedRelation(newSelectedRelation);
+                  } else {
+                    setSelectedRelation([...selectedRelation, option]);
+                  }
+                }}
+                style={{ lineHeight: 2 }}
+              />
+            );
+          })}
+        </FieldInput>
+        <FieldInput>
+          <LabelText text="What type of property is this?" />
+          {SPACES_TYPE.map((option, index) => {
+            let isChecked = selectedType.includes(option);
+            return (
+              <Checkbox
+                key={index}
+                size="18px"
+                title={option}
+                titleProps={{ style: { fontSize: FONT_SIZE_NORMAL } }}
+                isChecked={isChecked}
+                onPress={() => {
+                  if (isChecked) {
+                    let newSelectedType = selectedType.filter((item: string) => item !== option);
+                    setSelectedType(newSelectedType);
+                  } else {
+                    setSelectedType([...selectedType, option]);
+                  }
+                }}
+                style={{ lineHeight: 2 }}
+              />
+            );
+          })}
+        </FieldInput>
       </ContentContainer>
       <OnboardingFooter>
         <Button text="Next" type="submit" disabled={!allValid} />
@@ -125,11 +127,14 @@ const Container = styled(Form)`
 `;
 
 const ContentContainer = styled(View)`
-  padding: 24px 48px;
+  padding: 12px 48px;
   z-index: 3;
 `;
 
 const LabelText = styled(Label)`
-  margin-top: 12px;
   margin-bottom: 8px;
+`;
+
+const FieldInput = styled(View)`
+  padding: 12px 0;
 `;
