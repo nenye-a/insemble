@@ -1,11 +1,12 @@
-import React, { ReactNode } from 'react';
-import styled from 'styled-components';
+import React, { ReactNode, ComponentProps } from 'react';
+import styled, { css } from 'styled-components';
 
 import { Card, ProgressBar, Text, View, Button } from '../../core-ui';
+import { useViewport } from '../../utils';
 import { THEME_COLOR, BACKGROUND_COLOR } from '../../constants/colors';
 import { DEFAULT_BORDER_RADIUS } from '../../constants/theme';
 
-type Props = {
+type Props = ViewProps & {
   title: string;
   children: ReactNode;
   progress: number;
@@ -21,13 +22,24 @@ type Button = {
 };
 
 export default function OnboardingCard(props: Props) {
-  let { title, children, progress, buttons, canPressNext } = props;
+  let { title, children, progress, buttons, canPressNext, ...otherProps } = props;
+  let { isDesktop } = useViewport();
 
   return (
     <Container
       titleBackground="purple"
       title={title}
       titleProps={{ style: { textAlign: 'center' } }}
+      isDesktop={isDesktop}
+      titleContainerProps={{
+        style: isDesktop
+          ? {
+              borderTopLeftRadius: DEFAULT_BORDER_RADIUS,
+              borderTopRightRadius: DEFAULT_BORDER_RADIUS,
+            }
+          : { borderRadius: 0 },
+      }}
+      {...otherProps}
     >
       <ProgressBar progress={progress} />
       <View flex style={{ zIndex: 1 }}>
@@ -54,11 +66,24 @@ export default function OnboardingCard(props: Props) {
   );
 }
 
-const Container = styled(Card)`
-  width: min(100vw, 720px);
-  min-height: 80vh;
+type ContainerProps = ComponentProps<typeof Card> & {
+  isDesktop: boolean;
+};
+
+const Container = styled(Card)<ContainerProps>`
+  ${({ isDesktop }) =>
+    isDesktop
+      ? css`
+          width: 720px;
+          border-radius: ${DEFAULT_BORDER_RADIUS};
+          min-height: 80vh;
+        `
+      : css`
+          width: 100vw;
+          border-radius: 0px;
+          min-height: 100%;
+        `}
   overflow: visible;
-  border-radius: ${DEFAULT_BORDER_RADIUS};
 `;
 
 const Footer = styled(View)`
