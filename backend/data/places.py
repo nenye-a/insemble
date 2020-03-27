@@ -181,8 +181,9 @@ def upload_brand(this_place, place):
         description = ""
         categories = this_place['categories']
         similar_brands = []
-        average_demographics = {}  # TODO
-        average_psychographics = {}  # TODO
+        average_environics_demographics = {}  # filled in tenant_api function
+        average_spatial_psychographics = {}  # filled in tenant_api function
+        average_arcgis_demographics = {}  # filled in tenant_api function
 
         annual_sales = this_place['annual_sales'].copy()
         for sales_object in annual_sales:
@@ -208,8 +209,9 @@ def upload_brand(this_place, place):
             'description': description,
             'categories': categories,
             'similar_brands': similar_brands,
-            'average_demographics': average_demographics,
-            'average_psychographics': average_psychographics,
+            'average_environics_demographics': average_environics_demographics,
+            'average_spatial_psychographics': average_spatial_psychographics,
+            'average_arcgis_demographics': average_arcgis_demographics,
             'annual_sales': annual_sales,
             'contacts': contacts,
             'match_requests': match_requests,
@@ -293,9 +295,6 @@ def upload_brand(this_place, place):
                 # brand_category['categories'] = list(set(brand_category['categories']))
             for source, new_categories in source_category.items():
                 brand['categories'].append(new_categories)
-
-        average_demographics = {}  # TODO
-        average_psychographics = {}  # TODO
 
         if len(brand['annual_sales']) == 0:
             brand['annual_sales'] == this_place['annual_sales'].copy()
