@@ -12,6 +12,10 @@ import { GetTenantProfile } from '../../generated/GetTenantProfile';
 import { GetLandlordProfile } from '../../generated/GetLandlordProfile';
 import { Role } from '../../types/types';
 import { useCredentials } from '../../utils';
+import { GET_PROPERTIES } from '../../graphql/queries/server/properties';
+import { GET_BRANDS } from '../../graphql/queries/server/brand';
+import { GetBrands } from '../../generated/GetBrands';
+import { GetProperties } from '../../generated/GetProperties';
 
 type Props = {
   showButton?: boolean;
@@ -49,6 +53,20 @@ export default function HeaderNavigationBar(props: Props) {
     }
   };
 
+  let [getBrand] = useLazyQuery<GetBrands>(GET_BRANDS, {
+    notifyOnNetworkStatusChange: true,
+    onCompleted: (data) => {
+      let { id } = data.brands[0];
+      history.push(`/map/${id}`);
+    },
+  });
+  let [getProperties] = useLazyQuery<GetProperties>(GET_PROPERTIES, {
+    notifyOnNetworkStatusChange: true,
+    onCompleted: () => {
+      history.push(`/landlord/properties/`);
+    },
+  });
+
   let [getTenantProfile] = useLazyQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
     onCompleted: onTenantCompleted,
     fetchPolicy: 'network-only',
@@ -72,10 +90,10 @@ export default function HeaderNavigationBar(props: Props) {
       <TouchableOpacity
         onPress={() => {
           if (role === Role.TENANT) {
-            history.push('/');
+            getBrand();
           }
           if (role === Role.LANDLORD) {
-            history.push('/landlord/signup');
+            getProperties();
           }
         }}
       >

@@ -11,7 +11,7 @@ import Description from './LandingPage/Description';
 import Features from './LandingPage/Features';
 import SpeedUpLeasing from './LandingPage/SpeedUpLeasing';
 import Footer from './LandingPage/Footer';
-import { useGoogleMaps, useCredentials, useViewport } from '../utils';
+import { useGoogleMaps, useCredentials, useViewport, localStorage } from '../utils';
 import Button from '../core-ui/Button';
 import { GetTenantProfile } from '../generated/GetTenantProfile';
 import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../graphql/queries/server/profile';
@@ -22,6 +22,10 @@ import { WHITE } from '../constants/colors';
 import { VIEWPORT_TYPE } from '../constants/viewports';
 import { FONT_SIZE_XXLARGE } from '../constants/theme';
 import { Place } from '../generated/Place';
+import { GET_PROPERTIES } from '../graphql/queries/server/properties';
+import { GET_BRANDS } from '../graphql/queries/server/brand';
+import { GetBrands } from '../generated/GetBrands';
+import { GetProperties } from '../generated/GetProperties';
 
 type LogoViewProps = ViewProps & {
   isDesktop?: boolean;
@@ -47,6 +51,34 @@ function Landing() {
       fetchPolicy: 'network-only',
     }
   );
+  let [getBrand] = useLazyQuery<GetBrands>(GET_BRANDS, {
+    notifyOnNetworkStatusChange: true,
+    onCompleted: (data) => {
+      let { id } = data.brands[0];
+      history.push(`/map/${id}`);
+    },
+  });
+  let [getProperties] = useLazyQuery<GetProperties>(GET_PROPERTIES, {
+    notifyOnNetworkStatusChange: true,
+    onCompleted: (data) => {
+      let { id } = data?.properties[0];
+      history.push(`/landlord/properties/${id}`);
+    },
+  });
+
+  useEffect(() => {
+    if (role === Role.TENANT) {
+      let token = localStorage.getTenantToken();
+      if (token) {
+        getBrand();
+      }
+    } else if (role === Role.LANDLORD) {
+      let token = localStorage.getLandlordToken();
+      if (token) {
+        getProperties();
+      }
+    }
+  }, [getBrand, getProperties, role]);
 
   useEffect(() => {
     if (role === Role.TENANT) {
