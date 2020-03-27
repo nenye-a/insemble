@@ -166,6 +166,8 @@ model Property {
 model SavedProperty {
   id         String   @id @default(cuid())
   spaceId    String
+  brandId    String
+  propertyId String
   matchValue Float
   createdAt  DateTime @default(now())
 }
