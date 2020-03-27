@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-import { useApolloClient, useLazyQuery } from '@apollo/react-hooks';
+import { useApolloClient, useQuery } from '@apollo/react-hooks';
 
 import { View, Card, Avatar, Text, Button, LoadingIndicator } from '../../core-ui';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
@@ -61,27 +61,15 @@ export default function ProfileCard({ role }: Props) {
     }
   };
 
-  let [getTenant, { loading: tenantLoading, data: tenantData }] = useLazyQuery<GetTenantProfile>(
-    GET_TENANT_PROFILE,
-    {
-      notifyOnNetworkStatusChange: true,
-    }
-  );
-
-  let [getLandlord, { loading: landlordLoading, data: landlordData }] = useLazyQuery<
-    GetLandlordProfile
-  >(GET_LANDLORD_PROFILE, {
+  let { loading: tenantLoading, data: tenantData } = useQuery(GET_TENANT_PROFILE, {
     notifyOnNetworkStatusChange: true,
+    skip: role === Role.LANDLORD,
   });
 
-  useEffect(() => {
-    if (role === Role.TENANT) {
-      getTenant();
-    }
-    if (role === Role.LANDLORD) {
-      getLandlord();
-    }
-  }, [getLandlord, getTenant, role]);
+  let { loading: landlordLoading, data: landlordData } = useQuery(GET_LANDLORD_PROFILE, {
+    notifyOnNetworkStatusChange: true,
+    skip: role === Role.TENANT,
+  });
 
   useEffect(() => {
     if (role === Role.TENANT && tenantData) {
