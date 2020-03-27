@@ -18,6 +18,7 @@ type Props = ComponentProps<typeof TouchableOpacity> & {
   text: string;
   textProps?: TextProps;
   mode?: 'primary' | 'secondary' | 'transparent';
+  size?: 'small' | 'default';
   icon?: ReactNode;
   badgeText?: string;
   loading?: boolean;
@@ -27,6 +28,7 @@ type Props = ComponentProps<typeof TouchableOpacity> & {
 export default function Button(props: Props) {
   let {
     mode = 'primary',
+    size = 'default',
     text,
     textProps,
     icon,
@@ -43,6 +45,7 @@ export default function Button(props: Props) {
       disabled={loading || disabled}
       mode={mode}
       onStopPropagation={stopPropagation}
+      size={size}
       {...otherProps}
     >
       {loading ? (
@@ -63,11 +66,11 @@ export default function Button(props: Props) {
 const Container = styled(TouchableOpacity)<Props>`
   background-color: ${THEME_COLOR};
   border-radius: 4px;
-  height: 36px;
   justify-content: center;
   padding: 0 12px;
   flex-direction: row;
   align-items: center;
+  height: ${(props) => (props.size === 'default' ? '36px' : '28px')}
   ${(props) =>
     props.mode === 'primary' &&
     css`
