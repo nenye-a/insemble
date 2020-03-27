@@ -63,7 +63,7 @@ type TenantMatchesContextFilter = {
 
 type PlaceResult = google.maps.places.PlaceResult;
 
-type SelectedLatLng = {
+export type SelectedLatLng = {
   lat: string;
   lng: string;
   address: string;
@@ -420,6 +420,16 @@ export default function MainMap() {
                 visible={propertyRecommendationVisible}
                 onHideClick={() => togglePropertyRecommendation(false)}
                 matchingProperties={visibleMatchingProperties}
+                onPropertyPress={({ lat, lng, address, targetNeighborhood, propertyId }) => {
+                  setSelectedLatLng({
+                    lat,
+                    lng,
+                    address,
+                    targetNeighborhood,
+                    propertyId,
+                  });
+                  toggleDeepDiveModal(true);
+                }}
               />
             </>
           )}

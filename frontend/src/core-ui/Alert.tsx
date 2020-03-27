@@ -31,7 +31,7 @@ export default function Alert(props: Props) {
 }
 
 const Container = styled(View)`
-  border: 0.5px solid ${THEME_COLOR};
+  border: 1px solid ${THEME_COLOR};
   flex-direction: row;
   padding: 9px 12px;
   background-color: ${ALERT_BACKGROUND_COLOR};

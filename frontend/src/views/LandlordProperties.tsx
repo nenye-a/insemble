@@ -189,8 +189,9 @@ export default function LandlordProperties() {
                         <Text>Number of Spaces</Text>
                         <Text>{item.space.length}</Text>
                       </RowedView>
-                      <AddSpace
+                      <AddSpaceButton
                         text="Add Space"
+                        size="small"
                         onPress={() => {
                           history.push(`/landlord/add-space/step-1`, {
                             propertyId: item.id,
@@ -252,8 +253,9 @@ const LeftContainer = styled(View)`
   height: 150px;
 `;
 
-const AddSpace = styled(Button)`
-  zindex: 5;
+const AddSpaceButton = styled(Button)`
+  margin-top: 8px;
+  align-self: flex-start;
 `;
 
 const AddButton = styled(TouchableOpacity)`

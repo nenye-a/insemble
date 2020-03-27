@@ -6,11 +6,13 @@ import AvailablePropertyCard from './AvailablePropertyCard';
 import { THEME_COLOR } from '../../constants/colors';
 import { TenantMatches_tenantMatches_matchingProperties as MatchingProperties } from '../../generated/TenantMatches';
 import { EmptyDataComponent } from '../../components';
+import { SelectedLatLng } from '../MainMap';
 
 type Props = {
   visible: boolean;
   onHideClick: () => void;
   matchingProperties: Array<MatchingProperties>;
+  onPropertyPress: (selectedProperty: SelectedLatLng) => void;
 };
 
 type ContainerProps = ComponentProps<typeof View> & {
@@ -18,7 +20,8 @@ type ContainerProps = ComponentProps<typeof View> & {
 };
 
 export default function AvailableProperties(props: Props) {
-  let { visible, onHideClick, matchingProperties } = props;
+  let { visible, onHideClick, matchingProperties, onPropertyPress } = props;
+
   return (
     <Container flex visible={visible}>
       <UpperTextContainer>
@@ -43,19 +46,22 @@ export default function AvailableProperties(props: Props) {
           {` (${TOTAL_RECOMMENDED_PROPERTY} recommended)`}
         </ItalicText> */}
           </RowedFlex>
-          {matchingProperties.map(({ address, rent, sqft, tenantType }, index) => (
-            <AvailablePropertyCard
-              key={index}
-              // TODO: pass photo when BE is ready
-              photo=""
-              address={address}
-              price={rent}
-              area={sqft}
-              propertyType={tenantType.join(', ')}
-              // TODO: open deep dive
-              onPress={() => {}}
-            />
-          ))}
+          {matchingProperties.map(
+            ({ lat, lng, address, rent, sqft, tenantType, propertyId }, index) => (
+              <AvailablePropertyCard
+                key={index}
+                // TODO: pass photo when BE is ready
+                photo=""
+                address={address}
+                price={rent}
+                area={sqft}
+                propertyType={tenantType.join(', ')}
+                onPress={() => {
+                  onPropertyPress({ lat, lng, address, propertyId, targetNeighborhood: '' });
+                }}
+              />
+            )
+          )}
         </>
       ) : (
         <EmptyDataComponent text="No Matching Property Found" />

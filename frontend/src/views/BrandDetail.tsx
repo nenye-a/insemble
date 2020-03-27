@@ -145,10 +145,10 @@ export default function BrandDetail() {
         />
 
         <RowedView>
-          <Title>Matches</Title>
+          <Title>Your Brands</Title>
           <Button
             mode="transparent"
-            text="Edit Matches"
+            text="Edit Your Brands"
             onPress={() => {
               setMatchesEditable(true);
             }}
