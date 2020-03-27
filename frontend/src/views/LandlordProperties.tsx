@@ -10,26 +10,10 @@ import { WHITE, THEME_COLOR } from '../constants/colors';
 import SvgPlus from '../components/icons/plus';
 import SvgCircleClose from '../components/icons/circle-close';
 import { GET_PROPERTIES, DELETE_PROPERTY } from '../graphql/queries/server/properties';
-import {
-  GetProperties,
-  GetProperties_properties_space as SpaceData,
-  GetProperties_properties_location as GetPropertyLocation,
-} from '../generated/GetProperties';
+import { GetProperties } from '../generated/GetProperties';
 import { MAPS_IFRAME_URL_SEARCH } from '../constants/googleMaps';
 import { Popup, EmptyDataComponent } from '../components';
 import { DeleteProperty, DeletePropertyVariables } from '../generated/DeleteProperty';
-import { MarketingPreference } from '../generated/globalTypes';
-
-type PropertyData = {
-  location: GetPropertyLocation;
-  name: string;
-  categories: Array<string>;
-  businessType: Array<string>;
-  propertyType: Array<string>;
-  exclusive: Array<string>;
-  marketingPreference: MarketingPreference;
-  userRelations: Array<string>;
-};
 
 export default function LandlordProperties() {
   let history = useHistory();
@@ -60,66 +44,12 @@ export default function LandlordProperties() {
     }
   };
 
-  let getPropertyState = (propertyData: PropertyData, spaceData: Array<SpaceData>) => {
-    if (data) {
-      let {
-        location,
-        name,
-        categories,
-        businessType,
-        propertyType,
-        exclusive,
-        marketingPreference,
-        userRelations,
-      } = propertyData;
-      return {
-        spaces: spaceData,
-        property: {
-          name,
-          categories,
-          location,
-          businessType,
-          propertyType,
-          exclusive,
-          marketingPreference,
-          userRelations,
-        },
-      };
-    }
-  };
-
   if (!loading && data && history.location.state?.signedIn && data.properties.length > 0) {
-    let {
-      name,
-      categories,
-      location,
-      businessType,
-      propertyType,
-      exclusive,
-      marketingPreference,
-      userRelations,
-      space,
-      id,
-    } = data?.properties[0];
+    let { id } = data?.properties[0];
     return (
       <Redirect
         to={{
           pathname: `/landlord/properties/${id}`,
-          state: {
-            ...getPropertyState(
-              {
-                name,
-                categories,
-                location,
-                businessType,
-                propertyType,
-                exclusive,
-                marketingPreference,
-                userRelations,
-              },
-              space
-            ),
-          },
         }}
       />
     );
@@ -143,17 +73,7 @@ export default function LandlordProperties() {
       ) : properties ? (
         properties.length > 0 ? (
           properties.map((item, index) => {
-            let {
-              name,
-              categories,
-              location,
-              businessType,
-              propertyType,
-              exclusive,
-              marketingPreference,
-              userRelations,
-              space,
-            } = item;
+            let { location } = item;
             let { lat, lng } = location;
             let iframeSource = MAPS_IFRAME_URL_SEARCH + '&q=' + lat + ', ' + lng;
 
@@ -162,21 +82,7 @@ export default function LandlordProperties() {
                 <TouchableOpacity
                   flex
                   onPress={() => {
-                    history.push(`/landlord/properties/${item.id}`, {
-                      ...getPropertyState(
-                        {
-                          name,
-                          categories,
-                          location,
-                          businessType,
-                          propertyType,
-                          exclusive,
-                          marketingPreference,
-                          userRelations,
-                        },
-                        space
-                      ),
-                    });
+                    history.push(`/landlord/properties/${item.id}`, {});
                   }}
                 >
                   <Row>
