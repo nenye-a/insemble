@@ -5,7 +5,7 @@ import { Context } from 'serverTypes';
 export let savePropertyResolver: FieldResolver<
   'Mutation',
   'saveProperty'
-> = async (_, { spaceId, matchValue }, context: Context) => {
+> = async (_, { spaceId, ...args }, context: Context) => {
   let space = await context.prisma.space.findOne({
     where: {
       spaceId: spaceId,
@@ -29,7 +29,7 @@ export let savePropertyResolver: FieldResolver<
         },
       },
       spaceId,
-      matchValue,
+      ...args,
     },
   });
 
@@ -46,6 +46,8 @@ export let saveProperty = mutationField('saveProperty', {
   type: 'SavedProperty',
   args: {
     spaceId: stringArg({ required: true }),
+    brandId: stringArg({ required: true }),
+    propertyId: stringArg({ required: true }),
     matchValue: floatArg({ required: true }),
   },
   resolve: savePropertyResolver,

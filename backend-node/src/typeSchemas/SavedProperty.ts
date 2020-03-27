@@ -6,6 +6,8 @@ export let SavedProperty = objectType({
     t.model.id();
     t.model.matchValue();
     t.model.spaceId();
+    t.model.brandId();
+    t.model.propertyId();
     t.string('address');
     t.int('rent');
     t.int('sqft');

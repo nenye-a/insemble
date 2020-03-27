@@ -44,6 +44,7 @@ export type MatchingProperty = {
   matchValue: number;
   lng: string;
   lat: string;
+  thumbnail: string;
   liked: boolean;
 };
 
