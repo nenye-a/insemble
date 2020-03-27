@@ -207,9 +207,8 @@ export default function AddSpace(props: Props) {
           mode="transparent"
           text="Back"
           onPress={() => {
-            history.push('/landlord/properties');
+            history.goBack();
           }}
-          disabled={!allValid || history.location.state.addSpace}
         />
         <Button text="Next" disabled={!allValid} type="submit" />
       </OnboardingFooter>
