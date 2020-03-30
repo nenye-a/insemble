@@ -227,12 +227,12 @@ export type LocationDetailsType = {
       mile: number;
       DaytimePop: number;
       MedHouseholdIncome: number;
-      TotalHousholds: number;
+      TotalHouseholds: number;
       'HouseholdGrowth2017-2022': number;
       num_metro: number;
       num_universities: number;
       num_hospitals: number;
-      num_apartments: number;
+      nearby_apartments: number;
     };
     commute: {
       'Public Transport': number;
@@ -293,12 +293,12 @@ export type PropertyDetailsType = {
       mile: number;
       DaytimePop: number;
       MedHouseholdIncome: number;
-      TotalHousholds: number;
+      TotalHouseholds: number;
       'HouseholdGrowth2017-2022': number;
       num_metro: number;
       num_universities: number;
       num_hospitals: number;
-      num_apartments: number;
+      nearby_apartments: number;
     };
     commute?: {
       'Public Transport': number;
