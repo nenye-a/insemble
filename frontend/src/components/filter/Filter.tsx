@@ -50,6 +50,7 @@ type Props = ComponentProps<typeof View> & {
   hasPreference?: boolean;
   onNoPreferencePress?: () => void;
   disabled?: boolean; // TODO: pass disabled to other filter components as well when necessary
+  sliderDisabled?: boolean;
   loading?: boolean;
   link?: string;
 };
@@ -82,6 +83,7 @@ export default function Filter(props: Props) {
     hasPreference,
     onNoPreferencePress,
     disabled,
+    sliderDisabled,
     loading,
     link,
     linkTitle,
@@ -157,7 +159,7 @@ export default function Filter(props: Props) {
               minimum={minimum}
               postfix={income ? 'K' : ''}
               prefix={income ? '$' : ''}
-              disabled={disabled}
+              disabled={sliderDisabled || disabled}
             />
           )}
           {rangeInput && (
