@@ -99,7 +99,7 @@ export default function MessageCard(props: Props) {
 
   return (
     <Root isEven={isEven}>
-      <Container onPress={onPress}>
+      <Container flex onPress={onPress}>
         <Avatar size="medium" image={avatar} />
         <MessageContent flex>
           <Text fontSize={FONT_SIZE_MEDIUM} color={THEME_COLOR}>

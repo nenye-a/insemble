@@ -16,13 +16,13 @@ export default function Popover(props: Props) {
   let { children, button } = props;
   return (
     <>
-      <View
+      <ButtonView
         onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
           setAnchor(e.currentTarget);
         }}
       >
         {button}
-      </View>
+      </ButtonView>
       <BasePopover
         id="simple-popper"
         open={open}
@@ -45,4 +45,8 @@ export default function Popover(props: Props) {
 
 const PopoverContainer = styled(View)`
   border-radius: ${DEFAULT_BORDER_RADIUS};
+`;
+
+const ButtonView = styled(View)`
+  cursor: pointer;
 `;
