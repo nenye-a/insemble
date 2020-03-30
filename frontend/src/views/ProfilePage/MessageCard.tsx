@@ -1,15 +1,21 @@
 import React, { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
 
-import { View, Avatar, Text, TouchableOpacity } from '../../core-ui';
-import { FONT_SIZE_MEDIUM, FONT_WEIGHT_MEDIUM, DEFAULT_BORDER_RADIUS } from '../../constants/theme';
-import { THEME_COLOR, BACKGROUND_COLOR, WHITE } from '../../constants/colors';
+import { View, Avatar, Text, TouchableOpacity, PillButton } from '../../core-ui';
+import {
+  FONT_SIZE_MEDIUM,
+  FONT_WEIGHT_MEDIUM,
+  DEFAULT_BORDER_RADIUS,
+  FONT_SIZE_SMALL,
+} from '../../constants/theme';
+import { THEME_COLOR, BACKGROUND_COLOR, WHITE, DARK_TEXT_COLOR } from '../../constants/colors';
 import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
 import SvgInfoFilled from '../../components/icons/info-filled';
 import { useCredentials } from '../../utils';
 import { Role } from '../../types/types';
 import SvgReply from '../../components/icons/reply';
 import { Conversations_conversations as ConversationMessages } from '../../generated/Conversations';
+import { Popover } from '../../components';
 
 type Props = {
   isEven: boolean;
@@ -25,44 +31,117 @@ export default function MessageCard(props: Props) {
   let { isEven, conversation, onPress } = props;
   let {
     tenant: { avatar },
-    property: { name: propertyName, space },
+    property: {
+      name: propertyName,
+      location: { address },
+      space: propertySpace,
+    },
+    brand: { nextLocations, categories: brandCategories, locationCount },
+    space,
     messages,
     header,
+    matchScore,
   } = conversation;
+  let { mainPhoto } = space;
   let lastMessage = messages.length - 1;
   let { role } = useCredentials();
+  let landlordPopoverContent = (
+    <LandlordPopoverContainer>
+      <LandlordMatchTitle>{matchScore}% customer match</LandlordMatchTitle>
+      {brandCategories.length > 0 && (
+        <>
+          <LandlordPopoverText>Categories:</LandlordPopoverText>
+          <Row>
+            {brandCategories.map((category, idx) => (
+              <Pill disabled key={idx} primary>
+                {category}
+              </Pill>
+            ))}
+          </Row>
+        </>
+      )}
+
+      {nextLocations && (
+        <>
+          <LandlordPopoverText>Expanding in:</LandlordPopoverText>
+          <Row>
+            {nextLocations.map((location, idx) => (
+              <Pill disabled key={idx} primary>
+                {location.address}
+              </Pill>
+            ))}
+          </Row>
+        </>
+      )}
+
+      {/* <LandlordPopoverText>Years in business:</LandlordPopoverText> */}
+      {locationCount ? (
+        <Row>
+          <LandlordPopoverText># of existing locations: </LandlordPopoverText>
+          <LocationCount>{locationCount}</LocationCount>
+        </Row>
+      ) : null}
+    </LandlordPopoverContainer>
+  );
+
+  let tenantPopoverContent = (
+    <>
+      <Popoverimage src={mainPhoto} />
+      <AddressContainer>
+        <Text>{address}</Text>
+        <SpaceText>{propertySpace.length} Space</SpaceText>
+      </AddressContainer>
+      <MatchContainer>
+        <TenantMatchTitle>{matchScore}% Match</TenantMatchTitle>
+      </MatchContainer>
+    </>
+  );
+
   return (
-    <Container isEven={isEven} onPress={onPress}>
-      <Avatar size="medium" image={avatar} />
-      <MessageContent flex>
-        <Text fontSize={FONT_SIZE_MEDIUM} color={THEME_COLOR}>
-          {propertyName}
-        </Text>
-        <Text fontWeight={FONT_WEIGHT_MEDIUM}>{header}</Text>
-        <MessageText>{messages[lastMessage].message}</MessageText>
-      </MessageContent>
+    <Root isEven={isEven}>
+      <Container onPress={onPress}>
+        <Avatar size="medium" image={avatar} />
+        <MessageContent flex>
+          <Text fontSize={FONT_SIZE_MEDIUM} color={THEME_COLOR}>
+            {propertyName}
+          </Text>
+          <Text fontWeight={FONT_WEIGHT_MEDIUM}>{header}</Text>
+          <MessageText>{messages[lastMessage].message}</MessageText>
+        </MessageContent>
+      </Container>
       <View>
         {role === Role.TENANT ? (
           <>
-            <Image src={space[0].mainPhoto || imgPlaceholder} />
-            <IconContainer>
-              <SvgInfoFilled style={{ color: WHITE }} />
-            </IconContainer>
+            <Image src={mainPhoto || imgPlaceholder} />
+            <PopoverContainer>
+              <Popover
+                button={
+                  <IconContainer>
+                    <SvgInfoFilled style={{ color: WHITE }} />
+                  </IconContainer>
+                }
+              >
+                {tenantPopoverContent}
+              </Popover>
+            </PopoverContainer>
           </>
         ) : (
           <Row>
             <SvgReply />
-            <SvgInfoFilled style={{ color: THEME_COLOR, marginLeft: 10 }} />
+            <Popover button={<SvgInfoFilled style={{ color: THEME_COLOR, marginLeft: 10 }} />}>
+              {landlordPopoverContent}
+            </Popover>
           </Row>
         )}
       </View>
-    </Container>
+    </Root>
   );
 }
 
-const Container = styled(TouchableOpacity)<ContainerProps>`
+const Root = styled(View)<ContainerProps>`
   flex-direction: row;
   padding: 16px 24px;
+  justify-content: space-between;
   ${(props) =>
     props.isEven &&
     css`
@@ -86,13 +165,70 @@ const Image = styled.img`
   height: 90px;
 `;
 
+const Popoverimage = styled.img`
+  object-fit: cover;
+  height: 90px;
+`;
+
 const MessageText = styled(Text)`
   height: 3em; // 2 lines * line-height
   overflow: hidden;
 `;
 
+const PopoverContainer = styled(View)`
+  position: absolute;
+  right: 6px;
+  top: 6px;
+`;
+
+const LandlordPopoverContainer = styled(View)`
+  padding: 20px;
+`;
 const IconContainer = styled(TouchableOpacity)`
   position: absolute;
   right: 6px;
   top: 6px;
+`;
+
+const SpaceText = styled(Text)`
+  font-size: ${FONT_SIZE_SMALL};
+  color: ${DARK_TEXT_COLOR};
+`;
+
+const Pill = styled(PillButton)`
+  margin-right: 8px;
+`;
+
+const LandlordPopoverText = styled(Text)`
+  margin: 8px 0;
+`;
+
+const LocationCount = styled(LandlordPopoverText)`
+  color: ${THEME_COLOR};
+`;
+
+const Container = styled(TouchableOpacity)`
+  flex-direction: row;
+`;
+
+const MatchTitle = styled(Text)`
+  color: ${THEME_COLOR};
+  font-weight: ${FONT_WEIGHT_MEDIUM};
+`;
+
+const TenantMatchTitle = styled(MatchTitle)`
+  font-size: 18px;
+`;
+
+const LandlordMatchTitle = styled(MatchTitle)`
+  font-size: 16px;
+`;
+
+const AddressContainer = styled(View)`
+  padding: 16px;
+  background-color: ${BACKGROUND_COLOR};
+`;
+
+const MatchContainer = styled(View)`
+  padding: 16px;
 `;
