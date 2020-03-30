@@ -153,7 +153,11 @@ export default function KeyFacts(props: Props) {
                     ? '$' + getKeyfactsValue(line)
                     : getKeyfactsValue(line)
                   : '';
-                return <NumberText key={i}>{formattedValues || '-'}</NumberText>;
+                return (
+                  <NumberText key={i}>
+                    {formattedValues || typeof formattedValues === 'number' ? formattedValues : '-'}
+                  </NumberText>
+                );
               })}
             </EconomicColumn>
             <EconomicColumn>
@@ -167,7 +171,11 @@ export default function KeyFacts(props: Props) {
                 let value = getKeyfactsValue(line);
                 let formattedValues =
                   value === 60 || value === '60' ? value.toString() + '+' : line;
-                return <NumberText key={i}>{formattedValues || '-'}</NumberText>;
+                return (
+                  <NumberText key={i}>
+                    {formattedValues || typeof formattedValues === 'number' ? formattedValues : '-'}
+                  </NumberText>
+                );
               })}
             </EconomicColumn>
             <EconomicColumn>
