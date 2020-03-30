@@ -76,7 +76,7 @@ function Landing() {
         getProperties();
       }
     }
-  }, [getBrand, getProperties, role]);
+  }, [getBrand, getProperties, role, landlordToken, tenantToken]);
 
   useEffect(() => {
     if (role === Role.TENANT) {
