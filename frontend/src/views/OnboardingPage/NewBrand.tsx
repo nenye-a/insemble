@@ -13,6 +13,7 @@ import { FONT_WEIGHT_BOLD } from '../../constants/theme';
 export default function NewBrand() {
   let { isLoading } = useGoogleMaps();
   let history = useHistory();
+
   return (
     <Container flex>
       <OnboardingCard title="Submit another brand." progress={0}>
@@ -61,7 +62,9 @@ export default function NewBrand() {
             />
           </View>
         </ContentContainer>
-        <OnboardingFooter />
+        <OnboardingFooter>
+          <TransparentButton text="Back" mode="transparent" onPress={() => history.goBack()} />
+        </OnboardingFooter>
       </OnboardingCard>
     </Container>
   );
@@ -84,4 +87,8 @@ const ContentContainer = styled(View)`
   padding: 24px 48px;
   z-index: 1;
   flex: 1;
+`;
+
+const TransparentButton = styled(Button)`
+  padding: 0 12px;
 `;
