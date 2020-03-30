@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 
-import { View, Text, Card, LoadingIndicator } from '../core-ui';
+import { View, Text, Card, LoadingIndicator, TouchableOpacity } from '../core-ui';
+import LocationDeepDiveModal from './DeepDivePage/DeepDiveModal';
 import { EmptyDataComponent, ErrorComponent } from '../components';
 import { FONT_WEIGHT_BOLD, FONT_SIZE_LARGE, FONT_SIZE_SMALL } from '../constants/theme';
 import { THEME_COLOR } from '../constants/colors';
@@ -12,8 +13,16 @@ import SvgSqft from '../components/icons/sqft';
 import { SavedSpaces } from '../generated/SavedSpaces';
 import { GET_SAVED_SPACES } from '../graphql/queries/server/space';
 
+type SelectedProperty = {
+  propertyId: string;
+  brandId: string;
+};
+
 export default function TenantSavedProperties() {
   let { data, loading, refetch } = useQuery<SavedSpaces>(GET_SAVED_SPACES);
+  let [deepDiveModalVisible, setDeepDiveModalVisible] = useState(false);
+  let [selectedProperty, setSelectedProperty] = useState<SelectedProperty | null>(null);
+
   return (
     <Container flex>
       <Title>Saved Properties</Title>
@@ -23,25 +32,34 @@ export default function TenantSavedProperties() {
         data.savedProperties.length > 0 ? (
           <TenantCardContainer>
             {data.savedProperties.map((item, index) => (
-              <TenantCard key={index}>
-                <Image src={item.thumbnail || imgPlaceholder} />
-                <DescriptionContainer>
-                  <Text color={THEME_COLOR}>{item.address}</Text>
-                  <MatchPercentage color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
-                    {item.matchValue}% customer match
-                  </MatchPercentage>
-                  <RowedView flex>
+              <Touchable
+                key={index}
+                onPress={() => {
+                  let { propertyId, brandId } = item;
+                  setSelectedProperty({ propertyId, brandId });
+                  setDeepDiveModalVisible(true);
+                }}
+              >
+                <Card>
+                  <Image src={item.thumbnail || imgPlaceholder} />
+                  <DescriptionContainer>
+                    <Text color={THEME_COLOR}>{item.address}</Text>
+                    <MatchPercentage color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
+                      {item.matchValue}% customer match
+                    </MatchPercentage>
                     <RowedView flex>
-                      <SvgRent />
-                      <Text fontSize={FONT_SIZE_SMALL}>${item.rent}</Text>
+                      <RowedView flex>
+                        <SvgRent />
+                        <Text fontSize={FONT_SIZE_SMALL}>${item.rent}</Text>
+                      </RowedView>
+                      <RowedView flex>
+                        <SvgSqft />
+                        <Text fontSize={FONT_SIZE_SMALL}>{item.sqft}sqft</Text>
+                      </RowedView>
                     </RowedView>
-                    <RowedView flex>
-                      <SvgSqft />
-                      <Text fontSize={FONT_SIZE_SMALL}>{item.sqft}sqft</Text>
-                    </RowedView>
-                  </RowedView>
-                </DescriptionContainer>
-              </TenantCard>
+                  </DescriptionContainer>
+                </Card>
+              </Touchable>
             ))}
           </TenantCardContainer>
         ) : (
@@ -49,6 +67,19 @@ export default function TenantSavedProperties() {
         )
       ) : (
         <ErrorComponent onRetry={refetch} />
+      )}
+      {selectedProperty && (
+        <LocationDeepDiveModal
+          visible={deepDiveModalVisible}
+          onClose={() => {
+            setDeepDiveModalVisible(false);
+          }}
+          // TODO: make this optional on deep dive
+          targetNeighborhood=""
+          categories={[]}
+          propertyId={selectedProperty.propertyId}
+          brandId={selectedProperty.brandId}
+        />
       )}
     </Container>
   );
@@ -69,7 +100,7 @@ const TenantCardContainer = styled(View)`
   flex-direction: row;
   flex-wrap: wrap;
 `;
-const TenantCard = styled(Card)`
+const Touchable = styled(TouchableOpacity)`
   width: calc(33.33% - 11px);
   margin: 12px 16px 12px 0;
   &:nth-child(3n) {
