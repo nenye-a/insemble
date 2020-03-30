@@ -8,7 +8,8 @@ import TouchableOpacity from './TouchableOpacity';
 import placeholder from '../assets/images/image-placeholder.jpg';
 import SvgCircleClose from '../components/icons/circle-close';
 import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
-import { BORDER_COLOR } from '../constants/colors';
+import SvgEdit from '../components/icons/Edit';
+import { BORDER_COLOR, WHITE, BUTTON_BORDER_COLOR } from '../constants/colors';
 
 export type FileWithPreview = { file: File; preview: string };
 
@@ -19,6 +20,8 @@ type Props = DropzoneProps & {
   onPhotoRemove?: () => void;
   showCloseIcon?: boolean;
   isMainPhoto?: boolean;
+  isAvatar?: boolean;
+  editAvatar?: (files: Array<FileWithPreview>) => void;
 };
 
 export default function Dropzone(props: Props) {
@@ -27,8 +30,10 @@ export default function Dropzone(props: Props) {
     getPreview,
     loading,
     onPhotoRemove,
+    editAvatar,
     showCloseIcon = true,
     isMainPhoto = false,
+    isAvatar = false,
     ...dropzoneProps
   } = props;
 
@@ -43,7 +48,11 @@ export default function Dropzone(props: Props) {
             file,
             preview: URL.createObjectURL(file),
           }));
-          getPreview && getPreview(files[0]);
+          if (isAvatar) {
+            editAvatar && editAvatar(files);
+          } else {
+            getPreview && getPreview(files[0]);
+          }
         }}
         {...dropzoneProps}
       >
@@ -53,10 +62,17 @@ export default function Dropzone(props: Props) {
             content = <LoadingIndicator />;
           } else if (source) {
             content = <Image src={source} isMainPhoto={isMainPhoto} />;
+          } else if (isAvatar) {
+            content = <SvgEdit />;
           } else {
             content = <Image src={placeholder} isMainPhoto={isMainPhoto} />;
           }
-          return (
+          return isAvatar ? (
+            <Edit {...getRootProps()}>
+              <input {...getInputProps()} />
+              {content}
+            </Edit>
+          ) : (
             <View {...getRootProps()}>
               <input {...getInputProps()} />
               {content}
@@ -88,4 +104,17 @@ const CloseButtonWrapper = styled(TouchableOpacity)`
   top: 8px;
   right: 8px;
   z-index: 2;
+`;
+const Edit = styled(View)`
+  position: absolute;
+  height: 35px;
+  width: 35px;
+  justify-content: center;
+  align-items: center;
+  top: -35px;
+  right: -60px;
+  border-radius: 50%;
+  background-color: ${WHITE};
+  border: 0.3px solid ${BUTTON_BORDER_COLOR};
+  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.3);
 `;
