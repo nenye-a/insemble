@@ -210,7 +210,7 @@ export default function AddSpace(props: Props) {
             history.goBack();
           }}
         />
-        <Button text="Next" disabled={!allValid} type="submit" />
+        <Button text="Submit" disabled={!allValid} type="submit" />
       </OnboardingFooter>
     </Form>
   );

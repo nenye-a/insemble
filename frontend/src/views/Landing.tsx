@@ -22,6 +22,10 @@ import { WHITE } from '../constants/colors';
 import { VIEWPORT_TYPE } from '../constants/viewports';
 import { FONT_SIZE_XXLARGE } from '../constants/theme';
 import { Place } from '../generated/Place';
+import { GET_PROPERTIES } from '../graphql/queries/server/properties';
+import { GET_BRANDS } from '../graphql/queries/server/brand';
+import { GetBrands } from '../generated/GetBrands';
+import { GetProperties } from '../generated/GetProperties';
 
 type LogoViewProps = ViewProps & {
   isDesktop?: boolean;
@@ -29,7 +33,7 @@ type LogoViewProps = ViewProps & {
 
 function Landing() {
   let { isLoading } = useGoogleMaps();
-  let { role } = useCredentials();
+  let { role, landlordToken, tenantToken } = useCredentials();
   let history = useHistory();
   let { viewportType } = useViewport();
   let isDesktop = viewportType === VIEWPORT_TYPE.DESKTOP;
@@ -47,6 +51,32 @@ function Landing() {
       fetchPolicy: 'network-only',
     }
   );
+  let [getBrand] = useLazyQuery<GetBrands>(GET_BRANDS, {
+    notifyOnNetworkStatusChange: true,
+    onCompleted: (data) => {
+      let { id } = data.brands[0];
+      history.push(`/map/${id}`);
+    },
+  });
+  let [getProperties] = useLazyQuery<GetProperties>(GET_PROPERTIES, {
+    notifyOnNetworkStatusChange: true,
+    onCompleted: (data) => {
+      let { id } = data?.properties[0];
+      history.push(`/landlord/properties/${id}`);
+    },
+  });
+
+  useEffect(() => {
+    if (role === Role.TENANT) {
+      if (tenantToken) {
+        getBrand();
+      }
+    } else if (role === Role.LANDLORD) {
+      if (landlordToken) {
+        getProperties();
+      }
+    }
+  }, [getBrand, getProperties, role, landlordToken, tenantToken]);
 
   useEffect(() => {
     if (role === Role.TENANT) {
