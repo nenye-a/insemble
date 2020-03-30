@@ -8,16 +8,20 @@ type Props = {
 
 type ViewportListenerContext = {
   viewportType: VIEWPORT_TYPE;
+  isDesktop: boolean;
 };
 
 let defaultContextValue = {
   viewportType: VIEWPORT_TYPE.DESKTOP,
+  isDesktop: true,
 };
 
 export let ViewportListenerContext = createContext<ViewportListenerContext>(defaultContextValue);
 
 export default function ViewportListener({ children }: Props) {
   let [viewportType, setViewportType] = useState(getViewportType(window.innerWidth));
+
+  let isDesktop = viewportType === VIEWPORT_TYPE.DESKTOP;
 
   useEffect(() => {
     let onResize = () => {
@@ -31,7 +35,7 @@ export default function ViewportListener({ children }: Props) {
     };
   }, []);
 
-  let value = useMemo(() => ({ viewportType }), [viewportType]);
+  let value = useMemo(() => ({ viewportType, isDesktop }), [viewportType, isDesktop]);
   return (
     <ViewportListenerContext.Provider value={value}>{children}</ViewportListenerContext.Provider>
   );

@@ -19,6 +19,7 @@ export default function RangeInput(props: Props) {
           onLowRangeInputChange && onLowRangeInputChange(e.target.value);
         }}
         value={lowValue}
+        containerStyle={{ flex: 1 }}
       />
       <Dash>-</Dash>
       <TextInput
@@ -27,6 +28,7 @@ export default function RangeInput(props: Props) {
           onHighRangeInputChange && onHighRangeInputChange(e.target.value);
         }}
         value={highValue}
+        containerStyle={{ flex: 1 }}
       />
     </Container>
   );
@@ -35,7 +37,7 @@ export default function RangeInput(props: Props) {
 const Container = styled(View)`
   flex-direction: row;
   justify-content: space-between;
-  width: '100%';
+  width: 100%;
   align-items: center;
   margin: 4px 12px;
 `;

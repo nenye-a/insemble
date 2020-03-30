@@ -1,5 +1,5 @@
 import React, { useState, useReducer, useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useHistory, Redirect, useParams } from 'react-router-dom';
 
 import { View } from '../core-ui';
@@ -12,6 +12,7 @@ import OnboardingSignUp from './OnboardingPage/OnboardingSignUp';
 import tenantOnboardingReducer, {
   tenantOnboardingInitialState,
 } from '../reducers/tenantOnboardingReducer';
+import { useViewport } from '../utils';
 
 type Params = {
   formStep?: string;
@@ -24,6 +25,8 @@ export default function Onboarding() {
 
   let [selectedStep, setSelectedStep] = useState(params.formStep);
   let [state, dispatch] = useReducer(tenantOnboardingReducer, tenantOnboardingInitialState);
+
+  let { isDesktop } = useViewport();
 
   useEffect(() => {
     if (landingState && !landingState.newPlace) {
@@ -89,11 +92,12 @@ export default function Onboarding() {
   }
 
   return (
-    <Container flex>
+    <Container flex isDesktop={isDesktop}>
       <OnboardingCard
         title={selectedPage.title}
         progress={SEGMENTS.indexOf(selectedPage) / SEGMENTS.length}
         canPressNext={state.canPressNext}
+        flex
       >
         <Content dispatch={dispatch} state={state} />
       </OnboardingCard>
@@ -101,7 +105,18 @@ export default function Onboarding() {
   );
 }
 
-const Container = styled(View)`
+type ContainerProps = ViewProps & {
+  isDesktop: boolean;
+};
+
+const Container = styled(View)<ContainerProps>`
   align-items: center;
-  margin: 24px;
+  ${(props) =>
+    props.isDesktop
+      ? css`
+          margin: 24px;
+        `
+      : css`
+          min-height: 90vh;
+        `}
 `;

@@ -100,7 +100,7 @@ export default function TenantPhysicalCriteria(props: Props) {
   }
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form style={{ flex: 1 }} onSubmit={handleSubmit(onSubmit)}>
       <Content flex>
         <Description
           visible
@@ -215,6 +215,6 @@ const ErrorMessage = styled(Text)`
 `;
 
 const RangeInputContainer = styled(RangeInput)`
-  width: 108px;
+  width: 216px;
   margin: 0 0 6px 0;
 `;
