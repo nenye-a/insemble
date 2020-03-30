@@ -39,14 +39,14 @@ let propertyDetailsResolver: FieldResolver<'Query', 'propertyDetails'> = async (
   } = result;
 
   let {
-    num_apartments: numApartements,
+    nearby_apartments: numApartements,
     num_hospitals: numHospitals,
     num_metro: numMetro,
     num_universities: numUniversities,
     'HouseholdGrowth2017-2022': householdGrowth2017to2022,
     DaytimePop: daytimePop,
     MedHouseholdIncome: mediumHouseholdIncome,
-    TotalHousholds: totalHousehold,
+    TotalHouseholds: totalHousehold,
     mile,
   } = keyFacts;
   let objectToArrayKeyObjectDemographics = (
