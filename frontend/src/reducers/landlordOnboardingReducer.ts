@@ -63,7 +63,7 @@ export let landlordOnboardingInitialState = {
     marketingPreference: MarketingPreference.PUBLIC,
   },
   confirmTenant: {
-    businessType: [],
+    businessType: ['Retail', 'Restaurant', 'Fitness', 'Entertainment'],
     selectedRetailCategories: [],
     existingExclusives: [],
   },
