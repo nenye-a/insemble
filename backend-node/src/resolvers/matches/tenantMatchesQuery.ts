@@ -88,14 +88,20 @@ let tenantMatches = queryField('tenantMatches', {
             brand_name: name,
             categories:
               categories.length > 0 ? JSON.stringify(categories) : undefined,
-            income: minIncome && {
-              min: minIncome,
-              max: maxIncome,
-            },
-            age: minAge && {
-              min: minAge,
-              max: maxAge,
-            },
+            income:
+              typeof minIncome === 'number'
+                ? {
+                    min: minIncome,
+                    max: maxIncome,
+                  }
+                : undefined,
+            age:
+              typeof minAge === 'number'
+                ? {
+                    min: minAge,
+                    max: maxAge,
+                  }
+                : undefined,
             personas:
               personas.length > 0 ? JSON.stringify(personas) : undefined,
             commute: commute.length > 0 ? JSON.stringify(commute) : undefined,
@@ -103,14 +109,20 @@ let tenantMatches = queryField('tenantMatches', {
               education.length > 0 ? JSON.stringify(education) : undefined,
             ethnicity:
               ethnicity.length > 0 ? JSON.stringify(ethnicity) : undefined,
-            rent: minRent && {
-              min: minRent,
-              max: maxRent,
-            },
-            sqft: minSize && {
-              min: minSize,
-              max: maxSize,
-            },
+            rent:
+              typeof minRent === 'number'
+                ? {
+                    min: minRent,
+                    max: maxRent,
+                  }
+                : undefined,
+            sqft:
+              typeof minSize === 'number'
+                ? {
+                    min: minSize,
+                    max: maxSize,
+                  }
+                : undefined,
             frontage_width: minFrontageWidth,
             propertyType:
               spaceType.length > 0 ? JSON.stringify(spaceType) : undefined,
