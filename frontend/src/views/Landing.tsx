@@ -11,7 +11,7 @@ import Description from './LandingPage/Description';
 import Features from './LandingPage/Features';
 import SpeedUpLeasing from './LandingPage/SpeedUpLeasing';
 import Footer from './LandingPage/Footer';
-import { useGoogleMaps, useCredentials, useViewport, localStorage } from '../utils';
+import { useGoogleMaps, useCredentials, useViewport } from '../utils';
 import Button from '../core-ui/Button';
 import { GetTenantProfile } from '../generated/GetTenantProfile';
 import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../graphql/queries/server/profile';
@@ -33,7 +33,7 @@ type LogoViewProps = ViewProps & {
 
 function Landing() {
   let { isLoading } = useGoogleMaps();
-  let { role } = useCredentials();
+  let { role, landlordToken, tenantToken } = useCredentials();
   let history = useHistory();
   let { viewportType } = useViewport();
   let isDesktop = viewportType === VIEWPORT_TYPE.DESKTOP;
@@ -68,13 +68,11 @@ function Landing() {
 
   useEffect(() => {
     if (role === Role.TENANT) {
-      let token = localStorage.getTenantToken();
-      if (token) {
+      if (tenantToken) {
         getBrand();
       }
     } else if (role === Role.LANDLORD) {
-      let token = localStorage.getLandlordToken();
-      if (token) {
+      if (landlordToken) {
         getProperties();
       }
     }
