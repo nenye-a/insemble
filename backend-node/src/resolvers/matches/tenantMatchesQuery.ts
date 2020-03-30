@@ -10,6 +10,40 @@ import {
   MatchingProperty,
 } from 'dataTypes';
 
+type PendingData = {
+  location?: {
+    address: string;
+    lat: string;
+    lng: string;
+  };
+  nextLocations?: Array<{
+    address: string;
+    lat: string;
+    lng: string;
+  }>;
+  education?: Array<string>;
+  commute?: Array<string>;
+  ethnicity?: Array<string>;
+  categories?: Array<string>;
+  equipment?: Array<string>;
+  maxAge?: number;
+  maxIncome?: number;
+  maxRent?: number;
+  maxSize?: number;
+  minAge?: number;
+  minDaytimePopulation?: number;
+  minFrontageWidth?: number;
+  minIncome?: number;
+  minRent?: number;
+  minSize?: number;
+  personas?: Array<string>;
+  spaceType?: Array<string>;
+  locationCount?: number;
+  name?: string;
+  newLocationPlan?: 'NOT_ACTIVE' | 'NOT_PLANNING' | 'YES';
+  userRelation?: string;
+};
+
 let tenantMatches = queryField('tenantMatches', {
   type: 'Brand',
   args: {
@@ -21,11 +55,19 @@ let tenantMatches = queryField('tenantMatches', {
       include: {
         location: true,
         nextLocations: true,
+        tenantUser: true,
       },
     });
     if (!selectedBrand) {
       throw new Error('Brand not found!');
     }
+    if (!selectedBrand.tenantUser) {
+      throw new Error('Tenant not found in this brand.');
+    }
+    if (selectedBrand.tenantUser.id !== context.tenantUserId) {
+      throw new Error('This is not your brand. Not Authorized!');
+    }
+
     let {
       matchId,
       tenantId,
@@ -56,6 +98,8 @@ let tenantMatches = queryField('tenantMatches', {
       newLocationPlan,
       userRelation,
       nextLocations,
+      // NOTE: data for update Matches
+      pendingUpdate,
     } = selectedBrand;
 
     if (!(name && location) && !(categories.length > 0 && minIncome)) {
@@ -75,135 +119,393 @@ let tenantMatches = queryField('tenantMatches', {
         : [];
       matchingProperties = existMatchingProperties;
       matchingLocations = existMatchingLocations;
-    } else {
-      let {
-        brand_id: newTenantId,
-        match_id: newMatchId,
-        matching_locations: newMatchingLocations,
-        matching_properties: rawMatchingProperties = [],
-      }: TenantMatchesType = (
-        await axios.get(`${LEGACY_API_URI}/api/tenantMatches/`, {
-          params: {
-            address: location?.address,
-            brand_name: name,
-            categories:
-              categories.length > 0 ? JSON.stringify(categories) : undefined,
-            income:
-              typeof minIncome === 'number'
-                ? {
-                    min: minIncome,
-                    max: maxIncome,
-                  }
-                : undefined,
-            age:
-              typeof minAge === 'number'
-                ? {
-                    min: minAge,
-                    max: maxAge,
-                  }
-                : undefined,
-            personas:
-              personas.length > 0 ? JSON.stringify(personas) : undefined,
-            commute: commute.length > 0 ? JSON.stringify(commute) : undefined,
-            education:
-              education.length > 0 ? JSON.stringify(education) : undefined,
-            ethnicity:
-              ethnicity.length > 0 ? JSON.stringify(ethnicity) : undefined,
-            rent:
-              typeof minRent === 'number'
-                ? {
-                    min: minRent,
-                    max: maxRent,
-                  }
-                : undefined,
-            sqft:
-              typeof minSize === 'number'
-                ? {
-                    min: minSize,
-                    max: maxSize,
-                  }
-                : undefined,
-            frontage_width: minFrontageWidth,
-            propertyType:
-              spaceType.length > 0 ? JSON.stringify(spaceType) : undefined,
-            min_daytime_pop: minDaytimePopulation,
-            match_id: matchId,
-          },
-        })
-      ).data;
+    } else if (pendingUpdate) {
+      try {
+        let {
+          categories: pendingCategories = [],
+          commute: pendingCommute = [],
+          education: pendingEducation = [],
+          ethnicity: pendingEthnicity = [],
+          location: pendingLocation,
+          name: pendingName,
+          maxIncome: pendingMaxIncome,
+          minIncome: pendingMinIncome,
+          minAge: pendingMinAge,
+          maxAge: pendingMaxAge,
+          personas: pendingPersonas = [],
+          minRent: pendingMinRent,
+          maxRent: pendingMaxRent,
+          minSize: pendingMinSize,
+          maxSize: pendingMaxSize,
+          minDaytimePopulation: pendingMinDaytimePopulation,
+          minFrontageWidth: pendingMinFrontageWidth,
+          spaceType: pendingSpaceType = [],
+          equipment: pendingEquipment = [],
+          locationCount: pendingLocationCount,
+          newLocationPlan: pendingNewLocationPlan,
+          userRelation: pendingUserRelation,
+          nextLocations: pendingNextLocations,
+        }: PendingData = JSON.parse(pendingUpdate);
+        let {
+          brand_id: newTenantId,
+          match_id: newMatchId,
+          matching_locations: newMatchingLocations,
+          matching_properties: rawMatchingProperties = [],
+        }: TenantMatchesType = (
+          await axios.get(`${LEGACY_API_URI}/api/tenantMatches/`, {
+            params: {
+              address: pendingLocation?.address,
+              brand_name: pendingName,
+              categories:
+                pendingCategories.length > 0
+                  ? JSON.stringify(pendingCategories)
+                  : undefined,
+              income:
+                typeof pendingMinIncome === 'number'
+                  ? {
+                      min: pendingMinIncome,
+                      max: pendingMaxIncome,
+                    }
+                  : undefined,
+              age:
+                typeof pendingMinAge === 'number'
+                  ? {
+                      min: pendingMinAge,
+                      max: pendingMaxAge,
+                    }
+                  : undefined,
+              personas:
+                pendingPersonas.length > 0
+                  ? JSON.stringify(pendingPersonas)
+                  : undefined,
+              commute:
+                pendingCommute.length > 0
+                  ? JSON.stringify(pendingCommute)
+                  : undefined,
+              education:
+                pendingEducation.length > 0
+                  ? JSON.stringify(pendingEducation)
+                  : undefined,
+              ethnicity:
+                pendingEthnicity.length > 0
+                  ? JSON.stringify(pendingEthnicity)
+                  : undefined,
+              rent:
+                typeof pendingMinRent === 'number'
+                  ? {
+                      min: pendingMinRent,
+                      max: pendingMaxRent,
+                    }
+                  : undefined,
+              sqft:
+                typeof pendingMinSize === 'number'
+                  ? {
+                      min: pendingMinSize,
+                      max: pendingMaxSize,
+                    }
+                  : undefined,
+              frontage_width: pendingMinFrontageWidth,
+              propertyType:
+                pendingSpaceType.length > 0
+                  ? JSON.stringify(pendingSpaceType)
+                  : undefined,
+              min_daytime_pop: pendingMinDaytimePopulation,
+              match_id: matchId,
+            },
+          })
+        ).data;
 
-      let rawMatchingPropertiesIds = rawMatchingProperties?.map(
-        ({ space_id }) => space_id,
-      );
+        let rawMatchingPropertiesIds = rawMatchingProperties?.map(
+          ({ space_id }) => space_id,
+        );
 
-      let spaces = await context.prisma.space.findMany({
-        where: {
-          spaceId: {
-            in: rawMatchingPropertiesIds,
-          },
-        },
-      });
-
-      let spacesMap = new Map(
-        spaces.map(({ spaceId, ...rest }) => [spaceId, rest]),
-      );
-      let prismaSpaceIds = [...spacesMap.keys()];
-      let filteredMatchingProperties = rawMatchingProperties?.filter(
-        ({ space_id }) => prismaSpaceIds.includes(space_id),
-      );
-
-      let savedPropertySpaceIds = (
-        await context.prisma.savedProperty.findMany({
+        let spaces = await context.prisma.space.findMany({
           where: {
-            tenantUser: {
-              id: context.tenantUserId,
+            spaceId: {
+              in: rawMatchingPropertiesIds,
             },
           },
-        })
-      ).map(({ spaceId }) => {
-        return spaceId;
-      });
+        });
 
-      let newMatchingProperties = filteredMatchingProperties?.map(
-        ({
-          space_id: spaceId,
-          property_id: propertyId,
-          space_condition: spaceCondition,
-          tenant_type: tenantType,
-          match_value: matchValue,
-          lng: numberLng,
-          lat: numberLat,
-          type,
-          ...other
-        }) => {
-          return {
-            spaceId,
-            propertyId,
-            spaceCondition,
-            tenantType,
+        let spacesMap = new Map(
+          spaces.map(({ spaceId, ...rest }) => [spaceId, rest]),
+        );
+        let prismaSpaceIds = [...spacesMap.keys()];
+        let filteredMatchingProperties = rawMatchingProperties?.filter(
+          ({ space_id }) => prismaSpaceIds.includes(space_id),
+        );
+
+        let savedPropertySpaceIds = (
+          await context.prisma.savedProperty.findMany({
+            where: {
+              tenantUser: {
+                id: context.tenantUserId,
+              },
+            },
+          })
+        ).map(({ spaceId }) => {
+          return spaceId;
+        });
+
+        let newMatchingProperties = filteredMatchingProperties?.map(
+          ({
+            space_id: spaceId,
+            property_id: propertyId,
+            space_condition: spaceCondition,
+            tenant_type: tenantType,
+            match_value: matchValue,
+            lng: numberLng,
+            lat: numberLat,
             type,
-            matchValue,
-            thumbnail: spacesMap.get(spaceId)?.mainPhoto || '',
-            lng: numberLng.toString(),
-            lat: numberLat.toString(),
-            ...other,
-            liked: savedPropertySpaceIds.includes(spaceId),
-          };
-        },
-      );
-      tenantId = newTenantId;
-      matchId = newMatchId;
-      matchingLocations = newMatchingLocations;
-      matchingProperties = newMatchingProperties;
-      await context.prisma.brand.update({
-        where: { id: brandId },
-        data: {
-          matchingLocations: JSON.stringify(newMatchingLocations),
-          matchingProperties: JSON.stringify(newMatchingProperties),
-          tenantId,
-          matchId,
-        },
-      });
+            ...other
+          }) => {
+            return {
+              spaceId,
+              propertyId,
+              spaceCondition,
+              tenantType,
+              type,
+              matchValue,
+              thumbnail: spacesMap.get(spaceId)?.mainPhoto || '',
+              lng: numberLng.toString(),
+              lat: numberLat.toString(),
+              ...other,
+              liked: savedPropertySpaceIds.includes(spaceId),
+            };
+          },
+        );
+        let newBrand = await context.prisma.brand.update({
+          where: { id: brandId },
+          data: {
+            name: pendingName,
+            maxIncome: pendingMaxIncome,
+            minIncome: pendingMinIncome,
+            minAge: pendingMinAge,
+            maxAge: pendingMaxAge,
+            minRent: pendingMinRent,
+            maxRent: pendingMaxRent,
+            minSize: pendingMinSize,
+            maxSize: pendingMaxSize,
+            minDaytimePopulation: pendingMinDaytimePopulation,
+            minFrontageWidth: pendingMinFrontageWidth,
+            locationCount: pendingLocationCount,
+            newLocationPlan: pendingNewLocationPlan,
+            userRelation: pendingUserRelation,
+            nextLocations: {
+              create: pendingNextLocations,
+            },
+            categories: {
+              set: pendingCategories,
+            },
+            equipment: {
+              set: pendingEquipment,
+            },
+            personas: {
+              set: pendingPersonas,
+            },
+            spaceType: {
+              set: pendingSpaceType,
+            },
+            education: {
+              set: pendingEducation,
+            },
+            commute: {
+              set: pendingCommute,
+            },
+            ethnicity: {
+              set: pendingEthnicity,
+            },
+            location: {
+              update: pendingLocation,
+            },
+            matchingLocations: JSON.stringify(newMatchingLocations),
+            matchingProperties: JSON.stringify(newMatchingProperties),
+            tenantId,
+            matchId,
+            pendingUpdate: null,
+          },
+          include: {
+            location: true,
+            nextLocations: true,
+          },
+        });
+
+        // NOTE: Redeclare for return
+        categories = newBrand.categories;
+        location = newBrand.location;
+        name = newBrand.name;
+        maxIncome = newBrand.maxIncome;
+        minIncome = newBrand.minIncome;
+        minAge = newBrand.minAge;
+        maxAge = newBrand.maxAge;
+        personas = newBrand.personas;
+        commute = newBrand.commute;
+        education = newBrand.education;
+        minRent = newBrand.minRent;
+        maxRent = newBrand.maxRent;
+        minSize = newBrand.minSize;
+        maxSize = newBrand.maxSize;
+        minDaytimePopulation = newBrand.minDaytimePopulation;
+        minFrontageWidth = newBrand.minFrontageWidth;
+        spaceType = newBrand.spaceType;
+        equipment = newBrand.equipment;
+        ethnicity = newBrand.ethnicity;
+        locationCount = newBrand.locationCount;
+        newLocationPlan = newBrand.newLocationPlan;
+        userRelation = newBrand.userRelation;
+        nextLocations = newBrand.nextLocations;
+
+        tenantId = newTenantId;
+        matchId = newMatchId;
+        matchingLocations = newMatchingLocations;
+        matchingProperties = newMatchingProperties;
+      } catch {
+        await context.prisma.brand.update({
+          data: {
+            pendingUpdate: null,
+          },
+          where: {
+            id: brandId,
+          },
+        });
+        throw new Error(
+          'Failed to Load Heatmap, please adjust settings and try again.',
+        );
+      }
+    } else {
+      try {
+        // NOTE: By new logic this only run when first time create brand
+        let {
+          brand_id: newTenantId,
+          match_id: newMatchId,
+          matching_locations: newMatchingLocations,
+          matching_properties: rawMatchingProperties = [],
+        }: TenantMatchesType = (
+          await axios.get(`${LEGACY_API_URI}/api/tenantMatches/`, {
+            params: {
+              address: location?.address,
+              brand_name: name,
+              categories:
+                categories.length > 0 ? JSON.stringify(categories) : undefined,
+              income:
+                typeof minIncome === 'number'
+                  ? {
+                      min: minIncome,
+                      max: maxIncome,
+                    }
+                  : undefined,
+              age:
+                typeof minAge === 'number'
+                  ? {
+                      min: minAge,
+                      max: maxAge,
+                    }
+                  : undefined,
+              personas:
+                personas.length > 0 ? JSON.stringify(personas) : undefined,
+              commute: commute.length > 0 ? JSON.stringify(commute) : undefined,
+              education:
+                education.length > 0 ? JSON.stringify(education) : undefined,
+              ethnicity:
+                ethnicity.length > 0 ? JSON.stringify(ethnicity) : undefined,
+              rent:
+                typeof minRent === 'number'
+                  ? {
+                      min: minRent,
+                      max: maxRent,
+                    }
+                  : undefined,
+              sqft:
+                typeof minSize === 'number'
+                  ? {
+                      min: minSize,
+                      max: maxSize,
+                    }
+                  : undefined,
+              frontage_width: minFrontageWidth,
+              propertyType:
+                spaceType.length > 0 ? JSON.stringify(spaceType) : undefined,
+              min_daytime_pop: minDaytimePopulation,
+              match_id: matchId,
+            },
+          })
+        ).data;
+
+        let rawMatchingPropertiesIds = rawMatchingProperties?.map(
+          ({ space_id }) => space_id,
+        );
+
+        let spaces = await context.prisma.space.findMany({
+          where: {
+            spaceId: {
+              in: rawMatchingPropertiesIds,
+            },
+          },
+        });
+
+        let spacesMap = new Map(
+          spaces.map(({ spaceId, ...rest }) => [spaceId, rest]),
+        );
+        let prismaSpaceIds = [...spacesMap.keys()];
+        let filteredMatchingProperties = rawMatchingProperties?.filter(
+          ({ space_id }) => prismaSpaceIds.includes(space_id),
+        );
+
+        let savedPropertySpaceIds = (
+          await context.prisma.savedProperty.findMany({
+            where: {
+              tenantUser: {
+                id: context.tenantUserId,
+              },
+            },
+          })
+        ).map(({ spaceId }) => {
+          return spaceId;
+        });
+
+        let newMatchingProperties = filteredMatchingProperties?.map(
+          ({
+            space_id: spaceId,
+            property_id: propertyId,
+            space_condition: spaceCondition,
+            tenant_type: tenantType,
+            match_value: matchValue,
+            lng: numberLng,
+            lat: numberLat,
+            type,
+            ...other
+          }) => {
+            return {
+              spaceId,
+              propertyId,
+              spaceCondition,
+              tenantType,
+              type,
+              matchValue,
+              thumbnail: spacesMap.get(spaceId)?.mainPhoto || '',
+              lng: numberLng.toString(),
+              lat: numberLat.toString(),
+              ...other,
+              liked: savedPropertySpaceIds.includes(spaceId),
+            };
+          },
+        );
+        tenantId = newTenantId;
+        matchId = newMatchId;
+        matchingLocations = newMatchingLocations;
+        matchingProperties = newMatchingProperties;
+        await context.prisma.brand.update({
+          where: { id: brandId },
+          data: {
+            matchingLocations: JSON.stringify(newMatchingLocations),
+            matchingProperties: JSON.stringify(newMatchingProperties),
+            tenantId,
+            matchId,
+          },
+        });
+      } catch {
+        throw new Error('Failed to Load Heatmap, please try again.');
+      }
     }
 
     return {

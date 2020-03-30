@@ -10,16 +10,8 @@ export let editBrandResolver: FieldResolver<'Mutation', 'editBrand'> = async (
   { business, filter, brandId },
   context: Context,
 ) => {
-  let {
-    categories = [],
-    equipment = [],
-    personas = [],
-    spaceType = [],
-    education = [],
-    commute = [],
-    ethnicity = [],
-    ...filterInput
-  } = filter || {};
+  let { education = [], commute = [], ethnicity = [], ...filterInput } =
+    filter || {};
   let {
     ethnicity: ethnicityOpt,
     commute: commuteOpt,
@@ -38,7 +30,7 @@ export let editBrandResolver: FieldResolver<'Mutation', 'editBrand'> = async (
     return educationOpt.find((strOptRaw) => strOptRaw.includes(str)) || '';
   });
 
-  let { location, nextLocations, ...businessInput } = business || {};
+  let { nextLocations, ...businessInput } = business || {};
 
   if (nextLocations) {
     await context.prisma.brand.update({
@@ -52,40 +44,18 @@ export let editBrandResolver: FieldResolver<'Mutation', 'editBrand'> = async (
       },
     });
   }
+  let pendingUpdateData = {
+    ...businessInput,
+    ...filterInput,
+    nextLocations: nextLocations,
+    education: educationRaw,
+    commute: commuteRaw,
+    ethnicity: ethnicityRaw,
+  };
 
   let brand = await context.prisma.brand.update({
     data: {
-      ...businessInput,
-      ...filterInput,
-      nextLocations: {
-        create: nextLocations,
-      },
-      categories: {
-        set: categories,
-      },
-      equipment: {
-        set: equipment,
-      },
-      personas: {
-        set: personas,
-      },
-      spaceType: {
-        set: spaceType,
-      },
-      education: {
-        set: educationRaw,
-      },
-      commute: {
-        set: commuteRaw,
-      },
-      ethnicity: {
-        set: ethnicityRaw,
-      },
-      location: {
-        update: location,
-      },
-      matchingLocations: null,
-      matchingProperties: null,
+      pendingUpdate: JSON.stringify(pendingUpdateData),
     },
     where: {
       id: brandId,
