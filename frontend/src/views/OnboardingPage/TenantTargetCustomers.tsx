@@ -161,6 +161,7 @@ export default function TenantTargetCustomers(props: Props) {
             setSelectedAgeRange(values);
           }}
           disabled={editCriteriaDisabled}
+          sliderDisabled={noAgePreference}
           loading={autoPopulateLoading}
         />
         <FilterContainer
