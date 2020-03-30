@@ -14,7 +14,7 @@ import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
 import { State, Action } from '../../reducers/landlordOnboardingReducer';
 import { CREATE_PROPERTY, GET_PROPERTIES } from '../../graphql/queries/server/properties';
 import { CreateProperty, CreatePropertyVariables } from '../../generated/CreateProperty';
-import { getImageBlob } from '../../utils';
+import { getImageBlob, useViewport } from '../../utils';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -32,6 +32,7 @@ export default function PreviewListing(props: Props) {
     createProperty,
     { loading: createPropertyLoading, data: createPropertyData, error: createPropertyError },
   ] = useMutation<CreateProperty, CreatePropertyVariables>(CREATE_PROPERTY);
+  let { isDesktop } = useViewport();
 
   let onSubmit = () => {
     let { userRelations, propertyType, physicalAddress, marketingPreference } = confirmLocation;
@@ -102,12 +103,36 @@ export default function PreviewListing(props: Props) {
   if (createPropertyData?.createProperty) {
     history.push('/landlord/properties');
   }
+  let photoGallery = (
+    <PhotoGallery
+      images={[
+        (typeof spaceListing.mainPhoto !== 'string' && spaceListing?.mainPhoto?.preview) || '',
+        ...propertyPhotos,
+      ]}
+    />
+  );
+
+  let cards = (
+    <CardsContainer flex isDesktop={isDesktop}>
+      <SummaryCard
+        priceSqft={`$${spaceListing.pricePerSqft.toString()}`}
+        sqft={spaceListing.sqft}
+        tenacy="Multiple"
+        type={confirmLocation.propertyType?.join(', ') || ''}
+        condition={spaceListing.condition}
+      />
+      <Spacing />
+      <DescriptionCard content={spaceListing?.description || ''} />
+    </CardsContainer>
+  );
+
+  let content = isDesktop ? [photoGallery, cards] : [cards, photoGallery];
   return (
     <Form onSubmit={onSubmit}>
       <Alert visible={!!createPropertyError} text={createPropertyError?.message || ''} />
       <RowView>
         <Title>Space 1</Title>
-        <Alert visible text="This is how the Retailer will see your listing." />
+        {isDesktop && <Alert visible text="This is how the Retailer will see your listing." />}
       </RowView>
       <TourContainer isShrink={false}>
         <PendingAlert visible text="Pending virtual tour" />
@@ -119,25 +144,9 @@ export default function PreviewListing(props: Props) {
         clickable={false}
         targetNeighborhood=""
       />
-      <RowedView flex>
-        <PhotoGallery
-          images={[
-            (typeof spaceListing.mainPhoto !== 'string' && spaceListing?.mainPhoto?.preview) || '',
-            ...propertyPhotos,
-          ]}
-        />
-        <CardsContainer flex>
-          <SummaryCard
-            priceSqft={`$${spaceListing.pricePerSqft.toString()}`}
-            sqft={spaceListing.sqft}
-            tenacy="Multiple"
-            type={confirmLocation.propertyType?.join(', ') || ''}
-            condition={spaceListing.condition}
-          />
-          <Spacing />
-          <DescriptionCard content={spaceListing?.description || ''} />
-        </CardsContainer>
-      </RowedView>
+      <Content flex isDesktop={isDesktop}>
+        {content}
+      </Content>
       <OnboardingFooter>
         <TransparentButton mode="transparent" text="Back" onPress={() => history.goBack()} />
         <Button type="submit" text="Next" loading={createPropertyLoading} />
@@ -146,22 +155,24 @@ export default function PreviewListing(props: Props) {
   );
 }
 
-const CardsContainer = styled(View)`
-  padding: 0 16px;
-`;
-const Spacing = styled(View)`
-  height: 12px;
-`;
-const RowedView = styled(View)`
-  flex-direction: row;
-  align-items: flex-start;
-  background-color: ${WHITE};
-`;
+type ViewPropsWithViewport = ViewProps & {
+  isDesktop: boolean;
+};
 
 type TourContainerProps = {
   isShrink: boolean;
 };
 
+const CardsContainer = styled(View)<ViewPropsWithViewport>`
+  padding: ${(props) => (props.isDesktop ? '0 16px 16px 16px' : '16px')};
+`;
+const Spacing = styled(View)`
+  height: 12px;
+`;
+const Content = styled(View)<ViewPropsWithViewport>`
+  flex-direction: ${({ isDesktop }) => (isDesktop ? 'row' : 'column')};
+  background-color: ${WHITE};
+`;
 const TourContainer = styled(View)<TourContainerProps>`
   height: ${(props) => (props.isShrink ? '180px' : '320px')};
   transition: 0.3s height linear;

@@ -69,16 +69,16 @@ export default function TenantTargetCustomers(props: Props) {
   );
   let [minDaytimePopulation, setMinDaytimePopulation] = useState('0');
   let [[minAge, maxAge], setSelectedAgeRange] = useState<Array<number>>([
-    targetCustomers.minAge || INTIIAL_MIN_AGE,
+    targetCustomers.minAge === 0 ? 0 : targetCustomers.minAge || INTIIAL_MIN_AGE,
     targetCustomers.maxAge || INTIIAL_MAX_AGE,
   ]);
   let [[minIncome, maxIncome], setSelectedIncomeRange] = useState<Array<number>>([
-    targetCustomers.minIncome || INITIAL_MIN_INCOME,
+    targetCustomers.minIncome === 0 ? 0 : targetCustomers.minIncome || INITIAL_MIN_INCOME,
     targetCustomers.maxIncome || INITIAL_MAX_INCOME,
   ]);
 
   useEffect(() => {
-    if (autoPopulateData?.autoPopulateFilter) {
+    if (autoPopulateData?.autoPopulateFilter && Object.keys(targetCustomers).length === 0) {
       let { personas, income, age } = autoPopulateData.autoPopulateFilter;
       let { min: autoMinIncome, max: autoMaxIncome } = income;
       let { min: autoMinAge, max: autoMaxAge } = age;

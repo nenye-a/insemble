@@ -1,5 +1,12 @@
-import React, { useState, ChangeEvent, Dispatch, useEffect, useCallback } from 'react';
-import styled from 'styled-components';
+import React, {
+  useState,
+  ChangeEvent,
+  Dispatch,
+  useEffect,
+  useCallback,
+  ComponentProps,
+} from 'react';
+import styled, { css } from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
@@ -23,7 +30,7 @@ import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD, FONT_SIZE_SMALL } from '../../const
 import { Action, State as LandlordOnboardingState } from '../../reducers/landlordOnboardingReducer';
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
 import { Equipments } from '../../generated/Equipments';
-import { validateNumber } from '../../utils/validation';
+import { validateNumber, useViewport } from '../../utils';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
 
 type Props = {
@@ -35,6 +42,7 @@ export default function LandlordListing(props: Props) {
   let history = useHistory();
   let { state, dispatch } = props;
   let { confirmLocation, spaceListing } = state;
+  let { isDesktop } = useViewport();
   let { register, errors, handleSubmit, watch } = useForm();
   let sqft = spaceListing.sqft || watch('sqft');
   let price = spaceListing.pricePerSqft || watch('price');
@@ -196,7 +204,7 @@ export default function LandlordListing(props: Props) {
             errorMessage={(errors?.date as FieldError)?.message || ''}
           />
           <SpaceAlert
-            style={{ alignSelf: 'flex-end' }}
+            isDesktop={isDesktop}
             visible
             text="You will be able to add more spaces later"
           />
@@ -217,6 +225,10 @@ export default function LandlordListing(props: Props) {
     </Form>
   );
 }
+
+type AlertProps = ComponentProps<typeof Alert> & {
+  isDesktop: boolean;
+};
 
 const Container = styled(View)`
   padding: 12px 48px;
@@ -247,8 +259,16 @@ const Address = styled(Text)`
   color: ${DARK_TEXT_COLOR};
 `;
 
-const SpaceAlert = styled(Alert)`
-  margin: 0 0 0 38px;
+const SpaceAlert = styled(Alert)<AlertProps>`
+  ${({ isDesktop }) =>
+    isDesktop
+      ? css`
+          margin: 0 0 0 38px;
+          align-self: flex-end;
+        `
+      : css`
+          margin: 24px 0 12px 0;
+        `}
 `;
 
 const ShortTextInput = styled(TextInput)`
@@ -261,6 +281,7 @@ const TitleContainer = styled(RowView)`
 
 const DatePickerContainer = styled(RowView)`
   padding: 12px 0;
+  flex-flow: wrap;
 `;
 
 const TransparentButton = styled(Button)`

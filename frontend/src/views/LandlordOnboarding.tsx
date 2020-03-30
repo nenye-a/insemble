@@ -1,5 +1,5 @@
 import React, { useState, useReducer, useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useParams, Redirect } from 'react-router-dom';
 
 import { View } from '../core-ui';
@@ -13,6 +13,7 @@ import TenantConfirm from './LandlordOnboardingPage/TenantConfirm';
 import LandlordListing from './LandlordOnboardingPage/LandlordListing';
 import PreviewListing from './LandlordOnboardingPage/PreviewListing';
 import ThankYou from './LandlordOnboardingPage/ThankYou';
+import { useViewport } from '../utils';
 
 type Params = {
   formStep?: string;
@@ -25,6 +26,7 @@ export default function LandlordOnboarding() {
   let {
     confirmLocation: { physicalAddress },
   } = state;
+  let { isDesktop } = useViewport();
 
   useEffect(() => {
     // putting here as well to avoid blinking
@@ -76,11 +78,12 @@ export default function LandlordOnboarding() {
   }
 
   return (
-    <Container flex>
+    <Container flex isDesktop={isDesktop}>
       <OnboardingCard
         title={selectedPage.title}
         progress={SEGMENTS.indexOf(selectedPage) / SEGMENTS.length}
         canPressNext={state.canPressNext}
+        flex
       >
         <Content dispatch={dispatch} state={state} />
       </OnboardingCard>
@@ -88,7 +91,18 @@ export default function LandlordOnboarding() {
   );
 }
 
-const Container = styled(View)`
+type ContainerProps = ViewProps & {
+  isDesktop: boolean;
+};
+
+const Container = styled(View)<ContainerProps>`
   align-items: center;
-  margin: 24px;
+  ${(props) =>
+    props.isDesktop
+      ? css`
+          margin: 24px;
+        `
+      : css`
+          min-height: 90vh;
+        `}
 `;

@@ -1,8 +1,9 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { ComponentProps } from 'react';
+import styled, { css } from 'styled-components';
 
 import { View, Label, TouchableOpacity, Dropzone } from '../../core-ui';
 import { FileWithPreview } from '../../core-ui/Dropzone';
+import { useViewport } from '../../utils';
 
 type Props = {
   mainPhoto: string | FileWithPreview | null;
@@ -13,7 +14,7 @@ type Props = {
 
 export default function PhotosPicker(props: Props) {
   let { mainPhoto, onMainPhotoChange, additionalPhotos, onAdditionalPhotoChange } = props;
-
+  let { isDesktop } = useViewport();
   let onPhotoRemove = (index: number) => {
     if (index === 0) {
       onMainPhotoChange(null);
@@ -53,7 +54,7 @@ export default function PhotosPicker(props: Props) {
         {Array.from({ length: 4 }).map((_, index) => {
           let image = additionalPhotos[index];
           return (
-            <PhotoWrapper key={index}>
+            <PhotoWrapper isDesktop={isDesktop} key={index} is>
               <Dropzone
                 source={typeof image === 'string' ? image : image?.preview}
                 getPreview={(file) => onAdditionalPhotosChange(file, index)}
@@ -69,6 +70,10 @@ export default function PhotosPicker(props: Props) {
   );
 }
 
+type PhotoWrapperProps = ComponentProps<typeof TouchableOpacity> & {
+  isDesktop: boolean;
+};
+
 const LabelText = styled(Label)`
   margin: 12px 0 8px 0;
 `;
@@ -79,6 +84,15 @@ const PhotosContainer = styled(View)`
   justify-content: space-between;
 `;
 
-const PhotoWrapper = styled(TouchableOpacity)`
-  width: 24%;
+const PhotoWrapper = styled(TouchableOpacity)<PhotoWrapperProps>`
+  ${(props) =>
+    props.isDesktop
+      ? css`
+          width: 24%;
+        `
+      : css`
+          // so there is still 1% margin between each photo
+          width: 49%;
+          margin-top: 8px;
+        `}
 `;
