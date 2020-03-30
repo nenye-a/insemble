@@ -579,10 +579,11 @@ def obtain_nearby(target_location, categories, db_connection=utils.SYSTEM_MONGO)
         nearby_dict[place["place_id"]]["hospital"] = True
 
     metro_tag = 'nearby_metro' if 'nearby_metro' in target_location else 'nearby_subway_station'
-    for place in target_location[metro_tag]:
-        if place["place_id"] not in nearby_dict:
-            item_into_dict(nearby_dict, place)
-        nearby_dict[place["place_id"]]["metro"] = True
+    if metro_tag in target_location:
+        for place in target_location[metro_tag]:
+            if place["place_id"] not in nearby_dict:
+                item_into_dict(nearby_dict, place)
+            nearby_dict[place["place_id"]]["metro"] = True
 
     places = _update_all_places(lat, lng, nearby_dict, categories, db_connection)
 
