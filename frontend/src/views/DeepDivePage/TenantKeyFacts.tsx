@@ -28,7 +28,7 @@ export default function TenantKeyFacts({ keyFacts }: Props) {
 
     let numbers2 = [(rating && rating.toFixed(2)) || '-', averageReviews];
 
-    let categories2 = ['Rating', 'Average # of Reviews'];
+    let categories2 = ['Rating', 'Total Ratings'];
     return (
       <View>
         <TextView>
