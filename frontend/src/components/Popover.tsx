@@ -1,6 +1,6 @@
 import React, { ReactNode, useState } from 'react';
 import styled from 'styled-components';
-import { Popover as BasePopover } from '@material-ui/core';
+import BasePopover from '@material-ui/core/Popover';
 
 import { View } from '../core-ui';
 import { DEFAULT_BORDER_RADIUS } from '../constants/theme';

@@ -1,14 +1,9 @@
 import React, { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
 
-import { View, Avatar, Text, TouchableOpacity, PillButton } from '../../core-ui';
-import {
-  FONT_SIZE_MEDIUM,
-  FONT_WEIGHT_MEDIUM,
-  DEFAULT_BORDER_RADIUS,
-  FONT_SIZE_SMALL,
-} from '../../constants/theme';
-import { THEME_COLOR, BACKGROUND_COLOR, WHITE, DARK_TEXT_COLOR } from '../../constants/colors';
+import { View, Avatar, Text, TouchableOpacity } from '../../core-ui';
+import { FONT_SIZE_MEDIUM, FONT_WEIGHT_MEDIUM, DEFAULT_BORDER_RADIUS } from '../../constants/theme';
+import { THEME_COLOR, BACKGROUND_COLOR, WHITE } from '../../constants/colors';
 import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
 import SvgInfoFilled from '../../components/icons/info-filled';
 import { useCredentials } from '../../utils';
@@ -16,6 +11,7 @@ import { Role } from '../../types/types';
 import SvgReply from '../../components/icons/reply';
 import { Conversations_conversations as ConversationMessages } from '../../generated/Conversations';
 import { Popover } from '../../components';
+import { LandlordPopover, TenantPopover } from '../../components/message';
 
 type Props = {
   isEven: boolean;
@@ -45,57 +41,6 @@ export default function MessageCard(props: Props) {
   let { mainPhoto } = space;
   let lastMessage = messages.length - 1;
   let { role } = useCredentials();
-  let landlordPopoverContent = (
-    <LandlordPopoverContainer>
-      <LandlordMatchTitle>{matchScore}% customer match</LandlordMatchTitle>
-      {brandCategories.length > 0 && (
-        <>
-          <LandlordPopoverText>Categories:</LandlordPopoverText>
-          <Row>
-            {brandCategories.map((category, idx) => (
-              <Pill disabled key={idx} primary>
-                {category}
-              </Pill>
-            ))}
-          </Row>
-        </>
-      )}
-
-      {nextLocations && (
-        <>
-          <LandlordPopoverText>Expanding in:</LandlordPopoverText>
-          <Row>
-            {nextLocations.map((location, idx) => (
-              <Pill disabled key={idx} primary>
-                {location.address}
-              </Pill>
-            ))}
-          </Row>
-        </>
-      )}
-
-      {/* <LandlordPopoverText>Years in business:</LandlordPopoverText> */}
-      {locationCount ? (
-        <Row>
-          <LandlordPopoverText># of existing locations: </LandlordPopoverText>
-          <LocationCount>{locationCount}</LocationCount>
-        </Row>
-      ) : null}
-    </LandlordPopoverContainer>
-  );
-
-  let tenantPopoverContent = (
-    <>
-      <Popoverimage src={mainPhoto} />
-      <AddressContainer>
-        <Text>{address}</Text>
-        <SpaceText>{propertySpace.length} Space</SpaceText>
-      </AddressContainer>
-      <MatchContainer>
-        <TenantMatchTitle>{matchScore}% Match</TenantMatchTitle>
-      </MatchContainer>
-    </>
-  );
 
   return (
     <Root isEven={isEven}>
@@ -121,7 +66,12 @@ export default function MessageCard(props: Props) {
                   </IconContainer>
                 }
               >
-                {tenantPopoverContent}
+                <TenantPopover
+                  mainPhoto={mainPhoto}
+                  address={address}
+                  propertySpace={propertySpace}
+                  matchScore={matchScore}
+                />
               </Popover>
             </PopoverContainer>
           </>
@@ -129,7 +79,12 @@ export default function MessageCard(props: Props) {
           <Row>
             <SvgReply />
             <Popover button={<SvgInfoFilled style={{ color: THEME_COLOR, marginLeft: 10 }} />}>
-              {landlordPopoverContent}
+              <LandlordPopover
+                matchScore={matchScore}
+                brandCategories={brandCategories}
+                nextLocations={nextLocations}
+                locationCount={locationCount}
+              />
             </Popover>
           </Row>
         )}
@@ -165,11 +120,6 @@ const Image = styled.img`
   height: 90px;
 `;
 
-const Popoverimage = styled.img`
-  object-fit: cover;
-  height: 90px;
-`;
-
 const MessageText = styled(Text)`
   height: 3em; // 2 lines * line-height
   overflow: hidden;
@@ -181,54 +131,12 @@ const PopoverContainer = styled(View)`
   top: 6px;
 `;
 
-const LandlordPopoverContainer = styled(View)`
-  padding: 20px;
-`;
 const IconContainer = styled(TouchableOpacity)`
   position: absolute;
   right: 6px;
   top: 6px;
 `;
 
-const SpaceText = styled(Text)`
-  font-size: ${FONT_SIZE_SMALL};
-  color: ${DARK_TEXT_COLOR};
-`;
-
-const Pill = styled(PillButton)`
-  margin-right: 8px;
-`;
-
-const LandlordPopoverText = styled(Text)`
-  margin: 8px 0;
-`;
-
-const LocationCount = styled(LandlordPopoverText)`
-  color: ${THEME_COLOR};
-`;
-
 const Container = styled(TouchableOpacity)`
   flex-direction: row;
-`;
-
-const MatchTitle = styled(Text)`
-  color: ${THEME_COLOR};
-  font-weight: ${FONT_WEIGHT_MEDIUM};
-`;
-
-const TenantMatchTitle = styled(MatchTitle)`
-  font-size: 18px;
-`;
-
-const LandlordMatchTitle = styled(MatchTitle)`
-  font-size: 16px;
-`;
-
-const AddressContainer = styled(View)`
-  padding: 16px;
-  background-color: ${BACKGROUND_COLOR};
-`;
-
-const MatchContainer = styled(View)`
-  padding: 16px;
 `;
