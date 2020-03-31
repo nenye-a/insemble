@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { CSSProperties } from 'styled-components';
 import ReactDropzone, { DropzoneProps } from 'react-dropzone';
 
 import View from './View';
@@ -9,7 +9,7 @@ import placeholder from '../assets/images/image-placeholder.jpg';
 import SvgCircleClose from '../components/icons/circle-close';
 import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
 import SvgEdit from '../components/icons/Edit';
-import { BORDER_COLOR, WHITE, BUTTON_BORDER_COLOR } from '../constants/colors';
+import { BORDER_COLOR } from '../constants/colors';
 
 export type FileWithPreview = { file: File; preview: string };
 
@@ -21,7 +21,7 @@ type Props = DropzoneProps & {
   showCloseIcon?: boolean;
   isMainPhoto?: boolean;
   isAvatar?: boolean;
-  editAvatar?: (files: Array<FileWithPreview>) => void;
+  containerStyle?: CSSProperties;
 };
 
 export default function Dropzone(props: Props) {
@@ -30,7 +30,7 @@ export default function Dropzone(props: Props) {
     getPreview,
     loading,
     onPhotoRemove,
-    editAvatar,
+    containerStyle,
     showCloseIcon = true,
     isMainPhoto = false,
     isAvatar = false,
@@ -48,11 +48,7 @@ export default function Dropzone(props: Props) {
             file,
             preview: URL.createObjectURL(file),
           }));
-          if (isAvatar) {
-            editAvatar && editAvatar(files);
-          } else {
-            getPreview && getPreview(files[0]);
-          }
+          getPreview && getPreview(files[0]);
         }}
         {...dropzoneProps}
       >
@@ -67,13 +63,8 @@ export default function Dropzone(props: Props) {
           } else {
             content = <Image src={placeholder} isMainPhoto={isMainPhoto} />;
           }
-          return isAvatar ? (
-            <Edit {...getRootProps()}>
-              <input {...getInputProps()} />
-              {content}
-            </Edit>
-          ) : (
-            <View {...getRootProps()}>
+          return (
+            <View style={containerStyle} {...getRootProps()}>
               <input {...getInputProps()} />
               {content}
             </View>
@@ -104,17 +95,4 @@ const CloseButtonWrapper = styled(TouchableOpacity)`
   top: 8px;
   right: 8px;
   z-index: 2;
-`;
-const Edit = styled(View)`
-  position: absolute;
-  height: 35px;
-  width: 35px;
-  justify-content: center;
-  align-items: center;
-  top: -35px;
-  right: -60px;
-  border-radius: 50%;
-  background-color: ${WHITE};
-  border: 0.3px solid ${BUTTON_BORDER_COLOR};
-  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.3);
 `;
