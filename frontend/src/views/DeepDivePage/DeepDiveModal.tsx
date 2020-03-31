@@ -35,11 +35,12 @@ type Props = {
   onClose: () => void;
   lat?: string;
   lng?: string;
-  address?: string;
-  targetNeighborhood: string;
+  address: string;
+  targetNeighborhood?: string;
   categories?: Array<string>;
   propertyId?: string;
   brandId?: string;
+  sqft?: number;
 };
 
 // const SHRINK_HEIGHT = 160;
@@ -50,11 +51,12 @@ export default function LocationDeepDiveModal(props: Props) {
     onClose,
     lat = '',
     lng = '',
-    address = '',
-    targetNeighborhood,
+    address,
+    targetNeighborhood = '',
     categories,
     propertyId,
     brandId: brandIdProps,
+    sqft,
   } = props;
   let brandId = brandIdParam || brandIdProps || '';
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -131,6 +133,7 @@ export default function LocationDeepDiveModal(props: Props) {
                   matchScore={0}
                   address={address}
                   targetNeighborhood={targetNeighborhood}
+                  sqft={sqft}
                 />
                 <Overview />
               </ScrollView>
@@ -153,6 +156,7 @@ export default function LocationDeepDiveModal(props: Props) {
                     address={address}
                     targetNeighborhood={targetNeighborhood}
                     showConnect={false}
+                    sqft={sqft}
                   />
                   {isOverviewSelected ? (
                     <Overview />

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { View, Text, Button } from '../../core-ui';
 import ContactModal from './ContactModal';
-import { FONT_SIZE_LARGE } from '../../constants/theme';
+import { FONT_SIZE_LARGE, FONT_WEIGHT_MEDIUM } from '../../constants/theme';
 import { PropertyMatches_propertyMatches_contacts as Contacts } from '../../generated/PropertyMatches';
 
 type Props = {
@@ -14,6 +14,7 @@ type Props = {
   clickable?: boolean;
   showConnect?: boolean;
   contacts?: Contacts;
+  sqft?: number;
 };
 
 export default function PropertyDeepDiveHeader({
@@ -25,12 +26,18 @@ export default function PropertyDeepDiveHeader({
   contacts,
   clickable = true,
   showConnect = true,
+  sqft,
 }: Props) {
   let [contactModalVisible, toggleContactModalVisibility] = useState(false);
   return (
     <Container>
       <View flex>
-        <Text fontSize={FONT_SIZE_LARGE}>{address}</Text>
+        <RowedView>
+          <Text fontSize={FONT_SIZE_LARGE} fontWeight={FONT_WEIGHT_MEDIUM}>
+            {address}
+          </Text>
+          {sqft && <Text fontSize={FONT_SIZE_LARGE}> &#183; {sqft} sqft</Text>}
+        </RowedView>
         <Text>{targetNeighborhood}</Text>
       </View>
       {showConnect ? (
@@ -59,4 +66,8 @@ const Container = styled(View)`
   flex-direction: row;
   padding: 16px;
   align-items: center;
+`;
+
+const RowedView = styled(View)`
+  flex-direction: row;
 `;

@@ -10,18 +10,16 @@ import { THEME_COLOR } from '../constants/colors';
 import imgPlaceholder from '../assets/images/image-placeholder.jpg';
 import SvgRent from '../components/icons/rent';
 import SvgSqft from '../components/icons/sqft';
-import { SavedSpaces } from '../generated/SavedSpaces';
+import {
+  SavedSpaces,
+  SavedSpaces_savedProperties as SavedProperty,
+} from '../generated/SavedSpaces';
 import { GET_SAVED_SPACES } from '../graphql/queries/server/space';
-
-type SelectedProperty = {
-  propertyId: string;
-  brandId: string;
-};
 
 export default function TenantSavedProperties() {
   let { data, loading, refetch } = useQuery<SavedSpaces>(GET_SAVED_SPACES);
   let [deepDiveModalVisible, setDeepDiveModalVisible] = useState(false);
-  let [selectedProperty, setSelectedProperty] = useState<SelectedProperty | null>(null);
+  let [selectedProperty, setSelectedProperty] = useState<SavedProperty | null>(null);
 
   return (
     <Container flex>
@@ -35,8 +33,8 @@ export default function TenantSavedProperties() {
               <Touchable
                 key={index}
                 onPress={() => {
-                  let { propertyId, brandId } = item;
-                  setSelectedProperty({ propertyId, brandId });
+                  setSelectedProperty(item);
+                  console.log(item);
                   setDeepDiveModalVisible(true);
                 }}
               >
@@ -79,6 +77,8 @@ export default function TenantSavedProperties() {
           categories={[]}
           propertyId={selectedProperty.propertyId}
           brandId={selectedProperty.brandId}
+          address={selectedProperty.address}
+          sqft={selectedProperty.sqft}
         />
       )}
     </Container>
