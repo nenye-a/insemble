@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { View, Text, Button } from '../../core-ui';
+import { numberFormatter } from '../../utils';
 import ContactModal from './ContactModal';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_MEDIUM } from '../../constants/theme';
 import { PropertyMatches_propertyMatches_contacts as Contacts } from '../../generated/PropertyMatches';
@@ -36,7 +37,7 @@ export default function PropertyDeepDiveHeader({
           <Text fontSize={FONT_SIZE_LARGE} fontWeight={FONT_WEIGHT_MEDIUM}>
             {address}
           </Text>
-          {sqft && <Text fontSize={FONT_SIZE_LARGE}> &#183; {sqft} sqft</Text>}
+          {sqft && <Text fontSize={FONT_SIZE_LARGE}> &#183; {numberFormatter(sqft)} sqft</Text>}
         </RowedView>
         <Text>{targetNeighborhood}</Text>
       </View>

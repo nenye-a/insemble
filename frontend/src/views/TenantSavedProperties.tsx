@@ -34,7 +34,6 @@ export default function TenantSavedProperties() {
                 key={index}
                 onPress={() => {
                   setSelectedProperty(item);
-                  console.log(item);
                   setDeepDiveModalVisible(true);
                 }}
               >
