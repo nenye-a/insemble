@@ -75,6 +75,13 @@ export const GET_CONVERSATION = gql`
         createdAt
       }
       matchScore
+      brand {
+        categories
+        nextLocations {
+          address
+        }
+        locationCount
+      }
       property {
         id
         propertyId
@@ -85,6 +92,7 @@ export const GET_CONVERSATION = gql`
         space {
           mainPhoto
         }
+        categories
       }
       space {
         id
@@ -101,8 +109,8 @@ export const GET_CONVERSATIONS = gql`
     conversations {
       id
       brand {
-        id
         tenantId
+        id
         name
       }
       landlord {
@@ -127,6 +135,13 @@ export const GET_CONVERSATIONS = gql`
         createdAt
       }
       matchScore
+      brand {
+        categories
+        nextLocations {
+          address
+        }
+        locationCount
+      }
       property {
         id
         propertyId
@@ -137,6 +152,12 @@ export const GET_CONVERSATIONS = gql`
         space {
           mainPhoto
         }
+        categories
+      }
+      space {
+        id
+        spaceId
+        mainPhoto
       }
       createdAt
     }

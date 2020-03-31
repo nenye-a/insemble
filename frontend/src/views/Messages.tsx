@@ -24,7 +24,7 @@ export default function Messages() {
         <LoadingIndicator />
       ) : (
         <>
-          <Title> {role === Role.TENANT ? 'Messages' : 'Messages from Tenants'} </Title>
+          <Title>{role === Role.TENANT ? 'Messages' : 'Messages from Tenants'}</Title>
           {data &&
             data.conversations.map((item, index) => (
               <MessageCard
@@ -52,5 +52,5 @@ const Title = styled(Text)`
   color: ${THEME_COLOR};
   font-weight: ${FONT_WEIGHT_BOLD};
   font-size: ${FONT_SIZE_LARGE};
-  padding: 0 24px;
+  padding: 12px 24px;
 `;
