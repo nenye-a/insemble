@@ -388,12 +388,12 @@ class FastLocationDetailsAPI(AsynchronousAPI):
 
     Parameters:
         {
-            match_id: string,                      (required)
-            target_location: {                      (required, not used if property_id is provided)
-                lat: int,
-                lng: int,
+            match_id: string,                       (required)
+            target_location: {                      (required if property_id is not provided)
+                lat: int,                           (required if target_location provided)
+                lng: int,                           (required if target_location provided)
             },
-            property_id: string                     (optional)
+            property_id: string                     (required if target_location is not provided)
         }
 
     Response:
@@ -519,20 +519,7 @@ class FastLocationDetailsAPI(AsynchronousAPI):
                     },
                     ... many more
                 ],
-            },
-            ## Following to be removed pending team answer
-            # property_details: {                                                 (only provided if property_details provided)
-            #     3D_tour: url, (matterport media)                                (provided only when available)
-            #     main_photo: url,
-            #     sqft: int,
-            #     photos: list[urls],
-            #     summary: {
-            #         price/sqft: int,
-            #         type: string,
-            #         condition: string
-            #     },
-            #     description: string
-            # }
+            }
         }
 
     """
@@ -855,20 +842,11 @@ class LocationPreviewAPI(AsynchronousAPI):
     Provided the latitude and longitude of a location, will provide details for a preview.
 
     parameters: {
-        my_location: {                          (required)
-            address: string,                    (required -> not required if categories are provided)
-            brand_name: string,                 (required -> not required if categories are provided)
-            categories: list[string],           (required)
-            income: {                           (required -> not required if brand_name and address provided)
-                min: int,                       (required if income provided)
-                max: int,
-            }
+        target_location: {                      (required if property_id is not provided)
+            lat: int,                           (required if target_location provided)
+            lng: int,                           (required if target_location provided)
         },
-        target_location: {                      
-            lat: int,
-            lng: int,
-        },
-        property_id: string,                    (optional)
+        property_id: string                     (required if target_location is not provided)
     }
 
     response: {
