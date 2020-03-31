@@ -57,7 +57,10 @@ export default function LandlordPropertyDetails() {
   );
   let { data, loading } = useQuery<PropertyMatches, PropertyMatchesVariables>(
     GET_PROPERTY_MATCHES_DATA,
-    { variables: { propertyId: params.paramsId, spaceId: selectedSpaceId } }
+    {
+      variables: { propertyId: params.paramsId, spaceId: selectedSpaceId },
+      skip: !selectedSpaceId || !params.paramsId,
+    }
   );
 
   let propertyMatches = useMemo(() => {
