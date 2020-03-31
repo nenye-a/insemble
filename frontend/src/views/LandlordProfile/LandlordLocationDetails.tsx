@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
 import { View, Text, LoadingIndicator, Button } from '../../core-ui';
@@ -10,20 +10,20 @@ import KeyFacts from '../DeepDivePage/KeyFacts';
 import RelevantConsumerCard from '../DeepDivePage/RelevantConsumerCard';
 import DemographicCard from '../DeepDivePage/Demographics';
 import { GET_PROPERTY_LOCATION_DETAILS } from '../../graphql/queries/server/deepdive';
+import { GET_PROPERTY } from '../../graphql/queries/server/properties';
 import {
   PropertyLocationDetails,
   PropertyLocationDetailsVariables,
 } from '../../generated/PropertyLocationDetails';
+import { Property, PropertyVariables } from '../../generated/Property';
 import { MAPS_IFRAME_URL_SEARCH } from '../../constants/googleMaps';
 
 type Params = {
   paramsId: string;
 };
 export default function LandlordLocationDetails() {
-  let history = useHistory();
   let { paramsId: propertyId = '' } = useParams<Params>();
-  let { lat, lng } = history.location.state.property.location;
-  let iframeSource = MAPS_IFRAME_URL_SEARCH + '&q=' + lat + ', ' + lng;
+
   let { data, loading, error, refetch } = useQuery<
     PropertyLocationDetails,
     PropertyLocationDetailsVariables
@@ -33,6 +33,21 @@ export default function LandlordLocationDetails() {
     },
     notifyOnNetworkStatusChange: true,
   });
+  let { data: propertyData, loading: propertyLoading } = useQuery<Property, PropertyVariables>(
+    GET_PROPERTY,
+    {
+      variables: {
+        propertyId,
+      },
+    }
+  );
+
+  let iframeSource =
+    MAPS_IFRAME_URL_SEARCH +
+    '&q=' +
+    propertyData?.property.location.lat +
+    ', ' +
+    propertyData?.property.location.lng;
 
   let keyFactsData = data?.propertyDetails.keyFacts;
   let demographicsData = [
@@ -50,7 +65,7 @@ export default function LandlordLocationDetails() {
 
   return (
     <View>
-      {loading ? (
+      {loading || propertyLoading ? (
         <LoadingIndicator />
       ) : error ? (
         <CenteredView flex>
@@ -58,7 +73,6 @@ export default function LandlordLocationDetails() {
           <Button text="Try Again" onPress={refetch} />
         </CenteredView>
       ) : (
-        // {/* TODO: change to map */}
         <>
           <Iframe src={iframeSource} />
           <KeyFacts
