@@ -8,7 +8,7 @@ import { DELETED_BASE64_STRING } from '../..DELETED_BASE64_STRING';
 
 let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
   _: Root,
-  { brandId, propertyId: nodePropertyId },
+  { brandId, propertyId: nodePropertyId, matchId },
   context: Context,
 ) => {
   let property = await context.prisma.property.findOne({
@@ -30,7 +30,8 @@ let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
   }: TenantDetail = (
     await axios.get(`${LEGACY_API_URI}/api/tenantDetails/`, {
       params: {
-        tenant_id: brandId,
+        brand_id: brandId,
+        match_id: matchId,
         property_id: property.propertyId,
       },
     })
@@ -111,6 +112,7 @@ let tenantDetailQuery = queryField('tenantDetail', {
   args: {
     brandId: stringArg({ required: true }),
     propertyId: stringArg({ required: true }),
+    matchId: stringArg(),
   },
   resolve: tenantDetailResolver,
 });
