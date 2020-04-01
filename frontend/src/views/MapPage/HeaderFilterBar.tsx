@@ -97,7 +97,9 @@ export default function HeaderFilterBar(props: Props) {
             disabled={publishButtonDisabled}
           />
         </Row>
-        <View>{address ? <Text>{`My Address: ${address}`}</Text> : null}</View>
+        <AddressContainer>
+          {address ? <Text>{`My Address: ${address}`}</Text> : null}
+        </AddressContainer>
       </RowedView>
 
       {/* <LocationInputContainer flex>
@@ -118,25 +120,28 @@ export default function HeaderFilterBar(props: Props) {
 
 const Row = styled(View)`
   flex-direction: row;
+  padding: 6px 0;
 `;
 
 const RowedView = styled(View)`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
 `;
 
-const Container = styled(RowedView)`
-  padding: 12px 32px;
+const Container = styled(Row)`
+  padding: 6px 32px;
   z-index: 1;
   background-color: ${WHITE};
-  box-shadow: 0px 1px 1px 0px ${HEADER_BORDER_COLOR};
-  position: sticky;
-  top: 0px;
 `;
 
 const UpdateMapButton = styled(Button)`
   margin-left: 8px;
+`;
+
+const AddressContainer = styled(View)`
+  padding: 6px 0;
 `;
 
 // we should remove this styling later when dropdown and legend are ready

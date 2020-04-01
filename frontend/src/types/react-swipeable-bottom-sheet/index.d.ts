@@ -9,6 +9,7 @@ declare module 'react-swipeable-bottom-sheet' {
     overlayStyle?: CSSProperties;
     shadowTip?: boolean;
     overlay?: boolean;
+    onChange?: (visible: boolean) => void;
   }
 
   export default class SwipeableBottomSheet extends Component<SwipeableBottomSheetProps> {}
