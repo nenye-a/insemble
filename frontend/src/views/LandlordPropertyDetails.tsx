@@ -37,6 +37,7 @@ export default function LandlordPropertyDetails() {
   let [selectedSpaceIndex, setSelectedSpaceIndex] = useState(0);
   let [selectedSpaceId, setSelectedSpaceId] = useState('');
   let [selectedBrand, setSelectedBrand] = useState<SelectedBrand>({
+    matchId: '',
     tenantPhoto: '',
     matchScore: 0,
     brandId: '',

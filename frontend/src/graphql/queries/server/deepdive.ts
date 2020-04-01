@@ -264,8 +264,8 @@ export const GET_PROPERTY_LOCATION_DETAILS = gql`
 `;
 
 export const GET_TENANT_DETAILS = gql`
-  query TenantDetail($brandId: String!, $propertyId: String!) {
-    tenantDetail(brandId: $brandId, propertyId: $propertyId) {
+  query TenantDetail($brandId: String!, $propertyId: String!, $matchId: String) {
+    tenantDetail(brandId: $brandId, propertyId: $propertyId, matchId: $matchId) {
       name
       category
       keyFacts {
