@@ -1,17 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-import { useApolloClient, useQuery } from '@apollo/react-hooks';
+import { useApolloClient, useMutation, useQuery } from '@apollo/react-hooks';
 
-import { View, Card, Avatar, Text, Button, LoadingIndicator } from '../../core-ui';
+import { View, Card, Avatar, Text, Button, LoadingIndicator, Dropzone } from '../../core-ui';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../../constants/theme';
-import { THEME_COLOR, RED_TEXT, BACKGROUND_COLOR } from '../../constants/colors';
+import {
+  THEME_COLOR,
+  RED_TEXT,
+  BACKGROUND_COLOR,
+  WHITE,
+  BUTTON_BORDER_COLOR,
+} from '../../constants/colors';
 import ProfileMenuList from './ProfileMenuList';
 import { GetTenantProfile } from '../../generated/GetTenantProfile';
-import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../../graphql/queries/server/profile';
+import {
+  GET_TENANT_PROFILE,
+  GET_LANDLORD_PROFILE,
+  EDIT_TENANT_PROFILE,
+  EDIT_LANDLORD_PROFILE,
+} from '../../graphql/queries/server/profile';
 import { logout } from '../../utils/authorization';
 import { Role } from '../../types/types';
 import { GetLandlordProfile } from '../../generated/GetLandlordProfile';
+import { getImageBlob } from '../../utils';
+import { EditTenantProfile, EditTenantProfileVariables } from '../../generated/EditTenantProfile';
+import {
+  EditLandlordProfile,
+  EditLandlordProfileVariables,
+} from '../../generated/EditLandlordProfile';
+import { FileWithPreview } from '../../core-ui/Dropzone';
 
 type Props = {
   role: Role;
@@ -24,7 +42,8 @@ type Profile = {
   avatar: string | null;
 };
 
-export default function ProfileCard({ role }: Props) {
+export default function ProfileCard(props: Props) {
+  let { role } = props;
   let history = useHistory();
   let client = useApolloClient();
 
@@ -61,14 +80,37 @@ export default function ProfileCard({ role }: Props) {
     }
   };
 
-  let { loading: tenantLoading, data: tenantData } = useQuery(GET_TENANT_PROFILE, {
-    notifyOnNetworkStatusChange: true,
-    skip: role === Role.LANDLORD,
+  let { loading: tenantLoading, data: tenantData, refetch: refetchTenantProfile } = useQuery(
+    GET_TENANT_PROFILE,
+    {
+      notifyOnNetworkStatusChange: true,
+      skip: role === Role.LANDLORD,
+    }
+  );
+
+  let { loading: landlordLoading, data: landlordData, refetch: refetchLandlordProfile } = useQuery(
+    GET_LANDLORD_PROFILE,
+    {
+      notifyOnNetworkStatusChange: true,
+      skip: role === Role.TENANT,
+    }
+  );
+  let [editTenantProfile, { loading: editTenantLoading }] = useMutation<
+    EditTenantProfile,
+    EditTenantProfileVariables
+  >(EDIT_TENANT_PROFILE, {
+    onCompleted: () => {
+      refetchTenantProfile();
+    },
   });
 
-  let { loading: landlordLoading, data: landlordData } = useQuery(GET_LANDLORD_PROFILE, {
-    notifyOnNetworkStatusChange: true,
-    skip: role === Role.TENANT,
+  let [editLandlordProfile, { loading: editLandlordLoading }] = useMutation<
+    EditLandlordProfile,
+    EditLandlordProfileVariables
+  >(EDIT_LANDLORD_PROFILE, {
+    onCompleted: () => {
+      refetchLandlordProfile();
+    },
   });
 
   useEffect(() => {
@@ -79,6 +121,38 @@ export default function ProfileCard({ role }: Props) {
     }
   }, [role, landlordData, tenantData]);
 
+  let editAvatar = (file: FileWithPreview) => {
+    let avatarBlob = getImageBlob(file.file);
+
+    if (role === Role.TENANT) {
+      editTenantProfile({
+        variables: {
+          profile: {
+            avatar: avatarBlob,
+          },
+        },
+        refetchQueries: [
+          {
+            query: GET_TENANT_PROFILE,
+          },
+        ],
+      });
+    } else if (role === Role.LANDLORD && landlordData) {
+      editLandlordProfile({
+        variables: {
+          profile: {
+            avatar: avatarBlob,
+          },
+        },
+        refetchQueries: [
+          {
+            query: GET_LANDLORD_PROFILE,
+          },
+        ],
+      });
+    }
+  };
+
   return (
     <CardContainer>
       {tenantLoading || landlordLoading ? (
@@ -86,6 +160,25 @@ export default function ProfileCard({ role }: Props) {
       ) : (
         <ProfileWrapper>
           <ProfilePicture size="large" image={avatar} />
+          <Dropzone
+            loading={editLandlordLoading || editTenantLoading}
+            isAvatar={true}
+            getPreview={editAvatar}
+            containerStyle={{
+              position: 'absolute',
+              height: 35,
+              width: 35,
+              top: -35,
+              right: -60,
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: '50%',
+              backgroundColor: WHITE,
+              borderWidth: 0.3,
+              borderColor: BUTTON_BORDER_COLOR,
+              boxShadow: '0px 2px 6px 0px rgba(0, 0, 0, 0.3)',
+            }}
+          />
           <ProfileText fontSize={FONT_SIZE_LARGE} fontWeight={FONT_WEIGHT_BOLD} color={THEME_COLOR}>
             {name}
           </ProfileText>

@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { CSSProperties } from 'styled-components';
 import ReactDropzone, { DropzoneProps } from 'react-dropzone';
 
 import View from './View';
@@ -8,6 +8,7 @@ import TouchableOpacity from './TouchableOpacity';
 import placeholder from '../assets/images/image-placeholder.jpg';
 import SvgCircleClose from '../components/icons/circle-close';
 import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
+import SvgEdit from '../components/icons/Edit';
 import { BORDER_COLOR } from '../constants/colors';
 
 export type FileWithPreview = { file: File; preview: string };
@@ -19,6 +20,8 @@ type Props = DropzoneProps & {
   onPhotoRemove?: () => void;
   showCloseIcon?: boolean;
   isMainPhoto?: boolean;
+  isAvatar?: boolean;
+  containerStyle?: CSSProperties;
 };
 
 export default function Dropzone(props: Props) {
@@ -27,8 +30,10 @@ export default function Dropzone(props: Props) {
     getPreview,
     loading,
     onPhotoRemove,
+    containerStyle,
     showCloseIcon = true,
     isMainPhoto = false,
+    isAvatar = false,
     ...dropzoneProps
   } = props;
 
@@ -53,11 +58,13 @@ export default function Dropzone(props: Props) {
             content = <LoadingIndicator />;
           } else if (source) {
             content = <Image src={source} isMainPhoto={isMainPhoto} />;
+          } else if (isAvatar) {
+            content = <SvgEdit />;
           } else {
             content = <Image src={placeholder} isMainPhoto={isMainPhoto} />;
           }
           return (
-            <View {...getRootProps()}>
+            <View style={containerStyle} {...getRootProps()}>
               <input {...getInputProps()} />
               {content}
             </View>
