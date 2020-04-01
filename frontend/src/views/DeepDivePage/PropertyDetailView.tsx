@@ -19,7 +19,13 @@ import { SaveSpace, SaveSpaceVariables } from '../../generated/SaveSpace';
 type Params = {
   brandId: string;
 };
-export default function PropertyDetailView() {
+
+type Props = {
+  propertyId?: string;
+};
+
+export default function PropertyDetailView(props: Props) {
+  let { propertyId = '' } = props;
   let contextValue = useContext(DeepDiveContext);
   let [saveSpace, { data }] = useMutation<SaveSpace, SaveSpaceVariables>(SAVE_SPACE);
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -37,7 +43,8 @@ export default function PropertyDetailView() {
       return space;
     });
     setSpaceDetails(newSpaceDetails);
-  }, [data, spaceDetails]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   let selectedData = spaceDetails[selectedTabIndex];
 
@@ -66,6 +73,8 @@ export default function PropertyDetailView() {
                 saveSpace({
                   variables: {
                     spaceId: selectedData.spaceId,
+                    brandId: params.brandId,
+                    propertyId,
                     matchValue: contextValue?.result?.matchValue || 0,
                   },
                 });
@@ -78,7 +87,7 @@ export default function PropertyDetailView() {
           </RowedView>
         </HeaderContainer>
         {selectedData && (
-          <RowedView flex>
+          <SpaceDetail flex>
             <PhotoGallery images={[selectedData.mainPhoto, ...selectedData.photos]} />
             <CardsContainer flex>
               <SummaryCard
@@ -91,7 +100,7 @@ export default function PropertyDetailView() {
               <Spacing />
               <DescriptionCard content={selectedData.description || ''} />
             </CardsContainer>
-          </RowedView>
+          </SpaceDetail>
         )}
         <ContactModal
           matchScore={contextValue?.result?.matchValue}
@@ -120,7 +129,7 @@ const RowedView = styled(View)`
 `;
 
 const HeaderContainer = styled(RowedView)`
-  padding: 10px 8px;
+  padding: 10px 16px;
   align-items: center;
   justify-content: space-between;
   background-color: transparent;
@@ -130,4 +139,9 @@ const SpaceSegment = styled(SegmentedControl)`
   height: 36px;
   border: none;
   width: fit-content;
+`;
+
+const SpaceDetail = styled(View)`
+  flex-direction: row;
+  align-items: flex-start;
 `;

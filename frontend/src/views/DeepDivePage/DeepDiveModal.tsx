@@ -3,7 +3,9 @@ import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
 
-import { View, Modal, TabBar, LoadingIndicator, Text, Button } from '../../core-ui';
+import { View, Modal, TabBar, LoadingIndicator } from '../../core-ui';
+import { ErrorComponent } from '../../components';
+
 import PropertyDeepDiveHeader from './PropertyDeepDiveHeader';
 import PropertyDetailView from './PropertyDetailView';
 import Overview from './Overview';
@@ -15,7 +17,6 @@ import {
   LocationDetails_locationDetails_spaceDetails as DELETED_BASE64_STRING,
 } from '../../generated/LocationDetails';
 import { THEME_COLOR } from '../../constants/colors';
-import { FONT_SIZE_LARGE } from '../../constants/theme';
 
 type SelectedLocation = { lat: string; lng: string; address: string; targetNeighborhood: string };
 
@@ -32,18 +33,32 @@ export const DeepDiveContext = React.createContext<DeepDiveContextType>(undefine
 type Props = {
   visible: boolean;
   onClose: () => void;
-  lat: string;
-  lng: string;
+  lat?: string;
+  lng?: string;
   address: string;
-  targetNeighborhood: string;
+  targetNeighborhood?: string;
   categories?: Array<string>;
   propertyId?: string;
+  brandId?: string;
+  sqft?: number;
 };
 
 // const SHRINK_HEIGHT = 160;
 export default function LocationDeepDiveModal(props: Props) {
-  let { brandId = '' } = useParams();
-  let { visible, onClose, lat, lng, address, targetNeighborhood, categories, propertyId } = props;
+  let { brandId: brandIdParam = '' } = useParams();
+  let {
+    visible,
+    onClose,
+    lat = '',
+    lng = '',
+    address,
+    targetNeighborhood = '',
+    categories,
+    propertyId,
+    brandId: brandIdProps,
+    sqft,
+  } = props;
+  let brandId = brandIdParam || brandIdProps || '';
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   // let [headerShrink, setHeaderShrink] = useState(false);
   let isOverviewSelected = selectedTabIndex === 0;
@@ -52,11 +67,14 @@ export default function LocationDeepDiveModal(props: Props) {
     {
       variables: {
         brandId,
-        selectedLocation: {
-          address,
-          lat,
-          lng,
-        },
+        selectedLocation:
+          address && lat && lng
+            ? {
+                address,
+                lat,
+                lng,
+              }
+            : undefined,
         selectedPropertyId: propertyId ? propertyId : null,
       },
       notifyOnNetworkStatusChange: true,
@@ -99,11 +117,7 @@ export default function LocationDeepDiveModal(props: Props) {
             style={{ justifyContent: 'center', alignItems: 'center' }}
           />
         ) : error ? (
-          // TODO: add a more proper ErrorComponent
-          <CenteredView flex>
-            <Text fontSize={FONT_SIZE_LARGE}>{error.message || ''}</Text>
-            <Button text="Try Again" onPress={refetch} />
-          </CenteredView>
+          <ErrorComponent onRetry={refetch} text={error.message} />
         ) : (
           <>
             {/* <TourContainer isShrink={headerShrink}>
@@ -119,6 +133,7 @@ export default function LocationDeepDiveModal(props: Props) {
                   matchScore={0}
                   address={address}
                   targetNeighborhood={targetNeighborhood}
+                  sqft={sqft}
                 />
                 <Overview />
               </ScrollView>
@@ -141,8 +156,13 @@ export default function LocationDeepDiveModal(props: Props) {
                     address={address}
                     targetNeighborhood={targetNeighborhood}
                     showConnect={false}
+                    sqft={sqft}
                   />
-                  {isOverviewSelected ? <Overview /> : <PropertyDetailView />}
+                  {isOverviewSelected ? (
+                    <Overview />
+                  ) : (
+                    <PropertyDetailView propertyId={propertyId} />
+                  )}
                 </ScrollView>
               </>
             )}
@@ -167,9 +187,4 @@ type TourContainerProps = {
 
 const ScrollView = styled(View)`
   overflow-y: scroll;
-`;
-
-const CenteredView = styled(View)`
-  justify-content: center;
-  align-items: center;
 `;
