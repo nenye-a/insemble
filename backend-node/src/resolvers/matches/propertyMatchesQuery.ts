@@ -7,7 +7,7 @@ import { PropertyMatchesType, ReceiverContact } from 'dataTypes';
 
 type MatchBrand = {
   brandId: string;
-  matchId: string;
+  matchId: string | null | undefined;
   name: string;
   pictureUrl: string;
   category: string;
