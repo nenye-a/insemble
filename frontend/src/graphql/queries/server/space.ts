@@ -34,8 +34,18 @@ export const DELETE_SPACE = gql`
 `;
 
 export const SAVE_SPACE = gql`
-  mutation SaveSpace($spaceId: String!, $matchValue: Float!) {
-    saveProperty(spaceId: $spaceId, matchValue: $matchValue) {
+  mutation SaveSpace(
+    $spaceId: String!
+    $brandId: String!
+    $propertyId: String!
+    $matchValue: Float!
+  ) {
+    saveProperty(
+      spaceId: $spaceId
+      brandId: $brandId
+      propertyId: $propertyId
+      matchValue: $matchValue
+    ) {
       spaceId
     }
   }
@@ -51,6 +61,8 @@ export const GET_SAVED_SPACES = gql`
       rent
       sqft
       thumbnail
+      propertyId
+      brandId
     }
   }
 `;
