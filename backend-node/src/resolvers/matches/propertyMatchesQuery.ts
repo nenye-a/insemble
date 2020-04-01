@@ -7,6 +7,7 @@ import { PropertyMatchesType, ReceiverContact } from 'dataTypes';
 
 type MatchBrand = {
   brandId: string;
+  matchId: string;
   name: string;
   pictureUrl: string;
   category: string;
@@ -96,6 +97,7 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
     let newMatchingBrands = brands?.map(
       ({
         match_value: matchValue,
+        match_id: matchId,
         brand_id: brandId,
         matches_tenant_type: matchesTenantType,
         number_existing_locations: numExistingLocations,
@@ -106,6 +108,7 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
         return {
           matchValue,
           brandId,
+          matchId,
           matchesTenantType,
           numExistingLocations,
           onPlatform,
