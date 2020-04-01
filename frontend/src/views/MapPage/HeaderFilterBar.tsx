@@ -134,6 +134,7 @@ const Container = styled(Row)`
   padding: 6px 32px;
   z-index: 1;
   background-color: ${WHITE};
+  box-shadow: 0px 1px 1px 0px ${HEADER_BORDER_COLOR};
 `;
 
 const UpdateMapButton = styled(Button)`

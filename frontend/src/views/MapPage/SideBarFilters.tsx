@@ -33,7 +33,6 @@ import SvgRent from '../../components/icons/rent';
 import SvgSqft from '../../components/icons/sqft';
 import SvgPropertyType from '../../components/icons/property-type';
 import SvgEthnicity from '../../components/icons/ethnicity';
-import { NAVBAR_HEIGHT } from '../../constants/theme';
 import { Personas } from '../../generated/Personas';
 import { Ethnicity } from '../../generated/Ethnicity';
 import { Commute } from '../../generated/Commute';
