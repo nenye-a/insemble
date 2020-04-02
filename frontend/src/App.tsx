@@ -14,7 +14,7 @@ import ReactGA from 'react-ga';
 ReactGA.initialize(trackingID);
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './assets/main.scss';
+
 import ViewportListener from './core-ui/ViewportListener';
 
 export default function App() {
