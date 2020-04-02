@@ -20,7 +20,7 @@ import { roundDecimal, useViewport } from '../../utils';
 import { VIEWPORT_TYPE } from '../../constants/viewports';
 
 export type SelectedBrand = {
-  matchId: string;
+  matchId: string | null;
   brandId: string;
   tenantPhoto: string;
   matchScore: number;

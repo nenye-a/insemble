@@ -24,7 +24,7 @@ type Props = {
 export default function HeaderFilterBar(props: Props) {
   let { categories, onPublishChangesPress, publishButtonDisabled, address } = props;
   // let [selectedDropdownValue, setSelectedDropdownValue] = useState<string>('Recommended');
-  let [selectedOptions, setSelectedOptions] = useState<Array<string>>(categories || []);
+  let [selectedOptions, setSelectedOptions] = useState<Array<string>>([]);
   let { data: categoryData, loading: categoryLoading } = useQuery<Categories>(GET_CATEGORIES);
   let { onCategoryChange } = useContext(TenantMatchesContext);
 
@@ -43,6 +43,12 @@ export default function HeaderFilterBar(props: Props) {
       };
     }
   }, []);
+
+  useEffect(() => {
+    if (categories) {
+      setSelectedOptions(categories);
+    }
+  }, [categories]);
 
   // let submitHandler = () => {
   //   if (selectedPlace.current) {
