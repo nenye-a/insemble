@@ -20,6 +20,7 @@ import { roundDecimal, useViewport } from '../../utils';
 import { VIEWPORT_TYPE } from '../../constants/viewports';
 
 export type SelectedBrand = {
+  matchId: string;
   brandId: string;
   tenantPhoto: string;
   matchScore: number;
@@ -51,6 +52,7 @@ export default function LandlordTenantMatches({ onPress, matchResult, loading }:
               viewportType={viewportType}
               onPress={() =>
                 onPress({
+                  matchId: item.matchId,
                   brandId: item.brandId,
                   tenantPhoto: item.pictureUrl,
                   matchScore: Number(matchScore),

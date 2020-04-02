@@ -4,6 +4,7 @@ export const GET_PROPERTY_MATCHES_DATA = gql`
   query PropertyMatches($propertyId: String!, $spaceId: String!) {
     propertyMatches(propertyId: $propertyId, spaceId: $spaceId) {
       brandId
+      matchId
       pictureUrl
       name
       category
