@@ -27,7 +27,7 @@ export default function TenantDeepDiveModal(props: Props) {
     visible,
     onClose,
     spaceId,
-    brand: { brandId, tenantPhoto, matchScore, contacts },
+    brand: { brandId, tenantPhoto, matchScore, contacts, matchId },
   } = props;
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [headerShrink, setHeaderShrink] = useState(false);
@@ -36,6 +36,7 @@ export default function TenantDeepDiveModal(props: Props) {
     variables: {
       brandId,
       propertyId: props.propertyId,
+      matchId,
     },
   });
 
