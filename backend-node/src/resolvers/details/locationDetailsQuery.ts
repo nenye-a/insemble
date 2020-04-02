@@ -62,7 +62,7 @@ let locationDetails = queryField('locationDetails', {
         affinities,
         key_facts: keyFacts,
         commute,
-        top_personas: topPersonasRaw,
+        top_personas: topPersonas,
         demographics1,
         demographics3,
         demographics5,
@@ -120,10 +120,6 @@ let locationDetails = queryField('locationDetails', {
           };
         },
       );
-
-      let topPersonas = topPersonasRaw.map(({ ...persona }) => {
-        return { photo: '', ...persona }; // TODO: change to real photoURL
-      });
 
       let property = selectedPropertyId
         ? await context.prisma.property.findOne({
@@ -185,9 +181,7 @@ let locationDetails = queryField('locationDetails', {
             mediumHouseholdIncome,
           },
           commute: objectToArrayKeyObjectCommute(commute),
-          topPersonas: topPersonas.map((topPersona) => {
-            return { ...topPersona, photo: '' };
-          }),
+          topPersonas,
           demographics1: {
             age: objectToArrayKeyObjectDemographics(demographics1.age),
             income: objectToArrayKeyObjectDemographics(demographics1.income),
