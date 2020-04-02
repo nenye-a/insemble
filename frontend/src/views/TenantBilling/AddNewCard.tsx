@@ -117,8 +117,6 @@ export function AddNewCardModal({
 
       !preventClosingOnSubmit && onClose();
       dispatch({ type: 'RESET' });
-
-      //   await refetchPaymentList();
     }
   };
   return (

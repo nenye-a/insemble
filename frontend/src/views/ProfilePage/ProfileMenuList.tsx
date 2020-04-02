@@ -117,6 +117,11 @@ const TENANT_PROFILE_MENU: Array<MenuObj> = [
     icon: <SvgFullHeart />,
     path: '/user/saved-properties',
   },
+  {
+    menu: 'Billing & Plans',
+    icon: <SvgBilling />,
+    path: '/user/billing',
+  },
 ];
 
 const LANDLORD_PROFILE_MENU: Array<MenuObj> = [
@@ -135,9 +140,9 @@ const LANDLORD_PROFILE_MENU: Array<MenuObj> = [
     icon: <SvgMessage />,
     path: '/landlord/messages',
   },
-  {
-    menu: 'Billing & Plans',
-    icon: <SvgBilling />,
-    path: '/user/billing',
-  },
+  // {
+  //   menu: 'Billing & Plans',
+  //   icon: <SvgBilling />,
+  //   path: '/landlord/billing',
+  // },
 ];

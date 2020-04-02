@@ -35,7 +35,7 @@ export default function Modal({
       otherProps?.onClick();
     };
     return ReactDOM.createPortal(
-      <Overlay style={overlayStyle} onClick={onClose}>
+      <Overlay style={overlayStyle}>
         <ModalDialog
           backgroundColor={backgroundColor}
           aria-modal
