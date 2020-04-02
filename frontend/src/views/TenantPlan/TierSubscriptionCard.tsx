@@ -43,7 +43,7 @@ export default function TierSubscription(props: TierSubscriptionProps) {
         >
           <LoadingIndicator />
         </Modal>
-      ) : (paymentListData?.paymentMethodList?.length ?? 0) > 0 ? (
+      ) : (paymentListData?.paymentMethodList?.length || 0) > 0 ? (
         <SubscriptionConfirmationModal
           isVisible={isModalVisible}
           onClose={onCloseModal}
@@ -51,7 +51,7 @@ export default function TierSubscription(props: TierSubscriptionProps) {
           planId={planId}
           price={price}
           isAnnual={isAnnual}
-          paymentMethodList={paymentListData?.paymentMethodList ?? []}
+          paymentMethodList={paymentListData?.paymentMethodList || []}
         />
       ) : (
         <AddNewCardModal
