@@ -384,7 +384,7 @@ export default function MainMap() {
         )}
         <Alert
           visible={!!tenantMatchesError}
-          text="Failed to Load Heatmap, please adjust settings and try again"
+          text="Failed to load heatmap, please adjust filters and try again"
         />
         <Alert visible={!!editBrandError} text={editBrandError?.message || ''} />
         <Container flex>
