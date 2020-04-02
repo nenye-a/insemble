@@ -36,7 +36,7 @@ export default function TenantDeepDiveModal(props: Props) {
     variables: {
       brandId,
       propertyId: props.propertyId,
-      matchId,
+      matchId: matchId || undefined,
     },
   });
 

@@ -120,6 +120,9 @@ export default function MainMap() {
     },
     fetchPolicy: 'network-only',
     notifyOnNetworkStatusChange: true,
+    onError: () => {
+      tenantMatchesRefetch();
+    },
   });
 
   let [editBrand, { loading: editBrandLoading, error: editBrandError }] = useMutation<
@@ -365,14 +368,12 @@ export default function MainMap() {
             onClose={() => toggleDeepDiveModal(!deepDiveModalVisible)}
           />
         )}
-        {!isLoading && tenantMatchesData && (
-          <HeaderFilterBar
-            address={tenantMatchesData.tenantMatches.location?.address}
-            categories={tenantMatchesData.tenantMatches.categories}
-            onPublishChangesPress={onPublishChangesPress}
-            publishButtonDisabled={filtersAreEqual}
-          />
-        )}
+        <HeaderFilterBar
+          address={tenantMatchesData?.tenantMatches.location?.address || ''}
+          categories={tenantMatchesData?.tenantMatches.categories || []}
+          onPublishChangesPress={onPublishChangesPress}
+          publishButtonDisabled={filtersAreEqual}
+        />
         {(loading || editBrandLoading) && (
           <LoadingOverlay>
             <LoadingIndicator visible={true} color="white" size="large" />
@@ -381,7 +382,10 @@ export default function MainMap() {
             </Text>
           </LoadingOverlay>
         )}
-        <Alert visible={!!tenantMatchesError} text={tenantMatchesError?.message || ''} />
+        <Alert
+          visible={!!tenantMatchesError}
+          text="Failed to load heatmap, please adjust filters and try again"
+        />
         <Alert visible={!!editBrandError} text={editBrandError?.message || ''} />
         <Container flex>
           <SideBarFilters />

@@ -37,7 +37,7 @@ export default function LandlordPropertyDetails() {
   let [selectedSpaceIndex, setSelectedSpaceIndex] = useState(0);
   let [selectedSpaceId, setSelectedSpaceId] = useState('');
   let [selectedBrand, setSelectedBrand] = useState<SelectedBrand>({
-    matchId: '',
+    matchId: null,
     tenantPhoto: '',
     matchScore: 0,
     brandId: '',
@@ -132,7 +132,8 @@ export default function LandlordPropertyDetails() {
               loading={loading}
               matchResult={propertyMatches}
               onPress={(selectedBrand) => {
-                setModalVisible(true), setSelectedBrand(selectedBrand);
+                setSelectedBrand(selectedBrand);
+                setModalVisible(true);
               }}
             />
           </ContentWrapper>
