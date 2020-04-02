@@ -62,10 +62,6 @@ module.exports = [
           loaders: ['style-loader', 'css-loader', 'postcss-loader'],
         },
         {
-          test: /\.scss$/,
-          loaders: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
-        },
-        {
           test: /\.(svg)(\?v=\d+\.\d+\.\d+)?$/,
           loader: 'url-loader?limit=100000',
         },
