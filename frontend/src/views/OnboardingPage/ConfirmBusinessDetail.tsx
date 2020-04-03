@@ -95,6 +95,7 @@ export default function ConfirmBusinessDetail() {
           userRelation: fieldValues.businessRelationship,
           otherUserRelation: fieldValues.otherBusinessRelation || '',
         },
+        pendingData: true,
       },
     });
   };

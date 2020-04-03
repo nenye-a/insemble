@@ -3,7 +3,9 @@ import {
   TenantGoals,
   TargetCustomers,
   PhysicalSiteCriteria,
-} from '../reducers/tenantOnboardingReducer';
+} from '../graphql/localState';
+import omitTypename from './omitTypename';
+import { LocationInput } from '../generated/globalTypes';
 
 export default function getBusinessAndFilterParams(
   confirmBusinessDetail: ConfirmBusinessDetail,
@@ -31,10 +33,10 @@ export default function getBusinessAndFilterParams(
     business: {
       name,
       userRelation: userRelation === 'Other' ? otherUserRelation || '' : userRelation,
-      location,
+      location: omitTypename<LocationInput>(location || []) as LocationInput,
       locationCount: locationCount ? Number(locationCount) : null,
       newLocationPlan: newLocationPlan?.value,
-      nextLocations,
+      nextLocations: omitTypename(nextLocations) as Array<LocationInput>,
     },
     filter: {
       categories,

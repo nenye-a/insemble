@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useHistory, Redirect } from 'react-router-dom';
@@ -16,7 +16,6 @@ import {
   Text,
   LoadingIndicator,
 } from '../../core-ui';
-import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
 import { Equipments } from '../../generated/Equipments';
 import { SPACES_TYPE } from '../../constants/spaces';
@@ -33,13 +32,7 @@ import {
   UPDATE_TENANT_ONBOARDING,
 } from '../../graphql/queries/client/tenantOnboarding';
 
-type Props = {
-  dispatch: Dispatch<Action>;
-  state: OnboardingState;
-};
-
 export default function TenantPhysicalCriteria() {
-  // let { dispatch, state } = props;
   let { tenantToken } = useCredentials();
   let signedIn = !!tenantToken;
   let history = useHistory();
@@ -65,7 +58,6 @@ export default function TenantPhysicalCriteria() {
       let {
         minSize,
         maxSize,
-        minFrontageWidth,
         equipments,
         spaceType,
       } = onboardingStateData.tenantOnboardingState.physicalSiteCriteria;

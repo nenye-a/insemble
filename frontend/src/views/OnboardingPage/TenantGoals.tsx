@@ -16,13 +16,16 @@ import {
   LoadingIndicator,
 } from '../../core-ui';
 import { useGoogleMaps, validateNumber } from '../../utils';
-import { NewLocationPlan, NewLocationPlanObj } from '../../reducers/tenantOnboardingReducer';
+import {
+  NewLocationPlan,
+  NewLocationPlanObj,
+  TenantOnboardingState,
+} from '../../graphql/localState';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
 import { FONT_SIZE_SMALL } from '../../constants/theme';
 import { RED_TEXT } from '../../constants/colors';
 import { LocationInput } from '../../generated/globalTypes';
 import { NEW_LOCATION_PLAN_OPTIONS } from '../../constants/locationPlan';
-import { TenantOnboardingState } from '../../graphql/localState';
 import {
   GET_TENANT_ONBOARDING_STATE,
   UPDATE_TENANT_ONBOARDING,

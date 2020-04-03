@@ -6,12 +6,14 @@ export const UPDATE_TENANT_ONBOARDING = gql`
     $tenantGoals: TenantGoals
     $targetCustomers: TargetCustomers
     $tenantPhysicalCriteria: TenantPhysicalCriteria
+    $pendingData: Boolean
   ) {
     updateTenantOnboarding(
       confirmBusinessDetail: $confirmBusinessDetail
       tenantGoals: $tenantGoals
       targetCustomers: $targetCustomers
       tenantPhysicalCriteria: $tenantPhysicalCriteria
+      pendingData: $pendingData
     ) @client
   }
 `;
@@ -19,6 +21,7 @@ export const UPDATE_TENANT_ONBOARDING = gql`
 export const GET_TENANT_ONBOARDING_STATE = gql`
   query tenantOnboardingState {
     tenantOnboardingState @client {
+      pendingData
       confirmBusinessDetail {
         name
         location {

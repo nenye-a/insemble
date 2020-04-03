@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useHistory, Redirect } from 'react-router-dom';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 
 import { TextInput, Button, View, Form, Alert } from '../core-ui';
 import { validateEmail } from '../utils/validation';
@@ -13,30 +13,35 @@ import { LoginLandlord, LoginLandlordVariables } from '../generated/LoginLandlor
 import { CreateBrand, CreateBrandVariables } from '../generated/CreateBrand';
 import { getBusinessAndFilterParams, saveCredentials } from '../utils';
 import { Role } from '../types/types';
-import { State as OnboardingState } from '../reducers/tenantOnboardingReducer';
+import {
+  GET_TENANT_ONBOARDING_STATE,
+  UPDATE_TENANT_ONBOARDING,
+} from '../graphql/queries/client/tenantOnboarding';
+import { TenantOnboardingState, initialTenantOnboardingState } from '../graphql/localState';
 
 type Props = {
   role: Role;
-  onboardingState?: OnboardingState;
 };
 
 export default function Login(props: Props) {
   let history = useHistory();
-  let { role, onboardingState } = props;
+  let { role } = props;
   let { register, handleSubmit, errors } = useForm();
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
+  let { data: onboardingStateData } = useQuery<TenantOnboardingState>(GET_TENANT_ONBOARDING_STATE);
   let [tenantLogin, { data, loading, error }] = useMutation<LoginTenant, LoginTenantVariables>(
     LOGIN_TENANT
   );
+  let [updateTenantOnboarding] = useMutation(UPDATE_TENANT_ONBOARDING);
   let [
     landlordLogin,
     { data: landlordData, loading: landlordLoading, error: landlordError },
   ] = useMutation<LoginLandlord, LoginLandlordVariables>(LOGIN_LANDLORD);
-  // let { data: propertyData, loading: propertyLoading } = useQuery<GetProperties>(GET_PROPERTIES);
   let [
     createBrand,
     { data: createBrandData, loading: createBrandLoading, error: createBrandError },
   ] = useMutation<CreateBrand, CreateBrandVariables>(CREATE_BRAND);
+
   let onSubmit = (data: FieldValues) => {
     let { email, password } = data;
     tenantLogin({
@@ -45,24 +50,28 @@ export default function Login(props: Props) {
   };
 
   let createNewBrand = () => {
-    if (onboardingState) {
+    if (onboardingStateData) {
       let {
         confirmBusinessDetail,
         tenantGoals,
         targetCustomers,
         physicalSiteCriteria,
-      } = onboardingState;
-      let params = getBusinessAndFilterParams(
-        confirmBusinessDetail,
-        tenantGoals,
-        targetCustomers,
-        physicalSiteCriteria
-      );
-      createBrand({
-        variables: {
-          ...params,
-        },
-      });
+        pendingData,
+      } = onboardingStateData.tenantOnboardingState;
+      if (pendingData) {
+        let params = getBusinessAndFilterParams(
+          confirmBusinessDetail,
+          tenantGoals,
+          targetCustomers,
+          physicalSiteCriteria
+        );
+        createBrand({
+          variables: {
+            ...params,
+          },
+        });
+        updateTenantOnboarding({ variables: { ...initialTenantOnboardingState } });
+      }
     }
   };
 
@@ -77,7 +86,7 @@ export default function Login(props: Props) {
       });
 
       if (brandId) {
-        if (onboardingState) {
+        if (onboardingStateData?.tenantOnboardingState.pendingData) {
           createNewBrand();
         } else {
           history.push(`/map/${brandId}`);

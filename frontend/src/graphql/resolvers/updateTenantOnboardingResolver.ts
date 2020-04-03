@@ -1,5 +1,5 @@
 import { ApolloCache } from 'apollo-cache';
-import { TenantOnboardingContent } from '../localState';
+import { TenantOnboardingContent, TenantOnboardingState } from '../localState';
 import { GET_TENANT_ONBOARDING_STATE } from '../queries/client/tenantOnboarding';
 
 export let updateTenantOnboarding = async (
@@ -8,44 +8,57 @@ export let updateTenantOnboarding = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   { cache }: { cache: ApolloCache<any> }
 ) => {
-  let { confirmBusinessDetail, tenantGoals, targetCustomers, physicalSiteCriteria } = args;
+  let {
+    confirmBusinessDetail,
+    tenantGoals,
+    targetCustomers,
+    physicalSiteCriteria,
+    pendingData,
+  } = args;
   console.log(args, 'MASUK RESOLVER');
-  let previousState: TenantOnboardingContent | null = cache.readQuery({
+  let previousState: TenantOnboardingState | null = cache.readQuery({
     query: GET_TENANT_ONBOARDING_STATE,
   });
-
-  console.log(previousState);
+  let oper =
+    typeof pendingData === 'boolean'
+      ? pendingData
+      : previousState?.tenantOnboardingState.pendingData;
+  console.log(oper, pendingData, previousState, '<<<<');
   let data = {
     tenantOnboardingState: {
       __typename: 'TenantOnboardingState',
+      pendingData:
+        typeof pendingData === 'boolean'
+          ? pendingData
+          : previousState?.tenantOnboardingState.pendingData,
       confirmBusinessDetail: {
         __typename: 'TenantOnboardingConfirmBusinessDetail',
-        ...previousState?.confirmBusinessDetail,
+        ...previousState?.tenantOnboardingState.confirmBusinessDetail,
         ...confirmBusinessDetail,
         location: {
           __typename: 'LocationInput',
-          ...previousState?.confirmBusinessDetail?.location,
+          ...previousState?.tenantOnboardingState.confirmBusinessDetail?.location,
           ...confirmBusinessDetail?.location,
         },
       },
       tenantGoals: {
         __typename: 'TenantOnboardingTenantGoals',
-        ...previousState?.tenantGoals,
+        ...previousState?.tenantOnboardingState.tenantGoals,
         ...tenantGoals,
         newLocationPlan: {
           __typename: 'TenantOnboardingTenantGoalsNewLocationPlan',
-          ...previousState?.tenantGoals?.newLocationPlan,
+          ...previousState?.tenantOnboardingState.tenantGoals?.newLocationPlan,
           ...tenantGoals?.newLocationPlan,
         },
       },
       targetCustomers: {
         __typename: 'TenantOnboardingTargetCustomers',
-        ...previousState?.targetCustomers,
+        ...previousState?.tenantOnboardingState.targetCustomers,
         ...targetCustomers,
       },
       physicalSiteCriteria: {
         __typename: 'TenantOnboardingPhysicalSiteCriteria',
-        ...previousState?.physicalSiteCriteria,
+        ...previousState?.tenantOnboardingState.physicalSiteCriteria,
         ...physicalSiteCriteria,
       },
     },

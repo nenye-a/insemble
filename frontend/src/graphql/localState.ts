@@ -1,4 +1,11 @@
 import { LocationInput } from '../generated/globalTypes';
+import { NEW_LOCATION_PLAN_OPTIONS } from '../constants/locationPlan';
+import {
+  INITIAL_MIN_AGE,
+  INITIAL_MAX_AGE,
+  INITIAL_MIN_INCOME,
+  INITIAL_MAX_INCOME,
+} from '../constants/initialValues';
 
 type WithTypename = { __typename: string };
 
@@ -37,54 +44,104 @@ export type NewLocationPlanObj = {
 
 export type ConfirmBusinessDetail = WithTypename & {
   name: string;
-  location?: LocationInput;
+  location: LocationInput & WithTypename;
   categories: Array<string>;
   userRelation: string;
   otherUserRelation?: string;
 };
 
 export type TenantGoals = WithTypename & {
-  newLocationPlan?: NewLocationPlanObj;
+  newLocationPlan: NewLocationPlanObj & WithTypename;
   location: Array<LocationInput>;
   locationCount?: string;
 };
 
 export type TargetCustomers = WithTypename & {
-  minAge?: number;
-  maxAge?: number;
-  noAgePreference?: boolean;
-  minIncome?: number;
-  maxIncome?: number;
-  personas?: Array<string>;
-  noPersonasPreference?: boolean;
-  educations?: Array<string>;
-  noEducationsPreference?: boolean;
-  minDaytimePopulation?: string;
-  noMinDaytimePopulationPreference?: boolean;
+  minAge: number;
+  maxAge: number;
+  noAgePreference: boolean;
+  minIncome: number;
+  maxIncome: number;
+  personas: Array<string>;
+  noPersonasPreference: boolean;
+  educations: Array<string>;
+  noEducationsPreference: boolean;
+  minDaytimePopulation: string;
+  noMinDaytimePopulationPreference: boolean;
 };
 
 export type PhysicalSiteCriteria = WithTypename & {
-  minSize?: number | string;
-  maxSize?: number | string;
-  minFrontageWidth?: number | string;
-  equipments?: Array<string>;
-  spaceType?: Array<string>;
+  minSize: string;
+  maxSize: string;
+  minFrontageWidth: string;
+  equipments: Array<string>;
+  spaceType: Array<string>;
 };
 
-type TenantOnboardingContent = {
+export type TenantOnboardingContent = {
   confirmBusinessDetail: ConfirmBusinessDetail;
   tenantGoals: TenantGoals;
   targetCustomers: TargetCustomers;
   physicalSiteCriteria: PhysicalSiteCriteria;
+  pendingData: boolean;
 };
 
-type TenantOnboardingState = {
+export type TenantOnboardingState = {
   tenantOnboardingState: {
     __typename: string;
   } & TenantOnboardingContent;
 };
 
 export type RootState = UserState & ErrorState & TenantOnboardingState;
+
+export const initialTenantOnboardingState = {
+  __typename: 'TenantOnboardingState',
+  pendingData: false,
+  confirmBusinessDetail: {
+    __typename: 'TenantOnboardingConfirmBusinessDetail',
+    name: '',
+    categories: [],
+    userRelation: '',
+    location: {
+      __typename: 'LocationInput',
+      address: '',
+      lat: '',
+      lng: '',
+    },
+    otherUserRelation: '',
+  },
+  tenantGoals: {
+    __typename: 'TenantOnboardingTenantGoals',
+    newLocationPlan: {
+      __typename: 'TenantOnboardingTenantGoalsNewLocationPlan',
+      ...NEW_LOCATION_PLAN_OPTIONS[0],
+    },
+    location: [],
+    locationCount: '',
+  },
+  targetCustomers: {
+    __typename: 'TenantOnboardingTargetCustomers',
+    minAge: INITIAL_MIN_AGE,
+    maxAge: INITIAL_MAX_AGE,
+    noAgePreference: false,
+    minIncome: INITIAL_MIN_INCOME,
+    maxIncome: INITIAL_MAX_INCOME,
+    personas: [],
+    noPersonasPreference: false,
+    educations: [],
+    noEducationsPreference: false,
+    minDaytimePopulation: '',
+    noMinDaytimePopulationPreference: false,
+  },
+  physicalSiteCriteria: {
+    __typename: 'TenantOnboardingPhysicalSiteCriteria',
+    minSize: '',
+    maxSize: '',
+    minFrontageWidth: '',
+    equipments: [],
+    spaceType: [],
+  },
+};
 
 export const defaultState: RootState = {
   userState: {
@@ -102,24 +159,5 @@ export const defaultState: RootState = {
     __typename: 'ErrorState',
     locationPreview: false,
   },
-  tenantOnboardingState: {
-    __typename: 'TenantOnboardingState',
-    confirmBusinessDetail: {
-      __typename: 'TenantOnboardingConfirmBusinessDetail',
-      name: '',
-      categories: [],
-      userRelation: '',
-    },
-    tenantGoals: {
-      __typename: 'TenantOnboardingTenantGoals',
-      newLocationPlan: undefined,
-      location: [],
-    },
-    targetCustomers: {
-      __typename: 'TenantOnboardingTargetCustomers',
-    },
-    physicalSiteCriteria: {
-      __typename: 'TenantOnboardingPhysicalSiteCriteria',
-    },
-  },
+  tenantOnboardingState: initialTenantOnboardingState,
 };

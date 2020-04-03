@@ -21,7 +21,7 @@ import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../constants/theme';
 import { THEME_COLOR } from '../constants/colors';
 import { useGoogleMaps } from '../utils';
 import { NEW_LOCATION_PLAN_OPTIONS } from '../constants/locationPlan';
-import { NewLocationPlanObj } from '../reducers/tenantOnboardingReducer';
+import { NewLocationPlanObj } from '../graphql/localState';
 import { SelectedLocation } from '../components/LocationInput';
 import SvgArrowBack from '../components/icons/arrow-back';
 import { validateNumber } from '../utils/validation';

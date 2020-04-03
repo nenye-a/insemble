@@ -21,7 +21,7 @@ export default function Login() {
         titleBackground="purple"
       >
         <FormContainer>
-          <LoginForm role={Role.TENANT} onboardingState={history.location.state?.onboardingState} />
+          <LoginForm role={Role.TENANT} />
         </FormContainer>
       </LoginCard>
       <NoAccountContainer>

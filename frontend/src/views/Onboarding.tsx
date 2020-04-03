@@ -1,6 +1,7 @@
 import React, { useState, useReducer, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { useHistory, Redirect, useParams } from 'react-router-dom';
+import { useMutation } from '@apollo/react-hooks';
 
 import { View } from '../core-ui';
 import OnboardingCard from './OnboardingPage/OnboardingCard';
@@ -9,43 +10,42 @@ import TenantGoals from './OnboardingPage/TenantGoals';
 import TenantTargetCustomers from './OnboardingPage/TenantTargetCustomers';
 import TenantPhysicalCriteria from './OnboardingPage/TenantPhysicalCriteria';
 import OnboardingSignUp from './OnboardingPage/OnboardingSignUp';
-import tenantOnboardingReducer, {
-  tenantOnboardingInitialState,
-} from '../reducers/tenantOnboardingReducer';
 import { useViewport } from '../utils';
+import { UPDATE_TENANT_ONBOARDING } from '../graphql/queries/client/tenantOnboarding';
 
 type Params = {
   formStep?: string;
 };
 
 export default function Onboarding() {
+  let [updateTenantOnboarding] = useMutation(UPDATE_TENANT_ONBOARDING);
   let params = useParams<Params>();
   let history = useHistory();
   let { state: landingState } = history.location;
 
   let [selectedStep, setSelectedStep] = useState(params.formStep);
-  let [state, dispatch] = useReducer(tenantOnboardingReducer, tenantOnboardingInitialState);
 
   let { isDesktop } = useViewport();
 
-  useEffect(() => {
-    if (landingState && !landingState.newPlace) {
-      let { name, lat, lng, formattedAddress } = landingState;
-      dispatch({
-        type: 'SAVE_CHANGES_CONFIRM_BUSINESS_DETAIL',
-        values: {
-          ...state,
-          confirmBusinessDetail: {
-            ...state.confirmBusinessDetail,
-            name,
-            location: {
-              lat,
-              lng,
-              address: formattedAddress,
-            },
+  let updateState = async () => {
+    let { name, lat, lng, formattedAddress } = landingState;
+    await updateTenantOnboarding({
+      variables: {
+        confirmBusinessDetail: {
+          name,
+          location: {
+            lat,
+            lng,
+            address: formattedAddress,
           },
         },
-      });
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (landingState && !landingState.newPlace) {
+      updateState();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.formStep]);
@@ -87,19 +87,18 @@ export default function Onboarding() {
   let Content = selectedPage.content;
   if (!params?.formStep) {
     return <Redirect to="/verify/step-1" />;
-  } else if (!state.confirmBusinessDetail.name && params.formStep !== 'step-1') {
-    return <Redirect to="/" />;
   }
-
+  // else if (!state.confirmBusinessDetail.name && params.formStep !== 'step-1') {
+  //   return <Redirect to="/" />;
+  // }
   return (
     <Container flex isDesktop={isDesktop}>
       <OnboardingCard
         title={selectedPage.title}
         progress={SEGMENTS.indexOf(selectedPage) / SEGMENTS.length}
-        canPressNext={state.canPressNext}
         flex
       >
-        <Content dispatch={dispatch} state={state} />
+        <Content />
       </OnboardingCard>
     </Container>
   );

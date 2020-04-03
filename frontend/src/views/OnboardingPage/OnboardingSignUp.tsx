@@ -6,33 +6,24 @@ import { View, Text, Button } from '../../core-ui';
 import { WHITE, SECONDARY_COLOR } from '../../constants/colors';
 import { FONT_SIZE_XLARGE, FONT_SIZE_SMALL, FONT_WEIGHT_BOLD } from '../../constants/theme';
 import SignUpForm from '../SignUpPage/SignUpForm';
-import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import InsembleLogo from '../../components/common/InsembleLogo';
 import { Role } from '../../types/types';
 import { useViewport } from '../../utils';
 
-type Props = {
-  dispatch: Dispatch<Action>;
-  state: OnboardingState;
-};
-
-export default function OnBoardingSignUp(props: Props) {
-  let { state: onboardingState } = props;
+export default function OnBoardingSignUp() {
   let { isDesktop } = useViewport();
   let history = useHistory();
   return (
     <Container>
       <FormContainer flex>
-        <SignUpForm role={Role.TENANT} onboardingState={onboardingState} />
+        <SignUpForm role={Role.TENANT} />
         <RowView style={{ marginBottom: 10 }}>
           <Text>Already have an account? </Text>
           <Button
             mode="transparent"
             text="Log in here"
             onPress={() => {
-              history.push('/login', {
-                onboardingState,
-              });
+              history.push('/login');
             }}
           />
         </RowView>

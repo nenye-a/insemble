@@ -1,4 +1,4 @@
-import { NewLocationPlan } from '../reducers/tenantOnboardingReducer';
+import { NewLocationPlan } from '../graphql/localState';
 
 export const NEW_LOCATION_PLAN_OPTIONS = [
   {
