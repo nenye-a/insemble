@@ -7,7 +7,7 @@ import { ApolloLink } from 'apollo-link';
 import { createUploadLink } from 'apollo-upload-client';
 import { API_URI } from '../constants/uris';
 import { defaultState } from './localState';
-import { loginSuccess } from './resolvers';
+import { loginSuccess, updateTenantOnboarding } from './resolvers';
 import { useCredentials } from '../utils';
 import { Role } from '../types/types';
 
@@ -39,6 +39,7 @@ const stateLink = withClientState({
   resolvers: {
     Mutation: {
       loginSuccess,
+      updateTenantOnboarding,
     },
   },
   cache,
