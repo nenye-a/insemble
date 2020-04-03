@@ -274,7 +274,7 @@ export default function LandlordManageSpace(props: Props) {
             <LabelText text="Features & Amenities" />
             {!equipmentLoading && equipmentData && (
               <Features
-                placeholder="Set Equipment Preference"
+                placeholder="Set Features & Amenities"
                 options={equipmentData.equipments}
                 onChange={setSelectedEquipment}
                 inputContainerStyle={{ flex: 1 }}
