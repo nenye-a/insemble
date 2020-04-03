@@ -17,7 +17,6 @@ export let updateTenantOnboarding = async (
   console.log(previousState);
   let data = {
     tenantOnboardingState: {
-      ...previousState,
       __typename: 'TenantOnboardingState',
       confirmBusinessDetail: {
         __typename: 'TenantOnboardingConfirmBusinessDetail',
@@ -26,7 +25,7 @@ export let updateTenantOnboarding = async (
         location: {
           __typename: 'LocationInput',
           ...previousState?.confirmBusinessDetail?.location,
-          ...confirmBusinessDetail.location,
+          ...confirmBusinessDetail?.location,
         },
       },
       tenantGoals: {

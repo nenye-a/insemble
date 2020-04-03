@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, useMemo } from 'react';
+import React, { useState, Dispatch, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useHistory, Redirect } from 'react-router-dom';
@@ -14,6 +14,7 @@ import {
   Button,
   TextInput,
   Text,
+  LoadingIndicator,
 } from '../../core-ui';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
@@ -26,18 +27,28 @@ import { CREATE_BRAND, GET_BRANDS } from '../../graphql/queries/server/brand';
 import { FONT_SIZE_SMALL } from '../../constants/theme';
 import { RED_TEXT } from '../../constants/colors';
 import { RangeInput } from '../../components';
+import { TenantOnboardingState } from '../../graphql/localState';
+import {
+  GET_TENANT_ONBOARDING_STATE,
+  UPDATE_TENANT_ONBOARDING,
+} from '../../graphql/queries/client/tenantOnboarding';
 
 type Props = {
   dispatch: Dispatch<Action>;
   state: OnboardingState;
 };
 
-export default function TenantPhysicalCriteria(props: Props) {
-  let { dispatch, state } = props;
+export default function TenantPhysicalCriteria() {
+  // let { dispatch, state } = props;
   let { tenantToken } = useCredentials();
   let signedIn = !!tenantToken;
   let history = useHistory();
   let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
+  let { data: onboardingStateData, loading: onboardingStateLoading } = useQuery<
+    TenantOnboardingState
+  >(GET_TENANT_ONBOARDING_STATE);
+  let [updateTenantOnboarding] = useMutation(UPDATE_TENANT_ONBOARDING);
+
   let [createBrand, { loading, data }] = useMutation<CreateBrand, CreateBrandVariables>(
     CREATE_BRAND
   );
@@ -49,12 +60,26 @@ export default function TenantPhysicalCriteria(props: Props) {
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
   let { register, errors, handleSubmit } = useForm();
 
-  let onSubmit = (fieldValues: FieldValues) => {
-    if (!sqftError) {
+  useEffect(() => {
+    if (onboardingStateData) {
+      let {
+        minSize,
+        maxSize,
+        minFrontageWidth,
+        equipments,
+        spaceType,
+      } = onboardingStateData.tenantOnboardingState.physicalSiteCriteria;
+      setMinSqft(minSize);
+      setMaxSqft(maxSize);
+      setSelectedSpaceOptions(spaceType);
+      setSelectedEquipmentOptions(equipments);
+    }
+  }, [onboardingStateData]);
+  let onSubmit = async (fieldValues: FieldValues) => {
+    if (!sqftError && onboardingStateData) {
       if (Object.keys(errors).length === 0) {
-        dispatch({
-          type: 'SAVE_CHANGES_PHYSICAL_SITE_CRITERIA',
-          values: {
+        await updateTenantOnboarding({
+          variables: {
             physicalSiteCriteria: {
               minSize: minSqft,
               maxSize: maxSqft,
@@ -64,8 +89,15 @@ export default function TenantPhysicalCriteria(props: Props) {
             },
           },
         });
+
         if (signedIn) {
-          let { confirmBusinessDetail, tenantGoals, targetCustomers, physicalSiteCriteria } = state;
+          let {
+            confirmBusinessDetail,
+            tenantGoals,
+            targetCustomers,
+            physicalSiteCriteria,
+          } = onboardingStateData.tenantOnboardingState;
+          console.log(onboardingStateData, 'SEBELUM SIGN UP');
           createBrand({
             variables: {
               ...getBusinessAndFilterParams(
@@ -82,8 +114,6 @@ export default function TenantPhysicalCriteria(props: Props) {
           history.push('/verify/step-5');
         }
       }
-    } else {
-      dispatch({ type: 'DISABLE_NEXT_BUTTON' });
     }
   };
 
@@ -97,77 +127,82 @@ export default function TenantPhysicalCriteria(props: Props) {
         }}
       />
     );
-  }
-
-  return (
-    <Form style={{ flex: 1 }} onSubmit={handleSubmit(onSubmit)}>
-      <Content flex>
-        <Description
-          visible
-          text="Customer criteria has been pre-populated based on your store's location."
-        />
-        <LabelText text="Sqft" />
-        <RangeInputContainer
-          lowValue={minSqft}
-          onLowRangeInputChange={setMinSqft}
-          highValue={maxSqft}
-          onHighRangeInputChange={setMaxSqft}
-        />
-        {sqftError ? <ErrorMessage>{sqftError}</ErrorMessage> : null}
-        <NumberTextInput
-          label="Minimum Frontage Width (ft)"
-          name="minFrontageWidth"
-          ref={register({
-            validate: (val) => validateNumber(val) || 'Input should be number',
-          })}
-          containerStyle={inputContainerStyle}
-          errorMessage={(errors?.minFrontageWidth as FieldError)?.message || ''}
-        />
-        <LabelText text="Buildout Preference" />
-        {!equipmentLoading && equipmentData && (
-          <MultiSelectInput
-            placeholder="Buildout preference"
-            options={equipmentData.equipments}
-            onChange={setSelectedEquipmentOptions}
-            containerStyle={{ marginBottom: 12 }}
-            inputContainerStyle={{ flex: 1 }}
+  } else if (onboardingStateData) {
+    let { minFrontageWidth } = onboardingStateData.tenantOnboardingState.physicalSiteCriteria;
+    return (
+      <Form style={{ flex: 1 }} onSubmit={handleSubmit(onSubmit)}>
+        <Content flex>
+          <Description
+            visible
+            text="Customer criteria has been pre-populated based on your store's location."
           />
-        )}
-        <LabelText text="Space type" />
-        {SPACES_TYPE.map((option, index) => {
-          let isChecked = selectedSpaceOptions.includes(option);
-          return (
-            <Checkbox
-              key={index}
-              size="18px"
-              title={option}
-              isChecked={isChecked}
-              onPress={() => {
-                if (isChecked) {
-                  let newSelectedSpaceOptions = selectedSpaceOptions.filter(
-                    (item: string) => item !== option
-                  );
-                  setSelectedSpaceOptions(newSelectedSpaceOptions);
-                } else {
-                  setSelectedSpaceOptions([...selectedSpaceOptions, option]);
-                }
-              }}
-              style={{ lineHeight: 2 }}
+          <LabelText text="Sqft" />
+          <RangeInputContainer
+            lowValue={minSqft}
+            onLowRangeInputChange={setMinSqft}
+            highValue={maxSqft}
+            onHighRangeInputChange={setMaxSqft}
+          />
+          {sqftError ? <ErrorMessage>{sqftError}</ErrorMessage> : null}
+          <NumberTextInput
+            label="Minimum Frontage Width (ft)"
+            name="minFrontageWidth"
+            defaultValue={minFrontageWidth}
+            ref={register({
+              validate: (val) => validateNumber(val) || 'Input should be number',
+            })}
+            containerStyle={inputContainerStyle}
+            errorMessage={(errors?.minFrontageWidth as FieldError)?.message || ''}
+          />
+          <LabelText text="Buildout Preference" />
+          {!equipmentLoading && equipmentData && (
+            <MultiSelectInput
+              placeholder="Buildout preference"
+              options={equipmentData.equipments}
+              onChange={setSelectedEquipmentOptions}
+              containerStyle={{ marginBottom: 12 }}
+              inputContainerStyle={{ flex: 1 }}
             />
-          );
-        })}
-      </Content>
-      <OnboardingFooter>
-        <TransparentButton
-          text="Back"
-          mode="transparent"
-          type="submit"
-          onPress={() => history.goBack()}
-        />
-        <Button text={signedIn ? 'Submit' : 'Next'} type="submit" loading={loading} />
-      </OnboardingFooter>
-    </Form>
-  );
+          )}
+          <LabelText text="Space type" />
+          {SPACES_TYPE.map((option, index) => {
+            let isChecked = selectedSpaceOptions.includes(option);
+            return (
+              <Checkbox
+                key={index}
+                size="18px"
+                title={option}
+                isChecked={isChecked}
+                onPress={() => {
+                  if (isChecked) {
+                    let newSelectedSpaceOptions = selectedSpaceOptions.filter(
+                      (item: string) => item !== option
+                    );
+                    setSelectedSpaceOptions(newSelectedSpaceOptions);
+                  } else {
+                    setSelectedSpaceOptions([...selectedSpaceOptions, option]);
+                  }
+                }}
+                style={{ lineHeight: 2 }}
+              />
+            );
+          })}
+        </Content>
+        <OnboardingFooter>
+          <TransparentButton
+            text="Back"
+            mode="transparent"
+            type="submit"
+            onPress={() => history.goBack()}
+          />
+          <Button text={signedIn ? 'Submit' : 'Next'} type="submit" loading={loading} />
+        </OnboardingFooter>
+      </Form>
+    );
+  } else if (onboardingStateLoading) {
+    return <LoadingIndicator />;
+  }
+  return null;
 }
 
 function getRangeInputError(minValue: string, maxValue: string) {
