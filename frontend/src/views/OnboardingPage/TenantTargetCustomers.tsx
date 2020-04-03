@@ -1,14 +1,22 @@
-import React, { useState, Dispatch, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
-import { View, Alert, Label, Button, Text, TextInput, Form as BaseForm } from '../../core-ui';
+import {
+  View,
+  Alert,
+  Label,
+  Button,
+  Text,
+  TextInput,
+  Form as BaseForm,
+  LoadingIndicator,
+} from '../../core-ui';
 import { Filter } from '../../components';
-import { MUTED_TEXT_COLOR } from '../../constants/colors';
+import { MUTED_TEXT_COLOR, TEXT_COLOR } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_SIZE_MEDIUMSMALL } from '../../constants/theme';
 import { convertToKilos } from '../../utils';
-import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import {
   GET_PERSONA_LIST,
   GET_EDUCATION_LIST,
@@ -21,64 +29,51 @@ import {
 } from '../../generated/AutoPopulateFilter';
 import { LocationState } from './types';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
+import { TenantOnboardingState } from '../../graphql/localState';
+import {
+  GET_TENANT_ONBOARDING_STATE,
+  UPDATE_TENANT_ONBOARDING,
+} from '../../graphql/queries/client/tenantOnboarding';
+import {
+  INITIAL_MIN_AGE,
+  INITIAL_MAX_AGE,
+  INITIAL_MIN_INCOME,
+  INITIAL_MAX_INCOME,
+} from '../../constants/initialValues';
 
-// remove this when it's connected to endpoint that returns prefilled values
-const INITIAL_MIN_INCOME = 100;
-const INITIAL_MAX_INCOME = 200;
-const INTIIAL_MIN_AGE = 25;
-const INTIIAL_MAX_AGE = 40;
-
-type Props = {
-  dispatch: Dispatch<Action>;
-  state: OnboardingState;
-};
-
-export default function TenantTargetCustomers(props: Props) {
-  let { dispatch, state } = props;
-  let { targetCustomers, confirmBusinessDetail } = state;
+export default function TenantTargetCustomers() {
   let history = useHistory<LocationState>();
 
   let { data: personaData, loading: personaLoading } = useQuery(GET_PERSONA_LIST);
   let { data: educationData, loading: educationLoading } = useQuery(GET_EDUCATION_LIST);
-  let { data: autoPopulateData, loading: autoPopulateLoading } = useQuery<
-    AutoPopulateFilter,
-    AutoPopulateFilterVariables
-  >(GET_AUTOPOPULATE_FILTER, {
-    variables: {
-      brandName: confirmBusinessDetail.name,
-      address: confirmBusinessDetail.location?.address || '',
-    },
-    skip: !confirmBusinessDetail.name || !confirmBusinessDetail.location?.address,
-  });
+  let [
+    getAutoPopulateData,
+    { data: autoPopulateData, loading: autoPopulateLoading },
+  ] = useLazyQuery<AutoPopulateFilter, AutoPopulateFilterVariables>(GET_AUTOPOPULATE_FILTER, {});
+  let { data: onboardingStateData, loading: onboardingStateLoading } = useQuery<
+    TenantOnboardingState
+  >(GET_TENANT_ONBOARDING_STATE);
+  let [updateTenantOnboarding] = useMutation(UPDATE_TENANT_ONBOARDING);
+
   let [editCriteriaDisabled, toggleEditCriteria] = useState(true);
-  let [noAgePreference, setNoAgePreference] = useState(targetCustomers.noAgePreference);
-  let [noPersonasPreference, setNoPersonasPreference] = useState(
-    targetCustomers.noPersonasPreference
-  );
-  let [noMinDaytimePopulationPreference, setNoMinDaytimePopulationPreference] = useState(
-    targetCustomers.noMinDaytimePopulationPreference
-  );
-  let [noEducationsPreference, setNoEducationsPreference] = useState(
-    targetCustomers.noEducationsPreference
-  );
-  let [selectedPersonas, setSelectedPersonas] = useState<Array<string>>(
-    targetCustomers.personas || []
-  );
-  let [selectedEducations, setSelectedEducations] = useState<Array<string>>(
-    targetCustomers.educations || []
-  );
+  let [noAgePreference, setNoAgePreference] = useState(false);
+  let [noPersonasPreference, setNoPersonasPreference] = useState(false);
+  let [noMinDaytimePopulationPreference, setNoMinDaytimePopulationPreference] = useState(false);
+  let [noEducationsPreference, setNoEducationsPreference] = useState(false);
+  let [selectedPersonas, setSelectedPersonas] = useState<Array<string>>([]);
+  let [selectedEducations, setSelectedEducations] = useState<Array<string>>([]);
   let [minDaytimePopulation, setMinDaytimePopulation] = useState('0');
   let [[minAge, maxAge], setSelectedAgeRange] = useState<Array<number>>([
-    targetCustomers.minAge === 0 ? 0 : targetCustomers.minAge || INTIIAL_MIN_AGE,
-    targetCustomers.maxAge || INTIIAL_MAX_AGE,
+    INITIAL_MIN_AGE,
+    INITIAL_MAX_AGE,
   ]);
   let [[minIncome, maxIncome], setSelectedIncomeRange] = useState<Array<number>>([
-    targetCustomers.minIncome === 0 ? 0 : targetCustomers.minIncome || INITIAL_MIN_INCOME,
-    targetCustomers.maxIncome || INITIAL_MAX_INCOME,
+    INITIAL_MIN_INCOME,
+    INITIAL_MAX_INCOME,
   ]);
 
   useEffect(() => {
-    if (autoPopulateData?.autoPopulateFilter && Object.keys(targetCustomers).length === 0) {
+    if (autoPopulateData?.autoPopulateFilter) {
       let { personas, income, age } = autoPopulateData.autoPopulateFilter;
       let { min: autoMinIncome, max: autoMaxIncome } = income;
       let { min: autoMinAge, max: autoMaxAge } = age;
@@ -98,10 +93,48 @@ export default function TenantTargetCustomers(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoPopulateLoading, autoPopulateData]);
 
-  let onSubmit = () => {
-    dispatch({
-      type: 'SAVE_CHANGES_TARGET_CUSTOMERS',
-      values: {
+  useEffect(() => {
+    if (onboardingStateData) {
+      let { confirmBusinessDetail, targetCustomers } = onboardingStateData.tenantOnboardingState;
+      let { name, location } = confirmBusinessDetail;
+
+      let {
+        minAge,
+        maxAge,
+        minIncome,
+        maxIncome,
+        personas,
+        educations,
+        noAgePreference,
+        noPersonasPreference,
+        noEducationsPreference,
+        noMinDaytimePopulationPreference,
+        minDaytimePopulation,
+      } = targetCustomers;
+      console.log(name, location, 'HAHA');
+      if (name && location) {
+        getAutoPopulateData({
+          variables: {
+            brandName: name,
+            address: location?.address || '',
+          },
+        });
+      }
+      setNoAgePreference(noAgePreference);
+      setNoPersonasPreference(noPersonasPreference);
+      setNoEducationsPreference(noEducationsPreference);
+      setNoMinDaytimePopulationPreference(noMinDaytimePopulationPreference);
+      setSelectedAgeRange([minAge, maxAge]);
+      setSelectedIncomeRange([minIncome, maxIncome]);
+      setSelectedPersonas(personas);
+      setSelectedEducations(educations);
+      setMinDaytimePopulation(minDaytimePopulation);
+    }
+  }, [onboardingStateData, getAutoPopulateData]);
+
+  let onSubmit = async () => {
+    await updateTenantOnboarding({
+      variables: {
         targetCustomers: {
           minAge,
           maxAge,
@@ -112,161 +145,171 @@ export default function TenantTargetCustomers(props: Props) {
           noAgePreference,
           noPersonasPreference,
           noEducationsPreference,
+          noMinDaytimePopulationPreference,
           minDaytimePopulation,
         },
       },
     });
+
     history.push('/verify/step-4');
   };
-
-  return (
-    <Form onSubmit={onSubmit}>
-      <Content>
-        <Alert
-          visible
-          text="Your customer criteria has been pre-populated based on your store's location."
-        />
-        <DescriptionContainer>
-          <RowedView>
-            <Label text="Confirm your target customer criteria." />
-            <Button
-              mode="transparent"
-              text="Click here to edit criteria"
-              style={{ marginLeft: 12, height: 18 }}
-              textProps={{
-                style: { fontStyle: 'italic', fontSize: FONT_SIZE_SMALL, color: MUTED_TEXT_COLOR },
-              }}
-              onPress={() => {
-                toggleEditCriteria(!editCriteriaDisabled);
-              }}
-            />
-          </RowedView>
-          <ItalicText fontSize={FONT_SIZE_MEDIUMSMALL} color={MUTED_TEXT_COLOR}>
-            If you have no preference, select “no preference” and we will handle the rest.
-          </ItalicText>
-        </DescriptionContainer>
-        <FilterContainer
-          title="Age"
-          visible
-          rangeSlide
-          noPreferenceButton
-          hasPreference={!noAgePreference}
-          onNoPreferencePress={() => {
-            setNoAgePreference(!noAgePreference);
-          }}
-          values={[minAge, maxAge]}
-          minimum={0}
-          maximum={65}
-          onSliderChange={(values: Array<number>) => {
-            setSelectedAgeRange(values);
-          }}
-          disabled={editCriteriaDisabled}
-          sliderDisabled={noAgePreference}
-          loading={autoPopulateLoading}
-        />
-        <FilterContainer
-          title="Income"
-          visible
-          rangeSlide
-          income
-          values={[minIncome, maxIncome]}
-          minimum={0}
-          maximum={200}
-          onSliderChange={(values: Array<number>) => setSelectedIncomeRange(values)}
-          disabled={editCriteriaDisabled}
-          loading={autoPopulateLoading}
-        />
-        {!educationLoading && educationData && (
-          <FilterContainer
+  if (onboardingStateData) {
+    return (
+      <Form onSubmit={onSubmit}>
+        <Content>
+          <Alert
             visible
-            search
-            noPreferenceButton
-            hasPreference={!noEducationsPreference}
-            onNoPreferencePress={() => {
-              setSelectedEducations([]);
-              setNoEducationsPreference(!noEducationsPreference);
-            }}
-            title="Education"
-            allOptions={
-              educationData.education
-                ? educationData.education.map((item: EducationEducation) => item.displayValue)
-                : []
-            }
-            selectedOptions={selectedEducations}
-            onSelect={(option: string) => {
-              if (noEducationsPreference) {
-                setNoEducationsPreference(false);
-              }
-              setSelectedEducations([...selectedEducations, option]);
-            }}
-            onUnSelect={(option: string) => {
-              let newSelectedOptions = selectedEducations.filter((item) => item !== option);
-              setSelectedEducations(newSelectedOptions);
-            }}
-            onClear={() => setSelectedEducations([])}
-            disabled={editCriteriaDisabled}
+            text="Your customer criteria has been pre-populated based on your store's location."
           />
-        )}
-        {!personaLoading && personaData && (
+          <DescriptionContainer>
+            <RowedView>
+              <Label text="Confirm your target customer criteria." />
+              <Button
+                mode="transparent"
+                text="Click here to edit criteria"
+                style={{ marginLeft: 12, height: 18 }}
+                textProps={{
+                  style: {
+                    fontStyle: 'italic',
+                    fontSize: FONT_SIZE_SMALL,
+                    color: TEXT_COLOR,
+                  },
+                }}
+                onPress={() => {
+                  toggleEditCriteria(!editCriteriaDisabled);
+                }}
+              />
+            </RowedView>
+            <ItalicText fontSize={FONT_SIZE_MEDIUMSMALL} color={MUTED_TEXT_COLOR}>
+              If you have no preference, select “no preference” and we will handle the rest.
+            </ItalicText>
+          </DescriptionContainer>
           <FilterContainer
+            title="Age"
             visible
-            search
+            rangeSlide
             noPreferenceButton
-            link="https://taxonomy.spatial.ai/"
-            linkTitle="Psychographics"
-            hasPreference={!noPersonasPreference}
+            hasPreference={!noAgePreference}
             onNoPreferencePress={() => {
-              setSelectedPersonas([]);
-              setNoPersonasPreference(!noPersonasPreference);
+              setNoAgePreference(!noAgePreference);
             }}
-            title="Consumer Personas"
-            allOptions={personaData.personas}
-            selectedOptions={selectedPersonas}
-            onSelect={(option: string) => {
-              if (noPersonasPreference) {
-                setNoPersonasPreference(false);
-              }
-              setSelectedPersonas([...selectedPersonas, option]);
+            values={[minAge, maxAge]}
+            minimum={0}
+            maximum={65}
+            onSliderChange={(values: Array<number>) => {
+              setSelectedAgeRange(values);
             }}
-            onUnSelect={(option: string) => {
-              let newSelectedOptions = selectedPersonas.filter((item) => item !== option);
-              setSelectedPersonas(newSelectedOptions);
-            }}
-            onClear={() => setSelectedPersonas([])}
+            disabled={editCriteriaDisabled}
+            sliderDisabled={noAgePreference}
+            loading={autoPopulateLoading}
+          />
+          <FilterContainer
+            title="Income"
+            visible
+            rangeSlide
+            income
+            values={[minIncome, maxIncome]}
+            minimum={0}
+            maximum={200}
+            onSliderChange={(values: Array<number>) => setSelectedIncomeRange(values)}
             disabled={editCriteriaDisabled}
             loading={autoPopulateLoading}
           />
-        )}
-        <DaytimeContainer>
-          <MinDaytimePopulationInput
-            disabled={editCriteriaDisabled}
-            onChange={(e) => {
-              setMinDaytimePopulation(e.target.value);
-            }}
-            label="Minimum Daytime Population"
-            placeholder="0"
-            errorMessage={!minDaytimePopulation ? 'Field should not be empty' : ''}
+          {!educationLoading && educationData && (
+            <FilterContainer
+              visible
+              search
+              noPreferenceButton
+              hasPreference={!noEducationsPreference}
+              onNoPreferencePress={() => {
+                setSelectedEducations([]);
+                setNoEducationsPreference(!noEducationsPreference);
+              }}
+              title="Education"
+              allOptions={
+                educationData.education
+                  ? educationData.education.map((item: EducationEducation) => item.displayValue)
+                  : []
+              }
+              selectedOptions={selectedEducations}
+              onSelect={(option: string) => {
+                if (noEducationsPreference) {
+                  setNoEducationsPreference(false);
+                }
+                setSelectedEducations([...selectedEducations, option]);
+              }}
+              onUnSelect={(option: string) => {
+                let newSelectedOptions = selectedEducations.filter((item) => item !== option);
+                setSelectedEducations(newSelectedOptions);
+              }}
+              onClear={() => setSelectedEducations([])}
+              disabled={editCriteriaDisabled}
+            />
+          )}
+          {!personaLoading && personaData && (
+            <FilterContainer
+              visible
+              search
+              noPreferenceButton
+              link="https://taxonomy.spatial.ai/"
+              linkTitle="Psychographics"
+              hasPreference={!noPersonasPreference}
+              onNoPreferencePress={() => {
+                setSelectedPersonas([]);
+                setNoPersonasPreference(!noPersonasPreference);
+              }}
+              title="Consumer Personas"
+              allOptions={personaData.personas}
+              selectedOptions={selectedPersonas}
+              onSelect={(option: string) => {
+                if (noPersonasPreference) {
+                  setNoPersonasPreference(false);
+                }
+                setSelectedPersonas([...selectedPersonas, option]);
+              }}
+              onUnSelect={(option: string) => {
+                let newSelectedOptions = selectedPersonas.filter((item) => item !== option);
+                setSelectedPersonas(newSelectedOptions);
+              }}
+              onClear={() => setSelectedPersonas([])}
+              disabled={editCriteriaDisabled}
+              loading={autoPopulateLoading}
+            />
+          )}
+          <DaytimeContainer>
+            <MinDaytimePopulationInput
+              disabled={editCriteriaDisabled}
+              onChange={(e) => {
+                setMinDaytimePopulation(e.target.value);
+              }}
+              label="Minimum Daytime Population"
+              placeholder="0"
+              errorMessage={!minDaytimePopulation ? 'Field should not be empty' : ''}
+            />
+            <Button
+              mode={!noMinDaytimePopulationPreference ? 'transparent' : 'primary'}
+              text="No Preference"
+              onPress={() => setNoMinDaytimePopulationPreference(!noMinDaytimePopulationPreference)}
+              style={!noMinDaytimePopulationPreference ? { fontStyle: 'italic' } : undefined}
+              disabled={editCriteriaDisabled}
+            />
+          </DaytimeContainer>
+        </Content>
+        <OnboardingFooter>
+          <TransparentButton
+            text="Back"
+            mode="transparent"
+            type="submit"
+            onPress={() => history.goBack()}
           />
-          <Button
-            mode={!noMinDaytimePopulationPreference ? 'transparent' : 'primary'}
-            text="No Preference"
-            onPress={() => setNoMinDaytimePopulationPreference(!noMinDaytimePopulationPreference)}
-            style={!noMinDaytimePopulationPreference ? { fontStyle: 'italic' } : undefined}
-            disabled={editCriteriaDisabled}
-          />
-        </DaytimeContainer>
-      </Content>
-      <OnboardingFooter>
-        <TransparentButton
-          text="Back"
-          mode="transparent"
-          type="submit"
-          onPress={() => history.goBack()}
-        />
-        <Button text="Next" type="submit" />
-      </OnboardingFooter>
-    </Form>
-  );
+          <Button text="Next" type="submit" />
+        </OnboardingFooter>
+      </Form>
+    );
+  } else if (onboardingStateLoading) {
+    return <LoadingIndicator />;
+  }
+  return null;
 }
 
 const Form = styled(BaseForm)`

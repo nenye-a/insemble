@@ -68,7 +68,7 @@ export default function TenantGoals() {
         tenantGoals: {
           newLocationPlan: selectedNewLocationPlan,
           location: selectedLocations.map((item) => ({ ...item, __typename: 'LocationInput' })),
-          locationCount,
+          locationCount: locationCount || 0,
         },
       },
     });

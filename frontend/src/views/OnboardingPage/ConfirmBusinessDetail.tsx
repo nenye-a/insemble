@@ -93,7 +93,7 @@ export default function ConfirmBusinessDetail() {
           name: fieldValues.businessName,
           categories: selectedCategories,
           userRelation: fieldValues.businessRelationship,
-          otherUserRelation: fieldValues.otherBusinessRelation,
+          otherUserRelation: fieldValues.otherBusinessRelation || '',
         },
       },
     });
