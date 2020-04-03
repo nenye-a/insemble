@@ -40,7 +40,7 @@ export default function ConfirmBusinessDetail() {
   let { data: categoriesData } = useQuery<Categories>(GET_CATEGORIES);
   let [
     getAutopopulateData,
-    { data: autopopulateData, loading: autopopulateLoading, error: apError },
+    { data: autopopulateData, loading: autopopulateLoading },
   ] = useLazyQuery<AutoPopulateFilter, AutoPopulateFilterVariables>(GET_AUTOPOPULATE_FILTER);
   let { data: onboardingStateData, loading: onboardingStateLoading } = useQuery<
     TenantOnboardingState
