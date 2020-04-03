@@ -39,6 +39,25 @@ let locationDetails = queryField('locationDetails', {
       throw new Error('This not your brand. Not authorized!');
     }
 
+    const minLat = 33.7036519;
+    const maxLat = 34.3373061;
+    const minLng = -118.6681759;
+    const maxLng = -118.1552891;
+    if (selectedLocation) {
+      let selectedLat = parseFloat(selectedLocation.lat);
+      let selectedLng = parseFloat(selectedLocation.lng);
+      if (
+        selectedLat < minLat ||
+        selectedLng < minLng ||
+        selectedLat > maxLat ||
+        selectedLng > maxLng
+      ) {
+        throw new Error(
+          'Unsupported location. Please select a location within the LA or OC area.',
+        );
+      }
+    }
+
     try {
       let { result }: LocationDetailsType = (
         await axios.get(`${LEGACY_API_URI}/api/fastLocationDetails/`, {
