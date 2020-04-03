@@ -9,16 +9,23 @@ let placeResolver: FieldResolver<'Query', 'place'> = async (
   _: Root,
   { address },
 ) => {
+  let locationCoor = '34.020479,-118.4117325';
   // eslint-disable-next-line @typescript-eslint/camelcase
   let { place_id }: { place_id: string } = (
     await axios.get(`${GOOGLE_API}/maps/api/place/autocomplete/json`, {
       params: {
         input: address,
         key: GOOGLE_API_KEY,
+        location: locationCoor,
+        radius: 28500,
+        strictbounds: true,
       },
     })
-  ).data.predictions[0];
-
+  ).data.predictions[0] || { place_id: undefined };
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  if (!place_id) {
+    throw new Error('No suggestion');
+  }
   let {
     // eslint-disable-next-line @typescript-eslint/camelcase
     formatted_address,
