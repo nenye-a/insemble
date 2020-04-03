@@ -52,9 +52,19 @@ function LocationsInput(props: Props) {
     }
   }, [onSubmit, getPlace]);
 
+  let LABounds = new google.maps.LatLngBounds(
+    new google.maps.LatLng(33.7036519, -118.6681759),
+    new google.maps.LatLng(34.3373061, -118.1552891)
+  );
+
+  let opts = {
+    bounds: LABounds,
+    strictBounds: true,
+  };
+
   useEffect(() => {
     if (inputRef.current) {
-      let autocomplete = new window.google.maps.places.Autocomplete(inputRef.current);
+      let autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, opts);
       let listener = autocomplete.addListener('place_changed', () => {
         let place = autocomplete.getPlace();
         selectedPlace.current = place;
@@ -63,7 +73,7 @@ function LocationsInput(props: Props) {
         listener.remove();
       };
     }
-  }, []);
+  }, [opts]);
   return (
     <>
       {label && <Label style={{ paddingBottom: 8 }} text={label} />}

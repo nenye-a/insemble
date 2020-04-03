@@ -75,9 +75,18 @@ export default function LocationInput(props: Props) {
     }
   }, [onPlaceSelected, getPlace]);
 
+  let LABounds = new google.maps.LatLngBounds(
+    new google.maps.LatLng(33.7036519, -118.6681759),
+    new google.maps.LatLng(34.3373061, -118.1552891)
+  );
+
+  let opts = {
+    bounds: LABounds,
+    strictBounds: true,
+  };
   useEffect(() => {
     if (!isLoading && inputRef.current) {
-      let autocomplete = new window.google.maps.places.Autocomplete(inputRef.current);
+      let autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, opts);
       let listener = autocomplete.addListener('place_changed', () => {
         let place = autocomplete.getPlace();
         selectedPlace.current = place;
@@ -87,7 +96,7 @@ export default function LocationInput(props: Props) {
         listener.remove();
       };
     }
-  }, [isLoading, submitHandler]);
+  }, [isLoading, submitHandler, opts]);
 
   if (isLoading) {
     return null;

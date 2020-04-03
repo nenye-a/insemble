@@ -145,7 +145,7 @@ export default function BrandDetail() {
         />
 
         <RowedView>
-          <Title>Your Brands</Title>
+          <Title>Brands</Title>
           <Button
             mode="transparent"
             text="Edit Your Brands"
