@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { View, FragmentedProgressBar, Text, TouchableOpacity } from '../../core-ui';
 import {
@@ -15,12 +15,14 @@ import { GREEN_ICON, GREY_ICON, DARK_TEXT_COLOR } from '../../constants/colors';
 import SvgTriangleUp from '../../components/icons/triangle-up';
 import SvgArrowDownShort from '../../components/icons/arrow-down-short';
 import { DeepDiveContext } from './DeepDiveModal';
-import { roundDecimal } from '../../utils';
+import { roundDecimal, useViewport } from '../../utils';
+import { ViewPropsWithViewport } from '../../constants/viewports';
 
 export default function MatchPercentageCard() {
   let data = useContext(DeepDiveContext);
   let progress = data?.result?.matchValue;
   let affinities = data?.result?.affinities;
+  let { isDesktop } = useViewport();
 
   const ASPECTS = [
     {
@@ -59,10 +61,10 @@ export default function MatchPercentageCard() {
         </Text>
         <FragmentedProgressBar progress={progress} style={{ marginTop: 30, marginBottom: 60 }} />
       </PercentageContainer>
-      <AspectsRowedView>
+      <AspectsRowedView isDesktop={isDesktop}>
         {ASPECTS.map(({ name, description, growthIcon }, index) => {
           return (
-            <AspectContainer key={name + '_' + index.toString()}>
+            <AspectContainer isDesktop={isDesktop} key={name + '_' + index.toString()}>
               <RowedView>
                 <Text fontSize={FONT_SIZE_LARGE} fontWeight={FONT_WEIGHT_BOLD}>
                   {name}
@@ -95,7 +97,17 @@ const RowedView = styled(View)`
   flex-direction: row;
 `;
 
-const AspectsRowedView = styled(RowedView)``;
+const AspectsRowedView = styled(View)<ViewPropsWithViewport>`
+  flex-direction: ${({ isDesktop }) => (isDesktop ? 'row' : 'column')};
+  ${({ isDesktop }) =>
+    isDesktop
+      ? css`
+          flex-direction: row;
+        `
+      : css`
+          align-items: center;
+        `}
+`;
 
 const SeeMoreContainer = styled(TouchableOpacity)`
   flex-direction: row;
@@ -104,9 +116,14 @@ const SeeMoreContainer = styled(TouchableOpacity)`
   margin-top: 23px;
 `;
 
-const AspectContainer = styled(View)`
+const AspectContainer = styled(View)<ViewPropsWithViewport>`
   align-items: center;
   width: 25%;
+  ${({ isDesktop }) =>
+    !isDesktop &&
+    css`
+      margin: 8px 0;
+    `}
 `;
 
 const PercentageText = styled(Text)`

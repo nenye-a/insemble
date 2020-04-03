@@ -1,12 +1,13 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { View, Card, Text, Badge as BaseBadge } from '../../core-ui';
 import NearbyPlacesTag from './NearbyPlacesTag';
 import { DEFAULT_BORDER_RADIUS, FONT_SIZE_SMALL, FONT_WEIGHT_MEDIUM } from '../../constants/theme';
 import { MUTED_TEXT_COLOR, THEME_COLOR } from '../../constants/colors';
 import { LEGEND } from './NearbyMapLegend';
-import { roundDecimal } from '../../utils';
+import { roundDecimal, useViewport } from '../../utils';
+import { CardPropsWithViewport } from '../../constants/viewports';
 
 type Props = {
   name: string;
@@ -21,8 +22,9 @@ type Props = {
 
 export default function NearbyPlacesCard(props: Props) {
   let { name, category, rating, numberRating, distance, placeType, similar } = props;
-  return (
-    <Container>
+  let { isDesktop } = useViewport();
+  let content = (
+    <Container isDesktop={isDesktop}>
       {similar && (
         <Badge
           text="Similar"
@@ -45,12 +47,23 @@ export default function NearbyPlacesCard(props: Props) {
       </TagsContainer>
     </Container>
   );
+  return isDesktop ? content : <Root>{content}</Root>;
 }
 const MARGIN = '6px';
 
-const Container = styled(Card)`
+const Root = styled(View)`
+  width: 100%;
+`;
+const Container = styled(Card)<CardPropsWithViewport>`
   margin: ${MARGIN};
-  width: calc(50% - (2 * ${MARGIN}));
+  ${({ isDesktop }) =>
+    isDesktop
+      ? css`
+          width: calc(50% - (2 * ${MARGIN}));
+        `
+      : css`
+          width: 100%;
+        `}
   padding: 12px;
   overflow: visible;
 `;

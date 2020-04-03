@@ -16,6 +16,7 @@ import {
 } from '../../generated/LocationDetails';
 import { THEME_COLOR } from '../../constants/colors';
 import { FONT_SIZE_LARGE } from '../../constants/theme';
+import { useViewport } from '../../utils';
 
 type SelectedLocation = { lat: string; lng: string; address: string; targetNeighborhood: string };
 
@@ -43,8 +44,9 @@ type Props = {
 // const SHRINK_HEIGHT = 160;
 export default function LocationDeepDiveModal(props: Props) {
   let { brandId = '' } = useParams();
+  let { isDesktop } = useViewport();
   let { visible, onClose, lat, lng, address, targetNeighborhood, categories, propertyId } = props;
-  let [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  let [selectedTabIndex, setSelectedTabIndex] = useState(1);
   // let [headerShrink, setHeaderShrink] = useState(false);
   let isOverviewSelected = selectedTabIndex === 0;
   let { data, loading, error, refetch } = useQuery<LocationDetails, LocationDetailsVariables>(
@@ -114,12 +116,24 @@ export default function LocationDeepDiveModal(props: Props) {
                 flex
                 //  onScroll={handleOnScroll}
               >
-                <PropertyDeepDiveHeader
-                  showConnect={false}
-                  matchScore={0}
-                  address={address}
-                  targetNeighborhood={targetNeighborhood}
-                />
+                {isDesktop ? (
+                  <PropertyDeepDiveHeader
+                    showConnect={false}
+                    matchScore={0}
+                    address={address}
+                    targetNeighborhood={targetNeighborhood}
+                  />
+                ) : (
+                  <MobileContainer>
+                    <PropertyDeepDiveHeader
+                      showConnect={false}
+                      matchScore={0}
+                      address={address}
+                      targetNeighborhood={targetNeighborhood}
+                    />
+                  </MobileContainer>
+                )}
+
                 <Overview />
               </ScrollView>
             ) : (
@@ -171,5 +185,12 @@ const ScrollView = styled(View)`
 
 const CenteredView = styled(View)`
   justify-content: center;
+  align-items: center;
+`;
+
+const MobileContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   align-items: center;
 `;

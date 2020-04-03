@@ -4,12 +4,12 @@ import View from './View';
 
 type PressHandler = () => void;
 
-type Props = Omit<ViewProps, 'onClick'> & {
+export type TouchableOpacityProps = Omit<ViewProps, 'onClick'> & {
   onPress?: PressHandler;
   onStopPropagation?: boolean;
 };
 
-export default function TouchableOpacity(props: Props) {
+export default function TouchableOpacity(props: TouchableOpacityProps) {
   let { onPress, href, onStopPropagation, disabled, ...otherProps } = props;
   let isLink = href != null;
   let isLocalLink = isLink && isLocalURL(href);

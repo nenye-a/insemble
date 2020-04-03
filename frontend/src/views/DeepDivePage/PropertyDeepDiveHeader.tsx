@@ -4,6 +4,8 @@ import { View, Text, Button } from '../../core-ui';
 import ContactModal from './ContactModal';
 import { FONT_SIZE_LARGE } from '../../constants/theme';
 import { PropertyMatches_propertyMatches_contacts as Contacts } from '../../generated/PropertyMatches';
+import { ViewPropsWithViewport } from '../../constants/viewports';
+import { useViewport } from '../../utils';
 
 type Props = {
   address: string;
@@ -27,8 +29,9 @@ export default function PropertyDeepDiveHeader({
   showConnect = true,
 }: Props) {
   let [contactModalVisible, toggleContactModalVisibility] = useState(false);
+  let { isDesktop } = useViewport();
   return (
-    <Container>
+    <Container isDesktop={isDesktop}>
       <View flex>
         <Text fontSize={FONT_SIZE_LARGE}>{address}</Text>
         <Text>{targetNeighborhood}</Text>
@@ -55,8 +58,8 @@ export default function PropertyDeepDiveHeader({
   );
 }
 
-const Container = styled(View)`
-  flex-direction: row;
+const Container = styled(View)<ViewPropsWithViewport>`
+  flex-direction: ${({ isDesktop }) => (isDesktop ? 'row' : 'column')};
   padding: 16px;
   align-items: center;
 `;

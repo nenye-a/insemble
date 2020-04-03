@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
 
-import { View, Text, Card, SegmentedControl } from '../../core-ui';
+import { View, Text, Card, SegmentedControl, Dropdown } from '../../core-ui';
 import { CarouselFilter } from '../../components';
 import SvgGreenArrow from '../../components/icons/green-arrow';
 import SvgRedArrow from '../../components/icons/red-arrow';
@@ -20,10 +20,11 @@ import {
   FONT_FAMILY_NORMAL,
   FONT_SIZE_NORMAL,
 } from '../../constants/theme';
-import { roundDecimal, convertToKilos, formatSnakeCaseLabel } from '../../utils';
+import { roundDecimal, convertToKilos, formatSnakeCaseLabel, useViewport } from '../../utils';
 import { LocationDetails_locationDetails_result_demographics1 as LocationDetailsDemographics } from '../../generated/LocationDetails';
 import { PropertyLocationDetails_propertyDetails_demographics1 as PropertyDetailsDemographics } from '../../generated/PropertyLocationDetails';
 import { TenantDetail_tenantDetail_insightView_demographics1 as TenantDetailsDemographics } from '../../generated/TenantDetail';
+import { ViewPropsWithViewport } from '../../constants/viewports';
 
 //TODO Improve Typing for data
 type DemographicsStatus = {
@@ -62,6 +63,7 @@ function hasGrowth(
 
 export default function Graphic(props: Props) {
   let { demographicsData, withMargin } = props;
+  let { isDesktop } = useViewport();
   let [activeIndex, setActiveIndex] = useState<number>(0);
   let [selectedFilter, setSelectedFilter] = useState<string>('Age');
   let options = ['Age', 'Income', 'Ethnicity', 'Education', 'Gender'];
@@ -141,9 +143,9 @@ export default function Graphic(props: Props) {
 
   let content = (
     <>
-      <RowedView>
+      <RowedView isDesktop={isDesktop}>
         <Title>Demographics</Title>
-        <RightTitleContainer>
+        <RightTitleContainer isDesktop={isDesktop}>
           <Text>Radius</Text>
           <Segmented
             onPress={(index: number) => setActiveIndex(index)}
@@ -152,7 +154,20 @@ export default function Graphic(props: Props) {
           />
         </RightTitleContainer>
       </RowedView>
-      <RowedView>
+      <RowedView isDesktop={isDesktop}>
+        {!isDesktop && (
+          <DropdownContainer>
+            <Dropdown
+              options={options}
+              fullWidth
+              selectedOption={selectedFilter}
+              onSelect={(value) => {
+                setSelectedFilter(value);
+              }}
+            />
+          </DropdownContainer>
+        )}
+
         <Legend barGraph={true} />
         {/* hiding this until data is ready */}
         {/* <RowedView style={{ margin: 0 }}>
@@ -162,7 +177,7 @@ export default function Graphic(props: Props) {
       </RowedView>
       <ChartContainer>
         <BarChart
-          width={900} // TODO: get width based on device's width
+          width={window.innerWidth} // TODO: get width based on device's width
           height={400}
           data={dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey]}
         >
@@ -204,13 +219,15 @@ export default function Graphic(props: Props) {
         </BarChart>
       </ChartContainer>
 
-      <CarouselFilter
-        selectedOption={selectedFilter}
-        options={options}
-        onSelectionChange={(value) => {
-          setSelectedFilter(value);
-        }}
-      />
+      {isDesktop && (
+        <CarouselFilter
+          selectedOption={selectedFilter}
+          options={options}
+          onSelectionChange={(value) => {
+            setSelectedFilter(value);
+          }}
+        />
+      )}
     </>
   );
   return withMargin ? <Container>{content}</Container> : <ViewContainer>{content}</ViewContainer>;
@@ -220,8 +237,8 @@ const ViewContainer = styled(View)`
   padding: 0 12px 12px 12px;
 `;
 
-const RowedView = styled(View)`
-  flex-direction: row;
+const RowedView = styled(View)<ViewPropsWithViewport>`
+  flex-direction: ${({ isDesktop }) => (isDesktop ? 'row' : 'column')};
   justify-content: space-between;
   margin: 16px 0 4px 0;
 `;
@@ -231,14 +248,23 @@ const Container = styled(Card)`
   margin: 18px 36px;
 `;
 
+const DropdownContainer = styled(View)`
+  margin-bottom: 14px;
+`;
+
 const ChartContainer = styled(View)`
   justify-content: center;
   align-items: center;
 `;
 
-const RightTitleContainer = styled(View)`
+const RightTitleContainer = styled(View)<ViewPropsWithViewport>`
   flex-direction: row;
   align-items: center;
+  ${({ isDesktop }) =>
+    !isDesktop &&
+    css`
+      margin-top: 16px;
+    `}
 `;
 const Segmented = styled(SegmentedControl)`
   margin-left: 12px;

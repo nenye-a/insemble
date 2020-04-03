@@ -1,14 +1,16 @@
 import React, { ReactNode, ComponentProps } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import View from './View';
 import Text from './Text';
 import { DEFAULT_BORDER_RADIUS, FONT_SIZE_SMALL, FONT_WEIGHT_BOLD } from '../constants/theme';
 import { THEME_COLOR, WHITE, CARD_GREY_HEADER, TEXT_COLOR } from '../constants/colors';
+import { useViewport } from '../utils';
+import { ViewPropsWithViewport } from '../constants/viewports';
 
 type TextProps = ComponentProps<typeof Text>;
 type ViewProps = ComponentProps<typeof View>;
 
-type Props = ViewProps & {
+export type CardProps = ViewProps & {
   titleBackground?: 'purple' | 'white' | 'grey';
   title?: string;
   subTitle?: string;
@@ -18,7 +20,7 @@ type Props = ViewProps & {
   rightTitleComponent?: ReactNode;
 };
 
-export default function Card(props: Props) {
+export default function Card(props: CardProps) {
   let {
     title,
     subTitle,
@@ -30,8 +32,9 @@ export default function Card(props: Props) {
     rightTitleComponent,
     ...otherProps
   } = props;
-  return (
-    <StyledCard {...otherProps}>
+  let { isDesktop } = useViewport();
+  let content = (
+    <StyledCard isDesktop={isDesktop} {...otherProps}>
       {title && (
         <TitleContainer titleBackground={titleBackground} {...titleContainerProps}>
           <RowedView flex>
@@ -48,18 +51,33 @@ export default function Card(props: Props) {
       {children}
     </StyledCard>
   );
+
+  return isDesktop ? content : <MobileContainer>{content}</MobileContainer>;
 }
 
 type TitleContainerProps = ViewProps & {
   titleBackground: string;
 };
 
-const StyledCard = styled(View)`
+const MobileContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const StyledCard = styled(View)<ViewPropsWithViewport>`
   border-radius: ${DEFAULT_BORDER_RADIUS};
   box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.1);
   background-color: ${WHITE};
   overflow: hidden;
   background-color: ${WHITE};
+  ${({ isDesktop }) =>
+    !isDesktop &&
+    css`
+      width: 85vw;
+      flex: 1;
+    `}
 `;
 
 const TitleContainer = styled(View)<TitleContainerProps>`

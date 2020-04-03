@@ -10,7 +10,7 @@ import {
 import Card from './Card';
 import Text from './Text';
 import View from './View';
-import TouchableOpacity from './TouchableOpacity';
+import TouchableOpacity, { TouchableOpacityProps } from './TouchableOpacity';
 import ClickAway from './ClickAway';
 
 import arrowIcon from '../assets/images/arrow-down.svg';
@@ -23,6 +23,11 @@ type Props<T> = {
   titleExtractor?: (item: T) => string;
   keyExtractor?: (item: T, index: number) => string;
   containerStyle?: CSSProperties;
+  fullWidth?: boolean;
+};
+
+type TouchableWithFullWidth = TouchableOpacityProps & {
+  fullWidth: boolean;
 };
 
 const defaultTitleExtractor = (item: unknown) => String(item);
@@ -36,12 +41,13 @@ export default function Dropdown<T>(props: Props<T>) {
     titleExtractor = defaultTitleExtractor,
     keyExtractor = defaultKeyExtractor,
     containerStyle,
+    fullWidth = false,
   } = props;
   let [dropdownOpen, toggleDropdown] = useState(false);
 
   return (
     <View style={{ zIndex: 2, ...containerStyle }}>
-      <Container onPress={() => toggleDropdown(!dropdownOpen)}>
+      <Container fullWidth={fullWidth} onPress={() => toggleDropdown(!dropdownOpen)}>
         <Text color={THEME_COLOR}>{selectedOption}</Text>
         <ArrowIcon src={arrowIcon} alt="arrow-icon" isOpen={dropdownOpen} />
       </Container>
@@ -81,12 +87,12 @@ type ListTextProps = ComponentProps<'li'> & {
   selected: boolean;
 };
 
-const Container = styled(TouchableOpacity)`
+const Container = styled(TouchableOpacity)<TouchableWithFullWidth>`
   border: 0.5px solid ${THEME_COLOR};
   border-radius: ${DEFAULT_BORDER_RADIUS};
   padding-left: 8px;
   padding-right: 8px;
-  width: 150px;
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : '150px')};
   height: 36px;
   background-color: ${WHITE};
   flex-direction: row;

@@ -14,7 +14,7 @@ import LoadingIndicator from './LoadingIndicator';
 
 type TextProps = ComponentProps<typeof Text>;
 
-type Props = ComponentProps<typeof TouchableOpacity> & {
+export type ButtonProps = ComponentProps<typeof TouchableOpacity> & {
   text: string;
   textProps?: TextProps;
   mode?: 'primary' | 'secondary' | 'transparent';
@@ -25,7 +25,7 @@ type Props = ComponentProps<typeof TouchableOpacity> & {
   stopPropagation?: boolean;
 };
 
-export default function Button(props: Props) {
+export default function Button(props: ButtonProps) {
   let {
     mode = 'primary',
     size = 'default',
@@ -63,7 +63,7 @@ export default function Button(props: Props) {
   );
 }
 
-const Container = styled(TouchableOpacity)<Props>`
+const Container = styled(TouchableOpacity)<ButtonProps>`
   background-color: ${THEME_COLOR};
   border-radius: 4px;
   justify-content: center;

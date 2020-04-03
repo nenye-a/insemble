@@ -11,6 +11,8 @@ import SvgGrid from '../../components/icons/grid';
 import SvgList from '../../components/icons/list';
 import { DeepDiveContext } from './DeepDiveModal';
 import { EmptyDataComponent } from '../../components';
+import { useViewport } from '../../utils';
+import { ViewPropsWithViewport } from '../../constants/viewports';
 
 type ViewMode = 'grid' | 'list';
 
@@ -35,6 +37,7 @@ export default function NearbyCard() {
   let mile = data?.result?.keyFacts.mile;
   let nearbyData = data?.result?.nearby;
   let category = data?.categories;
+  let { isDesktop } = useViewport();
 
   let filteredData = useMemo(() => {
     switch (selectedDropdownVal) {
@@ -76,24 +79,25 @@ export default function NearbyCard() {
     <Container
       titleBackground="white"
       title="Nearby"
-      rightTitleComponent={iconTab}
+      rightTitleComponent={isDesktop ? iconTab : null}
       titleContainerProps={{ style: { height: 56 } }}
     >
-      <RowedView flex>
+      <RowedView isDesktop={isDesktop} flex>
         <NearbyMap data={filteredData || []} />
         <View flex>
           <NearbyMapLegend />
-          <RightContent flex>
+          <RightContent isDesktop={isDesktop} flex>
             <Dropdown
               options={['Most Popular', 'Distance', 'Rating', 'Similar']}
               onSelect={(newValue) => {
                 setSelectedDropdownVal(newValue);
               }}
+              fullWidth={!isDesktop}
               selectedOption={selectedDropdownVal}
-              containerStyle={{ paddingLeft: 6, paddingBottom: 12 }}
+              containerStyle={isDesktop ? { paddingLeft: 6, paddingBottom: 12 } : {}}
             />
 
-            <NearbyPlacesCardContainer flex>
+            <NearbyPlacesCardContainer isDesktop={isDesktop} flex>
               {filteredData?.length === 0 ? (
                 <EmptyDataComponent
                   text={category && mile ? `No ${category} within ${mile} mile(s)` : ''}
@@ -113,15 +117,18 @@ export default function NearbyCard() {
 
 const Container = styled(Card)`
   margin: 18px 36px;
-  height: 630px;
 `;
 
-const RowedView = styled(View)`
-  flex-direction: row;
+// const Container = styled(Card)`
+//   margin: 18px 36px;
+//   height: 630px;
+// `;
+const RowedView = styled(View)<ViewPropsWithViewport>`
+  flex-direction: ${({ isDesktop }) => (isDesktop ? 'row' : 'column')};
 `;
 
-const RightContent = styled(View)`
-  padding: 24px 20px;
+const RightContent = styled(View)<ViewPropsWithViewport>`
+  padding: ${({ isDesktop }) => (isDesktop ? '24px' : '20px')};
   background-color: ${BACKGROUND_COLOR};
 `;
 const RightTitleContainer = styled(View)`
@@ -135,9 +142,9 @@ const IconContainer = styled(TouchableOpacity)`
   margin: 8px;
 `;
 
-const NearbyPlacesCardContainer = styled(View)`
+const NearbyPlacesCardContainer = styled(View)<ViewPropsWithViewport>`
   align-content: flex-start;
-  flex-direction: row;
+  flex-direction: ${({ isDesktop }) => (isDesktop ? 'row' : 'column')};
   flex-wrap: wrap;
   overflow-y: scroll;
   padding-top: 12px;

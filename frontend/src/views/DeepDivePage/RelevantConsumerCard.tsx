@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { Card, Text, View } from '../../core-ui';
 import { THEME_COLOR, WHITE, DARK_TEXT_COLOR, SECONDARY_COLOR } from '../../constants/colors';
@@ -11,8 +11,9 @@ import {
   SECONDARY_BORDER_RADIUS,
   FONT_WEIGHT_LIGHT,
 } from '../../constants/theme';
-import { roundDecimal } from '../../utils';
+import { roundDecimal, useViewport } from '../../utils';
 import ImagePlaceHolder from '../../assets/images/image-placeholder.jpg';
+import { CardPropsWithViewport } from '../../constants/viewports';
 
 type Props = {
   photo?: string;
@@ -24,8 +25,9 @@ type Props = {
 
 export default function RelevantConsumerCard(props: Props) {
   let { photo, percentile, name, description, tags } = props;
+  let { isDesktop } = useViewport();
   return (
-    <Container flex>
+    <Container isDesktop={isDesktop} flex>
       <Image src={photo ? photo : ImagePlaceHolder} alt="consumer-persona-image" />
       <RowedView>
         <PercentageContainer>
@@ -50,16 +52,30 @@ export default function RelevantConsumerCard(props: Props) {
   );
 }
 
-const Container = styled(Card)`
-  margin: 0 4px;
-  -webkit-min-logical-width: 250px;
-  &:first-child {
-    margin-left: 0;
-  }
-  &:last-child {
-    margin-right: 0;
-  }
+const Container = styled(Card)<CardPropsWithViewport>`
+  ${({ isDesktop }) =>
+    isDesktop
+      ? css`
+          margin: 0 4px;
+          -webkit-min-logical-width: 250px;
+          &:first-child {
+            margin-left: 0;
+          }
+          &:last-child {
+            margin-right: 0;
+          }
+        `
+      : css`
+          margin: 10px 0;
+          &:first-child {
+            margin-top: 0;
+          }
+          &:last-child {
+            margin-bottom: 0;
+          }
+        `}
 `;
+
 const Image = styled.img`
   width: 100%;
   height: 120px;

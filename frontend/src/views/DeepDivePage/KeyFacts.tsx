@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Card, View, Text, TabBar } from '../../core-ui';
 import { PieChart, Pie, Cell, Legend } from 'recharts';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+import { Card, View, Text, TabBar } from '../../core-ui';
 import {
   FONT_WEIGHT_BOLD,
   FONT_WEIGHT_LIGHT,
@@ -9,11 +10,12 @@ import {
   FONT_SIZE_XXLARGE,
 } from '../../constants/theme';
 import { COMMUTE_CHART_COLORS, SECONDARY_COLOR } from '../../constants/colors';
-import { roundDecimal, getKeyfactsValue } from '../../utils';
+import { roundDecimal, getKeyfactsValue, useViewport } from '../../utils';
 import {
   LocationDetails_locationDetails_result_commute as LocationDetailsCommute,
   LocationDetails_locationDetails_result_keyFacts as LocationDetailsKeyFacts,
 } from '../../generated/LocationDetails';
+import { ViewPropsWithViewport } from '../../constants/viewports';
 
 type Props = {
   withMargin?: boolean;
@@ -35,6 +37,8 @@ export default function KeyFacts(props: Props) {
   let { withMargin, keyFactsData, commuteData, totalValue } = props;
   let [selectedIndex, setSelectedIndex] = useState<number>(0);
   let [pieSize, setPieSize] = useState<Array<number>>([]);
+  let { isDesktop } = useViewport();
+
   let isCommuteSelected = selectedIndex === 1;
   useEffect(() => {
     let size = () => {
@@ -96,6 +100,104 @@ export default function KeyFacts(props: Props) {
   ];
   let categories2 = ['Metro stations', 'Universities', 'Hospitals', 'Apartments'];
 
+  let mobileContent = (
+    <Row>
+      <View flex>
+        <EconomicColumn>
+          {numbers1.map((line, i) => {
+            let lastIndex = numbers1.length - 1 === i;
+            let houseHoldIncomeIndex = i === 1;
+            let formattedValues = line
+              ? lastIndex
+                ? roundDecimal(line) + '%'
+                : houseHoldIncomeIndex
+                ? '$' + getKeyfactsValue(line)
+                : getKeyfactsValue(line)
+              : '';
+            return (
+              <NumberText isDesktop={isDesktop} key={i}>
+                {formattedValues || typeof formattedValues === 'number' ? formattedValues : '-'}
+              </NumberText>
+            );
+          })}
+        </EconomicColumn>
+        <EconomicColumn>
+          {numbers2.map((line, i) => {
+            // currently system can only show up to 60 results. so we need to add '+' for values === 60
+            let value = getKeyfactsValue(line);
+            let formattedValues = value === 60 || value === '60' ? value.toString() + '+' : line;
+            return (
+              <NumberText isDesktop={isDesktop} key={i}>
+                {formattedValues || typeof formattedValues === 'number' ? formattedValues : '-'}
+              </NumberText>
+            );
+          })}
+        </EconomicColumn>
+      </View>
+      <View style={{ flex: 2 }}>
+        <EconomicColumn>
+          {categories1.map((line, i) => (
+            <CategoriesText isDesktop={isDesktop} key={i}>
+              {line}
+            </CategoriesText>
+          ))}
+        </EconomicColumn>
+        <EconomicColumn>
+          {categories2.map((line, i) => (
+            <CategoriesText isDesktop={isDesktop} key={i}>
+              {line}
+            </CategoriesText>
+          ))}
+        </EconomicColumn>
+      </View>
+    </Row>
+  );
+
+  let desktopContent = (
+    <>
+      <EconomicColumn>
+        {numbers1.map((line, i) => {
+          let lastIndex = numbers1.length - 1 === i;
+          let houseHoldIncomeIndex = i === 1;
+          let formattedValues = line
+            ? lastIndex
+              ? roundDecimal(line) + '%'
+              : houseHoldIncomeIndex
+              ? '$' + getKeyfactsValue(line)
+              : getKeyfactsValue(line)
+            : '';
+          return (
+            <NumberText key={i}>
+              {formattedValues || typeof formattedValues === 'number' ? formattedValues : '-'}
+            </NumberText>
+          );
+        })}
+      </EconomicColumn>
+      <EconomicColumn>
+        {categories1.map((line, i) => (
+          <CategoriesText key={i}>{line}</CategoriesText>
+        ))}
+      </EconomicColumn>
+      <EconomicColumn>
+        {numbers2.map((line, i) => {
+          // currently system can only show up to 60 results. so we need to add '+' for values === 60
+          let value = getKeyfactsValue(line);
+          let formattedValues = value === 60 || value === '60' ? value.toString() + '+' : line;
+          return (
+            <NumberText key={i}>
+              {formattedValues || typeof formattedValues === 'number' ? formattedValues : '-'}
+            </NumberText>
+          );
+        })}
+      </EconomicColumn>
+      <EconomicColumn>
+        {categories2.map((line, i) => (
+          <CategoriesText key={i}>{line}</CategoriesText>
+        ))}
+      </EconomicColumn>
+    </>
+  );
+
   let content = (
     <>
       <TextView>
@@ -103,14 +205,17 @@ export default function KeyFacts(props: Props) {
         {keyFactsData?.mile && <Radius>within {keyFactsData.mile} miles</Radius>}
       </TextView>
       <RowedView>
-        <Tab
-          verticalMode
-          options={['Economic Drivers', 'Commute']}
-          activeTab={selectedIndex}
-          onPress={(index) => {
-            setSelectedIndex(index);
-          }}
-        />
+        {isDesktop ? (
+          <Tab
+            verticalMode
+            options={['Economic Drivers', 'Commute']}
+            activeTab={selectedIndex}
+            onPress={(index) => {
+              setSelectedIndex(index);
+            }}
+          />
+        ) : null}
+
         {isCommuteSelected ? (
           <CommuteView flex id="commute-view">
             <PieChart width={pieSize[0]} height={pieSize[1]}>
@@ -141,48 +246,8 @@ export default function KeyFacts(props: Props) {
           </TextView> */}
           </CommuteView>
         ) : (
-          <EconomicView flex>
-            <EconomicColumn>
-              {numbers1.map((line, i) => {
-                let lastIndex = numbers1.length - 1 === i;
-                let houseHoldIncomeIndex = i === 1;
-                let formattedValues = line
-                  ? lastIndex
-                    ? roundDecimal(line) + '%'
-                    : houseHoldIncomeIndex
-                    ? '$' + getKeyfactsValue(line)
-                    : getKeyfactsValue(line)
-                  : '';
-                return (
-                  <NumberText key={i}>
-                    {formattedValues || typeof formattedValues === 'number' ? formattedValues : '-'}
-                  </NumberText>
-                );
-              })}
-            </EconomicColumn>
-            <EconomicColumn>
-              {categories1.map((line, i) => (
-                <CategoriesText key={i}>{line}</CategoriesText>
-              ))}
-            </EconomicColumn>
-            <EconomicColumn>
-              {numbers2.map((line, i) => {
-                // currently system can only show up to 60 results. so we need to add '+' for values === 60
-                let value = getKeyfactsValue(line);
-                let formattedValues =
-                  value === 60 || value === '60' ? value.toString() + '+' : line;
-                return (
-                  <NumberText key={i}>
-                    {formattedValues || typeof formattedValues === 'number' ? formattedValues : '-'}
-                  </NumberText>
-                );
-              })}
-            </EconomicColumn>
-            <EconomicColumn>
-              {categories2.map((line, i) => (
-                <CategoriesText key={i}>{line}</CategoriesText>
-              ))}
-            </EconomicColumn>
+          <EconomicView isDesktop={isDesktop} flex>
+            {isDesktop ? desktopContent : mobileContent}
           </EconomicView>
         )}
       </RowedView>
@@ -194,9 +259,11 @@ export default function KeyFacts(props: Props) {
 const Container = styled(Card)`
   margin: 18px 36px;
   min-height: 600px;
+  flex: 1;
 `;
 const WithoutMargin = styled(View)`
   min-height: 600px;
+  flex: 1;
 `;
 const RowedView = styled(View)`
   flex: 1;
@@ -245,20 +312,45 @@ const NumberText = styled(Text)`
   font-size: ${FONT_SIZE_XXLARGE};
   font-weight: ${FONT_WEIGHT_BOLD};
   color: ${SECONDARY_COLOR};
-  margin: 24px 0 24px 24px;
+  ${({ isDesktop }) =>
+    isDesktop &&
+    css`
+      margin: 24px 0 24px 24px;
+    `}
 `;
 
 const CategoriesText = styled(Text)`
   font-size: ${FONT_SIZE_MEDIUM};
   font-weight: ${FONT_WEIGHT_LIGHT};
-  margin: 24px 0 24px 0;
+  ${({ isDesktop }) =>
+    isDesktop
+      ? css`
+          margin: 24px 0 24px 24px;
+        `
+      : css`
+          margin: 20px 0;
+        `}
 `;
 
-const EconomicView = styled(View)`
-  flex-direction: row;
-  width: 600px;
+const EconomicView = styled(View)<ViewPropsWithViewport>`
+  ${({ isDesktop }) =>
+    isDesktop
+      ? css`
+          flex-direction: row;
+          width: 600px;
+        `
+      : css`
+          align-items: center;
+          width: 600px;
+        `}
 `;
 const EconomicColumn = styled(View)`
   flex: 1;
   justify-content: space-around;
+`;
+
+const Row = styled(View)`
+  flex-direction: row;
+  width: 100%;
+  padding: 0 15px;
 `;
