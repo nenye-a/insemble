@@ -30,7 +30,9 @@ export default function Login() {
           mode="transparent"
           text="Sign Up here"
           onPress={() => {
-            history.push('/signup');
+            history.push('/signup', {
+              onboardingState: history.location.state.onboardingState,
+            });
           }}
         />
       </NoAccountContainer>

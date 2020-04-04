@@ -21,7 +21,7 @@ export default function OnBoardingSignUp() {
         titleBackground="purple"
       >
         <FormContainer>
-          <SignUpForm role={Role.TENANT} />
+          <SignUpForm role={Role.TENANT} onboardingState={history.location.state.onboardingState} />
         </FormContainer>
       </Card>
       <RowView style={{ marginTop: 16 }}>
@@ -30,7 +30,9 @@ export default function OnBoardingSignUp() {
           mode="transparent"
           text="Log in here"
           onPress={() => {
-            history.push('/login');
+            history.push('/login', {
+              onboardingState: history.location.state.onboardingState,
+            });
           }}
         />
       </RowView>
