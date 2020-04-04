@@ -1,17 +1,13 @@
-import React, { ComponentProps } from 'react';
+import { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
 import { TEXT_COLOR, THEME_COLOR, WHITE } from '../constants/colors';
 import { FONT_FAMILY_NORMAL, FONT_SIZE_NORMAL } from '../constants/theme';
 
-type PillButtonProps = {
+type PillButtonProps = ComponentProps<'button'> & {
   primary?: boolean;
 };
 
-function DefaultButton(props: ComponentProps<'button'>) {
-  return <button {...props} type="button" />;
-}
-
-const PillButton = styled(DefaultButton)`
+const PillButton = styled.button.attrs(() => ({ type: 'button' }))<PillButtonProps>`
   flex: 0 1 auto;
   padding: 0.5rem 0.5rem;
   line-height: 1;
