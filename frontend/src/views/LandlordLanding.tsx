@@ -76,7 +76,7 @@ const DescriptionSmallText = styled(Text)`
   padding-top: 5%;
 `;
 
-const TextWrapper = styled(View) <ViewWithViewportType>`
+const TextWrapper = styled(View)<ViewWithViewportType>`
   justify-content: center;
   align-content: center;
   padding: ${(props) => (props.isDesktop ? '0 20%' : '24px')};
