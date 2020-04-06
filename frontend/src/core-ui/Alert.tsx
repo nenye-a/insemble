@@ -7,23 +7,33 @@ import { THEME_COLOR, ALERT_BACKGROUND_COLOR } from '../constants/colors';
 import { FONT_SIZE_SMALL, DEFAULT_BORDER_RADIUS } from '../constants/theme';
 import SvgInfo from '../components/icons/info';
 import { formatGraphQLError } from '../utils';
+import SvgClose from '../components/icons/close';
+import TouchableOpacity from './TouchableOpacity';
 
 type Props = ViewProps & {
   text: string;
   visible?: boolean;
+  onClose?: () => void;
 };
 
 export default function Alert(props: Props) {
-  let { visible, text, ...otherProps } = props;
+  let { visible, text, onClose, ...otherProps } = props;
   // TODO: Discuss and change the fix regarding this issue https://github.com/apollographql/apollo-feature-requests/issues/46
   let formattedText = formatGraphQLError(text);
   if (visible) {
     return (
       <Container {...otherProps}>
-        <SvgInfo />
-        <Message color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
-          {formattedText}
-        </Message>
+        <Row>
+          <SvgInfo />
+          <Message color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
+            {formattedText}
+          </Message>
+        </Row>
+        {onClose ? (
+          <TouchableOpacity onPress={onClose}>
+            <SvgClose fill={THEME_COLOR} style={{ height: 18, width: 18 }} />
+          </TouchableOpacity>
+        ) : null}
       </Container>
     );
   }
@@ -36,6 +46,11 @@ const Container = styled(View)`
   padding: 9px 12px;
   background-color: ${ALERT_BACKGROUND_COLOR};
   border-radius: ${DEFAULT_BORDER_RADIUS};
+  justify-content: space-between;
+`;
+
+const Row = styled(View)`
+  flex-direction: row;
 `;
 
 const Message = styled(Text)`

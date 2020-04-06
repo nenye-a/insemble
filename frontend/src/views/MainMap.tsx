@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
 
-import { View, Text, LoadingIndicator, Alert, Button } from '../core-ui';
+import { View, Text, LoadingIndicator, Button } from '../core-ui';
 import SideBarFilters, {
   DEMOGRAPHICS_CATEGORIES,
   PROPERTIES_CATEGORIES,
@@ -23,6 +23,7 @@ import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer'
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 import { LocationInput } from '../generated/globalTypes';
 import SvgPropertyLocation from '../components/icons/property-location';
+import MapAlert from './MapPage/MapAlert';
 
 type BrandId = {
   brandId: string;
@@ -106,30 +107,34 @@ export default function MainMap() {
   let [filters, setFilters] = useState<TenantMatchesContextFilter>(tenantMatchesInit.filters);
   let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
   let [deepDiveModalVisible, toggleDeepDiveModal] = useState(false);
+  let [mapErrorMessage, setMapErrorMessage] = useState('');
   let { isLoading } = useGoogleMaps();
   let { isDesktop } = useViewport();
   let params = useParams<BrandId>();
   let { brandId } = params;
-  let {
-    data: tenantMatchesData,
-    loading,
-    error: tenantMatchesError,
-    refetch: tenantMatchesRefetch,
-  } = useQuery<TenantMatches, TenantMatchesVariables>(GET_TENANT_MATCHES_DATA, {
+  let { data: tenantMatchesData, loading, refetch: tenantMatchesRefetch } = useQuery<
+    TenantMatches,
+    TenantMatchesVariables
+  >(GET_TENANT_MATCHES_DATA, {
     variables: {
       brandId,
     },
     fetchPolicy: 'network-only',
     notifyOnNetworkStatusChange: true,
     onError: () => {
+      setMapErrorMessage('Failed to load heatmap, please adjust filters and try again.');
       tenantMatchesRefetch();
     },
   });
 
-  let [editBrand, { loading: editBrandLoading, error: editBrandError }] = useMutation<
-    EditBrand,
-    EditBrandVariables
-  >(EDIT_BRAND);
+  let [editBrand, { loading: editBrandLoading }] = useMutation<EditBrand, EditBrandVariables>(
+    EDIT_BRAND,
+    {
+      onError: (err) => {
+        setMapErrorMessage(err.message);
+      },
+    }
+  );
 
   let [selectedLatLng, setSelectedLatLng] = useState<SelectedLatLng | null>(null);
 
@@ -383,15 +388,17 @@ export default function MainMap() {
             </Text>
           </LoadingOverlay>
         )}
-        <Alert
-          visible={!!tenantMatchesError}
-          text="Failed to load heatmap, please adjust filters and try again"
-        />
-        <Alert visible={!!editBrandError} text={editBrandError?.message || ''} />
         <Container flex>
           <SideBarFilters />
+          {/* TODO: Responsive alert */}
+          <MapAlert
+            visible={!!mapErrorMessage}
+            text={mapErrorMessage}
+            onClose={() => setMapErrorMessage('')}
+          />
           {!isLoading && (
             <MapContainer
+              onMapError={(val) => setMapErrorMessage(val)}
               onMarkerClick={(
                 latLng: google.maps.LatLng,
                 address: string,
