@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 
 import { View, Alert, Label, Button, Text, TextInput, Form as BaseForm } from '../../core-ui';
 import { Filter } from '../../components';
-import { MUTED_TEXT_COLOR } from '../../constants/colors';
+import { MUTED_TEXT_COLOR, DARK_TEXT_COLOR } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_SIZE_MEDIUMSMALL } from '../../constants/theme';
 import { convertToKilos } from '../../utils';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
@@ -134,7 +134,7 @@ export default function TenantTargetCustomers(props: Props) {
               text="Click here to edit criteria"
               style={{ marginLeft: 12, height: 18 }}
               textProps={{
-                style: { fontStyle: 'italic', fontSize: FONT_SIZE_SMALL, color: MUTED_TEXT_COLOR },
+                style: { fontStyle: 'italic', fontSize: FONT_SIZE_SMALL, color: DARK_TEXT_COLOR },
               }}
               onPress={() => {
                 toggleEditCriteria(!editCriteriaDisabled);
@@ -145,6 +145,20 @@ export default function TenantTargetCustomers(props: Props) {
             If you have no preference, select “no preference” and we will handle the rest.
           </ItalicText>
         </DescriptionContainer>
+
+        <FilterContainer
+          title="Income"
+          visible
+          rangeSlide
+          income
+          values={[minIncome, maxIncome]}
+          minimum={0}
+          maximum={200}
+          onSliderChange={(values: Array<number>) => setSelectedIncomeRange(values)}
+          disabled={editCriteriaDisabled}
+          loading={autoPopulateLoading}
+          noBottomWrapper={true}
+        />
         <FilterContainer
           title="Age"
           visible
@@ -162,18 +176,6 @@ export default function TenantTargetCustomers(props: Props) {
           }}
           disabled={editCriteriaDisabled}
           sliderDisabled={noAgePreference}
-          loading={autoPopulateLoading}
-        />
-        <FilterContainer
-          title="Income"
-          visible
-          rangeSlide
-          income
-          values={[minIncome, maxIncome]}
-          minimum={0}
-          maximum={200}
-          onSliderChange={(values: Array<number>) => setSelectedIncomeRange(values)}
-          disabled={editCriteriaDisabled}
           loading={autoPopulateLoading}
         />
         {!educationLoading && educationData && (
