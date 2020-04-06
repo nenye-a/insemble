@@ -34,7 +34,7 @@ export default function LandlordLanding() {
         <DescriptionLargeText>Find the perfect tenant for your property</DescriptionLargeText>
         <DescriptionSmallText>
           We help you find the best retailers for your property. We match clients using customer fit
-          & space compatibility,saving time for brokers, owners, and retailers.
+          & space compatibility, saving time for brokers, owners, and retailers.
         </DescriptionSmallText>
       </TextWrapper>
     </Description>
@@ -76,7 +76,7 @@ const DescriptionSmallText = styled(Text)`
   padding-top: 5%;
 `;
 
-const TextWrapper = styled(View)<ViewWithViewportType>`
+const TextWrapper = styled(View) <ViewWithViewportType>`
   justify-content: center;
   align-content: center;
   padding: ${(props) => (props.isDesktop ? '0 20%' : '24px')};
