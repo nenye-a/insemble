@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 
 import { View, Button, Text } from '../../core-ui';
-import { MultiSelectBox } from '../../components';
+import { MultiSelectBox, LocationInput } from '../../components';
+import { SelectedLocation } from '../../components/LocationInput';
 
 import { WHITE, HEADER_BORDER_COLOR } from '../../constants/colors';
-// import TextInput from '../../core-ui/ContainedTextInput';
 import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
 import { Categories } from '../../generated/Categories';
 import { TenantMatchesContext } from '../MainMap';
@@ -18,42 +18,27 @@ type Props = {
   categories?: Array<string>;
   onPublishChangesPress?: () => void;
   publishButtonDisabled?: boolean;
+  onAddressSearch?: (selectedLocation: SelectedLocation) => void;
 };
 
 export default function HeaderFilterBar(props: Props) {
-  let { categories, onPublishChangesPress, publishButtonDisabled, address } = props;
+  let {
+    categories,
+    onPublishChangesPress,
+    publishButtonDisabled,
+    address,
+    onAddressSearch,
+  } = props;
   // let [selectedDropdownValue, setSelectedDropdownValue] = useState<string>('Recommended');
   let [selectedOptions, setSelectedOptions] = useState<Array<string>>([]);
   let { data: categoryData, loading: categoryLoading } = useQuery<Categories>(GET_CATEGORIES);
   let { onCategoryChange } = useContext(TenantMatchesContext);
-
-  let inputRef = useRef<HTMLInputElement | null>(null);
-  let selectedPlace = useRef<PlaceResult | null>(null);
-
-  useEffect(() => {
-    if (inputRef.current) {
-      let autocomplete = new window.google.maps.places.Autocomplete(inputRef.current);
-      let listener = autocomplete.addListener('place_changed', () => {
-        let place = autocomplete.getPlace();
-        selectedPlace.current = place;
-      });
-      return () => {
-        listener.remove();
-      };
-    }
-  }, []);
 
   useEffect(() => {
     if (categories) {
       setSelectedOptions(categories);
     }
   }, [categories]);
-
-  // let submitHandler = () => {
-  //   if (selectedPlace.current) {
-  //     onAddressChange && onAddressChange(selectedPlace.current);
-  //   }
-  // };
 
   let setTagSelected = (tag: string, selected: boolean) => {
     let newSelectedOptions = selectedOptions;
@@ -95,21 +80,18 @@ export default function HeaderFilterBar(props: Props) {
             onPress={onPublishChangesPress}
             disabled={publishButtonDisabled}
           />
+          <LocationInput
+            icon
+            placeholder="Search for something on the map"
+            onPlaceSelected={onAddressSearch}
+            className="search-box"
+            containerStyle={{ paddingLeft: 20, width: 340 }}
+          />
         </Row>
         <AddressContainer>
           {address ? <Text>{`My Address: ${address}`}</Text> : null}
         </AddressContainer>
       </RowedView>
-
-      {/* <LocationInputContainer flex>
-        <LocationInput
-          icon
-          ref={inputRef}
-          placeholder={'Search an address or retailer'}
-          onSubmit={submitHandler}
-          className="search-box"
-        />
-      </LocationInputContainer> */}
     </Container>
   );
 }
@@ -142,22 +124,6 @@ const UpdateMapButton = styled(Button)`
 const AddressContainer = styled(View)`
   padding: 6px 0;
 `;
-
-// we should remove this styling later when dropdown and legend are ready
-// const LocationInputContainer = styled(View)`
-//   align-items: center;
-//   margin-left: -20%;
-// `;
-
-// TODO: check this styling esp on Safari when uncommenting
-// const LocationInput = styled(TextInput)`
-//   width: 343px;
-//   height: 36px;
-//   border: solid;
-//   border-width: 1px;
-//   margin-left: 8px;
-//   align-self: center;
-// `;
 
 const CategorySelector = styled(MultiSelectBox)`
   margin-right: 8px;

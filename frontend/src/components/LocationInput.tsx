@@ -9,8 +9,9 @@ import React, {
 import { useLazyQuery } from '@apollo/react-hooks';
 
 import { GOOGLE_PLACE } from '../graphql/queries/server/place';
-import { TextInput } from '../core-ui';
+import { TextInput, TouchableOpacity } from '../core-ui';
 import { useGoogleMaps } from '../utils';
+import SvgSearch from './icons/search';
 
 type PlaceResult = google.maps.places.PlaceResult;
 type InputProps = ComponentProps<'input'>;
@@ -24,6 +25,7 @@ export type SelectedLocation = {
 };
 
 type Props = Omit<InputProps, 'onSubmit' | 'ref'> & {
+  icon?: boolean;
   label?: string;
   placeholder?: string;
   ref?: RefObject<HTMLInputElement> | null;
@@ -33,7 +35,7 @@ type Props = Omit<InputProps, 'onSubmit' | 'ref'> & {
 
 export default function LocationInput(props: Props) {
   let { isLoading } = useGoogleMaps();
-  let { placeholder, onPlaceSelected, label, containerStyle, ...otherProps } = props;
+  let { placeholder, onPlaceSelected, label, containerStyle, icon, ...otherProps } = props;
   let inputRef = useRef<HTMLInputElement | null>(null);
   let selectedPlace = useRef<PlaceResult | null>(null);
 
@@ -94,13 +96,24 @@ export default function LocationInput(props: Props) {
   }
 
   return (
-    <TextInput
-      ref={inputRef}
-      placeholder={placeholder}
-      onSubmit={submitHandler}
-      label={label}
-      containerStyle={containerStyle}
-      {...otherProps}
-    />
+    <>
+      <TextInput
+        ref={inputRef}
+        placeholder={placeholder}
+        onSubmit={submitHandler}
+        label={label}
+        containerStyle={containerStyle}
+        style={icon ? { paddingRight: 36 } : undefined}
+        {...otherProps}
+      />
+      {icon && (
+        <TouchableOpacity
+          onPress={submitHandler}
+          style={{ position: 'absolute', right: 5, top: 12 }}
+        >
+          <SvgSearch />
+        </TouchableOpacity>
+      )}
+    </>
   );
 }

@@ -19,6 +19,7 @@ import { LocationPreview, LocationPreviewVariables } from '../generated/Location
 import { GOOGLE_MAPS_STYLE } from '../constants/googleMaps';
 import MapTour from './MapPage/MapTour';
 import { getGroupedMatchingPropertiesByKey } from '../utils';
+import { SelectedLocation } from '../components/LocationInput';
 
 type LatLng = google.maps.LatLng;
 type LatLngLiteral = google.maps.LatLngLiteral;
@@ -35,6 +36,7 @@ type Props = {
   matchingProperties?: Array<TenantMatchesMatchingProperties>;
   onMapError?: (message: string) => void;
   currentLocation?: TenantMatchesLocation | null;
+  addressSearchLocation?: SelectedLocation | null;
 };
 
 const defaultCenter = {
@@ -50,6 +52,7 @@ function MapContainer({
   matchingProperties,
   onMapError,
   currentLocation,
+  addressSearchLocation,
 }: Props) {
   let history = useHistory();
   let { brandId = '' } = useParams();
@@ -150,8 +153,8 @@ function MapContainer({
       <LoadingIndicator visible={loading} />
       <GoogleMap
         ref={mapRef}
-        defaultZoom={defaultZoom}
-        defaultCenter={defaultCenter}
+        // defaultZoom={defaultZoom}
+        // defaultCenter={defaultCenter}
         defaultOptions={{
           maxZoom: 17,
           minZoom: 7,
@@ -160,6 +163,12 @@ function MapContainer({
           fullscreenControl: false,
         }}
         onClick={(event) => onMapClick(event.latLng)}
+        zoom={addressSearchLocation ? 17 : defaultZoom}
+        center={
+          addressSearchLocation
+            ? { lat: Number(addressSearchLocation.lat), lng: Number(addressSearchLocation.lng) }
+            : defaultCenter
+        }
       >
         {groupedMatchingProperties &&
           groupedMatchingProperties.length > 0 &&

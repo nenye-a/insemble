@@ -12,6 +12,8 @@ import HeaderFilterBar from './MapPage/HeaderFilterBar';
 import MapContainer from './MapContainer';
 import DeepDiveModal from './DeepDivePage/DeepDiveModal';
 import AvailableProperties from './MapPage/AvailableProperties';
+import MapAlert from './MapPage/MapAlert';
+import { SelectedLocation } from '../components/LocationInput';
 import { GET_TENANT_MATCHES_DATA } from '../graphql/queries/server/matches';
 import { EDIT_BRAND } from '../graphql/queries/server/brand';
 import { WHITE, HEADER_BORDER_COLOR, THEME_COLOR } from '../constants/colors';
@@ -23,7 +25,6 @@ import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer'
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 import { LocationInput } from '../generated/globalTypes';
 import SvgPropertyLocation from '../components/icons/property-location';
-import MapAlert from './MapPage/MapAlert';
 
 type BrandId = {
   brandId: string;
@@ -108,6 +109,7 @@ export default function MainMap() {
   let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
   let [deepDiveModalVisible, toggleDeepDiveModal] = useState(false);
   let [mapErrorMessage, setMapErrorMessage] = useState('');
+  let [addressSearchLocation, setAddressSearchLocation] = useState<SelectedLocation | null>(null);
   let { isLoading } = useGoogleMaps();
   let { isDesktop } = useViewport();
   let params = useParams<BrandId>();
@@ -379,6 +381,7 @@ export default function MainMap() {
           categories={tenantMatchesData?.tenantMatches.categories || []}
           onPublishChangesPress={onPublishChangesPress}
           publishButtonDisabled={filtersAreEqual}
+          onAddressSearch={setAddressSearchLocation}
         />
         {(loading || editBrandLoading) && (
           <LoadingOverlay>
@@ -418,6 +421,7 @@ export default function MainMap() {
               matchingLocations={tenantMatchesData?.tenantMatches.matchingLocations}
               matchingProperties={visibleMatchingProperties}
               currentLocation={tenantMatchesData?.tenantMatches.location}
+              addressSearchLocation={addressSearchLocation}
             />
           )}
           {isDesktop && (
