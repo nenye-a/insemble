@@ -382,6 +382,7 @@ export default function MainMap() {
           onPublishChangesPress={onPublishChangesPress}
           publishButtonDisabled={filtersAreEqual}
           onAddressSearch={setAddressSearchLocation}
+          brandName={tenantMatchesData?.tenantMatches.name}
         />
         {(loading || editBrandLoading) && (
           <LoadingOverlay>
