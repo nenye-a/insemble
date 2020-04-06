@@ -70,7 +70,7 @@ def process_place(place):
     photos = {}
     if 'photos' in place and len(place['photos']) > 0:
         other = [
-            google.get_photo_url(item['photo_reference']) for item in place['photos']
+            item['photo_reference'] for item in place['photos']
         ]
         main = other.pop(0)
         photos = {

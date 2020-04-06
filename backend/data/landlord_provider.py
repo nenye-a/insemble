@@ -102,7 +102,7 @@ def get_matching_tenants(eval_property, space_id):
         }, {'photos.main': 1}).sort([('popularity.user_ratings_total', -1)])
 
         for store in most_popular_store:
-            photo_url = store['photos']['main'] if 'main' in store['photos'] else None
+            photo_url = google.get_photo(store['photos']['main']) if 'main' in store['photos'] else None
             if photo_url:
                 break
 
@@ -178,7 +178,7 @@ def get_photos(location_id):
         return ""
 
     photo_reference = space['photos'][0]['photo_reference']
-    return google.get_photo_url(photo_reference)
+    return google.get_photo(photo_reference)
 
 
 def get_property(property_id):
