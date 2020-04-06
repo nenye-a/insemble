@@ -12,10 +12,8 @@ import { GetTenantProfile } from '../../generated/GetTenantProfile';
 import { GetLandlordProfile } from '../../generated/GetLandlordProfile';
 import { Role } from '../../types/types';
 import { useCredentials } from '../../utils';
-import { GET_PROPERTIES } from '../../graphql/queries/server/properties';
 import { GET_BRANDS } from '../../graphql/queries/server/brand';
 import { GetBrands } from '../../generated/GetBrands';
-import { GetProperties } from '../../generated/GetProperties';
 
 type Props = {
   showButton?: boolean;
@@ -53,18 +51,8 @@ export default function HeaderNavigationBar(props: Props) {
     }
   };
 
-  let [getBrand] = useLazyQuery<GetBrands>(GET_BRANDS, {
+  let [getBrand, { data: brandData }] = useLazyQuery<GetBrands>(GET_BRANDS, {
     notifyOnNetworkStatusChange: true,
-    onCompleted: (data) => {
-      let { id } = data.brands[0];
-      history.push(`/map/${id}`);
-    },
-  });
-  let [getProperties] = useLazyQuery<GetProperties>(GET_PROPERTIES, {
-    notifyOnNetworkStatusChange: true,
-    onCompleted: () => {
-      history.push(`/landlord/properties/`);
-    },
   });
 
   let [getTenantProfile] = useLazyQuery<GetTenantProfile>(GET_TENANT_PROFILE, {
@@ -85,6 +73,16 @@ export default function HeaderNavigationBar(props: Props) {
     }
   }, [role, getTenantProfile, getLandlordProfile]);
 
+  useEffect(() => {
+    if (brandData?.brands) {
+      if (brandData.brands.length > 0) {
+        let { id } = brandData.brands[0];
+
+        history.push(`/map/${id}`);
+      }
+    }
+  }, [brandData, history]);
+
   return (
     <Container>
       <TouchableOpacity
@@ -92,7 +90,7 @@ export default function HeaderNavigationBar(props: Props) {
           if (role === Role.TENANT) {
             getBrand();
           } else if (role === Role.LANDLORD) {
-            getProperties();
+            history.push(`/landlord/properties/`);
           } else {
             history.push('/');
           }
