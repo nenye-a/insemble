@@ -1,0 +1,19 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "Space",
+      "field": "marketingPreference",
+      "type": "MarketingPreference",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Space",
+      "field": "spaceType",
+      "type": "String",
+      "arity": "List"
+    }
+  ]
+}
