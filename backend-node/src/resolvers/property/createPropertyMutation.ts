@@ -9,7 +9,6 @@ export let createPropertyResolver: FieldResolver<
 > = async (_, { property, space }, context: Context) => {
   let {
     businessType = [],
-    categories = [],
     exclusive = [],
     userRelations = [],
     location,
@@ -41,9 +40,6 @@ export let createPropertyResolver: FieldResolver<
       ...propertyInput,
       location: {
         create: location,
-      },
-      categories: {
-        set: categories,
       },
       exclusive: {
         set: exclusive,

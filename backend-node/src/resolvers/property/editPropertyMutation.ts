@@ -25,7 +25,6 @@ export let editPropertyResolver: FieldResolver<
 
   let {
     businessType = [],
-    categories = [],
     exclusive = [],
     userRelations = [],
     location,
@@ -36,9 +35,6 @@ export let editPropertyResolver: FieldResolver<
       ...propertyInput,
       location: {
         update: location,
-      },
-      categories: {
-        set: categories,
       },
       exclusive: {
         set: exclusive,
