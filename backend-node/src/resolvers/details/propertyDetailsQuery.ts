@@ -20,7 +20,7 @@ let propertyDetailsResolver: FieldResolver<'Query', 'propertyDetails'> = async (
     throw new Error('Property not found!');
   }
   if (!selectedProperty.propertyId) {
-    throw new Error('Please wait until tenant matches completed.');
+    throw new Error('Your location details are loading.');
   }
   let resultDetail;
   try {
