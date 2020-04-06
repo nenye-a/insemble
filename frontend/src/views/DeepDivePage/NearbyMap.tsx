@@ -5,7 +5,7 @@ import { View } from '../../core-ui';
 import { LEGEND } from './NearbyMapLegend';
 import { useGoogleMaps } from '../../utils';
 import { THEME_COLOR } from '../../constants/colors';
-import mapPin from '../../components/icons/map-pin.svg';
+import mapPin from '../../assets/images/map-pin.svg';
 import greenIcon from '../../assets/images/green-circle.svg';
 import { DeepDiveContext } from './DeepDiveModal';
 

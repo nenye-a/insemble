@@ -7,8 +7,8 @@ import { useLazyQuery } from '@apollo/react-hooks';
 import { GET_LOCATION_PREVIEW } from '../graphql/queries/server/preview';
 import { View, LoadingIndicator } from '../core-ui';
 import LocationDetail from '../components/location-detail/LocationDetail';
-import MapPin from '../components/icons/map-pin.svg';
-import availablePropertyPin from '../assets/images/available-property-pin.svg';
+import availablePropertyPin from '../assets/images/map-pin.svg';
+import mapPin from '../assets/images/small-map-pin.svg';
 import currentLocationPin from '../assets/images/current-location-marker.svg';
 import {
   TenantMatches_tenantMatches_matchingLocations as TenantMatchesMatchingLocations,
@@ -153,8 +153,6 @@ function MapContainer({
       <LoadingIndicator visible={loading} />
       <GoogleMap
         ref={mapRef}
-        // defaultZoom={defaultZoom}
-        // defaultCenter={defaultCenter}
         defaultOptions={{
           maxZoom: 17,
           minZoom: 7,
@@ -211,7 +209,7 @@ function MapContainer({
           />
         )}
         {markerPosition && !loading && data && (
-          <Marker position={markerPosition} onClick={onPreviewClick} icon={MapPin}>
+          <Marker position={markerPosition} onClick={onPreviewClick} icon={mapPin}>
             <LocationDetail
               visible
               title={data?.locationPreview.targetAddress}

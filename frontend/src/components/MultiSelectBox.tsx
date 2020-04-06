@@ -71,7 +71,7 @@ export default function MultiSelectBox(props: Props) {
 }
 
 const Container = styled(TouchableOpacity)`
-  border: 0.5px solid ${THEME_COLOR};
+  border: 1px solid ${THEME_COLOR};
   border-radius: ${DEFAULT_BORDER_RADIUS};
   padding-left: 8px;
   padding-right: 8px;
