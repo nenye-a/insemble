@@ -8,13 +8,18 @@ import { NAVBAR_HEIGHT } from '../../constants/theme';
 type Props = {
   visible: boolean;
   text?: string;
+  onClose?: () => void;
 };
 
-export default function MapAlert({ visible, text }: Props) {
+export default function MapAlert({ visible, text, onClose }: Props) {
   return (
     <Root>
       <Container>
-        <Alert visible={visible} text={text || 'An error occured. Please try again.'} />
+        <Alert
+          onClose={onClose}
+          visible={visible}
+          text={text || 'An error occured. Please try again.'}
+        />
       </Container>
     </Root>
   );

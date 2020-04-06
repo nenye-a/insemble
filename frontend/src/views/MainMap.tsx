@@ -107,30 +107,33 @@ export default function MainMap() {
   let [filters, setFilters] = useState<TenantMatchesContextFilter>(tenantMatchesInit.filters);
   let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
   let [deepDiveModalVisible, toggleDeepDiveModal] = useState(false);
-  let [mapError, setMapError] = useState('');
+  let [mapErrorMessage, setMapErrorMessage] = useState('');
   let { isLoading } = useGoogleMaps();
   let params = useParams<BrandId>();
   let { brandId } = params;
-  let {
-    data: tenantMatchesData,
-    loading,
-    error: tenantMatchesError,
-    refetch: tenantMatchesRefetch,
-  } = useQuery<TenantMatches, TenantMatchesVariables>(GET_TENANT_MATCHES_DATA, {
+  let { data: tenantMatchesData, loading, refetch: tenantMatchesRefetch } = useQuery<
+    TenantMatches,
+    TenantMatchesVariables
+  >(GET_TENANT_MATCHES_DATA, {
     variables: {
       brandId,
     },
     fetchPolicy: 'network-only',
     notifyOnNetworkStatusChange: true,
     onError: () => {
+      setMapErrorMessage('Failed to load heatmap, please adjust filters and try again.');
       tenantMatchesRefetch();
     },
   });
 
-  let [editBrand, { loading: editBrandLoading, error: editBrandError }] = useMutation<
-    EditBrand,
-    EditBrandVariables
-  >(EDIT_BRAND);
+  let [editBrand, { loading: editBrandLoading }] = useMutation<EditBrand, EditBrandVariables>(
+    EDIT_BRAND,
+    {
+      onError: (err) => {
+        setMapErrorMessage(err.message);
+      },
+    }
+  );
 
   let [selectedLatLng, setSelectedLatLng] = useState<SelectedLatLng | null>(null);
 
@@ -387,16 +390,13 @@ export default function MainMap() {
         <Container flex>
           <SideBarFilters />
           <MapAlert
-            visible={!!mapError || !!tenantMatchesError || !!editBrandError}
-            text={
-              mapError ||
-              'Failed to load heatmap, please adjust filters and try again.' ||
-              editBrandError?.message
-            }
+            visible={!!mapErrorMessage}
+            text={mapErrorMessage}
+            onClose={() => setMapErrorMessage('')}
           />
           {!isLoading && (
             <MapContainer
-              onMapError={(val) => setMapError(val)}
+              onMapError={(val) => setMapErrorMessage(val)}
               onMarkerClick={(
                 latLng: google.maps.LatLng,
                 address: string,
