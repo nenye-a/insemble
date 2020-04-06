@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
 
-import { View, Text, LoadingIndicator, Alert, Button } from '../core-ui';
+import { View, Text, LoadingIndicator, Button } from '../core-ui';
 import SideBarFilters, {
   DEMOGRAPHICS_CATEGORIES,
   PROPERTIES_CATEGORIES,
@@ -23,6 +23,7 @@ import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer'
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 import { LocationInput } from '../generated/globalTypes';
 import SvgPropertyLocation from '../components/icons/property-location';
+import MapAlert from './MapPage/MapAlert';
 
 type BrandId = {
   brandId: string;
@@ -106,6 +107,7 @@ export default function MainMap() {
   let [filters, setFilters] = useState<TenantMatchesContextFilter>(tenantMatchesInit.filters);
   let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
   let [deepDiveModalVisible, toggleDeepDiveModal] = useState(false);
+  let [mapError, setMapError] = useState('');
   let { isLoading } = useGoogleMaps();
   let params = useParams<BrandId>();
   let { brandId } = params;
@@ -382,15 +384,19 @@ export default function MainMap() {
             </Text>
           </LoadingOverlay>
         )}
-        <Alert
-          visible={!!tenantMatchesError}
-          text="Failed to load heatmap, please adjust filters and try again"
-        />
-        <Alert visible={!!editBrandError} text={editBrandError?.message || ''} />
         <Container flex>
           <SideBarFilters />
+          <MapAlert
+            visible={!!mapError || !!tenantMatchesError || !!editBrandError}
+            text={
+              mapError ||
+              'Failed to load heatmap, please adjust filters and try again.' ||
+              editBrandError?.message
+            }
+          />
           {!isLoading && (
             <MapContainer
+              onMapError={(val) => setMapError(val)}
               onMarkerClick={(
                 latLng: google.maps.LatLng,
                 address: string,
