@@ -5,7 +5,7 @@ sys.path.append(BASE_DIR)  # include data_testing
 
 from decouple import config
 import utils
-import safe_request
+from . import safe_request
 import pprint
 import urllib
 
@@ -288,6 +288,26 @@ def get_photo_url(photo_reference):
 
     url = GOOG_PLACE_PHOTOS_ENDPOINT + '?' + urllib.parse.urlencode(params)
     return url
+
+
+def get_photo(photo_reference):
+    params = {
+        'key': GOOG_KEY,
+        'photoreference': photo_reference,
+        'maxheight': 1000
+    }
+
+    payload = {}
+    headers = {}
+
+    url = GOOG_PLACE_PHOTOS_ENDPOINT
+
+    result, _id = safe_request.request(API_NAME, "GET", url, headers=headers, data=payload, params=params, api_field='key')
+
+    if result is None:
+        return None
+
+    return result
 
 
 if __name__ == "__main__":
