@@ -33,7 +33,6 @@ import SvgRent from '../../components/icons/rent';
 import SvgSqft from '../../components/icons/sqft';
 import SvgPropertyType from '../../components/icons/property-type';
 import SvgEthnicity from '../../components/icons/ethnicity';
-import { NAVBAR_HEIGHT } from '../../constants/theme';
 import { Personas } from '../../generated/Personas';
 import { Ethnicity } from '../../generated/Ethnicity';
 import { Commute } from '../../generated/Commute';
@@ -258,23 +257,23 @@ export default function SideBarFilters() {
 }
 
 const RowedView = styled(View)`
+  position: absolute;
+  left: 32px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   flex-direction: row;
   z-index: 5;
 `;
 const Container = styled(View)`
-  position: absolute;
-  left: 32px;
   width: 160px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  height: calc(100% - ${NAVBAR_HEIGHT});
+  height: fit-content;
 `;
 
 const FilterContainer = styled(Filter)`
-  position: absolute;
-  left: 200px;
+  margin-left: 12px;
   top: 50px;
   min-width: 240px;
+  max-width: 400px;
 `;
 
 export const DEMOGRAPHICS_CATEGORIES = {

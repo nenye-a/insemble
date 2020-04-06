@@ -18,7 +18,7 @@ import { WHITE, HEADER_BORDER_COLOR, THEME_COLOR } from '../constants/colors';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_MEDIUM } from '../constants/theme';
 import { TenantMatches, TenantMatchesVariables } from '../generated/TenantMatches';
 
-import { useGoogleMaps, isEqual } from '../utils';
+import { useGoogleMaps, isEqual, useViewport } from '../utils';
 import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer';
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 import { LocationInput } from '../generated/globalTypes';
@@ -107,6 +107,7 @@ export default function MainMap() {
   let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
   let [deepDiveModalVisible, toggleDeepDiveModal] = useState(false);
   let { isLoading } = useGoogleMaps();
+  let { isDesktop } = useViewport();
   let params = useParams<BrandId>();
   let { brandId } = params;
   let {
@@ -133,7 +134,7 @@ export default function MainMap() {
   let [selectedLatLng, setSelectedLatLng] = useState<SelectedLatLng | null>(null);
 
   let visibleMatchingProperties = tenantMatchesData?.tenantMatches.matchingProperties
-    ? tenantMatchesData.tenantMatches.matchingProperties.filter((property) => property.visible)
+    ? tenantMatchesData.tenantMatches.matchingProperties
     : [];
   let onFilterChange = (state: SideBarFiltersState) => {
     let { demographics, properties, openFilterName } = state;
@@ -413,16 +414,24 @@ export default function MainMap() {
           )}
           {visibleMatchingProperties.length > 0 && (
             <>
-              <ShowPropertyButton
-                visible={!propertyRecommendationVisible}
-                mode="secondary"
-                onPress={() => togglePropertyRecommendation(true)}
-                text="Show Property List"
-                icon={<SvgPropertyLocation />}
-              />
+              {isDesktop && (
+                <ShowPropertyButton
+                  visible={!propertyRecommendationVisible}
+                  mode="secondary"
+                  onPress={() => togglePropertyRecommendation(true)}
+                  text="Show Property List"
+                  icon={<SvgPropertyLocation />}
+                />
+              )}
               <AvailableProperties
                 visible={propertyRecommendationVisible}
-                onHideClick={() => togglePropertyRecommendation(false)}
+                onShowOrHide={(visible) => {
+                  if (visible !== undefined) {
+                    togglePropertyRecommendation(visible);
+                  } else {
+                    togglePropertyRecommendation(!propertyRecommendationVisible);
+                  }
+                }}
                 matchingProperties={visibleMatchingProperties}
                 onPropertyPress={({ lat, lng, address, targetNeighborhood, propertyId }) => {
                   setSelectedLatLng({
@@ -444,8 +453,8 @@ export default function MainMap() {
 }
 
 const Container = styled(View)`
-  flex-direction: row;
   overflow: hidden;
+  z-index: 1;
 `;
 
 const ShowPropertyButton = styled(Button)<ShowPropertyButtonProps>`
