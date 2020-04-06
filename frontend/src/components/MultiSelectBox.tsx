@@ -99,6 +99,7 @@ const PickerContainer = styled(Filter)`
   background-color: ${WHITE};
   position: absolute;
   width: 400px;
+  max-width: 80vw;
 `;
 
 const SelectorBadge = styled(Badge)`

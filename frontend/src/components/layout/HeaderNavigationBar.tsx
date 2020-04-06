@@ -91,9 +91,10 @@ export default function HeaderNavigationBar(props: Props) {
         onPress={() => {
           if (role === Role.TENANT) {
             getBrand();
-          }
-          if (role === Role.LANDLORD) {
+          } else if (role === Role.LANDLORD) {
             getProperties();
+          } else {
+            history.push('/');
           }
         }}
       >
