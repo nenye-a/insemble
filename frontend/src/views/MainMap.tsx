@@ -417,6 +417,7 @@ export default function MainMap() {
               }}
               matchingLocations={tenantMatchesData?.tenantMatches.matchingLocations}
               matchingProperties={visibleMatchingProperties}
+              currentLocation={tenantMatchesData?.tenantMatches.location}
             />
           )}
           {isDesktop && (

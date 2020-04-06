@@ -6,7 +6,6 @@ import { View, Button, Text } from '../../core-ui';
 import { MultiSelectBox } from '../../components';
 
 import { WHITE, HEADER_BORDER_COLOR } from '../../constants/colors';
-// import Legend from '../MapPage/Legend';
 // import TextInput from '../../core-ui/ContainedTextInput';
 import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
 import { Categories } from '../../generated/Categories';
@@ -111,7 +110,6 @@ export default function HeaderFilterBar(props: Props) {
           className="search-box"
         />
       </LocationInputContainer> */}
-      {/* <Legend /> */}
     </Container>
   );
 }
