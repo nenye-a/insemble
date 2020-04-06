@@ -35,8 +35,6 @@ def get_matching_tenants(eval_property, space_id):
     #     'average_spatial_psychographics.1mile': {'$ne': None}
     # })
 
-    print("Got HEre")
-
     tenants = utils.DB_BRANDS.find({
         "$or": [{
             "$or": [{'regions_present.regions': "California"}, {'regions_present.regions': "Nationwide"}],
