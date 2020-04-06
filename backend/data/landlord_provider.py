@@ -26,15 +26,6 @@ def get_matching_tenants(eval_property, space_id):
         if item['space_id'] == space_id:
             my_space = item
 
-    # fetch the tenants that we will use for matching and kick off matching. # TODO: temporarily force the inclusion
-    # tenants = utils.DB_BRANDS.find({
-    #     "$or": [{'regions_present.regions': "California"}, {'regions_present.regions': "Nationwide"}],
-    #     'number_found_locations': {'$gt': 1},
-    #     'average_arcgis_demographics.1mile': {'$ne': None},
-    #     'average_environics_demographics.1mile': {'$ne': None},
-    #     'average_spatial_psychographics.1mile': {'$ne': None}
-    # })
-
     tenants = utils.DB_BRANDS.find({
         "$or": [{
             "$or": [{'regions_present.regions': "California"}, {'regions_present.regions': "Nationwide"}],
