@@ -389,6 +389,7 @@ export default function MainMap() {
         )}
         <Container flex>
           <SideBarFilters />
+          {/* TODO: Responsive alert */}
           <MapAlert
             visible={!!mapErrorMessage}
             text={mapErrorMessage}
