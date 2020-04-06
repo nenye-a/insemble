@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useContext } from 'react';
+import React, { useEffect, useReducer, useContext, ComponentProps } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 
@@ -37,6 +37,7 @@ import { Personas } from '../../generated/Personas';
 import { Ethnicity } from '../../generated/Ethnicity';
 import { Commute } from '../../generated/Commute';
 import { Education } from '../../generated/Education';
+import SvgAmenities from '../../components/icons/amenities';
 
 export default function SideBarFilters() {
   let { filters, onFilterChange } = useContext(TenantMatchesContext);
@@ -61,6 +62,9 @@ export default function SideBarFilters() {
     getInitialState()
   );
   let { demographics, properties, openFilterName } = state;
+  let isPropertyOptionSelected = Object.values(PROPERTIES_CATEGORIES).includes(
+    openFilterName || ''
+  );
 
   useEffect(() => {
     // Get options and prefilled value;
@@ -206,8 +210,7 @@ export default function SideBarFilters() {
           }}
           openFilterName={openFilterName}
         />
-        {/* Hiding this for now */}
-        {/* <FilterCard
+        <FilterCard
           title="Property"
           options={properties}
           style={{ maxHeight: '30%', marginTop: 10, marginBottom: 10 }}
@@ -219,7 +222,7 @@ export default function SideBarFilters() {
             });
           }}
           openFilterName={openFilterName}
-        /> */}
+        />
       </Container>
       <ClickAway
         onClickAway={() =>
@@ -249,12 +252,17 @@ export default function SideBarFilters() {
             spaceTypeLoading ||
             ethnicityLoading
           }
+          isPropertyOptionSelected={isPropertyOptionSelected}
           {...filterProps}
         />
       </ClickAway>
     </RowedView>
   );
 }
+
+type FilterProps = ComponentProps<typeof Filter> & {
+  isPropertyOptionSelected: boolean;
+};
 
 const RowedView = styled(View)`
   position: absolute;
@@ -269,9 +277,9 @@ const Container = styled(View)`
   height: fit-content;
 `;
 
-const FilterContainer = styled(Filter)`
+const FilterContainer = styled(Filter)<FilterProps>`
   margin-left: 12px;
-  top: 50px;
+  top: ${({ isPropertyOptionSelected }) => (isPropertyOptionSelected ? '300px' : '50px')};
   min-width: 240px;
   max-width: 400px;
 `;
@@ -288,6 +296,7 @@ export const DEMOGRAPHICS_CATEGORIES = {
 export const PROPERTIES_CATEGORIES = {
   rent: 'Rent',
   sqft: 'Sqft',
+  amenities: 'Amenities',
   propertyType: 'Type',
 };
 
@@ -332,16 +341,27 @@ const DEMOGRAPHIC_OPTIONS: Array<FilterObj> = [
 
 const PROPERTIES_OPTIONS: Array<FilterObj> = [
   {
-    name: 'Rent',
+    name: PROPERTIES_CATEGORIES.rent,
     icon: SvgRent,
     selectedValues: [],
     type: FilterType.RANGE_INPUT,
   },
   {
-    name: 'Sqft',
+    name: PROPERTIES_CATEGORIES.sqft,
     icon: SvgSqft,
     selectedValues: [],
     type: FilterType.RANGE_INPUT,
   },
-  { name: 'Type', icon: SvgPropertyType, selectedValues: [], type: FilterType.SELECTION },
+  {
+    name: PROPERTIES_CATEGORIES.amenities,
+    icon: SvgAmenities,
+    selectedValues: [],
+    type: FilterType.SELECTION,
+  },
+  {
+    name: PROPERTIES_CATEGORIES.propertyType,
+    icon: SvgPropertyType,
+    selectedValues: [],
+    type: FilterType.SELECTION,
+  },
 ];
