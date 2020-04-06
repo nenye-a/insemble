@@ -28,7 +28,7 @@ let deletePropertyResolver: FieldResolver<
   if (pyPropertyId) {
     let resultStatus = (
       await axios.delete(
-        `${LEGACY_API_URI}/api/propertyTenants/${pyPropertyId}/`,
+        `${LEGACY_API_URI}/api/propertyTenants/${pyPropertyId}`,
       )
     ).status;
     if (resultStatus !== 304 && resultStatus !== 200) {
