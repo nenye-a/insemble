@@ -3,8 +3,6 @@ import styled from 'styled-components';
 
 import { View, Alert } from '../../core-ui';
 
-import { NAVBAR_HEIGHT } from '../../constants/theme';
-
 type Props = {
   visible: boolean;
   text?: string;
@@ -35,5 +33,4 @@ const Container = styled(View)`
   width: 540px;
   margin-top: 10px;
   margin-bottom: 10px;
-  height: calc(100% - ${NAVBAR_HEIGHT});
 `;
