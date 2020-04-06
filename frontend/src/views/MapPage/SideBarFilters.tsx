@@ -17,6 +17,7 @@ import {
   GET_EDUCATION_LIST,
   GET_PROPERTY_TYPE_LIST,
   GET_ETHNICITY_LIST,
+  GET_EQUIPMENT_LIST,
 } from '../../graphql/queries/server/filters';
 import {
   getDemographicsOptionsAndPrefilledValues,
@@ -37,6 +38,7 @@ import { Personas } from '../../generated/Personas';
 import { Ethnicity } from '../../generated/Ethnicity';
 import { Commute } from '../../generated/Commute';
 import { Education } from '../../generated/Education';
+import { Equipments } from '../../generated/Equipments';
 import SvgAmenities from '../../components/icons/amenities';
 
 export default function SideBarFilters() {
@@ -47,6 +49,7 @@ export default function SideBarFilters() {
   let { data: educationData, loading: educationLoading } = useQuery<Education>(GET_EDUCATION_LIST);
   let { data: spaceTypeData, loading: spaceTypeLoading } = useQuery(GET_PROPERTY_TYPE_LIST);
   let { data: ethnicityData, loading: ethnicityLoading } = useQuery<Ethnicity>(GET_ETHNICITY_LIST);
+  let { data: amenitiesData, loading: amenitiesLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
 
   let getInitialState = () => ({
     openFilterName: null,
@@ -83,6 +86,7 @@ export default function SideBarFilters() {
       propertyInitialFilter,
       {
         spaceType: spaceTypeData?.spaceType,
+        amenities: amenitiesData?.equipments,
       }
     );
 
@@ -250,7 +254,8 @@ export default function SideBarFilters() {
             commuteLoading ||
             educationLoading ||
             spaceTypeLoading ||
-            ethnicityLoading
+            ethnicityLoading ||
+            amenitiesLoading
           }
           isPropertyOptionSelected={isPropertyOptionSelected}
           {...filterProps}

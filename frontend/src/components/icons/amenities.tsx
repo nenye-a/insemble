@@ -6,6 +6,14 @@ const SvgAmenities = (props: IconProps) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" {...props}>
     <g id="Group_1326" data-name="Group 1326" transform="translate(-44 -512)">
       <g id="Group_1324" data-name="Group 1324" transform="translate(-1.695 476.056)">
+        <rect
+          id="Rectangle_1557"
+          data-name="Rectangle 1557"
+          width="26"
+          height="26"
+          transform="translate(44 512)"
+          fill="#fff"
+        />
         <path
           id="Path_4009"
           data-name="Path 4009"
@@ -14,14 +22,6 @@ const SvgAmenities = (props: IconProps) => (
           fillRule="evenodd"
         />
       </g>
-      <rect
-        id="Rectangle_1557"
-        data-name="Rectangle 1557"
-        width="26"
-        height="26"
-        transform="translate(44 512)"
-        fill="rgba(255,255,255,0)"
-      />
     </g>
   </svg>
 );

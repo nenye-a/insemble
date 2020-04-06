@@ -47,6 +47,7 @@ export type PropertyFilter = {
   minSize: number | null;
   maxSize: number | null;
   spaceType: Array<string>;
+  amenities: Array<string>;
 };
 
 type ShowPropertyButtonProps = {
@@ -98,6 +99,7 @@ let tenantMatchesInit = {
       minSize: null,
       maxSize: null,
       spaceType: [],
+      amenities: [],
     },
   },
 };
@@ -340,6 +342,7 @@ export default function MainMap() {
         spaceType,
         categories,
         ethnicity,
+        equipment
       } = tenantMatchesData.tenantMatches;
       setFilters({
         demographics: {
@@ -358,6 +361,7 @@ export default function MainMap() {
           minSize,
           maxSize,
           spaceType,
+          amenities: equipment
         },
         categories,
       });
