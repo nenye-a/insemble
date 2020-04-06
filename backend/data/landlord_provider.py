@@ -109,18 +109,21 @@ def get_matching_tenants(eval_property, space_id):
         contacts = brand['contacts'] if 'contacts' in brand and brand['contacts'] != [] else None
 
         interested = False
+        has_requested_sqft = False
 
         if 'match_requests' in brand and len(brand['match_requests']) > 0:
+            has_requested_sqft = True
             for match_request in brand['match_requests']:
                 temp_match_value = match_value
                 match_request = utils.DB_LOCATION_MATCHES.find_one({"_id": match_request['match_id']})
                 sqft = match_request['params']['sqft']
+                if sqft == {}:
+                    has_requested_sqft = False
+                    continue  # if sqft is empty, return
                 matches_sqft = False
-                for ft in sqft:
-                    # choosing an arbitrarily large integer
-                    square_foot_range = [ft['min'], ft['max'] or 200000]
-                    if utils.in_range(my_space['sqft'], square_foot_range):
-                        matches_sqft = True
+                square_foot_range = [sqft['min'], sqft['max'] or 200000]  # choosing an arbitrarily large integer
+                if utils.in_range(my_space['sqft'], square_foot_range):
+                    matches_sqft = True
                 if matches_sqft:
                     temp_match_value = temp_match_value * 1.075
                 elif len(sqft) > 0:
@@ -140,19 +143,19 @@ def get_matching_tenants(eval_property, space_id):
                     'onPlatform': False,          # TODO: add more details to onPlatform
                     'contacts': contacts
                 })
-        else:
-            if brand['typical_squarefoot']:
-                matches_sqft = False
-                for ft in brand['typical_squarefoot']:
-                    # choosing an arbitrarily large integer
-                    square_foot_range = [ft['min'], ft['max'] or 200000]
-                    if utils.in_range(my_space['sqft'], square_foot_range):
-                        matches_sqft = True
-                if matches_sqft:
-                    match_value = match_value * 1.075
-                elif len(brand['typical_squarefoot']) > 0:
-                    # match_value = match_value * 0.80 (instead of downranking the match, just eliminating it)
-                    continue
+
+        if 'typical_squarefoot' in brand and brand['typical_squarefoot'] and not has_requested_sqft:
+            matches_sqft = False
+            for ft in brand['typical_squarefoot']:
+                # choosing an arbitrarily large integer
+                square_foot_range = [ft['min'], ft['max'] or 200000]
+                if utils.in_range(my_space['sqft'], square_foot_range):
+                    matches_sqft = True
+            if matches_sqft:
+                match_value = match_value * 1.075
+            elif len(brand['typical_squarefoot']) > 0:
+                # match_value = match_value * 0.80 (instead of downranking the match, just eliminating it)
+                continue
 
             # bound match value by 10 and 100%
             match_value = min(max(match_value, 10), 95)
