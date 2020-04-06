@@ -139,7 +139,7 @@ export default function MainMap() {
   let [selectedLatLng, setSelectedLatLng] = useState<SelectedLatLng | null>(null);
 
   let visibleMatchingProperties = tenantMatchesData?.tenantMatches.matchingProperties
-    ? tenantMatchesData.tenantMatches.matchingProperties
+    ? tenantMatchesData.tenantMatches.matchingProperties.filter((property) => property.visible)
     : [];
   let onFilterChange = (state: SideBarFiltersState) => {
     let { demographics, properties, openFilterName } = state;
@@ -419,40 +419,36 @@ export default function MainMap() {
               matchingProperties={visibleMatchingProperties}
             />
           )}
-          {visibleMatchingProperties.length > 0 && (
-            <>
-              {isDesktop && (
-                <ShowPropertyButton
-                  visible={!propertyRecommendationVisible}
-                  mode="secondary"
-                  onPress={() => togglePropertyRecommendation(true)}
-                  text="Show Property List"
-                  icon={<SvgPropertyLocation />}
-                />
-              )}
-              <AvailableProperties
-                visible={propertyRecommendationVisible}
-                onShowOrHide={(visible) => {
-                  if (visible !== undefined) {
-                    togglePropertyRecommendation(visible);
-                  } else {
-                    togglePropertyRecommendation(!propertyRecommendationVisible);
-                  }
-                }}
-                matchingProperties={visibleMatchingProperties}
-                onPropertyPress={({ lat, lng, address, targetNeighborhood, propertyId }) => {
-                  setSelectedLatLng({
-                    lat,
-                    lng,
-                    address,
-                    targetNeighborhood,
-                    propertyId,
-                  });
-                  toggleDeepDiveModal(true);
-                }}
-              />
-            </>
+          {isDesktop && (
+            <ShowPropertyButton
+              visible={!propertyRecommendationVisible}
+              mode="secondary"
+              onPress={() => togglePropertyRecommendation(true)}
+              text="Show Property List"
+              icon={<SvgPropertyLocation />}
+            />
           )}
+          <AvailableProperties
+            visible={propertyRecommendationVisible}
+            onShowOrHide={(visible) => {
+              if (visible !== undefined) {
+                togglePropertyRecommendation(visible);
+              } else {
+                togglePropertyRecommendation(!propertyRecommendationVisible);
+              }
+            }}
+            matchingProperties={visibleMatchingProperties}
+            onPropertyPress={({ lat, lng, address, targetNeighborhood, propertyId }) => {
+              setSelectedLatLng({
+                lat,
+                lng,
+                address,
+                targetNeighborhood,
+                propertyId,
+              });
+              toggleDeepDiveModal(true);
+            }}
+          />
         </Container>
       </View>
     </TenantMatchesContext.Provider>
