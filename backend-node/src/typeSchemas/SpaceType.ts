@@ -13,5 +13,7 @@ export let Space = objectType({
     t.model.pricePerSqft();
     t.model.mainPhoto();
     t.model.description();
+    t.model.spaceType();
+    t.model.marketingPreference();
   },
 });
