@@ -215,7 +215,13 @@ def upload_brand(this_place, place):
             'annual_sales': annual_sales,
             'contacts': contacts,
             'match_requests': match_requests,
+            'headquarters_city': None,
+            'parent_company': None,
+            'regions_present': [],
+            'typical_property_type': [],
+            'typical_squarefoot': []
         }
+
     else:
         # if there is an existing brand, let's splice their results together.
         if not brand['logo']:
