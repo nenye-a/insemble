@@ -183,7 +183,7 @@ export default function LandlordListing(props: Props) {
           <LabelText text="Features & Amenities" />
           {!equipmentLoading && equipmentData && (
             <MultiSelectInput
-              placeholder="Set Equipment Preference"
+              placeholder="Set Features & Amenities"
               options={equipmentData.equipments}
               onChange={setSelectedEquipment}
               inputContainerStyle={{ flex: 1 }}
