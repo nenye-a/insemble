@@ -10,6 +10,7 @@ if this call has been made previously.
 
 '''
 
+
 API_KEY_MASK = 'API_KEY_MASK'
 
 # executable request method
@@ -66,14 +67,22 @@ def request(api_name, req_type, url, headers={}, data={}, params={}, api_field=N
     # otherwise, call the api directly & store result
     try:
         response = requests.request(
-            req_type, url, headers=headers, data=data, params=params).json()
+            req_type, url, headers=headers, data=data, params=params)
+        if "https://maps.googleapis.com/maps/api/place/photo" in url:
+            response = response.url  # special case for google photos
+        else:
+            response = response.json()
     except requests.exceptions.ConnectionError:
         retry_couter = 0
         print('Failed to connect, retrying call on {} API'.format(api_name))
         while retry_couter < 3:
             print('Retry attempt {}'.format(retry_couter + 1))
             response = requests.request(
-                req_type, url, headers=headers, data=data, params=params).json()
+                req_type, url, headers=headers, data=data, params=params)
+            if "https://maps.googleapis.com/maps/api/place/photo" in url:
+                response = response.url  # special case for google photos
+            else:
+                response = response.json()
             if response:
                 print('Successful retry on attempt {}'.format(retry_couter + 1))
                 break
@@ -98,7 +107,3 @@ def request(api_name, req_type, url, headers={}, data={}, params={}, api_field=N
         _id = None
 
     return (response, _id)
-
-
-if __name__ == "__main__":
-    pass
