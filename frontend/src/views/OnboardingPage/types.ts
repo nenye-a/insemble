@@ -6,4 +6,5 @@ export type LocationState = {
   lng?: number;
   income?: number;
   categories?: Array<string>;
+  outOfBound?: boolean;
 };

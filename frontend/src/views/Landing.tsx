@@ -37,6 +37,10 @@ function Landing() {
   let history = useHistory();
   let { viewportType } = useViewport();
   let isDesktop = viewportType === VIEWPORT_TYPE.DESKTOP;
+  let minLat = 33.7036519;
+  let maxLat = 34.3373061;
+  let minLng = -118.6681759;
+  let maxLng = -118.1552891;
 
   let [getTenantProfile, { data: tenantData }] = useLazyQuery<GetTenantProfile>(
     GET_TENANT_PROFILE,
@@ -158,13 +162,29 @@ function Landing() {
                   let { lat, lng } = location;
                   let latitude = lat();
                   let longitude = lng();
-                  history.push('/verify/step-1', {
-                    placeID,
-                    name,
-                    formattedAddress,
-                    lat: latitude.toString(),
-                    lng: longitude.toString(),
-                  });
+                  if (
+                    latitude > maxLat ||
+                    longitude > maxLng ||
+                    latitude < minLat ||
+                    longitude < minLng
+                  ) {
+                    history.push('/verify/step-1', {
+                      placeID,
+                      name,
+                      formattedAddress,
+                      lat: latitude.toString(),
+                      lng: longitude.toString(),
+                      outOfBound: true,
+                    });
+                  } else {
+                    history.push('/verify/step-1', {
+                      placeID,
+                      name,
+                      formattedAddress,
+                      lat: latitude.toString(),
+                      lng: longitude.toString(),
+                    });
+                  }
                 }
               } else {
                 let newPlace = (place as unknown) as Place;
