@@ -9,7 +9,6 @@ export let createPropertyResolver: FieldResolver<
 > = async (_, { property, space }, context: Context) => {
   let {
     businessType = [],
-    propertyType = [],
     categories = [],
     exclusive = [],
     userRelations = [],
@@ -20,6 +19,7 @@ export let createPropertyResolver: FieldResolver<
     equipment = [],
     photoUploads,
     available,
+    spaceType = [],
     mainPhoto,
     photoUrls = [],
     ...spaceInput
@@ -51,13 +51,11 @@ export let createPropertyResolver: FieldResolver<
       businessType: {
         set: businessType,
       },
-      propertyType: {
-        set: propertyType,
-      },
       userRelations: {
         set: userRelations,
       },
       userRelation: '', //TODO: remove this after userRelation successfully migrated
+      marketingPreference: spaceInput.marketingPreference, //TODO: remove this after marketingPreference successfully migrated
       space: {
         create: {
           ...spaceInput,
@@ -67,6 +65,9 @@ export let createPropertyResolver: FieldResolver<
           },
           photos: {
             set: photoUrls,
+          },
+          spaceType: {
+            set: spaceType,
           },
           available: new Date(available),
         },
