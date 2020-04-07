@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, UIEvent } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
@@ -9,6 +9,7 @@ import { ErrorComponent } from '../../components';
 import PropertyDeepDiveHeader from './PropertyDeepDiveHeader';
 import PropertyDetailView from './PropertyDetailView';
 import Overview from './Overview';
+import VirtualTour from './VirtualTour';
 import { GET_LOCATION_DETAILS } from '../../graphql/queries/server/deepdive';
 import {
   LocationDetails,
@@ -43,7 +44,7 @@ type Props = {
   sqft?: number;
 };
 
-// const SHRINK_HEIGHT = 160;
+const SHRINK_HEIGHT = 160;
 export default function LocationDeepDiveModal(props: Props) {
   let { brandId: brandIdParam = '' } = useParams();
   let {
@@ -60,7 +61,8 @@ export default function LocationDeepDiveModal(props: Props) {
   } = props;
   let brandId = brandIdParam || brandIdProps || '';
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
-  // let [headerShrink, setHeaderShrink] = useState(false);
+  let [selectedSpaceIndex, setSelectedSpaceIndex] = useState(0);
+  let [headerShrink, setHeaderShrink] = useState(false);
   let isOverviewSelected = selectedTabIndex === 0;
   let { data, loading, error, refetch } = useQuery<LocationDetails, LocationDetailsVariables>(
     GET_LOCATION_DETAILS,
@@ -81,16 +83,16 @@ export default function LocationDeepDiveModal(props: Props) {
     }
   );
 
-  // let handleOnScroll = (e: UIEvent<HTMLDivElement>) => {
-  //   if (visible) {
-  //     let target = e.target as HTMLDivElement;
-  //     if (target.scrollTop !== 0 && target.scrollHeight + SHRINK_HEIGHT > window.innerHeight) {
-  //       setHeaderShrink(true);
-  //     } else if (target.scrollTop === 0) {
-  //       setHeaderShrink(false);
-  //     }
-  //   }
-  // };
+  let handleOnScroll = (e: UIEvent<HTMLDivElement>) => {
+    if (visible) {
+      let target = e.target as HTMLDivElement;
+      if (target.scrollTop !== 0 && target.scrollHeight + SHRINK_HEIGHT > window.innerHeight) {
+        setHeaderShrink(true);
+      } else if (target.scrollTop === 0) {
+        setHeaderShrink(false);
+      }
+    }
+  };
 
   let noPropertyDetail =
     !data?.locationDetails.spaceDetails || data?.locationDetails.spaceDetails.length === 0;
@@ -120,14 +122,8 @@ export default function LocationDeepDiveModal(props: Props) {
           <ErrorComponent onRetry={refetch} text={error.message} />
         ) : (
           <>
-            {/* <TourContainer isShrink={headerShrink}>
-              <Text>3D Tour</Text>
-            </TourContainer> */}
             {noPropertyDetail ? (
-              <ScrollView
-                flex
-                //  onScroll={handleOnScroll}
-              >
+              <ScrollView flex onScroll={handleOnScroll}>
                 <PropertyDeepDiveHeader
                   showConnect={false}
                   matchScore={0}
@@ -139,6 +135,11 @@ export default function LocationDeepDiveModal(props: Props) {
               </ScrollView>
             ) : (
               <>
+                <VirtualTour
+                  tourSource={data?.locationDetails.spaceDetails[selectedSpaceIndex].tour3D || ''}
+                  placeholder={data?.locationDetails.spaceDetails[selectedSpaceIndex].mainPhoto}
+                  isShrink={headerShrink}
+                />
                 <TabBar
                   options={['Overview', 'Property Details']}
                   activeTab={selectedTabIndex}
@@ -146,10 +147,7 @@ export default function LocationDeepDiveModal(props: Props) {
                     setSelectedTabIndex(index);
                   }}
                 />
-                <ScrollView
-                  flex
-                  // onScroll={handleOnScroll}
-                >
+                <ScrollView flex onScroll={handleOnScroll}>
                   <PropertyDeepDiveHeader
                     matchScore={data?.locationDetails.result.matchValue || 0}
                     brandId={brandId}
@@ -161,7 +159,11 @@ export default function LocationDeepDiveModal(props: Props) {
                   {isOverviewSelected ? (
                     <Overview />
                   ) : (
-                    <PropertyDetailView propertyId={propertyId} />
+                    <PropertyDetailView
+                      propertyId={propertyId}
+                      selectedSpaceIndex={selectedSpaceIndex}
+                      onSpaceChange={setSelectedSpaceIndex}
+                    />
                   )}
                 </ScrollView>
               </>
