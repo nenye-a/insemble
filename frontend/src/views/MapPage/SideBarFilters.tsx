@@ -89,6 +89,7 @@ export default function SideBarFilters() {
         amenities: amenitiesData?.equipments,
       }
     );
+    console.log(propertiesWithOptions, properties, propertyInitialFilter);
 
     dispatch({
       type: 'OPTIONS_FETCH_SUCCESS',
@@ -174,6 +175,11 @@ export default function SideBarFilters() {
           },
         };
       } else if (found.type === FilterType.RANGE_INPUT) {
+        let valid =
+          selectedValues.length > 1 &&
+          !isNaN(Number(selectedValues[0])) &&
+          !isNaN(Number(selectedValues[1])) &&
+          Number(selectedValues[0]) < Number(selectedValues[1]);
         return {
           rangeInput: true,
           onLowRangeInputChange: (value: string) => {
@@ -192,6 +198,7 @@ export default function SideBarFilters() {
           },
           lowValue: selectedValues[0],
           highValue: selectedValues[1],
+          disabled: !valid,
         };
       }
     }
@@ -275,7 +282,7 @@ const RowedView = styled(View)`
   margin-top: 10px;
   margin-bottom: 10px;
   flex-direction: row;
-  z-index: 5;
+  z-index: 10;
 `;
 const Container = styled(View)`
   width: 160px;
@@ -284,7 +291,8 @@ const Container = styled(View)`
 
 const FilterContainer = styled(Filter)<FilterProps>`
   margin-left: 12px;
-  top: ${({ isPropertyOptionSelected }) => (isPropertyOptionSelected ? '300px' : '50px')};
+  top: ${({ isPropertyOptionSelected }) => (isPropertyOptionSelected ? '250px' : '50px')};
+  bottom: 20px;
   min-width: 240px;
   max-width: 400px;
 `;
@@ -322,7 +330,7 @@ const DEMOGRAPHIC_OPTIONS: Array<FilterObj> = [
     name: DEMOGRAPHICS_CATEGORIES.personas,
     icon: SvgPsychographic,
     selectedValues: [],
-    type: FilterType.SELECTION,
+    type: FilterType.SEARCH_SELECTION,
   },
   {
     name: DEMOGRAPHICS_CATEGORIES.commute,
@@ -334,7 +342,7 @@ const DEMOGRAPHIC_OPTIONS: Array<FilterObj> = [
     name: DEMOGRAPHICS_CATEGORIES.education,
     icon: SvgEducation,
     selectedValues: [],
-    type: FilterType.SEARCH_SELECTION,
+    type: FilterType.SELECTION,
   },
   {
     name: DEMOGRAPHICS_CATEGORIES.ethnicity,
@@ -361,7 +369,7 @@ const PROPERTIES_OPTIONS: Array<FilterObj> = [
     name: PROPERTIES_CATEGORIES.amenities,
     icon: SvgAmenities,
     selectedValues: [],
-    type: FilterType.SELECTION,
+    type: FilterType.SEARCH_SELECTION,
   },
   {
     name: PROPERTIES_CATEGORIES.propertyType,

@@ -30,7 +30,7 @@ export default function FilterCard(props: Props) {
         {options.map(({ type, name, selectedValues, icon: Icon, allOptions }, index) => {
           let selectedText = '';
           if (type === FilterType.RANGE_SLIDER || type === FilterType.RANGE_INPUT) {
-            if (selectedValues.length > 1) {
+            if (selectedValues.filter((item) => !!item).length > 1) {
               if (name === DEMOGRAPHICS_CATEGORIES.income) {
                 selectedText = `${selectedValues[0]}K - ${selectedValues[1]}K`;
               } else {

@@ -190,18 +190,25 @@ export default function MainMap() {
             minRent: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[0]) : null,
             maxRent: !isNaN(Number(selectedValues[1])) ? Number(selectedValues[1]) : null,
           };
-
           break;
         }
         case PROPERTIES_CATEGORIES.sqft: {
-          // TODO: edit state when property filter is unhide
+          affectedPropertyState = {
+            minSize: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[0]) : null,
+            maxSize: !isNaN(Number(selectedValues[1])) ? Number(selectedValues[1]) : null,
+          };
           break;
         }
         case PROPERTIES_CATEGORIES.propertyType: {
           affectedPropertyState = {
             spaceType: selectedValues,
           };
-
+          break;
+        }
+        case PROPERTIES_CATEGORIES.amenities: {
+          affectedPropertyState = {
+            amenities: selectedValues,
+          };
           break;
         }
       }
@@ -227,6 +234,7 @@ export default function MainMap() {
           minSize: tenantMatchesData?.tenantMatches.minSize,
           maxSize: tenantMatchesData?.tenantMatches.maxSize,
           spaceType: tenantMatchesData?.tenantMatches.spaceType,
+          amenities: tenantMatchesData?.tenantMatches.equipment,
         },
         // business: {
         //   location: tenantMatchesData?.tenantMatches.location,
@@ -342,7 +350,7 @@ export default function MainMap() {
         spaceType,
         categories,
         ethnicity,
-        equipment
+        equipment,
       } = tenantMatchesData.tenantMatches;
       setFilters({
         demographics: {
@@ -361,7 +369,7 @@ export default function MainMap() {
           minSize,
           maxSize,
           spaceType,
-          amenities: equipment
+          amenities: equipment,
         },
         categories,
       });

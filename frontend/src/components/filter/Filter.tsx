@@ -235,7 +235,7 @@ export default function Filter(props: Props) {
               disabled={disabled}
             />
           )}
-          {onDone && <Button onPress={onDone} text="Done" />}
+          {onDone && <Button onPress={onDone} text="Done" disabled={disabled} />}
         </BottomWrapper>
       )}
     </Card>
