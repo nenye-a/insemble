@@ -137,14 +137,18 @@ export default (props: HeatmapProps) => {
           );
         })
       )}
-      <AddButton
-        onPress={() => {
-          history.push('/new-brand');
-        }}
-      >
-        <SvgPlus style={{ marginRight: 8, color: THEME_COLOR }} />
-        <Text color={THEME_COLOR}>New Retailer or Restaurant</Text>
-      </AddButton>
+      <View>
+        <AddButton
+          onPress={() => {
+            history.push('/new-brand');
+          }}
+        >
+          <SvgPlus style={{ marginRight: 8, color: THEME_COLOR }} />
+          <Text color={THEME_COLOR}>New Retailer or Restaurant</Text>
+        </AddButton>
+        {/* TODO: Redirect  */}
+        <UpgradeButton text="Upgrade to Add" onPress={() => {}} />
+      </View>
     </View>
   );
 };
@@ -233,4 +237,10 @@ const RemoveButton = styled(TouchableOpacity)`
   position: absolute;
   right: -36px;
   top: 63px;
+`;
+const UpgradeButton = styled(Button)`
+  position: absolute;
+  width: 160px;
+  right: 120px;
+  top: 5px;
 `;
