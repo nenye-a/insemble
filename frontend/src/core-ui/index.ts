@@ -7,6 +7,7 @@ export { default as Checkbox } from './Checkbox';
 export { default as ClickAway } from './ClickAway';
 export { default as Collapsible } from './Collapsible';
 export { default as ContainedTextInput } from './ContainedTextInput';
+export { default as Divider } from './Divider';
 export { default as Dropdown } from './Dropdown';
 export { default as Dropzone } from './Dropzone';
 export { default as Form } from './Form';

@@ -6,7 +6,7 @@ import { View, Text, Card, SegmentedControl } from '../../core-ui';
 import { CarouselFilter } from '../../components';
 import SvgGreenArrow from '../../components/icons/green-arrow';
 import SvgRedArrow from '../../components/icons/red-arrow';
-import Legend from '../MapPage/Legend';
+import DemographicsLegend from './DemographicsLegend';
 import {
   HOVERED_LIST_ITEM_BG,
   THEME_COLOR,
@@ -153,7 +153,7 @@ export default function Graphic(props: Props) {
         </RightTitleContainer>
       </RowedView>
       <RowedView>
-        <Legend barGraph={true} />
+        <DemographicsLegend />
         {/* hiding this until data is ready */}
         {/* <RowedView style={{ margin: 0 }}>
         <Text>Population: </Text>

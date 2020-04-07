@@ -2,54 +2,60 @@ import React from 'react';
 import styled from 'styled-components';
 import { View, Text, Card, TouchableOpacity } from '../../core-ui';
 import { THEME_COLOR } from '../../constants/colors';
-import { FONT_SIZE_SMALL, FONT_SIZE_XSMALL, FONT_WEIGHT_MEDIUM } from '../../constants/theme';
-import insembleIcon from '../../assets/images/insemble-i-logo.svg';
+import {
+  FONT_SIZE_SMALL,
+  FONT_SIZE_XSMALL,
+  FONT_WEIGHT_MEDIUM,
+  FONT_WEIGHT_BOLD,
+  FONT_SIZE_XLARGE,
+  FONT_SIZE_MEDIUM,
+} from '../../constants/theme';
 import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
+import { roundDecimal } from '../../utils';
 
 type Props = {
   photo: string;
   address: string;
   price: number | null;
   area: number;
-  propertyType: string;
+  matchValue: number;
   onPress: () => void;
 };
 
 export default function AvailablePropertyCard(props: Props) {
-  let { photo, address, price, area, propertyType, onPress } = props;
+  let { photo, address, price, area, matchValue, onPress } = props;
   return (
     <Container>
       <TouchableOpacity onPress={onPress}>
         <Photo src={photo || imgPlaceholder} alt="property-photo" />
         <DescriptionContainer flex>
-          <UpperDescriptionContainer flex>
+          <View flex>
             <Text color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
               {address}
             </Text>
-            <Icon src={insembleIcon} alt="insemble-icon" />
-          </UpperDescriptionContainer>
-          <LowerDescriptionContainer flex>
-            <RowedFlexTwo>
-              <Text fontWeight={FONT_WEIGHT_MEDIUM}>{price ? `$ ${price}` : 'NA'}</Text>
-              <Text fontSize={FONT_SIZE_XSMALL}>/sqft yearly</Text>
-            </RowedFlexTwo>
-            <RowedFlex>
-              <Text fontWeight={FONT_WEIGHT_MEDIUM}>{area}</Text>
-              <Text fontSize={FONT_SIZE_XSMALL}>sqft</Text>
-            </RowedFlex>
-            <RowedFlexTwo>
-              <Text fontWeight={FONT_WEIGHT_MEDIUM}>{propertyType}</Text>
-            </RowedFlexTwo>
-          </LowerDescriptionContainer>
+            <LowerDescriptionContainer flex>
+              <RowedFlexTwo>
+                <Text fontWeight={FONT_WEIGHT_MEDIUM}>{price ? `$ ${price}` : 'NA'}</Text>
+                <Text fontSize={FONT_SIZE_XSMALL}>/sqft yearly</Text>
+              </RowedFlexTwo>
+              <RowedFlex>
+                <Text fontWeight={FONT_WEIGHT_MEDIUM}>{area}</Text>
+                <Text fontSize={FONT_SIZE_XSMALL}>sqft</Text>
+              </RowedFlex>
+            </LowerDescriptionContainer>
+          </View>
+          <Text fontWeight={FONT_WEIGHT_BOLD} fontSize={FONT_SIZE_XLARGE} color={THEME_COLOR}>
+            {roundDecimal(matchValue, 0)}
+            <Text fontWeight={FONT_WEIGHT_BOLD} fontSize={FONT_SIZE_MEDIUM} color={THEME_COLOR}>
+              %
+            </Text>
+          </Text>
         </DescriptionContainer>
       </TouchableOpacity>
     </Container>
   );
 }
 
-const Icon = styled.img`
-  height: 24px;
-`;
 const Photo = styled.img`
   height: 120px;
   object-fit: cover;
@@ -57,7 +63,9 @@ const Photo = styled.img`
 
 const DescriptionContainer = styled(View)`
   padding: 14px 16px;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const Container = styled(Card)`
@@ -70,12 +78,6 @@ const LowerDescriptionContainer = styled(View)`
   margin-top: 6px;
   flex-direction: row;
   align-items: center;
-`;
-
-const UpperDescriptionContainer = styled(View)`
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: row;
 `;
 
 const RowedFlex = styled(View)`
