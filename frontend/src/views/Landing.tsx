@@ -26,6 +26,7 @@ import { GET_PROPERTIES } from '../graphql/queries/server/properties';
 import { GET_BRANDS } from '../graphql/queries/server/brand';
 import { GetBrands } from '../generated/GetBrands';
 import { GetProperties } from '../generated/GetProperties';
+import { LOS_ANGELES_LOCATION } from '../constants/location';
 
 type LogoViewProps = ViewProps & {
   isDesktop?: boolean;
@@ -37,6 +38,7 @@ function Landing() {
   let history = useHistory();
   let { viewportType } = useViewport();
   let isDesktop = viewportType === VIEWPORT_TYPE.DESKTOP;
+  let { minLat, minLng, maxLat, maxLng } = LOS_ANGELES_LOCATION;
 
   let [getTenantProfile, { data: tenantData }] = useLazyQuery<GetTenantProfile>(
     GET_TENANT_PROFILE,
@@ -158,13 +160,29 @@ function Landing() {
                   let { lat, lng } = location;
                   let latitude = lat();
                   let longitude = lng();
-                  history.push('/verify/step-1', {
-                    placeID,
-                    name,
-                    formattedAddress,
-                    lat: latitude.toString(),
-                    lng: longitude.toString(),
-                  });
+                  if (
+                    latitude > maxLat ||
+                    longitude > maxLng ||
+                    latitude < minLat ||
+                    longitude < minLng
+                  ) {
+                    history.push('/verify/step-1', {
+                      placeID,
+                      name,
+                      formattedAddress,
+                      lat: latitude.toString(),
+                      lng: longitude.toString(),
+                      outOfBound: true,
+                    });
+                  } else {
+                    history.push('/verify/step-1', {
+                      placeID,
+                      name,
+                      formattedAddress,
+                      lat: latitude.toString(),
+                      lng: longitude.toString(),
+                    });
+                  }
                 }
               } else {
                 let newPlace = (place as unknown) as Place;
