@@ -89,7 +89,6 @@ export default function SideBarFilters() {
         amenities: amenitiesData?.equipments,
       }
     );
-    console.log(propertiesWithOptions, properties, propertyInitialFilter);
 
     dispatch({
       type: 'OPTIONS_FETCH_SUCCESS',

@@ -374,8 +374,8 @@ export default function MainMap() {
       } = tenantMatchesData.tenantMatches;
       setFilters({
         demographics: {
-          minIncome: minIncome ? minIncome / 1000 : null,
-          maxIncome: maxIncome ? maxIncome / 1000 : null,
+          minIncome: typeof minIncome === 'number' ? minIncome / 1000 : null,
+          maxIncome: typeof maxIncome === 'number' ? maxIncome / 1000 : null,
           maxAge,
           minAge,
           personas,
