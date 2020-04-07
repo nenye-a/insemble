@@ -250,7 +250,7 @@ const TitleWrapper = styled(View)`
 const FlexRowWrap = styled(View)`
   flex-direction: row;
   flex-flow: row wrap;
-  max-height: 150px;
+  max-height: 120px;
   padding: 0 12px;
   overflow-y: scroll;
 `;
