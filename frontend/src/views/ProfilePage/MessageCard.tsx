@@ -32,7 +32,7 @@ export default function MessageCard(props: Props) {
       location: { address },
       space: propertySpace,
     },
-    brand: { nextLocations, categories: brandCategories, locationCount },
+    brand: { categories: brandCategories },
     space,
     messages,
     header,
