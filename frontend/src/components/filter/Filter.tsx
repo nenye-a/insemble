@@ -52,6 +52,7 @@ type Props = ComponentProps<typeof View> & {
   disabled?: boolean; // TODO: pass disabled to other filter components as well when necessary
   sliderDisabled?: boolean;
   loading?: boolean;
+  noBottomWrapper?: boolean;
   link?: string;
 };
 
@@ -87,6 +88,7 @@ export default function Filter(props: Props) {
     loading,
     link,
     linkTitle,
+    noBottomWrapper,
     ...otherProps
   } = props;
   let [filteredOptions, setFilteredOptions] = useState(allOptions);
@@ -219,21 +221,23 @@ export default function Filter(props: Props) {
           )}
         </>
       )}
-      <BottomWrapper>
-        {selectedOptions.length > 0 && (
-          <ClearButton mode="secondary" onPress={onClear} text="Clear All" />
-        )}
-        {noPreferenceButton && onNoPreferencePress && (
-          <Button
-            mode={hasPreference ? 'transparent' : 'primary'}
-            text="No Preference"
-            onPress={onNoPreferencePress}
-            style={hasPreference ? { fontStyle: 'italic' } : undefined}
-            disabled={disabled}
-          />
-        )}
-        {onDone && <Button onPress={onDone} text="Done" />}
-      </BottomWrapper>
+      {noBottomWrapper ? null : (
+        <BottomWrapper>
+          {selectedOptions.length > 0 && (
+            <ClearButton mode="secondary" onPress={onClear} text="Clear All" />
+          )}
+          {noPreferenceButton && onNoPreferencePress && (
+            <Button
+              mode={hasPreference ? 'transparent' : 'primary'}
+              text="No Preference"
+              onPress={onNoPreferencePress}
+              style={hasPreference ? { fontStyle: 'italic' } : undefined}
+              disabled={disabled}
+            />
+          )}
+          {onDone && <Button onPress={onDone} text="Done" />}
+        </BottomWrapper>
+      )}
     </Card>
   ) : null;
 }

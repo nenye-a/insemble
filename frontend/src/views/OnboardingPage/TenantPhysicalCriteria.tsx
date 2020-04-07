@@ -2,7 +2,7 @@ import React, { useState, Dispatch, useMemo } from 'react';
 import styled from 'styled-components';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useHistory, Redirect } from 'react-router-dom';
-import { useForm, FieldError, FieldValues } from 'react-hook-form';
+import { useForm, FieldValues } from 'react-hook-form';
 
 import {
   View,
@@ -12,7 +12,6 @@ import {
   MultiSelectInput,
   Form as BaseForm,
   Button,
-  TextInput,
   Text,
 } from '../../core-ui';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
@@ -35,19 +34,22 @@ type Props = {
 export default function TenantPhysicalCriteria(props: Props) {
   let { dispatch, state } = props;
   let { tenantToken } = useCredentials();
+  let { physicalSiteCriteria } = state;
   let signedIn = !!tenantToken;
   let history = useHistory();
   let { data: equipmentData, loading: equipmentLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
   let [createBrand, { loading, data }] = useMutation<CreateBrand, CreateBrandVariables>(
     CREATE_BRAND
   );
-  let [selectedSpaceOptions, setSelectedSpaceOptions] = useState<Array<string>>([]);
+  let [selectedSpaceOptions, setSelectedSpaceOptions] = useState<Array<string>>(
+    physicalSiteCriteria?.spaceType || []
+  );
   let [selectedEquipmentOptions, setSelectedEquipmentOptions] = useState<Array<string>>([]);
   let [minSqft, setMinSqft] = useState('');
   let [maxSqft, setMaxSqft] = useState('');
   let sqftError = useMemo(() => getRangeInputError(minSqft, maxSqft), [minSqft, maxSqft]);
-  let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
-  let { register, errors, handleSubmit } = useForm();
+  // let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
+  let { errors, handleSubmit } = useForm();
 
   let onSubmit = (fieldValues: FieldValues) => {
     if (!sqftError) {
@@ -114,7 +116,7 @@ export default function TenantPhysicalCriteria(props: Props) {
           onHighRangeInputChange={setMaxSqft}
         />
         {sqftError ? <ErrorMessage>{sqftError}</ErrorMessage> : null}
-        <NumberTextInput
+        {/* <NumberTextInput
           label="Minimum Frontage Width (ft)"
           name="minFrontageWidth"
           ref={register({
@@ -122,11 +124,11 @@ export default function TenantPhysicalCriteria(props: Props) {
           })}
           containerStyle={inputContainerStyle}
           errorMessage={(errors?.minFrontageWidth as FieldError)?.message || ''}
-        />
-        <LabelText text="Buildout Preference" />
+        /> */}
+        <LabelText text="Features & Amenities" />
         {!equipmentLoading && equipmentData && (
           <MultiSelectInput
-            placeholder="Buildout preference"
+            placeholder="Features & Amenities"
             options={equipmentData.equipments}
             onChange={setSelectedEquipmentOptions}
             containerStyle={{ marginBottom: 12 }}
@@ -190,9 +192,9 @@ const Content = styled(View)`
   padding: 24px 48px;
 `;
 
-const NumberTextInput = styled(TextInput)`
-  width: 80px;
-`;
+// const NumberTextInput = styled(TextInput)`
+//   width: 80px;
+// `;
 
 const LabelText = styled(Label)`
   padding-top: 12px;

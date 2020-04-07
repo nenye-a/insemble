@@ -1,4 +1,5 @@
 import { LocationInput } from '../generated/globalTypes';
+import { SPACES_TYPE } from '../constants/spaces';
 
 export enum NewLocationPlan {
   YES = 'YES',
@@ -91,7 +92,9 @@ export let tenantOnboardingInitialState = {
     location: [],
   },
   targetCustomers: {},
-  physicalSiteCriteria: {},
+  physicalSiteCriteria: {
+    spaceType: [...SPACES_TYPE],
+  },
 };
 
 export default function tenantOnboardingReducer(state: State, action: Action): State {
