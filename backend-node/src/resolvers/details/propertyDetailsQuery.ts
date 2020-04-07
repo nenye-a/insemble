@@ -19,14 +19,23 @@ let propertyDetailsResolver: FieldResolver<'Query', 'propertyDetails'> = async (
   if (!selectedProperty) {
     throw new Error('Property not found!');
   }
-  let { result }: PropertyDetailsType = (
-    await axios.get(`${LEGACY_API_URI}/api/propertyDetails/`, {
-      params: {
-        property_id: selectedProperty.propertyId,
-      },
-    })
-  ).data;
-  if (!result) {
+  if (!selectedProperty.propertyId) {
+    throw new Error('Your location details are loading.');
+  }
+  let resultDetail;
+  try {
+    let { result }: PropertyDetailsType = (
+      await axios.get(`${LEGACY_API_URI}/api/propertyDetails/`, {
+        params: {
+          property_id: selectedProperty.propertyId,
+        },
+      })
+    ).data;
+    resultDetail = result;
+  } catch {
+    throw new Error('An error has occurred, please try again.');
+  }
+  if (!resultDetail) {
     throw new Error("Can't get the result!");
   }
   let {
@@ -36,7 +45,7 @@ let propertyDetailsResolver: FieldResolver<'Query', 'propertyDetails'> = async (
     demographics1,
     demographics3,
     demographics5,
-  } = result;
+  } = resultDetail;
 
   let {
     nearby_apartments: numApartements,
