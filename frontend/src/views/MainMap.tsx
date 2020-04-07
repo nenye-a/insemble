@@ -12,6 +12,8 @@ import HeaderFilterBar from './MapPage/HeaderFilterBar';
 import MapContainer from './MapContainer';
 import DeepDiveModal from './DeepDivePage/DeepDiveModal';
 import AvailableProperties from './MapPage/AvailableProperties';
+import MapAlert from './MapPage/MapAlert';
+import { SelectedLocation } from '../components/LocationInput';
 import { GET_TENANT_MATCHES_DATA } from '../graphql/queries/server/matches';
 import { EDIT_BRAND } from '../graphql/queries/server/brand';
 import { WHITE, HEADER_BORDER_COLOR, THEME_COLOR } from '../constants/colors';
@@ -23,7 +25,6 @@ import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer'
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 import { LocationInput } from '../generated/globalTypes';
 import SvgPropertyLocation from '../components/icons/property-location';
-import MapAlert from './MapPage/MapAlert';
 
 type BrandId = {
   brandId: string;
@@ -108,6 +109,7 @@ export default function MainMap() {
   let [propertyRecommendationVisible, togglePropertyRecommendation] = useState(false);
   let [deepDiveModalVisible, toggleDeepDiveModal] = useState(false);
   let [mapErrorMessage, setMapErrorMessage] = useState('');
+  let [addressSearchLocation, setAddressSearchLocation] = useState<SelectedLocation | null>(null);
   let { isLoading } = useGoogleMaps();
   let { isDesktop } = useViewport();
   let params = useParams<BrandId>();
@@ -139,7 +141,7 @@ export default function MainMap() {
   let [selectedLatLng, setSelectedLatLng] = useState<SelectedLatLng | null>(null);
 
   let visibleMatchingProperties = tenantMatchesData?.tenantMatches.matchingProperties
-    ? tenantMatchesData.tenantMatches.matchingProperties
+    ? tenantMatchesData.tenantMatches.matchingProperties.filter((property) => property.visible)
     : [];
   let onFilterChange = (state: SideBarFiltersState) => {
     let { demographics, properties, openFilterName } = state;
@@ -379,6 +381,8 @@ export default function MainMap() {
           categories={tenantMatchesData?.tenantMatches.categories || []}
           onPublishChangesPress={onPublishChangesPress}
           publishButtonDisabled={filtersAreEqual}
+          onAddressSearch={setAddressSearchLocation}
+          brandName={tenantMatchesData?.tenantMatches.name}
         />
         {(loading || editBrandLoading) && (
           <LoadingOverlay>
@@ -417,42 +421,40 @@ export default function MainMap() {
               }}
               matchingLocations={tenantMatchesData?.tenantMatches.matchingLocations}
               matchingProperties={visibleMatchingProperties}
+              currentLocation={tenantMatchesData?.tenantMatches.location}
+              addressSearchLocation={addressSearchLocation}
             />
           )}
-          {visibleMatchingProperties.length > 0 && (
-            <>
-              {isDesktop && (
-                <ShowPropertyButton
-                  visible={!propertyRecommendationVisible}
-                  mode="secondary"
-                  onPress={() => togglePropertyRecommendation(true)}
-                  text="Show Property List"
-                  icon={<SvgPropertyLocation />}
-                />
-              )}
-              <AvailableProperties
-                visible={propertyRecommendationVisible}
-                onShowOrHide={(visible) => {
-                  if (visible !== undefined) {
-                    togglePropertyRecommendation(visible);
-                  } else {
-                    togglePropertyRecommendation(!propertyRecommendationVisible);
-                  }
-                }}
-                matchingProperties={visibleMatchingProperties}
-                onPropertyPress={({ lat, lng, address, targetNeighborhood, propertyId }) => {
-                  setSelectedLatLng({
-                    lat,
-                    lng,
-                    address,
-                    targetNeighborhood,
-                    propertyId,
-                  });
-                  toggleDeepDiveModal(true);
-                }}
-              />
-            </>
+          {isDesktop && (
+            <ShowPropertyButton
+              visible={!propertyRecommendationVisible}
+              mode="secondary"
+              onPress={() => togglePropertyRecommendation(true)}
+              text="Show Property List"
+              icon={<SvgPropertyLocation />}
+            />
           )}
+          <AvailableProperties
+            visible={propertyRecommendationVisible}
+            onShowOrHide={(visible) => {
+              if (visible !== undefined) {
+                togglePropertyRecommendation(visible);
+              } else {
+                togglePropertyRecommendation(!propertyRecommendationVisible);
+              }
+            }}
+            matchingProperties={visibleMatchingProperties}
+            onPropertyPress={({ lat, lng, address, targetNeighborhood, propertyId }) => {
+              setSelectedLatLng({
+                lat,
+                lng,
+                address,
+                targetNeighborhood,
+                propertyId,
+              });
+              toggleDeepDiveModal(true);
+            }}
+          />
         </Container>
       </View>
     </TenantMatchesContext.Provider>

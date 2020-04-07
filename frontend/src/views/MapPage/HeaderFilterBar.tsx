@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 
-import { View, Button, Text } from '../../core-ui';
-import { MultiSelectBox } from '../../components';
+import { View, Button, Text, Divider } from '../../core-ui';
+import { MultiSelectBox, LocationInput } from '../../components';
+import { SelectedLocation } from '../../components/LocationInput';
+import { TenantMatchesContext } from '../MainMap';
 
-import { WHITE, HEADER_BORDER_COLOR } from '../../constants/colors';
-// import Legend from '../MapPage/Legend';
-// import TextInput from '../../core-ui/ContainedTextInput';
+import { WHITE, HEADER_BORDER_COLOR, LIGHTER_GREY, BLACK } from '../../constants/colors';
+import { DEFAULT_BORDER_RADIUS } from '../../constants/theme';
+
 import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
 import { Categories } from '../../generated/Categories';
-import { TenantMatchesContext } from '../MainMap';
+import currentLocationIcon from '../../assets/images/current-location-marker.svg';
 
 type PlaceResult = google.maps.places.PlaceResult;
 
@@ -19,42 +21,29 @@ type Props = {
   categories?: Array<string>;
   onPublishChangesPress?: () => void;
   publishButtonDisabled?: boolean;
+  onAddressSearch?: (selectedLocation: SelectedLocation) => void;
+  brandName?: string | null;
 };
 
 export default function HeaderFilterBar(props: Props) {
-  let { categories, onPublishChangesPress, publishButtonDisabled, address } = props;
+  let {
+    categories,
+    onPublishChangesPress,
+    publishButtonDisabled,
+    address,
+    onAddressSearch,
+    brandName,
+  } = props;
   // let [selectedDropdownValue, setSelectedDropdownValue] = useState<string>('Recommended');
   let [selectedOptions, setSelectedOptions] = useState<Array<string>>([]);
   let { data: categoryData, loading: categoryLoading } = useQuery<Categories>(GET_CATEGORIES);
   let { onCategoryChange } = useContext(TenantMatchesContext);
-
-  let inputRef = useRef<HTMLInputElement | null>(null);
-  let selectedPlace = useRef<PlaceResult | null>(null);
-
-  useEffect(() => {
-    if (inputRef.current) {
-      let autocomplete = new window.google.maps.places.Autocomplete(inputRef.current);
-      let listener = autocomplete.addListener('place_changed', () => {
-        let place = autocomplete.getPlace();
-        selectedPlace.current = place;
-      });
-      return () => {
-        listener.remove();
-      };
-    }
-  }, []);
 
   useEffect(() => {
     if (categories) {
       setSelectedOptions(categories);
     }
   }, [categories]);
-
-  // let submitHandler = () => {
-  //   if (selectedPlace.current) {
-  //     onAddressChange && onAddressChange(selectedPlace.current);
-  //   }
-  // };
 
   let setTagSelected = (tag: string, selected: boolean) => {
     let newSelectedOptions = selectedOptions;
@@ -96,22 +85,26 @@ export default function HeaderFilterBar(props: Props) {
             onPress={onPublishChangesPress}
             disabled={publishButtonDisabled}
           />
+          <LocationInput
+            icon
+            placeholder="Search for something on the map"
+            onPlaceSelected={onAddressSearch}
+            className="search-box"
+            containerStyle={{ paddingLeft: 20, width: 340 }}
+          />
         </Row>
-        <AddressContainer>
-          {address ? <Text>{`My Address: ${address}`}</Text> : null}
-        </AddressContainer>
+        {address && (
+          <Row>
+            <Text>Showing Results For:</Text>
+            <AddressContainer>
+              <Icon src={currentLocationIcon} />
+              <BrandName>{brandName}</BrandName>
+              <Divider mode="vertical" />
+              <Address>{address}</Address>
+            </AddressContainer>
+          </Row>
+        )}
       </RowedView>
-
-      {/* <LocationInputContainer flex>
-        <LocationInput
-          icon
-          ref={inputRef}
-          placeholder={'Search an address or retailer'}
-          onSubmit={submitHandler}
-          className="search-box"
-        />
-      </LocationInputContainer> */}
-      {/* <Legend /> */}
     </Container>
   );
 }
@@ -120,6 +113,7 @@ export default function HeaderFilterBar(props: Props) {
 
 const Row = styled(View)`
   flex-direction: row;
+  align-items: center;
   padding: 6px 0;
 `;
 
@@ -142,25 +136,38 @@ const UpdateMapButton = styled(Button)`
 `;
 
 const AddressContainer = styled(View)`
-  padding: 6px 0;
+  padding: 6px;
+  flex-direction: row;
+  width: 400px;
+  background-color: ${LIGHTER_GREY};
+  border-radius: ${DEFAULT_BORDER_RADIUS};
+  margin-left: 8px;
 `;
 
-// we should remove this styling later when dropdown and legend are ready
-// const LocationInputContainer = styled(View)`
-//   align-items: center;
-//   margin-left: -20%;
-// `;
+const BrandName = styled(Text)`
+  align-self: center;
+  width: fit-content;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-right: 8px;
+  color: ${BLACK};
+`;
 
-// TODO: check this styling esp on Safari when uncommenting
-// const LocationInput = styled(TextInput)`
-//   width: 343px;
-//   height: 36px;
-//   border: solid;
-//   border-width: 1px;
-//   margin-left: 8px;
-//   align-self: center;
-// `;
+const Address = styled(Text)`
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  align-self: center;
+  padding-left: 8px;
+  max-width: 300px;
+  color: ${BLACK};
+`;
 
 const CategorySelector = styled(MultiSelectBox)`
   margin-right: 8px;
+`;
+
+const Icon = styled.img`
+  padding-right: 8px;
 `;

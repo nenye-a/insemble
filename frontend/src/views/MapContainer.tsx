@@ -7,16 +7,19 @@ import { useLazyQuery } from '@apollo/react-hooks';
 import { GET_LOCATION_PREVIEW } from '../graphql/queries/server/preview';
 import { View, LoadingIndicator } from '../core-ui';
 import LocationDetail from '../components/location-detail/LocationDetail';
-import MapPin from '../components/icons/map-pin.svg';
-import availablePropertyPin from '../assets/images/available-property-pin.svg';
+import availablePropertyPin from '../assets/images/map-pin.svg';
+import mapPin from '../assets/images/small-map-pin.svg';
+import currentLocationPin from '../assets/images/current-location-marker.svg';
 import {
   TenantMatches_tenantMatches_matchingLocations as TenantMatchesMatchingLocations,
   TenantMatches_tenantMatches_matchingProperties as TenantMatchesMatchingProperties,
+  TenantMatches_tenantMatches_location as TenantMatchesLocation,
 } from '../generated/TenantMatches';
 import { LocationPreview, LocationPreviewVariables } from '../generated/LocationPreview';
 import { GOOGLE_MAPS_STYLE } from '../constants/googleMaps';
 import MapTour from './MapPage/MapTour';
 import { getGroupedMatchingPropertiesByKey } from '../utils';
+import { SelectedLocation } from '../components/LocationInput';
 
 type LatLng = google.maps.LatLng;
 type LatLngLiteral = google.maps.LatLngLiteral;
@@ -32,6 +35,8 @@ type Props = {
   matchingLocations?: Array<TenantMatchesMatchingLocations> | null;
   matchingProperties?: Array<TenantMatchesMatchingProperties>;
   onMapError?: (message: string) => void;
+  currentLocation?: TenantMatchesLocation | null;
+  addressSearchLocation?: SelectedLocation | null;
 };
 
 const defaultCenter = {
@@ -41,7 +46,14 @@ const defaultCenter = {
 
 const defaultZoom = 10;
 
-function MapContainer({ onMarkerClick, matchingLocations, matchingProperties, onMapError }: Props) {
+function MapContainer({
+  onMarkerClick,
+  matchingLocations,
+  matchingProperties,
+  onMapError,
+  currentLocation,
+  addressSearchLocation,
+}: Props) {
   let history = useHistory();
   let { brandId = '' } = useParams();
   let [getLocation, { data, loading }] = useLazyQuery<LocationPreview, LocationPreviewVariables>(
@@ -141,8 +153,6 @@ function MapContainer({ onMarkerClick, matchingLocations, matchingProperties, on
       <LoadingIndicator visible={loading} />
       <GoogleMap
         ref={mapRef}
-        defaultZoom={defaultZoom}
-        defaultCenter={defaultCenter}
         defaultOptions={{
           maxZoom: 17,
           minZoom: 7,
@@ -151,6 +161,12 @@ function MapContainer({ onMarkerClick, matchingLocations, matchingProperties, on
           fullscreenControl: false,
         }}
         onClick={(event) => onMapClick(event.latLng)}
+        zoom={addressSearchLocation ? 17 : defaultZoom}
+        center={
+          addressSearchLocation
+            ? { lat: Number(addressSearchLocation.lat), lng: Number(addressSearchLocation.lng) }
+            : defaultCenter
+        }
       >
         {groupedMatchingProperties &&
           groupedMatchingProperties.length > 0 &&
@@ -184,8 +200,16 @@ function MapContainer({ onMarkerClick, matchingLocations, matchingProperties, on
               </Marker>
             );
           })}
+        {currentLocation && (
+          <Marker
+            position={
+              new google.maps.LatLng(Number(currentLocation.lat), Number(currentLocation.lng))
+            }
+            icon={currentLocationPin}
+          />
+        )}
         {markerPosition && !loading && data && (
-          <Marker position={markerPosition} onClick={onPreviewClick} icon={MapPin}>
+          <Marker position={markerPosition} onClick={onPreviewClick} icon={mapPin}>
             <LocationDetail
               visible
               title={data?.locationPreview.targetAddress}
