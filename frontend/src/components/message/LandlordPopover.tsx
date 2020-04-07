@@ -3,25 +3,17 @@ import styled from 'styled-components';
 
 import { View, Text, PillButton } from '../../core-ui';
 import { THEME_COLOR } from '../../constants/colors';
-import { FONT_WEIGHT_MEDIUM } from '../../constants/theme';
-import { Conversations_conversations_brand_nextLocations as NextLocations } from '../../generated/Conversations';
+import { FONT_WEIGHT_MEDIUM, FONT_SIZE_MEDIUM } from '../../constants/theme';
 
 type Props = {
   matchScore: number;
   brandCategories: Array<string>;
-  nextLocations: Array<NextLocations> | null;
-  locationCount: number | null;
 };
 
-export default function LandlordPopover({
-  matchScore,
-  brandCategories,
-  nextLocations,
-  locationCount,
-}: Props) {
+export default function LandlordPopover({ matchScore, brandCategories }: Props) {
   return (
     <PopoverContainer>
-      <MatchTitle>{matchScore}% customer match</MatchTitle>
+      <MatchTitle>{matchScore}% match</MatchTitle>
       {brandCategories.length > 0 && (
         <>
           <PopoverText>Categories:</PopoverText>
@@ -34,33 +26,12 @@ export default function LandlordPopover({
           </Row>
         </>
       )}
-
-      {nextLocations && (
-        <>
-          <PopoverText>Expanding in:</PopoverText>
-          <Row>
-            {nextLocations.map((location, idx) => (
-              <Pill disabled key={idx} primary>
-                {location.address}
-              </Pill>
-            ))}
-          </Row>
-        </>
-      )}
-
-      {/* <PopoverText>Years in business:</PopoverText> */}
-      {locationCount ? (
-        <Row>
-          <PopoverText># of existing locations: </PopoverText>
-          <LocationCount>{locationCount}</LocationCount>
-        </Row>
-      ) : null}
     </PopoverContainer>
   );
 }
 
 const Row = styled(View)`
-  flex-direction: row;
+  flex-wrap: row wrap;
 `;
 
 const PopoverText = styled(Text)`
@@ -69,18 +40,15 @@ const PopoverText = styled(Text)`
 
 const PopoverContainer = styled(View)`
   padding: 20px;
+  max-width: 300px;
 `;
 
 const Pill = styled(PillButton)`
   margin-right: 8px;
 `;
 
-const LocationCount = styled(PopoverText)`
-  color: ${THEME_COLOR};
-`;
-
 const MatchTitle = styled(Text)`
-  font-size: 16px;
+  font-size: ${FONT_SIZE_MEDIUM};
   color: ${THEME_COLOR};
   font-weight: ${FONT_WEIGHT_MEDIUM};
 `;

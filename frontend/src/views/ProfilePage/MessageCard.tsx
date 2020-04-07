@@ -79,12 +79,7 @@ export default function MessageCard(props: Props) {
           <Row>
             <SvgReply />
             <Popover button={<SvgInfoFilled style={{ color: THEME_COLOR, marginLeft: 10 }} />}>
-              <LandlordPopover
-                matchScore={matchScore}
-                brandCategories={brandCategories}
-                nextLocations={nextLocations}
-                locationCount={locationCount}
-              />
+              <LandlordPopover matchScore={matchScore} brandCategories={brandCategories} />
             </Popover>
           </Row>
         )}
