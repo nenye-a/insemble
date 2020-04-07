@@ -122,7 +122,7 @@ export default function ConfirmBusinessDetail(props: Props) {
             </Text>
           </FormContainer>
           <OnboardingFooter>
-            <Button text="Next" onPress={() => history.goBack()} />
+            <Button text="Back" onPress={() => history.goBack()} />
           </OnboardingFooter>
         </>
       ) : (
