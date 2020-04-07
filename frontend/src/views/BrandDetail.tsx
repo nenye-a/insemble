@@ -18,7 +18,7 @@ import {
 } from '../core-ui';
 import { LocationInput as LocationsInput, Popup } from '../components';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../constants/theme';
-import { THEME_COLOR } from '../constants/colors';
+import { THEME_COLOR, DARK_TEXT_COLOR } from '../constants/colors';
 import { useGoogleMaps } from '../utils';
 import { NEW_LOCATION_PLAN_OPTIONS } from '../constants/locationPlan';
 import { NewLocationPlanObj } from '../reducers/tenantOnboardingReducer';
@@ -224,9 +224,18 @@ export default function BrandDetail() {
           errorMessage={(errors?.locationCount as FieldError)?.message || ''}
         />
         <ButtonRow>
+          <ReturnToMap
+            mode="withShadow"
+            text="Return to map to edit customer / physical criteria"
+            textProps={{ style: { color: DARK_TEXT_COLOR } }}
+            onPress={() => {
+              history.push(`/map/${brandId}`);
+            }}
+          />
           <RemoveButton
-            mode="secondary"
+            mode="withShadow"
             text="Remove Brand"
+            textProps={{ style: { color: DARK_TEXT_COLOR } }}
             onPress={() => {
               setDeleteConfirmationVisible(true);
             }}
@@ -290,4 +299,9 @@ const RemoveButton = styled(Button)`
 const RepresentativeAddress = styled(LocationsInput)`
   margin-top: 12px;
   margin-bottom: 8px;
+`;
+
+const ReturnToMap = styled(Button)`
+  position: absolute;
+  left: 0;
 `;
