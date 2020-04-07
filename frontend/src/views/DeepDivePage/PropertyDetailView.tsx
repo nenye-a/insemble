@@ -22,13 +22,14 @@ type Params = {
 
 type Props = {
   propertyId?: string;
+  selectedSpaceIndex: number;
+  onSpaceChange: (spaceIndex: number) => void;
 };
 
 export default function PropertyDetailView(props: Props) {
-  let { propertyId = '' } = props;
+  let { propertyId = '', selectedSpaceIndex, onSpaceChange } = props;
   let contextValue = useContext(DeepDiveContext);
   let [saveSpace, { data }] = useMutation<SaveSpace, SaveSpaceVariables>(SAVE_SPACE);
-  let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [contactModalVisible, toggleContactModalVisibility] = useState(false);
   let params = useParams<Params>();
   let [spaceDetails, setSpaceDetails] = useState<Array<SpaceDetails>>(
@@ -46,7 +47,7 @@ export default function PropertyDetailView(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  let selectedData = spaceDetails[selectedTabIndex];
+  let selectedData = spaceDetails[selectedSpaceIndex];
 
   if (spaceDetails) {
     let getSpaceTab = () => {
@@ -60,9 +61,9 @@ export default function PropertyDetailView(props: Props) {
         <HeaderContainer>
           <SpaceSegment
             options={getSpaceTab()}
-            selectedIndex={selectedTabIndex}
+            selectedIndex={selectedSpaceIndex}
             fullWidth={false}
-            onPress={setSelectedTabIndex}
+            onPress={onSpaceChange}
             segmentStyle={{ width: 75 }}
             activeSegmentStyle={{ width: 75 }}
             textStyle={{ fontWeight: FONT_WEIGHT_MEDIUM, color: TEXT_COLOR }}
