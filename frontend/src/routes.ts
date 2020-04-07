@@ -19,6 +19,8 @@ import LandlordOnboarding from './views/LandlordOnboarding';
 import LandlordAddSpace from './views/LandlordAddSpace';
 import LandlordSignUp from './views/LandlordSignUp';
 import LandlordLogin from './views/LandlordLogin';
+import TenantBilling from './views/TenantBilling';
+import TenantPlan from './views/TenantPlan';
 import TenantEmailVerification from './views/TenantEmailVerification';
 import VerificationSuccessful from './views/VerificationSuccessful';
 import LandlordEmailVerification from './views/LandlordEmailVerification';
@@ -242,6 +244,16 @@ const TENANT_ROUTES = [
     layout: UserProfileLayout,
     component: TenantSavedProperties,
     authorization: tenantAuthorization,
+  },
+  {
+    path: '/user/billing',
+    layout: UserProfileLayout,
+    component: TenantBilling,
+  },
+  {
+    path: '/user/plan',
+    layout: BasicLayout,
+    component: TenantPlan,
   },
   {
     path: '/email-verification/:verificationId',
