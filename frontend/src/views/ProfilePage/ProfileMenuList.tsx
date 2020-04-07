@@ -9,6 +9,7 @@ import SvgPerson from '../../components/icons/person';
 import SvgBusiness from '../../components/icons/business';
 import SvgMessage from '../../components/icons/message';
 import SvgFullHeart from '../../components/icons/full-heart';
+import SvgBilling from '../../components/icons/bill';
 import { Role } from '../../types/types';
 
 type Props = {
@@ -115,6 +116,11 @@ const TENANT_PROFILE_MENU: Array<MenuObj> = [
     menu: 'Saved Properties',
     icon: <SvgFullHeart />,
     path: '/user/saved-properties',
+  },
+  {
+    menu: 'Billing & Plans',
+    icon: <SvgBilling />,
+    path: '/user/billing',
   },
 ];
 

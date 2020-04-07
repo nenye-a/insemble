@@ -21,6 +21,7 @@ export default function SegmentedControl(props: Props) {
     options,
     selectedIndex,
     onPress,
+    containerStyle,
     activeSegmentStyle,
     segmentStyle,
     activeTextStyle,
@@ -29,7 +30,7 @@ export default function SegmentedControl(props: Props) {
   } = props;
 
   return (
-    <SegmentContainer {...otherProps}>
+    <SegmentContainer style={containerStyle} {...otherProps}>
       {options.map((option, index) => {
         let isActive = selectedIndex === index;
         return (
