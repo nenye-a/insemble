@@ -20,7 +20,7 @@ import { WHITE, HEADER_BORDER_COLOR, THEME_COLOR } from '../constants/colors';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_MEDIUM } from '../constants/theme';
 import { TenantMatches, TenantMatchesVariables } from '../generated/TenantMatches';
 
-import { useGoogleMaps, isEqual, useViewport } from '../utils';
+import { useGoogleMaps, isEqual, useViewport, omitTypename } from '../utils';
 import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer';
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 import { LocationInput } from '../generated/globalTypes';
@@ -292,44 +292,62 @@ export default function MainMap() {
   };
 
   let onPublishChangesPress = async () => {
-    let { demographics, categories, property, business } = filters;
-    let {
-      minIncome,
-      maxIncome,
-      minAge,
-      maxAge,
-      personas,
-      commute,
-      education,
-      ethnicity,
-    } = demographics;
-    let { minSize, maxSize, minRent, maxRent, spaceType } = property;
-    let result = await editBrand({
-      variables: {
-        filter: {
-          categories,
-          personas,
-          minAge: Number(minAge),
-          maxAge: Number(maxAge),
-          minIncome: Number(minIncome) * 1000,
-          maxIncome: Number(maxIncome) * 1000,
-          minSize,
-          maxSize,
-          minRent,
-          maxRent,
-          spaceType,
-          commute,
-          education,
-          ethnicity,
+    if (tenantMatchesData) {
+      let { demographics, categories, property } = filters;
+      let {
+        minIncome,
+        maxIncome,
+        minAge,
+        maxAge,
+        personas,
+        commute,
+        education,
+        ethnicity,
+      } = demographics;
+      let { minSize, maxSize, minRent, maxRent, spaceType, amenities } = property;
+      let {
+        name,
+        location,
+        userRelation,
+        locationCount,
+        newLocationPlan,
+        nextLocations,
+      } = tenantMatchesData.tenantMatches;
+
+      let result = await editBrand({
+        variables: {
+          filter: {
+            categories,
+            personas,
+            minAge: Number(minAge),
+            maxAge: Number(maxAge),
+            minIncome: Number(minIncome) * 1000,
+            maxIncome: Number(maxIncome) * 1000,
+            minSize,
+            maxSize,
+            minRent,
+            maxRent,
+            spaceType,
+            commute,
+            education,
+            ethnicity,
+            equipment: amenities,
+          },
+          business: {
+            name,
+            location: location ? (omitTypename(location) as LocationInput) : null,
+            userRelation,
+            locationCount,
+            newLocationPlan,
+            nextLocations,
+          },
+          brandId,
         },
-        ...(business &&
-          business.name && { business: { name: business.name, location: business.location } }),
-        brandId,
-      },
-    });
-    if (result.data?.editBrand) {
-      setCanUpdateMap(false);
-      tenantMatchesRefetch({ brandId });
+      });
+      if (result.data?.editBrand) {
+        setCanUpdateMap(false);
+        tenantMatchesRefetch({ brandId });
+      }
     }
   };
 
@@ -351,6 +369,8 @@ export default function MainMap() {
         categories,
         ethnicity,
         equipment,
+        location,
+        name,
       } = tenantMatchesData.tenantMatches;
       setFilters({
         demographics: {
@@ -372,6 +392,10 @@ export default function MainMap() {
           amenities: equipment,
         },
         categories,
+        business: {
+          location,
+          name,
+        },
       });
     }
   }, [loading, tenantMatchesData]);

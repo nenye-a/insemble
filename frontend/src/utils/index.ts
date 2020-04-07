@@ -11,6 +11,7 @@ export { default as getKeyfactsValue } from './getKeyfactsValue';
 export { default as getViewportType } from './getViewportType';
 export { default as localStorage } from './localStorage';
 export { default as numberFormatter } from './numberFormatter';
+export { default as omitTypename } from './omitTypename';
 export { default as roundDecimal } from './roundDecimal';
 export { default as urlEncode } from './urlEncode';
 export { default as useCredentials } from './useCredentials';
