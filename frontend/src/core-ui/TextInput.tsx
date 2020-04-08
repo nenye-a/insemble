@@ -15,6 +15,7 @@ import {
   TEXT_COLOR,
   DISABLED_TEXT_INPUT_BACKGROUND,
   RED_TEXT,
+  THEME_COLOR,
 } from '../constants/colors';
 import useID from '../utils/useID';
 
@@ -49,7 +50,7 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) =>
   let isError = !!errorMessage;
   return (
     <View style={containerStyle}>
-      {label && <LabelWrapper isError={isError} id={id} text={label} />}
+      {label && <LabelWrapper color={isError ? RED_TEXT : THEME_COLOR} id={id} text={label} />}
       <InputBox
         id={id}
         type="text"
