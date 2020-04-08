@@ -2,7 +2,7 @@ import React, { useState, useEffect, Dispatch } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
-import { View, RadioGroup, Text, Label, Button, Form } from '../../core-ui';
+import { View, Text, Button, Form } from '../../core-ui';
 import { LocationInput } from '../../components';
 import { THEME_COLOR } from '../../constants/colors';
 import { MAPS_IFRAME_URL_SEARCH } from '../../constants/googleMaps';
@@ -11,37 +11,16 @@ import { Action, State as LandlordOnboardingState } from '../../reducers/landlor
 import { urlEncode } from '../../utils';
 import { SelectedLocation } from '../../components/LocationInput';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
-import { MarketingPreference } from '../../generated/globalTypes';
 
 type Props = {
   dispatch: Dispatch<Action>;
   state: LandlordOnboardingState;
 };
 
-type MarketingPreferenceRadio = {
-  label: string;
-  value: MarketingPreference;
-};
-
-const MARKETING_PREFERENCE_OPTIONS: Array<MarketingPreferenceRadio> = [
-  {
-    label: 'Public — I want to publicly advertise my property to matching tenants.',
-    value: MarketingPreference.PUBLIC,
-  },
-  {
-    label:
-      'Private — I want to connect with matching tenants without publicly listing my property.',
-    value: MarketingPreference.PRIVATE,
-  },
-];
-
 export default function LocationConfirm(props: Props) {
   let history = useHistory();
   let { state: landlordOnboardingState, dispatch } = props;
   let { confirmLocation } = landlordOnboardingState;
-  let [selectedMarketingPreference, setSelectedMarketingPreference] = useState<
-    MarketingPreferenceRadio
-  >(MARKETING_PREFERENCE_OPTIONS[0]);
   let [selectedLocation, setSelectedLocation] = useState<SelectedLocation | undefined>(
     confirmLocation?.physicalAddress
   );
@@ -50,10 +29,8 @@ export default function LocationConfirm(props: Props) {
     selectedLocation?.address || confirmLocation?.physicalAddress?.address || '';
   let mapURL = confirmLocation ? MAPS_IFRAME_URL_SEARCH + '&q=' + urlEncode(propertyAddress) : '';
 
-  let allValid = selectedMarketingPreference && selectedLocation;
-
   useEffect(() => {
-    if (allValid) {
+    if (selectedLocation) {
       dispatch({
         type: 'SAVE_CHANGES_CONFIRM_LOCATION',
         values: {
@@ -66,13 +43,12 @@ export default function LocationConfirm(props: Props) {
               name: '',
               id: '',
             },
-            marketingPreference: selectedMarketingPreference.value,
           },
         },
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allValid, dispatch, selectedLocation, selectedMarketingPreference]);
+  }, [selectedLocation, dispatch, selectedLocation]);
 
   let saveFormState = () => {
     dispatch({
@@ -87,13 +63,12 @@ export default function LocationConfirm(props: Props) {
             name: '',
             id: '',
           },
-          marketingPreference: selectedMarketingPreference.value,
         },
       },
     });
   };
   let handleSubmit = () => {
-    if (allValid) {
+    if (selectedLocation) {
       history.push('/landlord/new-property/step-3');
     }
   };
@@ -121,17 +96,6 @@ export default function LocationConfirm(props: Props) {
             }}
           />
         </RowedView>
-        <Label text="Marketing Preference" />
-        <RadioGroup<MarketingPreferenceRadio>
-          name="Marketing Preference"
-          options={MARKETING_PREFERENCE_OPTIONS}
-          selectedOption={selectedMarketingPreference}
-          onSelect={(item) => {
-            setSelectedMarketingPreference(item);
-          }}
-          radioItemProps={{ style: { marginTop: 9 } }}
-          titleExtractor={(item: MarketingPreferenceRadio) => item.label}
-        />
       </FormContainer>
       <OnboardingFooter>
         <TransparentButton
@@ -141,9 +105,9 @@ export default function LocationConfirm(props: Props) {
             saveFormState();
             history.goBack();
           }}
-          disabled={!allValid}
+          disabled={!selectedLocation}
         />
-        <Button type="submit" text="Next" disabled={!allValid} />
+        <Button type="submit" text="Next" disabled={!selectedLocation} />
       </OnboardingFooter>
     </Form>
   );

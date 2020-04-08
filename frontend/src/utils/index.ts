@@ -17,4 +17,5 @@ export { default as useCredentials } from './useCredentials';
 export { default as useID } from './useID';
 export { default as useGoogleMaps } from './useGoogleMaps';
 export { default as useViewport } from './useViewport';
+export { default as withinLA } from './withinLA';
 export * from './validation';

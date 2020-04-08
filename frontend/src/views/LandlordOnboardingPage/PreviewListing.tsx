@@ -72,16 +72,16 @@ export default function PreviewListing(props: Props) {
             businessType: otherBusinessType
               ? [...filteredBusinessType, otherBusinessType]
               : filteredBusinessType,
-            categories: selectedRetailCategories,
+            // categories: selectedRetailCategories,
             exclusive: existingExclusives,
             location: {
               lat: physicalAddress?.lat || '',
               lng: physicalAddress?.lng || '',
               address: physicalAddress?.address || '',
             },
-            marketingPreference,
+            // marketingPreference,
             name: physicalAddress?.name || '',
-            propertyType,
+            // propertyType,
             userRelations,
           },
           space: {
