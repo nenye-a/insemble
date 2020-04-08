@@ -17,7 +17,12 @@ import {
   Alert,
 } from '../core-ui';
 import { GET_BRANDS, DELETE_BRAND } from '../graphql/queries/server/brand';
-import { DEFAULT_BORDER_RADIUS, FONT_SIZE_SMALL, FONT_WEIGHT_MEDIUM } from '../constants/theme';
+import {
+  DEFAULT_BORDER_RADIUS,
+  FONT_SIZE_SMALL,
+  FONT_WEIGHT_MEDIUM,
+  FONT_WEIGHT_LIGHT,
+} from '../constants/theme';
 import { WHITE, THEME_COLOR } from '../constants/colors';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import SvgPlus from '../components/icons/plus';
@@ -144,10 +149,15 @@ export default (props: HeatmapProps) => {
           }}
         >
           <SvgPlus style={{ marginRight: 8, color: THEME_COLOR }} />
-          <Text color={THEME_COLOR}>New Retailer or Restaurant</Text>
+          <AddBrandText color={THEME_COLOR}>New Retailer or Restaurant</AddBrandText>
+          {/* TODO: Redirect  */}
+          <UpgradeButton
+            text="Upgrade to Add"
+            onPress={() => {}}
+            stopPropagation={true}
+            textProps={{ style: { fontWeight: FONT_WEIGHT_LIGHT } }}
+          />
         </AddButton>
-        {/* TODO: Redirect  */}
-        <UpgradeButton text="Upgrade to Add" onPress={() => {}} />
       </View>
     </View>
   );
@@ -239,8 +249,9 @@ const RemoveButton = styled(TouchableOpacity)`
   top: 63px;
 `;
 const UpgradeButton = styled(Button)`
-  position: absolute;
   width: 160px;
-  right: 120px;
-  top: 5px;
+`;
+
+const AddBrandText = styled(Text)`
+  margin-right: 100px;
 `;

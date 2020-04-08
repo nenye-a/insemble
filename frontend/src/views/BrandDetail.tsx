@@ -224,24 +224,28 @@ export default function BrandDetail() {
           errorMessage={(errors?.locationCount as FieldError)?.message || ''}
         />
         <ButtonRow>
-          <ReturnToMap
-            mode="withShadow"
-            text="Return to map to edit customer / physical criteria"
-            textProps={{ style: { color: DARK_TEXT_COLOR } }}
-            onPress={() => {
-              history.push(`/map/${brandId}`);
-            }}
-          />
-          <RemoveButton
-            mode="withShadow"
-            text="Remove Brand"
-            textProps={{ style: { color: DARK_TEXT_COLOR } }}
-            onPress={() => {
-              setDeleteConfirmationVisible(true);
-            }}
-            loading={deleteBrandLoading}
-          />
-          <Button text="Save Changes" type="submit" loading={editBrandLoading} />
+          <View>
+            <ReturnToMap
+              mode="withShadow"
+              text="Return to map to edit customer / physical criteria"
+              textProps={{ style: { color: DARK_TEXT_COLOR } }}
+              onPress={() => {
+                history.push(`/map/${brandId}`);
+              }}
+            />
+          </View>
+          <RowedView>
+            <RemoveButton
+              mode="withShadow"
+              text="Remove Brand"
+              textProps={{ style: { color: DARK_TEXT_COLOR } }}
+              onPress={() => {
+                setDeleteConfirmationVisible(true);
+              }}
+              loading={deleteBrandLoading}
+            />
+            <Button text="Save Changes" type="submit" loading={editBrandLoading} />
+          </RowedView>
         </ButtonRow>
         {/*
             <RowedView>
@@ -287,7 +291,7 @@ const RadioGroupWrapper = styled(RadioGroup)`
 
 const ButtonRow = styled(View)`
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   padding: 12px 0;
 `;
@@ -302,6 +306,6 @@ const RepresentativeAddress = styled(LocationsInput)`
 `;
 
 const ReturnToMap = styled(Button)`
-  position: absolute;
-  left: 0;
+  // position: absolute;
+  // left: 0;
 `;
