@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Text, View } from '../../core-ui';
 import { THEME_COLOR, HOVERED_LIST_ITEM_BG } from '../../constants/colors';
+import projectedIcon from '../../assets/images/arrow-projected.svg';
 
 export default function DemographicsLegend() {
   return (
@@ -10,6 +11,8 @@ export default function DemographicsLegend() {
       <Text>This Location</Text>
       <RoundExisting />
       <Text>Your Existing Location</Text>
+      <ProjectedIcon src={projectedIcon} />
+      <Text>Projected 5 Year Growth</Text>
     </BarRowedView>
   );
 }
@@ -28,4 +31,8 @@ const Round = styled(View)`
 const RoundExisting = styled(Round)`
   margin: 0 12px 0 36px;
   background-color: ${HOVERED_LIST_ITEM_BG};
+`;
+
+const ProjectedIcon = styled.img`
+  margin: 0 12px 0 36px;
 `;
