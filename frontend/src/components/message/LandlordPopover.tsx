@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { View, Text, PillButton } from '../../core-ui';
 import { THEME_COLOR } from '../../constants/colors';
-import { FONT_WEIGHT_MEDIUM, FONT_SIZE_MEDIUM } from '../../constants/theme';
+import { FONT_SIZE_MEDIUM } from '../../constants/theme';
 
 type Props = {
   matchScore: number;
@@ -31,24 +31,26 @@ export default function LandlordPopover({ matchScore, brandCategories }: Props) 
 }
 
 const Row = styled(View)`
-  flex-wrap: row wrap;
+  flex-flow: row wrap;
+  padding: 0 4px;
 `;
 
 const PopoverText = styled(Text)`
-  margin: 8px 0;
+  padding: 8px;
 `;
 
 const PopoverContainer = styled(View)`
-  padding: 20px;
-  max-width: 300px;
+  padding: 12px 8px;
+  min-width: 300px;
+  max-width: 500px;
 `;
 
 const Pill = styled(PillButton)`
-  margin-right: 8px;
+  margin: 4px;
 `;
 
 const MatchTitle = styled(Text)`
+  padding: 0px 8px;
   font-size: ${FONT_SIZE_MEDIUM};
   color: ${THEME_COLOR};
-  font-weight: ${FONT_WEIGHT_MEDIUM};
 `;
