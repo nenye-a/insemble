@@ -59,7 +59,3 @@ const PaymentsRowView = styled(RowView)`
 const Label = styled(BaseLabel)`
   padding-bottom: 8px;
 `;
-
-const Label = styled(BaseLabel)`
-  padding-bottom: 8px;
-`;
