@@ -110,6 +110,7 @@ export default function MainMap() {
   let [deepDiveModalVisible, toggleDeepDiveModal] = useState(false);
   let [mapErrorMessage, setMapErrorMessage] = useState('');
   let [addressSearchLocation, setAddressSearchLocation] = useState<SelectedLocation | null>(null);
+  let [canUpdateMap, setCanUpdateMap] = useState(false);
   let { isLoading } = useGoogleMaps();
   let { isDesktop } = useViewport();
   let params = useParams<BrandId>();
@@ -202,7 +203,36 @@ export default function MainMap() {
           break;
         }
       }
-      setFilters({
+      let filtersFromMatches = {
+        categories: tenantMatchesData?.tenantMatches.categories,
+        demographics: {
+          minIncome: tenantMatchesData?.tenantMatches.minIncome
+            ? tenantMatchesData?.tenantMatches.minIncome / 1000
+            : 0,
+          maxIncome: tenantMatchesData?.tenantMatches.maxIncome
+            ? tenantMatchesData?.tenantMatches.maxIncome / 1000
+            : 0,
+          minAge: tenantMatchesData?.tenantMatches.minAge,
+          maxAge: tenantMatchesData?.tenantMatches.maxAge,
+          personas: tenantMatchesData?.tenantMatches.personas,
+          commute: tenantMatchesData?.tenantMatches.commute,
+          education: tenantMatchesData?.tenantMatches.education,
+          ethnicity: tenantMatchesData?.tenantMatches.ethnicity,
+        },
+        property: {
+          minRent: tenantMatchesData?.tenantMatches.minRent,
+          maxRent: tenantMatchesData?.tenantMatches.maxRent,
+          minSize: tenantMatchesData?.tenantMatches.minSize,
+          maxSize: tenantMatchesData?.tenantMatches.maxSize,
+          spaceType: tenantMatchesData?.tenantMatches.spaceType,
+        },
+        // business: {
+        //   location: tenantMatchesData?.tenantMatches.location,
+        //   name: tenantMatchesData?.tenantMatches.name,
+        // },
+      };
+
+      let newFilters = {
         ...filters,
         demographics: {
           ...filters.demographics,
@@ -212,7 +242,12 @@ export default function MainMap() {
           ...filters.property,
           ...affectedPropertyState,
         },
-      });
+      };
+      let filtersAreEqual = isEqual(filtersFromMatches, newFilters);
+      if (!filtersAreEqual) {
+        setCanUpdateMap(true);
+      }
+      setFilters(newFilters);
     }
   };
 
@@ -283,35 +318,10 @@ export default function MainMap() {
       },
     });
     if (result.data?.editBrand) {
+      setCanUpdateMap(false);
       tenantMatchesRefetch({ brandId });
     }
   };
-
-  let filtersAreEqual = isEqual(
-    {
-      categories: tenantMatchesData?.tenantMatches.categories,
-      demographics: {
-        minIncome: tenantMatchesData?.tenantMatches.minIncome,
-        maxIncome: tenantMatchesData?.tenantMatches.maxIncome,
-        minAge: tenantMatchesData?.tenantMatches.minAge,
-        maxAge: tenantMatchesData?.tenantMatches.maxAge,
-        personas: tenantMatchesData?.tenantMatches.personas,
-        commute: tenantMatchesData?.tenantMatches.commute,
-        education: tenantMatchesData?.tenantMatches.education,
-        ethnicity: tenantMatchesData?.tenantMatches.ethnicity,
-      },
-      property: {
-        minRent: tenantMatchesData?.tenantMatches.minRent,
-        maxRent: tenantMatchesData?.tenantMatches.maxRent,
-        spaceType: tenantMatchesData?.tenantMatches.spaceType,
-      },
-      business: {
-        location: tenantMatchesData?.tenantMatches.location,
-        name: tenantMatchesData?.tenantMatches.name,
-      },
-    },
-    filters
-  );
 
   useEffect(() => {
     if (tenantMatchesData) {
@@ -380,7 +390,7 @@ export default function MainMap() {
           address={tenantMatchesData?.tenantMatches.location?.address || ''}
           categories={tenantMatchesData?.tenantMatches.categories || []}
           onPublishChangesPress={onPublishChangesPress}
-          publishButtonDisabled={filtersAreEqual}
+          publishButtonDisabled={!canUpdateMap}
           onAddressSearch={setAddressSearchLocation}
           brandName={tenantMatchesData?.tenantMatches.name}
         />
@@ -400,6 +410,12 @@ export default function MainMap() {
             text={mapErrorMessage}
             onClose={() => setMapErrorMessage('')}
           />
+          <MapAlert
+            visible={canUpdateMap}
+            text="Please press the Update button below to update the maps with your desired filters."
+            onClose={() => setCanUpdateMap(false)}
+          />
+
           {!isLoading && (
             <MapContainer
               onMapError={(val) => setMapErrorMessage(val)}

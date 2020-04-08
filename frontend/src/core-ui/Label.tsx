@@ -4,16 +4,17 @@ import Text from './Text';
 import { THEME_COLOR } from '../constants/colors';
 import { FONT_SIZE_SMALL } from '../constants/theme';
 
-type Props = TextProps & {
+export type LabelProps = TextProps & {
   text: string;
   id?: string;
+  color?: string;
 };
 
-export default function Label({ text, id, ...otherProps }: Props) {
+export default function Label({ text, id, color, ...otherProps }: LabelProps) {
   return (
     <Text
       fontSize={FONT_SIZE_SMALL}
-      color={THEME_COLOR}
+      color={color ? color : THEME_COLOR}
       htmlFor={id}
       as={id ? 'label' : 'h5'}
       {...otherProps}

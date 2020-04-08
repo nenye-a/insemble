@@ -29,7 +29,6 @@ const Root = styled(View)`
 `;
 const Container = styled(View)`
   position: absolute;
-  left: 50%;
   width: 540px;
   margin-top: 10px;
   margin-bottom: 10px;
