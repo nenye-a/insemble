@@ -17,7 +17,7 @@ type TextProps = ComponentProps<typeof Text>;
 type Props = ComponentProps<typeof TouchableOpacity> & {
   text: string;
   textProps?: TextProps;
-  mode?: 'primary' | 'secondary' | 'transparent';
+  mode?: 'primary' | 'secondary' | 'transparent' | 'withShadow';
   size?: 'small' | 'default';
   icon?: ReactNode;
   badgeText?: string;
@@ -99,6 +99,18 @@ const Container = styled(TouchableOpacity)<Props>`
         color: ${MUTED_TEXT_COLOR};
       }
     `}
+    ${(props) =>
+      props.mode === 'withShadow' &&
+      css`
+        background-color: transparent;
+        box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.1);
+        ${Text} {
+          color: ${THEME_COLOR};
+        }
+        &:disabled ${Text} {
+          color: ${MUTED_TEXT_COLOR};
+        }
+      `}
   &:hover, &:not():disabled {
     opacity: 0.9;
   }

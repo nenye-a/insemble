@@ -1,26 +1,82 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { GoogleMap, withGoogleMap } from 'react-google-maps';
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { Popup } from '../components';
 
-import { View, Card, Text, PillButton, TouchableOpacity, LoadingIndicator } from '../core-ui';
-import { GET_BRANDS } from '../graphql/queries/server/brand';
-import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
+import {
+  View,
+  Card,
+  Text,
+  PillButton,
+  Button,
+  TouchableOpacity,
+  LoadingIndicator,
+  Alert,
+} from '../core-ui';
+import { GET_BRANDS, DELETE_BRAND } from '../graphql/queries/server/brand';
+import {
+  DEFAULT_BORDER_RADIUS,
+  FONT_SIZE_SMALL,
+  FONT_WEIGHT_MEDIUM,
+  FONT_WEIGHT_LIGHT,
+} from '../constants/theme';
 import { WHITE, THEME_COLOR } from '../constants/colors';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import SvgPlus from '../components/icons/plus';
 import { GetBrands } from '../generated/GetBrands';
 import { MAP_DEFAULT_CENTER } from '../constants/googleMaps';
+import SvgCircleClose from '../components/icons/circle-close';
+import { DeleteBrand, DeleteBrandVariables } from '../generated/DeleteBrand';
 
-export default () => {
+type HeatmapProps = {
+  heatmapData: google.maps.MVCArray<google.maps.visualization.WeightedLocation>;
+  brandId?: string;
+};
+
+export default (props: HeatmapProps) => {
   let { data, loading } = useQuery<GetBrands>(GET_BRANDS);
+  let [removeConfirmationVisible, setRemoveConfirmationVisible] = useState(false);
   let history = useHistory();
+  let [selectedBrandId, setSelectedBrandId] = useState('');
   let { isLoading: googleLoading } = useGoogleMaps();
+  let [removeBrand, { error: removeBrandError, loading: removeBrandLoading }] = useMutation<
+    DeleteBrand,
+    DeleteBrandVariables
+  >(DELETE_BRAND);
+  let closeDeleteConfirmation = () => {
+    setRemoveConfirmationVisible(false);
+  };
+  let onRemovePress = () => {
+    if (selectedBrandId) {
+      removeBrand({
+        variables: {
+          brandId: selectedBrandId,
+        },
+        refetchQueries: [{ query: GET_BRANDS }],
+        awaitRefetchQueries: true,
+      });
+      setRemoveConfirmationVisible(false);
+      setSelectedBrandId('');
+    }
+  };
+
   return (
     <View flex>
-      {loading || googleLoading ? (
+      <Popup
+        visible={removeConfirmationVisible}
+        title="Remove Property"
+        bodyText="Are you sure you want to remove this property?"
+        buttons={[
+          { text: 'Yes', onPress: onRemovePress },
+          { text: 'No', onPress: closeDeleteConfirmation },
+        ]}
+        onClose={closeDeleteConfirmation}
+      />
+      <Alert visible={!!removeBrandError} text={removeBrandError?.message || ''} />
+      {loading || googleLoading || removeBrandLoading ? (
         <LoadingIndicator />
       ) : (
         data &&
@@ -35,52 +91,76 @@ export default () => {
               })
             : []) as unknown) as google.maps.MVCArray<google.maps.visualization.WeightedLocation>;
           return (
-            <TouchableOpacity key={index} style={{ marginBottom: 24 }}>
-              <HistoryContainer>
-                <LeftContainer
-                  flex
-                  onClick={() => {
-                    history.push(`/user/brands/${id}`, {
-                      ...brandData,
-                    });
-                  }}
-                >
-                  <RowedView>
-                    <Text>Brand Name</Text>
-                    <Text>{name}</Text>
-                  </RowedView>
-                  <RowedView>
-                    <Text>Categories</Text>
-                    <PillContainer>
-                      {categories &&
-                        categories.map((category, idx) => (
-                          <Pill disabled key={index + '_' + idx} primary>
-                            {category}
-                          </Pill>
-                        ))}
-                    </PillContainer>
-                  </RowedView>
-                </LeftContainer>
-                <HeatmapPlaceholder heatmapData={heatmapData} brandId={id} />
-              </HistoryContainer>
-            </TouchableOpacity>
+            <View key={index}>
+              <TouchableOpacity style={{ marginBottom: 24 }}>
+                <HistoryContainer>
+                  <LeftContainer
+                    flex
+                    onClick={() => {
+                      history.push(`/map/${props.brandId}`);
+                    }}
+                  >
+                    <RowedView>
+                      <Text>Brand Name</Text>
+                      <Text>{name}</Text>
+                    </RowedView>
+                    <RowedView>
+                      <Text>Categories</Text>
+                      <PillContainer>
+                        {categories &&
+                          categories.map((category, idx) => (
+                            <Pill disabled key={index + '_' + idx} primary>
+                              {category}
+                            </Pill>
+                          ))}
+                      </PillContainer>
+                    </RowedView>
+                    <EditButton
+                      stopPropagation={true}
+                      mode="withShadow"
+                      text="Edit Brand"
+                      textProps={{ fontSize: FONT_SIZE_SMALL, fontWeight: FONT_WEIGHT_MEDIUM }}
+                      onPress={() => {
+                        history.push(`/user/brands/${id}`, {
+                          ...brandData,
+                        });
+                      }}
+                    />
+                  </LeftContainer>
+                  <HeatmapPlaceholder heatmapData={heatmapData} brandId={id} />
+                </HistoryContainer>
+              </TouchableOpacity>
+              <RemoveButton
+                onPress={() => {
+                  setRemoveConfirmationVisible(true);
+                  setSelectedBrandId(brandData.id);
+                }}
+              >
+                <SvgCircleClose />
+              </RemoveButton>
+            </View>
           );
         })
       )}
-      <AddButton
-        onPress={() => {
-          history.push('/new-brand');
-        }}
-      >
-        <SvgPlus style={{ marginRight: 8, color: THEME_COLOR }} />
-        <Text color={THEME_COLOR}>New Retailer or Restaurant</Text>
-      </AddButton>
+      <View>
+        <AddButton
+          onPress={() => {
+            history.push('/new-brand');
+          }}
+        >
+          <SvgPlus style={{ marginRight: 8, color: THEME_COLOR }} />
+          <AddBrandText color={THEME_COLOR}>New Retailer or Restaurant</AddBrandText>
+          {/* TODO: Redirect  */}
+          <UpgradeButton
+            text="Upgrade to Add"
+            onPress={() => {}}
+            stopPropagation={true}
+            textProps={{ style: { fontWeight: FONT_WEIGHT_LIGHT } }}
+          />
+        </AddButton>
+      </View>
     </View>
   );
-};
-type HeatmapProps = {
-  heatmapData: google.maps.MVCArray<google.maps.visualization.WeightedLocation>;
-  brandId?: string;
 };
 
 let GoogleHeatmap = withGoogleMap((props: HeatmapProps) => {
@@ -158,4 +238,20 @@ const AddButton = styled(TouchableOpacity)`
   align-items: center;
   height: 48px;
   flex-direction: row;
+`;
+
+const EditButton = styled(Button)`
+  width: 85px;
+`;
+const RemoveButton = styled(TouchableOpacity)`
+  position: absolute;
+  right: -36px;
+  top: 63px;
+`;
+const UpgradeButton = styled(Button)`
+  width: 160px;
+`;
+
+const AddBrandText = styled(Text)`
+  margin-right: 100px;
 `;
