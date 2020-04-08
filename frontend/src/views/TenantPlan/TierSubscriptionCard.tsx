@@ -138,6 +138,7 @@ const BenefitCheck = styled(View)`
 const BenefitItemContainer = styled(View)`
   flex-direction: row;
   flex: 1;
+  align-items: baseline;
 `;
 const BenefitItemText = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
