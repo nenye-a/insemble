@@ -8,4 +8,3 @@ export { default as MultiSelectBox } from './MultiSelectBox';
 export { default as RangeInput } from './filter/RangeInput';
 export { default as Popup } from './Popup';
 export { default as Popover } from './Popover';
-export { default as UpgradeAlert } from './UpgradeAlert';

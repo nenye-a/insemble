@@ -52,6 +52,7 @@ export default function Card(props: Props) {
                 <>
                   <SvgLock style={{ marginLeft: 14, marginRight: 20 }} />
                   <UpgradeButton
+                    size="small"
                     text="Upgrade to Access"
                     onPress={() => history.push('/user/plan')}
                   />

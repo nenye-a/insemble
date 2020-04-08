@@ -303,5 +303,7 @@ const LockedContainer = styled(View)`
   top: 0;
   bottom: 0;
   right: 20%;
-  left: 0;
+  left: 40%;
+  align-content: center;
+  justify-content: center;
 `;
