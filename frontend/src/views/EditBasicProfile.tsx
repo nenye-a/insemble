@@ -325,7 +325,7 @@ export default function BasicProfile() {
             />
             <TextArea
               defaultValue={profile.description || ''}
-              label="Public Description"
+              label="About"
               disabled={!profileEditable}
               containerStyle={textInputContainerStyle}
               name="description"
