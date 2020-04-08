@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Card, View, Text, TabBar } from '../../core-ui';
+import { Card, View, Text, TabBar, Button } from '../../core-ui';
 import { PieChart, Pie, Cell, Legend } from 'recharts';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
+
 import {
   FONT_WEIGHT_BOLD,
   FONT_WEIGHT_LIGHT,
@@ -14,12 +16,14 @@ import {
   LocationDetails_locationDetails_result_commute as LocationDetailsCommute,
   LocationDetails_locationDetails_result_keyFacts as LocationDetailsKeyFacts,
 } from '../../generated/LocationDetails';
+import BlurredCommute from '../../assets/images/blurred-commute.png';
 
 type Props = {
   withMargin?: boolean;
   keyFactsData?: LocationDetailsKeyFacts;
   commuteData?: Array<LocationDetailsCommute>;
   totalValue: number;
+  isLocked?: boolean;
 };
 
 function formatCommuteValue(value: number, totalValue: number) {
@@ -32,8 +36,9 @@ function formatCommuteValue(value: number, totalValue: number) {
 }
 
 export default function KeyFacts(props: Props) {
-  let { withMargin, keyFactsData, commuteData, totalValue } = props;
+  let { withMargin, keyFactsData, commuteData, totalValue, isLocked } = props;
   let [selectedIndex, setSelectedIndex] = useState<number>(0);
+  let history = useHistory();
   let [pieSize, setPieSize] = useState<Array<number>>([]);
   let isCommuteSelected = selectedIndex === 1;
   useEffect(() => {
@@ -112,34 +117,54 @@ export default function KeyFacts(props: Props) {
           }}
         />
         {isCommuteSelected ? (
-          <CommuteView flex id="commute-view">
-            <PieChart width={pieSize[0]} height={pieSize[1]}>
-              <Pie
-                data={commuteData && commuteData}
-                cx="50%"
-                cy="50%"
-                outerRadius={150}
-                nameKey="name"
-                dataKey="value"
-                label={renderCustomizedLabel}
-                labelLine={false}
-              >
-                {sortedData &&
-                  sortedData.map((entry, index: number) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COMMUTE_CHART_COLORS[index % COMMUTE_CHART_COLORS.length]}
+          isLocked ? (
+            <>
+              <Image src={BlurredCommute} />
+              <LockedContainer>
+                <Card title="Upgrade  Now" titleBackground="purple">
+                  <LockedContent>
+                    <Text>
+                      {`Looks like your trial has ended, but it's easy to get back up and running.`}
+                    </Text>
+                    <Button
+                      style={{ marginTop: 12 }}
+                      text="Upgrade to Access"
+                      onPress={() => history.push('/user/plan')}
                     />
-                  ))}
-              </Pie>
-              <Legend layout="vertical" verticalAlign="middle" align="left" />
-            </PieChart>
-            {/* hiding this until data is ready */}
-            {/* <TextView>
+                  </LockedContent>
+                </Card>
+              </LockedContainer>
+            </>
+          ) : (
+            <CommuteView flex id="commute-view">
+              <PieChart width={pieSize[0]} height={pieSize[1]}>
+                <Pie
+                  data={commuteData && commuteData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={150}
+                  nameKey="name"
+                  dataKey="value"
+                  label={renderCustomizedLabel}
+                  labelLine={false}
+                >
+                  {sortedData &&
+                    sortedData.map((entry, index: number) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COMMUTE_CHART_COLORS[index % COMMUTE_CHART_COLORS.length]}
+                      />
+                    ))}
+                </Pie>
+                <Legend layout="vertical" verticalAlign="middle" align="left" />
+              </PieChart>
+              {/* hiding this until data is ready */}
+              {/* <TextView>
             <AverageTime>Average time to work: </AverageTime>
             <Time>{time}mins</Time>
           </TextView> */}
-          </CommuteView>
+            </CommuteView>
+          )
         ) : (
           <EconomicView flex>
             <EconomicColumn>
@@ -261,4 +286,22 @@ const EconomicView = styled(View)`
 const EconomicColumn = styled(View)`
   flex: 1;
   justify-content: space-around;
+`;
+
+const Image = styled.img`
+  width: 100%;
+  object-fit: contain;
+`;
+
+const LockedContent = styled(View)`
+  padding: 12px;
+  align-items: center;
+`;
+
+const LockedContainer = styled(View)`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 20%;
+  left: 0;
 `;

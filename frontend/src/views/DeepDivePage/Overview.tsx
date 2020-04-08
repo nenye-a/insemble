@@ -7,6 +7,7 @@ import NearbyCard from './NearbyCard';
 import Demographics from './Demographics';
 import KeyFacts from './KeyFacts';
 import { DeepDiveContext } from './DeepDiveModal';
+import { TenantTier } from '../../generated/globalTypes';
 
 export default function Overview() {
   let data = useContext(DeepDiveContext);
@@ -18,11 +19,13 @@ export default function Overview() {
     data?.result?.demographics3,
     data?.result?.demographics5,
   ];
+  let isLocked = data?.tier === TenantTier.FREE;
   let totalValue = 0;
   commuteData &&
     commuteData.forEach((item) => {
       totalValue = totalValue + item.value;
     });
+
   return (
     <View>
       <MatchPercentageCard />
@@ -31,9 +34,10 @@ export default function Overview() {
         commuteData={commuteData}
         keyFactsData={keyFactsData}
         withMargin
+        isLocked={isLocked}
       />
-      <RelevantConsumerPersonas personasData={personasData} />
-      <Demographics demographicsData={demographicsData} withMargin={true} />
+      <RelevantConsumerPersonas isLocked={isLocked} personasData={personasData} />
+      <Demographics isLocked={isLocked} demographicsData={demographicsData} withMargin={true} />
       <NearbyCard />
     </View>
   );

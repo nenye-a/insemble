@@ -4,19 +4,25 @@ import styled from 'styled-components';
 import { View, Card } from '../../core-ui';
 import RelevantConsumerCard from './RelevantConsumerCard';
 import { LocationDetails_locationDetails_result_topPersonas as LocationPersonas } from '../../generated/LocationDetails';
+import BlurredPersonas from '../../assets/images/blurred-personas.png';
 
 type Props = {
   personasData?: Array<LocationPersonas>;
+  isLocked?: boolean;
 };
 
 export default function RelevantConsumerPersonas(props: Props) {
-  let { personasData } = props;
+  let { personasData, isLocked } = props;
   return (
-    <Container titleBackground="white" title="Relevant Consumer Personas">
-      <CardsContainer>
-        {personasData &&
-          personasData.map((item, index) => <RelevantConsumerCard key={index} {...item} />)}
-      </CardsContainer>
+    <Container titleBackground="white" title="Relevant Consumer Personas" isLocked={isLocked}>
+      {isLocked ? (
+        <Image src={BlurredPersonas} />
+      ) : (
+        <CardsContainer>
+          {personasData &&
+            personasData.map((item, index) => <RelevantConsumerCard key={index} {...item} />)}
+        </CardsContainer>
+      )}
     </Container>
   );
 }
@@ -28,4 +34,9 @@ const Container = styled(Card)`
 const CardsContainer = styled(View)`
   padding: 30px 42px;
   flex-direction: row;
+`;
+
+const Image = styled.img`
+  width: 100%;
+  object-fit: cover;
 `;

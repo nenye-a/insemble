@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useHistory, Redirect } from 'react-router-dom';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useApolloClient } from '@apollo/react-hooks';
 
 import { TextInput, Button, View, Form, Alert } from '../core-ui';
 import { validateEmail } from '../utils/validation';
@@ -14,6 +14,8 @@ import { CreateBrand, CreateBrandVariables } from '../generated/CreateBrand';
 import { getBusinessAndFilterParams, saveCredentials } from '../utils';
 import { Role } from '../types/types';
 import { State as OnboardingState } from '../reducers/tenantOnboardingReducer';
+import { GET_TIER } from '../graphql/queries/client/userState';
+import { SAVE_TENANT_LOGIN } from '../graphql/queries/client/auth';
 
 type Props = {
   role: Role;
@@ -23,6 +25,7 @@ type Props = {
 export default function Login(props: Props) {
   let history = useHistory();
   let { role, onboardingState } = props;
+  let client = useApolloClient();
   let { register, handleSubmit, errors } = useForm();
   let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
   let [tenantLogin, { data, loading, error }] = useMutation<LoginTenant, LoginTenantVariables>(
@@ -69,11 +72,25 @@ export default function Login(props: Props) {
   useEffect(() => {
     if (!loading && data) {
       let { loginTenant } = data;
-      let { token, brandId } = loginTenant;
+      let {
+        token,
+        brandId,
+        tenant: { tier },
+      } = loginTenant;
 
       saveCredentials({
         tenantToken: token,
         role: Role.TENANT,
+      });
+
+      client.writeQuery({
+        query: GET_TIER,
+        data: {
+          userState: {
+            __typename: 'UserState',
+            tier,
+          },
+        },
       });
 
       if (brandId) {

@@ -1,9 +1,13 @@
 import React, { ReactNode, ComponentProps } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
+
 import View from './View';
 import Text from './Text';
+import Button from './Button';
 import { DEFAULT_BORDER_RADIUS, FONT_SIZE_SMALL, FONT_WEIGHT_BOLD } from '../constants/theme';
 import { THEME_COLOR, WHITE, CARD_GREY_HEADER, TEXT_COLOR } from '../constants/colors';
+import SvgLock from '../components/icons/lock';
 
 type TextProps = ComponentProps<typeof Text>;
 type ViewProps = ComponentProps<typeof View>;
@@ -28,21 +32,34 @@ export default function Card(props: Props) {
     titleProps,
     titleBackground,
     rightTitleComponent,
+    isLocked,
     ...otherProps
   } = props;
+  let history = useHistory();
   return (
     <StyledCard {...otherProps}>
       {title && (
         <TitleContainer titleBackground={titleBackground} {...titleContainerProps}>
-          <RowedView flex>
-            <View flex>
-              <Text fontWeight={FONT_WEIGHT_BOLD} {...titleProps}>
-                {title}
-              </Text>
-              <SubTitle>{subTitle}</SubTitle>
-            </View>
+          <TitleComponents flex>
+            <Row>
+              <View flex>
+                <Text fontWeight={FONT_WEIGHT_BOLD} {...titleProps}>
+                  {title}
+                </Text>
+                <SubTitle>{subTitle}</SubTitle>
+              </View>
+              {isLocked ? (
+                <>
+                  <SvgLock style={{ marginLeft: 14, marginRight: 20 }} />
+                  <UpgradeButton
+                    text="Upgrade to Access"
+                    onPress={() => history.push('/user/plan')}
+                  />
+                </>
+              ) : null}
+            </Row>
             {rightTitleComponent}
-          </RowedView>
+          </TitleComponents>
         </TitleContainer>
       )}
       {children}
@@ -80,8 +97,17 @@ const SubTitle = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
 `;
 
-const RowedView = styled(View)`
+const Row = styled(View)`
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
+`;
+
+const TitleComponents = styled(Row)`
+  justify-content: space-between;
+`;
+
+const UpgradeButton = styled(Button)`
+  ${Text} {
+    color: ${WHITE};
+  }
 `;
