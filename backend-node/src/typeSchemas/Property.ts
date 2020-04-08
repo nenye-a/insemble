@@ -6,11 +6,8 @@ export let Property = objectType({
     t.model.id();
     t.model.businessType();
     t.model.propertyId();
-    t.model.categories();
     t.model.exclusive();
     t.model.location();
-    t.model.marketingPreference();
-    t.model.propertyType();
     t.model.name();
     t.model.userRelations();
     t.model.space();

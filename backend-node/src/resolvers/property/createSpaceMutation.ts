@@ -30,6 +30,7 @@ export let createSpaceResolver: FieldResolver<
     available,
     mainPhoto,
     photoUrls = [],
+    spaceType = [],
     ...spaceInput
   } = space || {};
   if (!photoUrls) {
@@ -53,6 +54,9 @@ export let createSpaceResolver: FieldResolver<
       },
       photos: {
         set: photoUrls,
+      },
+      spaceType: {
+        set: spaceType,
       },
       property: { connect: { id: propertyId } },
       available: new Date(available),

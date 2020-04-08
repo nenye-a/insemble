@@ -82,6 +82,7 @@ export let registerLandlordInvitationResolver: FieldResolver<
           condition: 'White Space',
           sqft: 1000,
           pricePerSqft: 10,
+          marketingPreference: 'PUBLIC',
         },
       },
       landlordUser: {
