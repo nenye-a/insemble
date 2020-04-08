@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useMutation } from '@apollo/react-hooks';
 import { CardNumberElement, useElements, useStripe } from '@stripe/react-stripe-js';
 
-import { Label, RadioButton, TextInput, Button, Modal, View } from '../../core-ui';
+import { Label as BaseLabel, RadioButton, TextInput, Button, Modal, View } from '../../core-ui';
 import {
   RegisterPaymentMethod,
   RegisterPaymentMethodVariables,
@@ -218,6 +218,7 @@ function toBillingDetails(state: NewCardState) {
 let inputRow = {
   maxHeight: 90,
   height: 90,
+  flex: 1,
 };
 
 const AddNewCardModalContainer = styled(Modal)`
@@ -238,4 +239,8 @@ const PaymentsRowView = styled(RowView)`
 const InputRowView = styled(RowView)`
   max-height: 90px;
   height: 90px;
+`;
+
+const Label = styled(BaseLabel)`
+  padding-bottom: 8px;
 `;
