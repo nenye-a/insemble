@@ -15,7 +15,6 @@ import { getBusinessAndFilterParams, saveCredentials } from '../utils';
 import { Role } from '../types/types';
 import { State as OnboardingState } from '../reducers/tenantOnboardingReducer';
 import { GET_TIER } from '../graphql/queries/client/userState';
-import { SAVE_TENANT_LOGIN } from '../graphql/queries/client/auth';
 
 type Props = {
   role: Role;
