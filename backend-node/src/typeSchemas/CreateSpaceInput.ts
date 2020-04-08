@@ -12,5 +12,10 @@ export let CreateSpaceInput = inputObjectType({
     t.int('pricePerSqft', { required: true });
     t.string('equipment', { list: true });
     t.field('available', { type: 'DateTime', required: true });
+    t.string('spaceType', { list: true });
+    t.field('marketingPreference', {
+      type: 'MarketingPreference',
+      required: true,
+    }); //enum
   },
 });

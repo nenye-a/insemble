@@ -71,6 +71,7 @@ export let emailRegisterLandlordInvitationHandler = async (
             condition: 'White Space',
             sqft: 1000,
             pricePerSqft: 10,
+            marketingPreference: 'PUBLIC',
           },
         },
         landlordUser: {

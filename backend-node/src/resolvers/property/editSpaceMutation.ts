@@ -31,6 +31,7 @@ export let editSpaceResolver: FieldResolver<'Mutation', 'editSpace'> = async (
     mainPhoto,
     mainPhotoUrl,
     photoUploads,
+    spaceType = [],
     ...spaceInput
   } = space || {};
   if (!photoUrls) {
@@ -57,6 +58,9 @@ export let editSpaceResolver: FieldResolver<'Mutation', 'editSpace'> = async (
       },
       photos: {
         set: photoUrls,
+      },
+      spaceType: {
+        set: spaceType,
       },
       available: new Date(available),
       matchingBrand: null,
