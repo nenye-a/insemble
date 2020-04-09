@@ -72,7 +72,7 @@ export default function EnterBillingInfo(props: Props) {
       <CardFooter>
         <BackButton mode="transparent" text="Back" onPress={() => history.goBack()} />
         <Button
-          text="Next"
+          text="Confirm"
           onPress={() => {
             history.push('/user/upgrade-plan/upgrade-success', {
               ...history.location.state,

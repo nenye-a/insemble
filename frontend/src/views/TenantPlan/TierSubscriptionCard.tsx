@@ -1,18 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { useQuery } from '@apollo/react-hooks';
+import { useHistory, useLocation } from 'react-router-dom';
 
-import { View, Text, Button, Modal, LoadingIndicator } from '../../core-ui';
-import { AddNewCardModal } from '../TenantBilling/AddNewCard';
+import { View, Text, Button } from '../../core-ui';
 import CardContainer, { CardTitleContainer } from './CardContainer';
-import SubscriptionConfirmationModal from './SubscriptionConfirmationModal';
-
 import { WHITE, THEME_COLOR, SECONDARY_COLOR } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_SIZE_LARGE, FONT_SIZE_XXXLARGE } from '../../constants/theme';
-
 import getUnit from './helpers/getUnit';
-import { GET_PAYMENT_METHOD_LIST } from '../../graphql/queries/server/billing';
-import { PaymentMethodList } from '../../generated/PaymentMethodList';
 
 type TierSubscriptionProps = {
   title: string;
@@ -27,78 +21,52 @@ type TierSubscriptionProps = {
 
 export default function TierSubscription(props: TierSubscriptionProps) {
   let { price, isAnnual, benefits, isUserCurrentTier, tierName, title, planId } = props;
-  let [isModalVisible, setModalVisibility] = useState(false);
-  let { data: paymentListData, loading: paymentListLoading } = useQuery<PaymentMethodList>(
-    GET_PAYMENT_METHOD_LIST
-  );
-  let onCloseModal = () => setModalVisibility(false);
+  let history = useHistory();
+  let location = useLocation();
 
   return (
-    <>
-      {paymentListLoading ? (
-        <Modal
-          visible={isModalVisible}
-          onClose={onCloseModal}
-          style={{ width: 'fit-content', height: 'fit-content' }}
-        >
-          <LoadingIndicator />
-        </Modal>
-      ) : (paymentListData?.paymentMethodList?.length || 0) > 0 ? (
-        <SubscriptionConfirmationModal
-          isVisible={isModalVisible}
-          onClose={onCloseModal}
-          tierName={tierName}
-          planId={planId}
-          price={price}
-          isAnnual={isAnnual}
-          paymentMethodList={paymentListData?.paymentMethodList || []}
-        />
-      ) : (
-        <AddNewCardModal
-          isModalVisible={isModalVisible}
-          onClose={onCloseModal}
-          preventClosingOnSubmit={true}
-        />
-      )}
-
-      <TierSubscriptionWrapper>
-        <CardContainer title={title}>
-          <TypeWrapper>
-            <TypeText>{tierName}</TypeText>
-          </TypeWrapper>
-          <PlanSection>
-            <PlanPrice>
-              {price === 0 ? (
-                <PriceText>{tierName}</PriceText>
-              ) : (
-                <PlanPriceContainer>
-                  <PlanTitleText>Starting at</PlanTitleText>
-                  <PlanPriceTextContainer>
-                    <PriceText>
-                      ${price}
-                      <Text>/{getUnit(isAnnual)}</Text>
-                    </PriceText>
-                  </PlanPriceTextContainer>
-                </PlanPriceContainer>
-              )}
-            </PlanPrice>
-
-            <View>
-              {benefits.map((text, index) => (
-                <BenefitItem benefit={text} key={index} />
-              ))}
-            </View>
-          </PlanSection>
-        </CardContainer>
-        <UpgradeButton
-          text="Upgrade"
-          onPress={() => {
-            setModalVisibility(true);
-          }}
-          disabled={isUserCurrentTier}
-        />
-      </TierSubscriptionWrapper>
-    </>
+    <TierSubscriptionWrapper>
+      <CardContainer title={title}>
+        <TypeWrapper>
+          <TypeText>{tierName}</TypeText>
+        </TypeWrapper>
+        <PlanSection>
+          <PlanPrice>
+            {price === 0 ? (
+              <PriceText>{tierName}</PriceText>
+            ) : (
+              <PlanPriceContainer>
+                <PlanTitleText>Starting at</PlanTitleText>
+                <PlanPriceTextContainer>
+                  <PriceText>
+                    ${price}
+                    <Text>/{getUnit(isAnnual)}</Text>
+                  </PriceText>
+                </PlanPriceTextContainer>
+              </PlanPriceContainer>
+            )}
+          </PlanPrice>
+          <View>
+            {benefits.map((text, index) => (
+              <BenefitItem benefit={text} key={index} />
+            ))}
+          </View>
+        </PlanSection>
+      </CardContainer>
+      <UpgradeButton
+        text="Upgrade"
+        onPress={() => {
+          history.push('/user/upgrade-plan/confirm-plan', {
+            background: location,
+            planId,
+            tierName,
+            price,
+            isAnnual,
+          });
+        }}
+        disabled={isUserCurrentTier}
+      />
+    </TierSubscriptionWrapper>
   );
 }
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 import { View, Text, Button } from '../../core-ui';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_LIGHT, FONT_SIZE_SMALL } from '../../constants/theme';
@@ -14,6 +15,8 @@ type Props = {
 
 export default function ConfirmPlanUpgrade(props: Props) {
   let { tierName, price, isAnnual } = props;
+  let history = useHistory();
+
   return (
     <>
       <Container>
@@ -27,7 +30,9 @@ export default function ConfirmPlanUpgrade(props: Props) {
         <Button
           text="Next"
           onPress={() => {
-            // TODO: navigate on next press
+            history.push('/user/upgrade-plan/confirm-payment', {
+              ...history.location.state,
+            });
           }}
         />
       </CardFooter>
