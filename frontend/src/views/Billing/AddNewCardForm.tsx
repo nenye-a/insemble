@@ -36,10 +36,11 @@ type NewCardAction =
 
 type Props = {
   onFinishCreatingPaymentMethod?: () => void;
+  showSaveButton?: boolean;
 };
 
 export default function AddNewCardForm(props: Props) {
-  let { onFinishCreatingPaymentMethod } = props;
+  let { onFinishCreatingPaymentMethod, showSaveButton = true } = props;
   let [state, dispatch] = useReducer(reducer, initialNewCardState);
   let [isSaving, setIsSaving] = useState(false);
   let stripe = useStripe();
