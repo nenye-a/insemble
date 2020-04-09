@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import View from './View';
 import TouchableOpacity from './TouchableOpacity';
-import ClickAway from './ClickAway';
 import { WHITE } from '../constants/colors';
 import SvgClose from '../components/icons/close';
 

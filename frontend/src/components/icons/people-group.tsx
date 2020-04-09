@@ -3,7 +3,7 @@ import { IconProps } from '../../types/types';
 import { THEME_COLOR } from '../../constants/colors';
 
 const SvgPeopleGroup = (props: IconProps) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="29" height="19" viewBox="0 0 29 19">
+  <svg xmlns="http://www.w3.org/2000/svg" width="29" height="19" viewBox="0 0 29 19" {...props}>
     <g id="Group_1326" data-name="Group 1326" transform="translate(-803.5 -324.5)">
       <path
         id="Path_4007"

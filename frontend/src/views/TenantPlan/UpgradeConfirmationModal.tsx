@@ -26,8 +26,7 @@ export default function UpgradeConfirmationModal() {
   let history = useHistory<UpgradeConfirmationModalState>();
   let params = useParams<Param>();
   let { step = 'confirm-plan' } = params;
-  console.log(history, params, 'HISTORY');
-  let { tierName, price, isAnnual, planId } = history.location.state;
+  let { tierName, price, isAnnual } = history.location.state;
   let { data: paymentListData, loading: paymentListLoading } = useQuery<PaymentMethodList>(
     GET_PAYMENT_METHOD_LIST
   );
@@ -54,7 +53,7 @@ export default function UpgradeConfirmationModal() {
   useEffect(() => {
     let foundIndex = SEGMENTS.findIndex(({ path }) => path === step);
     setSelectedStepIndex(foundIndex || 0);
-  }, [params.step]);
+  }, [SEGMENTS, step]);
 
   return (
     <Container
