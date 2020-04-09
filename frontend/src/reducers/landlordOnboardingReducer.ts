@@ -6,13 +6,11 @@ type ConfirmLocation = {
   userRelations: Array<string>;
   propertyType?: Array<string>;
   physicalAddress?: SelectedLocation;
-  marketingPreference: MarketingPreference;
 };
 
 type ConfirmTenant = {
   businessType: Array<string>;
   otherBusinessType?: string;
-  selectedRetailCategories: Array<string>;
   existingExclusives: Array<string>;
 };
 
@@ -64,7 +62,6 @@ export let landlordOnboardingInitialState = {
   },
   confirmTenant: {
     businessType: ['Retail', 'Restaurant', 'Fitness', 'Entertainment'],
-    selectedRetailCategories: [],
     existingExclusives: [],
   },
   spaceListing: {

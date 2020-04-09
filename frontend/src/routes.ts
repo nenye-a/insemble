@@ -36,6 +36,7 @@ import RegisterByInvitationLandlord from './views/RegisterByInvitationLandlord';
 import RegisterByInvitationTenant from './views/RegisterByInvitationTenant';
 import RedirectLoginTenant from './views/RedirectLoginTenant';
 import RedirectLoginLandlord from './views/RedirectLoginLandlord';
+import OutOfBound from './views/OutOfBound';
 
 import { tenantAuthorization, landlordAuthorization } from './utils';
 
@@ -96,6 +97,11 @@ const COMMON_ROUTES = [
     path: '/redirect-login-landlord/:token',
     layout: BasicLayout,
     component: RedirectLoginLandlord,
+  },
+  {
+    path: '/out-of-bound',
+    layout: BasicLayout,
+    component: OutOfBound,
   },
 ];
 
