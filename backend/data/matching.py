@@ -147,35 +147,21 @@ def generate_matching_locations(location, options={}, db_connection=utils.SYSTEM
     """
 
     my_location_df = landlord_matching.generate_match_df(location)
-
-    # OBTAIN USER OPTIONS
-    # unpack and ensure values
-    desired_min_income = options['income']['min'] if 'income' in options and 'min' in options['income'] else None
-    desired_max_income = options['income']['max'] if 'income' in options and 'max' in options['income'] else None
-    desired_min_age = options['age']['min'] if 'age' in options and 'min' in options['age'] else None
-    desired_max_age = options['age']['max'] if 'age' in options and 'max' in options['age'] else None
-    desired_personas = options['personas'] if 'personas' in options else []
-    desired_commute = options['commute'] if 'commute' in options else []
-    desired_education = options['education'] if 'education' in options else []
-    desired_ethnicity = options['ethnicity'] if 'ethnicity' in options else []
-
-    # re_package option values
-    options = {
-        'desired_min_income': desired_min_income,
-        'desired_max_income': desired_max_income,
-        'desired_min_age': desired_min_age,
-        'desired_max_age': desired_max_age,
-        'desired_personas': desired_personas,
-        'desired_commute': desired_commute,
-        'desired_education': desired_education,
-        'desired_ethnicity': desired_ethnicity
-    }
+    options = process_options(options)
 
     # MATCHING (Pre-process)
     print("** Matching: Match Setup")
     info_df = MATCHING_DF.copy()
     match_df = info_df.drop(columns=["_id", "lat", "lng", "loc_id"])
     match_df = match_df.append(my_location_df)
+
+    if options:
+        match_df.iloc[-1]["DaytimePop1"] = max(match_df.iloc[-1].loc["DaytimePop1"], options['desired_min_daytime_pop'])
+        match_df = match_df[match_df["DaytimePop1"] > options['desired_min_daytime_pop']]
+
+        if len(match_df) < 1000:
+            # if min daytime is too high, then we can't evaluate
+            return [], []
 
     if "brand_name" in match_df.columns:
         match_df = match_df.drop(columns=["brand_name"])
@@ -217,31 +203,19 @@ def generate_matching_locations(location, options={}, db_connection=utils.SYSTEM
 
 def generate_matching_properties(locations, options={}, db_connection=utils.SYSTEM_MONGO):
 
-    # OBTAIN USER OPTIONS
-    # unpack and ensure values
-    desired_min_income = options['income']['min'] if 'income' in options and 'min' in options['income'] else None
-    desired_max_income = options['income']['max'] if 'income' in options and 'max' in options['income'] else None
-    desired_min_age = options['age']['min'] if 'age' in options and 'min' in options['age'] else None
-    desired_max_age = options['age']['max'] if 'age' in options and 'max' in options['age'] else None
-    desired_personas = options['personas'] if 'personas' in options else []
-    desired_commute = options['commute'] if 'commute' in options else []
-    desired_education = options['education'] if 'education' in options else []
-    desired_ethnicity = options['ethnicity'] if 'ethnicity' in options else []
-
-    # re_package option values
-    options = {
-        'desired_min_income': desired_min_income,
-        'desired_max_income': desired_max_income,
-        'desired_min_age': desired_min_age,
-        'desired_max_age': desired_max_age,
-        'desired_personas': desired_personas,
-        'desired_commute': desired_commute,
-        'desired_education': desired_education,
-        'desired_ethnicity': desired_ethnicity
-    }
+    options = process_options(options)
 
     info_df = landlord_matching.generate_match_df(locations)
     match_df = info_df.drop(columns=['_id', 'brand_name'])
+
+    if options:
+        match_df.iloc[-1].loc["DaytimePop1"] = max(match_df.iloc[-1].loc["DaytimePop1"], options['desired_min_daytime_pop'])
+        match_df = match_df[match_df["DaytimePop1"] > options['desired_min_daytime_pop']]
+
+        if len(match_df) < 1000:
+            # if min daytime is too high, then we can't evaluate
+            return []
+
     print("** Matching (properties): Pre-processing start.")
     prepared_match_df = preprocess_match_df(match_df.fillna(0)).fillna(0)
     prepared_match_df = adjust_range(prepared_match_df, options)
@@ -259,6 +233,35 @@ def generate_matching_properties(locations, options={}, db_connection=utils.SYST
     weighted_df['match_value'] = weighted_df['error_sum'].apply(_map_difference_to_match)
 
     return weighted_df[['match_value', 'location_id']].to_dict(orient='records')
+
+
+def process_options(options):
+
+    # unpack and ensure values
+    desired_min_income = options['income']['min'] if 'income' in options and 'min' in options['income'] else None
+    desired_max_income = options['income']['max'] if 'income' in options and 'max' in options['income'] else None
+    desired_min_age = options['age']['min'] if 'age' in options and 'min' in options['age'] else None
+    desired_max_age = options['age']['max'] if 'age' in options and 'max' in options['age'] else None
+    desired_personas = options['personas'] if 'personas' in options else []
+    desired_commute = options['commute'] if 'commute' in options else []
+    desired_education = options['education'] if 'education' in options else []
+    desired_ethnicity = options['ethnicity'] if 'ethnicity' in options else []
+    desired_min_daytime_pop = options['min_daytime_pop'] if 'min_daytime_pop' in options else None
+
+    # re_package option values
+    options = {
+        'desired_min_income': desired_min_income,
+        'desired_max_income': desired_max_income,
+        'desired_min_age': desired_min_age,
+        'desired_max_age': desired_max_age,
+        'desired_personas': desired_personas,
+        'desired_commute': desired_commute,
+        'desired_education': desired_education,
+        'desired_ethnicity': desired_ethnicity,
+        'desired_min_daytime_pop': desired_min_daytime_pop
+    }
+
+    return options
 
 
 def generate_vector_address(address, name):
@@ -419,7 +422,7 @@ def _generate_location_vector(address, name=None, lat=None, lng=None):
 
 
 # given a match dataframe, will preprocess into the correct format
-def preprocess_match_df(dataframe):
+def preprocess_match_df(dataframe, options=None):
 
     # convert all tier break downs to percentage
     # TODO: Clean up pre processing code below
@@ -611,7 +614,6 @@ def postprocess_match_df(difference_dataframe, options):
         else:
             # ridiculously high number to allow greater incomes
             desired_range.append(1000000)
-        in_income_range = lambda x: utils.in_range(x, desired_range)
 
         below_range1 = difference_dataframe["MedHouseholdIncome1"] < desired_range[0]
         above_range1 = difference_dataframe["MedHouseholdIncome1"] > desired_range[1]
