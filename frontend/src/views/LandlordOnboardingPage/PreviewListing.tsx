@@ -15,6 +15,7 @@ import { State, Action } from '../../reducers/landlordOnboardingReducer';
 import { CREATE_PROPERTY, GET_PROPERTIES } from '../../graphql/queries/server/properties';
 import { CreateProperty, CreatePropertyVariables } from '../../generated/CreateProperty';
 import { getImageBlob, useViewport } from '../../utils';
+import { MarketingPreference } from '../../generated/globalTypes';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -35,13 +36,8 @@ export default function PreviewListing(props: Props) {
   let { isDesktop } = useViewport();
 
   let onSubmit = () => {
-    let { userRelations, propertyType, physicalAddress, marketingPreference } = confirmLocation;
-    let {
-      businessType,
-      otherBusinessType,
-      selectedRetailCategories,
-      existingExclusives,
-    } = confirmTenant;
+    let { userRelations, physicalAddress } = confirmLocation;
+    let { businessType, otherBusinessType, existingExclusives } = confirmTenant;
 
     let {
       mainPhoto,
@@ -72,16 +68,13 @@ export default function PreviewListing(props: Props) {
             businessType: otherBusinessType
               ? [...filteredBusinessType, otherBusinessType]
               : filteredBusinessType,
-            categories: selectedRetailCategories,
             exclusive: existingExclusives,
             location: {
               lat: physicalAddress?.lat || '',
               lng: physicalAddress?.lng || '',
               address: physicalAddress?.address || '',
             },
-            marketingPreference,
             name: physicalAddress?.name || '',
-            propertyType,
             userRelations,
           },
           space: {
@@ -93,6 +86,7 @@ export default function PreviewListing(props: Props) {
             photoUploads: additionalPhotosBlob.filter((item) => item != null),
             pricePerSqft: Number(pricePerSqft),
             sqft: Number(sqft),
+            marketingPreference: MarketingPreference.PUBLIC, // TODO: get marketing preference
           },
         },
         refetchQueries: [{ query: GET_PROPERTIES }],
