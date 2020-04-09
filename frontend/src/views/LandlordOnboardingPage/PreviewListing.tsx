@@ -48,6 +48,8 @@ export default function PreviewListing(props: Props) {
       pricePerSqft,
       equipments,
       availability,
+      marketingPreference,
+      propertyType,
     } = spaceListing;
     if (mainPhoto && typeof mainPhoto !== 'string') {
       let mainPhotoBlob = getImageBlob(mainPhoto.file);
@@ -86,7 +88,9 @@ export default function PreviewListing(props: Props) {
             photoUploads: additionalPhotosBlob.filter((item) => item != null),
             pricePerSqft: Number(pricePerSqft),
             sqft: Number(sqft),
-            marketingPreference: MarketingPreference.PUBLIC, // TODO: get marketing preference
+            // marketingPreference: MarketingPreference.PUBLIC, // TODO: get marketing preference
+            spaceType: propertyType,
+            marketingPreference,
           },
         },
         refetchQueries: [{ query: GET_PROPERTIES }],
@@ -112,7 +116,7 @@ export default function PreviewListing(props: Props) {
         priceSqft={`$${spaceListing.pricePerSqft.toString()}`}
         sqft={spaceListing.sqft}
         tenacy="Multiple"
-        type={confirmLocation.propertyType?.join(', ') || ''}
+        type={spaceListing.propertyType?.join(', ') || ''}
         condition={spaceListing.condition}
       />
       <Spacing />
@@ -130,7 +134,7 @@ export default function PreviewListing(props: Props) {
       </RowView>
       <TourContainer isShrink={false}>
         <PendingAlert visible text="Pending virtual tour" />
-        <Text>3D Tour</Text>
+        <Tour3DText>{confirmLocation?.physicalAddress?.address}</Tour3DText>
       </TourContainer>
       <PropertyDeepDiveHeader
         address={confirmLocation?.physicalAddress?.address || ''}
@@ -196,4 +200,8 @@ const PendingAlert = styled(Alert)`
 const TransparentButton = styled(Button)`
   margin-right: 8px;
   padding: 0 12px;
+`;
+const Tour3DText = styled(Text)`
+  color: ${WHITE};
+  font-size: ${FONT_SIZE_LARGE};
 `;

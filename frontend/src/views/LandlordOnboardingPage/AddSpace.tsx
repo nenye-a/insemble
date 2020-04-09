@@ -15,21 +15,46 @@ import {
   Text,
   Form,
   Button,
+  Checkbox,
 } from '../../core-ui';
 import PhotosPicker from './PhotosPicker';
 import { FileWithPreview } from '../../core-ui/Dropzone';
 import { THEME_COLOR, DARK_TEXT_COLOR } from '../../constants/colors';
-import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD, FONT_SIZE_SMALL } from '../../constants/theme';
+import {
+  FONT_SIZE_MEDIUM,
+  FONT_WEIGHT_BOLD,
+  FONT_SIZE_SMALL,
+  FONT_SIZE_NORMAL,
+} from '../../constants/theme';
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
 import { Equipments } from '../../generated/Equipments';
 import { validateNumber } from '../../utils/validation';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
 import { Action, State as LandlordAddSpaceState } from '../../reducers/landlordAddSpaceReducer';
+import { MarketingPreference } from '../../generated/globalTypes';
+import { SPACES_TYPE } from '../../constants/spaces';
 
 type Props = {
   state: LandlordAddSpaceState;
   dispatch: Dispatch<Action>;
 };
+
+type MarketingPreferenceRadio = {
+  label: string;
+  value: MarketingPreference;
+};
+
+const MARKETING_PREFERENCE_OPTIONS: Array<MarketingPreferenceRadio> = [
+  {
+    label: 'Public — I want to publicly advertise my property to matching tenants.',
+    value: MarketingPreference.PUBLIC,
+  },
+  {
+    label:
+      'Private — I want to connect with matching tenants without publicly listing my property.',
+    value: MarketingPreference.PRIVATE,
+  },
+];
 
 export default function AddSpace(props: Props) {
   let history = useHistory();
@@ -44,6 +69,10 @@ export default function AddSpace(props: Props) {
   let [additionalPhotos, setAdditionalPhotos] = useState<Array<string | FileWithPreview | null>>(
     addSpace.propertyPhotos
   );
+  let [selectedType, setSelectedType] = useState<Array<string>>(addSpace.propertyType || []);
+  let [selectedMarketingPreference, setSelectedMarketingPreference] = useState<
+    MarketingPreferenceRadio
+  >(MARKETING_PREFERENCE_OPTIONS[0]);
   let [description, setDescription] = useState<string>(addSpace.description);
   let [selectedCondition, setSelectedCondition] = useState(addSpace.condition || 'Whitebox');
   let [selectedEquipments, setSelectedEquipment] = useState<Array<string>>(addSpace.equipments);
@@ -66,6 +95,8 @@ export default function AddSpace(props: Props) {
               pricePerSqft: fieldValues ? fieldValues.price : price,
               equipments: selectedEquipments,
               availability: fieldValues ? fieldValues.date : date,
+              marketingPreference: selectedMarketingPreference.value,
+              propertyType: selectedType,
             },
           },
         });
@@ -82,6 +113,8 @@ export default function AddSpace(props: Props) {
       price,
       selectedEquipments,
       date,
+      selectedMarketingPreference,
+      selectedType,
     ]
   );
 
@@ -103,6 +136,8 @@ export default function AddSpace(props: Props) {
     price,
     selectedEquipments,
     date,
+    selectedMarketingPreference,
+    selectedType,
   ]);
 
   return (
@@ -117,6 +152,16 @@ export default function AddSpace(props: Props) {
         <Alert
           visible
           text="We provide complementary virtual tours & comprehensive photos to every listing."
+        />
+        <RadioGroup<MarketingPreferenceRadio>
+          name="Marketing Preference"
+          options={MARKETING_PREFERENCE_OPTIONS}
+          selectedOption={selectedMarketingPreference}
+          onSelect={(item) => {
+            setSelectedMarketingPreference(item);
+          }}
+          radioItemProps={{ style: { marginTop: 9 } }}
+          titleExtractor={(item: MarketingPreferenceRadio) => item.label}
         />
         <PhotosPicker
           mainPhoto={mainPhoto}
@@ -147,6 +192,30 @@ export default function AddSpace(props: Props) {
           }}
           radioItemProps={{ style: { marginTop: 8 } }}
         />
+        <FieldInput>
+          <LabelText text="What type of space is this?" />
+          {SPACES_TYPE.map((option, index) => {
+            let isChecked = selectedType.includes(option);
+            return (
+              <Checkbox
+                key={index}
+                size="18px"
+                title={option}
+                titleProps={{ style: { fontSize: FONT_SIZE_NORMAL } }}
+                isChecked={isChecked}
+                onPress={() => {
+                  if (isChecked) {
+                    let newSelectedType = selectedType.filter((item: string) => item !== option);
+                    setSelectedType(newSelectedType);
+                  } else {
+                    setSelectedType([...selectedType, option]);
+                  }
+                }}
+                style={{ lineHeight: 2 }}
+              />
+            );
+          })}
+        </FieldInput>
         <ShortTextInput
           label="Sqft"
           name="sqft"
@@ -264,4 +333,8 @@ const DatePickerContainer = styled(RowView)`
 const TransparentButton = styled(Button)`
   margin-right: 8px;
   padding: 0 12px;
+`;
+
+const FieldInput = styled(View)`
+  padding: 12px 0;
 `;

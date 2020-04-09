@@ -4,7 +4,6 @@ import { MarketingPreference } from '../generated/globalTypes';
 
 type ConfirmLocation = {
   userRelations: Array<string>;
-  propertyType?: Array<string>;
   physicalAddress?: SelectedLocation;
 };
 
@@ -23,6 +22,8 @@ type SpaceListing = {
   pricePerSqft: string;
   equipments: Array<string>;
   availability: string;
+  marketingPreference: MarketingPreference;
+  propertyType?: Array<string>;
 };
 
 export type State = {
@@ -58,7 +59,6 @@ export let landlordOnboardingInitialState = {
   canPressNext: false,
   confirmLocation: {
     userRelations: [],
-    marketingPreference: MarketingPreference.PUBLIC,
   },
   confirmTenant: {
     businessType: ['Retail', 'Restaurant', 'Fitness', 'Entertainment'],
@@ -66,13 +66,14 @@ export let landlordOnboardingInitialState = {
   },
   spaceListing: {
     mainPhoto: null,
-    propertyPhotos: [null, null, null, null],
+    propertyPhotos: [''],
     description: '',
     condition: '',
     sqft: '',
     pricePerSqft: '',
     equipments: [],
     availability: '',
+    marketingPreference: MarketingPreference.PUBLIC,
   },
 };
 

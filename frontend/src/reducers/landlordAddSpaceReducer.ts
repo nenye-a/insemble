@@ -1,4 +1,5 @@
 import { FileWithPreview } from '../core-ui/Dropzone';
+import { MarketingPreference } from '../generated/globalTypes';
 
 type AddSpace = {
   mainPhoto: FileWithPreview | null | string;
@@ -9,6 +10,8 @@ type AddSpace = {
   pricePerSqft: string;
   equipments: Array<string>;
   availability: string;
+  marketingPreference: MarketingPreference;
+  propertyType?: Array<string>;
 };
 
 export type State = {
@@ -27,13 +30,14 @@ export let landlordAddSpacelInitialState = {
   canPressNext: false,
   addSpace: {
     mainPhoto: null,
-    propertyPhotos: [null, null, null, null],
+    propertyPhotos: [],
     description: '',
     condition: '',
     sqft: '',
     pricePerSqft: '',
     equipments: [],
     availability: '',
+    marketingPreference: MarketingPreference.PUBLIC,
   },
 };
 

@@ -15,6 +15,7 @@ import {
   Button,
   Text,
   Alert,
+  Checkbox,
 } from '../../core-ui';
 import { FileWithPreview } from '../../core-ui/Dropzone';
 import PhotosPicker from '../LandlordOnboardingPage/PhotosPicker';
@@ -24,6 +25,7 @@ import {
   FONT_WEIGHT_LIGHT,
   FONT_SIZE_SMALL,
   FONT_WEIGHT_BOLD,
+  FONT_SIZE_NORMAL,
 } from '../../constants/theme';
 import { WHITE, THEME_COLOR } from '../../constants/colors';
 import { getImageBlob, dateFormatter } from '../../utils';
@@ -35,11 +37,30 @@ import { Popup } from '../../components';
 import { GET_PROPERTY, GET_PROPERTIES } from '../../graphql/queries/server/properties';
 import { Property, PropertyVariables } from '../../generated/Property';
 import { DeleteSpace, DeleteSpaceVariables } from '../../generated/DeleteSpace';
+import { MarketingPreference } from '../../generated/globalTypes';
+import { SPACES_TYPE } from '../../constants/spaces';
 
 type Props = {
   spaceIndex: number;
   propertyId: string;
 };
+
+type MarketingPreferenceRadio = {
+  label: string;
+  value: MarketingPreference;
+};
+
+const MARKETING_PREFERENCE_OPTIONS: Array<MarketingPreferenceRadio> = [
+  {
+    label: 'Public — I want to publicly advertise my property to matching tenants.',
+    value: MarketingPreference.PUBLIC,
+  },
+  {
+    label:
+      'Private — I want to connect with matching tenants without publicly listing my property.',
+    value: MarketingPreference.PRIVATE,
+  },
+];
 
 export default function LandlordManageSpace(props: Props) {
   let { spaceIndex, propertyId } = props;
@@ -53,6 +74,9 @@ export default function LandlordManageSpace(props: Props) {
   let [additionalPhotos, setAdditionalPhotos] = useState<Array<string | FileWithPreview | null>>(
     []
   );
+  let [selectedMarketingPreference, setSelectedMarketingPreference] = useState<
+    MarketingPreferenceRadio
+  >(MARKETING_PREFERENCE_OPTIONS[0]);
   let {
     data: propertyData,
     error: propertyError,
@@ -61,6 +85,9 @@ export default function LandlordManageSpace(props: Props) {
   } = useQuery<Property, PropertyVariables>(GET_PROPERTY, {
     variables: { propertyId },
   });
+  let [selectedType, setSelectedType] = useState<Array<string>>(
+    propertyData?.property.space[spaceIndex].spaceType || []
+  );
 
   let [
     editSpace,
@@ -114,6 +141,8 @@ export default function LandlordManageSpace(props: Props) {
             pricePerSqft: Number(price),
             equipment: selectedEquipment,
             available: dateFormatter(date),
+            spaceType: selectedCondition,
+            marketingPreference: selectedMarketingPreference.value,
           },
         },
         refetchQueries: [
@@ -218,6 +247,16 @@ export default function LandlordManageSpace(props: Props) {
                 }}
               />
             </RowView>
+            <RadioGroup<MarketingPreferenceRadio>
+              name="Marketing Preference"
+              options={MARKETING_PREFERENCE_OPTIONS}
+              selectedOption={selectedMarketingPreference}
+              onSelect={(item) => {
+                setSelectedMarketingPreference(item);
+              }}
+              radioItemProps={{ style: { marginTop: 9 } }}
+              titleExtractor={(item: MarketingPreferenceRadio) => item.label}
+            />
             <PhotosPicker
               mainPhoto={mainPhoto}
               onMainPhotoChange={(file: PhotoFile) => {
@@ -248,6 +287,32 @@ export default function LandlordManageSpace(props: Props) {
               }}
               radioItemProps={{ style: { marginBottom: 8 } }}
             />
+            <FieldInput>
+              <LabelText text="What type of space is this?" />
+              {SPACES_TYPE.map((option, index) => {
+                let isChecked = selectedType.includes(option);
+                return (
+                  <Checkbox
+                    key={index}
+                    size="18px"
+                    title={option}
+                    titleProps={{ style: { fontSize: FONT_SIZE_NORMAL } }}
+                    isChecked={isChecked}
+                    onPress={() => {
+                      if (isChecked) {
+                        let newSelectedType = selectedType.filter(
+                          (item: string) => item !== option
+                        );
+                        setSelectedType(newSelectedType);
+                      } else {
+                        setSelectedType([...selectedType, option]);
+                      }
+                    }}
+                    style={{ lineHeight: 2 }}
+                  />
+                );
+              })}
+            </FieldInput>
             <TextInput
               label="Sqft"
               name="sqft"
@@ -358,4 +423,8 @@ const TotalSpace = styled(Text)`
 const RemoveButton = styled(Button)`
   position: absolute;
   right: 0;
+`;
+
+const FieldInput = styled(View)`
+  padding: 12px 0;
 `;

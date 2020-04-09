@@ -12,6 +12,8 @@ export const GET_SPACE = gql`
       pricePerSqft
       mainPhoto
       description
+      spaceType
+      marketingPreference
     }
   }
 `;

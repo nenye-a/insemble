@@ -37,6 +37,11 @@ export default function TenantConfirm(props: Props) {
   );
   let [otherService, setOtherService] = useState(confirmTenant?.otherBusinessType || '');
 
+  // let [categorySelectionVisible, toggleCategorySelection] = useState(false);
+  // let [selectedCategories, setSelectedCategories] = useState<Array<string>>(
+  //   confirmTenant?.selectedRetailCategories || []
+  // );
+
   let [existingCategorySelectionVisible, toggleExistingCategorySelectionVisible] = useState(false);
   let [selectedExistingCategories, setExistingSelectedCategories] = useState<Array<string>>(
     confirmTenant?.existingExclusives || []
@@ -106,6 +111,35 @@ export default function TenantConfirm(props: Props) {
         </InputField>
         {categoriesData && (
           <>
+            {/* <InputField style={{ zIndex: 1 }}>
+              <LabelText text="Are you looking for any specific retail categories?" />
+              <TouchableOpacity onPress={() => toggleCategorySelection(!categorySelectionVisible)}>
+                <SelectCategories
+                  disabled
+                  placeholder="Select retailer categories"
+                  value={selectedCategories.join(', ')}
+                />
+              </TouchableOpacity>
+              <ClickAway onClickAway={() => toggleCategorySelection(false)} style={{ zIndex: 1 }}>
+                <FilterContainer
+                  search
+                  visible={categorySelectionVisible}
+                  selectedOptions={selectedCategories}
+                  allOptions={categoriesData.categories}
+                  onSelect={(category: string) => {
+                    setSelectedCategories([...selectedCategories, category]);
+                  }}
+                  onUnSelect={(category: string) => {
+                    let newSelectedCategories = selectedCategories.filter(
+                      (el: string) => !el.includes(category)
+                    );
+                    setSelectedCategories(newSelectedCategories);
+                  }}
+                  onDone={() => toggleCategorySelection(false)}
+                  onClear={() => setSelectedCategories([])}
+                />
+              </ClickAway>
+            </InputField> */}
             <InputField>
               <LabelText text="Do you have any existing exclusives?" />
               <TouchableOpacity

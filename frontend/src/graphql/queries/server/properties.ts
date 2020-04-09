@@ -31,6 +31,8 @@ export const GET_PROPERTIES = gql`
         pricePerSqft
         mainPhoto
         description
+        spaceType
+        marketingPreference
       }
     }
   }
@@ -73,6 +75,8 @@ export const GET_PROPERTY = gql`
         pricePerSqft
         mainPhoto
         description
+        spaceType
+        marketingPreference
       }
     }
   }

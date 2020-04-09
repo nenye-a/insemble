@@ -19,22 +19,24 @@ export default function PhotosPicker(props: Props) {
     if (index === 0) {
       onMainPhotoChange(null);
     } else {
-      let newPhotoList = additionalPhotos.map((item, i) => {
-        if (i + 1 === index) {
-          return null;
-        } else {
-          return item;
-        }
+      if (index === 20) {
+        additionalPhotos.splice(index, 1, null);
+      }
+      additionalPhotos.splice(index - 1, 1);
+      let newPhotoList = additionalPhotos.map((item) => {
+        return item;
       });
       onAdditionalPhotoChange(newPhotoList);
     }
   };
 
   let onAdditionalPhotosChange = (file: FileWithPreview, index: number) => {
-    let newList = additionalPhotos.map((item, idx) => {
-      if (index === idx) {
-        return file;
-      }
+    if (index < 19) {
+      additionalPhotos.unshift(file);
+    } else {
+      additionalPhotos.splice(index, 1, file);
+    }
+    let newList = additionalPhotos.map((item) => {
       return item;
     });
     onAdditionalPhotoChange(newList);
@@ -51,7 +53,7 @@ export default function PhotosPicker(props: Props) {
       />
       <LabelText text="Additional Property Photos" />
       <PhotosContainer flex>
-        {Array.from({ length: 4 }).map((_, index) => {
+        {additionalPhotos.map((_, index) => {
           let image = additionalPhotos[index];
           return (
             <PhotoWrapper isDesktop={isDesktop} key={index} is>
@@ -81,7 +83,7 @@ const LabelText = styled(Label)`
 const PhotosContainer = styled(View)`
   flex-wrap: wrap;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
 `;
 
 const PhotoWrapper = styled(TouchableOpacity)<PhotoWrapperProps>`
@@ -89,6 +91,7 @@ const PhotoWrapper = styled(TouchableOpacity)<PhotoWrapperProps>`
     props.isDesktop
       ? css`
           width: 24%;
+          margin-right: 6px;
         `
       : css`
           // so there is still 1% margin between each photo

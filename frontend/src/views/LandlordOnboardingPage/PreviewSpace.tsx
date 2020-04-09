@@ -46,6 +46,8 @@ export default function PreviewSpace(props: Props) {
       pricePerSqft,
       equipments,
       availability,
+      marketingPreference,
+      propertyType,
     } = addSpace;
     if (mainPhoto && typeof mainPhoto !== 'string') {
       let mainPhotoBlob = getImageBlob(mainPhoto.file);
@@ -71,7 +73,9 @@ export default function PreviewSpace(props: Props) {
               photoUploads: additionalPhotosBlob.filter((item) => item != null),
               pricePerSqft: Number(pricePerSqft),
               sqft: Number(sqft),
-              marketingPreference: MarketingPreference.PUBLIC, // TODO: get marketing preference
+              // marketingPreference: MarketingPreference.PUBLIC, // TODO: get marketing preference
+              spaceType: propertyType,
+              marketingPreference,
             },
           },
           refetchQueries: [
@@ -96,11 +100,12 @@ export default function PreviewSpace(props: Props) {
       </RowView>
       <TourContainer isShrink={false}>
         <PendingAlert visible text="Pending virtual tour" />
-        <Text>3D Tour</Text>
+        <Text>{address}</Text>
       </TourContainer>
       <PropertyDeepDiveHeader
         address={address || ''}
         // TODO: ask where to get this info
+        clickable={false}
         targetNeighborhood=""
       />
       <RowedView flex>
@@ -115,7 +120,7 @@ export default function PreviewSpace(props: Props) {
             priceSqft={`$${addSpace.pricePerSqft.toString()}`}
             sqft={addSpace.sqft}
             tenacy="Multiple"
-            type={''}
+            type={addSpace.propertyType?.join(', ') || ''}
             condition={addSpace.condition}
           />
           <Spacing />
@@ -123,13 +128,7 @@ export default function PreviewSpace(props: Props) {
         </CardsContainer>
       </RowedView>
       <OnboardingFooter>
-        <TransparentButton
-          mode="transparent"
-          text="Back"
-          onPress={() => {
-            history.goBack();
-          }}
-        />
+        <TransparentButton mode="transparent" text="Back" onPress={() => history.goBack()} />
         <Button type="submit" text="Next" loading={createSpaceLoading} />
       </OnboardingFooter>
     </Form>
