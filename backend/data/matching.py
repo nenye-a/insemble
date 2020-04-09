@@ -186,6 +186,7 @@ def generate_matching_locations(location, options={}, db_connection=utils.SYSTEM
 
     print("** Matching: Pre-processing start.")
     prepared_match_df = preprocess_match_df(match_df)
+    prepared_match_df = adjust_range(prepared_match_df, options)
     diff = prepared_match_df.subtract(prepared_match_df.iloc[-1]).iloc[:-1]
     print("** Matching: Post-processing start.")
     processed_diff = postprocess_match_df(diff, options)
@@ -243,6 +244,7 @@ def generate_matching_properties(locations, options={}, db_connection=utils.SYST
     match_df = info_df.drop(columns=['_id', 'brand_name'])
     print("** Matching (properties): Pre-processing start.")
     prepared_match_df = preprocess_match_df(match_df.fillna(0)).fillna(0)
+    prepared_match_df = adjust_range(prepared_match_df, options)
     match_diff = prepared_match_df.subtract(prepared_match_df.iloc[-1]).iloc[:-1]
     print("** Matching (properties): Post-processing start.")
     match_diff = postprocess_match_df(match_diff, options)
@@ -474,14 +476,57 @@ def preprocess_match_df(dataframe):
     return dataframe
 
 
-# given difference matrix, post proesses items into groups that work together
-def postprocess_match_df(difference_dataframe, options):
+def modify_range(ordered_categories, target_categories, adjacents=True) -> dict:
+    """
+    Provided ordered categories, and target categories that are contained within the ordered categories,
+    determines what the distribution of the ordered_categories should be.
 
-    difference_dataframe = difference_dataframe.abs()
-    # we want to amplify the differences of importance categories
-    importance_factor = 10
-    # we want to make larger the difference of values that are outside of our ranges
-    difference_multiplier = 2.5
+    ordered categories are "ordered": adjacent categories are the categories to the left and right of the target range
+    """
+
+    num_targets = len(target_categories)
+    number_categories = len(ordered_categories)
+
+    if num_targets == 0:
+        return None
+
+    target_indices = []
+    for target in target_categories:
+        target_indices.append(ordered_categories.index(target))
+
+    first_category = min(target_indices)
+    last_category = max(target_indices)
+
+    adjacent_categories = []
+    if adjacents:
+        adjacent_categories.append(first_category - 1) if first_category != 0 else None
+        adjacent_categories.append(last_category + 1) if last_category != len(ordered_categories) - 1 else None
+    num_adjacent = len(adjacent_categories)
+
+    distribution = {}
+
+    if num_adjacent == 0:
+        target_value = 0.9
+    else:
+        target_value = 0.6
+        adjacent_value = 0.3
+    default_value = 0.1
+
+    for category in ordered_categories:
+        category_index = ordered_categories.index(category)
+        if utils.in_range(category_index, [first_category, last_category]):
+            distribution[category] = target_value / num_targets
+        elif category_index in adjacent_categories:
+            distribution[category] = adjacent_value / num_adjacent
+        else:
+            distribution[category] = default_value / (number_categories - num_adjacent - num_targets)
+
+    return distribution
+
+
+def adjust_range(preprocessed_dataframe, options):
+
+    category_values = {}
 
     if options['desired_min_age']:
         desired_range = [options['desired_min_age']]
@@ -492,19 +537,71 @@ def postprocess_match_df(difference_dataframe, options):
             desired_range.append(1000)
         in_age_range = lambda x: utils.in_range(x, desired_range)
 
+        target_age_categories = []
         # process ages
         for category in AGE_LIST:
             eval_category = category[:-1] if "+" in category else category
             category_range_list = [int(item) for item in eval_category.split(" ") if utils.is_number(item)]
 
             if utils.list_matches_condition(in_age_range, category_range_list):
-                # weight items that are in range higher than those that are not. (both 1 and 3 miles)
-                difference_dataframe[category] = difference_dataframe[category] * importance_factor
-                difference_dataframe[category + "3"] = difference_dataframe[category + "3"] * importance_factor
-            else:
-                # reduce the impact of non matching items by a reduced factor
-                difference_dataframe[category] = difference_dataframe[category] / (importance_factor / 3)
-                difference_dataframe[category + "3"] = difference_dataframe[category + "3"] / (importance_factor / 3)
+                target_age_categories.append(category)
+
+        age_values = modify_range(AGE_LIST, target_age_categories)
+        if age_values:
+            category_values.update(age_values)
+
+    if options['desired_min_income']:
+
+        desired_range = [options['desired_min_income']]
+        if options['desired_max_income']:
+            desired_range.append(options['desired_max_income'])
+        else:
+            # ridiculously high number to allow greater incomes
+            desired_range.append(1000000)
+        in_income_range = lambda x: utils.in_range(x, desired_range)
+
+        target_income_categories = []
+        # process incomes
+        for category in INCOME_LIST:
+            eval_category = category.replace("Current Year Households, Household Income ", "")
+            eval_category = eval_category[:-1] if "+" in eval_category else eval_category  # remove trailing "+"
+            category_range_list = [int("".join(item[1:].split(","))) for item in eval_category.split(" ") if "," in item]
+
+            if utils.list_matches_condition(in_income_range, category_range_list):
+                target_income_categories.append(category)
+
+            income_values = modify_range(INCOME_LIST, target_income_categories)
+            if income_values:
+                category_values.update(income_values)
+
+    education_values = modify_range(EDUCATION_LIST, options['desired_education'])
+    if education_values:
+        category_values.update(education_values)
+
+    ethnicity_values = modify_range(RACE_LIST, options['desired_ethnicity'])
+    if ethnicity_values:
+        category_values.update(ethnicity_values)
+
+    commute_values = modify_range(TRANSPORT_LIST, options['desired_commute'])
+    if commute_values:
+        category_values.update(commute_values)
+
+    for category in category_values:
+        preprocessed_dataframe.iloc[-1][category] = category_values[category]
+        preprocessed_dataframe.iloc[-1][category + "3"] = category_values[category]
+
+    for category in options['desired_personas']:
+        high_value = 0.95
+        preprocessed_dataframe.iloc[-1][category] = max(high_value, preprocessed_dataframe.iloc[-1][category])
+
+    return preprocessed_dataframe
+
+
+# given difference matrix, post proesses items into groups that work together
+def postprocess_match_df(difference_dataframe, options):
+
+    difference_dataframe = difference_dataframe.abs()
+    difference_multiplier = 2.5
 
     if options['desired_min_income']:
 
@@ -520,28 +617,10 @@ def postprocess_match_df(difference_dataframe, options):
         above_range1 = difference_dataframe["MedHouseholdIncome1"] > desired_range[1]
         below_range3 = difference_dataframe["MedHouseholdIncome13"] < desired_range[0]
         above_range3 = difference_dataframe["MedHouseholdIncome13"] > desired_range[1]
-
         difference_dataframe[below_range1] = difference_dataframe[below_range1] * difference_multiplier
         difference_dataframe[above_range1] = difference_dataframe[above_range1] * difference_multiplier
         difference_dataframe[below_range3] = difference_dataframe[below_range3] * difference_multiplier
         difference_dataframe[above_range3] = difference_dataframe[below_range3] * difference_multiplier
-
-        # process incomes
-        for category in INCOME_LIST:
-            eval_category = category.replace("Current Year Households, Household Income ", "")
-            eval_category = eval_category[:-1] if "+" in eval_category else eval_category  # remove trailing "+"
-            category_range_list = [int("".join(item[1:].split(","))) for item in eval_category.split(" ") if "," in item]
-
-            if utils.list_matches_condition(in_income_range, category_range_list):
-                difference_dataframe[category] = difference_dataframe[category] * importance_factor
-                difference_dataframe[category + "3"] = difference_dataframe[category + "3"] * importance_factor
-            else:
-                difference_dataframe[category] = difference_dataframe[category] / (importance_factor / 3)
-                difference_dataframe[category + "3"] = difference_dataframe[category + "3"] / (importance_factor / 3)
-
-    for category in options['desired_personas'] + options['desired_commute'] + options['desired_education'] + options['desired_education']:
-        difference_dataframe[category] = difference_dataframe[category] * importance_factor
-        difference_dataframe[category + "3"] = difference_dataframe[category] * importance_factor
 
     category_set = set(difference_dataframe.columns)
     for category in FOURSQUARE_CATEGORIES:
