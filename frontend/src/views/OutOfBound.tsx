@@ -9,15 +9,14 @@ import OnboardingFooter from '../components/layout/OnboardingFooter';
 import { FONT_SIZE_LARGE } from '../constants/theme';
 import { THEME_COLOR } from '../constants/colors';
 import { MAPS_IFRAME_URL_SEARCH } from '../constants/googleMaps';
+import { Role } from '../types/types';
+import { OUT_OF_BOUND_TENANT, OUT_OF_BOUND_LANDLORD } from '../constants/location';
 
-type Props = {
-  latitude: number;
-  longitude: number;
-};
-export default function OutOfBound({ latitude, longitude }: Props) {
+export default function OutOfBound() {
   let history = useHistory();
-
   let { isDesktop } = useViewport();
+
+  let { latitude, longitude, role } = history.location.state;
 
   let iframeSource = MAPS_IFRAME_URL_SEARCH + '&q=' + latitude + ', ' + longitude;
 
@@ -28,12 +27,7 @@ export default function OutOfBound({ latitude, longitude }: Props) {
         <ContentContainer>
           <ContentContainer>
             <Title>We apologize, your address is not supported.</Title>
-            <Text>
-              Insemble currently only supports addresses within the Los Angeles and Orange County
-              metropolitan area. We will be expanding our area of support in the upcoming months. To
-              access our platform, please use an address within the Los Angeles and Orange County
-              area, or choose categories that represent your brand.
-            </Text>
+            <Text>{role === Role.LANDLORD ? OUT_OF_BOUND_LANDLORD : OUT_OF_BOUND_TENANT}</Text>
           </ContentContainer>
         </ContentContainer>
         <OnboardingFooter>

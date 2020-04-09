@@ -9,6 +9,7 @@ import { FONT_SIZE_NORMAL } from '../../constants/theme';
 import { Action, State as LandlordOnboardingState } from '../../reducers/landlordOnboardingReducer';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
 import { withinLA } from '../../utils';
+import { Role } from '../../types/types';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -37,7 +38,11 @@ export default function PropertyConfirm(props: Props) {
         history.push('/landlord/new-property/step-2');
       }
     } else {
-      history.push('/out-of-bound');
+      history.push('/out-of-bound', {
+        latitude: location.lat,
+        longitude: location.lng,
+        role: Role.LANDLORD,
+      });
     }
   };
 
