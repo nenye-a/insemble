@@ -3,7 +3,12 @@ import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
-import { THEME_COLOR, WHITE, HIGHLIGHTED_BANNER_BACKGROUND } from '../../constants/colors';
+import {
+  THEME_COLOR,
+  WHITE,
+  HIGHLIGHTED_BANNER_BACKGROUND,
+  SUBSCRIBE_BUTTON_COLOR,
+} from '../../constants/colors';
 import { View, Text, Button } from '../../core-ui';
 import { GET_TIER } from '../../graphql/queries/client/userState';
 import { TenantTier } from '../../generated/globalTypes';
@@ -60,7 +65,7 @@ const StatusContainer = styled(View)`
 
 const SubscribeButton = styled(Button)`
   margin: 0 0 0 24px;
-  background-color: #ece9f8;
+  background-color: ${SUBSCRIBE_BUTTON_COLOR};
   ${Text} {
     color: ${THEME_COLOR};
   }
