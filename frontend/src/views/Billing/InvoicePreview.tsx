@@ -53,6 +53,7 @@ const Container = styled(Card)`
   padding: 12px;
   background-color: ${LIGHTER_GREY};
   width: 250px;
+  height: 280px;
 `;
 
 const RowedView = styled(View)`

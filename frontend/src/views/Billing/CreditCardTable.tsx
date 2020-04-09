@@ -15,8 +15,8 @@ export default function CreditCardTable(props: Props) {
   return (
     <DataTable>
       <DataTable.HeaderRow>
-        <DataTable.HeaderCell width={130}>Primary</DataTable.HeaderCell>
-        <DataTable.HeaderCell width={200}>Card Number</DataTable.HeaderCell>
+        <DataTable.HeaderCell width={100}>Primary</DataTable.HeaderCell>
+        <DataTable.HeaderCell width={220}>Card Number</DataTable.HeaderCell>
         <DataTable.HeaderCell>Expiration</DataTable.HeaderCell>
       </DataTable.HeaderRow>
       {paymentMethodList.map((p) => (
@@ -30,7 +30,7 @@ function PaymentMethodRow(props: PaymentMethodList) {
   let { lastFourDigits, expMonth, expYear, isDefault } = props;
   return (
     <DataTable.Row>
-      <DataTable.Cell width={130}>
+      <DataTable.Cell width={100}>
         <DefaultPaymentRadioButton
           name="primary"
           title=""
@@ -38,7 +38,7 @@ function PaymentMethodRow(props: PaymentMethodList) {
           onPress={() => {}}
         />
       </DataTable.Cell>
-      <DataTable.Cell width={200}>
+      <DataTable.Cell width={220}>
         <Text fontWeight={FONT_WEIGHT_LIGHT}>Card ending in **{lastFourDigits}</Text>
       </DataTable.Cell>
       <DataTable.Cell>

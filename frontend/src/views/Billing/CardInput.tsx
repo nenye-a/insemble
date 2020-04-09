@@ -35,7 +35,7 @@ export function ExpiryInput() {
 export function CvcInput() {
   return (
     <View style={inputStyle}>
-      <InputLabel text="Security Code" />
+      <InputLabel text="CVC/CVV" />
       <StripeElementContainer>
         <CardCvcElement options={CARD_OPTIONS} />
       </StripeElementContainer>
@@ -43,7 +43,7 @@ export function CvcInput() {
   );
 }
 
-let inputStyle = { paddingTop: 8, paddingBottom: 8 };
+let inputStyle = { paddingTop: 4, paddingBottom: 4 };
 const CARD_OPTIONS = {
   style: {
     base: {

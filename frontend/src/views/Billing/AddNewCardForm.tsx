@@ -36,10 +36,11 @@ type NewCardAction =
 
 type Props = {
   onFinishCreatingPaymentMethod?: () => void;
+  showSaveButton?: boolean;
 };
 
 export default function AddNewCardForm(props: Props) {
-  let { onFinishCreatingPaymentMethod } = props;
+  let { onFinishCreatingPaymentMethod, showSaveButton = true } = props;
   let [state, dispatch] = useReducer(reducer, initialNewCardState);
   let [isSaving, setSaving] = useState(false);
   let stripe = useStripe();
@@ -88,7 +89,7 @@ export default function AddNewCardForm(props: Props) {
     }
   };
   return (
-    <>
+    <View>
       <RowView>
         <NumberInput />
         <ExpiryInput />
@@ -112,7 +113,7 @@ export default function AddNewCardForm(props: Props) {
           containerStyle={inputRow}
         />
         <TextInput
-          label="Billing Address Line 2 (Optional)"
+          label="Apt., suite, etc."
           value={state.address2}
           onChange={(e) => dispatch({ type: 'EDIT', key: 'address2', value: e.target.value })}
           placeholder="Ex: Building or Unit number"
@@ -142,10 +143,12 @@ export default function AddNewCardForm(props: Props) {
           containerStyle={{ ...inputRow, maxWidth: '80px' }}
         />
       </RowView>
-      <SaveButtonContainer>
-        <Button text="Save" onPress={onSavePress} loading={disableSave} />
-      </SaveButtonContainer>
-    </>
+      {showSaveButton && (
+        <SaveButtonContainer>
+          <Button text="Save" onPress={onSavePress} loading={disableSave} />
+        </SaveButtonContainer>
+      )}
+    </View>
   );
 }
 
@@ -174,8 +177,8 @@ function reducer(state: NewCardState, action: NewCardAction) {
 }
 
 let inputRow = {
-  paddingTop: 8,
-  paddingBottom: 8,
+  paddingTop: 4,
+  paddingBottom: 4,
   flex: 1,
 };
 

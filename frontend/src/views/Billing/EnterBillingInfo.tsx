@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 import { View, Text, Button } from '../../core-ui';
 import {
@@ -14,8 +15,24 @@ import { THEME_COLOR, DARK_TEXT_COLOR } from '../../constants/colors';
 import CreditCardTable from './CreditCardTable';
 import InvoicePreview from './InvoicePreview';
 import CardFooter from '../../components/layout/OnboardingFooter';
+import { PaymentMethodList_paymentMethodList as PaymentMethod } from '../../generated/PaymentMethodList';
+import AddNewCardForm from './AddNewCardForm';
 
-export default function EnterBillingInfo() {
+type Props = {
+  paymentMethodList: Array<PaymentMethod>;
+};
+
+enum ViewMode {
+  NO_CARD,
+  EXISTING_CARD,
+}
+
+export default function EnterBillingInfo(props: Props) {
+  let { paymentMethodList } = props;
+  let history = useHistory();
+  let initialViewMode = paymentMethodList.length > 0 ? ViewMode.EXISTING_CARD : ViewMode.NO_CARD;
+  let [selectedViewMode, setSelectedViewMode] = useState(initialViewMode);
+
   return (
     <>
       <Container>
@@ -23,59 +40,67 @@ export default function EnterBillingInfo() {
         <Text fontWeight={FONT_WEIGHT_LIGHT} fontSize={FONT_SIZE_SMALL}>
           Questions? Email {SUPPORT_EMAIL}
         </Text>
-        <View>
+        <Content>
           <Text fontSize={FONT_SIZE_MEDIUM} color={THEME_COLOR} style={paddingStyle}>
             Payment Info
           </Text>
           <RowedView>
-            <ExistingCards />
+            {selectedViewMode === ViewMode.EXISTING_CARD ? (
+              <ExistingCards
+                paymentMethodList={paymentMethodList}
+                onUseNewCardPress={() => setSelectedViewMode(ViewMode.NO_CARD)}
+              />
+            ) : (
+              <View flex>
+                <AddNewCardForm showSaveButton={false} />
+                <Button
+                  text="Use existing card"
+                  mode="transparent"
+                  onPress={() => setSelectedViewMode(ViewMode.EXISTING_CARD)}
+                  textProps={{ style: { color: DARK_TEXT_COLOR, fontWeight: FONT_WEIGHT_BOLD } }}
+                  style={{ alignSelf: 'flex-end' }}
+                />
+              </View>
+            )}
+            <Spacing />
             <InvoicePreview
               subscriptions={[{ tierName: 'Professional', price: 300, isAnnual: true }]}
             />
           </RowedView>
-        </View>
+        </Content>
       </Container>
       <CardFooter>
-        <BackButton mode="transparent" text="Back" />
-        <Button text="Next" />
+        <BackButton mode="transparent" text="Back" onPress={() => history.goBack()} />
+        <Button
+          text="Next"
+          onPress={() => {
+            history.push('/user/upgrade-plan/upgrade-success', {
+              ...history.location.state,
+            });
+          }}
+        />
       </CardFooter>
     </>
   );
 }
 
-function ExistingCards() {
+type ExistingCardsProps = {
+  paymentMethodList: Array<PaymentMethod>;
+  onUseNewCardPress: () => void;
+};
+
+function ExistingCards({ paymentMethodList, onUseNewCardPress }: ExistingCardsProps) {
   return (
-    <>
-      <LeftContainer>
-        <Text color={THEME_COLOR} style={paddingStyle}>
-          Use existing card
-        </Text>
-        <CreditCardTable
-          paymentMethodList={[
-            {
-              __typename: 'CustomerPaymentMethod',
-              id: '1',
-              expMonth: 9,
-              expYear: 2022,
-              lastFourDigits: '4111',
-              isDefault: true,
-            },
-            {
-              __typename: 'CustomerPaymentMethod',
-              id: '2',
-              expMonth: 9,
-              expYear: 2022,
-              lastFourDigits: '1232',
-              isDefault: false,
-            },
-          ]}
-        />
-        <UseNewCardContainer>
-          <Text>or </Text>
-          <AddNewCard text="use a new card" mode="transparent" />
-        </UseNewCardContainer>
-      </LeftContainer>
-    </>
+    <View>
+      <Text color={THEME_COLOR} style={paddingStyle}>
+        Use existing card
+      </Text>
+      <CreditCardTable paymentMethodList={paymentMethodList} />
+      <UseNewCardContainer>
+        <Text>or </Text>
+        <AddNewCard text="use a new card" mode="transparent" onPress={onUseNewCardPress} />
+      </UseNewCardContainer>
+    </View>
   );
 }
 
@@ -95,9 +120,8 @@ const RowedView = styled(View)`
   flex-direction: row;
 `;
 
-const LeftContainer = styled(View)`
-  align-items: flex-start;
-  margin-right: 24px;
+const Content = styled(View)`
+  width: 100%;
 `;
 
 const UseNewCardContainer = styled(RowedView)`
@@ -119,4 +143,8 @@ const BackButton = styled(Button)`
   ${Text} {
     font-style: italic;
   }
+`;
+
+const Spacing = styled(View)`
+  width: 24px;
 `;
