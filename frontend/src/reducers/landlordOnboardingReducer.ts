@@ -23,7 +23,7 @@ type SpaceListing = {
   equipments: Array<string>;
   availability: string;
   marketingPreference: MarketingPreference;
-  propertyType?: Array<string>;
+  spaceType?: Array<string>;
 };
 
 export type State = {

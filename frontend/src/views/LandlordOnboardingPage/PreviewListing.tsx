@@ -15,7 +15,6 @@ import { State, Action } from '../../reducers/landlordOnboardingReducer';
 import { CREATE_PROPERTY, GET_PROPERTIES } from '../../graphql/queries/server/properties';
 import { CreateProperty, CreatePropertyVariables } from '../../generated/CreateProperty';
 import { getImageBlob, useViewport } from '../../utils';
-import { MarketingPreference } from '../../generated/globalTypes';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -49,7 +48,7 @@ export default function PreviewListing(props: Props) {
       equipments,
       availability,
       marketingPreference,
-      propertyType,
+      spaceType,
     } = spaceListing;
     if (mainPhoto && typeof mainPhoto !== 'string') {
       let mainPhotoBlob = getImageBlob(mainPhoto.file);
@@ -88,8 +87,7 @@ export default function PreviewListing(props: Props) {
             photoUploads: additionalPhotosBlob.filter((item) => item != null),
             pricePerSqft: Number(pricePerSqft),
             sqft: Number(sqft),
-            // marketingPreference: MarketingPreference.PUBLIC, // TODO: get marketing preference
-            spaceType: propertyType,
+            spaceType: spaceType,
             marketingPreference,
           },
         },
@@ -116,7 +114,7 @@ export default function PreviewListing(props: Props) {
         priceSqft={`$${spaceListing.pricePerSqft.toString()}`}
         sqft={spaceListing.sqft}
         tenacy="Multiple"
-        type={spaceListing.propertyType?.join(', ') || ''}
+        type={spaceListing.spaceType?.join(', ') || ''}
         condition={spaceListing.condition}
       />
       <Spacing />

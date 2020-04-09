@@ -77,7 +77,7 @@ export default function LandlordListing(props: Props) {
   let [additionalPhotos, setAdditionalPhotos] = useState<Array<string | FileWithPreview | null>>(
     spaceListing.propertyPhotos
   );
-  let [selectedType, setSelectedType] = useState<Array<string>>(spaceListing.propertyType || []);
+  let [selectedType, setSelectedType] = useState<Array<string>>(spaceListing.spaceType || []);
   let [selectedMarketingPreference, setSelectedMarketingPreference] = useState<
     MarketingPreferenceRadio
   >(MARKETING_PREFERENCE_OPTIONS[0]);
@@ -104,7 +104,7 @@ export default function LandlordListing(props: Props) {
               equipments: selectedEquipments,
               availability: fieldValues ? fieldValues.date : date,
               marketingPreference: selectedMarketingPreference.value,
-              propertyType: selectedType,
+              spaceType: selectedType,
             },
           },
         });

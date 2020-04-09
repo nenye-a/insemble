@@ -69,7 +69,7 @@ export default function AddSpace(props: Props) {
   let [additionalPhotos, setAdditionalPhotos] = useState<Array<string | FileWithPreview | null>>(
     addSpace.propertyPhotos
   );
-  let [selectedType, setSelectedType] = useState<Array<string>>(addSpace.propertyType || []);
+  let [selectedType, setSelectedType] = useState<Array<string>>(addSpace.spaceType || []);
   let [selectedMarketingPreference, setSelectedMarketingPreference] = useState<
     MarketingPreferenceRadio
   >(MARKETING_PREFERENCE_OPTIONS[0]);
@@ -96,7 +96,7 @@ export default function AddSpace(props: Props) {
               equipments: selectedEquipments,
               availability: fieldValues ? fieldValues.date : date,
               marketingPreference: selectedMarketingPreference.value,
-              propertyType: selectedType,
+              spaceType: selectedType,
             },
           },
         });
