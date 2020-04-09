@@ -40,7 +40,14 @@ export default function UpgradeConfirmationModal() {
     },
     {
       title: "Let's confirm  your subscription",
-      content: <EnterBillingInfo paymentMethodList={paymentListData?.paymentMethodList || []} />,
+      content: (
+        <EnterBillingInfo
+          paymentMethodList={paymentListData?.paymentMethodList || []}
+          tierName={tierName}
+          price={price}
+          isAnnual={isAnnual}
+        />
+      ),
       path: 'confirm-payment',
     },
     { title: 'Thank You!', content: <UpgradeSuccess />, path: 'upgrade-success' },
@@ -61,7 +68,7 @@ export default function UpgradeConfirmationModal() {
       visible={true}
       hideCloseButton={true}
       onClose={() => {
-        history.goBack();
+        history.push('/user/plan');
       }}
     >
       <Card

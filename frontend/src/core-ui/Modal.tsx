@@ -57,7 +57,7 @@ export default function Modal({
 }
 
 const Overlay = styled(View)`
-  background-color: rgba(0, 0, 0, 0.15);
+  background-color: rgba(0, 0, 0, 0.4);
   position: fixed;
   top: 0;
   left: 0;

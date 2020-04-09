@@ -20,6 +20,9 @@ import AddNewCardForm from './AddNewCardForm';
 
 type Props = {
   paymentMethodList: Array<PaymentMethod>;
+  tierName: string;
+  price: number;
+  isAnnual: boolean;
 };
 
 enum ViewMode {
@@ -28,7 +31,7 @@ enum ViewMode {
 }
 
 export default function EnterBillingInfo(props: Props) {
-  let { paymentMethodList } = props;
+  let { paymentMethodList, tierName, price, isAnnual } = props;
   let history = useHistory();
   let initialViewMode = paymentMethodList.length > 0 ? ViewMode.EXISTING_CARD : ViewMode.NO_CARD;
   let [selectedViewMode, setSelectedViewMode] = useState(initialViewMode);
@@ -63,9 +66,7 @@ export default function EnterBillingInfo(props: Props) {
               </View>
             )}
             <Spacing />
-            <InvoicePreview
-              subscriptions={[{ tierName: 'Professional', price: 300, isAnnual: true }]}
-            />
+            <InvoicePreview subscriptions={[{ tierName, price, isAnnual }]} />
           </RowedView>
         </Content>
       </Container>

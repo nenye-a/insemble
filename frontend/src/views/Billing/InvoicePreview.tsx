@@ -42,8 +42,8 @@ export default function InvoicePreview(props: Props) {
       </SubscriptionsContainer>
       <Divider color={GREY_DIVIDER} />
       <RowedView>
-        <TotalText fontWeight={FONT_WEIGHT_MEDIUM}>Total</TotalText>
-        <TotalText fontWeight={FONT_WEIGHT_MEDIUM}>${total}</TotalText>
+        <TotalText>Total</TotalText>
+        <TotalText>${total}</TotalText>
       </RowedView>
     </Container>
   );

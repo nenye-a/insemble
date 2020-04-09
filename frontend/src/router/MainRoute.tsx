@@ -6,6 +6,12 @@ import UpgradeConfirmationModal from '../views/TenantPlan/UpgradeConfirmationMod
 
 export default function MainRoute() {
   let location = useLocation();
+
+  /**
+   * This piece of state is set when we open the modal
+   * If it's there, us it as the location for the <Switch> so we show
+   * the previous path in the background, behind the modal
+   */
   let background = location.state && location.state.background;
 
   return (
