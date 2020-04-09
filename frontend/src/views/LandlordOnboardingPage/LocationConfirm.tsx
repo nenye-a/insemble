@@ -6,7 +6,7 @@ import { View, Text, Button, Form } from '../../core-ui';
 import { LocationInput } from '../../components';
 import { THEME_COLOR } from '../../constants/colors';
 import { MAPS_IFRAME_URL_SEARCH } from '../../constants/googleMaps';
-import { FONT_SIZE_NORMAL } from '../../constants/theme';
+import { FONT_SIZE_NORMAL, FONT_SIZE_LARGE, FONT_WEIGHT_MEDIUM } from '../../constants/theme';
 import { Action, State as LandlordOnboardingState } from '../../reducers/landlordOnboardingReducer';
 import { urlEncode } from '../../utils';
 import { SelectedLocation } from '../../components/LocationInput';
@@ -81,6 +81,7 @@ export default function LocationConfirm(props: Props) {
     >
       <Iframe src={mapURL} />
       <FormContainer flex>
+        <TitleText>Is this your property?</TitleText>
         <RowedView>
           <LocationInput
             label="Property Name"
@@ -143,4 +144,10 @@ const EditButton = styled(Button)`
 const TransparentButton = styled(Button)`
   margin-right: 8px;
   padding: 0 12px;
+`;
+
+const TitleText = styled(Text)`
+color: ${THEME_COLOR}
+  font-size: ${FONT_SIZE_LARGE}
+  font-weight: ${FONT_WEIGHT_MEDIUM}
 `;
