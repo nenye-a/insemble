@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { CardNumberElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { useMutation } from '@apollo/react-hooks';
 
-import { View, TextInput, Button } from '../../core-ui';
+import { View, TextInput } from '../../core-ui';
 import { NumberInput, ExpiryInput, CvcInput } from './CardInput';
 import {
   RegisterPaymentMethod,
@@ -36,11 +36,10 @@ type NewCardAction =
 
 type Props = {
   onFinishCreatingPaymentMethod?: () => void;
-  showSaveButton?: boolean;
 };
 
 export default function AddNewCardForm(props: Props) {
-  let { onFinishCreatingPaymentMethod, showSaveButton = true } = props;
+  let { onFinishCreatingPaymentMethod } = props;
   let [state, dispatch] = useReducer(reducer, initialNewCardState);
   let [isSaving, setIsSaving] = useState(false);
   let stripe = useStripe();
@@ -143,11 +142,6 @@ export default function AddNewCardForm(props: Props) {
           containerStyle={{ ...inputRow, maxWidth: '80px' }}
         />
       </RowView>
-      {showSaveButton && (
-        <SaveButtonContainer>
-          <Button text="Save" onPress={onSavePress} loading={disableSave} />
-        </SaveButtonContainer>
-      )}
     </View>
   );
 }
@@ -184,8 +178,4 @@ let inputRow = {
 
 const RowView = styled(View)`
   flex-direction: row;
-`;
-
-const SaveButtonContainer = styled(View)`
-  align-items: flex-end;
 `;
