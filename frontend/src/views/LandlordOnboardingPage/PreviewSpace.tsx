@@ -16,6 +16,7 @@ import { getImageBlob } from '../../utils';
 import { CreateSpace, CreateSpaceVariables } from '../../generated/CreateSpace';
 import { Action, State as LandlordAddSpaceState } from '../../reducers/landlordAddSpaceReducer';
 import { GET_PROPERTIES, GET_PROPERTY } from '../../graphql/queries/server/properties';
+import { MarketingPreference } from '../../generated/globalTypes';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -70,6 +71,7 @@ export default function PreviewSpace(props: Props) {
               photoUploads: additionalPhotosBlob.filter((item) => item != null),
               pricePerSqft: Number(pricePerSqft),
               sqft: Number(sqft),
+              marketingPreference: MarketingPreference.PUBLIC, // TODO: get marketing preference
             },
           },
           refetchQueries: [

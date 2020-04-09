@@ -19,7 +19,6 @@ import OnboardingFooter from '../../components/layout/OnboardingFooter';
 import { FONT_SIZE_NORMAL } from '../../constants/theme';
 import { WHITE } from '../../constants/colors';
 import { GET_CATEGORIES } from '../../graphql/queries/server/filters';
-import { SPACES_TYPE } from '../../constants/spaces';
 import { SERVICE_OPTIONS } from '../LandlordOnboardingPage/TenantConfirm';
 import { Categories } from '../../generated/Categories';
 import { Filter, ErrorComponent } from '../../components';
@@ -45,11 +44,7 @@ export default function LandlordManageProperty() {
     { data: editPropertyData, loading: editPropertyLoading, error: editPropertyError },
   ] = useMutation<EditProperty, EditPropertyVariables>(EDIT_PROPERTY);
 
-  let [selectedType, setSelectedType] = useState<Array<string>>([]);
-
   let [selectedRelationType, setSelectedRelationType] = useState<Array<string>>([]);
-  let [categorySelectionVisible, toggleCategorySelection] = useState(false);
-  let [selectedCategories, setSelectedCategories] = useState<Array<string>>([]);
   let [existingCategorySelectionVisible, toggleExistingCategorySelectionVisible] = useState(false);
   let [selectedExistingCategories, setExistingSelectedCategories] = useState<Array<string>>([]);
   let [otherService, setOtherService] = useState('');
@@ -57,16 +52,8 @@ export default function LandlordManageProperty() {
 
   useEffect(() => {
     if (propertyData) {
-      let {
-        businessType,
-        categories,
-        exclusive,
-        propertyType,
-        userRelations,
-      } = propertyData.property;
-      setSelectedType(propertyType);
+      let { businessType, exclusive, userRelations } = propertyData.property;
       setSelectedRelationType(userRelations);
-      setSelectedCategories(categories);
       setExistingSelectedCategories(exclusive);
       let otherSvc = businessType.find((service: string) => !SERVICE_OPTIONS.includes(service));
       if (otherSvc) {
@@ -79,7 +66,7 @@ export default function LandlordManageProperty() {
 
   let onSubmit = () => {
     if (propertyData && propertyId) {
-      let { name, location, marketingPreference } = propertyData.property;
+      let { name, location } = propertyData.property;
       let { lat, lng, address } = location;
       let businessType = otherService
         ? [...selectedBusinessService.filter((svc) => svc !== 'Other'), otherService]
@@ -87,12 +74,9 @@ export default function LandlordManageProperty() {
       let variables = {
         property: {
           name,
-          categories: selectedCategories,
           location: { lat, lng, address },
           businessType,
-          propertyType: selectedType,
           exclusive: selectedExistingCategories,
-          marketingPreference,
           userRelations: selectedRelationType,
         },
         propertyId,
@@ -121,32 +105,6 @@ export default function LandlordManageProperty() {
           <>
             {<Alert visible={!!editPropertyData} text="Property succesfully updated" />}
             {<Alert visible={!!editPropertyError} text={editPropertyError?.message || ''} />}
-            <InputWrapper>
-              <LabelText text="What type of property is this?" />
-              {SPACES_TYPE.map((option, index) => {
-                let isChecked = selectedType.includes(option);
-                return (
-                  <Checkbox
-                    key={index}
-                    size="18px"
-                    title={option}
-                    titleProps={{ style: { fontSize: FONT_SIZE_NORMAL } }}
-                    isChecked={isChecked}
-                    onPress={() => {
-                      if (isChecked) {
-                        let newSelectedType = selectedType.filter(
-                          (item: string) => item !== option
-                        );
-                        setSelectedType(newSelectedType);
-                      } else {
-                        setSelectedType([...selectedType, option]);
-                      }
-                    }}
-                    style={{ lineHeight: 2 }}
-                  />
-                );
-              })}
-            </InputWrapper>
             <InputWrapper>
               <LabelText text="What type of business can your property serve?" />
               {SERVICE_OPTIONS.map((option, index) => {
@@ -211,37 +169,6 @@ export default function LandlordManageProperty() {
             </InputWrapper>
             {categoriesData && (
               <>
-                <InputWrapper style={{ zIndex: 1 }}>
-                  <LabelText text="Are you looking for any specific retail categories?" />
-                  <TouchableOpacity
-                    onPress={() => toggleCategorySelection(!categorySelectionVisible)}
-                  >
-                    <SelectCategories
-                      disabled
-                      placeholder="Select retailer categories"
-                      value={selectedCategories.join(', ')}
-                    />
-                  </TouchableOpacity>
-                  <ClickAway onClickAway={() => toggleCategorySelection(false)}>
-                    <FilterContainer
-                      search
-                      visible={categorySelectionVisible}
-                      selectedOptions={selectedCategories}
-                      allOptions={categoriesData.categories}
-                      onSelect={(category: string) => {
-                        setSelectedCategories([...selectedCategories, category]);
-                      }}
-                      onUnSelect={(category: string) => {
-                        let newSelectedCategories = selectedCategories.filter(
-                          (el: string) => !el.includes(category)
-                        );
-                        setSelectedCategories(newSelectedCategories);
-                      }}
-                      onDone={() => toggleCategorySelection(false)}
-                      onClear={() => setSelectedCategories([])}
-                    />
-                  </ClickAway>
-                </InputWrapper>
                 <InputWrapper>
                   <LabelText text="Do you have any existing exclusives?" />
                   <TouchableOpacity

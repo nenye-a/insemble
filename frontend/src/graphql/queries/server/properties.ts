@@ -12,12 +12,8 @@ export const GET_PROPERTIES = gql`
       id
       propertyId
       name
-      categories
-      userRelations
       businessType
-      propertyType
       exclusive
-      marketingPreference
       userRelations
       location {
         id
@@ -56,19 +52,17 @@ export const GET_PROPERTY = gql`
   query Property($propertyId: String!) {
     property(propertyId: $propertyId) {
       id
-      businessType
       propertyId
-      categories
-      exclusive
-      location {
-        lat
-        lng
-        address
-      }
-      marketingPreference
-      propertyType
       name
+      businessType
+      exclusive
       userRelations
+      location {
+        id
+        address
+        lng
+        lat
+      }
       space {
         id
         available

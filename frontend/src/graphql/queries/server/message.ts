@@ -92,7 +92,6 @@ export const GET_CONVERSATION = gql`
         space {
           mainPhoto
         }
-        categories
       }
       space {
         id
@@ -152,7 +151,6 @@ export const GET_CONVERSATIONS = gql`
         space {
           mainPhoto
         }
-        categories
       }
       space {
         id
