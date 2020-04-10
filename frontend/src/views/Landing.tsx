@@ -56,8 +56,12 @@ function Landing() {
   let [getBrand] = useLazyQuery<GetBrands>(GET_BRANDS, {
     notifyOnNetworkStatusChange: true,
     onCompleted: (data) => {
-      let { id } = data.brands[0];
-      history.push(`/map/${id}`);
+      if (data.brands.length > 0) {
+        let { id } = data.brands[0];
+        history.push(`/map/${id}`);
+      } else {
+        history.push('/user/brands');
+      }
     },
   });
   let [getProperties] = useLazyQuery<GetProperties>(GET_PROPERTIES, {
