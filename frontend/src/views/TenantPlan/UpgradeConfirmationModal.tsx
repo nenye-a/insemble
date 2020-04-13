@@ -74,6 +74,7 @@ export default function UpgradeConfirmationModal() {
         onClose={() => {
           history.push('/user/plan');
         }}
+        progress={SEGMENTS.indexOf(selectedPage) / SEGMENTS.length}
       >
         <Card
           titleBackground="purple"
