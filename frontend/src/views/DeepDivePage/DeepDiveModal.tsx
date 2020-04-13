@@ -119,7 +119,7 @@ export default function LocationDeepDiveModal(props: Props) {
             style={{ justifyContent: 'center', alignItems: 'center' }}
           />
         ) : error ? (
-          <ErrorComponent onRetry={refetch} text={error.message} />
+          <ErrorComponent onRetry={refetch} />
         ) : (
           <>
             {noPropertyDetail ? (

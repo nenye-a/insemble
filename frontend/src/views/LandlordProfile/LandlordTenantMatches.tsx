@@ -53,7 +53,7 @@ export default function LandlordTenantMatches({
       {loading ? (
         <LoadingIndicator size="large" text="Loading the matches for your space." />
       ) : error ? (
-        <ErrorComponent text={error.message} onRetry={refetch} />
+        <ErrorComponent onRetry={refetch} />
       ) : !matchResult ? (
         <EmptyDataComponent />
       ) : (
