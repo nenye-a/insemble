@@ -16,9 +16,9 @@ import {
   PillButton,
 } from '../../core-ui';
 import { Filter } from '../../components';
-import { BUTTON_TRANSPARENT_TEXT_COLOR, RED_TEXT, THEME_COLOR } from '../../constants/colors';
+import { BUTTON_TRANSPARENT_TEXT_COLOR, RED_TEXT } from '../../constants/colors';
 import { MAPS_IFRAME_URL_SEARCH } from '../../constants/googleMaps';
-import { FONT_SIZE_SMALL, FONT_SIZE_LARGE } from '../../constants/theme';
+import { FONT_SIZE_SMALL } from '../../constants/theme';
 import { GET_CATEGORIES, GET_AUTOPOPULATE_FILTER } from '../../graphql/queries/server/filters';
 import { Categories } from '../../generated/Categories';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
@@ -268,10 +268,4 @@ const CategoryInput = styled(View)`
 const LabelText = styled(Label)`
   padding-top: 12px;
   padding-bottom: 8px;
-`;
-
-const Title = styled(Text)`
-  font-size: ${FONT_SIZE_LARGE};
-  color: ${THEME_COLOR};
-  margin-bottom: 10px;
 `;

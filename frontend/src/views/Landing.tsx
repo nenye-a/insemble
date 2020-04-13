@@ -26,7 +26,6 @@ import { GET_PROPERTIES } from '../graphql/queries/server/properties';
 import { GET_BRANDS } from '../graphql/queries/server/brand';
 import { GetBrands } from '../generated/GetBrands';
 import { GetProperties } from '../generated/GetProperties';
-import { LOS_ANGELES_LOCATION } from '../constants/location';
 
 type LogoViewProps = ViewProps & {
   isDesktop?: boolean;
@@ -38,7 +37,6 @@ function Landing() {
   let history = useHistory();
   let { viewportType } = useViewport();
   let isDesktop = viewportType === VIEWPORT_TYPE.DESKTOP;
-  let { minLat, minLng, maxLat, maxLng } = LOS_ANGELES_LOCATION;
 
   let [getTenantProfile, { data: tenantData }] = useLazyQuery<GetTenantProfile>(
     GET_TENANT_PROFILE,
