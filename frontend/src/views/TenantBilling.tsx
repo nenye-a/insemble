@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { useQuery } from '@apollo/react-hooks';
+import { useMutation, useQuery, useLazyQuery } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
 import { SECONDARY_COLOR, THEME_COLOR, WHITE } from '../constants/colors';
@@ -10,15 +10,34 @@ import { Button, Card, LoadingIndicator, Text, View, Alert } from '../core-ui';
 import { PaymentMethodList } from '../generated/PaymentMethodList';
 
 import { BillingList } from '../generated/BillingList';
-import { GET_BILLING_LIST, GET_PAYMENT_METHOD_LIST } from '../graphql/queries/server/billing';
-
+import {
+  GET_BILLING_LIST,
+  GET_PAYMENT_METHOD_LIST,
+  CANCEL_TENANT_SUBSCRIPTION,
+} from '../graphql/queries/server/billing';
 import { GET_TENANT_PROFILE } from '../graphql/queries/server/profile';
 import { GetTenantProfile } from '../generated/GetTenantProfile';
 import { TenantTier } from '../generated/globalTypes';
-import { BillingSummaryTable, CreditCardTable } from '../components/plan';
+import { Popup } from '../components';
+import { CancelTenantSubcription } from '../generated/CancelTenantSubcription';
+import { GetBrands } from '../generated/GetBrands';
+import { GET_BRANDS } from '../graphql/queries/server/brand';
 import { BillingContextProvider } from '../utils/billing';
+import { BillingSummaryTable, CreditCardTable } from '../components/plan';
 
 export default function TenantBilling() {
+  let [cancelPlanVisible, setCancelPlanVisible] = useState(false);
+  let [planCancelled, setPlanCancelled] = useState(false);
+
+  let [cancelPlan, { error: cancelPlanError, loading: cancelPlanLoading }] = useMutation<
+    CancelTenantSubcription
+  >(CANCEL_TENANT_SUBSCRIPTION, {
+    onCompleted: (result) => {
+      if (result.cancelTenantSubscription) {
+        setPlanCancelled(true);
+      }
+    },
+  });
   let { data: billingListData, loading: billingListLoading } = useQuery<BillingList>(
     GET_BILLING_LIST,
     {
@@ -27,6 +46,19 @@ export default function TenantBilling() {
       },
     }
   );
+
+  let [getBrand] = useLazyQuery<GetBrands>(GET_BRANDS, {
+    notifyOnNetworkStatusChange: true,
+    onCompleted: (data) => {
+      if (data.brands.length > 0) {
+        let { id } = data.brands[0];
+        history.push(`/map/${id}`);
+      } else {
+        history.push('/user/brands');
+      }
+    },
+  });
+
   let {
     data: paymentListData,
     loading: paymentListLoading,
@@ -36,36 +68,65 @@ export default function TenantBilling() {
     GET_TENANT_PROFILE
   );
 
+  let errorMessage = cancelPlanError?.message || '';
+  let lastBill = 'May 1st, 9AM'; // TODO: get last bill date
   let history = useHistory();
   return (
     <BillingContextProvider value={{ refetchPaymentList }}>
       <Container flex>
         <Title>{`Billing & Plans`}</Title>
-        <Alert
+        <BillingAlert
           text="Upgrading your account may take up to 1 minute. Please refresh this page later."
           visible={
             history.location.state &&
             history.location.state?.from === 'TenantPlanList' &&
             history.location.state?.isTierUpgradeSuccess
           }
-          style={{ marginBottom: 8 }}
         />
+        <BillingAlert text={errorMessage} visible={!!errorMessage} />
         <TierSection
           currentTier={tenantProfile?.profileTenant.tier}
-          loading={tenantProfileLoading}
+          loading={tenantProfileLoading || cancelPlanLoading}
+          onCancel={() => setCancelPlanVisible(true)}
         />
         <BillingSummaryTable loading={billingListLoading} billingData={billingListData} />
         <CreditCardTable loading={paymentListLoading} paymentData={paymentListData} />
       </Container>
+      <Popup
+        visible={cancelPlanVisible}
+        title="Subscription Cancellation"
+        bodyText={
+          planCancelled
+            ? `Cancellation Successful. Your last bill will be on ${lastBill}`
+            : 'Are you sure you want to cancel your professional subscription? You will lose access to all professional features.'
+        }
+        buttons={
+          planCancelled
+            ? [{ text: 'Home', onPress: () => getBrand() }]
+            : [
+                {
+                  text: 'Cancel',
+                  onPress: () => {
+                    cancelPlan();
+                    setCancelPlanVisible(false);
+                  },
+                },
+                {
+                  text: 'Keep Pro Features',
+                  onPress: () => setCancelPlanVisible(false),
+                },
+              ]
+        }
+      />
     </BillingContextProvider>
   );
 }
 
-type TierSectionProps = { currentTier?: TenantTier; loading: boolean };
+type TierSectionProps = { currentTier?: TenantTier; loading: boolean; onCancel: () => void };
 
-function TierSection({ currentTier, loading }: TierSectionProps) {
+function TierSection({ currentTier, loading, onCancel }: TierSectionProps) {
   let history = useHistory();
-  let onUpgradePlanButtonClick = useCallback(() => {
+  let onPlanButtonClick = useCallback(() => {
     history.push('/user/plan');
   }, [history]);
 
@@ -81,7 +142,14 @@ function TierSection({ currentTier, loading }: TierSectionProps) {
             Your current account tier is <Text fontWeight="bold">{currentTier}</Text>
           </Text>
         )}
-        <UpgradePlanButton text="Upgrade Plan" onPress={onUpgradePlanButtonClick} />
+        {currentTier === TenantTier.FREE || currentTier === TenantTier.EXPLORE ? (
+          <UpgradePlanButton text="Upgrade Plan" onPress={onPlanButtonClick} />
+        ) : (
+          <Row>
+            <Button text="Cancel Plan" onPress={onCancel} mode="withShadow" />
+            <SeePlanButton text="See Plan" onPress={onPlanButtonClick} />
+          </Row>
+        )}
       </TierSectionCard>
     </View>
   );
@@ -119,5 +187,18 @@ let TierSectionCard = styled(SectionCard)`
 `;
 
 let UpgradePlanButton = styled(Button)`
-  padding: '8px 32px';
+  padding: 8px 32px;
+`;
+
+const Row = styled(View)`
+  flex-direction: row;
+`;
+
+const SeePlanButton = styled(Button)`
+  padding: 8px 32px;
+  margin-left: 12px;
+`;
+
+const BillingAlert = styled(Alert)`
+  margin-bottom: 8px;
 `;
