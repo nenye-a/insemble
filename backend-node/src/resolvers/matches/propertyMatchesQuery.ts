@@ -103,6 +103,7 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
         number_existing_locations: numExistingLocations,
         on_platform: onPlatform,
         photo_url: pictureUrl,
+        contacts,
         ...other
       }) => {
         return {
@@ -113,6 +114,7 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
           numExistingLocations,
           onPlatform,
           pictureUrl: pictureUrl || '',
+          contacts: contacts || [],
           ...other,
         };
       },
