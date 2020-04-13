@@ -1,4 +1,4 @@
-import { mutationField, stringArg } from 'nexus';
+import { mutationField, stringArg, FieldResolver } from 'nexus';
 import { Context } from 'serverTypes';
 
 import stripe from '../../config/stripe';
@@ -65,5 +65,45 @@ export let createTenantSubscription = mutationField(
         status,
       };
     },
+  },
+);
+
+export let cancelTenantSubscriptionResolver: FieldResolver<
+  'Mutation',
+  'cancelTenantSubscription'
+> = async (_, __, context: Context) => {
+  let user = await context.prisma.tenantUser.findOne({
+    where: {
+      id: context.tenantUserId,
+    },
+  });
+  if (!user) {
+    throw new Error('User not found');
+  }
+  if (!user.stripeCustomerId) {
+    throw new Error('User has not been connected with Stripe');
+  }
+  try {
+    await stripe.subscriptions.del(user.stripeSubscriptionId);
+    await context.prisma.tenantUser.update({
+      where: {
+        stripeCustomerId: user.stripeCustomerId,
+      },
+      data: {
+        tier: 'FREE',
+        stripeSubscriptionId: null,
+      },
+    });
+  } catch {
+    throw new Error('Failed to cancel subscription');
+  }
+  return 'Success';
+};
+
+export let cancelTenantSubscription = mutationField(
+  'cancelTenantSubscription',
+  {
+    type: 'String',
+    resolve: cancelTenantSubscriptionResolver,
   },
 );
