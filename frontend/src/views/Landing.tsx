@@ -11,7 +11,7 @@ import Description from './LandingPage/Description';
 import Features from './LandingPage/Features';
 import SpeedUpLeasing from './LandingPage/SpeedUpLeasing';
 import Footer from './LandingPage/Footer';
-import { useGoogleMaps, useCredentials, useViewport } from '../utils';
+import { useGoogleMaps, useCredentials, useViewport, withinLA } from '../utils';
 import Button from '../core-ui/Button';
 import { GetTenantProfile } from '../generated/GetTenantProfile';
 import { GET_TENANT_PROFILE, GET_LANDLORD_PROFILE } from '../graphql/queries/server/profile';
@@ -164,27 +164,20 @@ function Landing() {
                   let { lat, lng } = location;
                   let latitude = lat();
                   let longitude = lng();
-                  if (
-                    latitude > maxLat ||
-                    longitude > maxLng ||
-                    latitude < minLat ||
-                    longitude < minLng
-                  ) {
+                  let isWithinLA = withinLA(latitude, longitude);
+                  if (isWithinLA) {
                     history.push('/verify/step-1', {
                       placeID,
                       name,
                       formattedAddress,
                       lat: latitude.toString(),
                       lng: longitude.toString(),
-                      outOfBound: true,
                     });
                   } else {
-                    history.push('/verify/step-1', {
-                      placeID,
-                      name,
-                      formattedAddress,
-                      lat: latitude.toString(),
-                      lng: longitude.toString(),
+                    history.push('/out-of-bound', {
+                      latitude,
+                      longitude,
+                      role: Role.TENANT,
                     });
                   }
                 }

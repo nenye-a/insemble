@@ -56,9 +56,7 @@ export default function Onboarding() {
 
   const SEGMENTS = [
     {
-      title: history.location.state.outOfBound
-        ? 'Unsupported Address'
-        : 'Let’s confirm your business details.',
+      title: 'Let’s confirm your business details.',
       content: ConfirmBusinessDetail,
       path: 'step-1',
     },
