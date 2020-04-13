@@ -228,6 +228,13 @@ model SubscriptionLandlordHistory {
   createdAt      DateTime       @default(now())
 }
 
+model SubscriptionLandlordHistory {
+  id             String     @default(cuid()) @id
+  subscriptionId String
+  landlordUser   LandlordUser
+  createdAt      DateTime   @default(now())
+}
+
 model TenantRegisterVerification {
   id            String  @default(cuid()) @id
   businessInput String?
