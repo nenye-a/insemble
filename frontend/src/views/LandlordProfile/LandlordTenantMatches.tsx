@@ -1,5 +1,6 @@
 import React, { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
+import { ApolloError, ApolloQueryResult } from 'apollo-client';
 
 import { View, Text, TouchableOpacity, LoadingIndicator } from '../../core-ui';
 import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
@@ -14,8 +15,10 @@ import { DARK_TEXT_COLOR, WHITE, SECONDARY_COLOR, THEME_COLOR } from '../../cons
 import {
   PropertyMatches_propertyMatches as PropertyMatchesProps,
   PropertyMatches_propertyMatches_contacts as Contacts,
+  PropertyMatchesVariables,
+  PropertyMatches,
 } from '../../generated/PropertyMatches';
-import { EmptyDataComponent } from '../../components';
+import { EmptyDataComponent, ErrorComponent } from '../../components';
 import { roundDecimal, useViewport } from '../../utils';
 import { VIEWPORT_TYPE } from '../../constants/viewports';
 
@@ -31,14 +34,26 @@ type Props = {
   onPress: (selectedData: SelectedBrand) => void;
   matchResult?: Array<PropertyMatchesProps>;
   loading: boolean;
+  error?: ApolloError;
+  refetch: (
+    variables?: PropertyMatchesVariables | undefined
+  ) => Promise<ApolloQueryResult<PropertyMatches>>;
 };
 
-export default function LandlordTenantMatches({ onPress, matchResult, loading }: Props) {
+export default function LandlordTenantMatches({
+  onPress,
+  matchResult,
+  loading,
+  error,
+  refetch,
+}: Props) {
   let { viewportType } = useViewport();
   return (
     <Container flex>
       {loading ? (
         <LoadingIndicator size="large" text="Loading the matches for your space." />
+      ) : error ? (
+        <ErrorComponent text={error.message} onRetry={refetch} />
       ) : !matchResult ? (
         <EmptyDataComponent />
       ) : (
