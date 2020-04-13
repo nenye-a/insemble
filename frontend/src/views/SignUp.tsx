@@ -21,7 +21,10 @@ export default function OnBoardingSignUp() {
         titleBackground="purple"
       >
         <FormContainer>
-          <SignUpForm role={Role.TENANT} onboardingState={history.location.state.onboardingState} />
+          <SignUpForm
+            role={Role.TENANT}
+            onboardingState={history.location.state?.onboardingState}
+          />
         </FormContainer>
       </Card>
       <RowView style={{ marginTop: 16 }}>
