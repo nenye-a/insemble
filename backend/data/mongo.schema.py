@@ -368,29 +368,15 @@ Properties:
         }
         ... other spaces
     ],
-    contacts: {
-        admin: {                                        -> admin of this brand
-            admin_id: string,                           -> postgres ID of the admin of this brand
+    contacts: [
+        {                                        -> admin of this brand
+            email: string
             name: string,
+            phone: string,
             role: string,                               -> professional role of the user
         }
-        owners: [                                       -> users who are marked as owners of the platform
-            {
-                user_id: string,                        -> postgres ID of the user
-                name: string,                           -> name of the user associated with the brand
-                role: string,                           -> professional role of the user
-            },
-            ... more owners
-        ],
-        representatives: [                              -> users who are marked as representatives of this brand
-            {
-                user_id: string,                        -> postgres ID of the user
-                name: string,                           -> name of the user associated with the brand
-                role: string,                           -> professional role of the user
-            },
-            ... more representatives
-        ],
-    },
+        ... more contacts
+    ]
 }
 
 '''
