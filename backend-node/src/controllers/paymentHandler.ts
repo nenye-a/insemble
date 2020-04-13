@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import { prisma } from '../prisma';
 import stripe from '../config/stripe';
 import { subscriptionPlans } from '../constants/subscriptions';
+import { TenantTier } from '@prisma/client';
 
 const signingSecret = process.env.STRIPE_WH_SECRET || '';
 
@@ -22,6 +23,39 @@ export async function paymentHandler(request: Request, response: Response) {
     return;
   }
   let { type, data } = event;
+
+  if (type === 'customer.subscription.deleted') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let object: { [key: string]: any } = data.object;
+    let { customer: stripeCustomerId, items } = object;
+    let productId = items.data[0]?.plan?.product;
+    let subscriptionPlan = subscriptionPlans.find(
+      (plan) => plan.id === productId,
+    );
+    let subscriptionId = items.data[0]?.subscription;
+    if (!subscriptionId) {
+      response.status(400).send(`This invoice doesn't contain a subscription`);
+      return;
+    }
+    if (!subscriptionPlan) {
+      response
+        .status(400)
+        .send(`This invoice doesn't contain a recognized subscription product`);
+      return;
+    }
+    if (subscriptionPlan.role === 'TENANT') {
+      await prisma.tenantUser.update({
+        where: {
+          stripeCustomerId,
+        },
+        data: {
+          tier: 'FREE',
+          stripeSubscriptionId: null,
+        },
+      });
+    }
+  }
+
   if (type === 'invoice.payment_succeeded') {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let object: { [key: string]: any } = data.object;
@@ -41,16 +75,17 @@ export async function paymentHandler(request: Request, response: Response) {
         .send(`This invoice doesn't contain a recognized subscription product`);
       return;
     }
-
-    await prisma.tenantUser.update({
-      where: {
-        stripeCustomerId,
-      },
-      data: {
-        tier: subscriptionPlan.tier,
-        stripeSubscriptionId: subscriptionId,
-      },
-    });
+    if (subscriptionPlan.role === 'TENANT') {
+      await prisma.tenantUser.update({
+        where: {
+          stripeCustomerId,
+        },
+        data: {
+          tier: subscriptionPlan.tier as TenantTier,
+          stripeSubscriptionId: subscriptionId,
+        },
+      });
+    }
   }
   response.json({ received: true });
 }

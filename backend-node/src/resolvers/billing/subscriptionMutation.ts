@@ -83,27 +83,22 @@ export let cancelTenantSubscriptionResolver: FieldResolver<
   if (!user.stripeCustomerId) {
     throw new Error('User has not been connected with Stripe');
   }
+  let cancelAt;
   try {
-    await stripe.subscriptions.del(user.stripeSubscriptionId);
-    await context.prisma.tenantUser.update({
-      where: {
-        stripeCustomerId: user.stripeCustomerId,
-      },
-      data: {
-        tier: 'FREE',
-        stripeSubscriptionId: null,
-      },
+    let subs = await stripe.subscriptions.update(user.stripeSubscriptionId, {
+      cancel_at_period_end: true,
     });
+    cancelAt = subs.cancel_at * 1000;
   } catch {
     throw new Error('Failed to cancel subscription');
   }
-  return 'Success';
+  return new Date(cancelAt);
 };
 
 export let cancelTenantSubscription = mutationField(
   'cancelTenantSubscription',
   {
-    type: 'String',
+    type: 'DateTime',
     resolve: cancelTenantSubscriptionResolver,
   },
 );
