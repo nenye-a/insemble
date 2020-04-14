@@ -39,6 +39,7 @@ import RedirectLoginLandlord from '../views/RedirectLoginLandlord';
 import OutOfBound from '../views/OutOfBound';
 import LandlordBilling from '../views/LandlordBilling';
 import UpgradeConfirmationModal from '../views/TenantPlan/UpgradeConfirmationModal';
+import ChangeLandlordPlanModal from '../views/LandlordPlan/ChangeLandlordPlanModal';
 
 import { tenantAuthorization, landlordAuthorization } from '../utils';
 
@@ -186,6 +187,17 @@ const LANDLORD_ROUTES = [
     layout: BasicLayout,
     component: LandlordAddSpace,
     authorization: landlordAuthorization,
+  },
+  {
+    path: '/landlord/change-plan/:step',
+    layout: BasicLayout,
+    component: ChangeLandlordPlanModal,
+  },
+  {
+    path: '/landlord/change-plans/:step',
+    layout: BlankLayout,
+    component: ChangeLandlordPlanModal,
+    exact: true,
   },
 ];
 

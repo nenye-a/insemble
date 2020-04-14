@@ -16,11 +16,21 @@ type TierSubscriptionProps = {
   isAnnual: boolean;
   planId: string;
   isUserCurrentTier: boolean;
-  onPress: (id: string) => void;
+  onPress?: (id: string) => void;
+  onUpgradeButtonPress?: () => void;
 };
 
 export default function TierSubscription(props: TierSubscriptionProps) {
-  let { price, isAnnual, benefits, isUserCurrentTier, tierName, title, planId } = props;
+  let {
+    price,
+    isAnnual,
+    benefits,
+    isUserCurrentTier,
+    tierName,
+    title,
+    planId,
+    onUpgradeButtonPress,
+  } = props;
   let history = useHistory();
   let location = useLocation();
 
@@ -53,19 +63,9 @@ export default function TierSubscription(props: TierSubscriptionProps) {
           </View>
         </PlanSection>
       </CardContainer>
-      <UpgradeButton
-        text="Upgrade"
-        onPress={() => {
-          history.push('/user/upgrade-plan/confirm-plan', {
-            background: location,
-            planId,
-            tierName,
-            price,
-            isAnnual,
-          });
-        }}
-        disabled={isUserCurrentTier}
-      />
+      {onUpgradeButtonPress && (
+        <UpgradeButton text="Upgrade" onPress={onUpgradeButtonPress} disabled={isUserCurrentTier} />
+      )}
     </TierSubscriptionWrapper>
   );
 }

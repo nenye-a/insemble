@@ -1,21 +1,34 @@
-import { TenantTier } from '../generated/globalTypes';
+import { TenantTier, LandlordTier } from '../generated/globalTypes';
 
 export const LandlordTiers = {
-  BASIC: {
+  [LandlordTier.EXPLORE]: {
     id: 'prod_GlgyphMKy4y1RY',
     name: 'Explore',
     monthly: { id: 'plan_GlgzmsDFYNivMf', price: 30 },
     yearly: { id: 'plan_Glgzi3McWzuZ1v', price: 300 },
+    title: 'Explore',
+    benefits: [
+      'Access thousands of pre-qualified tenants',
+      'Complementary virtual tours & photos',
+      'In depth marketing analytics',
+    ],
+    type: LandlordTier.EXPLORE,
   },
-  PRO: {
+  [LandlordTier.PROFESSIONAL]: {
     id: 'prod_Glh0kj8K2C44rw',
     name: 'Professional',
     monthly: { id: 'plan_Glh0alOVw1hDJh', price: 800 },
     yearly: { id: 'plan_Glh0neF7FfBXcw', price: 4000 },
+    title: 'Professional',
+    benefits: [
+      'See expanding tenants that fit property',
+      'Advertise both on-market & off-market',
+      'Full “Smart” access with no monthly fee',
+      '24/7 support & premium services',
+    ],
+    type: LandlordTier.PROFESSIONAL,
   },
 };
-
-export type LandlordTier = keyof typeof LandlordTiers;
 
 type Plan = {
   id: string;

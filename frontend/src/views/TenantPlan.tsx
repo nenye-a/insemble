@@ -55,6 +55,8 @@ export default function TenantPlan() {
         ) : (
           <View style={{ flexDirection: 'row', padding: 23 }}>
             {Object.values(TenantTiers).map(({ name, monthly, yearly, title, type: tierType }) => {
+              let planId = isAnnual ? yearly.id : monthly.id;
+              let price = isAnnual ? yearly.price : monthly.price;
               return (
                 <TierSubscriptionCard
                   key={isAnnual ? yearly.id : monthly.id}
@@ -68,9 +70,18 @@ export default function TenantPlan() {
                   ]}
                   isAnnual={!!isAnnual}
                   onPress={() => {}}
-                  planId={isAnnual ? yearly.id : monthly.id}
-                  price={isAnnual ? yearly.price : monthly.price}
+                  planId={planId}
+                  price={price}
                   isUserCurrentTier={tenantProfile?.profileTenant.tier === tierType}
+                  onUpgradeButtonPress={() => {
+                    history.push('/user/upgrade-plan/confirm-plan', {
+                      background: location,
+                      planId,
+                      tierName: name,
+                      price,
+                      isAnnual,
+                    });
+                  }}
                 />
               );
             })}
