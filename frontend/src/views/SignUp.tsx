@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
 import { View, Text, Button, Card } from '../core-ui';
-import { FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
 import SignUpForm from './SignUpPage/SignUpForm';
 import { Role } from '../types/types';
 
@@ -12,14 +11,7 @@ export default function OnBoardingSignUp() {
 
   return (
     <Container>
-      <Card
-        titleContainerProps={{
-          style: { textAlign: 'center', height: 54 },
-        }}
-        title="Sign Up"
-        titleProps={{ style: { fontSize: FONT_SIZE_MEDIUM, fontWeight: FONT_WEIGHT_NORMAL } }}
-        titleBackground="purple"
-      >
+      <Card title="Sign Up" mode="secondary">
         <FormContainer>
           <SignUpForm
             role={Role.TENANT}

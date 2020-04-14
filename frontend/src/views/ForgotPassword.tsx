@@ -5,7 +5,6 @@ import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useMutation } from '@apollo/react-hooks';
 
 import { Card, Text, View, Button, Form, TextInput, Alert } from '../core-ui';
-import { FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
 import { validateEmail } from '../utils/validation';
 import {
   FORGOT_PASSWORD_TENANT,
@@ -63,12 +62,7 @@ export default function ForgotPassword() {
 
   return (
     <Container>
-      <ContainerCard
-        titleContainerProps={{ style: { textAlign: 'center', height: 54 } }}
-        title="Recover Password"
-        titleProps={{ style: { fontSize: FONT_SIZE_MEDIUM, fontWeight: FONT_WEIGHT_NORMAL } }}
-        titleBackground="purple"
-      >
+      <ContainerCard title="Recover Password" mode="secondary">
         <Content>
           {!hasSubmitted ? (
             <Form onSubmit={handleSubmit(onSubmit)}>
