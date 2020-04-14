@@ -1,7 +1,14 @@
-import { TenantTier, LandlordTier } from '../generated/globalTypes';
+import { TenantTier } from '../generated/globalTypes';
+
+// TODO: import from generated when there's any
+enum LandlordTier {
+  NO_TIER,
+  BASIC,
+  PROFESSIONAL,
+}
 
 export const LandlordTiers = {
-  [LandlordTier.EXPLORE]: {
+  [LandlordTier.BASIC]: {
     id: 'prod_GlgyphMKy4y1RY',
     name: 'Basic',
     monthly: { id: 'plan_GlgzmsDFYNivMf', price: 30 },
@@ -12,7 +19,7 @@ export const LandlordTiers = {
       'Complementary virtual tours & photos',
       'In depth marketing analytics',
     ],
-    type: LandlordTier.EXPLORE,
+    type: LandlordTier.BASIC,
   },
   [LandlordTier.PROFESSIONAL]: {
     id: 'prod_Glh0kj8K2C44rw',
