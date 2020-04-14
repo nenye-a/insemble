@@ -146,6 +146,7 @@ const Row = styled(Card)`
 const Iframe = styled.iframe`
   width: 200px;
   border: none;
+  pointer-events: none;
 `;
 
 const RowedView = styled(View)`
