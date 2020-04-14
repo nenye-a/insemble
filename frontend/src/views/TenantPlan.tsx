@@ -10,7 +10,7 @@ import {
   Button,
   Text,
 } from '../core-ui';
-import TierSubscriptionCard from './TenantPlan/TierSubscriptionCard';
+import TierSubscriptionCard from './Billing/TierSubscriptionCard';
 import { TenantTiers } from '../constants/SubscriptionTiers';
 import createContext from '../utils/createContext';
 import { GET_TENANT_PROFILE } from '../graphql/queries/server/profile';

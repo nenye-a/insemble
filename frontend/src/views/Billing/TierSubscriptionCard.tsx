@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { View, Text, Button } from '../../core-ui';
-import CardContainer, { CardTitleContainer } from './CardContainer';
+import CardContainer, { CardTitleContainer } from '../TenantPlan/CardContainer';
 import { WHITE, THEME_COLOR, SECONDARY_COLOR } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_SIZE_LARGE, FONT_SIZE_XXXLARGE } from '../../constants/theme';
 import getUnit from './helpers/getUnit';
