@@ -13,6 +13,7 @@ import { FONT_SIZE_SMALL, FONT_SIZE_LARGE, FONT_SIZE_XXXLARGE } from '../../cons
 import getUnit from './helpers/getUnit';
 import { GET_PAYMENT_METHOD_LIST } from '../../graphql/queries/server/billing';
 import { PaymentMethodList } from '../../generated/PaymentMethodList';
+import { LandlordTier, TenantTier } from '../../generated/globalTypes';
 
 type TierSubscriptionProps = {
   title: string;
@@ -91,7 +92,11 @@ export default function TierSubscription(props: TierSubscriptionProps) {
           </PlanSection>
         </CardContainer>
         <UpgradeButton
-          text={tierName === 'Professional' ? 'Upgrade (Free Trial Currently Active)' : 'Upgrade'}
+          text={
+            tierName === LandlordTier.PROFESSIONAL || TenantTier.PROFESSIONAL
+              ? 'Upgrade (Free Trial Currently Active)'
+              : 'Upgrade'
+          }
           onPress={() => {
             setModalVisibility(true);
           }}
