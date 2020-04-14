@@ -6,7 +6,7 @@ import NearbyPlacesTag from './NearbyPlacesTag';
 import { DEFAULT_BORDER_RADIUS, FONT_SIZE_SMALL, FONT_WEIGHT_MEDIUM } from '../../constants/theme';
 import { MUTED_TEXT_COLOR, THEME_COLOR } from '../../constants/colors';
 import { LEGEND } from './NearbyMapLegend';
-import { roundDecimal } from '../../utils';
+import { roundDecimal, numberFormatter } from '../../utils';
 
 type Props = {
   name: string;
@@ -41,7 +41,7 @@ export default function NearbyPlacesCard(props: Props) {
       <TagsContainer>
         <NearbyPlacesTag content={rating} postfix="Rating" />
         <NearbyPlacesTag content={numberRating} postfix="Reviews" />
-        <NearbyPlacesTag content={roundDecimal(distance)} postfix="Miles" />
+        <NearbyPlacesTag content={numberFormatter(roundDecimal(distance))} postfix="Miles" />
       </TagsContainer>
     </Container>
   );

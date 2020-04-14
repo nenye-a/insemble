@@ -27,9 +27,11 @@ export type NearbyPlace = {
   similar: boolean;
 };
 
+export type DropdownSelection = 'Most Popular' | 'Distance' | 'Rating' | 'Similar';
+
 export default function NearbyCard() {
   let [selectedView, setSelectedView] = useState<ViewMode>('list');
-  let [selectedDropdownVal, setSelectedDropdownVal] = useState('Most Popular');
+  let [selectedDropdownVal, setSelectedDropdownVal] = useState<DropdownSelection>('Most Popular');
   let isGridViewMode = selectedView === 'grid';
   let data = useContext(DeepDiveContext);
   let mile = data?.result?.keyFacts.mile;
@@ -84,7 +86,7 @@ export default function NearbyCard() {
         <View flex>
           <NearbyMapLegend />
           <RightContent flex>
-            <Dropdown
+            <Dropdown<DropdownSelection>
               options={['Most Popular', 'Distance', 'Rating', 'Similar']}
               onSelect={(newValue) => {
                 setSelectedDropdownVal(newValue);
@@ -99,7 +101,13 @@ export default function NearbyCard() {
                   text={category && mile ? `No ${category} within ${mile} mile(s)` : ''}
                 />
               ) : isGridViewMode ? (
-                filteredData?.map((item, index) => <MiniNearbyPlacesCard key={index} {...item} />)
+                filteredData?.map((item, index) => (
+                  <MiniNearbyPlacesCard
+                    key={index}
+                    selectedDropdownValue={selectedDropdownVal}
+                    {...item}
+                  />
+                ))
               ) : (
                 filteredData?.map((item, index) => <NearbyPlacesCard key={index} {...item} />)
               )}

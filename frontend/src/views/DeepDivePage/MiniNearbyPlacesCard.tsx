@@ -2,19 +2,50 @@ import React from 'react';
 import styled from 'styled-components';
 import { Card, Text, Badge as BaseBadge } from '../../core-ui';
 import NearbyPlacesTag from './NearbyPlacesTag';
+import { DropdownSelection } from './NearbyCard';
 import { DEFAULT_BORDER_RADIUS, FONT_WEIGHT_MEDIUM, FONT_SIZE_SMALL } from '../../constants/theme';
 import { THEME_COLOR } from '../../constants/colors';
-import { roundDecimal } from '../../utils';
+import { roundDecimal, numberFormatter } from '../../utils';
 
 type Props = {
   name: string;
   distance: number;
   photo?: string;
   similar: boolean;
+  selectedDropdownValue: DropdownSelection;
+  rating: number | null;
+  numberRating: number;
 };
 
 export default function MiniNearbyPlacesCard(props: Props) {
-  let { name, distance, similar } = props;
+  let { name, distance, rating, numberRating, similar, selectedDropdownValue } = props;
+
+  const MiniNearbyTag: {
+    [key in DropdownSelection]: {
+      field: number | null;
+      postfix: string;
+    };
+  } = {
+    'Most Popular': {
+      field: numberRating,
+      postfix: 'Reviews',
+    },
+    Distance: {
+      field: distance,
+      postfix: 'Miles',
+    },
+    Rating: {
+      field: rating,
+      postfix: 'Rating',
+    },
+    Similar: {
+      field: distance,
+      postfix: 'Miles',
+    },
+  };
+
+  let selectedTag = MiniNearbyTag[selectedDropdownValue];
+
   return (
     <Container>
       {similar && (
@@ -24,11 +55,13 @@ export default function MiniNearbyPlacesCard(props: Props) {
         />
       )}
       <PlaceName>{name}</PlaceName>
-      <NearbyPlacesTag
-        content={roundDecimal(distance)}
-        postfix="Miles"
-        style={{ margin: 0, marginTop: 3 }}
-      />
+      {selectedTag.field != null && (
+        <NearbyPlacesTag
+          content={numberFormatter(roundDecimal(selectedTag.field))}
+          postfix={selectedTag.postfix}
+          style={{ margin: 0, marginTop: 3 }}
+        />
+      )}
     </Container>
   );
 }
