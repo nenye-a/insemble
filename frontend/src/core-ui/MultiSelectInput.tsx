@@ -155,7 +155,6 @@ const OptionContainer = styled(Card)`
   margin-top: 5px;
   background-color: ${WHITE};
   position: absolute;
-  /* z-index: 3; */
 `;
 
 const Option = styled(TouchableOpacity)`
