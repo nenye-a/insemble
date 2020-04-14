@@ -31,7 +31,7 @@ export default function Login() {
           text="Sign Up here"
           onPress={() => {
             history.push('/signup', {
-              onboardingState: history.location.state.onboardingState,
+              onboardingState: history.location.state?.onboardingState,
             });
           }}
         />
