@@ -20,7 +20,7 @@ import { WHITE, HEADER_BORDER_COLOR, THEME_COLOR } from '../constants/colors';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_MEDIUM } from '../constants/theme';
 import { TenantMatches, TenantMatchesVariables } from '../generated/TenantMatches';
 
-import { useGoogleMaps, isEqual, useViewport } from '../utils';
+import { useGoogleMaps, isEqual, useViewport, omitTypename } from '../utils';
 import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer';
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 import { LocationInput } from '../generated/globalTypes';
@@ -47,6 +47,7 @@ export type PropertyFilter = {
   minSize: number | null;
   maxSize: number | null;
   spaceType: Array<string>;
+  amenities: Array<string>;
 };
 
 type ShowPropertyButtonProps = {
@@ -98,6 +99,7 @@ let tenantMatchesInit = {
       minSize: null,
       maxSize: null,
       spaceType: [],
+      amenities: [],
     },
   },
 };
@@ -110,7 +112,7 @@ export default function MainMap() {
   let [deepDiveModalVisible, toggleDeepDiveModal] = useState(false);
   let [mapErrorMessage, setMapErrorMessage] = useState('');
   let [addressSearchLocation, setAddressSearchLocation] = useState<SelectedLocation | null>(null);
-  let [canUpdateMap, setCanUpdateMap] = useState(false);
+  let [alertUpdateMapVisible, setAlertUpdateMapVisible] = useState(false);
   let { isLoading } = useGoogleMaps();
   let { isDesktop } = useViewport();
   let params = useParams<BrandId>();
@@ -188,49 +190,28 @@ export default function MainMap() {
             minRent: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[0]) : null,
             maxRent: !isNaN(Number(selectedValues[1])) ? Number(selectedValues[1]) : null,
           };
-
           break;
         }
         case PROPERTIES_CATEGORIES.sqft: {
-          // TODO: edit state when property filter is unhide
+          affectedPropertyState = {
+            minSize: !isNaN(Number(selectedValues[0])) ? Number(selectedValues[0]) : null,
+            maxSize: !isNaN(Number(selectedValues[1])) ? Number(selectedValues[1]) : null,
+          };
           break;
         }
         case PROPERTIES_CATEGORIES.propertyType: {
           affectedPropertyState = {
             spaceType: selectedValues,
           };
-
+          break;
+        }
+        case PROPERTIES_CATEGORIES.amenities: {
+          affectedPropertyState = {
+            amenities: selectedValues,
+          };
           break;
         }
       }
-      let filtersFromMatches = {
-        categories: tenantMatchesData?.tenantMatches.categories,
-        demographics: {
-          minIncome: tenantMatchesData?.tenantMatches.minIncome
-            ? tenantMatchesData?.tenantMatches.minIncome / 1000
-            : 0,
-          maxIncome: tenantMatchesData?.tenantMatches.maxIncome
-            ? tenantMatchesData?.tenantMatches.maxIncome / 1000
-            : 0,
-          minAge: tenantMatchesData?.tenantMatches.minAge,
-          maxAge: tenantMatchesData?.tenantMatches.maxAge,
-          personas: tenantMatchesData?.tenantMatches.personas,
-          commute: tenantMatchesData?.tenantMatches.commute,
-          education: tenantMatchesData?.tenantMatches.education,
-          ethnicity: tenantMatchesData?.tenantMatches.ethnicity,
-        },
-        property: {
-          minRent: tenantMatchesData?.tenantMatches.minRent,
-          maxRent: tenantMatchesData?.tenantMatches.maxRent,
-          minSize: tenantMatchesData?.tenantMatches.minSize,
-          maxSize: tenantMatchesData?.tenantMatches.maxSize,
-          spaceType: tenantMatchesData?.tenantMatches.spaceType,
-        },
-        // business: {
-        //   location: tenantMatchesData?.tenantMatches.location,
-        //   name: tenantMatchesData?.tenantMatches.name,
-        // },
-      };
 
       let newFilters = {
         ...filters,
@@ -243,10 +224,6 @@ export default function MainMap() {
           ...affectedPropertyState,
         },
       };
-      let filtersAreEqual = isEqual(filtersFromMatches, newFilters);
-      if (!filtersAreEqual) {
-        setCanUpdateMap(true);
-      }
       setFilters(newFilters);
     }
   };
@@ -282,46 +259,93 @@ export default function MainMap() {
   };
 
   let onPublishChangesPress = async () => {
-    let { demographics, categories, property, business } = filters;
-    let {
-      minIncome,
-      maxIncome,
-      minAge,
-      maxAge,
-      personas,
-      commute,
-      education,
-      ethnicity,
-    } = demographics;
-    let { minSize, maxSize, minRent, maxRent, spaceType } = property;
-    let result = await editBrand({
-      variables: {
-        filter: {
-          categories,
-          personas,
-          minAge: Number(minAge),
-          maxAge: Number(maxAge),
-          minIncome: Number(minIncome) * 1000,
-          maxIncome: Number(maxIncome) * 1000,
-          minSize,
-          maxSize,
-          minRent,
-          maxRent,
-          spaceType,
-          commute,
-          education,
-          ethnicity,
+    if (tenantMatchesData) {
+      let { demographics, categories, property } = filters;
+      let {
+        minIncome,
+        maxIncome,
+        minAge,
+        maxAge,
+        personas,
+        commute,
+        education,
+        ethnicity,
+      } = demographics;
+      let { minSize, maxSize, minRent, maxRent, spaceType, amenities } = property;
+      let {
+        name,
+        location,
+        userRelation,
+        locationCount,
+        newLocationPlan,
+        nextLocations,
+      } = tenantMatchesData.tenantMatches;
+
+      let result = await editBrand({
+        variables: {
+          filter: {
+            categories,
+            personas,
+            minAge: Number(minAge),
+            maxAge: Number(maxAge),
+            minIncome: Number(minIncome) * 1000,
+            maxIncome: Number(maxIncome) * 1000,
+            minSize,
+            maxSize,
+            minRent,
+            maxRent,
+            spaceType,
+            commute,
+            education,
+            ethnicity,
+            equipment: amenities,
+          },
+          business: {
+            name,
+            location: location ? (omitTypename(location) as LocationInput) : null,
+            userRelation,
+            locationCount,
+            newLocationPlan,
+            nextLocations,
+          },
+          brandId,
         },
-        ...(business &&
-          business.name && { business: { name: business.name, location: business.location } }),
-        brandId,
-      },
-    });
-    if (result.data?.editBrand) {
-      setCanUpdateMap(false);
-      tenantMatchesRefetch({ brandId });
+      });
+      if (result.data?.editBrand) {
+        tenantMatchesRefetch({ brandId });
+      }
     }
   };
+
+  let filtersFromMatches = {
+    categories: tenantMatchesData?.tenantMatches.categories,
+    demographics: {
+      minIncome:
+        typeof tenantMatchesData?.tenantMatches.minIncome === 'number'
+          ? tenantMatchesData?.tenantMatches.minIncome / 1000
+          : null,
+      maxIncome:
+        typeof tenantMatchesData?.tenantMatches.maxIncome === 'number'
+          ? tenantMatchesData?.tenantMatches.maxIncome / 1000
+          : null,
+      minAge: tenantMatchesData?.tenantMatches.minAge,
+      maxAge: tenantMatchesData?.tenantMatches.maxAge,
+      personas: tenantMatchesData?.tenantMatches.personas,
+      commute: tenantMatchesData?.tenantMatches.commute,
+      education: tenantMatchesData?.tenantMatches.education,
+      ethnicity: tenantMatchesData?.tenantMatches.ethnicity,
+    },
+    property: {
+      minRent: tenantMatchesData?.tenantMatches.minRent,
+      maxRent: tenantMatchesData?.tenantMatches.maxRent,
+      minSize: tenantMatchesData?.tenantMatches.minSize,
+      maxSize: tenantMatchesData?.tenantMatches.maxSize,
+      spaceType: tenantMatchesData?.tenantMatches.spaceType,
+      amenities: tenantMatchesData?.tenantMatches.equipment,
+    },
+  };
+
+  let filtersAreEqual = isEqual(filtersFromMatches, filters);
 
   useEffect(() => {
     if (tenantMatchesData) {
@@ -340,11 +364,12 @@ export default function MainMap() {
         spaceType,
         categories,
         ethnicity,
+        equipment,
       } = tenantMatchesData.tenantMatches;
       setFilters({
         demographics: {
-          minIncome: minIncome ? minIncome / 1000 : null,
-          maxIncome: maxIncome ? maxIncome / 1000 : null,
+          minIncome: typeof minIncome === 'number' ? minIncome / 1000 : null,
+          maxIncome: typeof maxIncome === 'number' ? maxIncome / 1000 : null,
           maxAge,
           minAge,
           personas,
@@ -358,11 +383,16 @@ export default function MainMap() {
           minSize,
           maxSize,
           spaceType,
+          amenities: equipment,
         },
         categories,
       });
     }
   }, [loading, tenantMatchesData]);
+
+  useEffect(() => {
+    setAlertUpdateMapVisible(!filtersAreEqual);
+  }, [filtersAreEqual]);
 
   return (
     <TenantMatchesContext.Provider
@@ -390,7 +420,7 @@ export default function MainMap() {
           address={tenantMatchesData?.tenantMatches.location?.address || ''}
           categories={tenantMatchesData?.tenantMatches.categories || []}
           onPublishChangesPress={onPublishChangesPress}
-          publishButtonDisabled={!canUpdateMap}
+          publishButtonDisabled={filtersAreEqual}
           onAddressSearch={setAddressSearchLocation}
           brandName={tenantMatchesData?.tenantMatches.name}
         />
@@ -411,9 +441,9 @@ export default function MainMap() {
             onClose={() => setMapErrorMessage('')}
           />
           <MapAlert
-            visible={canUpdateMap}
+            visible={alertUpdateMapVisible}
             text="Please press the Update button below to update the maps with your desired filters."
-            onClose={() => setCanUpdateMap(false)}
+            onClose={() => setAlertUpdateMapVisible(false)}
           />
 
           {!isLoading && (

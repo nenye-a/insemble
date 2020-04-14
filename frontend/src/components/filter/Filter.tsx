@@ -235,7 +235,7 @@ export default function Filter(props: Props) {
               disabled={disabled}
             />
           )}
-          {onDone && <Button onPress={onDone} text="Done" />}
+          {onDone && <Button onPress={onDone} text="Done" disabled={disabled} />}
         </BottomWrapper>
       )}
     </Card>
@@ -250,7 +250,7 @@ const TitleWrapper = styled(View)`
 const FlexRowWrap = styled(View)`
   flex-direction: row;
   flex-flow: row wrap;
-  max-height: 150px;
+  max-height: 120px;
   padding: 0 12px;
   overflow-y: scroll;
 `;

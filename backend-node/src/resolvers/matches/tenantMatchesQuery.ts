@@ -109,17 +109,7 @@ let tenantMatches = queryField('tenantMatches', {
     }
     let matchingLocations;
     let matchingProperties;
-
-    if (matchingLocationsJSON) {
-      let existMatchingLocations: Array<MatchingLocation> = JSON.parse(
-        matchingLocationsJSON,
-      );
-      let existMatchingProperties: Array<MatchingProperty> = matchingPropertiesJSON
-        ? JSON.parse(matchingPropertiesJSON)
-        : [];
-      matchingProperties = existMatchingProperties;
-      matchingLocations = existMatchingLocations;
-    } else if (pendingUpdate) {
+    if (pendingUpdate) {
       try {
         let {
           categories: pendingCategories = [],
@@ -372,6 +362,15 @@ let tenantMatches = queryField('tenantMatches', {
           'Failed to Load Heatmap, please adjust settings and try again.',
         );
       }
+    } else if (matchingLocationsJSON) {
+      let existMatchingLocations: Array<MatchingLocation> = JSON.parse(
+        matchingLocationsJSON,
+      );
+      let existMatchingProperties: Array<MatchingProperty> = matchingPropertiesJSON
+        ? JSON.parse(matchingPropertiesJSON)
+        : [];
+      matchingProperties = existMatchingProperties;
+      matchingLocations = existMatchingLocations;
     } else {
       try {
         // NOTE: By new logic this only run when first time create brand

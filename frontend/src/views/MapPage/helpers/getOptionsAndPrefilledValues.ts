@@ -79,10 +79,11 @@ export function getPropertyOptionsAndPrefilledValues(
   propertiesFilterValues: PropertyFilter,
   filter: {
     spaceType: Array<string> | undefined;
+    amenities: Array<string> | undefined;
   }
 ) {
-  let { spaceType, minRent, maxRent } = propertiesFilterValues;
-  let { spaceType: spaceTypeOptions } = filter;
+  let { spaceType, minRent, maxRent, amenities, minSize, maxSize } = propertiesFilterValues;
+  let { spaceType: spaceTypeOptions, amenities: amenitiesOptions } = filter;
   return properties.map((item) => {
     let allOptions;
     let selectedValues: Array<string> = [];
@@ -92,8 +93,24 @@ export function getPropertyOptionsAndPrefilledValues(
         allOptions = spaceTypeOptions ? spaceTypeOptions : [];
         break;
       }
+      case PROPERTIES_CATEGORIES.amenities: {
+        selectedValues = amenities;
+        allOptions = amenitiesOptions ? amenitiesOptions : [];
+        break;
+      }
       case PROPERTIES_CATEGORIES.rent: {
-        selectedValues = minRent && maxRent ? [minRent.toString(), maxRent.toString()] : [];
+        selectedValues =
+          typeof minRent === 'number' && typeof maxRent === 'number'
+            ? [minRent.toString(), maxRent.toString()]
+            : [];
+        break;
+      }
+      case PROPERTIES_CATEGORIES.sqft: {
+        selectedValues =
+          typeof minSize === 'number' && typeof maxSize === 'number'
+            ? [minSize.toString(), maxSize.toString()]
+            : [];
+        break;
       }
     }
     return { ...item, selectedValues, allOptions };

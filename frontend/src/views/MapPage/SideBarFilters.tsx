@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useContext } from 'react';
+import React, { useEffect, useReducer, useContext, ComponentProps } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 
@@ -17,6 +17,7 @@ import {
   GET_EDUCATION_LIST,
   GET_PROPERTY_TYPE_LIST,
   GET_ETHNICITY_LIST,
+  GET_EQUIPMENT_LIST,
 } from '../../graphql/queries/server/filters';
 import {
   DELETED_BASE64_STRING,
@@ -37,6 +38,8 @@ import { Personas } from '../../generated/Personas';
 import { Ethnicity } from '../../generated/Ethnicity';
 import { Commute } from '../../generated/Commute';
 import { Education } from '../../generated/Education';
+import { Equipments } from '../../generated/Equipments';
+import SvgAmenities from '../../components/icons/amenities';
 
 export default function SideBarFilters() {
   let { filters, onFilterChange } = useContext(TenantMatchesContext);
@@ -46,6 +49,7 @@ export default function SideBarFilters() {
   let { data: educationData, loading: educationLoading } = useQuery<Education>(GET_EDUCATION_LIST);
   let { data: spaceTypeData, loading: spaceTypeLoading } = useQuery(GET_PROPERTY_TYPE_LIST);
   let { data: ethnicityData, loading: ethnicityLoading } = useQuery<Ethnicity>(GET_ETHNICITY_LIST);
+  let { data: amenitiesData, loading: amenitiesLoading } = useQuery<Equipments>(GET_EQUIPMENT_LIST);
 
   let getInitialState = () => ({
     openFilterName: null,
@@ -61,6 +65,9 @@ export default function SideBarFilters() {
     getInitialState()
   );
   let { demographics, properties, openFilterName } = state;
+  let isPropertyOptionSelected = Object.values(PROPERTIES_CATEGORIES).includes(
+    openFilterName || ''
+  );
 
   useEffect(() => {
     // Get options and prefilled value;
@@ -79,6 +86,7 @@ export default function SideBarFilters() {
       propertyInitialFilter,
       {
         spaceType: spaceTypeData?.spaceType,
+        amenities: amenitiesData?.equipments,
       }
     );
 
@@ -166,6 +174,11 @@ export default function SideBarFilters() {
           },
         };
       } else if (found.type === FilterType.RANGE_INPUT) {
+        let valid =
+          selectedValues.length > 1 &&
+          !isNaN(Number(selectedValues[0])) &&
+          !isNaN(Number(selectedValues[1])) &&
+          Number(selectedValues[0]) < Number(selectedValues[1]);
         return {
           rangeInput: true,
           onLowRangeInputChange: (value: string) => {
@@ -184,6 +197,7 @@ export default function SideBarFilters() {
           },
           lowValue: selectedValues[0],
           highValue: selectedValues[1],
+          disabled: !valid,
         };
       }
     }
@@ -206,8 +220,7 @@ export default function SideBarFilters() {
           }}
           openFilterName={openFilterName}
         />
-        {/* Hiding this for now */}
-        {/* <FilterCard
+        <FilterCard
           title="Property"
           options={properties}
           style={{ maxHeight: '30%', marginTop: 10, marginBottom: 10 }}
@@ -219,7 +232,7 @@ export default function SideBarFilters() {
             });
           }}
           openFilterName={openFilterName}
-        /> */}
+        />
       </Container>
       <ClickAway
         onClickAway={() =>
@@ -247,8 +260,10 @@ export default function SideBarFilters() {
             commuteLoading ||
             educationLoading ||
             spaceTypeLoading ||
-            ethnicityLoading
+            ethnicityLoading ||
+            amenitiesLoading
           }
+          isPropertyOptionSelected={isPropertyOptionSelected}
           {...filterProps}
         />
       </ClickAway>
@@ -256,22 +271,27 @@ export default function SideBarFilters() {
   );
 }
 
+type FilterProps = ComponentProps<typeof Filter> & {
+  isPropertyOptionSelected: boolean;
+};
+
 const RowedView = styled(View)`
   position: absolute;
   left: 32px;
   margin-top: 10px;
   margin-bottom: 10px;
   flex-direction: row;
-  z-index: 5;
+  z-index: 10;
 `;
 const Container = styled(View)`
   width: 160px;
   height: fit-content;
 `;
 
-const FilterContainer = styled(Filter)`
+const FilterContainer = styled(Filter)<FilterProps>`
   margin-left: 12px;
-  top: 50px;
+  top: ${({ isPropertyOptionSelected }) => (isPropertyOptionSelected ? '250px' : '50px')};
+  bottom: 20px;
   min-width: 240px;
   max-width: 400px;
 `;
@@ -288,6 +308,7 @@ export const DEMOGRAPHICS_CATEGORIES = {
 export const PROPERTIES_CATEGORIES = {
   rent: 'Rent',
   sqft: 'Sqft',
+  amenities: 'Amenities',
   propertyType: 'Type',
 };
 
@@ -308,7 +329,7 @@ const DEMOGRAPHIC_OPTIONS: Array<FilterObj> = [
     name: DEMOGRAPHICS_CATEGORIES.personas,
     icon: SvgPsychographic,
     selectedValues: [],
-    type: FilterType.SELECTION,
+    type: FilterType.SEARCH_SELECTION,
   },
   {
     name: DEMOGRAPHICS_CATEGORIES.commute,
@@ -320,7 +341,7 @@ const DEMOGRAPHIC_OPTIONS: Array<FilterObj> = [
     name: DEMOGRAPHICS_CATEGORIES.education,
     icon: SvgEducation,
     selectedValues: [],
-    type: FilterType.SEARCH_SELECTION,
+    type: FilterType.SELECTION,
   },
   {
     name: DEMOGRAPHICS_CATEGORIES.ethnicity,
@@ -332,16 +353,27 @@ const DEMOGRAPHIC_OPTIONS: Array<FilterObj> = [
 
 const PROPERTIES_OPTIONS: Array<FilterObj> = [
   {
-    name: 'Rent',
+    name: PROPERTIES_CATEGORIES.rent,
     icon: SvgRent,
     selectedValues: [],
     type: FilterType.RANGE_INPUT,
   },
   {
-    name: 'Sqft',
+    name: PROPERTIES_CATEGORIES.sqft,
     icon: SvgSqft,
     selectedValues: [],
     type: FilterType.RANGE_INPUT,
   },
-  { name: 'Type', icon: SvgPropertyType, selectedValues: [], type: FilterType.SELECTION },
+  {
+    name: PROPERTIES_CATEGORIES.amenities,
+    icon: SvgAmenities,
+    selectedValues: [],
+    type: FilterType.SEARCH_SELECTION,
+  },
+  {
+    name: PROPERTIES_CATEGORIES.propertyType,
+    icon: SvgPropertyType,
+    selectedValues: [],
+    type: FilterType.SELECTION,
+  },
 ];
