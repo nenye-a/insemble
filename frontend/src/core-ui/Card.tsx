@@ -1,14 +1,21 @@
 import React, { ReactNode, ComponentProps } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import View from './View';
 import Text from './Text';
-import { DEFAULT_BORDER_RADIUS, FONT_SIZE_SMALL, FONT_WEIGHT_BOLD } from '../constants/theme';
+import {
+  DEFAULT_BORDER_RADIUS,
+  FONT_SIZE_SMALL,
+  FONT_WEIGHT_BOLD,
+  FONT_SIZE_MEDIUM,
+} from '../constants/theme';
 import { THEME_COLOR, WHITE, CARD_GREY_HEADER, TEXT_COLOR } from '../constants/colors';
 import UpgradeButton from '../components/UpgradeButton';
 
 type TextProps = ComponentProps<typeof Text>;
 type ViewProps = ComponentProps<typeof View>;
+
+type CardMode = 'primary' | 'secondary';
 
 type Props = ViewProps & {
   titleBackground?: 'purple' | 'white' | 'grey';
@@ -18,6 +25,7 @@ type Props = ViewProps & {
   titleContainerProps?: ViewProps;
   titleProps?: TextProps;
   rightTitleComponent?: ReactNode;
+  mode?: CardMode;
 };
 
 export default function Card(props: Props) {
@@ -31,18 +39,24 @@ export default function Card(props: Props) {
     titleBackground,
     rightTitleComponent,
     isLocked = false,
+    mode = 'primary',
     ...otherProps
   } = props;
+
   return (
     <StyledCard {...otherProps}>
       {title && (
-        <TitleContainer titleBackground={titleBackground} {...titleContainerProps}>
+        <TitleContainer
+          mode={mode}
+          titleBackground={mode === 'secondary' ? 'purple' : titleBackground}
+          {...titleContainerProps}
+        >
           <TitleComponents flex>
             <Row>
               <View flex>
-                <Text fontWeight={FONT_WEIGHT_BOLD} {...titleProps}>
+                <Title mode={mode} {...titleProps}>
                   {title}
-                </Text>
+                </Title>
                 <SubTitle>{subTitle}</SubTitle>
               </View>
               {isLocked ? <UpgradeButton /> : null}
@@ -58,7 +72,23 @@ export default function Card(props: Props) {
 
 type TitleContainerProps = ViewProps & {
   titleBackground: string;
+  mode: CardMode;
 };
+
+type TitleProps = TextProps & {
+  mode: CardMode;
+};
+
+const Title = styled(Text)<TitleProps>`
+  ${({ mode }) =>
+    mode === 'secondary'
+      ? css`
+          font-size: ${FONT_SIZE_MEDIUM};
+        `
+      : css`
+          font-weight: ${FONT_WEIGHT_BOLD};
+        `}
+`;
 
 const StyledCard = styled(View)`
   border-radius: ${DEFAULT_BORDER_RADIUS};
@@ -80,6 +110,12 @@ const TitleContainer = styled(View)<TitleContainerProps>`
   ${Text} {
     color: ${({ titleBackground }) => (titleBackground === 'purple' ? WHITE : TEXT_COLOR)};
   }
+  ${({ mode }) =>
+    mode === 'secondary' &&
+    css`
+      text-align: center;
+      height: 54px;
+    `}
 `;
 
 const SubTitle = styled(Text)`
