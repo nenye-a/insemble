@@ -2,7 +2,7 @@ import { mutationField, stringArg, FieldResolver } from 'nexus';
 import { Context } from 'serverTypes';
 
 import stripe from '../../config/stripe';
-import getUserDetails from '../../helpers/getUserDetails';
+import { changeDefaultPaymentMethodResolver } from './paymentMethodMutation';
 
 // TODO: Handle declined card
 // TODO: Handle recurring payment
@@ -12,17 +12,31 @@ export let createTenantSubscription = mutationField(
   {
     type: 'Subscription',
     args: {
-      planId: stringArg(),
-      // NOTE: When paymentMethodId isn't specified, Stripe will use customer's default payment method
+      planId: stringArg({ required: true }),
       paymentMethodId: stringArg({ required: false }),
     },
-    resolve: async (_, { planId, paymentMethodId }, context: Context) => {
-      let user = await getUserDetails(context);
+    resolve: async (_, { planId, paymentMethodId }, context: Context, info) => {
+      let user = await context.prisma.tenantUser.findOne({
+        where: {
+          id: context.tenantUserId,
+        },
+      });
       if (!user) {
         throw new Error('User not found');
       }
       if (!user.stripeCustomerId) {
         throw new Error('User has not been connected with Stripe');
+      }
+      if (user.stripeSubscriptionId) {
+        throw new Error('User already have subscription');
+      }
+      if (paymentMethodId) {
+        await changeDefaultPaymentMethodResolver(
+          _,
+          { paymentMethodId },
+          context,
+          info,
+        );
       }
       let {
         id: subscriptionId,
@@ -37,11 +51,18 @@ export let createTenantSubscription = mutationField(
             plan: planId,
           },
         ],
-        default_payment_method: paymentMethodId,
       });
       if (!plan) {
         throw new Error('Plan not found');
       }
+      context.prisma.tenantUser.update({
+        where: {
+          id: context.tenantUserId,
+        },
+        data: {
+          stripeSubscriptionId: subscriptionId,
+        },
+      });
       context.prisma.subscriptionTenantHistory.create({
         data: {
           subscriptionId,
@@ -68,6 +89,88 @@ export let createTenantSubscription = mutationField(
   },
 );
 
+export let editTenantSubscription = mutationField('editTenantSubscription', {
+  type: 'Subscription',
+  args: {
+    planId: stringArg({ required: true }),
+    // NOTE: When paymentMethodId isn't specified, Stripe will use customer's default payment method
+    paymentMethodId: stringArg({ required: false }),
+  },
+  resolve: async (_, { planId, paymentMethodId }, context: Context, info) => {
+    let user = await context.prisma.tenantUser.findOne({
+      where: {
+        id: context.tenantUserId,
+      },
+    });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    if (!user.stripeCustomerId) {
+      throw new Error('User has not been connected with Stripe');
+    }
+
+    if (!user.stripeSubscriptionId) {
+      throw new Error('User has not been connected to any subscription');
+    }
+    const selectedSubscription = await stripe.subscriptions.retrieve(
+      user.stripeSubscriptionId,
+    );
+    if (!selectedSubscription) {
+      throw new Error('Subscription not found.');
+    }
+    if (paymentMethodId) {
+      await changeDefaultPaymentMethodResolver(
+        _,
+        { paymentMethodId },
+        context,
+        info,
+      );
+    }
+    let {
+      id: subscriptionId,
+      current_period_end: currentPeriodEnd,
+      current_period_start: currentPeriodStart,
+      plan,
+      status,
+    } = await stripe.subscriptions.update(user.stripeSubscriptionId, {
+      items: [
+        {
+          id: selectedSubscription.items.data[0].id,
+          plan: planId,
+        },
+      ],
+      proration_behavior: 'always_invoice',
+      cancel_at_period_end: false,
+    });
+    if (!plan) {
+      throw new Error('Plan not found');
+    }
+    context.prisma.subscriptionTenantHistory.create({
+      data: {
+        subscriptionId,
+        action: 'CHANGE',
+        tenantUser: {
+          connect: {
+            id: context.tenantUserId,
+          },
+        },
+      },
+    });
+
+    let { product, id } = plan;
+    return {
+      id: subscriptionId,
+      currentPeriodStart,
+      currentPeriodEnd,
+      plan: {
+        id,
+        productId: product,
+      },
+      status,
+    };
+  },
+});
+
 export let cancelTenantSubscriptionResolver: FieldResolver<
   'Mutation',
   'cancelTenantSubscription'
@@ -82,6 +185,9 @@ export let cancelTenantSubscriptionResolver: FieldResolver<
   }
   if (!user.stripeCustomerId) {
     throw new Error('User has not been connected with Stripe');
+  }
+  if (!user.stripeSubscriptionId) {
+    throw new Error('User has not been connected to any subscription');
   }
   let cancelAt;
   try {
