@@ -16,9 +16,9 @@ import {
   PillButton,
 } from '../../core-ui';
 import { Filter } from '../../components';
-import { BUTTON_TRANSPARENT_TEXT_COLOR, RED_TEXT, THEME_COLOR } from '../../constants/colors';
+import { BUTTON_TRANSPARENT_TEXT_COLOR, RED_TEXT } from '../../constants/colors';
 import { MAPS_IFRAME_URL_SEARCH } from '../../constants/googleMaps';
-import { FONT_SIZE_SMALL, FONT_SIZE_LARGE } from '../../constants/theme';
+import { FONT_SIZE_SMALL } from '../../constants/theme';
 import { GET_CATEGORIES, GET_AUTOPOPULATE_FILTER } from '../../graphql/queries/server/filters';
 import { Categories } from '../../generated/Categories';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
@@ -110,120 +110,101 @@ export default function ConfirmBusinessDetail(props: Props) {
       }}
     >
       {iframeSource && <Iframe src={iframeSource} />}
-      {history.location.state.outOfBound ? (
-        <>
-          <FormContainer>
-            <Title>We apologize, your address is not supported.</Title>
-            <Text>
-              Insemble currently only supports addresses within the Los Angeles and Orange County
-              metropolitan area. We will be expanding our area of support in the upcoming months. To
-              access our platform, please use an address within the Los Angeles and Orange County
-              area, or choose categories that represent your brand.
-            </Text>
-          </FormContainer>
-          <OnboardingFooter>
-            <Button text="Back" onPress={() => history.goBack()} />
-          </OnboardingFooter>
-        </>
-      ) : (
-        <>
-          <FormContainer>
-            <TextInput
-              label="Business Name"
-              defaultValue={confirmBusinessDetail.name}
-              name="businessName"
-              ref={register({
-                required: 'Business Name should not be empty',
-              })}
-              errorMessage={(errors?.businessName as FieldError)?.message || ''}
-              containerStyle={{ paddingBottom: 12 }}
+      <FormContainer>
+        <TextInput
+          label="Business Name"
+          defaultValue={confirmBusinessDetail.name}
+          name="businessName"
+          ref={register({
+            required: 'Business Name should not be empty',
+          })}
+          errorMessage={(errors?.businessName as FieldError)?.message || ''}
+          containerStyle={{ paddingBottom: 12 }}
+        />
+        <CategoryInput>
+          <RowedView>
+            <Label text="Categories" />
+            <EditButton
+              text="Edit"
+              onPress={() => toggleCategorySelection(!categorySelectionVisible)}
             />
-            <CategoryInput>
-              <RowedView>
-                <Label text="Categories" />
-                <EditButton
-                  text="Edit"
-                  onPress={() => toggleCategorySelection(!categorySelectionVisible)}
-                />
-              </RowedView>
-              <ClickAway onClickAway={() => toggleCategorySelection(false)} style={{ zIndex: 1 }}>
-                {categoriesData && (
-                  <FilterContainer
-                    search
-                    visible={categorySelectionVisible}
-                    selectedOptions={selectedCategories}
-                    allOptions={categoriesData.categories}
-                    onSelect={(category: string) => {
-                      setSelectedCategories([...selectedCategories, category]);
-                    }}
-                    onUnSelect={(category: string) => {
-                      let newSelectedCategories = selectedCategories.filter(
-                        (el: string) => !el.includes(category)
-                      );
-                      setSelectedCategories(newSelectedCategories);
-                    }}
-                    onDone={() => toggleCategorySelection(false)}
-                    loading={autopopulateLoading}
-                  />
-                )}
-              </ClickAway>
-              <RowWrap>
-                {selectedCategories.map((category, index) => (
-                  <PillButton primary key={index} style={{ marginRight: 4, marginTop: 4 }}>
-                    {category}
-                  </PillButton>
-                ))}
-              </RowWrap>
-              {isSubmitted && selectedCategories.length === 0 && (
-                <ErrorText>Please Select Categories</ErrorText>
-              )}
-            </CategoryInput>
-
-            <LabelText text="What is your relationship to this business?" />
-            <RadioGroup
-              name="businessRelationship"
-              options={[
-                'I am the owner of this business',
-                'I am a development manager',
-                'I am an agent representing this business',
-                'Other',
-              ]}
-              selectedOption={selectedBusinessRelation}
-              onSelect={(item) => {
-                setBussinesRelation(item);
-              }}
-              radioItemProps={{
-                style: { marginBottom: 8 },
-                ref: register({
-                  required: 'Please select your relation to this business',
-                }),
-              }}
-              errorMessage={(errors?.businessRelationship as FieldError)?.message || ''}
-            />
-            {/* TODO: put to constants */}
-            {selectedBusinessRelation === 'Other' && (
-              <OtherTextInput
-                placeholder="Landlord"
-                ref={register({
-                  required: 'Input should not be empty',
-                })}
-                name="otherBusinessRelation"
-                errorMessage={(errors?.otherBusinessRelation as FieldError)?.message || ''}
-                defaultValue={onboardingState.confirmBusinessDetail.otherUserRelation}
+          </RowedView>
+          <ClickAway onClickAway={() => toggleCategorySelection(false)} style={{ zIndex: 1 }}>
+            {categoriesData && (
+              <FilterContainer
+                search
+                visible={categorySelectionVisible}
+                selectedOptions={selectedCategories}
+                allOptions={categoriesData.categories}
+                onSelect={(category: string) => {
+                  setSelectedCategories([...selectedCategories, category]);
+                }}
+                onUnSelect={(category: string) => {
+                  let newSelectedCategories = selectedCategories.filter(
+                    (el: string) => !el.includes(category)
+                  );
+                  setSelectedCategories(newSelectedCategories);
+                }}
+                onDone={() => toggleCategorySelection(false)}
+                loading={autopopulateLoading}
               />
             )}
-          </FormContainer>
-          <OnboardingFooter>
-            <TransparentButton
-              text="Not My Address"
-              mode="transparent"
-              type="submit"
-              onPress={() => history.goBack()}
-            />
-            <Button text="Next" type="submit" />
-          </OnboardingFooter>
-        </>
-      )}
+          </ClickAway>
+          <RowWrap>
+            {selectedCategories.map((category, index) => (
+              <PillButton primary key={index} style={{ marginRight: 4, marginTop: 4 }}>
+                {category}
+              </PillButton>
+            ))}
+          </RowWrap>
+          {isSubmitted && selectedCategories.length === 0 && (
+            <ErrorText>Please Select Categories</ErrorText>
+          )}
+        </CategoryInput>
+
+        <LabelText text="What is your relationship to this business?" />
+        <RadioGroup
+          name="businessRelationship"
+          options={[
+            'I am the owner of this business',
+            'I am a development manager',
+            'I am an agent representing this business',
+            'Other',
+          ]}
+          selectedOption={selectedBusinessRelation}
+          onSelect={(item) => {
+            setBussinesRelation(item);
+          }}
+          radioItemProps={{
+            style: { marginBottom: 8 },
+            ref: register({
+              required: 'Please select your relation to this business',
+            }),
+          }}
+          errorMessage={(errors?.businessRelationship as FieldError)?.message || ''}
+        />
+        {/* TODO: put to constants */}
+        {selectedBusinessRelation === 'Other' && (
+          <OtherTextInput
+            placeholder="Landlord"
+            ref={register({
+              required: 'Input should not be empty',
+            })}
+            name="otherBusinessRelation"
+            errorMessage={(errors?.otherBusinessRelation as FieldError)?.message || ''}
+            defaultValue={onboardingState.confirmBusinessDetail.otherUserRelation}
+          />
+        )}
+      </FormContainer>
+      <OnboardingFooter>
+        <TransparentButton
+          text="Not My Address"
+          mode="transparent"
+          type="submit"
+          onPress={() => history.goBack()}
+        />
+        <Button text="Next" type="submit" />
+      </OnboardingFooter>
     </Form>
   );
 }
@@ -287,10 +268,4 @@ const CategoryInput = styled(View)`
 const LabelText = styled(Label)`
   padding-top: 12px;
   padding-bottom: 8px;
-`;
-
-const Title = styled(Text)`
-  font-size: ${FONT_SIZE_LARGE};
-  color: ${THEME_COLOR};
-  margin-bottom: 10px;
 `;
