@@ -3,7 +3,7 @@ import { TenantTier, LandlordTier } from '../generated/globalTypes';
 export const LandlordTiers = {
   [LandlordTier.EXPLORE]: {
     id: 'prod_GlgyphMKy4y1RY',
-    name: 'Explore',
+    name: 'Basic',
     monthly: { id: 'plan_GlgzmsDFYNivMf', price: 30 },
     yearly: { id: 'plan_Glgzi3McWzuZ1v', price: 300 },
     title: '',
@@ -33,7 +33,7 @@ export const LandlordTiers = {
 export const TenantTiers = {
   [TenantTier.FREE]: {
     id: 'free',
-    name: 'Free',
+    name: 'Explore',
     monthly: { id: '', price: 0 },
     yearly: { id: '', price: 0 },
     title: '',
@@ -42,8 +42,8 @@ export const TenantTiers = {
   [TenantTier.PROFESSIONAL]: {
     id: 'prod_GlgxaiFQlz2C0g',
     name: 'Professional',
-    monthly: { id: 'plan_GlgyRHQ6XPof6v', price: 1500 },
-    yearly: { id: 'plan_GlgyE9w9q7ILhB', price: 5000 },
+    monthly: { id: 'plan_GlgyRHQ6XPof6v', price: 30 },
+    yearly: { id: 'plan_GlgyE9w9q7ILhB', price: 300 },
     title: 'Popular with Experts',
     type: TenantTier.PROFESSIONAL,
   },
