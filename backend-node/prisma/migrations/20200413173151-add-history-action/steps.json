@@ -1,0 +1,78 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateEnum",
+      "enum": "HistoryAction",
+      "values": [
+        "CREATE",
+        "CHANGE",
+        "CANCEL"
+      ]
+    },
+    {
+      "tag": "CreateField",
+      "model": "SubscriptionTenantHistory",
+      "field": "action",
+      "type": "HistoryAction",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "SubscriptionTenantHistory",
+          "field": "action"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "SubscriptionTenantHistory",
+          "field": "action"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "CREATE"
+    },
+    {
+      "tag": "CreateField",
+      "model": "SubscriptionLandlordHistory",
+      "field": "action",
+      "type": "HistoryAction",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "SubscriptionLandlordHistory",
+          "field": "action"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "SubscriptionLandlordHistory",
+          "field": "action"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "CREATE"
+    }
+  ]
+}
