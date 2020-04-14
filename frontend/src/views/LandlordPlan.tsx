@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import DataTable from '../components/DataTable';
 import { SECONDARY_COLOR, DARK_TEXT_COLOR } from '../constants/colors';
-import { Text, Card, Button, View } from '../core-ui';
+import { Text, Button, View } from '../core-ui';
 import { FONT_WEIGHT_LIGHT } from '../constants/theme';
 
 type BillingList = {
@@ -14,11 +14,7 @@ type BillingList = {
   cost: string;
 };
 
-type Props = {
-  billingList?: Array<BillingList>;
-};
-
-export default function LandlordPLan(props: Props) {
+export default function LandlordPLan() {
   let billingList = [
     {
       photos: 'asd',

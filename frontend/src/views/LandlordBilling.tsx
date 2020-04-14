@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { THEME_COLOR } from '../constants/colors';
-import { Text, Card, View, SegmentedControl } from '../core-ui';
+import { Text, Card, SegmentedControl } from '../core-ui';
 import LandlordPLan from './LandlordPlan';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_MEDIUM } from '../constants/theme';
 
@@ -21,7 +21,7 @@ export default function LandlordBilling() {
         }}
       />
 
-      {selectedTab === 0 ? <LandlordPLan /> : <View></View>}
+      {selectedTab === 0 ? <LandlordPLan /> : <Text>billing summary</Text>}
     </Container>
   );
 }
