@@ -1,7 +1,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://prisma:prisma@localhost:5432/insemble?schema=public"
+  url = "***"
 }
 
 
@@ -34,12 +34,6 @@ enum MarketingPreference {
 enum MessageRole {
   TENANT
   LANDLORD
-}
-
-enum HistoryAction {
-  CREATE
-  CHANGE
-  CANCEL
 }
 
 model Location {
@@ -213,19 +207,17 @@ model LandlordEmailVerification {
 }
 
 model SubscriptionTenantHistory {
-  id             String         @default(cuid()) @id
+  id             String     @default(cuid()) @id
   subscriptionId String
-  action         HistoryAction  @default(CREATE)
   tenantUser     TenantUser
-  createdAt      DateTime       @default(now())
+  createdAt      DateTime   @default(now())
 }
 
 model SubscriptionLandlordHistory {
-  id             String         @default(cuid()) @id
+  id             String     @default(cuid()) @id
   subscriptionId String
-  action         HistoryAction  @default(CREATE)
   landlordUser   LandlordUser
-  createdAt      DateTime       @default(now())
+  createdAt      DateTime   @default(now())
 }
 
 model TenantRegisterVerification {
