@@ -53,7 +53,7 @@ export default function TenantPlan() {
         {tenantProfileLoading ? (
           <LoadingIndicator />
         ) : (
-          <View style={{ flexDirection: 'row', padding: 23 }}>
+          <CardsContainer>
             {Object.values(TenantTiers).map(({ name, monthly, yearly, title, type: tierType }) => {
               let planId = isAnnual ? yearly.id : monthly.id;
               let price = isAnnual ? yearly.price : monthly.price;
@@ -85,7 +85,7 @@ export default function TenantPlan() {
                 />
               );
             })}
-          </View>
+          </CardsContainer>
         )}
       </Container>
     </PlanContextProvider>
@@ -106,4 +106,9 @@ const BackButton = styled(Button)`
   ${Text} {
     font-style: italic;
   }
+`;
+
+const CardsContainer = styled(View)`
+  padding: 42px 0;
+  flex-direction: row;
 `;

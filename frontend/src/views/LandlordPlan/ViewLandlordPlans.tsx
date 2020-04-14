@@ -21,7 +21,7 @@ export default function ViewLandlordPlans() {
           style={{ width: 140 }}
         />
 
-        <View style={{ flexDirection: 'row', padding: 23 }}>
+        <CardsContainer>
           {Object.values(LandlordTiers).map(({ name, monthly, yearly, title, benefits }) => {
             return (
               <TierSubscriptionCard
@@ -37,7 +37,7 @@ export default function ViewLandlordPlans() {
               />
             );
           })}
-        </View>
+        </CardsContainer>
       </Container>
       <CardFooter>
         <Button
@@ -55,4 +55,9 @@ const Container = styled(View)`
   justify-content: center;
   align-items: center;
   padding: 24px;
+`;
+
+const CardsContainer = styled(View)`
+  padding: 42px 24px;
+  flex-direction: row;
 `;

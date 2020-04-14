@@ -1,15 +1,18 @@
 import React from 'react';
-import styled from 'styled-components';
-import { useHistory, useLocation } from 'react-router-dom';
+import styled, { css } from 'styled-components';
 
 import { View, Text, Button } from '../../core-ui';
-import CardContainer, { CardTitleContainer } from '../TenantPlan/CardContainer';
 import { WHITE, THEME_COLOR, SECONDARY_COLOR } from '../../constants/colors';
-import { FONT_SIZE_SMALL, FONT_SIZE_LARGE, FONT_SIZE_XXXLARGE } from '../../constants/theme';
+import {
+  FONT_SIZE_SMALL,
+  FONT_SIZE_LARGE,
+  FONT_SIZE_XXXLARGE,
+  DEFAULT_BORDER_RADIUS,
+} from '../../constants/theme';
 import getUnit from './helpers/getUnit';
 
 type TierSubscriptionProps = {
-  title: string;
+  title?: string;
   tierName: string;
   benefits: Array<string>;
   price: number;
@@ -27,17 +30,19 @@ export default function TierSubscription(props: TierSubscriptionProps) {
     benefits,
     isUserCurrentTier,
     tierName,
-    title,
-    planId,
+    title = '',
     onUpgradeButtonPress,
   } = props;
-  let history = useHistory();
-  let location = useLocation();
 
   return (
     <TierSubscriptionWrapper>
-      <CardContainer title={title}>
-        <TypeWrapper>
+      <Content>
+        {title && (
+          <TitleContainer>
+            <Text color={WHITE}>{title}</Text>
+          </TitleContainer>
+        )}
+        <TypeWrapper hasTitle={!!title}>
           <TypeText>{tierName}</TypeText>
         </TypeWrapper>
         <PlanSection>
@@ -56,13 +61,12 @@ export default function TierSubscription(props: TierSubscriptionProps) {
               </PlanPriceContainer>
             )}
           </PlanPrice>
-          <View>
-            {benefits.map((text, index) => (
-              <BenefitItem benefit={text} key={index} />
-            ))}
-          </View>
+          {benefits.map((text, index) => (
+            <BenefitItem benefit={text} key={index} />
+          ))}
         </PlanSection>
-      </CardContainer>
+      </Content>
+
       {onUpgradeButtonPress && (
         <UpgradeButton text="Upgrade" onPress={onUpgradeButtonPress} disabled={isUserCurrentTier} />
       )}
@@ -79,6 +83,9 @@ function BenefitItem({ benefit }: { benefit: string }) {
   );
 }
 
+type TypeWrapperProps = ViewProps & {
+  hasTitle: boolean;
+};
 const PlanTitleText = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
 `;
@@ -105,7 +112,6 @@ const BenefitCheck = styled(View)`
 `;
 const BenefitItemContainer = styled(View)`
   flex-direction: row;
-  flex: 1;
   align-items: baseline;
 `;
 const BenefitItemText = styled(Text)`
@@ -116,20 +122,26 @@ const BenefitItemText = styled(Text)`
 const PlanSection = styled(View)`
   padding: 0 16px 32px;
   background-color: white;
-  border-bottom-left-radius: 5;
-  border-bottom-right-radius: 5;
+  border-bottom-left-radius: ${DEFAULT_BORDER_RADIUS};
+  border-bottom-right-radius: ${DEFAULT_BORDER_RADIUS};
   flex: 1;
 `;
 const PriceText = styled(Text)`
   text-align: center;
   font-size: ${FONT_SIZE_XXXLARGE};
   font-weight: 500;
-  line-height: 1;
+  line-height: 1.5;
 `;
-const TypeWrapper = styled(View)`
+const TypeWrapper = styled(View)<TypeWrapperProps>`
   justify-content: center;
   align-items: center;
   background-color: #fafafa;
+  ${(props) =>
+    props.hasTitle &&
+    css`
+      border-top-left-radius: ${DEFAULT_BORDER_RADIUS};
+      border-top-right-radius: ${DEFAULT_BORDER_RADIUS};
+    `}
 `;
 const TypeText = styled(Text)`
   font-size: ${FONT_SIZE_LARGE};
@@ -142,6 +154,23 @@ const UpgradeButton = styled(Button)`
   margin-top: 12px;
   cursor: pointer;
 `;
+const TitleContainer = styled(View)`
+  background-color: ${THEME_COLOR};
+  border-top-left-radius: ${DEFAULT_BORDER_RADIUS};
+  border-top-right-radius: ${DEFAULT_BORDER_RADIUS};
+  position: absolute;
+  z-index: 1;
+  top: -26px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+`;
+const Content = styled(View)`
+  box-shadow: 0px 0px 23px -11px rgba(0, 0, 0, 0.75);
+  border-radius: ${DEFAULT_BORDER_RADIUS};
+  height: 300px;
+`;
 const TierSubscriptionWrapper = styled(View)`
   margin-right: 12px;
   &:last-child {
@@ -149,9 +178,6 @@ const TierSubscriptionWrapper = styled(View)`
   }
   &:hover {
     cursor: pointer;
-    ${CardTitleContainer} {
-      background-color: ${THEME_COLOR};
-    }
     ${UpgradeButton}:enabled {
       background-color: ${THEME_COLOR};
     }

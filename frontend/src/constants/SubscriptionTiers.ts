@@ -6,7 +6,7 @@ export const LandlordTiers = {
     name: 'Explore',
     monthly: { id: 'plan_GlgzmsDFYNivMf', price: 30 },
     yearly: { id: 'plan_Glgzi3McWzuZ1v', price: 300 },
-    title: 'Explore',
+    title: '',
     benefits: [
       'Access thousands of pre-qualified tenants',
       'Complementary virtual tours & photos',
@@ -19,7 +19,7 @@ export const LandlordTiers = {
     name: 'Professional',
     monthly: { id: 'plan_Glh0alOVw1hDJh', price: 800 },
     yearly: { id: 'plan_Glh0neF7FfBXcw', price: 4000 },
-    title: 'Professional',
+    title: 'Popular',
     benefits: [
       'See expanding tenants that fit property',
       'Advertise both on-market & off-market',
@@ -30,27 +30,13 @@ export const LandlordTiers = {
   },
 };
 
-type Plan = {
-  id: string;
-  price: number;
-};
-
-export const TenantTiers: {
-  [key in TenantTier]: {
-    id: string;
-    name: string;
-    monthly: Plan;
-    yearly: Plan;
-    title: string;
-    type: TenantTier;
-  };
-} = {
+export const TenantTiers = {
   [TenantTier.FREE]: {
     id: 'free',
     name: 'Free',
     monthly: { id: '', price: 0 },
     yearly: { id: '', price: 0 },
-    title: 'Popular with Explorers',
+    title: '',
     type: TenantTier.FREE,
   },
   [TenantTier.PROFESSIONAL]: {
