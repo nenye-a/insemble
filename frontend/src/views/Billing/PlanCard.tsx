@@ -41,7 +41,7 @@ export default function PlanCard(props: Props) {
           ${roundDecimal(pricePerMonth)}
         </Text>
         <Text>USD per month</Text>
-        {isAnnual && (
+        {!!isAnnual && (
           <Text fontSize={FONT_SIZE_SMALL} fontWeight={FONT_WEIGHT_LIGHT} color={DARK_TEXT_COLOR}>
             paid anually
           </Text>

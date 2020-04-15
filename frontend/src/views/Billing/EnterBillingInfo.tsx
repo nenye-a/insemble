@@ -1,10 +1,10 @@
 import React, { useState, useReducer } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import { CardNumberElement, useElements, useStripe } from '@stripe/react-stripe-js';
 
-import { View, Text, Button, LoadingIndicator } from '../../core-ui';
+import { View, Text, Button, LoadingIndicator, Alert } from '../../core-ui';
 import { ContactInsemble } from '../../components';
 import CreditCardTable from './CreditCardTable';
 import InvoicePreview from './InvoicePreview';
@@ -19,6 +19,16 @@ import {
   FONT_WEIGHT_BOLD,
 } from '../../constants/theme';
 import { THEME_COLOR, DARK_TEXT_COLOR } from '../../constants/colors';
+import {
+  REGISTER_PAYMENT_METHOD,
+  GET_PAYMENT_METHOD_LIST,
+  GET_BILLING_LIST,
+} from '../../graphql/queries/server/billing';
+import {
+  CREATE_PLAN_SUBSCRIPTION,
+  EDIT_TENANT_SUBSCRIPTION,
+} from '../../graphql/queries/server/tenantSubscription';
+import { GET_TENANT_PROFILE } from '../../graphql/queries/server/profile';
 import { PaymentMethodList_paymentMethodList as PaymentMethod } from '../../generated/PaymentMethodList';
 import {
   RegisterPaymentMethod,
@@ -29,11 +39,10 @@ import {
   CreateTenantPlanSubscriptionVariables,
 } from '../../generated/CreateTenantPlanSubscription';
 import {
-  REGISTER_PAYMENT_METHOD,
-  GET_PAYMENT_METHOD_LIST,
-  GET_BILLING_LIST,
-} from '../../graphql/queries/server/billing';
-import { CREATE_PLAN_SUBSCRIPTION } from '../../graphql/queries/server/tenantSubscription';
+  EditTenantSubscription,
+  EditTenantSubscriptionVariables,
+} from '../../generated/EditTenantSubscription';
+import { GetTenantProfile } from '../../generated/GetTenantProfile';
 
 type Props = {
   paymentMethodList: Array<PaymentMethod>;
@@ -68,29 +77,39 @@ export default function EnterBillingInfo(props: Props) {
     ],
     awaitRefetchQueries: true,
   });
-  let [createPlanSubscription, { loading: createPlanSubscriptionLoading }] = useMutation<
-    CreateTenantPlanSubscription,
-    CreateTenantPlanSubscriptionVariables
-  >(CREATE_PLAN_SUBSCRIPTION, {
-    refetchQueries: [
-      {
-        query: GET_BILLING_LIST,
-        variables: {
-          status: 'paid',
+  let [
+    createPlanSubscription,
+    { loading: createPlanSubscriptionLoading, error: createPlanSubscriptionError },
+  ] = useMutation<CreateTenantPlanSubscription, CreateTenantPlanSubscriptionVariables>(
+    CREATE_PLAN_SUBSCRIPTION,
+    {
+      refetchQueries: [
+        {
+          query: GET_BILLING_LIST,
+          variables: {
+            status: 'paid',
+          },
         },
-      },
-    ],
-    awaitRefetchQueries: true,
-  });
+      ],
+      awaitRefetchQueries: true,
+    }
+  );
 
+  let [
+    editTenantSubscription,
+    { loading: editTenantSubscriptionLoading, error: editTenantSubscriptionError },
+  ] = useMutation<EditTenantSubscription, EditTenantSubscriptionVariables>(
+    EDIT_TENANT_SUBSCRIPTION
+  );
+
+  let { data: tenantProfileData, loading: tenantProfileLoading } = useQuery<GetTenantProfile>(
+    GET_TENANT_PROFILE
+  );
   let onConfirmPress = async () => {
     if (selectedViewMode === ViewMode.NO_CARD) {
       registerCard();
     } else if (selectedViewMode === ViewMode.EXISTING_CARD) {
-      let defaultPaymentMethod = paymentMethodList.find((item) => item.isDefault);
-      if (defaultPaymentMethod) {
-        upgradePlan(defaultPaymentMethod.id);
-      }
+      upgradePlan();
     }
   };
 
@@ -124,23 +143,38 @@ export default function EnterBillingInfo(props: Props) {
     }
   };
 
-  let upgradePlan = async (paymentMethodId: string) => {
-    let upgradePlanResult = await createPlanSubscription({
-      variables: {
-        planId,
-        paymentMethodId: paymentMethodId,
-      },
-    });
-    if (upgradePlanResult.data?.createTenantSubscription) {
-      history.push('/user/upgrade-plan/upgrade-success', {
-        ...history.location.state,
+  let upgradePlan = async (paymentMethodId?: string) => {
+    if (tenantProfileData?.profileTenant.stripeSubscriptionId) {
+      let upgradePlanResult = await editTenantSubscription({
+        variables: {
+          planId,
+          paymentMethodId: paymentMethodId || undefined,
+        },
       });
+      if (upgradePlanResult.data?.editTenantSubscription) {
+        console.log(upgradePlanResult.data.editTenantSubscription);
+        history.push('/user/upgrade-plan/upgrade-success', {
+          ...history.location.state,
+        });
+      }
+    } else {
+      let upgradePlanResult = await createPlanSubscription({
+        variables: {
+          planId,
+          paymentMethodId: paymentMethodId || undefined,
+        },
+      });
+      if (upgradePlanResult.data?.createTenantSubscription) {
+        history.push('/user/upgrade-plan/upgrade-success', {
+          ...history.location.state,
+        });
+      }
     }
   };
 
   let buttonLoading = isSaving && registerPaymentMethodLoading;
 
-  if (createPlanSubscriptionLoading) {
+  if (createPlanSubscriptionLoading || editTenantSubscriptionLoading || tenantProfileLoading) {
     return <LoadingIndicator />;
   }
 
@@ -150,11 +184,19 @@ export default function EnterBillingInfo(props: Props) {
         <Title>Enter your billing info</Title>
         <ContactInsemble />
         <Content>
+          <ErrorAlert
+            visible={!!createPlanSubscriptionError}
+            text={createPlanSubscriptionError?.message || ''}
+          />
+          <ErrorAlert
+            visible={!!editTenantSubscriptionError}
+            text={editTenantSubscriptionError?.message || ''}
+          />
           <Text fontSize={FONT_SIZE_MEDIUM} color={THEME_COLOR} style={paddingStyle}>
             Payment Info
           </Text>
           <RowedView>
-            {selectedViewMode === ViewMode.EXISTING_CARD ? (
+            {selectedViewMode === ViewMode.EXISTING_CARD && paymentMethodList.length > 0 ? (
               <ExistingCards
                 paymentMethodList={paymentMethodList}
                 onUseNewCardPress={() => setSelectedViewMode(ViewMode.NO_CARD)}
@@ -162,13 +204,15 @@ export default function EnterBillingInfo(props: Props) {
             ) : (
               <View flex>
                 <AddNewCardForm state={state} dispatch={dispatch} />
-                <Button
-                  text="Use existing card"
-                  mode="transparent"
-                  onPress={() => setSelectedViewMode(ViewMode.EXISTING_CARD)}
-                  textProps={{ style: { color: DARK_TEXT_COLOR, fontWeight: FONT_WEIGHT_BOLD } }}
-                  style={{ alignSelf: 'flex-end' }}
-                />
+                {paymentMethodList.length > 0 && (
+                  <Button
+                    text="Use existing card"
+                    mode="transparent"
+                    onPress={() => setSelectedViewMode(ViewMode.EXISTING_CARD)}
+                    textProps={{ style: { color: DARK_TEXT_COLOR, fontWeight: FONT_WEIGHT_BOLD } }}
+                    style={{ alignSelf: 'flex-end' }}
+                  />
+                )}
               </View>
             )}
             <Spacing />
@@ -247,4 +291,8 @@ const BackButton = styled(Button)`
 
 const Spacing = styled(View)`
   width: 24px;
+`;
+
+const ErrorAlert = styled(Alert)`
+  margin: 4px 0;
 `;
