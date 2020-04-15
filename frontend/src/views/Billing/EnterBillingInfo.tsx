@@ -152,7 +152,6 @@ export default function EnterBillingInfo(props: Props) {
         },
       });
       if (upgradePlanResult.data?.editTenantSubscription) {
-        console.log(upgradePlanResult.data.editTenantSubscription);
         history.push('/user/upgrade-plan/upgrade-success', {
           ...history.location.state,
         });

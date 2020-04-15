@@ -39,7 +39,7 @@ export default function TenantPlan() {
           mode="transparent"
           text="Back"
           onPress={() => {
-            history.goBack();
+            history.push('/user/billing');
           }}
         />
         <SegmentedControl
