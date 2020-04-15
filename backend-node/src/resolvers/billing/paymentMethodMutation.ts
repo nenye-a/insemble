@@ -1,8 +1,28 @@
-import { mutationField, stringArg } from 'nexus';
+import { mutationField, stringArg, FieldResolver } from 'nexus';
 import { Root, Context } from 'serverTypes';
 
 import stripe from '../../config/stripe';
 import getUserDetails from '../../helpers/getUserDetails';
+
+export let changeDefaultPaymentMethodResolver: FieldResolver<
+  'Mutation',
+  'changeDefaultPaymentMethod'
+> = async (_: Root, { paymentMethodId }, context: Context) => {
+  let user = await getUserDetails(context);
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  if (user.stripeCustomerId) {
+    await stripe.customers.update(user.stripeCustomerId, {
+      invoice_settings: {
+        default_payment_method: paymentMethodId,
+      },
+    });
+    return true;
+  }
+  return false;
+};
 
 let changeDefaultPaymentMethod = mutationField('changeDefaultPaymentMethod', {
   type: 'Boolean',
@@ -10,22 +30,7 @@ let changeDefaultPaymentMethod = mutationField('changeDefaultPaymentMethod', {
   args: {
     paymentMethodId: stringArg({ required: true }),
   },
-  resolve: async (_: Root, { paymentMethodId }, context: Context) => {
-    let user = await getUserDetails(context);
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    if (user.stripeCustomerId) {
-      await stripe.customers.update(user.stripeCustomerId, {
-        invoice_settings: {
-          default_payment_method: paymentMethodId,
-        },
-      });
-      return true;
-    }
-    return false;
-  },
+  resolve: changeDefaultPaymentMethodResolver,
 });
 
 let registerPaymentMethod = mutationField('registerPaymentMethod', {
