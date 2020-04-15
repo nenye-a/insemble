@@ -179,7 +179,8 @@ def generate_matching_locations(location, options={}, db_connection=utils.SYSTEM
     print("** Matching: Evaluation Ongoing.")
     weighted_df = weight_and_evaluate(standardize(processed_diff))
     # re-assign the important tracking information (location id & positioning)
-    weighted_df['lat'], weighted_df['lng'], weighted_df['loc_id'], weighted_df['_id'] = info_df['lat'], info_df['lng'], info_df['loc_id'], info_df['_id']
+    weighted_df['lat'], weighted_df['lng'], weighted_df['loc_id'], weighted_df['_id'] = info_df['lat'].round(
+        6), info_df['lng'].round(6), info_df['loc_id'], info_df['_id']
     print("** Matching: Matching complete, results immenent.")
     # calculate matches for all vectors
     weighted_df["match_value"] = weighted_df["error_sum"].apply(_map_difference_to_match)
