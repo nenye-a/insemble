@@ -64,7 +64,6 @@ export default function UpgradeConfirmationModal() {
 
   return (
     <Container
-      id="upgrade-modal"
       visible={true}
       hideCloseButton={true}
       onClose={() => {

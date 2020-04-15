@@ -10,7 +10,7 @@ type Props = ViewProps & {
   options: Array<string>;
   selectedIndex: number;
   onPress: (index: number) => void;
-  containerStyle: CSSProperties;
+  containerStyle?: CSSProperties;
   activeSegmentStyle?: CSSProperties;
   segmentStyle?: CSSProperties;
   activeTextStyle?: CSSProperties;
