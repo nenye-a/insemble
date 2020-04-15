@@ -39,6 +39,7 @@ import RedirectLoginLandlord from './views/RedirectLoginLandlord';
 import OutOfBound from './views/OutOfBound';
 
 import { tenantAuthorization, landlordAuthorization } from './utils';
+import LandlordBilling from './views/LandlordBilling';
 
 export type RouteType = {
   path: string;
@@ -166,6 +167,12 @@ const LANDLORD_ROUTES = [
     path: '/landlord/messages/:conversationId',
     layout: LandlordProfileLayout,
     component: LandlordMessageDetail,
+    authorization: landlordAuthorization,
+  },
+  {
+    path: '/landlord/billing',
+    layout: LandlordProfileLayout,
+    component: LandlordBilling,
     authorization: landlordAuthorization,
   },
   {

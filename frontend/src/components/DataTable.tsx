@@ -8,6 +8,9 @@ import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
 type Props = {
   children?: ReactNode;
 };
+type RowProps = {
+  height?: string;
+};
 
 function DataTable(props: Props) {
   return <Container>{props.children}</Container>;
@@ -53,11 +56,11 @@ const Cell = styled(View)<CellProps>`
   padding: 24px;
 `;
 
-const Row = styled(View)`
+const Row = styled(View)<RowProps>`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  height: 35px;
+  height: ${(props) => (props.height ? props.height : '35px')};
   border-bottom-width: 1px;
   border-color: ${BORDER_COLOR};
   &:last-of-type {
