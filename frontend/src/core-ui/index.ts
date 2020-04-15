@@ -28,3 +28,4 @@ export { default as TextArea } from './TextArea';
 export { default as TextInput } from './TextInput';
 export { default as TouchableOpacity } from './TouchableOpacity';
 export { default as View } from './View';
+export { default as ViewportListener } from './ViewportListener';

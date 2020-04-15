@@ -40,14 +40,6 @@ export const TenantTiers: {
     title: 'Popular with Explorers',
     type: TenantTier.FREE,
   },
-  [TenantTier.EXPLORE]: {
-    id: 'prod_GlgwI5jKh46guy',
-    name: 'Explore',
-    monthly: { id: 'plan_GlgxePOcdFloVN', price: 30 },
-    yearly: { id: 'plan_GlgxeQe5iurEBE', price: 300 },
-    title: 'Popular with Explorers',
-    type: TenantTier.EXPLORE,
-  },
   [TenantTier.PROFESSIONAL]: {
     id: 'prod_GlgxaiFQlz2C0g',
     name: 'Professional',
@@ -55,13 +47,5 @@ export const TenantTiers: {
     yearly: { id: 'plan_GlgyE9w9q7ILhB', price: 5000 },
     title: 'Popular with Experts',
     type: TenantTier.PROFESSIONAL,
-  },
-  [TenantTier.SMART]: {
-    id: 'prod_GnCLMYRH8GHqzM',
-    name: 'Smart',
-    monthly: { id: 'plan_GnCN8o6RGKcRGw', price: 2000 },
-    yearly: { id: 'plan_GnCN8o6RGKcRGw', price: 10000 },
-    title: 'Popular with Experts',
-    type: TenantTier.SMART,
   },
 };

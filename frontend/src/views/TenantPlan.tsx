@@ -1,8 +1,15 @@
 import React, { useState, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
+import { useHistory } from 'react-router-dom';
 
-import { View, SegmentedControl as BaseSegmentedControl, LoadingIndicator } from '../core-ui';
+import {
+  View,
+  SegmentedControl as BaseSegmentedControl,
+  LoadingIndicator,
+  Button,
+  Text,
+} from '../core-ui';
 import TierSubscriptionCard from './TenantPlan/TierSubscriptionCard';
 import { TenantTiers } from '../constants/SubscriptionTiers';
 import createContext from '../utils/createContext';
@@ -16,6 +23,7 @@ type PlanCtx = {
 
 export let [usePlanContext, PlanContextProvider] = createContext<PlanCtx>();
 export default function TenantPlan() {
+  let history = useHistory();
   let [isAnnual, setIsAnnual] = useState(0);
   let [selectedPaymentMethodId, setSelectedPaymentMethod] = useState<
     PlanCtx['selectedPaymentMethodId']
@@ -27,12 +35,20 @@ export default function TenantPlan() {
   return (
     <PlanContextProvider value={{ selectedPaymentMethodId, setSelectedPaymentMethod }}>
       <Container>
+        <BackButton
+          mode="transparent"
+          text="Back"
+          onPress={() => {
+            history.goBack();
+          }}
+        />
         <SegmentedControl
           options={['Monthly', 'Anually']}
           selectedIndex={isAnnual}
           onPress={(index: number) => {
             setIsAnnual(index);
           }}
+          style={{ width: 140 }}
         />
         {tenantProfileLoading ? (
           <LoadingIndicator />
@@ -66,10 +82,17 @@ export default function TenantPlan() {
 }
 
 const Container = styled(View)`
-  padding: 33px 221px 0px 221px;
+  padding: 33px 15% 0px 15%;
   align-items: center;
 `;
 
 const SegmentedControl = styled(BaseSegmentedControl)`
   width: 320px;
+`;
+
+const BackButton = styled(Button)`
+  align-self: flex-start;
+  ${Text} {
+    font-style: italic;
+  }
 `;

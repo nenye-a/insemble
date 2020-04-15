@@ -79,3 +79,6 @@ export const COMMUTE_CHART_COLORS = [
 
 // Banner colors
 export const HIGHLIGHTED_BANNER_BACKGROUND = DARK_PURPLE;
+
+// Divider colors
+export const GREY_DIVIDER = DETAIL_GREY;
