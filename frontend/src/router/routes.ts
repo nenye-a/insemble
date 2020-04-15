@@ -37,7 +37,7 @@ import RegisterByInvitationTenant from '../views/RegisterByInvitationTenant';
 import RedirectLoginTenant from '../views/RedirectLoginTenant';
 import RedirectLoginLandlord from '../views/RedirectLoginLandlord';
 import OutOfBound from '../views/OutOfBound';
-import LandlordBilling from './views/LandlordBilling';
+import LandlordBilling from '../views/LandlordBilling';
 import UpgradeConfirmationModal from '../views/TenantPlan/UpgradeConfirmationModal';
 
 import { tenantAuthorization, landlordAuthorization } from '../utils';
