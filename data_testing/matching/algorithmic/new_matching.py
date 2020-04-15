@@ -1,15 +1,17 @@
 import sys
 import os
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(BASE_DIR, 'data_aggregator'))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(BASE_DIR)  # include data_testing
+
+
 from decouple import config
 import time
 import pandas as pd
 from s3fs import S3FileSystem
-import environics
-import arcgis
-import spatial
-import google
+import api.environics as environics
+import api.arcgis as arcgis
+import api.spatial as spatial
+import api.google as google
 import utils
 
 
@@ -401,6 +403,60 @@ def preprocess_match_df(dataframe):
                       item] = dataframe.iloc[-1].loc[item]
 
     return dataframe
+
+
+def modify_range(ordered_categories, target_categories, adjacents=True) -> dict:
+    """
+    Provided ordered categories, and target categories that are contained within the ordered categories,
+    determines what the distribution of the ordered_categories should be.
+
+    ordered categories are "ordered": adjacent categories are the categories to the left and right of the target range
+    """
+
+    num_targets = len(target_categories)
+    number_categories = len(ordered_categories)
+
+    if num_targets == 0:
+        return None
+
+    target_indices = []
+    for target in target_categories:
+        target_indices.append(ordered_categories.index(target))
+
+    first_category = min(target_indices)
+    last_category = max(target_indices)
+
+    adjacent_categories = []
+    if adjacents:
+        adjacent_categories.append(first_category - 1) if first_category != 0 else None
+        adjacent_categories.append(last_category + 1) if last_category != len(ordered_categories) - 1 else None
+    num_adjacent = len(adjacent_categories)
+
+    distribution = {}
+
+    target_value = 0.65
+    adjacent_value = 0.25
+    default_value = 0.1
+
+    if num_adjacent == 0:
+        target_value = target_value + adjacent_value
+        adjacent_value
+    elif num_adjacent == 1:
+        target_value = target_value + adjacent_value / 2
+        adjacent_value = adjacent_value / 2
+    if num_adjacent + num_targets == number_categories:
+        target_value + default_value
+
+    for category in ordered_categories:
+        category_index = ordered_categories.index(category)
+        if utils.in_range(category_index, [first_category, last_category]):
+            distribution[category] = target_value / num_targets
+        elif category_index in adjacent_categories:
+            distribution[category] = adjacent_value / num_adjacent
+        else:
+            distribution[category] = default_value / (number_categories - num_adjacent - num_targets)
+
+    return distribution
 
 
 # given difference matrix, post proesses items into groups that work together

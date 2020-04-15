@@ -74,8 +74,8 @@ def generate_matching_properties(location, params):
         for space in result_property['spaces']:
             space.update({
                 'address': address,
-                'lat': lat,
-                'lng': lng,
+                'lat': round(lat, 6),
+                'lng': round(lng, 6),
                 'type': property_type,
                 'match_value': min(max(match['match_value'], 10), 95)
             })
