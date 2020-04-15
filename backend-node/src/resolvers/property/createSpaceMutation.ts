@@ -59,6 +59,7 @@ export let createSpaceResolver: FieldResolver<
         set: spaceType,
       },
       property: { connect: { id: propertyId } },
+      tier: 'PROFESSIONAL',
       available: new Date(available),
     },
   });

@@ -51,7 +51,7 @@ export let registerTenantInvitationResolver: FieldResolver<
       firstName,
       lastName,
       password: cryptPassword,
-      tier: 'FREE',
+      tier: 'PROFESSIONAL',
       company: `${name}'s Company`,
       title: role,
       phoneNumber: phone,

@@ -31,7 +31,6 @@ export let registerLandlord = mutationField('registerLandlord', {
             ...landlord,
             email: lowerCasedEmail,
             password,
-            tier: 'FREE',
           }),
           email: lowerCasedEmail,
           tokenEmail: bytesEmail.toString('base64'),
