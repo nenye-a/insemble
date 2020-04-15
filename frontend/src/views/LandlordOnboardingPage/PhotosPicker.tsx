@@ -19,8 +19,6 @@ export default function PhotosPicker(props: Props) {
     if (index === 0) {
       onMainPhotoChange(null);
     } else {
-      console.log(additionalPhotos.length, 'length');
-      console.log(index);
       if (additionalPhotos.length === 20) {
         if (index === 20) {
           additionalPhotos.splice(index - 1, 1, null);
@@ -29,7 +27,7 @@ export default function PhotosPicker(props: Props) {
           });
           onAdditionalPhotoChange(newPhotoList);
         } else {
-          if (additionalPhotos[additionalPhotos.length - 1] === null) {
+          if (additionalPhotos[additionalPhotos.length - 1] == null) {
             additionalPhotos.splice(index - 1, 1);
           } else {
             additionalPhotos.splice(index - 1, 1);
