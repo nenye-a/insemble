@@ -1,5 +1,4 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
 import { ClientContextProvider } from 'react-fetching-library';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { Elements as StripeProvider } from '@stripe/react-stripe-js';
