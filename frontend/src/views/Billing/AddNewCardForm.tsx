@@ -42,7 +42,7 @@ type Props = {
 export default function AddNewCardForm(props: Props) {
   let { onFinishCreatingPaymentMethod, showSaveButton = true } = props;
   let [state, dispatch] = useReducer(reducer, initialNewCardState);
-  let [isSaving, setSaving] = useState(false);
+  let [isSaving, setIsSaving] = useState(false);
   let stripe = useStripe();
   let elements = useElements();
 
@@ -66,13 +66,13 @@ export default function AddNewCardForm(props: Props) {
     }
     let cardNumberEl = elements.getElement(CardNumberElement);
     if (cardNumberEl) {
-      setSaving(true);
+      setIsSaving(true);
       let result = await stripe.createPaymentMethod({
         type: 'card',
         card: cardNumberEl,
         billing_details: toBillingDetails(state),
       });
-      setSaving(false);
+      setIsSaving(false);
       if (result.error || !result.paymentMethod) {
         // eslint-disable-next-line no-console
         console.log('Failed creating payment method', result.error);
