@@ -1,7 +1,9 @@
+
 datasource db {
   provider = "postgresql"
   url      = "postgresql://prisma:prisma@localhost:5432/insemble?schema=public"
 }
+
 
 generator client {
   provider = "prisma-client-js"
@@ -41,85 +43,71 @@ enum HistoryAction {
 }
 
 model Location {
-  id         String     @default(cuid()) @id
-  address    String
-  lat        String
-  lng        String
-  brands     Brand[]    @relation("currentLocation")
-  brand      Brand?     @relation("nextLocation", references: [id])
-  properties Property[]
+  id      String @id @default(cuid())
+  address String
+  lat     String
+  lng     String
 }
 
 model LocationAndPerformance {
-  id           String @default(cuid()) @id
+  id           String @id @default(cuid())
   address      String
   physicalSale String
   onlineSale   String
   estimate     String
-  brand        Brand? @relation(references: [id])
 }
 
 model TenantUser {
-  id                               String                            @default(cuid()) @id
-  email                            String                            @unique
-  avatar                           String?
-  password                         String
-  firstName                        String
-  lastName                         String
-  company                          String
-  phoneNumber                      String?
-  title                            String?
-  description                      String?
-  brands                           Brand[]
-  savedProperties                  SavedProperty[]
-  tier                             TenantTier
-  pendingEmail                     Boolean                           @default(false)
-  stripeCustomerId                 String?                           @unique
-  stripeSubscriptionId             String?                           @unique
-  createdAt                        DateTime                          @default(now())
-  tenantSessions                   TenantSession[]
-  subscriptionTenantHistories      SubscriptionTenantHistory[]
-  tenantEmailVerifications         TenantEmailVerification[]
-  tenantResetPasswordVerifications TenantResetPasswordVerification[]
-  conversations                    Conversation[]
+  id                   String          @id @default(cuid())
+  email                String          @unique
+  avatar               String?
+  password             String
+  firstName            String
+  lastName             String
+  company              String
+  phoneNumber          String?
+  title                String?
+  description          String?
+  brands               Brand[]
+  savedProperties      SavedProperty[]
+  tier                 TenantTier
+  pendingEmail         Boolean         @default(false)
+  stripeCustomerId     String?         @unique
+  stripeSubscriptionId String?         @unique
+  createdAt            DateTime        @default(now())
 }
 
 model LandlordUser {
-  id                                 String                              @default(cuid()) @id
-  email                              String                              @unique
-  avatar                             String?
-  password                           String
-  firstName                          String
-  lastName                           String
-  company                            String
-  phoneNumber                        String?
-  title                              String?
-  description                        String?
-  properties                         Property[]
-  billingAnchor                      Int?
-  pendingEmail                       Boolean                             @default(false)
-  stripeCustomerId                   String?                             @unique
-  createdAt                          DateTime                            @default(now())
-  landlordSessions                   LandlordSession[]
-  landlordEmailVerifications         LandlordEmailVerification[]
-  subscriptionLandlordHistories      SubscriptionLandlordHistory[]
-  landlordResetPasswordVerifications LandlordResetPasswordVerification[]
-  conversations                      Conversation[]
+  id                   String       @id @default(cuid())
+  email                String       @unique
+  avatar               String?
+  password             String
+  firstName            String
+  lastName             String
+  company              String
+  phoneNumber          String?
+  title                String?
+  description          String?
+  properties           Property[]
+  billingAnchor        Int?
+  pendingEmail         Boolean      @default(false)
+  stripeCustomerId     String?      @unique
+  createdAt            DateTime     @default(now())
 }
 
 model Brand {
-  id                     String                   @default(cuid()) @id
+  id                     String                   @id @default(cuid())
   // Note: All field can be empty because some case
   // Brand description
   name                   String?
-  location               Location?                @relation("currentLocation", references: [id])
-  tenantUser             TenantUser?              @relation(references: [id])
+  location               Location?                @relation(name: "currentLocation")
+  tenantUser             TenantUser?
   categories             String[]
   // Also for filter and description
   userRelation           String?
   // Goal of this brand
   newLocationPlan        NewLocationPlan?
-  nextLocations          Location[]               @relation("nextLocation")
+  nextLocations          Location[]               @relation(name: "nextLocation")
   locationCount          Int?
   // Filter params for heatmap
   minAge                 Int?
@@ -142,16 +130,15 @@ model Brand {
   matchingLocations      String?
   matchingProperties     String?
   pendingUpdate          String?
-  // Tenant Id(brandId) from tenantMatches django api
+  //Tenant Id(brandId) from tenantMatches django api
   tenantId               String?
   matchId                String?                  @unique
   createdAt              DateTime                 @default(now())
-  conversations          Conversation[]
 }
 
 model Space {
-  id                   String              @default(cuid()) @id
-  spaceId              String?             @unique
+  id                   String   @id @default(cuid())
+  spaceId              String?  @unique
   mainPhoto            String
   photos               String[]
   description          String
@@ -164,18 +151,16 @@ model Space {
   available            DateTime
   matchingBrand        String?
   tier                 LandlordTier
-  stripeSubscriptionId String?             @unique
-  createdAt            DateTime            @default(now())
-  property             Property?           @relation(references: [id])
-  conversations        Conversation[]
+  stripeSubscriptionId String?  @unique
+  createdAt            DateTime @default(now())
 }
 
 model Property {
-  id                  String              @default(cuid()) @id
+  id                  String              @id @default(cuid())
   propertyId          String?             @unique
   name                String
-  location            Location            @relation(references: [id])
-  landlordUser        LandlordUser        @relation(references: [id])
+  location            Location
+  landlordUser        LandlordUser
   userRelation        String
   userRelations       String[]
   propertyType        String[]
@@ -185,31 +170,29 @@ model Property {
   businessType        String[]
   space               Space[]
   createdAt           DateTime            @default(now())
-  conversations       Conversation[]
 }
 
 model SavedProperty {
-  id         String      @default(cuid()) @id
+  id         String   @id @default(cuid())
   spaceId    String
   brandId    String
   propertyId String
   matchValue Float
-  createdAt  DateTime    @default(now())
-  tenantUser TenantUser? @relation(references: [id])
+  createdAt  DateTime @default(now())
 }
 
 model TenantSession {
   id        String     @default(cuid()) @id
   token     String
   createdAt DateTime   @default(now())
-  user      TenantUser @relation(references: [id])
+  user      TenantUser
 }
 
 model LandlordSession {
   id        String       @default(cuid()) @id
   token     String
   createdAt DateTime     @default(now())
-  user      LandlordUser @relation(references: [id])
+  user      LandlordUser
 }
 
 model LandlordRegisterVerification {
@@ -224,25 +207,25 @@ model LandlordRegisterVerification {
 model LandlordEmailVerification {
   id         String       @default(cuid()) @id
   email      String
-  user       LandlordUser @relation(references: [id])
+  user       LandlordUser
   verified   Boolean      @default(false)
   tokenEmail String
 }
 
 model SubscriptionTenantHistory {
-  id             String        @default(cuid()) @id
+  id             String         @default(cuid()) @id
   subscriptionId String
-  action         HistoryAction @default(CREATE)
-  tenantUser     TenantUser    @relation(references: [id])
-  createdAt      DateTime      @default(now())
+  action         HistoryAction  @default(CREATE)
+  tenantUser     TenantUser
+  createdAt      DateTime       @default(now())
 }
 
 model SubscriptionLandlordHistory {
-  id             String        @default(cuid()) @id
+  id             String         @default(cuid()) @id
   subscriptionId String
-  action         HistoryAction @default(CREATE)
-  landlordUser   LandlordUser  @relation(references: [id])
-  createdAt      DateTime      @default(now())
+  action         HistoryAction  @default(CREATE)
+  landlordUser   LandlordUser
+  createdAt      DateTime       @default(now())
 }
 
 model TenantRegisterVerification {
@@ -259,7 +242,7 @@ model TenantRegisterVerification {
 model TenantEmailVerification {
   id         String     @default(cuid()) @id
   email      String
-  user       TenantUser @relation(references: [id])
+  user       TenantUser
   verified   Boolean    @default(false)
   tokenEmail String
 }
@@ -267,7 +250,7 @@ model TenantEmailVerification {
 model TenantResetPasswordVerification {
   id         String     @default(cuid()) @id
   email      String
-  user       TenantUser @relation(references: [id])
+  user       TenantUser
   verified   Boolean    @default(false)
   tokenEmail String
   tokenQuery String
@@ -276,7 +259,7 @@ model TenantResetPasswordVerification {
 model LandlordResetPasswordVerification {
   id         String       @default(cuid()) @id
   email      String
-  user       LandlordUser @relation(references: [id])
+  user       LandlordUser
   verified   Boolean      @default(false)
   tokenEmail String
   tokenQuery String
@@ -284,23 +267,22 @@ model LandlordResetPasswordVerification {
 
 model Conversation {
   id         String       @default(cuid()) @id
-  tenant     TenantUser   @relation(references: [id])
-  landlord   LandlordUser @relation(references: [id])
+  tenant     TenantUser
+  landlord   LandlordUser
   messages   Message[]
-  brand      Brand        @relation(references: [id])
-  property   Property     @relation(references: [id])
-  space      Space        @relation(references: [id])
+  brand      Brand
+  property   Property
+  space      Space
   matchScore Float
   header     String
   createdAt  DateTime     @default(now())
 }
 
 model Message {
-  id           String        @default(cuid()) @id
-  sender       MessageRole
-  message      String
-  createdAt    DateTime      @default(now())
-  conversation Conversation? @relation(references: [id])
+  id        String      @default(cuid()) @id
+  sender    MessageRole
+  message   String
+  createdAt DateTime    @default(now())
 }
 
 model PendingConversation {
