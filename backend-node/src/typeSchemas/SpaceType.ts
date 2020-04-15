@@ -15,5 +15,7 @@ export let Space = objectType({
     t.model.description();
     t.model.spaceType();
     t.model.marketingPreference();
+    t.model.tier();
+    t.model.stripeSubscriptionId();
   },
 });

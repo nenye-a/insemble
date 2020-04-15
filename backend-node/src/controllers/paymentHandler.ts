@@ -44,13 +44,24 @@ export async function paymentHandler(request: Request, response: Response) {
       return;
     }
     if (subscriptionPlan.role === 'TENANT') {
-      await prisma.tenantUser.update({
+      let user = await prisma.tenantUser.update({
         where: {
           stripeCustomerId,
         },
         data: {
           tier: 'FREE',
           stripeSubscriptionId: null,
+        },
+      });
+      await prisma.subscriptionTenantHistory.create({
+        data: {
+          subscriptionId,
+          action: 'CANCEL',
+          tenantUser: {
+            connect: {
+              id: user.id,
+            },
+          },
         },
       });
     }
@@ -82,7 +93,6 @@ export async function paymentHandler(request: Request, response: Response) {
         },
         data: {
           tier: subscriptionPlan.tier as TenantTier,
-          stripeSubscriptionId: subscriptionId,
         },
       });
     }

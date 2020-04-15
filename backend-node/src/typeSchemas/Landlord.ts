@@ -11,7 +11,6 @@ export let Landlord = objectType({
     t.model.company();
     t.model.description();
     t.model.title();
-    t.model.tier();
     t.model.pendingEmail();
   },
 });
