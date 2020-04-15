@@ -15,6 +15,7 @@ import { TenantTiers } from '../constants/SubscriptionTiers';
 import createContext from '../utils/createContext';
 import { GET_TENANT_PROFILE } from '../graphql/queries/server/profile';
 import { GetTenantProfile } from '../generated/GetTenantProfile';
+import { TenantTier } from '../generated/globalTypes';
 
 type PlanCtx = {
   selectedPaymentMethodId: string | null;
@@ -54,36 +55,34 @@ export default function TenantPlan() {
           <LoadingIndicator />
         ) : (
           <CardsContainer>
-            {Object.values(TenantTiers).map(({ name, monthly, yearly, title, type: tierType }) => {
-              let planId = isAnnual ? yearly.id : monthly.id;
-              let price = isAnnual ? yearly.price : monthly.price;
-              return (
-                <TierSubscriptionCard
-                  key={isAnnual ? yearly.id : monthly.id}
-                  title={title}
-                  tierName={name}
-                  benefits={[
-                    'Access matching locations and properties',
-                    'Connect with property managers & reps',
-                    'Compare prospective sites to existing stores',
-                    'See high level location match details',
-                  ]}
-                  isAnnual={!!isAnnual}
-                  onPress={() => {}}
-                  planId={planId}
-                  price={price}
-                  isUserCurrentTier={tenantProfile?.profileTenant.tier === tierType}
-                  onUpgradeButtonPress={() => {
-                    history.push('/user/upgrade-plan/confirm-plan', {
-                      planId,
-                      tierName: name,
-                      price,
-                      isAnnual,
-                    });
-                  }}
-                />
-              );
-            })}
+            {Object.values(TenantTiers).map(
+              ({ name, monthly, yearly, title, benefits, type: tierType }) => {
+                let planId = isAnnual ? yearly.id : monthly.id;
+                let price = isAnnual ? yearly.price : monthly.price;
+                return (
+                  <TierSubscriptionCard
+                    key={isAnnual ? yearly.id : monthly.id}
+                    title={title}
+                    tierName={name}
+                    benefits={benefits}
+                    isAnnual={!!isAnnual}
+                    onPress={() => {}}
+                    planId={planId}
+                    price={price}
+                    isUserCurrentTier={tenantProfile?.profileTenant.tier === tierType}
+                    freeTier={tierType === TenantTier.FREE}
+                    onUpgradeButtonPress={() => {
+                      history.push('/user/upgrade-plan/confirm-plan', {
+                        planId,
+                        tierName: name,
+                        price,
+                        isAnnual,
+                      });
+                    }}
+                  />
+                );
+              }
+            )}
           </CardsContainer>
         )}
       </Container>
