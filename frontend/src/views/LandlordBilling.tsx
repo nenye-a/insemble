@@ -10,7 +10,7 @@ export default function LandlordBilling() {
   let [selectedTab, setSelectedTab] = useState(0);
 
   return (
-    <Container>
+    <Container flex>
       <Title>Billing & Plans</Title>
       <Tab
         containerStyle={{ borderWidth: 0, height: 36 }}
