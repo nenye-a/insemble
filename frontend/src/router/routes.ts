@@ -39,6 +39,8 @@ import RedirectLoginLandlord from '../views/RedirectLoginLandlord';
 import OutOfBound from '../views/OutOfBound';
 import LandlordBilling from '../views/LandlordBilling';
 import UpgradeConfirmationModal from '..DELETED_BASE64_STRING';
+import ChangeLandlordPlanModal from '..DELETED_BASE64_STRING';
+import ChangeMultipleLandlordPlansModal from '..DELETED_BASE64_STRING';
 
 import { tenantAuthorization, landlordAuthorization } from '../utils';
 
@@ -186,6 +188,16 @@ const LANDLORD_ROUTES = [
     layout: BasicLayout,
     component: LandlordAddSpace,
     authorization: landlordAuthorization,
+  },
+  {
+    path: '/landlord/change-plan/:step',
+    layout: BasicLayout,
+    component: ChangeLandlordPlanModal,
+  },
+  {
+    path: '/landlord/change-plans/:step',
+    layout: BasicLayout,
+    component: ChangeMultipleLandlordPlansModal,
   },
 ];
 

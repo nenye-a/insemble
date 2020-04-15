@@ -7,7 +7,7 @@ import { Text, Button, Modal, RadioButton, View } from '../../core-ui';
 import DataTable from '../../components/DataTable';
 import CardContainer from './CardContainer';
 
-import getUnit from './helpers/getUnit';
+import getUnit from '../Billing/helpers/getUnit';
 import { usePlanContext } from '../TenantPlan';
 
 import { WHITE, THEME_COLOR } from '../../constants/colors';

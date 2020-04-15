@@ -10,7 +10,7 @@ import {
   Button,
   Text,
 } from '../core-ui';
-import TierSubscriptionCard from './TenantPlan/TierSubscriptionCard';
+import TierSubscriptionCard from './Billing/TierSubscriptionCard';
 import { TenantTiers } from '../constants/SubscriptionTiers';
 import createContext from '../utils/createContext';
 import { GET_TENANT_PROFILE } from '../graphql/queries/server/profile';
@@ -53,8 +53,10 @@ export default function TenantPlan() {
         {tenantProfileLoading ? (
           <LoadingIndicator />
         ) : (
-          <View style={{ flexDirection: 'row', padding: 23 }}>
+          <CardsContainer>
             {Object.values(TenantTiers).map(({ name, monthly, yearly, title, type: tierType }) => {
+              let planId = isAnnual ? yearly.id : monthly.id;
+              let price = isAnnual ? yearly.price : monthly.price;
               return (
                 <TierSubscriptionCard
                   key={isAnnual ? yearly.id : monthly.id}
@@ -68,13 +70,22 @@ export default function TenantPlan() {
                   ]}
                   isAnnual={!!isAnnual}
                   onPress={() => {}}
-                  planId={isAnnual ? yearly.id : monthly.id}
-                  price={isAnnual ? yearly.price : monthly.price}
+                  planId={planId}
+                  price={price}
                   isUserCurrentTier={tenantProfile?.profileTenant.tier === tierType}
+                  onUpgradeButtonPress={() => {
+                    history.push('/user/upgrade-plan/confirm-plan', {
+                      background: location,
+                      planId,
+                      tierName: name,
+                      price,
+                      isAnnual,
+                    });
+                  }}
                 />
               );
             })}
-          </View>
+          </CardsContainer>
         )}
       </Container>
     </PlanContextProvider>
@@ -95,4 +106,9 @@ const BackButton = styled(Button)`
   ${Text} {
     font-style: italic;
   }
+`;
+
+const CardsContainer = styled(View)`
+  padding: 42px 0;
+  flex-direction: row;
 `;
