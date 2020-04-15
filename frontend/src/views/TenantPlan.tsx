@@ -75,7 +75,6 @@ export default function TenantPlan() {
                   isUserCurrentTier={tenantProfile?.profileTenant.tier === tierType}
                   onUpgradeButtonPress={() => {
                     history.push('/user/upgrade-plan/confirm-plan', {
-                      background: location,
                       planId,
                       tierName: name,
                       price,

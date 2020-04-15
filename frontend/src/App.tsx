@@ -1,5 +1,4 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
 import { ClientContextProvider } from 'react-fetching-library';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { Elements as StripeProvider } from '@stripe/react-stripe-js';
@@ -26,9 +25,7 @@ export default function App() {
       <ClientContextProvider client={client}>
         <ViewportListener>
           <StripeProvider stripe={stripePromise}>
-            <Router basename={process.env.REACT_APP_BASENAME || ''}>
-              <MainRoute />
-            </Router>
+            <MainRoute />
           </StripeProvider>
         </ViewportListener>
       </ClientContextProvider>

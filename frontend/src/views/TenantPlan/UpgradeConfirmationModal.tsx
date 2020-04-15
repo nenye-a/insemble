@@ -6,6 +6,7 @@ import { useQuery } from '@apollo/react-hooks';
 import { Card, Modal, LoadingIndicator } from '../../core-ui';
 import ConfirmPlanUpgrade from '../Billing/ConfirmPlanUpgrade';
 import EnterBillingInfo from '../Billing/EnterBillingInfo';
+import TenantPlan from '../TenantPlan';
 import { DEFAULT_BORDER_RADIUS, FONT_WEIGHT_NORMAL } from '../../constants/theme';
 import { PaymentMethodList } from '../../generated/PaymentMethodList';
 import UpgradeSuccess from '../Billing/UpgradeSuccess';
@@ -63,27 +64,31 @@ export default function UpgradeConfirmationModal() {
   }, [SEGMENTS, step]);
 
   return (
-    <Container
-      visible={true}
-      hideCloseButton={true}
-      onClose={() => {
-        history.push('/user/plan');
-      }}
-    >
-      <Card
-        titleBackground="purple"
-        title="Lets confirm your subscription"
-        // TODO: make this default Card styling
-        titleProps={{
-          style: {
-            fontWeight: FONT_WEIGHT_NORMAL,
-            textAlign: 'center',
-          },
+    <>
+      {/* TODO: find a better way to display the modal without hardcoding the component underneath */}
+      <TenantPlan />
+      <Container
+        visible={true}
+        hideCloseButton={true}
+        onClose={() => {
+          history.push('/user/plan');
         }}
       >
-        {paymentListLoading ? <LoadingIndicator /> : Content}
-      </Card>
-    </Container>
+        <Card
+          titleBackground="purple"
+          title="Lets confirm your subscription"
+          // TODO: make this default Card styling
+          titleProps={{
+            style: {
+              fontWeight: FONT_WEIGHT_NORMAL,
+              textAlign: 'center',
+            },
+          }}
+        >
+          {paymentListLoading ? <LoadingIndicator /> : Content}
+        </Card>
+      </Container>
+    </>
   );
 }
 

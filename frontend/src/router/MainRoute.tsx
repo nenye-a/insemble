@@ -1,22 +1,12 @@
 import React from 'react';
-import { Route, Switch, Redirect, useLocation } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import Routes, { RouteType } from './routes';
 import withTracker from '../withTracker';
-import UpgradeConfirmationModal from '..DELETED_BASE64_STRING';
 
 export default function MainRoute() {
-  let location = useLocation();
-
-  /**
-   * This piece of state is set when we open the modal
-   * If it's there, us it as the location for the <Switch> so we show
-   * the previous path in the background, behind the modal
-   */
-  let background = location.state && location.state.background;
-
   return (
-    <>
-      <Switch location={background || location}>
+    <BrowserRouter>
+      <Switch>
         {Routes.map((route: RouteType, index) => {
           return (
             <Route
@@ -45,9 +35,6 @@ export default function MainRoute() {
           );
         })}
       </Switch>
-      {background && (
-        <Route exact={true} path="/user/upgrade-plan/:step" component={UpgradeConfirmationModal} />
-      )}
-    </>
+    </BrowserRouter>
   );
 }

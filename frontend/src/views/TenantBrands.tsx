@@ -67,8 +67,8 @@ export default (props: HeatmapProps) => {
     <View flex>
       <Popup
         visible={removeConfirmationVisible}
-        title="Remove Property"
-        bodyText="Are you sure you want to remove this property?"
+        title="Remove Brand"
+        bodyText="Are you sure you want to remove this brand?"
         buttons={[
           { text: 'Yes', onPress: onRemovePress },
           { text: 'No', onPress: closeDeleteConfirmation },
