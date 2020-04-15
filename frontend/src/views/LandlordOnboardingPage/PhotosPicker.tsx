@@ -19,14 +19,34 @@ export default function PhotosPicker(props: Props) {
     if (index === 0) {
       onMainPhotoChange(null);
     } else {
-      if (index === 20) {
-        additionalPhotos.splice(index, 1, null);
+      console.log(additionalPhotos.length, 'length');
+      console.log(index);
+      if (additionalPhotos.length === 20) {
+        if (index === 20) {
+          additionalPhotos.splice(index - 1, 1, null);
+          let newPhotoList = additionalPhotos.map((item) => {
+            return item;
+          });
+          onAdditionalPhotoChange(newPhotoList);
+        } else {
+          if (additionalPhotos[additionalPhotos.length - 1] === null) {
+            additionalPhotos.splice(index - 1, 1);
+          } else {
+            additionalPhotos.splice(index - 1, 1);
+            additionalPhotos.push(null);
+          }
+          let newPhotoList = additionalPhotos.map((item) => {
+            return item;
+          });
+          onAdditionalPhotoChange(newPhotoList);
+        }
+      } else {
+        additionalPhotos.splice(index - 1, 1);
+        let newPhotoList = additionalPhotos.map((item) => {
+          return item;
+        });
+        onAdditionalPhotoChange(newPhotoList);
       }
-      additionalPhotos.splice(index - 1, 1);
-      let newPhotoList = additionalPhotos.map((item) => {
-        return item;
-      });
-      onAdditionalPhotoChange(newPhotoList);
     }
   };
 

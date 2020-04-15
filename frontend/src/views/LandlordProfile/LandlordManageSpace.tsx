@@ -37,30 +37,16 @@ import { Popup } from '../../components';
 import { GET_PROPERTY, GET_PROPERTIES } from '../../graphql/queries/server/properties';
 import { Property, PropertyVariables } from '../../generated/Property';
 import { DeleteSpace, DeleteSpaceVariables } from '../../generated/DeleteSpace';
-import { MarketingPreference } from '../../generated/globalTypes';
 import { SPACES_TYPE } from '../../constants/spaces';
+import {
+  MARKETING_PREFERENCE_OPTIONS,
+  MarketingPreferenceRadio,
+} from '../../constants/marketingPreference';
 
 type Props = {
   spaceIndex: number;
   propertyId: string;
 };
-
-type MarketingPreferenceRadio = {
-  label: string;
-  value: MarketingPreference;
-};
-
-const MARKETING_PREFERENCE_OPTIONS: Array<MarketingPreferenceRadio> = [
-  {
-    label: 'Public — I want to publicly advertise my property to matching tenants.',
-    value: MarketingPreference.PUBLIC,
-  },
-  {
-    label:
-      'Private — I want to connect with matching tenants without publicly listing my property.',
-    value: MarketingPreference.PRIVATE,
-  },
-];
 
 export default function LandlordManageSpace(props: Props) {
   let { spaceIndex, propertyId } = props;

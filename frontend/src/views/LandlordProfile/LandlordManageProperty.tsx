@@ -169,37 +169,6 @@ export default function LandlordManageProperty() {
             </InputWrapper>
             {categoriesData && (
               <>
-                {/* <InputWrapper style={{ zIndex: 1 }}>
-                  <LabelText text="Are you looking for any specific retail categories?" />
-                  <TouchableOpacity
-                    onPress={() => toggleCategorySelection(!categorySelectionVisible)}
-                  >
-                    <SelectCategories
-                      disabled
-                      placeholder="Select retailer categories"
-                      value={selectedCategories.join(', ')}
-                    />
-                  </TouchableOpacity>
-                  <ClickAway onClickAway={() => toggleCategorySelection(false)}>
-                    <FilterContainer
-                      search
-                      visible={categorySelectionVisible}
-                      selectedOptions={selectedCategories}
-                      allOptions={categoriesData.categories}
-                      onSelect={(category: string) => {
-                        setSelectedCategories([...selectedCategories, category]);
-                      }}
-                      onUnSelect={(category: string) => {
-                        let newSelectedCategories = selectedCategories.filter(
-                          (el: string) => !el.includes(category)
-                        );
-                        setSelectedCategories(newSelectedCategories);
-                      }}
-                      onDone={() => toggleCategorySelection(false)}
-                      onClear={() => setSelectedCategories([])}
-                    />
-                  </ClickAway>
-                </InputWrapper> */}
                 <InputWrapper>
                   <LabelText text="Do you have any existing exclusives?" />
                   <TouchableOpacity

@@ -27,41 +27,22 @@ import {
 import PhotosPicker from './PhotosPicker';
 import { FileWithPreview } from '../../core-ui/Dropzone';
 import { THEME_COLOR, DARK_TEXT_COLOR } from '../../constants/colors';
-import {
-  FONT_SIZE_MEDIUM,
-  FONT_WEIGHT_BOLD,
-  FONT_SIZE_SMALL,
-  FONT_SIZE_NORMAL,
-} from '../../constants/theme';
+import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD, FONT_SIZE_SMALL } from '../../constants/theme';
 import { Action, State as LandlordOnboardingState } from '../../reducers/landlordOnboardingReducer';
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
 import { Equipments } from '../../generated/Equipments';
 import { validateNumber, useViewport } from '../../utils';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
-import { MarketingPreference } from '../../generated/globalTypes';
 import { SPACES_TYPE } from '../../constants/spaces';
+import {
+  MARKETING_PREFERENCE_OPTIONS,
+  MarketingPreferenceRadio,
+} from '../../constants/marketingPreference';
 
 type Props = {
   state: LandlordOnboardingState;
   dispatch: Dispatch<Action>;
 };
-
-type MarketingPreferenceRadio = {
-  label: string;
-  value: MarketingPreference;
-};
-
-const MARKETING_PREFERENCE_OPTIONS: Array<MarketingPreferenceRadio> = [
-  {
-    label: 'Public — I want to publicly advertise my property to matching tenants.',
-    value: MarketingPreference.PUBLIC,
-  },
-  {
-    label:
-      'Private — I want to connect with matching tenants without publicly listing my property.',
-    value: MarketingPreference.PRIVATE,
-  },
-];
 
 export default function LandlordListing(props: Props) {
   let history = useHistory();
@@ -207,9 +188,7 @@ export default function LandlordListing(props: Props) {
             return (
               <Checkbox
                 key={index}
-                size="18px"
                 title={option}
-                titleProps={{ style: { fontSize: FONT_SIZE_NORMAL } }}
                 isChecked={isChecked}
                 onPress={() => {
                   if (isChecked) {
