@@ -33,7 +33,7 @@ let registerTenantResolver: FieldResolver<
           ...tenant,
           email: lowerCasedEmail,
           password,
-          tier: 'FREE',
+          tier: 'PROFESSIONAL',
         }),
         email: lowerCasedEmail,
         tokenEmail: bytesEmail.toString('base64'),
