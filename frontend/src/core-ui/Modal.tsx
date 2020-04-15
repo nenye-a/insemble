@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import View from './View';
 import TouchableOpacity from './TouchableOpacity';
-import ClickAway from './ClickAway';
 import { WHITE } from '../constants/colors';
 import SvgClose from '../components/icons/close';
 
@@ -35,7 +34,7 @@ export default function Modal({
       otherProps?.onClick();
     };
     return ReactDOM.createPortal(
-      <Overlay style={overlayStyle}>
+      <Overlay style={overlayStyle} onClick={onClose}>
         <ModalDialog
           backgroundColor={backgroundColor}
           aria-modal
@@ -43,14 +42,12 @@ export default function Modal({
           {...otherProps}
           onClick={onModalDialogClick}
         >
-          <ClickAway onClickAway={onClose ? onClose : () => {}} flex>
-            {!hideCloseButton && (
-              <CloseIcon onPress={onClose} style={iconContainerStyle}>
-                <SvgClose {...svgCloseProps} />
-              </CloseIcon>
-            )}
-            {children}
-          </ClickAway>
+          {!hideCloseButton && (
+            <CloseIcon onPress={onClose} style={iconContainerStyle}>
+              <SvgClose {...svgCloseProps} />
+            </CloseIcon>
+          )}
+          {children}
         </ModalDialog>
       </Overlay>,
       document.body
@@ -60,7 +57,7 @@ export default function Modal({
 }
 
 const Overlay = styled(View)`
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.4);
   position: fixed;
   top: 0;
   left: 0;

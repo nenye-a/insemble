@@ -1,45 +1,46 @@
 import { FC } from 'react';
 
 // Layout Types
-import { BasicLayout, UserProfileLayout, BlankLayout, LandlordProfileLayout } from './layouts';
+import { BasicLayout, UserProfileLayout, BlankLayout, LandlordProfileLayout } from '../layouts';
 
 // Route Views
-import Login from './views/Login';
-import Landing from './views/Landing';
-import MainMap from './views/MainMap';
-import Onboarding from './views/Onboarding';
-import TenantSavedProperties from './views/TenantSavedProperties';
-import EditBasicProfile from './views/EditBasicProfile';
-import TenantBrands from './views/TenantBrands';
-import Messages from './views/Messages';
-import MessageDetail from './views/MessageDetail';
-import BrandDetail from './views/BrandDetail';
-import SignUp from './views/SignUp';
-import LandlordOnboarding from './views/LandlordOnboarding';
-import LandlordAddSpace from './views/LandlordAddSpace';
-import LandlordSignUp from './views/LandlordSignUp';
-import LandlordLogin from './views/LandlordLogin';
-import TenantBilling from './views/TenantBilling';
-import TenantPlan from './views/TenantPlan';
-import TenantEmailVerification from './views/TenantEmailVerification';
-import VerificationSuccessful from './views/VerificationSuccessful';
-import LandlordEmailVerification from './views/LandlordEmailVerification';
-import LandlordProperties from './views/LandlordProperties';
-import LandlordPropertyDetails from './views/LandlordPropertyDetails';
-import ForgotPassword from './views/ForgotPassword';
-import ForgotPasswordSubmitted from './views/ForgotPasswordSubmitted';
-import LandlordMessageDetail from './views/LandlordMessageDetail';
-import ResetPasswordTenant from './views/ResetPasswordTenant';
-import ResetPasswordLandlord from './views/ResetPasswordLandlord';
-import NewBrand from './views/OnboardingPage/NewBrand';
-import RegisterByInvitationLandlord from './views/RegisterByInvitationLandlord';
-import RegisterByInvitationTenant from './views/RegisterByInvitationTenant';
-import RedirectLoginTenant from './views/RedirectLoginTenant';
-import RedirectLoginLandlord from './views/RedirectLoginLandlord';
-import OutOfBound from './views/OutOfBound';
+import Login from '../views/Login';
+import Landing from '../views/Landing';
+import MainMap from '../views/MainMap';
+import Onboarding from '../views/Onboarding';
+import TenantSavedProperties from '../views/TenantSavedProperties';
+import EditBasicProfile from '../views/EditBasicProfile';
+import TenantBrands from '../views/TenantBrands';
+import Messages from '../views/Messages';
+import MessageDetail from '../views/MessageDetail';
+import BrandDetail from '../views/BrandDetail';
+import SignUp from '../views/SignUp';
+import LandlordOnboarding from '../views/LandlordOnboarding';
+import LandlordAddSpace from '../views/LandlordAddSpace';
+import LandlordSignUp from '../views/LandlordSignUp';
+import LandlordLogin from '../views/LandlordLogin';
+import TenantBilling from '../views/TenantBilling';
+import TenantPlan from '../views/TenantPlan';
+import TenantEmailVerification from '../views/TenantEmailVerification';
+import VerificationSuccessful from '../views/VerificationSuccessful';
+import LandlordEmailVerification from '../views/LandlordEmailVerification';
+import LandlordProperties from '../views/LandlordProperties';
+import LandlordPropertyDetails from '../views/LandlordPropertyDetails';
+import ForgotPassword from '../views/ForgotPassword';
+import ForgotPasswordSubmitted from '../views/ForgotPasswordSubmitted';
+import LandlordMessageDetail from '../views/LandlordMessageDetail';
+import ResetPasswordTenant from '../views/ResetPasswordTenant';
+import ResetPasswordLandlord from '../views/ResetPasswordLandlord';
+import NewBrand from '../views/OnboardingPage/NewBrand';
+import RegisterByInvitationLandlord from '../views/RegisterByInvitationLandlord';
+import RegisterByInvitationTenant from '../views/RegisterByInvitationTenant';
+import RedirectLoginTenant from '../views/RedirectLoginTenant';
+import RedirectLoginLandlord from '../views/RedirectLoginLandlord';
+import OutOfBound from '../views/OutOfBound';
+import LandlordBilling from '../views/LandlordBilling';
+import UpgradeConfirmationModal from '..DELETED_BASE64_STRING';
 
-import { tenantAuthorization, landlordAuthorization } from './utils';
-import LandlordBilling from './views/LandlordBilling';
+import { tenantAuthorization, landlordAuthorization } from '../utils';
 
 export type RouteType = {
   path: string;
@@ -267,6 +268,12 @@ const TENANT_ROUTES = [
     path: '/user/plan',
     layout: BasicLayout,
     component: TenantPlan,
+  },
+  {
+    path: '/user/upgrade-plan/:step',
+    layout: BlankLayout,
+    component: UpgradeConfirmationModal,
+    exact: true,
   },
   {
     path: '/email-verification/:verificationId',

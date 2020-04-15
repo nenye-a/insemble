@@ -6,6 +6,7 @@ export const FONT_SIZE_SMALL = '12px';
 export const FONT_SIZE_NORMAL = '14px';
 export const FONT_SIZE_MEDIUM = '16px';
 export const FONT_SIZE_LARGE = '18px';
+export const FONT_SIZE_LARGE_20 = '20px';
 export const FONT_SIZE_XLARGE = '25px';
 export const FONT_SIZE_XXLARGE = '28px';
 export const FONT_SIZE_XXXLARGE = '36px';

@@ -44,7 +44,6 @@ export const EDIT_LANDLORD_PROFILE = gql`
       company
       description
       title
-      tier
       pendingEmail
     }
   }
@@ -61,7 +60,6 @@ export const GET_LANDLORD_PROFILE = gql`
       company
       description
       title
-      tier
       pendingEmail
     }
   }

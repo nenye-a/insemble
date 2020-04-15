@@ -12,7 +12,7 @@ import {
 
 export function NumberInput() {
   return (
-    <View flex style={{ maxHeight: 90, marginRight: 24 }}>
+    <View flex style={{ ...inputStyle, marginRight: 8 }}>
       <InputLabel text="Card Number" />
       <StripeElementContainer>
         <CardNumberElement options={CARD_OPTIONS} />
@@ -23,7 +23,7 @@ export function NumberInput() {
 
 export function ExpiryInput() {
   return (
-    <View flex style={{ maxHeight: 90, marginRight: 12 }}>
+    <View style={{ ...inputStyle, marginRight: 8 }}>
       <InputLabel text="Expiration Date" />
       <StripeElementContainer>
         <CardExpiryElement options={CARD_OPTIONS} />
@@ -34,8 +34,8 @@ export function ExpiryInput() {
 
 export function CvcInput() {
   return (
-    <View flex style={{ maxHeight: 90 }}>
-      <InputLabel text="Security Code" />
+    <View style={inputStyle}>
+      <InputLabel text="CVC/CVV" />
       <StripeElementContainer>
         <CardCvcElement options={CARD_OPTIONS} />
       </StripeElementContainer>
@@ -43,6 +43,7 @@ export function CvcInput() {
   );
 }
 
+let inputStyle = { paddingTop: 4, paddingBottom: 4 };
 const CARD_OPTIONS = {
   style: {
     base: {

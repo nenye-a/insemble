@@ -1,23 +1,20 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-
+import { BrowserRouter as Router } from 'react-router-dom';
 import { ClientContextProvider } from 'react-fetching-library';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { Elements as StripeProvider } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import ReactGA from 'react-ga';
 
 import client from './client';
 import apolloClient from './graphql/apolloClient';
-import routes, { RouteType } from './routes';
-import withTracker from './withTracker';
-
-const trackingID = 'UA-153536736-1';
-import ReactGA from 'react-ga';
-ReactGA.initialize(trackingID);
+import { ViewportListener } from './core-ui';
+import MainRoute from './router/MainRoute';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import ViewportListener from './core-ui/ViewportListener';
+const trackingID = 'UA-153536736-1';
+ReactGA.initialize(trackingID);
 
 // TODO: Move the key to env, btw this is just our testing key so we need to
 // change it later anyway.
@@ -30,40 +27,7 @@ export default function App() {
         <ViewportListener>
           <StripeProvider stripe={stripePromise}>
             <Router basename={process.env.REACT_APP_BASENAME || ''}>
-              <Switch>
-                <>
-                  {routes.map((route: RouteType, index) => {
-                    return (
-                      <Route
-                        key={index}
-                        path={route.path}
-                        exact={route.exact}
-                        component={withTracker((props: RouteType) => {
-                          if (
-                            route?.authorization?.isAuthorized &&
-                            !route.authorization.isAuthorized()
-                          ) {
-                            return (
-                              <Redirect
-                                to={{
-                                  pathname: '/',
-                                }}
-                              />
-                            );
-                          }
-                          let Layout = route.layout;
-                          let Component = route.component;
-                          return (
-                            <Layout {...props} {...route?.props}>
-                              <Component {...props} />
-                            </Layout>
-                          );
-                        })}
-                      />
-                    );
-                  })}
-                </>
-              </Switch>
+              <MainRoute />
             </Router>
           </StripeProvider>
         </ViewportListener>
