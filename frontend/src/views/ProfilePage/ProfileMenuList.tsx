@@ -140,9 +140,9 @@ const LANDLORD_PROFILE_MENU: Array<MenuObj> = [
     icon: <SvgMessage />,
     path: '/landlord/messages',
   },
-  // {
-  //   menu: 'Billing & Plans',
-  //   icon: <SvgBilling />,
-  //   path: '/landlord/billing',
-  // },
+  {
+    menu: 'Billing & Plans',
+    icon: <SvgBilling />,
+    path: '/landlord/billing',
+  },
 ];
