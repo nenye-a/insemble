@@ -280,12 +280,14 @@ const TENANT_ROUTES = [
     path: '/user/plan',
     layout: BasicLayout,
     component: TenantPlan,
+    authorization: tenantAuthorization,
   },
   {
     path: '/user/upgrade-plan/:step',
-    layout: BlankLayout,
+    layout: BasicLayout,
     component: UpgradeConfirmationModal,
     exact: true,
+    authorization: tenantAuthorization,
   },
   {
     path: '/email-verification/:verificationId',

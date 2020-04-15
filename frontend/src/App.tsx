@@ -26,9 +26,7 @@ export default function App() {
       <ClientContextProvider client={client}>
         <ViewportListener>
           <StripeProvider stripe={stripePromise}>
-            <Router basename={process.env.REACT_APP_BASENAME || ''}>
-              <MainRoute />
-            </Router>
+            <MainRoute />
           </StripeProvider>
         </ViewportListener>
       </ClientContextProvider>
