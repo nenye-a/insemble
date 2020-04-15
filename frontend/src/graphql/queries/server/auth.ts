@@ -66,7 +66,6 @@ export const LANDLORD_VERIFICATION = gql`
           lastName
           avatar
           company
-          tier
           title
           description
         }
@@ -86,7 +85,6 @@ export const LOGIN_LANDLORD = gql`
         lastName
         avatar
         company
-        tier
         title
         description
       }
@@ -114,7 +112,6 @@ export const REGISTER_LANDLORD_INVITATION = gql`
         lastName
         avatar
         company
-        tier
         title
         description
       }
