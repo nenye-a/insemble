@@ -65,6 +65,7 @@ export let createPropertyResolver: FieldResolver<
           spaceType: {
             set: spaceType,
           },
+          tier: 'PROFESSIONAL',
           available: new Date(available),
         },
       },

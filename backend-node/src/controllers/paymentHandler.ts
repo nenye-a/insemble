@@ -72,6 +72,9 @@ export async function paymentHandler(request: Request, response: Response) {
     let object: { [key: string]: any } = data.object;
     let { customer: stripeCustomerId, lines } = object;
     let productId = lines.data[0]?.plan?.product;
+    if (lines.data.length > 1) {
+      productId = lines.data[1]?.plan?.product;
+    }
     let subscriptionPlan = subscriptionPlans.find(
       (plan) => plan.id === productId,
     );
