@@ -1,18 +1,29 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useQuery } from '@apollo/react-hooks';
 
 import { LoadingIndicator, Text } from '../../core-ui';
 import DataTable from '../DataTable';
 import { BillingList } from '../../generated/BillingList';
 import { SECONDARY_COLOR } from '../../constants/colors';
 import BillingRow from './BillingRow';
+import { GET_BILLING_LIST } from '../../graphql/queries/server/billing';
 
 type Props = {
   loading: boolean;
   billingData?: BillingList;
 };
 
-export default function BillingSummaryTable({ loading, billingData }: Props) {
+export default function BillingSummaryTable() {
+  let { data: billingListData, loading: billingListLoading } = useQuery<BillingList>(
+    GET_BILLING_LIST,
+    {
+      variables: {
+        status: 'paid',
+      },
+    }
+  );
+
   return (
     <>
       <SectionTitle>Billing Summary</SectionTitle>
@@ -25,10 +36,10 @@ export default function BillingSummaryTable({ loading, billingData }: Props) {
             Total Amount
           </DataTable.HeaderCell>
         </DataTable.HeaderRow>
-        {loading ? (
+        {billingListLoading ? (
           <LoadingIndicator />
         ) : (
-          billingData?.billingList.map((b) => <BillingRow key={b.id} {...b} />)
+          billingListData?.billingList.map((b) => <BillingRow key={b.id} {...b} />)
         )}
       </DataTable>
     </>
