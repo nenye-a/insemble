@@ -3,12 +3,11 @@ import Stripe from 'stripe';
 import { prisma } from '../prisma';
 import stripe from '../config/stripe';
 import { subscriptionPlans } from '../constants/subscriptions';
-import { TenantTier } from '@prisma/client';
+import { TenantTier, LandlordTier } from '@prisma/client';
 
 const signingSecret = process.env.STRIPE_WH_SECRET || '';
 
 export async function paymentHandler(request: Request, response: Response) {
-  // TODO: Create handler for landlord
   let signature = request.headers['stripe-signature'];
   let event: Stripe.Event;
 
@@ -96,6 +95,15 @@ export async function paymentHandler(request: Request, response: Response) {
         },
         data: {
           tier: subscriptionPlan.tier as TenantTier,
+        },
+      });
+    } else {
+      await prisma.space.update({
+        where: {
+          stripeSubscriptionId: subscriptionId,
+        },
+        data: {
+          tier: subscriptionPlan.tier as LandlordTier,
         },
       });
     }
