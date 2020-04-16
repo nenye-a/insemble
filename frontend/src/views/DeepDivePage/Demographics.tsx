@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
-import { useHistory } from 'react-router-dom';
 
-import { View, Text, Card, SegmentedControl, Button } from '../../core-ui';
-import { CarouselFilter } from '../../components';
+import { View, Text, Card, SegmentedControl } from '../../core-ui';
+import { CarouselFilter, UpgradeButton } from '../../components';
 import SvgGreenArrow from '../../components/icons/green-arrow';
 import SvgRedArrow from '../../components/icons/red-arrow';
 import DemographicsLegend from './DemographicsLegend';
@@ -14,7 +13,6 @@ import {
   RED_TEXT,
   GREEN_TEXT,
   LIGHT_GREY,
-  WHITE,
 } from '../../constants/colors';
 import {
   FONT_WEIGHT_BOLD,
@@ -27,7 +25,6 @@ import BlurredDemographics from '../../assets/images/blurred-demographics.png';
 import { LocationDetails_locationDetails_result_demographics1 as LocationDetailsDemographics } from '../../generated/LocationDetails';
 import { PropertyLocationDetails_propertyDetails_demographics1 as PropertyDetailsDemographics } from '../../generated/PropertyLocationDetails';
 import { TenantDetail_tenantDetail_insightView_demographics1 as TenantDetailsDemographics } from '../../generated/TenantDetail';
-import SvgLock from '../../components/icons/lock';
 
 //TODO Improve Typing for data
 type DemographicsStatus = {
@@ -71,7 +68,7 @@ export default function Graphic(props: Props) {
   let [selectedFilter, setSelectedFilter] = useState<string>('Age');
   let options = ['Age', 'Income', 'Ethnicity', 'Education', 'Gender'];
   let dataActiveIndex = demographicsData && demographicsData[activeIndex];
-  let history = useHistory();
+
   const renderCustomBarLabel = ({
     x,
     y,
@@ -150,16 +147,7 @@ export default function Graphic(props: Props) {
       <RowedView>
         <Row>
           <Title>Demographics</Title>
-          {isLocked ? (
-            <>
-              <SvgLock style={{ marginLeft: 14, marginRight: 20 }} />
-              <UpgradeButton
-                text="Upgrade to Access"
-                size="small"
-                onPress={() => history.push('/user/plan')}
-              />
-            </>
-          ) : null}
+          {isLocked ? <UpgradeButton /> : null}
         </Row>
 
         {isLocked ? null : (
@@ -292,12 +280,6 @@ const LabelText = styled.text`
 const Image = styled.img`
   width: 100%;
   object-fit: cover;
-`;
-
-const UpgradeButton = styled(Button)`
-  ${Text} {
-    color: ${WHITE};
-  }
 `;
 
 const Row = styled(View)`
