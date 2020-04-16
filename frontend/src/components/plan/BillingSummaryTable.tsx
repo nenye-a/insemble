@@ -9,11 +9,6 @@ import { SECONDARY_COLOR } from '../../constants/colors';
 import BillingRow from './BillingRow';
 import { GET_BILLING_LIST } from '../../graphql/queries/server/billing';
 
-type Props = {
-  loading: boolean;
-  billingData?: BillingList;
-};
-
 export default function BillingSummaryTable() {
   let { data: billingListData, loading: billingListLoading } = useQuery<BillingList>(
     GET_BILLING_LIST,
