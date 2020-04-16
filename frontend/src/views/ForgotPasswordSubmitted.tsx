@@ -2,17 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Card, Text, View } from '../core-ui';
-import { FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
 
 export default function ForgotPasswordSubmitted() {
   return (
     <Container>
-      <ContainerCard
-        titleContainerProps={{ style: { textAlign: 'center', height: 54 } }}
-        title="Recover Password"
-        titleProps={{ style: { fontSize: FONT_SIZE_MEDIUM, fontWeight: FONT_WEIGHT_NORMAL } }}
-        titleBackground="purple"
-      >
+      <ContainerCard title="Recover Password" mode="secondary">
         <Content>
           <Text>
             If we found an account associated with that username, we’ve sent password reset

@@ -199,7 +199,6 @@ export default function LandlordManageSpace(props: Props) {
             { text: 'Yes', onPress: onRemoveSpace },
             { text: 'No', onPress: closeDeleteConfirmation },
           ]}
-          onClose={closeDeleteConfirmation}
         />
         <Alert visible={!!editSpaceData} text="Your profile has been updated" />
         <Alert visible={!!editSpaceError} text={errorMessage} />

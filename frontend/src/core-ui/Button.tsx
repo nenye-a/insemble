@@ -82,7 +82,7 @@ const Container = styled(TouchableOpacity)<Props>`
     props.mode === 'secondary' &&
     css`
       background-color: ${WHITE};
-      border: 0.5px solid ${BUTTON_BORDER_COLOR};
+      border: 0.8px solid ${BUTTON_BORDER_COLOR};
       ${Text} {
         color: ${TEXT_COLOR};
       }

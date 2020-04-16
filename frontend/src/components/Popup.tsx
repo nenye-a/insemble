@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import { Modal, Card, View, Text, Button } from '../core-ui';
-import { BACKGROUND_COLOR } from '../constants/colors';
+import { BACKGROUND_COLOR, DARK_TEXT_COLOR, THEME_COLOR } from '../constants/colors';
 
 type PopupButton = {
   text: string;
@@ -13,17 +14,16 @@ type Props = {
   title: string;
   bodyText: string;
   buttons?: Array<PopupButton>;
-  onClose?: () => void;
 };
 
 export default function Popup(props: Props) {
   let { visible, title, bodyText, buttons } = props;
 
   return (
-    <Container visible={visible || false} iconContainerStyle={{ top: 10, right: 10 }}>
-      <Card title={title} titleBackground="purple">
+    <Container hideCloseButton={true} visible={visible || false}>
+      <Card mode="secondary" title={title}>
         <Content>
-          <Text>{bodyText}</Text>
+          <BodyText>{bodyText}</BodyText>
         </Content>
         <Footer>
           {buttons?.reverse().map(({ text, onPress }, index) => {
@@ -34,7 +34,7 @@ export default function Popup(props: Props) {
                 mode={lastIndex ? 'primary' : 'secondary'}
                 text={text}
                 onPress={onPress}
-                style={!lastIndex ? { marginRight: 8 } : undefined}
+                style={!lastIndex ? { marginRight: 8, borderColor: THEME_COLOR } : undefined}
               />
             );
           })}
@@ -45,18 +45,22 @@ export default function Popup(props: Props) {
 }
 
 const Container = styled(Modal)`
-  width: 300px;
+  width: 500px;
   height: fit-content;
   background-color: transparent;
 `;
 
 const Content = styled(View)`
-  padding: 12px;
-  align-items: center;
+  padding: 22px;
+  min-height: 200px;
+`;
+
+const BodyText = styled(Text)`
+  color: ${DARK_TEXT_COLOR};
 `;
 
 const Footer = styled(View)`
-  padding: 8px 12px;
+  padding: 12px;
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;

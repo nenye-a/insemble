@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Card, View } from '../core-ui';
-import { FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
 import { Role } from '../types/types';
 import RegisterByInvitationForm from './SignUpPage/RegisterByInvitationForm';
 
@@ -12,12 +11,7 @@ type Params = {
 export default function RegisterByInvitationLandlord() {
   return (
     <Container>
-      <ContainerCard
-        titleContainerProps={{ style: { textAlign: 'center', height: 54 } }}
-        title="Sign Up"
-        titleProps={{ style: { fontSize: FONT_SIZE_MEDIUM, fontWeight: FONT_WEIGHT_NORMAL } }}
-        titleBackground="purple"
-      >
+      <ContainerCard title="Sign Up" mode="secondary">
         <RegisterByInvitationForm role={Role.LANDLORD} />
       </ContainerCard>
     </Container>
