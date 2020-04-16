@@ -8,7 +8,7 @@ import { PaymentMethodList } from '../../generated/PaymentMethodList';
 import { GET_PAYMENT_METHOD_LIST } from '../../graphql/queries/server/billing';
 import { BillingSummaryTable, CreditCardTable } from '../../components/plan';
 import { BILLING_LIST_MOCK, PAYMENT_METHOD_MOCK } from '../../fixtures/dummyData';
-import { BillingContextProvider } from '../../constants/billing';
+import { BillingContextProvider } from '../../utils/billing';
 
 export default function LandlordBillingSummary() {
   let { refetch: refetchPaymentList } = useQuery<PaymentMethodList>(GET_PAYMENT_METHOD_LIST);

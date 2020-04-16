@@ -16,7 +16,7 @@ import { GET_TENANT_PROFILE } from '../graphql/queries/server/profile';
 import { GetTenantProfile } from '../generated/GetTenantProfile';
 import { TenantTier } from '../generated/globalTypes';
 import { BillingSummaryTable, CreditCardTable } from '../components/plan';
-import { BillingContextProvider } from '../constants/billing';
+import { BillingContextProvider } from '../utils/billing';
 
 export default function TenantBilling() {
   let { data: billingListData, loading: billingListLoading } = useQuery<BillingList>(

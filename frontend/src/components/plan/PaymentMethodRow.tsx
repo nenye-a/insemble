@@ -19,7 +19,7 @@ import {
   ChangeDefaultPaymentMethod,
   ChangeDefaultPaymentMethodVariables,
 } from '../../generated/ChangeDefaultPaymentMethod';
-import { useBillingContext } from '../../constants/billing';
+import { useBillingContext } from '../../utils/billing';
 
 type PaymentMethodRowProps = PaymentMethodList['paymentMethodList'][0];
 
