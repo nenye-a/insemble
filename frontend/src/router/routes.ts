@@ -196,7 +196,7 @@ const LANDLORD_ROUTES = [
   },
   {
     path: '/landlord/change-plans/:step',
-    layout: BasicLayout,
+    layout: LandlordProfileLayout,
     component: ChangeMultipleLandlordPlansModal,
   },
 ];

@@ -6,6 +6,9 @@ import { Card, Modal } from '../../core-ui';
 import { DEFAULT_BORDER_RADIUS, FONT_WEIGHT_NORMAL } from '../../constants/theme';
 import ViewLandlordPlans from './ViewLandlordPlans';
 import SelectMultipleLandlordPlans from './SelectMultipleLandlordPlans';
+import ConfirmChangeMultiplePlans from './ConfirmChangeMultiplePlans';
+import ChangeMultipleLandlordPlansBillingInfo from './ChangeMultipleLandlordPlansBillingInfo';
+import LandlordBilling from '../LandlordBilling';
 
 type Param = {
   step: string;
@@ -27,6 +30,31 @@ export default function ChangeMultipleLandlordPlansModal() {
       content: <SelectMultipleLandlordPlans />,
       path: 'select-plans',
     },
+    {
+      title: "Let's confirm your subscription",
+      content: (
+        <ConfirmChangeMultiplePlans
+          plans={[
+            { tierName: 'Basic', price: 300, isAnnual: true },
+            { tierName: 'Basic', price: 30, isAnnual: false },
+          ]}
+        />
+      ),
+      path: 'confirm-plans',
+    },
+    {
+      title: "Let's confirm your subscription",
+      content: (
+        <ChangeMultipleLandlordPlansBillingInfo
+          plans={[
+            { tierName: 'Basic', price: 300, isAnnual: true },
+            { tierName: 'Basic', price: 30, isAnnual: false },
+          ]}
+          paymentMethodList={[]}
+        />
+      ),
+      path: 'confirm-payment',
+    },
   ];
 
   let selectedPage = SEGMENTS[selectedStepIndex];
@@ -39,27 +67,30 @@ export default function ChangeMultipleLandlordPlansModal() {
   }, [SEGMENTS, step]);
 
   return (
-    <Container
-      visible={true}
-      hideCloseButton={true}
-      onClose={() => {
-        // navigate to landlord billing
-      }}
-    >
-      <Card
-        titleBackground="purple"
-        title="Lets confirm your subscription"
-        // TODO: make this default Card styling
-        titleProps={{
-          style: {
-            fontWeight: FONT_WEIGHT_NORMAL,
-            textAlign: 'center',
-          },
+    <>
+      <LandlordBilling />
+      <Container
+        visible={true}
+        hideCloseButton={true}
+        onClose={() => {
+          // navigate to landlord billing
         }}
       >
-        {Content}
-      </Card>
-    </Container>
+        <Card
+          titleBackground="purple"
+          title="Lets confirm your subscription"
+          // TODO: make this default Card styling
+          titleProps={{
+            style: {
+              fontWeight: FONT_WEIGHT_NORMAL,
+              textAlign: 'center',
+            },
+          }}
+        >
+          {Content}
+        </Card>
+      </Container>
+    </>
   );
 }
 

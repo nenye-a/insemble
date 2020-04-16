@@ -35,12 +35,17 @@ export default function ConfirmChangeMultiplePlans(props: Props) {
         </PlanCardsWrapper>
       </Container>
       <CardFooter>
+        <BackButton
+          text="Back"
+          mode="transparent"
+          onPress={() => {
+            history.goBack();
+          }}
+        />
         <Button
           text="Next"
           onPress={() => {
-            history.push('/user/upgrade-plan/confirm-payment', {
-              ...history.location.state,
-            });
+            history.push('/landlord/change-plans/confirm-payment');
           }}
         />
       </CardFooter>
@@ -74,4 +79,9 @@ const PlanCardsWrapper = styled(View)`
   overflow-y: scroll;
   height: 300px;
   width: 100%;
+`;
+
+const BackButton = styled(Button)`
+  margin-right: 8px;
+  padding: 0 12px;
 `;
