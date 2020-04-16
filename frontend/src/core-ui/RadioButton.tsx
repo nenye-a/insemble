@@ -12,6 +12,7 @@ type Props = ViewProps & {
   isSelected: boolean;
   onPress: () => void;
   disabled?: boolean;
+  labelProps?: TextProps;
 };
 
 type RadioContainerProps = ViewProps & {
@@ -110,7 +111,7 @@ const TextLabel = styled(Text)`
 `;
 
 export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) => {
-  let { name, value, id, title, isSelected, onPress, disabled, ...otherProps } = props;
+  let { name, value, id, title, isSelected, onPress, disabled, labelProps, ...otherProps } = props;
   let [isFocused, setFocus] = useState(false);
   return (
     <Row {...otherProps}>
@@ -129,7 +130,7 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) =>
           ref={forwardedRef}
         />
       </RadioContainer>
-      <TextLabel as="label" htmlFor={id}>
+      <TextLabel as="label" htmlFor={id} {...labelProps}>
         {title}
       </TextLabel>
     </Row>

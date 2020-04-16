@@ -1,6 +1,7 @@
 import { PaymentMethodList } from './../generated/PaymentMethodList';
 import { BillingStatus, SubscriptionStatus } from './../generated/globalTypes';
 import { BillingList } from './../generated/BillingList';
+import { LandlordTier } from '../constants/SubscriptionTiers';
 
 export const AVAILABLE_PROPERTIES = [
   {
@@ -306,3 +307,26 @@ export const PAYMENT_METHOD_MOCK: PaymentMethodList = {
     },
   ],
 };
+
+export const LANDLORD_BILLING_LIST = [
+  {
+    id: '1',
+    address: '317 2nd Street, LA 317 2nd CA, USA',
+    spaceNumber: 1,
+    tier: LandlordTier.BASIC,
+    term: 1,
+    mainPhoto: 'https://cdn.pixabay.com/photo/2018/08/10/21/52/restaurant-3597677_1280.jpg',
+    price: 300,
+    isAnnual: true,
+  },
+  {
+    id: '2',
+    address: '317 2nd Street, LA',
+    spaceNumber: 2,
+    tier: LandlordTier.PROFESSIONAL,
+    term: 2,
+    mainPhoto: 'https://cdn.pixabay.com/photo/2018/08/10/21/52/restaurant-3597677_1280.jpg',
+    price: 30,
+    isAnnual: false,
+  },
+];

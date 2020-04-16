@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 
 import { Card, Modal } from '../../core-ui';
 import { DEFAULT_BORDER_RADIUS, FONT_WEIGHT_NORMAL } from '../../constants/theme';
@@ -16,6 +16,7 @@ type Param = {
 
 export default function ChangeMultipleLandlordPlansModal() {
   let [selectedStepIndex, setSelectedStepIndex] = useState(0);
+  let history = useHistory();
   let params = useParams<Param>();
   let { step = 'view-plans' } = params;
 
@@ -73,19 +74,13 @@ export default function ChangeMultipleLandlordPlansModal() {
         visible={true}
         hideCloseButton={true}
         onClose={() => {
-          // navigate to landlord billing
+          history.push('/landlord/billing');
         }}
       >
         <Card
-          titleBackground="purple"
+          mode="secondary"
           title="Lets confirm your subscription"
-          // TODO: make this default Card styling
-          titleProps={{
-            style: {
-              fontWeight: FONT_WEIGHT_NORMAL,
-              textAlign: 'center',
-            },
-          }}
+          titleContainerProps={{ style: { height: 42 } }}
         >
           {Content}
         </Card>
