@@ -125,7 +125,6 @@ export default function BrandDetail() {
           { text: 'Yes', onPress: onRemovePress },
           { text: 'No', onPress: closeDeleteConfirmation },
         ]}
-        onClose={closeDeleteConfirmation}
       />
       <View style={{ alignItems: 'flex-start' }}>
         <Button

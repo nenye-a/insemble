@@ -73,7 +73,6 @@ export default (props: HeatmapProps) => {
           { text: 'Yes', onPress: onRemovePress },
           { text: 'No', onPress: closeDeleteConfirmation },
         ]}
-        onClose={closeDeleteConfirmation}
       />
       <Alert visible={!!removeBrandError} text={removeBrandError?.message || ''} />
       {loading || googleLoading || removeBrandLoading ? (

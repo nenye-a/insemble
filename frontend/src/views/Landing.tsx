@@ -65,8 +65,12 @@ function Landing() {
   let [getProperties] = useLazyQuery<GetProperties>(GET_PROPERTIES, {
     notifyOnNetworkStatusChange: true,
     onCompleted: (data) => {
-      let { id } = data?.properties[0];
-      history.push(`/landlord/properties/${id}`);
+      if (data?.properties.length > 0) {
+        let { id } = data?.properties[0];
+        history.push(`/landlord/properties/${id}`);
+      } else {
+        history.push('/landlord/properties');
+      }
     },
   });
 

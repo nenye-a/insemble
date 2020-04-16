@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
 import { Card, Text, View, Button } from '../core-ui';
-import { FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
 import LoginForm from './LoginForm';
 import { Role } from '../types/types';
 
@@ -14,12 +13,7 @@ export default function Login() {
 
   return (
     <Container>
-      <LoginCard
-        titleContainerProps={{ style: { textAlign: 'center', height: 54 } }}
-        title="Tenant Log In"
-        titleProps={{ style: { fontSize: FONT_SIZE_MEDIUM, fontWeight: FONT_WEIGHT_NORMAL } }}
-        titleBackground="purple"
-      >
+      <LoginCard title="Tenant Log In" mode="secondary">
         <FormContainer>
           <LoginForm role={Role.TENANT} onboardingState={history.location.state?.onboardingState} />
         </FormContainer>

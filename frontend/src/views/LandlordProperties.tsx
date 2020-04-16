@@ -65,7 +65,6 @@ export default function LandlordProperties() {
           { text: 'Yes', onPress: onRemovePress },
           { text: 'No', onPress: closeDeleteConfirmation },
         ]}
-        onClose={closeDeleteConfirmation}
       />
       <Alert visible={!!removePropertyError} text={removePropertyError?.message || ''} />
       {(loading && !data) || removePropertyLoading ? (
