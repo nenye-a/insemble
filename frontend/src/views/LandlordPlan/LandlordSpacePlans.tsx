@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import DataTable from '../components/DataTable';
-import { SECONDARY_COLOR, DARK_TEXT_COLOR } from '../constants/colors';
-import { Text, Button, View } from '../core-ui';
-import { FONT_WEIGHT_LIGHT } from '../constants/theme';
+import DataTable from '../../components/DataTable';
+import { SECONDARY_COLOR, DARK_TEXT_COLOR } from '../../constants/colors';
+import { Text, Button, View } from '../../core-ui';
+import { FONT_WEIGHT_LIGHT } from '../../constants/theme';
 
 type BillingList = {
   photos: string;
@@ -14,7 +14,7 @@ type BillingList = {
   cost: string;
 };
 
-export default function LandlordPLan() {
+export default function LandlordSpacePlans() {
   let billingList = [
     {
       photos: 'asd',
