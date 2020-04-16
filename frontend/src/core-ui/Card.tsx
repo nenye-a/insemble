@@ -6,7 +6,7 @@ import Text from './Text';
 import {
   DEFAULT_BORDER_RADIUS,
   FONT_SIZE_SMALL,
-  FONT_WEIGHT_BOLD,
+  FONT_WEIGHT_MEDIUM,
   FONT_SIZE_MEDIUM,
 } from '../constants/theme';
 import { THEME_COLOR, WHITE, CARD_GREY_HEADER, TEXT_COLOR } from '../constants/colors';
@@ -43,6 +43,15 @@ export default function Card(props: Props) {
     ...otherProps
   } = props;
 
+  let titleContent = (
+    <>
+      <Title mode={mode} {...titleProps}>
+        {title}
+      </Title>
+      <SubTitle>{subTitle}</SubTitle>
+    </>
+  );
+
   return (
     <StyledCard {...otherProps}>
       {title && (
@@ -51,18 +60,17 @@ export default function Card(props: Props) {
           titleBackground={mode === 'secondary' ? 'purple' : titleBackground}
           {...titleContainerProps}
         >
-          <TitleComponents flex>
-            <Row>
-              <View flex>
-                <Title mode={mode} {...titleProps}>
-                  {title}
-                </Title>
-                <SubTitle>{subTitle}</SubTitle>
-              </View>
-              {isLocked ? <UpgradeButton /> : null}
-            </Row>
+          <RowedView flex>
+            {isLocked ? (
+              <Row flex>
+                {titleContent}
+                <UpgradeButton />
+              </Row>
+            ) : (
+              <View flex>{titleContent}</View>
+            )}
             {rightTitleComponent}
-          </TitleComponents>
+          </RowedView>
         </TitleContainer>
       )}
       {children}
@@ -86,7 +94,7 @@ const Title = styled(Text)<TitleProps>`
           font-size: ${FONT_SIZE_MEDIUM};
         `
       : css`
-          font-weight: ${FONT_WEIGHT_BOLD};
+          font-weight: ${FONT_WEIGHT_MEDIUM};
         `}
 `;
 
@@ -115,6 +123,7 @@ const TitleContainer = styled(View)<TitleContainerProps>`
     css`
       text-align: center;
       height: 54px;
+      justify-content: center;
     `}
 `;
 
@@ -127,6 +136,8 @@ const Row = styled(View)`
   align-items: center;
 `;
 
-const TitleComponents = styled(Row)`
+const RowedView = styled(View)`
+  flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 `;

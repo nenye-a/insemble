@@ -3,7 +3,6 @@ import styled from 'styled-components';
 
 import { Modal, Card, View, Text, Button } from '../core-ui';
 import { BACKGROUND_COLOR, DARK_TEXT_COLOR, THEME_COLOR } from '../constants/colors';
-import { FONT_SIZE_MEDIUM } from '../constants/theme';
 
 type PopupButton = {
   text: string;
@@ -58,7 +57,6 @@ const Content = styled(View)`
 
 const BodyText = styled(Text)`
   color: ${DARK_TEXT_COLOR};
-  font-size: ${FONT_SIZE_MEDIUM};
 `;
 
 const Footer = styled(View)`
