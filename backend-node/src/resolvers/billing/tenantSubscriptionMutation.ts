@@ -3,6 +3,7 @@ import { Context } from 'serverTypes';
 
 import stripe from '../../config/stripe';
 import { changeDefaultPaymentMethodResolver } from './paymentMethodMutation';
+import { subscriptionPlansCheck } from '../../constants/subscriptions';
 
 // TODO: Handle declined card
 // TODO: Handle recurring payment
@@ -16,6 +17,15 @@ export let createTenantSubscription = mutationField(
       paymentMethodId: stringArg({ required: false }),
     },
     resolve: async (_, { planId, paymentMethodId }, context: Context, info) => {
+      let subscriptionPlan = subscriptionPlansCheck.find(
+        (plan) => plan.id === planId,
+      );
+      if (!subscriptionPlan) {
+        throw new Error('No plan found.');
+      }
+      if (subscriptionPlan.role === 'LANDLORD') {
+        throw new Error('This is landlord plan.');
+      }
       let user = await context.prisma.tenantUser.findOne({
         where: {
           id: context.tenantUserId,
@@ -97,6 +107,15 @@ export let editTenantSubscription = mutationField('editTenantSubscription', {
     paymentMethodId: stringArg({ required: false }),
   },
   resolve: async (_, { planId, paymentMethodId }, context: Context, info) => {
+    let subscriptionPlan = subscriptionPlansCheck.find(
+      (plan) => plan.id === planId,
+    );
+    if (!subscriptionPlan) {
+      throw new Error('No plan found.');
+    }
+    if (subscriptionPlan.role === 'LANDLORD') {
+      throw new Error('This is landlord plan.');
+    }
     let user = await context.prisma.tenantUser.findOne({
       where: {
         id: context.tenantUserId,
