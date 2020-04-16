@@ -19,7 +19,7 @@ export default function Overview() {
     data?.result?.demographics3,
     data?.result?.demographics5,
   ];
-  let isLocked = data?.tier === TenantTier.FREE;
+  let isLocked = data?.tier === TenantTier.FREE; // TODO: grant access to free trial users
   let totalValue = 0;
   commuteData &&
     commuteData.forEach((item) => {
