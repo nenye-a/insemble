@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { Card, Modal } from '../../core-ui';
 import { DEFAULT_BORDER_RADIUS, FONT_WEIGHT_NORMAL } from '../../constants/theme';
 import ViewLandlordPlans from './ViewLandlordPlans';
+import SelectMultipleLandlordPlans from './SelectMultipleLandlordPlans';
 
 type Param = {
   step: string;
@@ -20,6 +21,11 @@ export default function ChangeMultipleLandlordPlansModal() {
       title: "Let's confirm  your subscription",
       content: <ViewLandlordPlans />,
       path: 'view-plans',
+    },
+    {
+      title: "Let's confirm your subscription",
+      content: <SelectMultipleLandlordPlans />,
+      path: 'select-plans',
     },
   ];
 

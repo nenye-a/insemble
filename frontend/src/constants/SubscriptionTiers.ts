@@ -1,7 +1,7 @@
 import { TenantTier } from '../generated/globalTypes';
 
 // TODO: import from generated when there's any
-enum LandlordTier {
+export enum LandlordTier {
   NO_TIER,
   BASIC,
   PROFESSIONAL,
