@@ -1,9 +1,11 @@
 import React, { ReactNode, ComponentProps } from 'react';
 import styled from 'styled-components';
+
 import View from './View';
 import Text from './Text';
 import { DEFAULT_BORDER_RADIUS, FONT_SIZE_SMALL, FONT_WEIGHT_BOLD } from '../constants/theme';
 import { THEME_COLOR, WHITE, CARD_GREY_HEADER, TEXT_COLOR } from '../constants/colors';
+import UpgradeButton from '../components/UpgradeButton';
 
 type TextProps = ComponentProps<typeof Text>;
 type ViewProps = ComponentProps<typeof View>;
@@ -28,21 +30,25 @@ export default function Card(props: Props) {
     titleProps,
     titleBackground,
     rightTitleComponent,
+    isLocked = false,
     ...otherProps
   } = props;
   return (
     <StyledCard {...otherProps}>
       {title && (
         <TitleContainer titleBackground={titleBackground} {...titleContainerProps}>
-          <RowedView flex>
-            <View flex>
-              <Text fontWeight={FONT_WEIGHT_BOLD} {...titleProps}>
-                {title}
-              </Text>
-              <SubTitle>{subTitle}</SubTitle>
-            </View>
+          <TitleComponents flex>
+            <Row>
+              <View flex>
+                <Text fontWeight={FONT_WEIGHT_BOLD} {...titleProps}>
+                  {title}
+                </Text>
+                <SubTitle>{subTitle}</SubTitle>
+              </View>
+              {isLocked ? <UpgradeButton /> : null}
+            </Row>
             {rightTitleComponent}
-          </RowedView>
+          </TitleComponents>
         </TitleContainer>
       )}
       {children}
@@ -80,8 +86,11 @@ const SubTitle = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
 `;
 
-const RowedView = styled(View)`
+const Row = styled(View)`
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
+`;
+
+const TitleComponents = styled(Row)`
+  justify-content: space-between;
 `;

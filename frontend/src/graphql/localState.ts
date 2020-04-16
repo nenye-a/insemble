@@ -1,3 +1,5 @@
+import { TenantTier } from './../generated/globalTypes';
+
 export type UserContent = {
   token: string;
   email: string;
@@ -5,7 +7,7 @@ export type UserContent = {
   lastName: string;
   avatar: string;
   company: string;
-  tier: string;
+  tier: TenantTier | null;
   role: string;
 };
 
@@ -22,7 +24,7 @@ export const defaultState: RootState = {
     lastName: '',
     avatar: '',
     company: '',
-    tier: '',
+    tier: null,
     role: '',
   },
 };
