@@ -3,8 +3,9 @@ import styled from 'styled-components';
 
 import { THEME_COLOR } from '../constants/colors';
 import { Text, Card, SegmentedControl } from '../core-ui';
-import LandlordPLan from './LandlordPlan';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_MEDIUM } from '../constants/theme';
+import LandlordBillingSummary from './LandlordPlan/LandlordBillingSummary';
+import LandlordSpacePlans from './LandlordPlan/LandlordSpacePlans';
 
 export default function LandlordBilling() {
   let [selectedTab, setSelectedTab] = useState(0);
@@ -21,7 +22,7 @@ export default function LandlordBilling() {
         }}
       />
 
-      {selectedTab === 0 ? <LandlordPLan /> : <Text>billing summary</Text>}
+      {selectedTab === 0 ? <LandlordSpacePlans /> : <LandlordBillingSummary />}
     </Container>
   );
 }

@@ -1,3 +1,7 @@
+import { PaymentMethodList } from './../generated/PaymentMethodList';
+import { BillingStatus, SubscriptionStatus } from './../generated/globalTypes';
+import { BillingList } from './../generated/BillingList';
+
 export const AVAILABLE_PROPERTIES = [
   {
     photo: 'https://cdn.pixabay.com/photo/2016/11/18/14/05/brick-wall-1834784_1280.jpg',
@@ -262,3 +266,43 @@ export const CONSUMER_PERSONAS = [
     ],
   },
 ];
+
+export const BILLING_LIST_MOCK: BillingList = {
+  billingList: [
+    {
+      __typename: 'Billing',
+      id: '1',
+      amountPaid: 20000,
+      paid: true,
+      status: BillingStatus.paid,
+      subscription: {
+        __typename: 'Subscription',
+        id: '2',
+        currentPeriodStart: 1,
+        currentPeriodEnd: 2,
+        status: SubscriptionStatus.active,
+      },
+      paymentMethod: {
+        __typename: 'PaymentMethod',
+        lastFourDigits: '1111',
+      },
+      statusTransition: {
+        __typename: 'StatusTransition',
+        paidAt: '2020-05-07T14:36:49.000Z',
+      },
+    },
+  ],
+};
+
+export const PAYMENT_METHOD_MOCK: PaymentMethodList = {
+  paymentMethodList: [
+    {
+      __typename: 'CustomerPaymentMethod',
+      id: '1',
+      expMonth: 5,
+      expYear: 24,
+      lastFourDigits: '1111',
+      isDefault: true,
+    },
+  ],
+};
