@@ -1,13 +1,10 @@
-<DataTable.Cell>
-  <RadioGroup options={['Basic', 'Pro']} onSelect={() => {}} align="right" />
-</DataTable.Cell>;
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 import { View, Button, Text as BaseText, RadioGroup } from '../../core-ui';
 import { DataTable } from '../../components';
 import CardFooter from '../../components/layout/OnboardingFooter';
-import TierSubscriptionCard from '../Billing/TierSubscriptionCard';
 import {
   FONT_WEIGHT_LIGHT,
   FONT_SIZE_SMALL,
@@ -19,6 +16,7 @@ import { LandlordTier } from '../../constants/SubscriptionTiers';
 import { DARK_TEXT_COLOR } from '../../constants/colors';
 
 export default function SelectMultipleLandlordPlans() {
+  let history = useHistory();
   let billingList = [
     {
       address: '317 2nd Street, LA 317 2nd CA, USA',
@@ -94,6 +92,7 @@ export default function SelectMultipleLandlordPlans() {
         <Button
           text="Next"
           onPress={() => {
+            history.push('/landlord/change-plans/confirm-plans');
             //TODO: navigate to next scene
           }}
         />
