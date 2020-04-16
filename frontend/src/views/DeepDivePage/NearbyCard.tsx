@@ -11,6 +11,8 @@ import SvgGrid from '../../components/icons/grid';
 import SvgList from '../../components/icons/list';
 import { DeepDiveContext } from './DeepDiveModal';
 import { EmptyDataComponent } from '../../components';
+import { TenantTier } from '../../generated/globalTypes';
+import BlurredNearby from '../../assets/images/blurred-nearby.png';
 
 type ViewMode = 'grid' | 'list';
 
@@ -37,6 +39,7 @@ export default function NearbyCard() {
   let mile = data?.result?.keyFacts.mile;
   let nearbyData = data?.result?.nearby;
   let category = data?.categories;
+  let isLocked = data?.tier === TenantTier.FREE; // TODO: grant access to free trial users
 
   let filteredData = useMemo(() => {
     switch (selectedDropdownVal) {
@@ -80,41 +83,46 @@ export default function NearbyCard() {
       title="Nearby"
       rightTitleComponent={iconTab}
       titleContainerProps={{ style: { height: 56 } }}
+      isLocked={isLocked}
     >
-      <RowedView flex>
-        <NearbyMap data={filteredData || []} />
-        <View flex>
-          <NearbyMapLegend />
-          <RightContent flex>
-            <Dropdown<DropdownSelection>
-              options={['Most Popular', 'Distance', 'Rating', 'Similar']}
-              onSelect={(newValue) => {
-                setSelectedDropdownVal(newValue);
-              }}
-              selectedOption={selectedDropdownVal}
-              containerStyle={{ paddingLeft: 6, paddingBottom: 12 }}
-            />
+      {isLocked ? (
+        <Image src={BlurredNearby} />
+      ) : (
+        <RowedView flex>
+          <NearbyMap data={filteredData || []} />
+          <View flex>
+            <NearbyMapLegend />
+            <RightContent flex>
+              <Dropdown<DropdownSelection>
+                options={['Most Popular', 'Distance', 'Rating', 'Similar']}
+                onSelect={(newValue) => {
+                  setSelectedDropdownVal(newValue);
+                }}
+                selectedOption={selectedDropdownVal}
+                containerStyle={{ paddingLeft: 6, paddingBottom: 12 }}
+              />
 
-            <NearbyPlacesCardContainer flex>
-              {filteredData?.length === 0 ? (
-                <EmptyDataComponent
-                  text={category && mile ? `No ${category} within ${mile} mile(s)` : ''}
-                />
-              ) : isGridViewMode ? (
-                filteredData?.map((item, index) => (
-                  <MiniNearbyPlacesCard
-                    key={index}
-                    selectedDropdownValue={selectedDropdownVal}
-                    {...item}
+              <NearbyPlacesCardContainer flex>
+                {filteredData?.length === 0 ? (
+                  <EmptyDataComponent
+                    text={category && mile ? `No ${category} within ${mile} mile(s)` : ''}
                   />
-                ))
-              ) : (
-                filteredData?.map((item, index) => <NearbyPlacesCard key={index} {...item} />)
-              )}
-            </NearbyPlacesCardContainer>
-          </RightContent>
-        </View>
-      </RowedView>
+                ) : isGridViewMode ? (
+                  filteredData?.map((item, index) => (
+                    <MiniNearbyPlacesCard
+                      key={index}
+                      selectedDropdownValue={selectedDropdownVal}
+                      {...item}
+                    />
+                  ))
+                ) : (
+                  filteredData?.map((item, index) => <NearbyPlacesCard key={index} {...item} />)
+                )}
+              </NearbyPlacesCardContainer>
+            </RightContent>
+          </View>
+        </RowedView>
+      )}
     </Container>
   );
 }
@@ -149,4 +157,9 @@ const NearbyPlacesCardContainer = styled(View)`
   flex-wrap: wrap;
   overflow-y: scroll;
   padding-top: 12px;
+`;
+
+const Image = styled.img`
+  width: 100%;
+  object-fit: cover;
 `;
