@@ -202,6 +202,20 @@ let tenantMatches = queryField('tenantMatches', {
               min_daytime_pop: pendingMinDaytimePopulation,
               match_id: matchId,
             },
+            paramsSerializer: (params) => {
+              let queryString = Object.keys(params)
+                .map((key) => {
+                  const regexSquareBracketOpen = /%5B/gi;
+                  const regexSquareBracketClose = /%5D/gi;
+                  let encodeInput = encodeURI(params[key]);
+                  let squareBracket = encodeInput
+                    .replace(regexSquareBracketOpen, '[')
+                    .replace(regexSquareBracketClose, ']');
+                  return encodeURI(key) + '=' + squareBracket;
+                })
+                .join('&');
+              return queryString;
+            },
           })
         ).data;
 
@@ -426,6 +440,21 @@ let tenantMatches = queryField('tenantMatches', {
                 spaceType.length > 0 ? JSON.stringify(spaceType) : undefined,
               min_daytime_pop: minDaytimePopulation,
               match_id: matchId,
+            },
+            paramsSerializer: (params) => {
+              let queryString = Object.keys(params)
+                .filter((key) => params[key])
+                .map((key) => {
+                  const regexSquareBracketOpen = /%5B/gi;
+                  const regexSquareBracketClose = /%5D/gi;
+                  let encodeInput = encodeURI(params[key]);
+                  let squareBracket = encodeInput
+                    .replace(regexSquareBracketOpen, '[')
+                    .replace(regexSquareBracketClose, ']');
+                  return encodeURI(key) + '=' + squareBracket;
+                })
+                .join('&');
+              return queryString;
             },
           })
         ).data;

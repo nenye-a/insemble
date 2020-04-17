@@ -91,6 +91,22 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
             categories.length > 0 ? JSON.stringify(categories) : undefined,
           exclusives:
             exclusive.length > 0 ? JSON.stringify(exclusive) : undefined,
+          visible: selectedSpace.marketingPreference === 'PUBLIC',
+        },
+        paramsSerializer: (params) => {
+          let queryString = Object.keys(params)
+            .filter((key) => params[key])
+            .map((key) => {
+              const regexSquareBracketOpen = /%5B/gi;
+              const regexSquareBracketClose = /%5D/gi;
+              let encodeInput = encodeURI(params[key]);
+              let squareBracket = encodeInput
+                .replace(regexSquareBracketOpen, '[')
+                .replace(regexSquareBracketClose, ']');
+              return encodeURI(key) + '=' + squareBracket;
+            })
+            .join('&');
+          return queryString;
         },
       })
     ).data;
