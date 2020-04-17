@@ -331,9 +331,19 @@ export default function MainMap() {
       minAge: tenantMatchesData?.tenantMatches.minAge,
       maxAge: tenantMatchesData?.tenantMatches.maxAge,
       personas: tenantMatchesData?.tenantMatches.personas,
-      commute: tenantMatchesData?.tenantMatches.commute,
-      education: tenantMatchesData?.tenantMatches.education,
-      ethnicity: tenantMatchesData?.tenantMatches.ethnicity,
+
+      commute:
+        (tenantMatchesData?.tenantMatches?.commute &&
+          tenantMatchesData.tenantMatches.commute.map(({ displayValue }) => displayValue)) ||
+        [],
+      education:
+        (tenantMatchesData?.tenantMatches?.education &&
+          tenantMatchesData.tenantMatches.education.map(({ displayValue }) => displayValue)) ||
+        [],
+      ethnicity:
+        (tenantMatchesData?.tenantMatches?.ethnicity &&
+          tenantMatchesData.tenantMatches.ethnicity.map(({ displayValue }) => displayValue)) ||
+        [],
     },
     property: {
       minRent: tenantMatchesData?.tenantMatches.minRent,
