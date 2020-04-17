@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 import DataTable from '../../components/DataTable';
 import { SECONDARY_COLOR, DARK_TEXT_COLOR } from '../../constants/colors';
@@ -15,6 +16,8 @@ type BillingList = {
 };
 
 export default function LandlordSpacePlans() {
+  let history = useHistory();
+  // TODO: connect to BE
   let billingList = [
     {
       photos: 'asd',
@@ -28,7 +31,13 @@ export default function LandlordSpacePlans() {
     <Container>
       <RowView>
         <SectionTitle>Billing Summary</SectionTitle>
-        <Button text="Change multiple plans" mode="transparent" onPress={() => {}} />
+        <Button
+          text="Change multiple plans"
+          mode="transparent"
+          onPress={() => {
+            history.push('/landlord/change-plans/view-plans');
+          }}
+        />
       </RowView>
       <DataTable>
         <DataTable.HeaderRow>

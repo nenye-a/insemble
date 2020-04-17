@@ -1,4 +1,5 @@
 export { default as CarouselFilter } from './filter/CarouselFilter';
+export { default as ContactInsemble } from './common/ContactInsemble';
 export { default as DataTable } from './DataTable';
 export { default as EmptyDataComponent } from './common/EmptyDataComponent';
 export { default as ErrorComponent } from './common/ErrorComponent';

@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 
 import { Card, Modal } from '../../core-ui';
-import { DEFAULT_BORDER_RADIUS, FONT_WEIGHT_NORMAL } from '../../constants/theme';
+import { DEFAULT_BORDER_RADIUS } from '../../constants/theme';
 import ViewLandlordPlans from './ViewLandlordPlans';
+import SelectMultipleLandlordPlans from './SelectMultipleLandlordPlans';
+import ConfirmChangeMultiplePlans from './ConfirmChangeMultiplePlans';
+import ChangeMultipleLandlordPlansBillingInfo from './ChangeMultipleLandlordPlansBillingInfo';
+import LandlordBilling from '../LandlordBilling';
+import ChangeMultipleLandlordPlansUpgradeSuccess from './ChangeMultipleLandlordPlansUpgradeSuccess';
+import { SUBSCRIPTIONS } from '../../fixtures/dummyData';
 
 type Param = {
   step: string;
@@ -12,6 +18,7 @@ type Param = {
 
 export default function ChangeMultipleLandlordPlansModal() {
   let [selectedStepIndex, setSelectedStepIndex] = useState(0);
+  let history = useHistory();
   let params = useParams<Param>();
   let { step = 'view-plans' } = params;
 
@@ -20,6 +27,28 @@ export default function ChangeMultipleLandlordPlansModal() {
       title: "Let's confirm  your subscription",
       content: <ViewLandlordPlans />,
       path: 'view-plans',
+    },
+    {
+      title: "Let's confirm your subscription",
+      content: <SelectMultipleLandlordPlans />,
+      path: 'select-plans',
+    },
+    {
+      title: "Let's confirm your subscription",
+      content: <ConfirmChangeMultiplePlans plans={SUBSCRIPTIONS} />,
+      path: 'confirm-plans',
+    },
+    {
+      title: "Let's confirm your subscription",
+      content: (
+        <ChangeMultipleLandlordPlansBillingInfo plans={SUBSCRIPTIONS} paymentMethodList={[]} />
+      ),
+      path: 'confirm-payment',
+    },
+    {
+      title: 'Thank You!',
+      content: <ChangeMultipleLandlordPlansUpgradeSuccess />,
+      path: 'upgrade-success',
     },
   ];
 
@@ -33,27 +62,24 @@ export default function ChangeMultipleLandlordPlansModal() {
   }, [SEGMENTS, step]);
 
   return (
-    <Container
-      visible={true}
-      hideCloseButton={true}
-      onClose={() => {
-        // navigate to landlord billing
-      }}
-    >
-      <Card
-        titleBackground="purple"
-        title="Lets confirm your subscription"
-        // TODO: make this default Card styling
-        titleProps={{
-          style: {
-            fontWeight: FONT_WEIGHT_NORMAL,
-            textAlign: 'center',
-          },
+    <>
+      <LandlordBilling />
+      <Container
+        visible={true}
+        hideCloseButton={true}
+        onClose={() => {
+          history.push('/landlord/billing');
         }}
       >
-        {Content}
-      </Card>
-    </Container>
+        <Card
+          mode="secondary"
+          title="Lets confirm your subscription"
+          titleContainerProps={{ style: { height: 42 } }}
+        >
+          {Content}
+        </Card>
+      </Container>
+    </>
   );
 }
 

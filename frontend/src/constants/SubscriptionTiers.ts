@@ -1,10 +1,10 @@
 import { TenantTier } from '../generated/globalTypes';
 
 // TODO: import from generated when there's any
-enum LandlordTier {
-  NO_TIER,
-  BASIC,
-  PROFESSIONAL,
+export enum LandlordTier {
+  NO_TIER = 'NO_TIER',
+  BASIC = 'BASIC',
+  PROFESSIONAL = 'PROFESSIONAL',
 }
 
 export const LandlordTiers = {

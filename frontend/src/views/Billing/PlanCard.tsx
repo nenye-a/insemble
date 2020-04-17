@@ -27,7 +27,7 @@ export default function PlanCard(props: Props) {
   let { role } = useCredentials();
   let pricePerMonth = isAnnual ? price / 12 : price;
   let subscriptionSubject = role === Role.TENANT ? 'User' : 'Space';
-  let subscriptionDuration = isAnnual ? 'Anually' : 'Monthly';
+  let subscriptionDuration = isAnnual ? 'Anual' : 'Monthly';
   let subscriptionDescription = `1 ${subscriptionSubject} | ${subscriptionDuration} Subscription`;
 
   return (
@@ -52,7 +52,7 @@ export default function PlanCard(props: Props) {
         <Text
           color={DARK_TEXT_COLOR}
           fontSize={FONT_SIZE_SMALL}
-          style={{ paddingTop: 24, paddingBottom: 24 }}
+          style={{ paddingTop: 20, paddingBottom: 20 }}
         >
           {subscriptionDescription}
         </Text>
@@ -86,7 +86,7 @@ const RightContainer = styled(View)`
   align-items: center;
   justify-content: center;
   background-color: ${LIGHTER_GREY};
-  padding: 0 40px;
+  padding: 8px 40px;
 `;
 
 const RowedView = styled(View)`
