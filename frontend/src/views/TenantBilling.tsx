@@ -8,7 +8,6 @@ import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../constants/theme';
 import { Button, Card, LoadingIndicator, Text, View, Alert } from '../core-ui';
 
 import { PaymentMethodList } from '../generated/PaymentMethodList';
-
 import { BillingList } from '../generated/BillingList';
 import {
   GET_BILLING_LIST,
@@ -24,17 +23,18 @@ import { GetBrands } from '../generated/GetBrands';
 import { GET_BRANDS } from '../graphql/queries/server/brand';
 import { BillingContextProvider } from '../utils/billing';
 import { BillingSummaryTable, CreditCardTable } from '../components/plan';
+import formatDate from '../utils/formatDate';
 
 export default function TenantBilling() {
   let [cancelPlanVisible, setCancelPlanVisible] = useState(false);
-  let [planCancelled, setPlanCancelled] = useState(false);
+  let [lastBill, setLastBill] = useState('');
 
   let [cancelPlan, { error: cancelPlanError, loading: cancelPlanLoading }] = useMutation<
     CancelTenantSubcription
   >(CANCEL_TENANT_SUBSCRIPTION, {
     onCompleted: (result) => {
       if (result.cancelTenantSubscription) {
-        setPlanCancelled(true);
+        setLastBill(formatDate(new Date(result.cancelTenantSubscription)));
       }
     },
   });
@@ -69,7 +69,6 @@ export default function TenantBilling() {
   );
 
   let errorMessage = cancelPlanError?.message || '';
-  let lastBill = 'May 1st, 9AM'; // TODO: get last bill date
   let history = useHistory();
   return (
     <BillingContextProvider value={{ refetchPaymentList }}>
@@ -96,12 +95,12 @@ export default function TenantBilling() {
         visible={cancelPlanVisible}
         title="Subscription Cancellation"
         bodyText={
-          planCancelled
+          lastBill
             ? `Cancellation Successful. Your last bill will be on ${lastBill}`
             : 'Are you sure you want to cancel your professional subscription? You will lose access to all professional features.'
         }
         buttons={
-          planCancelled
+          lastBill
             ? [{ text: 'Home', onPress: () => getBrand() }]
             : [
                 {
