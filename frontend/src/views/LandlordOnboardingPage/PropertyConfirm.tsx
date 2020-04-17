@@ -60,7 +60,7 @@ export default function PropertyConfirm(props: Props) {
   };
 
   return (
-    <Container onSubmit={handleSubmit}>
+    <Container>
       <ContentContainer flex>
         <LocationInput
           defaultValue={location.address}
@@ -98,7 +98,7 @@ export default function PropertyConfirm(props: Props) {
         </FieldInput>
       </ContentContainer>
       <OnboardingFooter>
-        <Button text="Next" type="submit" disabled={!allValid} />
+        <Button text="Next" onPress={handleSubmit} disabled={!allValid} />
       </OnboardingFooter>
     </Container>
   );
