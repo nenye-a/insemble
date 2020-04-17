@@ -66,3 +66,9 @@ export const CHANGE_DEFAULT_PAYMENT_METHOD = gql`
     changeDefaultPaymentMethod(paymentMethodId: $paymentMethodId)
   }
 `;
+
+export const CANCEL_TENANT_SUBSCRIPTION = gql`
+  mutation CancelTenantSubcription {
+    cancelTenantSubscription
+  }
+`;
