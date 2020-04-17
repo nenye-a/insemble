@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
-import { View, Text, LoadingIndicator, Button } from '../../core-ui';
-import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD, FONT_SIZE_LARGE } from '../../constants/theme';
+import { View, Text, LoadingIndicator } from '../../core-ui';
+import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD } from '../../constants/theme';
 import { LIGHTEST_GREY } from '../../constants/colors';
 import KeyFacts from '../DeepDivePage/KeyFacts';
 import RelevantConsumerCard from '../DeepDivePage/RelevantConsumerCard';
@@ -17,10 +17,14 @@ import {
 } from '../../generated/PropertyLocationDetails';
 import { Property, PropertyVariables } from '../../generated/Property';
 import { MAPS_IFRAME_URL_SEARCH } from '../../constants/googleMaps';
+import { ErrorComponent } from '../../components';
 
 type Params = {
   paramsId: string;
 };
+
+const LOADING_ERROR = 'Your location details are loading';
+
 export default function LandlordLocationDetails() {
   let { paramsId: propertyId = '' } = useParams<Params>();
 
@@ -32,6 +36,11 @@ export default function LandlordLocationDetails() {
       propertyId,
     },
     notifyOnNetworkStatusChange: true,
+    onError: (error) => {
+      if (error.message.includes(LOADING_ERROR)) {
+        refetch();
+      }
+    },
   });
   let { data: propertyData, loading: propertyLoading } = useQuery<Property, PropertyVariables>(
     GET_PROPERTY,
@@ -65,13 +74,10 @@ export default function LandlordLocationDetails() {
 
   return (
     <View>
-      {loading || propertyLoading ? (
+      {loading || propertyLoading || error?.message.includes(LOADING_ERROR) ? (
         <LoadingIndicator />
       ) : error ? (
-        <CenteredView flex>
-          <Text fontSize={FONT_SIZE_LARGE}>{error.message || ''}</Text>
-          <Button text="Try Again" onPress={refetch} />
-        </CenteredView>
+        <ErrorContainer onRetry={refetch} />
       ) : (
         <>
           <Iframe src={iframeSource} />
@@ -123,7 +129,6 @@ const Iframe = styled.iframe`
   height: 240px;
   border: none;
 `;
-const CenteredView = styled(View)`
-  justify-content: center;
-  align-items: center;
+const ErrorContainer = styled(ErrorComponent)`
+  padding: 24px;
 `;
