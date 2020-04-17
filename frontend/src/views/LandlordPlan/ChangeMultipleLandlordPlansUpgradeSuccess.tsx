@@ -5,7 +5,7 @@ import CardFooter from '../../components/layout/OnboardingFooter';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_LIGHT } from '../../constants/theme';
 import { DARK_TEXT_COLOR } from '../../constants/colors';
 
-export default function UpgradeSuccess() {
+export default function ChangeMultipleLandlordPlansUpgradeSuccess() {
   return (
     <>
       <Container>
