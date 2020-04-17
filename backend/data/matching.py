@@ -155,7 +155,7 @@ def generate_matching_locations(location, options={}, db_connection=utils.SYSTEM
     match_df = info_df.drop(columns=["_id", "lat", "lng", "loc_id"])
     match_df = match_df.append(my_location_df)
 
-    if options:
+    if options['desired_min_daytime_pop']:
         match_df.iloc[-1]["DaytimePop1"] = max(match_df.iloc[-1].loc["DaytimePop1"], options['desired_min_daytime_pop'])
         match_df = match_df[match_df["DaytimePop1"] > options['desired_min_daytime_pop']]
 
