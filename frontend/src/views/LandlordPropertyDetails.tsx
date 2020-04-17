@@ -56,13 +56,13 @@ export default function LandlordPropertyDetails() {
       },
     }
   );
-  let { data, loading } = useQuery<PropertyMatches, PropertyMatchesVariables>(
-    GET_PROPERTY_MATCHES_DATA,
-    {
-      variables: { propertyId: params.paramsId, spaceId: selectedSpaceId },
-      skip: !selectedSpaceId || !params.paramsId,
-    }
-  );
+  let { data, loading, error: propertyMatchesError, refetch: propertyMatchesRefetch } = useQuery<
+    PropertyMatches,
+    PropertyMatchesVariables
+  >(GET_PROPERTY_MATCHES_DATA, {
+    variables: { propertyId: params.paramsId, spaceId: selectedSpaceId },
+    skip: !selectedSpaceId || !params.paramsId,
+  });
 
   let propertyMatches = useMemo(() => {
     if (!data) {
@@ -131,6 +131,8 @@ export default function LandlordPropertyDetails() {
             <LandlordTenantMatches
               loading={loading}
               matchResult={propertyMatches}
+              error={propertyMatchesError}
+              refetch={propertyMatchesRefetch}
               onPress={(selectedBrand) => {
                 setSelectedBrand(selectedBrand);
                 setModalVisible(true);
