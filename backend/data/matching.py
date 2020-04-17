@@ -209,7 +209,7 @@ def generate_matching_properties(locations, options={}, db_connection=utils.SYST
     info_df = landlord_matching.generate_match_df(locations)
     match_df = info_df.drop(columns=['_id', 'brand_name'])
 
-    if options:
+    if options['desired_min_daytime_pop']:
         match_df.iloc[-1].loc["DaytimePop1"] = max(match_df.iloc[-1].loc["DaytimePop1"], options['desired_min_daytime_pop'])
         match_df = match_df[match_df["DaytimePop1"] > options['desired_min_daytime_pop']]
 
