@@ -36,7 +36,7 @@ type HeatmapProps = {
   brandId?: string;
 };
 
-export default (props: HeatmapProps) => {
+export default () => {
   let { data, loading } = useQuery<GetBrands>(GET_BRANDS);
   let [removeConfirmationVisible, setRemoveConfirmationVisible] = useState(false);
   let history = useHistory();
@@ -96,7 +96,7 @@ export default (props: HeatmapProps) => {
                   <LeftContainer
                     flex
                     onClick={() => {
-                      history.push(`/map/${props.brandId}`);
+                      history.push(`/map/${id}`);
                     }}
                   >
                     <RowedView>
