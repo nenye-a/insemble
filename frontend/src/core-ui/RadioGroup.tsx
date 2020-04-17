@@ -22,6 +22,7 @@ type RadioGroupProps<T> = ViewProps & {
   label?: string;
   disabled?: boolean;
   errorMessage?: string;
+  labelProps?: TextProps;
 };
 
 const defaultTitleExtractor = (item: unknown) => String(item);
@@ -39,6 +40,7 @@ export default function RadioGroup<T>(props: RadioGroupProps<T>) {
     label,
     disabled = false,
     errorMessage,
+    labelProps,
     ...otherProps
   } = props;
   let fallbackName = useID();
@@ -58,6 +60,7 @@ export default function RadioGroup<T>(props: RadioGroupProps<T>) {
             isSelected={isEqual(item, selectedOption)}
             onPress={() => onSelect(item)}
             disabled={disabled}
+            labelProps={labelProps}
             {...radioItemProps}
           />
         );

@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
 import { View, Text, Button } from '../../core-ui';
-import { ContactInsemble } from '../../components';
 import {
   FONT_WEIGHT_LIGHT,
   FONT_SIZE_LARGE,
@@ -11,17 +10,18 @@ import {
   FONT_WEIGHT_BOLD,
 } from '../../constants/theme';
 import { THEME_COLOR, DARK_TEXT_COLOR } from '../../constants/colors';
-import CreditCardTable from './CreditCardTable';
-import InvoicePreview from './InvoicePreview';
+import CreditCardTable from '../Billing/CreditCardTable';
+import InvoicePreview from '../Billing/InvoicePreview';
+import AddNewCardForm from '../Billing/AddNewCardForm';
 import CardFooter from '../../components/layout/OnboardingFooter';
 import { PaymentMethodList_paymentMethodList as PaymentMethod } from '../../generated/PaymentMethodList';
-import AddNewCardForm from './AddNewCardForm';
+import { ContactInsemble } from '../../components';
+
+type Plan = { tierName: string; price: number; isAnnual: boolean };
 
 type Props = {
   paymentMethodList: Array<PaymentMethod>;
-  tierName: string;
-  price: number;
-  isAnnual: boolean;
+  plans: Array<Plan>;
 };
 
 enum ViewMode {
@@ -29,8 +29,8 @@ enum ViewMode {
   EXISTING_CARD,
 }
 
-export default function EnterBillingInfo(props: Props) {
-  let { paymentMethodList, tierName, price, isAnnual } = props;
+export default function ChangeMultipleLandlordPlansBillingInfo(props: Props) {
+  let { paymentMethodList, plans } = props;
   let history = useHistory();
   let initialViewMode = paymentMethodList.length > 0 ? ViewMode.EXISTING_CARD : ViewMode.NO_CARD;
   let [selectedViewMode, setSelectedViewMode] = useState(initialViewMode);
@@ -63,7 +63,7 @@ export default function EnterBillingInfo(props: Props) {
               </View>
             )}
             <Spacing />
-            <InvoicePreview subscriptions={[{ tierName, price, isAnnual }]} />
+            <InvoicePreview subscriptions={plans} />
           </RowedView>
         </Content>
       </Container>
@@ -72,9 +72,7 @@ export default function EnterBillingInfo(props: Props) {
         <Button
           text="Confirm"
           onPress={() => {
-            history.push('/user/upgrade-plan/upgrade-success', {
-              ...history.location.state,
-            });
+            // connect be
           }}
         />
       </CardFooter>

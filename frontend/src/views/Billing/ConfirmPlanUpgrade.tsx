@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
 import { View, Text, Button } from '../../core-ui';
-import { FONT_SIZE_LARGE, FONT_WEIGHT_LIGHT, FONT_SIZE_SMALL } from '../../constants/theme';
+import { ContactInsemble } from '../../components';
+import { FONT_SIZE_LARGE, FONT_WEIGHT_LIGHT } from '../../constants/theme';
 import PlanCard from './PlanCard';
 import CardFooter from '../../components/layout/OnboardingFooter';
 
@@ -21,9 +22,7 @@ export default function ConfirmPlanUpgrade(props: Props) {
     <>
       <Container>
         <Title>Confirm Plan Upgrade</Title>
-        <Text fontWeight={FONT_WEIGHT_LIGHT} fontSize={FONT_SIZE_SMALL}>
-          Questions? Email DELETED_EMAIL
-        </Text>
+        <ContactInsemble />
         <UpgradePlanCard tierName={tierName} price={price} isAnnual={isAnnual} />
       </Container>
       <CardFooter>

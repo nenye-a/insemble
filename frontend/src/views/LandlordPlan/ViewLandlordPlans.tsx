@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 import { View, SegmentedControl, Button } from '../../core-ui';
 import CardFooter from '../../components/layout/OnboardingFooter';
@@ -8,6 +9,7 @@ import { LandlordTiers } from '../../constants/SubscriptionTiers';
 
 export default function ViewLandlordPlans() {
   let [isAnnual, setIsAnnual] = useState(0);
+  let history = useHistory();
 
   return (
     <>
@@ -43,7 +45,7 @@ export default function ViewLandlordPlans() {
         <Button
           text="Next"
           onPress={() => {
-            // TODO: navigate to next page
+            history.push('/landlord/change-plans/select-plans');
           }}
         />
       </CardFooter>
