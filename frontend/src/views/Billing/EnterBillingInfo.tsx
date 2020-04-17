@@ -3,14 +3,13 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
 import { View, Text, Button } from '../../core-ui';
+import { ContactInsemble } from '../../components';
 import {
   FONT_WEIGHT_LIGHT,
-  FONT_SIZE_SMALL,
   FONT_SIZE_LARGE,
   FONT_SIZE_MEDIUM,
   FONT_WEIGHT_BOLD,
 } from '../../constants/theme';
-import { SUPPORT_EMAIL } from '../../constants/app';
 import { THEME_COLOR, DARK_TEXT_COLOR } from '../../constants/colors';
 import CreditCardTable from './CreditCardTable';
 import InvoicePreview from './InvoicePreview';
@@ -40,9 +39,7 @@ export default function EnterBillingInfo(props: Props) {
     <>
       <Container>
         <Title>Enter your billing info</Title>
-        <Text fontWeight={FONT_WEIGHT_LIGHT} fontSize={FONT_SIZE_SMALL}>
-          Questions? Email {SUPPORT_EMAIL}
-        </Text>
+        <ContactInsemble />
         <Content>
           <Text fontSize={FONT_SIZE_MEDIUM} color={THEME_COLOR} style={paddingStyle}>
             Payment Info

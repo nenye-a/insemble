@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
 import { View, Text, Button } from '../../core-ui';
-import { FONT_SIZE_LARGE, FONT_WEIGHT_LIGHT, FONT_SIZE_SMALL } from '../../constants/theme';
+import { ContactInsemble } from '../../components';
+import { FONT_SIZE_LARGE, FONT_WEIGHT_LIGHT } from '../../constants/theme';
 import BasePlanCard from '../Billing/PlanCard';
 import CardFooter from '../../components/layout/OnboardingFooter';
 
@@ -25,9 +26,7 @@ export default function ConfirmChangeMultiplePlans(props: Props) {
     <View>
       <Container>
         <Title>Confirm Plan</Title>
-        <Text fontWeight={FONT_WEIGHT_LIGHT} fontSize={FONT_SIZE_SMALL}>
-          Questions? Email support@insemblegroup.com
-        </Text>
+        <ContactInsemble />
         <PlanCardsWrapper>
           {plans.map(({ tierName, price, isAnnual }, index) => (
             <PlanCard key={index} tierName={tierName} price={price} isAnnual={isAnnual} />

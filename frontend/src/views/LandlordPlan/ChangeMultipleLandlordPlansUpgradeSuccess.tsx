@@ -9,7 +9,7 @@ export default function ChangeMultipleLandlordPlansUpgradeSuccess() {
   return (
     <>
       <Container>
-        <Title>You’re Plan is Updated!</Title>
+        <Title>Your Plan is Updated!</Title>
         <Text color={DARK_TEXT_COLOR}>Congratulations! You’ve successfully updated your plan.</Text>
       </Container>
       <CardFooter>

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
 import { View, Button, Text as BaseText, RadioGroup } from '../../core-ui';
-import { DataTable } from '../../components';
+import { DataTable, ContactInsemble } from '../../components';
 import CardFooter from '../../components/layout/OnboardingFooter';
 import {
   FONT_WEIGHT_LIGHT,
@@ -11,7 +11,6 @@ import {
   FONT_SIZE_LARGE,
   DEFAULT_BORDER_RADIUS,
 } from '../../constants/theme';
-import { SUPPORT_EMAIL } from '../../constants/app';
 import { LandlordTier, LandlordTiers } from '../../constants/SubscriptionTiers';
 import { DARK_TEXT_COLOR } from '../../constants/colors';
 import { LANDLORD_BILLING_LIST } from '../../fixtures/dummyData';
@@ -72,9 +71,7 @@ export default function SelectMultipleLandlordPlans() {
     <View>
       <Container>
         <Title>Select Plans For your Property</Title>
-        <Text fontWeight={FONT_WEIGHT_LIGHT} fontSize={FONT_SIZE_SMALL}>
-          Questions? Email {SUPPORT_EMAIL}
-        </Text>
+        <ContactInsemble />
         <TableWrapper>
           <DataTable>
             <DataTable.HeaderRow>
@@ -152,6 +149,7 @@ function LandlordPlanRow(props: LandlordPlanRowProps) {
     style: {
       fontSize: FONT_SIZE_SMALL,
       fontWeight: FONT_WEIGHT_LIGHT,
+      color: DARK_TEXT_COLOR,
     },
   };
 
