@@ -51,7 +51,7 @@ export default function LandlordTenantMatches({
   return (
     <Container flex>
       {loading ? (
-        <LoadingIndicator size="large" text="Loading the matches for your space." />
+        <LoadingIndicator flex size="large" text="Loading the matches for your space." />
       ) : error ? (
         <ErrorComponent onRetry={refetch} />
       ) : !matchResult ? (
@@ -116,7 +116,6 @@ const RowedView = styled(View)`
 
 const Container = styled(RowedView)`
   flex-wrap: wrap;
-  justify-content: center;
   align-items: center;
   overflow-y: scroll;
   overflow: visible;
