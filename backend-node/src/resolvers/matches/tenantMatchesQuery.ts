@@ -9,6 +9,7 @@ import {
   MatchingLocation,
   MatchingProperty,
 } from 'dataTypes';
+import { axiosParamsSerializer } from '../../helpers/axiosParamsCustomSerializer';
 
 type PendingData = {
   location?: {
@@ -202,6 +203,7 @@ let tenantMatches = queryField('tenantMatches', {
               min_daytime_pop: pendingMinDaytimePopulation,
               match_id: matchId,
             },
+            paramsSerializer: axiosParamsSerializer,
           })
         ).data;
 
@@ -427,6 +429,7 @@ let tenantMatches = queryField('tenantMatches', {
               min_daytime_pop: minDaytimePopulation,
               match_id: matchId,
             },
+            paramsSerializer: axiosParamsSerializer,
           })
         ).data;
 

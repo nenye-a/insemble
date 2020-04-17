@@ -27,7 +27,6 @@ export type MatchingLocation = {
   lat: number;
   lng: number;
   match: number;
-  loc_id: string;
 };
 
 export type MatchingProperty = {
