@@ -14,7 +14,7 @@ export default function ErrorComponent({ text, onRetry, ...otherProps }: Props) 
   return (
     <Container flex {...otherProps}>
       <Text color={THEME_COLOR}>
-        {text ? text : `An error has occurred. Please try again or conntact ${SUPPORT_EMAIL}`}
+        {text ? text : `An error has occurred. Please try again or contact ${SUPPORT_EMAIL}`}
       </Text>
       <RetryButton onPress={onRetry} text="Try Again" />
     </Container>
