@@ -4,20 +4,21 @@ import { useQuery } from '@apollo/react-hooks';
 
 import { LoadingIndicator, Text } from '../../core-ui';
 import DataTable from '../DataTable';
-import { BillingList } from '../../generated/BillingList';
+import { BillingList, BillingListVariables } from '../../generated/BillingList';
 import { SECONDARY_COLOR } from '../../constants/colors';
 import BillingRow from './BillingRow';
 import { GET_BILLING_LIST } from '../../graphql/queries/server/billing';
+import { BillingStatus } from '../../generated/globalTypes';
 
 export default function BillingSummaryTable() {
-  let { data: billingListData, loading: billingListLoading } = useQuery<BillingList>(
-    GET_BILLING_LIST,
-    {
-      variables: {
-        status: 'paid',
-      },
-    }
-  );
+  let { data: billingListData, loading: billingListLoading } = useQuery<
+    BillingList,
+    BillingListVariables
+  >(GET_BILLING_LIST, {
+    variables: {
+      status: BillingStatus.paid,
+    },
+  });
 
   return (
     <>
