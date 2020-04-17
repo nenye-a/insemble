@@ -330,3 +330,8 @@ export const LANDLORD_BILLING_LIST = [
     isAnnual: false,
   },
 ];
+
+export const SUBSCRIPTIONS = [
+  { tierName: 'Basic', price: 300, isAnnual: true },
+  { tierName: 'Basic', price: 30, isAnnual: false },
+];

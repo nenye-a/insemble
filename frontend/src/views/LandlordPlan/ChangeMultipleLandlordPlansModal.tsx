@@ -3,12 +3,13 @@ import styled from 'styled-components';
 import { useParams, useHistory } from 'react-router-dom';
 
 import { Card, Modal } from '../../core-ui';
-import { DEFAULT_BORDER_RADIUS, FONT_WEIGHT_NORMAL } from '../../constants/theme';
+import { DEFAULT_BORDER_RADIUS } from '../../constants/theme';
 import ViewLandlordPlans from './ViewLandlordPlans';
 import SelectMultipleLandlordPlans from './SelectMultipleLandlordPlans';
 import ConfirmChangeMultiplePlans from './ConfirmChangeMultiplePlans';
 import ChangeMultipleLandlordPlansBillingInfo from './ChangeMultipleLandlordPlansBillingInfo';
 import LandlordBilling from '../LandlordBilling';
+import { SUBSCRIPTIONS } from '../../fixtures/dummyData';
 
 type Param = {
   step: string;
@@ -33,26 +34,13 @@ export default function ChangeMultipleLandlordPlansModal() {
     },
     {
       title: "Let's confirm your subscription",
-      content: (
-        <ConfirmChangeMultiplePlans
-          plans={[
-            { tierName: 'Basic', price: 300, isAnnual: true },
-            { tierName: 'Basic', price: 30, isAnnual: false },
-          ]}
-        />
-      ),
+      content: <ConfirmChangeMultiplePlans plans={SUBSCRIPTIONS} />,
       path: 'confirm-plans',
     },
     {
       title: "Let's confirm your subscription",
       content: (
-        <ChangeMultipleLandlordPlansBillingInfo
-          plans={[
-            { tierName: 'Basic', price: 300, isAnnual: true },
-            { tierName: 'Basic', price: 30, isAnnual: false },
-          ]}
-          paymentMethodList={[]}
-        />
+        <ChangeMultipleLandlordPlansBillingInfo plans={SUBSCRIPTIONS} paymentMethodList={[]} />
       ),
       path: 'confirm-payment',
     },
