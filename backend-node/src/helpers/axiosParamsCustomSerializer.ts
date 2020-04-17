@@ -1,0 +1,17 @@
+export let axiosParamsSerializer = (params: {
+  [key: string]: string;
+}): string => {
+  let queryString = Object.keys(params)
+    .filter((key) => params[key])
+    .map((key) => {
+      const regexSquareBracketOpen = /%5B/gi;
+      const regexSquareBracketClose = /%5D/gi;
+      let encodeInput = encodeURI(params[key]);
+      let squareBracket = encodeInput
+        .replace(regexSquareBracketOpen, '[')
+        .replace(regexSquareBracketClose, ']');
+      return encodeURI(key) + '=' + squareBracket;
+    })
+    .join('&');
+  return queryString;
+};
