@@ -3,6 +3,7 @@ import { Root, Context } from 'serverTypes';
 import { LEGACY_API_URI } from '../../constants/host';
 import { queryField, arg } from 'nexus';
 import { LocationPreviewType } from 'dataTypes';
+import { axiosParamsSerializer } from '../../helpers/axiosParamsCustomSerializer';
 
 let locationPreview = queryField('locationPreview', {
   type: 'LocationPreviewResult',
@@ -78,6 +79,7 @@ let locationPreview = queryField('locationPreview', {
           },
           property_id: selectedPropertyId,
         },
+        paramsSerializer: axiosParamsSerializer,
       })
     ).data;
 

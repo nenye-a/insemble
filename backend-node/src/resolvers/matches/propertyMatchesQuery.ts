@@ -4,6 +4,7 @@ import { queryField, FieldResolver, stringArg } from 'nexus';
 import { Root, Context } from 'serverTypes';
 import { LEGACY_API_URI } from '../../constants/host';
 import { PropertyMatchesType, ReceiverContact } from 'dataTypes';
+import { axiosParamsSerializer } from '../../helpers/axiosParamsCustomSerializer';
 
 type MatchBrand = {
   brandId: string;
@@ -91,7 +92,9 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
             categories.length > 0 ? JSON.stringify(categories) : undefined,
           exclusives:
             exclusive.length > 0 ? JSON.stringify(exclusive) : undefined,
+          visible: selectedSpace.marketingPreference === 'PUBLIC',
         },
+        paramsSerializer: axiosParamsSerializer,
       })
     ).data;
     let newMatchingBrands = brands?.map(
