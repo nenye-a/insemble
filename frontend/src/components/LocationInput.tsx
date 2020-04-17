@@ -44,7 +44,7 @@ export default function LocationInput(props: Props) {
       address: inputRef.current?.value,
     },
     onCompleted: (data) => {
-      let { id, formattedAddress, name, location } = data;
+      let { id, formattedAddress, name, location } = data.place;
       let { lat, lng } = location;
       onPlaceSelected &&
         onPlaceSelected({
@@ -54,6 +54,10 @@ export default function LocationInput(props: Props) {
           lat,
           lng,
         });
+      if (inputRef.current) {
+        // assign address to textinput
+        inputRef.current.value = formattedAddress;
+      }
     },
   });
 
