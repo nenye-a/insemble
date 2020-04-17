@@ -57,7 +57,8 @@ export * from '.DELETED_BASE64_STRING';
 export * from './billing/billingQuery';
 export * from './billing/paymentMethodMutation';
 export * from './billing/paymentMethodQuery';
-export * from './billing/subscriptionMutation';
+export * from './billing/tenantSubscriptionMutation';
+export * from './billing/landlordSubscriptionMutation';
 
 export * from './message/conversationsQuery';
 export * from './message/conversationQuery';
