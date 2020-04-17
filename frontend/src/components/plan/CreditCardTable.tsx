@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useQuery } from '@apollo/react-hooks';
 
 import { LoadingIndicator, Text, View } from '../../core-ui';
 import DataTable from '../DataTable';
@@ -8,13 +9,12 @@ import { PaymentMethodList } from '../../generated/PaymentMethodList';
 import AddNewCard from '../../views/TenantBilling/AddNewCard';
 
 import PaymentMethodRow from './PaymentMethodRow';
+import { GET_PAYMENT_METHOD_LIST } from '../../graphql/queries/server/billing';
 
-type Props = {
-  loading: boolean;
-  paymentData?: PaymentMethodList;
-};
-
-export default function CreditCardTable({ loading, paymentData }: Props) {
+export default function CreditCardTable() {
+  let { data: paymentListData, loading: paymentListLoading } = useQuery<PaymentMethodList>(
+    GET_PAYMENT_METHOD_LIST
+  );
   return (
     <>
       <SectionTitleContainer>
@@ -28,10 +28,10 @@ export default function CreditCardTable({ loading, paymentData }: Props) {
           <DataTable.HeaderCell>Expiration</DataTable.HeaderCell>
           <DataTable.HeaderCell width={100} align="right" />
         </DataTable.HeaderRow>
-        {loading ? (
+        {paymentListLoading ? (
           <LoadingIndicator />
         ) : (
-          paymentData?.paymentMethodList.map((p) => <PaymentMethodRow key={p.id} {...p} />)
+          paymentListData?.paymentMethodList.map((p) => <PaymentMethodRow key={p.id} {...p} />)
         )}
       </DataTable>
     </>
