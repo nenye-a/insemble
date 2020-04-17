@@ -8,12 +8,11 @@ import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../constants/theme';
 import { Button, Card, LoadingIndicator, Text, View, Alert } from '../core-ui';
 
 import { PaymentMethodList } from '../generated/PaymentMethodList';
-import { BillingList } from '../generated/BillingList';
 import {
-  GET_BILLING_LIST,
   GET_PAYMENT_METHOD_LIST,
   CANCEL_TENANT_SUBSCRIPTION,
 } from '../graphql/queries/server/billing';
+
 import { GET_TENANT_PROFILE } from '../graphql/queries/server/profile';
 import { GetTenantProfile } from '../generated/GetTenantProfile';
 import { TenantTier } from '../generated/globalTypes';
@@ -38,14 +37,6 @@ export default function TenantBilling() {
       }
     },
   });
-  let { data: billingListData, loading: billingListLoading } = useQuery<BillingList>(
-    GET_BILLING_LIST,
-    {
-      variables: {
-        status: 'paid',
-      },
-    }
-  );
 
   let [getBrand] = useLazyQuery<GetBrands>(GET_BRANDS, {
     notifyOnNetworkStatusChange: true,
@@ -59,11 +50,7 @@ export default function TenantBilling() {
     },
   });
 
-  let {
-    data: paymentListData,
-    loading: paymentListLoading,
-    refetch: refetchPaymentList,
-  } = useQuery<PaymentMethodList>(GET_PAYMENT_METHOD_LIST);
+  let { refetch: refetchPaymentList } = useQuery<PaymentMethodList>(GET_PAYMENT_METHOD_LIST);
   let { data: tenantProfile, loading: tenantProfileLoading } = useQuery<GetTenantProfile>(
     GET_TENANT_PROFILE
   );
@@ -88,8 +75,8 @@ export default function TenantBilling() {
           loading={tenantProfileLoading || cancelPlanLoading}
           onCancel={() => setCancelPlanVisible(true)}
         />
-        <BillingSummaryTable loading={billingListLoading} billingData={billingListData} />
-        <CreditCardTable loading={paymentListLoading} paymentData={paymentListData} />
+        <BillingSummaryTable />
+        <CreditCardTable />
       </Container>
       <Popup
         visible={cancelPlanVisible}

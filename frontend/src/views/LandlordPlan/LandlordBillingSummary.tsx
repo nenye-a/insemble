@@ -7,7 +7,6 @@ import { View } from '../../core-ui';
 import { PaymentMethodList } from '../../generated/PaymentMethodList';
 import { GET_PAYMENT_METHOD_LIST } from '../../graphql/queries/server/billing';
 import { BillingSummaryTable, CreditCardTable } from '../../components/plan';
-import { BILLING_LIST_MOCK, PAYMENT_METHOD_MOCK } from '../../fixtures/dummyData';
 import { BillingContextProvider } from '../../utils/billing';
 
 export default function LandlordBillingSummary() {
@@ -16,8 +15,8 @@ export default function LandlordBillingSummary() {
   return (
     <BillingContextProvider value={{ refetchPaymentList }}>
       <Container flex>
-        <BillingSummaryTable loading={false} billingData={BILLING_LIST_MOCK} />
-        <CreditCardTable loading={false} paymentData={PAYMENT_METHOD_MOCK} />
+        <BillingSummaryTable />
+        <CreditCardTable />
       </Container>
     </BillingContextProvider>
   );
