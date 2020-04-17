@@ -141,7 +141,7 @@ function TierSection({ currentTier, loading, onCancel }: TierSectionProps) {
             Your current account tier is <Text fontWeight="bold">{currentTier}</Text>
           </Text>
         )}
-        {currentTier === TenantTier.FREE || currentTier === TenantTier.EXPLORE ? (
+        {currentTier === TenantTier.FREE ? (
           <UpgradePlanButton text="Upgrade Plan" onPress={onPlanButtonClick} />
         ) : (
           <Row>
