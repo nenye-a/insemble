@@ -59,6 +59,7 @@ export * from './billing/paymentMethodMutation';
 export * from './billing/paymentMethodQuery';
 export * from './billing/tenantSubscriptionMutation';
 export * from './billing/landlordSubscriptionMutation';
+export * from './billing/landlordSubscriptionQuery';
 
 export * from './message/conversationsQuery';
 export * from './message/conversationQuery';
