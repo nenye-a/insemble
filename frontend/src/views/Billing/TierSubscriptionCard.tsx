@@ -13,7 +13,8 @@ import { FONT_SIZE_SMALL, FONT_SIZE_LARGE, FONT_SIZE_XXXLARGE } from '../../cons
 import getUnit from './helpers/getUnit';
 import { GET_PAYMENT_METHOD_LIST } from '../../graphql/queries/server/billing';
 import { PaymentMethodList } from '../../generated/PaymentMethodList';
-import { LandlordTier, TenantTier } from '../../generated/globalTypes';
+import { TenantTier } from '../../generated/globalTypes';
+import { LandlordTier } from '../../constants/SubscriptionTiers';
 
 type TierSubscriptionProps = {
   title: string;
@@ -23,7 +24,8 @@ type TierSubscriptionProps = {
   isAnnual: boolean;
   planId: string;
   isUserCurrentTier: boolean;
-  onPress: (id: string) => void;
+  onPress?: (id: string) => void;
+  onUpgradeButtonPress?: () => void;
 };
 
 export default function TierSubscription(props: TierSubscriptionProps) {
