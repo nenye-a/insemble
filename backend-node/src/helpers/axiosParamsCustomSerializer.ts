@@ -6,7 +6,7 @@ export let axiosParamsSerializer = (params: {
     .map((key) => {
       const regexSquareBracketOpen = /%5B/gi;
       const regexSquareBracketClose = /%5D/gi;
-      let encodeInput = encodeURI(params[key]);
+      let encodeInput = encodeURI(JSON.stringify(params[key]));
       let squareBracket = encodeInput
         .replace(regexSquareBracketOpen, '[')
         .replace(regexSquareBracketClose, ']');
