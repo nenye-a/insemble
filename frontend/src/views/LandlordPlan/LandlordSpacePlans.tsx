@@ -8,7 +8,7 @@ import { SECONDARY_COLOR, DARK_TEXT_COLOR } from '../../constants/colors';
 import { Text, Button, View, LoadingIndicator } from '../../core-ui';
 import { FONT_WEIGHT_LIGHT } from '../../constants/theme';
 import { GET_LANDLORD_SUBSCRIPTIONS_LIST } from '../../graphql/queries/server/landlordSubscription';
-import { GetSubscriptionList } from '../../generated/GetSubscriptionList';
+import { GetSubscriptionsList } from '../../generated/GetSubscriptionsList';
 
 type BillingList = {
   photos: string;
@@ -21,7 +21,7 @@ type BillingList = {
 
 export default function LandlordSpacePlans() {
   let history = useHistory();
-  let { data: subListData, loading: subListLoading } = useQuery<GetSubscriptionList>(
+  let { data: subListData, loading: subListLoading } = useQuery<GetSubscriptionsList>(
     GET_LANDLORD_SUBSCRIPTIONS_LIST
   );
   let subscriptionList = subListData?.landlordSubscriptions;
