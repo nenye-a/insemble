@@ -1,7 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useReducer } from 'react';
 import styled from 'styled-components';
+import { useMutation } from '@apollo/react-hooks';
+import { CardNumberElement, useElements, useStripe } from '@stripe/react-stripe-js';
+
 import { Label as BaseLabel, RadioButton, Button, Modal, View } from '../../core-ui';
 import AddNewCardForm from '../Billing/AddNewCardForm';
+import addNewCardReducer, { initialNewCardState } from '../../reducers/addNewCardReducer';
+import {
+  RegisterPaymentMethod,
+  RegisterPaymentMethodVariables,
+} from '../../generated/RegisterPaymentMethod';
+import {
+  REGISTER_PAYMENT_METHOD,
+  GET_PAYMENT_METHOD_LIST,
+} from '../../graphql/queries/server/billing';
+import { toBillingDetails } from '../../utils';
 
 export default function AddNewCard() {
   let [isModalVisible, setModalVisibility] = useState(false);
@@ -27,16 +40,63 @@ export function AddNewCardModal({
   onClose: () => void;
   preventClosingOnSubmit?: boolean;
 }) {
-  let onFinishCreatingPaymentMethod = () => {
-    !preventClosingOnSubmit && onClose();
+  let [isSaving, setSaving] = useState(false);
+  let [state, dispatch] = useReducer(addNewCardReducer, initialNewCardState);
+  let stripe = useStripe();
+  let elements = useElements();
+  let [registerPaymentMethod, { loading }] = useMutation<
+    RegisterPaymentMethod,
+    RegisterPaymentMethodVariables
+  >(REGISTER_PAYMENT_METHOD, {
+    refetchQueries: [
+      {
+        query: GET_PAYMENT_METHOD_LIST,
+      },
+    ],
+    awaitRefetchQueries: true,
+  });
+
+  let disableSave = !stripe || !elements || isSaving || loading;
+
+  let onSavePress = async () => {
+    if (!stripe || !elements) {
+      return;
+    }
+    let cardNumberEl = elements.getElement(CardNumberElement);
+    if (cardNumberEl) {
+      setSaving(true);
+      let result = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardNumberEl,
+        billing_details: toBillingDetails(state),
+      });
+      setSaving(false);
+      if (result.error || !result.paymentMethod) {
+        // eslint-disable-next-line no-console
+        console.log('Failed creating payment method', result.error);
+        return;
+      }
+
+      await registerPaymentMethod({
+        variables: {
+          paymentMethodId: result.paymentMethod.id,
+        },
+      });
+      dispatch({ type: 'RESET' });
+      !preventClosingOnSubmit && onClose();
+    }
   };
+
   return (
     <AddNewCardModalContainer visible={isModalVisible} onClose={onClose}>
       <Label text="Payment Method" />
       <PaymentsRowView>
         <RadioButton name="method" title="Credit Card" isSelected={true} onPress={() => {}} />
       </PaymentsRowView>
-      <AddNewCardForm onFinishCreatingPaymentMethod={onFinishCreatingPaymentMethod} />
+      <AddNewCardForm state={state} dispatch={dispatch} />
+      <SaveButtonContainer>
+        <Button text="Save" onPress={onSavePress} loading={disableSave} />
+      </SaveButtonContainer>
     </AddNewCardModalContainer>
   );
 }
@@ -58,4 +118,8 @@ const PaymentsRowView = styled(RowView)`
 
 const Label = styled(BaseLabel)`
   padding-bottom: 8px;
+`;
+
+const SaveButtonContainer = styled(View)`
+  align-items: flex-end;
 `;

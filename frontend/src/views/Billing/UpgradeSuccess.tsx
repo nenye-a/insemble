@@ -1,11 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
+
 import { View, Button, Text } from '../../core-ui';
 import CardFooter from '../../components/layout/OnboardingFooter';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_LIGHT } from '../../constants/theme';
 import { DARK_TEXT_COLOR } from '../../constants/colors';
 
 export default function UpgradeSuccess() {
+  let history = useHistory();
   return (
     <>
       <Container>
@@ -15,7 +18,12 @@ export default function UpgradeSuccess() {
         </Text>
       </Container>
       <CardFooter>
-        <Button text="Home" />
+        <Button
+          text="Home"
+          onPress={() => {
+            history.push('/');
+          }}
+        />
       </CardFooter>
     </>
   );

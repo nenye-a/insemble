@@ -13,6 +13,7 @@ export { default as localStorage } from './localStorage';
 export { default as numberFormatter } from './numberFormatter';
 export { default as omitTypename } from './omitTypename';
 export { default as roundDecimal } from './roundDecimal';
+export { default as toBillingDetails } from './toBillingDetails';
 export { default as urlEncode } from './urlEncode';
 export { default as useCredentials } from './useCredentials';
 export { default as useID } from './useID';

@@ -1,93 +1,19 @@
-import React, { useReducer, useState } from 'react';
+import React, { Dispatch } from 'react';
 import styled from 'styled-components';
-import { CardNumberElement, useElements, useStripe } from '@stripe/react-stripe-js';
-import { useMutation } from '@apollo/react-hooks';
 
-import { View, TextInput, Button } from '../../core-ui';
+import { View, TextInput } from '../../core-ui';
 import { NumberInput, ExpiryInput, CvcInput } from './CardInput';
-import {
-  RegisterPaymentMethod,
-  RegisterPaymentMethodVariables,
-} from '../../generated/RegisterPaymentMethod';
-import {
-  REGISTER_PAYMENT_METHOD,
-  GET_PAYMENT_METHOD_LIST,
-} from '../../graphql/queries/server/billing';
-
-let initialNewCardState = {
-  name: '',
-  address: '',
-  address2: '',
-  city: '',
-  state: '',
-  zipcode: '',
-};
-
-type NewCardState = typeof initialNewCardState;
-type NewCardAction =
-  | {
-      type: 'EDIT';
-      key: keyof NewCardState;
-      value: string;
-    }
-  | {
-      type: 'RESET';
-    };
+import { NewCardState, NewCardAction } from '../../reducers/addNewCardReducer';
 
 type Props = {
   onFinishCreatingPaymentMethod?: () => void;
-  showSaveButton?: boolean;
+  state: NewCardState;
+  dispatch: Dispatch<NewCardAction>;
 };
 
 export default function AddNewCardForm(props: Props) {
-  let { onFinishCreatingPaymentMethod, showSaveButton = true } = props;
-  let [state, dispatch] = useReducer(reducer, initialNewCardState);
-  let [isSaving, setIsSaving] = useState(false);
-  let stripe = useStripe();
-  let elements = useElements();
+  let { state, dispatch } = props;
 
-  let [registerPaymentMethod, { loading }] = useMutation<
-    RegisterPaymentMethod,
-    RegisterPaymentMethodVariables
-  >(REGISTER_PAYMENT_METHOD, {
-    refetchQueries: [
-      {
-        query: GET_PAYMENT_METHOD_LIST,
-      },
-    ],
-    awaitRefetchQueries: true,
-  });
-
-  let disableSave = !stripe || !elements || isSaving || loading;
-
-  let onSavePress = async () => {
-    if (!stripe || !elements) {
-      return;
-    }
-    let cardNumberEl = elements.getElement(CardNumberElement);
-    if (cardNumberEl) {
-      setIsSaving(true);
-      let result = await stripe.createPaymentMethod({
-        type: 'card',
-        card: cardNumberEl,
-        billing_details: toBillingDetails(state),
-      });
-      setIsSaving(false);
-      if (result.error || !result.paymentMethod) {
-        // eslint-disable-next-line no-console
-        console.log('Failed creating payment method', result.error);
-        return;
-      }
-
-      await registerPaymentMethod({
-        variables: {
-          paymentMethodId: result.paymentMethod.id,
-        },
-      });
-      onFinishCreatingPaymentMethod && onFinishCreatingPaymentMethod();
-      dispatch({ type: 'RESET' });
-    }
-  };
   return (
     <View>
       <RowView>
@@ -143,37 +69,8 @@ export default function AddNewCardForm(props: Props) {
           containerStyle={{ ...inputRow, maxWidth: '80px' }}
         />
       </RowView>
-      {showSaveButton && (
-        <SaveButtonContainer>
-          <Button text="Save" onPress={onSavePress} loading={disableSave} />
-        </SaveButtonContainer>
-      )}
     </View>
   );
-}
-
-function toBillingDetails(state: NewCardState) {
-  return {
-    ...(state.name ? { name: state.name } : undefined),
-    address: {
-      ...(state.city ? { city: state.city } : undefined),
-      ...(state.address ? { line1: state.address } : undefined),
-      ...(state.address2 ? { line2: state.address2 } : undefined),
-      ...(state.zipcode ? { postal_code: state.zipcode } : undefined),
-      ...(state.state ? { state: state.state } : undefined),
-    },
-  };
-}
-
-function reducer(state: NewCardState, action: NewCardAction) {
-  switch (action.type) {
-    case 'EDIT':
-      return { ...state, [action.key]: action.value };
-    case 'RESET':
-      return { ...initialNewCardState };
-    default:
-      return state;
-  }
 }
 
 let inputRow = {
@@ -184,8 +81,4 @@ let inputRow = {
 
 const RowView = styled(View)`
   flex-direction: row;
-`;
-
-const SaveButtonContainer = styled(View)`
-  align-items: flex-end;
 `;

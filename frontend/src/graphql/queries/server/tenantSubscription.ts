@@ -10,3 +10,12 @@ export const CREATE_PLAN_SUBSCRIPTION = gql`
     }
   }
 `;
+
+export const EDIT_TENANT_SUBSCRIPTION = gql`
+  mutation EditTenantSubscription($planId: String!, $paymentMethodId: String) {
+    editTenantSubscription(planId: $planId, paymentMethodId: $paymentMethodId) {
+      id
+      status
+    }
+  }
+`;
