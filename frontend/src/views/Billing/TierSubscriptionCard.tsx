@@ -1,18 +1,23 @@
-import React from 'react';
-import styled, { css } from 'styled-components';
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { useQuery } from '@apollo/react-hooks';
 
-import { View, Text, Button } from '../../core-ui';
+import { View, Text, Button, Modal, LoadingIndicator } from '../../core-ui';
+import { AddNewCardModal } from '../TenantBilling/AddNewCard';
+import CardContainer, { CardTitleContainer } from '../TenantPlan/CardContainer';
+import SubscriptionConfirmationModal from '../TenantPlan/SubscriptionConfirmationModal';
+
 import { WHITE, THEME_COLOR, SECONDARY_COLOR } from '../../constants/colors';
-import {
-  FONT_SIZE_SMALL,
-  FONT_SIZE_LARGE,
-  FONT_SIZE_XXXLARGE,
-  DEFAULT_BORDER_RADIUS,
-} from '../../constants/theme';
+import { FONT_SIZE_SMALL, FONT_SIZE_LARGE, FONT_SIZE_XXXLARGE } from '../../constants/theme';
+
 import getUnit from './helpers/getUnit';
+import { GET_PAYMENT_METHOD_LIST } from '../../graphql/queries/server/billing';
+import { PaymentMethodList } from '../../generated/PaymentMethodList';
+import { TenantTier } from '../../generated/globalTypes';
+import { LandlordTier } from '../../constants/SubscriptionTiers';
 
 type TierSubscriptionProps = {
-  title?: string;
+  title: string;
   tierName: string;
   benefits: Array<string>;
   price: number;
@@ -24,53 +29,83 @@ type TierSubscriptionProps = {
 };
 
 export default function TierSubscription(props: TierSubscriptionProps) {
-  let {
-    price,
-    isAnnual,
-    benefits,
-    isUserCurrentTier,
-    tierName,
-    title = '',
-    onUpgradeButtonPress,
-  } = props;
+  let { price, isAnnual, benefits, isUserCurrentTier, tierName, title, planId } = props;
+  let [isModalVisible, setModalVisibility] = useState(false);
+  let { data: paymentListData, loading: paymentListLoading } = useQuery<PaymentMethodList>(
+    GET_PAYMENT_METHOD_LIST
+  );
+  let onCloseModal = () => setModalVisibility(false);
 
   return (
-    <TierSubscriptionWrapper>
-      <Content>
-        {title && (
-          <TitleContainer>
-            <Text color={WHITE}>{title}</Text>
-          </TitleContainer>
-        )}
-        <TypeWrapper hasTitle={!!title}>
-          <TypeText>{tierName}</TypeText>
-        </TypeWrapper>
-        <PlanSection>
-          <PlanPrice>
-            {price === 0 ? (
-              <PriceText>{tierName}</PriceText>
-            ) : (
-              <PlanPriceContainer>
-                <PlanTitleText>Starting at</PlanTitleText>
-                <PlanPriceTextContainer>
-                  <PriceText>
-                    ${price}
-                    <Text>/{getUnit(isAnnual)}</Text>
-                  </PriceText>
-                </PlanPriceTextContainer>
-              </PlanPriceContainer>
-            )}
-          </PlanPrice>
-          {benefits.map((text, index) => (
-            <BenefitItem benefit={text} key={index} />
-          ))}
-        </PlanSection>
-      </Content>
-
-      {onUpgradeButtonPress && (
-        <UpgradeButton text="Upgrade" onPress={onUpgradeButtonPress} disabled={isUserCurrentTier} />
+    <>
+      {paymentListLoading ? (
+        <Modal
+          visible={isModalVisible}
+          onClose={onCloseModal}
+          style={{ width: 'fit-content', height: 'fit-content' }}
+        >
+          <LoadingIndicator />
+        </Modal>
+      ) : (paymentListData?.paymentMethodList?.length || 0) > 0 ? (
+        <SubscriptionConfirmationModal
+          isVisible={isModalVisible}
+          onClose={onCloseModal}
+          tierName={tierName}
+          planId={planId}
+          price={price}
+          isAnnual={isAnnual}
+          paymentMethodList={paymentListData?.paymentMethodList || []}
+        />
+      ) : (
+        <AddNewCardModal
+          isModalVisible={isModalVisible}
+          onClose={onCloseModal}
+          preventClosingOnSubmit={true}
+        />
       )}
-    </TierSubscriptionWrapper>
+
+      <TierSubscriptionWrapper>
+        <CardContainer title={title}>
+          <TypeWrapper>
+            <TypeText>{tierName}</TypeText>
+          </TypeWrapper>
+          <PlanSection>
+            <PlanPrice>
+              {price === 0 ? (
+                <PriceText>{tierName}</PriceText>
+              ) : (
+                <PlanPriceContainer>
+                  <PlanTitleText>Starting at</PlanTitleText>
+                  <PlanPriceTextContainer>
+                    <PriceText>
+                      ${price}
+                      <Text>/{getUnit(isAnnual)}</Text>
+                    </PriceText>
+                  </PlanPriceTextContainer>
+                </PlanPriceContainer>
+              )}
+            </PlanPrice>
+
+            <View>
+              {benefits.map((text, index) => (
+                <BenefitItem benefit={text} key={index} />
+              ))}
+            </View>
+          </PlanSection>
+        </CardContainer>
+        <UpgradeButton
+          text={
+            tierName === LandlordTier.PROFESSIONAL || TenantTier.PROFESSIONAL
+              ? 'Upgrade (Free Trial Currently Active)'
+              : 'Upgrade'
+          }
+          onPress={() => {
+            setModalVisibility(true);
+          }}
+          disabled={isUserCurrentTier}
+        />
+      </TierSubscriptionWrapper>
+    </>
   );
 }
 
@@ -83,9 +118,6 @@ function BenefitItem({ benefit }: { benefit: string }) {
   );
 }
 
-type TypeWrapperProps = ViewProps & {
-  hasTitle: boolean;
-};
 const PlanTitleText = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
 `;
@@ -112,7 +144,7 @@ const BenefitCheck = styled(View)`
 `;
 const BenefitItemContainer = styled(View)`
   flex-direction: row;
-  align-items: baseline;
+  flex: 1;
 `;
 const BenefitItemText = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
@@ -122,26 +154,20 @@ const BenefitItemText = styled(Text)`
 const PlanSection = styled(View)`
   padding: 0 16px 32px;
   background-color: white;
-  border-bottom-left-radius: ${DEFAULT_BORDER_RADIUS};
-  border-bottom-right-radius: ${DEFAULT_BORDER_RADIUS};
+  border-bottom-left-radius: 5;
+  border-bottom-right-radius: 5;
   flex: 1;
 `;
 const PriceText = styled(Text)`
   text-align: center;
   font-size: ${FONT_SIZE_XXXLARGE};
   font-weight: 500;
-  line-height: 1.5;
+  line-height: 1;
 `;
-const TypeWrapper = styled(View)<TypeWrapperProps>`
+const TypeWrapper = styled(View)`
   justify-content: center;
   align-items: center;
   background-color: #fafafa;
-  ${(props) =>
-    props.hasTitle &&
-    css`
-      border-top-left-radius: ${DEFAULT_BORDER_RADIUS};
-      border-top-right-radius: ${DEFAULT_BORDER_RADIUS};
-    `}
 `;
 const TypeText = styled(Text)`
   font-size: ${FONT_SIZE_LARGE};
@@ -154,23 +180,6 @@ const UpgradeButton = styled(Button)`
   margin-top: 12px;
   cursor: pointer;
 `;
-const TitleContainer = styled(View)`
-  background-color: ${THEME_COLOR};
-  border-top-left-radius: ${DEFAULT_BORDER_RADIUS};
-  border-top-right-radius: ${DEFAULT_BORDER_RADIUS};
-  position: absolute;
-  z-index: 1;
-  top: -26px;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  height: 26px;
-`;
-const Content = styled(View)`
-  box-shadow: 0px 0px 23px -11px rgba(0, 0, 0, 0.75);
-  border-radius: ${DEFAULT_BORDER_RADIUS};
-  height: 300px;
-`;
 const TierSubscriptionWrapper = styled(View)`
   margin-right: 12px;
   &:last-child {
@@ -178,6 +187,9 @@ const TierSubscriptionWrapper = styled(View)`
   }
   &:hover {
     cursor: pointer;
+    ${CardTitleContainer} {
+      background-color: ${THEME_COLOR};
+    }
     ${UpgradeButton}:enabled {
       background-color: ${THEME_COLOR};
     }
