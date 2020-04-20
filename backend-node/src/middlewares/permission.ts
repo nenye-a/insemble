@@ -33,6 +33,14 @@ let permissions = shield({
     editProperty: isLandlordAuthenticated,
     createSpace: isLandlordAuthenticated,
     deleteSpace: isLandlordAuthenticated,
+    createTenantSubscription: isTenantAuthenticated,
+    editTenantSubscription: isTenantAuthenticated,
+    cancelTenantSubscription: isTenantAuthenticated,
+    createLandlordSubscription: isLandlordAuthenticated,
+    createManyLandlordSubscription: isLandlordAuthenticated,
+    editLandlordSubscription: isLandlordAuthenticated,
+    editManyLandlordSubscription: isLandlordAuthenticated,
+    cancelLandlordSubscription: isLandlordAuthenticated,
   },
 });
 
