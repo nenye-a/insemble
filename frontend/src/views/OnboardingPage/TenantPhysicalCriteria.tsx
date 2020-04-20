@@ -45,27 +45,31 @@ export default function TenantPhysicalCriteria(props: Props) {
     physicalSiteCriteria?.spaceType || []
   );
   let [selectedEquipmentOptions, setSelectedEquipmentOptions] = useState<Array<string>>([]);
-  let [minSqft, setMinSqft] = useState('');
-  let [maxSqft, setMaxSqft] = useState('');
+  let [minSqft, setMinSqft] = useState(state.physicalSiteCriteria.minSize || '');
+  let [maxSqft, setMaxSqft] = useState(state.physicalSiteCriteria.maxSize || '');
   let sqftError = useMemo(() => getRangeInputError(minSqft, maxSqft), [minSqft, maxSqft]);
   // let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
-  let { errors, handleSubmit } = useForm();
+  let { errors, handleSubmit, watch } = useForm();
 
+  let saveFormState = (fieldValues?: FieldValues) => {
+    let minFrontageWidth = fieldValues ? fieldValues.minFrontageWidth : watch('minFrontageWidth');
+    dispatch({
+      type: 'SAVE_CHANGES_PHYSICAL_SITE_CRITERIA',
+      values: {
+        physicalSiteCriteria: {
+          minSize: minSqft,
+          maxSize: maxSqft,
+          minFrontageWidth,
+          equipments: selectedEquipmentOptions,
+          spaceType: selectedSpaceOptions,
+        },
+      },
+    });
+  };
   let onSubmit = (fieldValues: FieldValues) => {
     if (!sqftError) {
       if (Object.keys(errors).length === 0) {
-        dispatch({
-          type: 'SAVE_CHANGES_PHYSICAL_SITE_CRITERIA',
-          values: {
-            physicalSiteCriteria: {
-              minSize: minSqft,
-              maxSize: maxSqft,
-              minFrontageWidth: fieldValues.minFrontageWidth,
-              equipments: selectedEquipmentOptions,
-              spaceType: selectedSpaceOptions,
-            },
-          },
-        });
+        saveFormState(fieldValues);
         if (signedIn) {
           let { confirmBusinessDetail, tenantGoals, targetCustomers, physicalSiteCriteria } = state;
           createBrand({
@@ -133,6 +137,7 @@ export default function TenantPhysicalCriteria(props: Props) {
             onChange={setSelectedEquipmentOptions}
             containerStyle={{ marginBottom: 12 }}
             inputContainerStyle={{ flex: 1 }}
+            defaultSelected={state.physicalSiteCriteria.equipments}
           />
         )}
         <LabelText text="Space type" />
@@ -164,7 +169,10 @@ export default function TenantPhysicalCriteria(props: Props) {
           text="Back"
           mode="transparent"
           type="submit"
-          onPress={() => history.goBack()}
+          onPress={() => {
+            saveFormState();
+            history.goBack();
+          }}
         />
         <Button text={signedIn ? 'Submit' : 'Next'} type="submit" loading={loading} />
       </OnboardingFooter>
@@ -172,11 +180,14 @@ export default function TenantPhysicalCriteria(props: Props) {
   );
 }
 
-function getRangeInputError(minValue: string, maxValue: string) {
-  if (minValue && maxValue) {
-    if (!validateNumber(minValue) || !validateNumber(maxValue)) {
+function getRangeInputError(minValue: string | number, maxValue: string | number) {
+  let minValueString = minValue.toString();
+  let maxValueString = maxValue.toString();
+
+  if (minValueString && maxValueString) {
+    if (!validateNumber(minValueString) || !validateNumber(maxValueString)) {
       return 'Input should number';
-    } else if (Number(minValue) >= Number(maxValue)) {
+    } else if (Number(minValueString) >= Number(maxValueString)) {
       return 'Minimum value should be lower than maximum value';
     }
     return '';

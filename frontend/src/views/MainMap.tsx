@@ -117,10 +117,12 @@ export default function MainMap() {
   let { isDesktop } = useViewport();
   let params = useParams<BrandId>();
   let { brandId } = params;
-  let { data: tenantMatchesData, loading, refetch: tenantMatchesRefetch } = useQuery<
-    TenantMatches,
-    TenantMatchesVariables
-  >(GET_TENANT_MATCHES_DATA, {
+  let {
+    data: tenantMatchesData,
+    loading: tenantMatchesLoading,
+    error: tenantMatchesError,
+    refetch: tenantMatchesRefetch,
+  } = useQuery<TenantMatches, TenantMatchesVariables>(GET_TENANT_MATCHES_DATA, {
     variables: {
       brandId,
     },
@@ -331,7 +333,6 @@ export default function MainMap() {
       minAge: tenantMatchesData?.tenantMatches.minAge,
       maxAge: tenantMatchesData?.tenantMatches.maxAge,
       personas: tenantMatchesData?.tenantMatches.personas,
-
       commute:
         (tenantMatchesData?.tenantMatches?.commute &&
           tenantMatchesData.tenantMatches.commute.map(({ displayValue }) => displayValue)) ||
@@ -398,7 +399,7 @@ export default function MainMap() {
         categories,
       });
     }
-  }, [loading, tenantMatchesData]);
+  }, [tenantMatchesLoading, tenantMatchesData]);
 
   useEffect(() => {
     setAlertUpdateMapVisible(!filtersAreEqual);
@@ -434,7 +435,7 @@ export default function MainMap() {
           onAddressSearch={setAddressSearchLocation}
           brandName={tenantMatchesData?.tenantMatches.name}
         />
-        {(loading || editBrandLoading) && (
+        {(tenantMatchesLoading || editBrandLoading) && (
           <LoadingOverlay>
             <LoadingIndicator visible={true} color="white" size="large" />
             <Text fontSize={FONT_SIZE_LARGE} color={WHITE}>
@@ -450,12 +451,13 @@ export default function MainMap() {
             text={mapErrorMessage}
             onClose={() => setMapErrorMessage('')}
           />
-          <MapAlert
-            visible={alertUpdateMapVisible}
-            text="Please press the Update button below to update the maps with your desired filters."
-            onClose={() => setAlertUpdateMapVisible(false)}
-          />
-
+          {!tenantMatchesLoading && !tenantMatchesError && (
+            <MapAlert
+              visible={alertUpdateMapVisible}
+              text="Please press the Update button below to update the maps with your desired filters."
+              onClose={() => setAlertUpdateMapVisible(false)}
+            />
+          )}
           {!isLoading && (
             <MapContainer
               onMapError={(val) => setMapErrorMessage(val)}
