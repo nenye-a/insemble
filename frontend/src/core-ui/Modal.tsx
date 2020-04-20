@@ -31,7 +31,7 @@ export default function Modal({
   if (visible) {
     let onModalDialogClick = (e: Event) => {
       e.stopPropagation();
-      otherProps?.onClick();
+      otherProps?.onClick && otherProps.onClick();
     };
     return ReactDOM.createPortal(
       <Overlay style={overlayStyle} onClick={onClose}>

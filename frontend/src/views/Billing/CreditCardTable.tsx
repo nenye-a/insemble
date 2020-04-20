@@ -1,10 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useMutation } from '@apollo/react-hooks';
 
 import DataTable from '../../components/DataTable';
 import { Text, RadioButton } from '../../core-ui';
 import { PaymentMethodList_paymentMethodList as PaymentMethodList } from '../../generated/PaymentMethodList';
 import { FONT_WEIGHT_LIGHT } from '../../constants/theme';
+import {
+  ChangeDefaultPaymentMethod,
+  ChangeDefaultPaymentMethodVariables,
+} from '../../generated/ChangeDefaultPaymentMethod';
+import { CHANGE_DEFAULT_PAYMENT_METHOD } from '../../graphql/queries/server/billing';
 
 type Props = {
   paymentMethodList: Array<PaymentMethodList>;
@@ -27,7 +33,12 @@ export default function CreditCardTable(props: Props) {
 }
 
 function PaymentMethodRow(props: PaymentMethodList) {
-  let { lastFourDigits, expMonth, expYear, isDefault } = props;
+  let { id, lastFourDigits, expMonth, expYear, isDefault } = props;
+  let [changeDefaultPaymentMethod, { loading: changeDefaultLoading }] = useMutation<
+    ChangeDefaultPaymentMethod,
+    ChangeDefaultPaymentMethodVariables
+  >(CHANGE_DEFAULT_PAYMENT_METHOD);
+
   return (
     <DataTable.Row>
       <DataTable.Cell width={100}>
@@ -35,7 +46,17 @@ function PaymentMethodRow(props: PaymentMethodList) {
           name="primary"
           title=""
           isSelected={isDefault}
-          onPress={() => {}}
+          onPress={async () => {
+            if (isDefault || changeDefaultLoading) {
+              return;
+            }
+            await changeDefaultPaymentMethod({
+              variables: {
+                paymentMethodId: id,
+              },
+              refetchQueries: ['PaymentMethodList'],
+            });
+          }}
         />
       </DataTable.Cell>
       <DataTable.Cell width={220}>

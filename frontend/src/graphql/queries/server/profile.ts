@@ -13,6 +13,7 @@ export const GET_TENANT_PROFILE = gql`
       title
       tier
       pendingEmail
+      stripeSubscriptionId
     }
   }
 `;

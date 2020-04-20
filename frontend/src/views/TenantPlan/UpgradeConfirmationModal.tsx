@@ -27,7 +27,7 @@ export default function UpgradeConfirmationModal() {
   let history = useHistory<UpgradeConfirmationModalState>();
   let params = useParams<Param>();
   let { step = 'confirm-plan' } = params;
-  let { tierName, price, isAnnual } = history.location.state;
+  let { tierName, price, isAnnual, planId } = history.location.state;
   let { data: paymentListData, loading: paymentListLoading } = useQuery<PaymentMethodList>(
     GET_PAYMENT_METHOD_LIST
   );
@@ -47,6 +47,7 @@ export default function UpgradeConfirmationModal() {
           tierName={tierName}
           price={price}
           isAnnual={isAnnual}
+          planId={planId}
         />
       ),
       path: 'confirm-payment',
@@ -73,10 +74,11 @@ export default function UpgradeConfirmationModal() {
         onClose={() => {
           history.push('/user/plan');
         }}
+        progress={SEGMENTS.indexOf(selectedPage) / SEGMENTS.length}
       >
         <Card
           titleBackground="purple"
-          title="Lets confirm your subscription"
+          title={selectedPage.title}
           // TODO: make this default Card styling
           titleProps={{
             style: {
