@@ -102,7 +102,7 @@ function MapContainer({
 
   let onMapClick = async (latLng: LatLng) => {
     let { lat, lng } = latLng;
-
+    onMapError && onMapError('');
     getLocation({
       variables: {
         brandId,
@@ -122,7 +122,7 @@ function MapContainer({
 
   let onPropertyMarkerClick = (latLng: LatLng, propertyId: string) => {
     let { lat, lng } = latLng;
-
+    onMapError && onMapError('');
     getLocation({
       variables: {
         brandId,
