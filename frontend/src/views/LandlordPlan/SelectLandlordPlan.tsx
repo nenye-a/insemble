@@ -4,10 +4,12 @@ import styled from 'styled-components';
 import { View, SegmentedControl } from '../../core-ui';
 import TierSubscriptionCard from '../Billing/TierSubscriptionCard';
 import { LandlordTiers } from '../../constants/SubscriptionTiers';
+import { useHistory } from 'react-router-dom';
 
 export default function SelectLandlordPlan() {
   let [isAnnual, setIsAnnual] = useState(0);
-
+  let history = useHistory();
+  let {} = history.location.state;
   return (
     <Container>
       <SegmentedControl
@@ -27,14 +29,20 @@ export default function SelectLandlordPlan() {
               title={title}
               tierName={name}
               benefits={benefits}
-              isAnnual={!!isAnnual}
-              onUpgradeButtonPress={() => {
-                // navigate to confirm plan
-              }}
               planId={isAnnual ? yearly.id : monthly.id}
               price={isAnnual ? yearly.price : monthly.price}
               // TODO: change to tierType
               isUserCurrentTier={false}
+              isAnnual={!!isAnnual}
+              onUpgradeButtonPress={() => {
+                history.push('/landlord/change-plan/select-plan', {
+                  planId: isAnnual ? yearly.id : monthly.id,
+                  price: isAnnual ? yearly.price : monthly.price,
+                  tierName: name,
+                  benefits: benefits,
+                  ...history.location.state,
+                });
+              }}
             />
           );
         })}

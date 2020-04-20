@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Card, View, Text as BaseText, Divider } from '../../core-ui';
 import { LIGHTER_GREY, THEME_COLOR, DARK_TEXT_COLOR, GREY_DIVIDER } from '../../constants/colors';
 import SvgPeopleGroup from '../../components/icons/people-group';
+import SvgBusiness from '../../components/icons/business';
 import {
   FONT_SIZE_SMALL,
   FONT_SIZE_MEDIUM,
@@ -48,7 +49,7 @@ export default function PlanCard(props: Props) {
         )}
       </LeftContainer>
       <RightContainer flex>
-        <SvgPeopleGroup />
+        {role === Role.TENANT ? <SvgPeopleGroup /> : <SvgBusiness />}
         <Text
           color={DARK_TEXT_COLOR}
           fontSize={FONT_SIZE_SMALL}

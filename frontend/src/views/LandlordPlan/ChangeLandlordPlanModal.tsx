@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
 
-import { Card, Modal } from '../../core-ui';
+import { Card, Modal, LoadingIndicator } from '../../core-ui';
 import { DEFAULT_BORDER_RADIUS, FONT_WEIGHT_NORMAL } from '../../constants/theme';
+import ConfirmLandlordPlanUpgrade from './ConfirmLandlordPlanUpgrade';
+import { PaymentMethodList } from '../../generated/PaymentMethodList';
+import LandlordBillingInfo from './LandlordBillingInfo';
+import { GET_PAYMENT_METHOD_LIST } from '../../graphql/queries/server/billing';
 import SelectLandlordPlan from './SelectLandlordPlan';
 
 type Param = {
@@ -13,13 +18,39 @@ type Param = {
 export default function ChangeLandlordPlanModal() {
   let [selectedStepIndex, setSelectedStepIndex] = useState(0);
   let params = useParams<Param>();
+  let history = useHistory();
+  let { tierName, price, isAnnual, spaceId, planId } = history.location.state;
   let { step = 'select-plan' } = params;
+  let { data: paymentListData, loading: paymentListLoading } = useQuery<PaymentMethodList>(
+    GET_PAYMENT_METHOD_LIST
+  );
 
   const SEGMENTS = [
     {
       title: "Let's confirm  your subscription",
       content: <SelectLandlordPlan />,
+      path: 'view-plan',
+      props: {},
+    },
+    {
+      title: "Let's confirm  your subscription",
+      content: <ConfirmLandlordPlanUpgrade tierName={tierName} price={price} isAnnual={isAnnual} />,
       path: 'select-plan',
+      props: {},
+    },
+    {
+      title: "Let's confirm  your subscription",
+      content: (
+        <LandlordBillingInfo
+          paymentMethodList={paymentListData?.paymentMethodList || []}
+          tierName={tierName}
+          price={price}
+          isAnnual={isAnnual}
+          spaceId={spaceId}
+          planId={planId}
+        />
+      ),
+      path: 'select-payment',
       props: {},
     },
   ];
@@ -38,7 +69,7 @@ export default function ChangeLandlordPlanModal() {
       visible={true}
       hideCloseButton={true}
       onClose={() => {
-        // navigate to landlord billing
+        history.push('landlord/billing');
       }}
     >
       <Card
@@ -52,7 +83,7 @@ export default function ChangeLandlordPlanModal() {
           },
         }}
       >
-        {Content}
+        {paymentListLoading ? <LoadingIndicator /> : Content}
       </Card>
     </Container>
   );

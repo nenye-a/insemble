@@ -1,11 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useQuery } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
 import DataTable from '../../components/DataTable';
 import { SECONDARY_COLOR, DARK_TEXT_COLOR } from '../../constants/colors';
-import { Text, Button, View } from '../../core-ui';
+import { Text, Button, View, LoadingIndicator } from '../../core-ui';
 import { FONT_WEIGHT_LIGHT } from '../../constants/theme';
+import { GET_LANDLORD_SUBSCRIPTIONS_LIST } from '../../graphql/queries/server/landlordSubscription';
+import { GetSubscriptionList } from '../../generated/GetSubscriptionList';
 
 type BillingList = {
   photos: string;
@@ -13,20 +16,15 @@ type BillingList = {
   space: number;
   plan: string;
   cost: string;
+  spaceId: string;
 };
 
 export default function LandlordSpacePlans() {
   let history = useHistory();
-  // TODO: connect to BE
-  let billingList = [
-    {
-      photos: 'asd',
-      address: '4th street',
-      space: 2,
-      plan: 'Pro',
-      cost: '30/monthly',
-    },
-  ];
+  let { data: subListData, loading: subListLoading } = useQuery<GetSubscriptionList>(
+    GET_LANDLORD_SUBSCRIPTIONS_LIST
+  );
+  let subscriptionList = subListData?.landlordSubscriptions;
   return (
     <Container>
       <RowView>
@@ -35,6 +33,7 @@ export default function LandlordSpacePlans() {
           text="Change multiple plans"
           mode="transparent"
           onPress={() => {
+            //TODO:Redirect to change multiple plans
             history.push('/landlord/change-plans/view-plans');
           }}
         />
@@ -55,9 +54,22 @@ export default function LandlordSpacePlans() {
           </DataTable.HeaderCell>
           <DataTable.HeaderCell width={140} align="center"></DataTable.HeaderCell>
         </DataTable.HeaderRow>
-        {billingList.map((item, index) => (
-          <ListOfBilling key={index} {...item} />
-        ))}
+        {subListLoading ? (
+          <LoadingIndicator />
+        ) : (
+          subscriptionList &&
+          subscriptionList.map((item, index) => (
+            <ListOfBilling
+              key={index}
+              photos={item.mainPhoto}
+              address={item.location.address}
+              space={item.spaceIndex}
+              plan={item.tier}
+              cost={item.cost}
+              spaceId={item.id}
+            />
+          ))
+        )}
       </DataTable>
     </Container>
   );
@@ -66,8 +78,8 @@ export default function LandlordSpacePlans() {
 type BillingRowProps = BillingList;
 
 function ListOfBilling(props: BillingRowProps) {
-  let { photos, address, space, plan, cost } = props;
-
+  let { photos, address, space, plan, cost, spaceId } = props;
+  let history = useHistory();
   return (
     <DataTable.Row height={'50px'}>
       <DataTable.Cell width={260} align="center">
@@ -84,7 +96,20 @@ function ListOfBilling(props: BillingRowProps) {
         <TableText>${cost}</TableText>
       </DataTable.Cell>
       <DataTable.Cell width={140} align="center">
-        <Button text="Change plan" mode="transparent" onPress={() => {}} />
+        <Button
+          text="Change plan"
+          mode="transparent"
+          onPress={() =>
+            history.push('/landlord/change-plan/view-plan', {
+              photos,
+              address,
+              space,
+              plan,
+              cost,
+              spaceId,
+            })
+          }
+        />
       </DataTable.Cell>
     </DataTable.Row>
   );
