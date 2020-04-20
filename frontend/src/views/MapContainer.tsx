@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
 import { useParams, useHistory } from 'react-router-dom';
@@ -56,14 +56,10 @@ function MapContainer({
 }: Props) {
   let history = useHistory();
   let { brandId = '' } = useParams();
-  let [getLocation, { data, loading }] = useLazyQuery<LocationPreview, LocationPreviewVariables>(
-    GET_LOCATION_PREVIEW,
-    {
-      onError: (err) => {
-        onMapError && onMapError(err.message);
-      },
-    }
-  );
+  let [getLocation, { data, loading, error }] = useLazyQuery<
+    LocationPreview,
+    LocationPreviewVariables
+  >(GET_LOCATION_PREVIEW);
   let heatmapData =
     matchingLocations && matchingLocations
       ? matchingLocations.map(({ lat, lng, match }) => ({
@@ -141,6 +137,12 @@ function MapContainer({
     setSelectedPropertyLatLng(latLng);
     setSelectedPropertyId(propertyId);
   };
+
+  useEffect(() => {
+    if (error && onMapError) {
+      onMapError(error.message);
+    }
+  }, [error, onMapError]);
 
   return (
     <div>

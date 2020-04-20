@@ -176,9 +176,9 @@ export default function Graphic(props: Props) {
    <PopulationText>k</PopulationText>
  </RowedView> */}
           </RowedView>
-          <ChartContainer>
+          <ChartContainer flex ref={chartContainerRef}>
             <BarChart
-              width={chartContainerRef.current?.clientWidth || 720} // TODO: get width based on device's width
+              width={chartContainerRef.current?.clientWidth || 720}
               height={400}
               data={
                 dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey]
@@ -239,9 +239,9 @@ export default function Graphic(props: Props) {
   );
 
   return withMargin ? (
-    <Container ref={chartContainerRef}>{content}</Container>
+    <Container flex>{content}</Container>
   ) : (
-    <ViewContainer ref={chartContainerRef}>{content}</ViewContainer>
+    <ViewContainer flex>{content}</ViewContainer>
   );
 }
 
