@@ -66,7 +66,6 @@ export default function TenantPlan() {
                     tierName={name}
                     benefits={benefits}
                     isAnnual={!!isAnnual}
-                    onPress={() => {}}
                     planId={planId}
                     price={price}
                     isUserCurrentTier={tenantProfile?.profileTenant.tier === tierType}

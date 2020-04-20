@@ -43,6 +43,7 @@ import {
   EditTenantSubscriptionVariables,
 } from '../../generated/EditTenantSubscription';
 import { GetTenantProfile } from '../../generated/GetTenantProfile';
+import { BillingStatus } from '../../generated/globalTypes';
 
 type Props = {
   paymentMethodList: Array<PaymentMethod>;
@@ -87,7 +88,7 @@ export default function EnterBillingInfo(props: Props) {
         {
           query: GET_BILLING_LIST,
           variables: {
-            status: 'paid',
+            status: BillingStatus.paid,
           },
         },
       ],
