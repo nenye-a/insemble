@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useReducer } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
 import { View, Text, Button } from '../../core-ui';
+import { ContactInsemble } from '../../components';
 import {
   FONT_WEIGHT_LIGHT,
   FONT_SIZE_LARGE,
@@ -15,7 +16,7 @@ import InvoicePreview from '../Billing/InvoicePreview';
 import AddNewCardForm from '../Billing/AddNewCardForm';
 import CardFooter from '../../components/layout/OnboardingFooter';
 import { PaymentMethodList_paymentMethodList as PaymentMethod } from '../../generated/PaymentMethodList';
-import { ContactInsemble } from '../../components';
+import addNewCardReducer, { initialNewCardState } from '../../reducers/addNewCardReducer';
 
 type Plan = { tierName: string; price: number; isAnnual: boolean };
 
@@ -34,6 +35,7 @@ export default function ChangeMultipleLandlordPlansBillingInfo(props: Props) {
   let history = useHistory();
   let initialViewMode = paymentMethodList.length > 0 ? ViewMode.EXISTING_CARD : ViewMode.NO_CARD;
   let [selectedViewMode, setSelectedViewMode] = useState(initialViewMode);
+  let [state, dispatch] = useReducer(addNewCardReducer, initialNewCardState);
 
   return (
     <>
@@ -52,7 +54,7 @@ export default function ChangeMultipleLandlordPlansBillingInfo(props: Props) {
               />
             ) : (
               <View flex>
-                <AddNewCardForm showSaveButton={false} />
+                <AddNewCardForm state={state} dispatch={dispatch} />
                 <Button
                   text="Use existing card"
                   mode="transparent"
