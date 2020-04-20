@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
 
@@ -13,12 +13,14 @@ import {
   RED_TEXT,
   GREEN_TEXT,
   LIGHT_GREY,
+  DARK_TEXT_COLOR,
 } from '../../constants/colors';
 import {
   FONT_WEIGHT_BOLD,
   FONT_SIZE_MEDIUM,
   FONT_FAMILY_NORMAL,
   FONT_SIZE_NORMAL,
+  FONT_SIZE_SMALL,
 } from '../../constants/theme';
 import { roundDecimal, convertToKilos, formatSnakeCaseLabel } from '../../utils';
 import BlurredDemographics from '../../assets/images/blurred-demographics.png';
@@ -66,6 +68,7 @@ export default function Graphic(props: Props) {
   let { demographicsData, withMargin, isLocked } = props;
   let [activeIndex, setActiveIndex] = useState<number>(0);
   let [selectedFilter, setSelectedFilter] = useState<string>('Age');
+  let chartContainerRef = useRef<HTMLDivElement | null>(null);
   let options = ['Age', 'Income', 'Ethnicity', 'Education', 'Gender'];
   let dataActiveIndex = demographicsData && demographicsData[activeIndex];
 
@@ -175,16 +178,20 @@ export default function Graphic(props: Props) {
           </RowedView>
           <ChartContainer>
             <BarChart
-              width={900} // TODO: get width based on device's width
+              width={chartContainerRef.current?.clientWidth || 720} // TODO: get width based on device's width
               height={400}
               data={
                 dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey]
               }
             >
-              <XAxis dataKey="name" tickFormatter={formatSnakeCaseLabel} />
+              <XAxis
+                dataKey="name"
+                tickFormatter={formatSnakeCaseLabel}
+                tick={{ color: LIGHT_GREY, fontSize: FONT_SIZE_SMALL, fontFamily: 'Avenir' }}
+              />
               <YAxis
                 axisLine={false}
-                tick={{ fill: LIGHT_GREY }}
+                tick={{ color: LIGHT_GREY, fontSize: FONT_SIZE_SMALL, fontFamily: 'Avenir' }}
                 tickFormatter={(value: number) =>
                   value
                     .toString()
@@ -200,6 +207,7 @@ export default function Graphic(props: Props) {
                   angle: -90,
                   x: -100,
                   position: 'insideLeft',
+                  style: { fill: DARK_TEXT_COLOR, fontFamily: 'Avenir' },
                 }}
               />
               <Bar
@@ -230,7 +238,11 @@ export default function Graphic(props: Props) {
     </>
   );
 
-  return withMargin ? <Container>{content}</Container> : <ViewContainer>{content}</ViewContainer>;
+  return withMargin ? (
+    <Container ref={chartContainerRef}>{content}</Container>
+  ) : (
+    <ViewContainer ref={chartContainerRef}>{content}</ViewContainer>
+  );
 }
 
 const ViewContainer = styled(View)`
