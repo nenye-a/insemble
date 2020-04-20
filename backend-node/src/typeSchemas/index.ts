@@ -40,6 +40,7 @@ export * from './PaymentMethod';
 export * from './Subscription';
 export * from './Billing';
 export * from './LandlordSubscriptionInput';
+export * from './SpacePlan';
 
 export * from './Message';
 export * from './Property';
