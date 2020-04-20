@@ -63,7 +63,41 @@ export async function paymentHandler(request: Request, response: Response) {
           },
         },
       });
+    } else {
+      let user = await prisma.landlordUser.findOne({
+        where: {
+          stripeCustomerId,
+        },
+      });
+      if (!user) {
+        throw new Error('User not found');
+      }
+      try {
+        await prisma.space.update({
+          where: {
+            stripeSubscriptionId: subscriptionId,
+          },
+          data: {
+            tier: 'NO_TIER',
+            stripeSubscriptionId: null,
+          },
+        });
+        await prisma.subscriptionLandlordHistory.create({
+          data: {
+            subscriptionId,
+            action: 'CANCEL',
+            landlordUser: {
+              connect: {
+                id: user.id,
+              },
+            },
+          },
+        });
+      } catch {
+        response.json({ received: true });
+      }
     }
+    response.json({ received: true });
   }
 
   if (type === 'invoice.payment_succeeded') {
