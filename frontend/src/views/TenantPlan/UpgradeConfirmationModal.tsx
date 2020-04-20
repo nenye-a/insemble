@@ -78,7 +78,7 @@ export default function UpgradeConfirmationModal() {
       >
         <Card
           titleBackground="purple"
-          title="Lets confirm your subscription"
+          title={selectedPage.title}
           // TODO: make this default Card styling
           titleProps={{
             style: {
