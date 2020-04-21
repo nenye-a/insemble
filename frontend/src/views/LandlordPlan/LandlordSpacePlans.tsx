@@ -101,11 +101,6 @@ function ListOfBilling(props: BillingRowProps) {
           mode="transparent"
           onPress={() =>
             history.push('/landlord/change-plan/view-plan', {
-              photos,
-              address,
-              space,
-              plan,
-              cost,
               spaceId,
             })
           }

@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 import { View, SegmentedControl } from '../../core-ui';
 import TierSubscriptionCard from '../Billing/TierSubscriptionCard';
 import { LandlordTiers } from '../../constants/SubscriptionTiers';
-import { useHistory } from 'react-router-dom';
 
 export default function SelectLandlordPlan() {
   let [isAnnual, setIsAnnual] = useState(0);
   let history = useHistory();
-  let {} = history.location.state;
   return (
     <Container>
       <SegmentedControl

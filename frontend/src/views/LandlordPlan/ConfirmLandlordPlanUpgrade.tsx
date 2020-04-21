@@ -6,6 +6,7 @@ import { View, Text, Button } from '../../core-ui';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_LIGHT, FONT_SIZE_SMALL } from '../../constants/theme';
 import PlanCard from '../Billing/PlanCard';
 import CardFooter from '../../components/layout/OnboardingFooter';
+import { ContactInsemble } from '../../components';
 
 type Props = {
   tierName: string;
@@ -21,9 +22,7 @@ export default function ConfirmLandlordPlanUpgrade(props: Props) {
     <>
       <Container>
         <Title>Confirm Plan Upgrade</Title>
-        <Text fontWeight={FONT_WEIGHT_LIGHT} fontSize={FONT_SIZE_SMALL}>
-          Questions? Email support@insemblegroup.com
-        </Text>
+        <ContactInsemble />
         <UpgradePlanCard tierName={tierName} price={price} isAnnual={isAnnual} />
       </Container>
       <CardFooter>

@@ -16,10 +16,12 @@ type Param = {
 };
 
 export default function ChangeLandlordPlanModal() {
-  let [selectedStepIndex, setSelectedStepIndex] = useState(0);
   let params = useParams<Param>();
   let history = useHistory();
-  let { tierName, price, isAnnual, spaceId, planId } = history.location.state;
+  let [selectedStepIndex, setSelectedStepIndex] = useState(0);
+  let [planId] = useState(history.location.state.planId);
+  let [spaceId] = useState(history.location.state.spaceId);
+  let { tierName, price, isAnnual } = history.location.state;
   let { step = 'select-plan' } = params;
   let { data: paymentListData, loading: paymentListLoading } = useQuery<PaymentMethodList>(
     GET_PAYMENT_METHOD_LIST
@@ -30,13 +32,11 @@ export default function ChangeLandlordPlanModal() {
       title: "Let's confirm  your subscription",
       content: <SelectLandlordPlan />,
       path: 'view-plan',
-      props: {},
     },
     {
       title: "Let's confirm  your subscription",
       content: <ConfirmLandlordPlanUpgrade tierName={tierName} price={price} isAnnual={isAnnual} />,
       path: 'select-plan',
-      props: {},
     },
     {
       title: "Let's confirm  your subscription",
@@ -51,7 +51,6 @@ export default function ChangeLandlordPlanModal() {
         />
       ),
       path: 'select-payment',
-      props: {},
     },
   ];
 
