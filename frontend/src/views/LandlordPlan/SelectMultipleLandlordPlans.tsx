@@ -13,9 +13,14 @@ import {
 } from '../../constants/theme';
 import { LandlordTier, LandlordTiers } from '../../constants/SubscriptionTiers';
 import { DARK_TEXT_COLOR } from '../../constants/colors';
-import { LANDLORD_BILLING_LIST } from '../../fixtures/dummyData';
+import { GetSubscriptionsList_landlordSubscriptions as LandlordSubscriptions } from '../../generated/GetSubscriptionsList';
+import { isEqual } from '../../utils';
 
 type BilledLandlordTier = LandlordTier.BASIC | LandlordTier.PROFESSIONAL;
+
+type BilledSubscriptions = LandlordSubscriptions & {
+  isAnnual?: boolean;
+};
 
 type PlanRadioGroup = {
   label: string;
@@ -42,10 +47,21 @@ const TERM_OPTIONS = [
     value: 12,
   },
 ];
+
+export type InvoiceList = {
+  spaceId: string;
+  planId: string;
+  tierName: string;
+  price: number;
+  isAnnual: boolean;
+};
+
 export default function SelectMultipleLandlordPlans() {
   let history = useHistory();
-  let [billingList, setBillingList] = useState(LANDLORD_BILLING_LIST);
+  let subscriptionList: Array<BilledSubscriptions> = history.location?.state?.subscriptionList;
 
+  let [billingList, setBillingList] = useState(subscriptionList);
+  let isBillingListEqual = isEqual(subscriptionList, billingList);
   let onPlanSelect = (selectedPlan: PlanRadioGroup, id: string) => {
     let newBillingList = billingList.map((item) => {
       if (item.id === id) {
@@ -66,6 +82,31 @@ export default function SelectMultipleLandlordPlans() {
       return item;
     });
     setBillingList(newBillingList);
+  };
+  let onPressNext = () => {
+    let filtered = billingList.filter((bill) => !subscriptionList.includes(bill));
+    let invoiceList: Array<InvoiceList> = [];
+    if (filtered.length > 0) {
+      filtered.map((item) => {
+        let price = item.isAnnual
+          ? LandlordTiers[item.tier as BilledLandlordTier].yearly.price
+          : LandlordTiers[item.tier as BilledLandlordTier].monthly.price;
+        let planId = item.isAnnual
+          ? LandlordTiers[item.tier as BilledLandlordTier].yearly.id
+          : LandlordTiers[item.tier as BilledLandlordTier].monthly.id;
+        let newInvoice = {
+          spaceId: item.id,
+          planId,
+          tierName: item.tier,
+          price: price,
+          isAnnual: item.isAnnual ? item.isAnnual : false,
+        };
+        invoiceList.push(newInvoice);
+      });
+    }
+    history.push('/landlord/change-plans/confirm-plans', {
+      invoiceList,
+    });
   };
   return (
     <View>
@@ -90,13 +131,20 @@ export default function SelectMultipleLandlordPlans() {
               <DataTable.HeaderCell align="right">Cost</DataTable.HeaderCell>
             </DataTable.HeaderRow>
             {billingList.map((space, index) => {
-              let { mainPhoto, address, spaceNumber, isAnnual, tier, id } = space;
+              let {
+                mainPhoto,
+                location: { address },
+                spaceIndex,
+                tier,
+                id,
+                isAnnual,
+              } = space;
               return (
                 <LandlordPlanRow
                   key={index}
                   mainPhoto={mainPhoto}
                   address={address}
-                  spaceNumber={spaceNumber}
+                  spaceNumber={spaceIndex}
                   tier={tier as BilledLandlordTier}
                   isAnnual={isAnnual}
                   onPlanSelect={(item) => onPlanSelect(item, id)}
@@ -115,12 +163,7 @@ export default function SelectMultipleLandlordPlans() {
             history.goBack();
           }}
         />
-        <Button
-          text="Next"
-          onPress={() => {
-            history.push('/landlord/change-plans/confirm-plans');
-          }}
-        />
+        <Button text="Next" disabled={isBillingListEqual} onPress={onPressNext} />
       </CardFooter>
     </View>
   );
@@ -130,10 +173,10 @@ type LandlordPlanRowProps = {
   mainPhoto: string;
   address: string;
   spaceNumber: number;
-  isAnnual: boolean;
   onPlanSelect: (item: PlanRadioGroup) => void;
   onTermSelect: (item: TermRadioGroup) => void;
   tier: BilledLandlordTier;
+  isAnnual?: boolean;
 };
 
 function LandlordPlanRow(props: LandlordPlanRowProps) {
