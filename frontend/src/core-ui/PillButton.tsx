@@ -1,7 +1,7 @@
 import { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
 import { TEXT_COLOR, THEME_COLOR, WHITE } from '../constants/colors';
-import { FONT_FAMILY_NORMAL, FONT_SIZE_NORMAL } from '../constants/theme';
+import { FONT_FAMILY_NORMAL, FONT_SIZE_NORMAL, DEFAULT_BORDER_RADIUS } from '../constants/theme';
 
 type PillButtonProps = ComponentProps<'button'> & {
   primary?: boolean;
@@ -19,7 +19,7 @@ const PillButton = styled.button.attrs(() => ({ type: 'button' }))<PillButtonPro
   border: 1px solid;
   border-color: ${WHITE};
 
-  border-radius: 0.375rem;
+  border-radius: ${DEFAULT_BORDER_RADIUS};
   box-shadow: 0 0 0.35rem rgba(0, 0, 0, 0.15);
 
   background: ${WHITE};

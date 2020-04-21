@@ -7,6 +7,7 @@ import Label from './Label';
 import { TEXT_INPUT_BORDER_COLOR } from '../constants/colors';
 import { useID } from '../utils';
 import { LocationInput } from '../generated/globalTypes';
+import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
 
 type Props = ComponentProps<'input'> & {
   onSelected: (values: Array<LocationInput>) => void;
@@ -96,7 +97,7 @@ const Container = styled(View)`
   border: solid;
   border-width: 1px;
   border-color: ${TEXT_INPUT_BORDER_COLOR};
-  border-radius: 5px;
+  border-radius: ${DEFAULT_BORDER_RADIUS};
   align-items: center;
   padding: 4px 0;
 `;

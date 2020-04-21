@@ -10,7 +10,7 @@ import {
   SLIDER_DISABLED_RAIL_COLOR,
   WHITE,
 } from '../../constants/colors';
-import { FONT_SIZE_SMALL } from '../../constants/theme';
+import { FONT_SIZE_SMALL, DEFAULT_BORDER_RADIUS } from '../../constants/theme';
 
 type Props = {
   onSliderChange?: (values: Array<number>) => void;
@@ -59,7 +59,7 @@ export default function SliderFilter(props: Props) {
           height: 8,
           position: 'absolute',
           width: '100%',
-          borderRadius: 4,
+          borderRadius: DEFAULT_BORDER_RADIUS,
           borderColor: SLIDER_SECONDARY_COLOR,
           borderWidth: 1,
           borderStyle: 'solid',

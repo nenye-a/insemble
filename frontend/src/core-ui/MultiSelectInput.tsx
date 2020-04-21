@@ -20,7 +20,12 @@ import {
 import Card from './Card';
 import TouchableOpacity from './TouchableOpacity';
 import ClickAway from './ClickAway';
-import { FONT_SIZE_NORMAL, FONT_FAMILY_NORMAL, FONT_WEIGHT_NORMAL } from '../constants/theme';
+import {
+  FONT_SIZE_NORMAL,
+  FONT_FAMILY_NORMAL,
+  FONT_WEIGHT_NORMAL,
+  DEFAULT_BORDER_RADIUS,
+} from '../constants/theme';
 
 type ViewProps = ComponentProps<typeof View>;
 
@@ -134,7 +139,7 @@ const SearchContainer = styled(View)<SearchContainerProps>`
   width: 100%;
   border-width: 1px;
   border-color: ${(props) => (props.isFocused ? THEME_COLOR : TEXT_INPUT_BORDER_COLOR)};
-  border-radius: 5px;
+  border-radius: ${DEFAULT_BORDER_RADIUS};
   z-index: 2;
 `;
 

@@ -1,6 +1,6 @@
 import React, { ComponentProps, forwardRef, Ref } from 'react';
 import styled from 'styled-components';
-import { FONT_FAMILY_NORMAL, FONT_SIZE_MEDIUM } from '../constants/theme';
+import { FONT_FAMILY_NORMAL, FONT_SIZE_MEDIUM, DEFAULT_BORDER_RADIUS } from '../constants/theme';
 import SvgSearch from '../components/icons/search';
 import TouchableOpacity from './TouchableOpacity';
 import Button from './Button';
@@ -38,13 +38,21 @@ const StyledTextInput = styled(TextInput)`
   line-height: 40px;
   color: #8e8e8e;
   border: none;
-  border-radius: 4px;
+  border-radius: ${DEFAULT_BORDER_RADIUS};
   display: block;
   width: 100%;
   box-sizing: border-box;
 `;
 
 const StyledButton = styled(Button)`
+  color: white;
+  box-sizing: border-box;
+  padding: 0 20px;
+  line-height: 40px;
+  border: none;
+  border-radius: ${DEFAULT_BORDER_RADIUS};
+  background-color: #634fa2;
+  box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
   position: absolute;
   top: 8px;
   right: 8px;

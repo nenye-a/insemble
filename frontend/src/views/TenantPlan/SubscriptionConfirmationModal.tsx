@@ -18,6 +18,7 @@ import {
   FONT_WEIGHT_MEDIUM,
   FONT_WEIGHT_LIGHT,
   FONT_SIZE_XLARGE,
+  DEFAULT_BORDER_RADIUS,
 } from '../../constants/theme';
 
 import { GET_BILLING_LIST } from '../../graphql/queries/server/billing';
@@ -162,7 +163,7 @@ let PlanModalContentTitle = styled(Text)`
 let ConfirmationModalContainer = styled(Modal)`
   width: fit-content;
   height: fit-content;
-  border-radius: 5px;
+  border-radius: ${DEFAULT_BORDER_RADIUS};
 `;
 
 let PlanNameText = styled(Text)`
