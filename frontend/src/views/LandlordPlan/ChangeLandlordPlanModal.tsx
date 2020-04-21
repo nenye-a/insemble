@@ -10,6 +10,7 @@ import { PaymentMethodList } from '../../generated/PaymentMethodList';
 import LandlordBillingInfo from './LandlordBillingInfo';
 import { GET_PAYMENT_METHOD_LIST } from '../../graphql/queries/server/billing';
 import SelectLandlordPlan from './SelectLandlordPlan';
+import { LandlordTiers } from '../../constants/SubscriptionTiers';
 
 type Param = {
   step: string;
@@ -19,23 +20,37 @@ export default function ChangeLandlordPlanModal() {
   let params = useParams<Param>();
   let history = useHistory();
   let [selectedStepIndex, setSelectedStepIndex] = useState(0);
-  let [planId] = useState(history.location.state.planId);
-  let [spaceId] = useState(history.location.state.spaceId);
-  let { tierName, price, isAnnual } = history.location.state;
+  let [planId, setPlanId] = useState('');
+  let { spaceId } = history.location.state;
   let { step = 'select-plan' } = params;
   let { data: paymentListData, loading: paymentListLoading } = useQuery<PaymentMethodList>(
     GET_PAYMENT_METHOD_LIST
   );
+  let planIdObj = Object.entries(LandlordTiers).find(
+    (item) => item[1].monthly.id === planId || item[1].yearly.id === planId
+  );
+  let isAnnual = planIdObj?.[1].monthly.id === planId ? false : true;
+  let {
+    name = '',
+    monthly: { price: monthlyPrice = 0 } = {},
+    yearly: { price: yearlyPrice = 0 } = {},
+  } = (planIdObj && planIdObj[1]) || {};
 
   const SEGMENTS = [
     {
       title: "Let's confirm  your subscription",
-      content: <SelectLandlordPlan />,
+      content: <SelectLandlordPlan onPlanSelect={setPlanId} />,
       path: 'view-plan',
     },
     {
       title: "Let's confirm  your subscription",
-      content: <ConfirmLandlordPlanUpgrade tierName={tierName} price={price} isAnnual={isAnnual} />,
+      content: (
+        <ConfirmLandlordPlanUpgrade
+          tierName={name}
+          price={isAnnual ? yearlyPrice : monthlyPrice}
+          isAnnual={isAnnual}
+        />
+      ),
       path: 'select-plan',
     },
     {
@@ -43,8 +58,8 @@ export default function ChangeLandlordPlanModal() {
       content: (
         <LandlordBillingInfo
           paymentMethodList={paymentListData?.paymentMethodList || []}
-          tierName={tierName}
-          price={price}
+          tierName={name}
+          price={isAnnual ? yearlyPrice : monthlyPrice}
           isAnnual={isAnnual}
           spaceId={spaceId}
           planId={planId}

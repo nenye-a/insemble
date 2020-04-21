@@ -6,7 +6,11 @@ import { View, SegmentedControl } from '../../core-ui';
 import TierSubscriptionCard from '../Billing/TierSubscriptionCard';
 import { LandlordTiers } from '../../constants/SubscriptionTiers';
 
-export default function SelectLandlordPlan() {
+type Props = {
+  onPlanSelect: (id: string) => void;
+};
+export default function SelectLandlordPlan(props: Props) {
+  let { onPlanSelect } = props;
   let [isAnnual, setIsAnnual] = useState(0);
   let history = useHistory();
   return (
@@ -34,6 +38,7 @@ export default function SelectLandlordPlan() {
               isUserCurrentTier={false}
               isAnnual={!!isAnnual}
               onUpgradeButtonPress={() => {
+                onPlanSelect(isAnnual ? yearly.id : monthly.id);
                 history.push('/landlord/change-plan/select-plan', {
                   planId: isAnnual ? yearly.id : monthly.id,
                   price: isAnnual ? yearly.price : monthly.price,
