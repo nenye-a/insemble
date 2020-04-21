@@ -1,6 +1,9 @@
 import { SelectedLocation } from '../components/LocationInput';
 import { FileWithPreview } from '../core-ui/Dropzone';
-import { MarketingPreference } from '../generated/globalTypes';
+import {
+  MarketingPreferenceRadio,
+  MARKETING_PREFERENCE_OPTIONS,
+} from '../constants/marketingPreference';
 
 type ConfirmLocation = {
   userRelations: Array<string>;
@@ -22,7 +25,7 @@ type SpaceListing = {
   pricePerSqft: string;
   equipments: Array<string>;
   availability: string;
-  marketingPreference: MarketingPreference;
+  marketingPreference: MarketingPreferenceRadio;
   spaceType?: Array<string>;
 };
 
@@ -73,7 +76,7 @@ export let landlordOnboardingInitialState = {
     pricePerSqft: '',
     equipments: [],
     availability: '',
-    marketingPreference: MarketingPreference.PUBLIC,
+    marketingPreference: MARKETING_PREFERENCE_OPTIONS[0],
   },
 };
 

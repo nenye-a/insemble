@@ -61,7 +61,7 @@ export default function LandlordListing(props: Props) {
   let [selectedType, setSelectedType] = useState<Array<string>>(spaceListing.spaceType || []);
   let [selectedMarketingPreference, setSelectedMarketingPreference] = useState<
     MarketingPreferenceRadio
-  >(MARKETING_PREFERENCE_OPTIONS[0]);
+  >(state.spaceListing.marketingPreference);
   let [description, setDescription] = useState<string>(spaceListing.description);
   let [selectedCondition, setSelectedCondition] = useState(spaceListing.condition || 'Whitebox');
   let [selectedEquipments, setSelectedEquipment] = useState<Array<string>>(spaceListing.equipments);
@@ -84,7 +84,7 @@ export default function LandlordListing(props: Props) {
               pricePerSqft: fieldValues ? fieldValues.price : price,
               equipments: selectedEquipments,
               availability: fieldValues ? fieldValues.date : date,
-              marketingPreference: selectedMarketingPreference.value,
+              marketingPreference: selectedMarketingPreference,
               spaceType: selectedType,
             },
           },

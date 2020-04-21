@@ -15,7 +15,6 @@ import { State, Action } from '../../reducers/landlordOnboardingReducer';
 import { CREATE_PROPERTY, GET_PROPERTIES } from '../../graphql/queries/server/properties';
 import { CreateProperty, CreatePropertyVariables } from '../../generated/CreateProperty';
 import { getImageBlob, useViewport } from '../../utils';
-import { MarketingPreference } from '../../generated/globalTypes';
 import SvgPlayButton from '../../components/icons/playButton';
 
 type Props = {
@@ -49,6 +48,7 @@ export default function PreviewListing(props: Props) {
       pricePerSqft,
       equipments,
       availability,
+      marketingPreference,
     } = spaceListing;
     if (mainPhoto && typeof mainPhoto !== 'string') {
       let mainPhotoBlob = getImageBlob(mainPhoto.file);
@@ -87,7 +87,7 @@ export default function PreviewListing(props: Props) {
             photoUploads: additionalPhotosBlob.filter((item) => item != null),
             pricePerSqft: Number(pricePerSqft),
             sqft: Number(sqft),
-            marketingPreference: MarketingPreference.PUBLIC, // TODO: get marketing preference
+            marketingPreference: marketingPreference.value,
           },
         },
         refetchQueries: [{ query: GET_PROPERTIES }],

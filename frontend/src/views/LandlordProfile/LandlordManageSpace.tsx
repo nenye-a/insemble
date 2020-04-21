@@ -25,7 +25,6 @@ import {
   FONT_WEIGHT_LIGHT,
   FONT_SIZE_SMALL,
   FONT_WEIGHT_BOLD,
-  FONT_SIZE_NORMAL,
 } from '../../constants/theme';
 import { WHITE, THEME_COLOR } from '../../constants/colors';
 import { getImageBlob, dateFormatter } from '../../utils';

@@ -74,7 +74,7 @@ export default function PreviewSpace(props: Props) {
               pricePerSqft: Number(pricePerSqft),
               sqft: Number(sqft),
               spaceType,
-              marketingPreference,
+              marketingPreference: marketingPreference.value,
             },
           },
           refetchQueries: [

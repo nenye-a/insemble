@@ -53,7 +53,7 @@ export default function AddSpace(props: Props) {
   let [selectedType, setSelectedType] = useState<Array<string>>(addSpace.spaceType || []);
   let [selectedMarketingPreference, setSelectedMarketingPreference] = useState<
     MarketingPreferenceRadio
-  >(MARKETING_PREFERENCE_OPTIONS[0]);
+  >(state.addSpace.marketingPreference);
   let [description, setDescription] = useState<string>(addSpace.description);
   let [selectedCondition, setSelectedCondition] = useState(addSpace.condition || 'Whitebox');
   let [selectedEquipments, setSelectedEquipment] = useState<Array<string>>(addSpace.equipments);
@@ -76,7 +76,7 @@ export default function AddSpace(props: Props) {
               pricePerSqft: fieldValues ? fieldValues.price : price,
               equipments: selectedEquipments,
               availability: fieldValues ? fieldValues.date : date,
-              marketingPreference: selectedMarketingPreference.value,
+              marketingPreference: selectedMarketingPreference,
               spaceType: selectedType,
             },
           },
