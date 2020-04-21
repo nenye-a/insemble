@@ -57,6 +57,31 @@ export const GET_LANDLORD_SUBSCRIPTIONS_LIST = gql`
       spaceIndex
       cost
       canceledAt
+      plan {
+        id
+        productId
+      }
+    }
+  }
+`;
+
+export const EDIT_MANY_LANDLORD_PLAN_SUSBCRIPTION = gql`
+  mutation EditManyLandlordSubscription(
+    $subscriptionsInput: [LandlordSubscriptionInput!]!
+    $paymentMethodId: String
+  ) {
+    editManyLandlordSubscription(
+      subscriptionsInput: $subscriptionsInput
+      paymentMethodId: $paymentMethodId
+    ) {
+      id
+      currentPeriodStart
+      currentPeriodEnd
+      status
+      plan {
+        id
+        productId
+      }
     }
   }
 `;
