@@ -10,5 +10,6 @@ export let SpacePlan = objectType({
     t.int('spaceIndex');
     t.string('cost');
     t.date('canceledAt', { nullable: true });
+    t.field('plan', { type: 'Plan' });
   },
 });
