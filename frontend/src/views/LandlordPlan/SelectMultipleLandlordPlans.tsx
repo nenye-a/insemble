@@ -87,6 +87,7 @@ export default function SelectMultipleLandlordPlans() {
     let filtered = billingList.filter((bill) => !subscriptionList.includes(bill));
     let invoiceList: Array<InvoiceList> = [];
     if (filtered.length > 0) {
+      // eslint-disable-next-line array-callback-return
       filtered.map((item) => {
         let price = item.isAnnual
           ? LandlordTiers[item.tier as BilledLandlordTier].yearly.price
