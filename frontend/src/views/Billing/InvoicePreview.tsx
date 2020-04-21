@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Card, Text as BaseText, Divider, View } from '../../core-ui';
-import { useCredentials } from '../../utils';
+import { useCredentials, roundDecimal } from '../../utils';
 import { LIGHTER_GREY, GREY_DIVIDER } from '../../constants/colors';
 import { FONT_WEIGHT_MEDIUM, FONT_SIZE_SMALL } from '../../constants/theme';
 import { Role } from '../../types/types';
@@ -26,7 +26,9 @@ export default function InvoicePreview(props: Props) {
           let pricePerMonth = isAnnual ? price / 12 : price;
           let subscriptionSubject = role === Role.TENANT ? 'user' : 'space';
           let subscriptionDuration = isAnnual ? 'anually' : 'monthly';
-          let subscriptionDescription = `(${pricePerMonth} USD per month, paid ${subscriptionDuration})`;
+          let subscriptionDescription = `(${roundDecimal(
+            pricePerMonth
+          )} USD per month, paid ${subscriptionDuration})`;
 
           return (
             <SubscriptionItem key={index}>
