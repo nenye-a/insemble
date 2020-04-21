@@ -5,7 +5,6 @@ import { useHistory } from 'react-router-dom';
 
 import {
   RadioGroup,
-  Label,
   View,
   TextInput,
   MultiSelectLocation,
@@ -78,12 +77,9 @@ export default function TenantGoals(props: Props) {
   return (
     <Form onSubmit={onSubmit}>
       <Content flex>
-        <Label
-          text="Are you planning to open new locations within the next year?"
-          id="new-location-plan"
-        />
         <RadioGroup
           name="new-location-plan"
+          label="Are you planning to open new locations within the next year?"
           options={NEW_LOCATION_PLAN_OPTIONS}
           selectedOption={selectedNewLocationPlan}
           onSelect={(item) => {
@@ -98,8 +94,8 @@ export default function TenantGoals(props: Props) {
           <>
             {!isLoading && (
               <FieldContainer>
-                <Label text="Where will you open your locations? (Cities, regions, or counties)" />
                 <MultiSelectLocation
+                  label="Where will you open your locations? (Cities, regions, or counties)"
                   onSelected={(values: Array<LocationInput>) => {
                     setSelectedLocations(values);
                   }}
@@ -154,6 +150,7 @@ const LocationsNumberInput = styled(TextInput)`
 const ErrorMessage = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
   color: ${RED_TEXT};
+  padding-top: 6px;
 `;
 
 const TransparentButton = styled(Button)`
