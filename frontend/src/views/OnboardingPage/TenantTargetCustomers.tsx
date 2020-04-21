@@ -98,7 +98,7 @@ export default function TenantTargetCustomers(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoPopulateLoading, autoPopulateData]);
 
-  let onSubmit = () => {
+  let saveFormState = () => {
     dispatch({
       type: 'SAVE_CHANGES_TARGET_CUSTOMERS',
       values: {
@@ -116,6 +116,9 @@ export default function TenantTargetCustomers(props: Props) {
         },
       },
     });
+  };
+  let onSubmit = () => {
+    saveFormState();
     history.push('/verify/step-4');
   };
 
@@ -248,6 +251,7 @@ export default function TenantTargetCustomers(props: Props) {
             label="Minimum Daytime Population"
             placeholder="0"
             errorMessage={!minDaytimePopulation ? 'Field should not be empty' : ''}
+            value={minDaytimePopulation}
           />
           <Button
             mode={!noMinDaytimePopulationPreference ? 'transparent' : 'primary'}
@@ -262,8 +266,10 @@ export default function TenantTargetCustomers(props: Props) {
         <TransparentButton
           text="Back"
           mode="transparent"
-          type="submit"
-          onPress={() => history.goBack()}
+          onPress={() => {
+            saveFormState();
+            history.goBack();
+          }}
         />
         <Button text="Next" type="submit" />
       </OnboardingFooter>

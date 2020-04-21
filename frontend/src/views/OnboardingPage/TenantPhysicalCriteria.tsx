@@ -168,7 +168,6 @@ export default function TenantPhysicalCriteria(props: Props) {
         <TransparentButton
           text="Back"
           mode="transparent"
-          type="submit"
           onPress={() => {
             saveFormState();
             history.goBack();
