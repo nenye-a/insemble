@@ -15,49 +15,47 @@ type Props = {
 export default function PhotosPicker(props: Props) {
   let { mainPhoto, onMainPhotoChange, additionalPhotos, onAdditionalPhotoChange } = props;
   let { isDesktop } = useViewport();
+  let photos = additionalPhotos;
   let onPhotoRemove = (index: number) => {
     if (index === 0) {
       onMainPhotoChange(null);
     } else {
-      if (additionalPhotos.length === 20) {
+      if (photos.length === 20) {
         if (index === 20) {
-          additionalPhotos.splice(index - 1, 1, null);
-          let newPhotoList = additionalPhotos.map((item) => {
-            return item;
-          });
-          onAdditionalPhotoChange(newPhotoList);
+          let firstStack = photos.slice(0, index - 1);
+          let secondStack = photos.slice(index, -1);
+          photos = [...firstStack, ...secondStack, null];
+          onAdditionalPhotoChange(photos);
         } else {
-          if (additionalPhotos[additionalPhotos.length - 1] == null) {
-            additionalPhotos.splice(index - 1, 1);
+          if (photos[photos.length - 1] == null) {
+            let firstStack = photos.slice(0, index - 1);
+            let secondStack = photos.slice(index, -1);
+            photos = [...firstStack, ...secondStack];
           } else {
-            additionalPhotos.splice(index - 1, 1);
-            additionalPhotos.push(null);
+            let firstStack = photos.slice(0, index - 1);
+            let secondStack = photos.slice(index, -1);
+            photos = [...firstStack, ...secondStack, null];
           }
-          let newPhotoList = additionalPhotos.map((item) => {
-            return item;
-          });
-          onAdditionalPhotoChange(newPhotoList);
+          onAdditionalPhotoChange(photos);
         }
       } else {
-        additionalPhotos.splice(index - 1, 1);
-        let newPhotoList = additionalPhotos.map((item) => {
-          return item;
-        });
-        onAdditionalPhotoChange(newPhotoList);
+        let firstStack = photos.slice(0, index - 1);
+        let secondStack = photos.slice(index, -1);
+        photos = [...firstStack, ...secondStack];
+        onAdditionalPhotoChange(photos);
       }
     }
   };
 
   let onAdditionalPhotosChange = (file: FileWithPreview, index: number) => {
     if (index < 19) {
-      additionalPhotos.unshift(file);
+      photos.unshift(file);
     } else {
-      additionalPhotos.splice(index, 1, file);
+      let firstStack = photos.slice(0, index - 1);
+      let secondStack = photos.slice(index, -1);
+      photos = [...firstStack, ...secondStack, file];
     }
-    let newList = additionalPhotos.map((item) => {
-      return item;
-    });
-    onAdditionalPhotoChange(newList);
+    onAdditionalPhotoChange(photos);
   };
 
   return (
