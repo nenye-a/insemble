@@ -10,7 +10,6 @@ import ConfirmChangeMultiplePlans from './ConfirmChangeMultiplePlans';
 import ChangeMultipleLandlordPlansBillingInfo from './ChangeMultipleLandlordPlansBillingInfo';
 import LandlordBilling from '../LandlordBilling';
 import ChangeMultipleLandlordPlansUpgradeSuccess from './ChangeMultipleLandlordPlansUpgradeSuccess';
-import { SUBSCRIPTIONS } from '../../fixtures/dummyData';
 
 type Param = {
   step: string;
@@ -35,14 +34,12 @@ export default function ChangeMultipleLandlordPlansModal() {
     },
     {
       title: "Let's confirm your subscription",
-      content: <ConfirmChangeMultiplePlans plans={SUBSCRIPTIONS} />,
+      content: <ConfirmChangeMultiplePlans />,
       path: 'confirm-plans',
     },
     {
       title: "Let's confirm your subscription",
-      content: (
-        <ChangeMultipleLandlordPlansBillingInfo plans={SUBSCRIPTIONS} paymentMethodList={[]} />
-      ),
+      content: <ChangeMultipleLandlordPlansBillingInfo />,
       path: 'confirm-payment',
     },
     {
