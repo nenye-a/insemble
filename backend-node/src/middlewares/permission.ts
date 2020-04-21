@@ -42,6 +42,8 @@ let permissions = shield({
     editLandlordSubscription: isLandlordAuthenticated,
     editManyLandlordSubscription: isLandlordAuthenticated,
     cancelLandlordSubscription: isLandlordAuthenticated,
+    undoCancelTenantSubscription: isTenantAuthenticated,
+    undoCancelLandlordSubscription: isLandlordAuthenticated,
   },
 });
 
