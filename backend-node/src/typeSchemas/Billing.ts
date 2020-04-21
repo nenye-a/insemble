@@ -14,9 +14,9 @@ export let Billing = objectType({
   name: 'Billing',
   definition(t) {
     t.string('id');
-    t.int('amountDue');
-    t.int('amountPaid');
-    t.int('amountRemaining');
+    t.float('amountDue');
+    t.float('amountPaid');
+    t.float('amountRemaining');
     t.string('billingReason');
     t.boolean('paid');
     t.string('status');
