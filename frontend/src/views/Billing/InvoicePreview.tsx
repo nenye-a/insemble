@@ -25,7 +25,7 @@ export default function InvoicePreview(props: Props) {
           let { tierName, price, isAnnual } = subscription;
           let pricePerMonth = isAnnual ? price / 12 : price;
           let subscriptionSubject = role === Role.TENANT ? 'user' : 'space';
-          let subscriptionDuration = isAnnual ? 'anually' : 'monthly';
+          let subscriptionDuration = isAnnual ? 'annually' : 'monthly';
           let subscriptionDescription = `(${roundDecimal(
             pricePerMonth
           )} USD per month, paid ${subscriptionDuration})`;
