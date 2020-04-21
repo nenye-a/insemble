@@ -37,7 +37,6 @@ export default function RangeInput(props: Props) {
 const Container = styled(View)`
   flex-direction: row;
   justify-content: space-between;
-  width: 100%;
   align-items: center;
   margin: 4px 12px;
 `;
