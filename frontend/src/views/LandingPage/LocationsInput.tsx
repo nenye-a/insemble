@@ -11,8 +11,7 @@ import { useLazyQuery } from '@apollo/react-hooks';
 
 import { GOOGLE_PLACE } from '../../graphql/queries/server/place';
 import { Place } from '../../generated/Place';
-import TextInput from '../../core-ui/ContainedTextInput';
-import { Label } from '../../core-ui';
+import { Label, Button, ContainedTextInput as TextInput } from '../../core-ui';
 import { TEXT_INPUT_BORDER_COLOR } from '../../constants/colors';
 
 type PlaceResult = google.maps.places.PlaceResult;
@@ -20,15 +19,15 @@ type InputProps = ComponentProps<'input'>;
 
 type Props = Omit<InputProps, 'onSubmit' | 'ref'> & {
   placeholder: string;
-  buttonText?: string;
   onSubmit?: (place: PlaceResult) => void;
   ref?: RefObject<HTMLInputElement> | null;
   onChange?: (e: ChangeEvent<HTMLDivElement>) => void;
   label?: string;
+  buttonProps?: ComponentProps<typeof Button>;
 };
 
 function LocationsInput(props: Props) {
-  let { placeholder, buttonText, onSubmit, label, ...otherProps } = props;
+  let { placeholder, onSubmit, label, ...otherProps } = props;
   let inputRef = useRef<HTMLInputElement | null>(null);
   let selectedPlace = useRef<PlaceResult | null>(null);
 
@@ -70,7 +69,6 @@ function LocationsInput(props: Props) {
       <StyledTextInput
         ref={inputRef}
         placeholder={placeholder}
-        buttonText={buttonText}
         onSubmit={submitHandler}
         {...otherProps}
       />

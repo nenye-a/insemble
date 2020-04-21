@@ -2,17 +2,13 @@ import React, { ComponentProps, forwardRef, Ref } from 'react';
 import styled from 'styled-components';
 import { FONT_FAMILY_NORMAL, FONT_SIZE_MEDIUM } from '../constants/theme';
 import SvgSearch from '../components/icons/search';
-import { TouchableOpacity } from '.';
+import TouchableOpacity from './TouchableOpacity';
+import Button from './Button';
 
-type ButtonProps = ComponentProps<'button'>;
 type InputProps = ComponentProps<'input'>;
 type TextInputProps = Omit<InputProps, 'onSubmit'> & {
   onSubmit?: () => void;
 };
-
-function Button(props: ButtonProps) {
-  return <button {...props} type="button" />;
-}
 
 const TextInput = forwardRef((props: TextInputProps, forwardedRef: Ref<HTMLInputElement>) => {
   let { onSubmit, ...otherProps } = props;
@@ -49,14 +45,6 @@ const StyledTextInput = styled(TextInput)`
 `;
 
 const StyledButton = styled(Button)`
-  color: white;
-  box-sizing: border-box;
-  padding: 0 20px;
-  line-height: 40px;
-  border: none;
-  border-radius: 3px;
-  background-color: #634fa2;
-  box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
   position: absolute;
   top: 8px;
   right: 8px;
@@ -64,15 +52,16 @@ const StyledButton = styled(Button)`
 
 type Props = TextInputProps & {
   buttonText?: string;
+  buttonProps?: ComponentProps<typeof Button>;
   icon?: boolean;
 };
 
 export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) => {
-  let { buttonText, onSubmit, ref, icon, ...otherProps } = props;
+  let { buttonText, onSubmit, ref, icon, buttonProps, ...otherProps } = props;
   return (
     <InputContainer>
       <StyledTextInput {...otherProps} ref={forwardedRef} onSubmit={onSubmit} />
-      {buttonText && <StyledButton onClick={onSubmit}>{buttonText}</StyledButton>}
+      {buttonProps && <StyledButton {...buttonProps} onPress={onSubmit} />}
       {icon && (
         <TouchableOpacity onPress={onSubmit} style={{ position: 'absolute', right: 5, top: 7 }}>
           <SvgSearch />
