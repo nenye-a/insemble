@@ -3,6 +3,7 @@ import { Root, Context } from 'serverTypes';
 
 import stripe from '../../config/stripe';
 import getUserDetails from '../../helpers/getUserDetails';
+import { defaultPaymentCheck } from '../../helpers/defaultPaymentCheck';
 
 export let changeDefaultPaymentMethodResolver: FieldResolver<
   'Mutation',
@@ -39,7 +40,7 @@ let registerPaymentMethod = mutationField('registerPaymentMethod', {
   args: {
     paymentMethodId: stringArg({ required: true }),
   },
-  resolve: async (_: Root, { paymentMethodId }, context: Context) => {
+  resolve: async (_, { paymentMethodId }, context: Context, info) => {
     let { prisma, tenantUserId, landlordUserId } = context;
     let user = await getUserDetails(context);
     if (!user) {
@@ -52,6 +53,17 @@ let registerPaymentMethod = mutationField('registerPaymentMethod', {
         customer: user.stripeCustomerId,
       });
       if (card) {
+        let thereIsDefaultPayment = await defaultPaymentCheck(
+          user.stripeCustomerId,
+        );
+        if (!thereIsDefaultPayment) {
+          await changeDefaultPaymentMethodResolver(
+            _,
+            { paymentMethodId: id },
+            context,
+            info,
+          );
+        }
         let { exp_month: expMonth, exp_year: expYear, last4 } = card;
         return { id, expMonth, expYear, lastFourDigits: last4 };
       }
@@ -102,7 +114,7 @@ let removePaymentMethod = mutationField('removePaymentMethod', {
   args: {
     paymentMethodId: stringArg({ required: true }),
   },
-  resolve: async (_: Root, { paymentMethodId }, context: Context) => {
+  resolve: async (_, { paymentMethodId }, context: Context, info) => {
     let user = await getUserDetails(context);
     if (!user) {
       throw new Error('User not found');
@@ -110,6 +122,38 @@ let removePaymentMethod = mutationField('removePaymentMethod', {
     let { id, card } = await stripe.paymentMethods.detach(paymentMethodId);
     if (!card) {
       return null;
+    }
+    try {
+      let stripeCust = await stripe.customers.retrieve(user.stripeCustomerId);
+      if ('invoice_settings' in stripeCust) {
+        if (!stripeCust.invoice_settings.default_payment_method) {
+          let { data } = await stripe.paymentMethods.list({
+            customer: stripeCust.id,
+            type: 'card',
+          });
+          if (data.length) {
+            let newDefaultPaymentId = data[0].id;
+            await changeDefaultPaymentMethodResolver(
+              _,
+              { paymentMethodId: newDefaultPaymentId },
+              context,
+              info,
+            );
+          } else {
+            if (stripeCust.subscriptions) {
+              for (let subs of stripeCust.subscriptions.data) {
+                await stripe.subscriptions.update(subs.id, {
+                  cancel_at_period_end: true,
+                });
+              }
+            }
+          }
+        }
+      } else {
+        throw new Error('Stripe user has been deleted or not exist!');
+      }
+    } catch {
+      throw new Error('Stripe user id not found!');
     }
     let { exp_month: expMonth, exp_year: expYear, last4 } = card;
     return {
