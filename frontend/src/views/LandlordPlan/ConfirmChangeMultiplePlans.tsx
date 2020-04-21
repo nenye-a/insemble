@@ -21,8 +21,7 @@ type Props = {
 
 export default function ConfirmChangeMultiplePlans() {
   let history = useHistory();
-  let invoiceList: Array<InvoiceList> = history.location?.state?.invoiceList;
-
+  let invoiceList: Array<InvoiceList> = history.location.state.invoiceList || [];
   return (
     <View>
       <Container>
@@ -45,7 +44,7 @@ export default function ConfirmChangeMultiplePlans() {
         <Button
           text="Next"
           onPress={() => {
-            history.push('/landlord/change-plans/confirm-payment', invoiceList);
+            history.push('/landlord/change-plans/confirm-payment', { invoiceList });
           }}
         />
       </CardFooter>
