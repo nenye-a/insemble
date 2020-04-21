@@ -10,6 +10,7 @@ import { LandlordTiers } from '../../constants/SubscriptionTiers';
 export default function ViewLandlordPlans() {
   let [isAnnual, setIsAnnual] = useState(0);
   let history = useHistory();
+  let { subscriptionList } = history.location.state;
 
   return (
     <>
@@ -45,7 +46,9 @@ export default function ViewLandlordPlans() {
         <Button
           text="Next"
           onPress={() => {
-            history.push('/landlord/change-plans/select-plans');
+            history.push('/landlord/change-plans/select-plans', {
+              subscriptionList,
+            });
           }}
         />
       </CardFooter>
