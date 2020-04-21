@@ -135,13 +135,13 @@ export default function AddSpace(props: Props) {
           text="We provide complementary virtual tours & comprehensive photos to every listing."
         />
         <RadioGroup<MarketingPreferenceRadio>
-          name="Marketing Preference"
+          label="Marketing Preference"
           options={MARKETING_PREFERENCE_OPTIONS}
           selectedOption={selectedMarketingPreference}
           onSelect={(item) => {
             setSelectedMarketingPreference(item);
           }}
-          radioItemProps={{ style: { marginTop: 9 } }}
+          radioItemProps={{ lineHeight: 2 }}
           titleExtractor={(item: MarketingPreferenceRadio) => item.label}
         />
         <PhotosPicker
@@ -171,7 +171,7 @@ export default function AddSpace(props: Props) {
           onSelect={(value: string) => {
             setSelectedCondition(value);
           }}
-          radioItemProps={{ style: { marginTop: 8 } }}
+          radioItemProps={{ lineHeight: 2 }}
         />
         <FieldInput>
           <LabelText text="What type of space is this?" />

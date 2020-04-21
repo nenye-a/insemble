@@ -30,7 +30,7 @@ export let landlordAddSpacelInitialState = {
   canPressNext: false,
   addSpace: {
     mainPhoto: null,
-    propertyPhotos: [''],
+    propertyPhotos: [null],
     description: '',
     condition: '',
     sqft: '',

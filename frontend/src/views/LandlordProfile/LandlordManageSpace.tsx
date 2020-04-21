@@ -280,9 +280,7 @@ export default function LandlordManageSpace(props: Props) {
                 return (
                   <Checkbox
                     key={index}
-                    size="18px"
                     title={option}
-                    titleProps={{ style: { fontSize: FONT_SIZE_NORMAL } }}
                     isChecked={isChecked}
                     onPress={() => {
                       if (isChecked) {

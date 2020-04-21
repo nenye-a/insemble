@@ -65,7 +65,7 @@ export default function Dropzone(props: Props) {
           }
           return (
             <View style={containerStyle} {...getRootProps()}>
-              <input {...getInputProps()} disabled={source !== undefined} />
+              <input {...getInputProps()} disabled={!!source} />
               {content}
             </View>
           );

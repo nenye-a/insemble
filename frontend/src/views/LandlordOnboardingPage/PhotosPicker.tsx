@@ -23,8 +23,7 @@ export default function PhotosPicker(props: Props) {
       if (photos.length === 20) {
         if (index === 20) {
           let firstStack = photos.slice(0, index - 1);
-          let secondStack = photos.slice(index, -1);
-          photos = [...firstStack, ...secondStack, null];
+          photos = [...firstStack, null];
           onAdditionalPhotoChange(photos);
         } else {
           if (photos[photos.length - 1] == null) {
