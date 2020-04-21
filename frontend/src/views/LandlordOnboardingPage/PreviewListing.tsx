@@ -15,6 +15,8 @@ import { State, Action } from '../../reducers/landlordOnboardingReducer';
 import { CREATE_PROPERTY, GET_PROPERTIES } from '../../graphql/queries/server/properties';
 import { CreateProperty, CreatePropertyVariables } from '../../generated/CreateProperty';
 import { getImageBlob, useViewport } from '../../utils';
+import { MarketingPreference } from '../../generated/globalTypes';
+import SvgPlayButton from '../../components/icons/playButton';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -47,8 +49,6 @@ export default function PreviewListing(props: Props) {
       pricePerSqft,
       equipments,
       availability,
-      marketingPreference,
-      spaceType,
     } = spaceListing;
     if (mainPhoto && typeof mainPhoto !== 'string') {
       let mainPhotoBlob = getImageBlob(mainPhoto.file);
@@ -87,8 +87,7 @@ export default function PreviewListing(props: Props) {
             photoUploads: additionalPhotosBlob.filter((item) => item != null),
             pricePerSqft: Number(pricePerSqft),
             sqft: Number(sqft),
-            spaceType: spaceType,
-            marketingPreference,
+            marketingPreference: MarketingPreference.PUBLIC, // TODO: get marketing preference
           },
         },
         refetchQueries: [{ query: GET_PROPERTIES }],
@@ -130,8 +129,14 @@ export default function PreviewListing(props: Props) {
         <Title>Space 1</Title>
         {isDesktop && <Alert visible text="This is how the Retailer will see your listing." />}
       </RowView>
-      <TourContainer isShrink={false}>
+      <TourContainer
+        isShrink={false}
+        mainPhoto={
+          (typeof spaceListing.mainPhoto !== 'string' && spaceListing?.mainPhoto?.preview) || ''
+        }
+      >
         <PendingAlert visible text="Pending virtual tour" />
+        <SvgPlayButton />
         <Tour3DText>{confirmLocation?.physicalAddress?.address}</Tour3DText>
       </TourContainer>
       <PropertyDeepDiveHeader
@@ -157,6 +162,7 @@ type ViewPropsWithViewport = ViewProps & {
 
 type TourContainerProps = {
   isShrink: boolean;
+  mainPhoto: string;
 };
 
 const CardsContainer = styled(View)<ViewPropsWithViewport>`
@@ -174,7 +180,7 @@ const TourContainer = styled(View)<TourContainerProps>`
   transition: 0.3s height linear;
   justify-content: center;
   align-items: center;
-  background-color: grey;
+  background-image: ${(props) => (props.mainPhoto ? `url(${props.mainPhoto})` : '')};
 `;
 const RowView = styled(View)`
   flex-direction: row;

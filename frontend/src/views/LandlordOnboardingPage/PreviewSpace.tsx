@@ -16,6 +16,7 @@ import { getImageBlob } from '../../utils';
 import { CreateSpace, CreateSpaceVariables } from '../../generated/CreateSpace';
 import { Action, State as LandlordAddSpaceState } from '../../reducers/landlordAddSpaceReducer';
 import { GET_PROPERTIES, GET_PROPERTY } from '../../graphql/queries/server/properties';
+import SvgPlayButton from '../../components/icons/playButton';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -96,8 +97,12 @@ export default function PreviewSpace(props: Props) {
         <Title>Space 1</Title>
         <Alert visible text="This is how the Retailer will see your listing." />
       </RowView>
-      <TourContainer isShrink={false}>
+      <TourContainer
+        isShrink={false}
+        mainPhoto={(typeof addSpace.mainPhoto !== 'string' && addSpace?.mainPhoto?.preview) || ''}
+      >
         <PendingAlert visible text="Pending virtual tour" />
+        <SvgPlayButton />
         <Text>{address}</Text>
       </TourContainer>
       <PropertyDeepDiveHeader
@@ -146,6 +151,7 @@ const RowedView = styled(View)`
 
 type TourContainerProps = {
   isShrink: boolean;
+  mainPhoto: string;
 };
 
 const TourContainer = styled(View)<TourContainerProps>`
@@ -153,7 +159,7 @@ const TourContainer = styled(View)<TourContainerProps>`
   transition: 0.3s height linear;
   justify-content: center;
   align-items: center;
-  background-color: grey;
+  background-image: ${(props) => (props.mainPhoto ? `url(${props.mainPhoto})` : '')};
 `;
 const RowView = styled(View)`
   flex-direction: row;
