@@ -118,7 +118,6 @@ const Container = styled(RowedView)`
   flex-wrap: wrap;
   align-items: center;
   overflow-y: scroll;
-  overflow: visible;
 `;
 
 const InterestedText = styled(Text)`

@@ -331,7 +331,6 @@ export default function MainMap() {
       minAge: tenantMatchesData?.tenantMatches.minAge,
       maxAge: tenantMatchesData?.tenantMatches.maxAge,
       personas: tenantMatchesData?.tenantMatches.personas,
-
       commute:
         (tenantMatchesData?.tenantMatches?.commute &&
           tenantMatchesData.tenantMatches.commute.map(({ displayValue }) => displayValue)) ||
