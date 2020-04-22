@@ -152,7 +152,7 @@ export default () => {
           {/* TODO: Redirect  */}
           <UpgradeButton
             text="Upgrade to Add"
-            onPress={() => {}}
+            onPress={history.push('/user/plan')}
             stopPropagation={true}
             textProps={{ style: { fontWeight: FONT_WEIGHT_LIGHT } }}
           />
