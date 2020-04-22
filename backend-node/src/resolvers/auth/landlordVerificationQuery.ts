@@ -1,6 +1,7 @@
 import { queryField, stringArg } from 'nexus';
 import { createSession } from '../../helpers/auth';
 import { Context } from 'serverTypes';
+import { trialCheck } from '../../helpers/trialCheck';
 
 export let landlordVerification = queryField('landlordRegisterVerification', {
   type: 'LandlordRegisterVerification',
@@ -40,11 +41,12 @@ export let landlordVerification = queryField('landlordRegisterVerification', {
     if (landlordTokenQuery !== landlordVerification.tokenQuery) {
       throw new Error('Invalid token');
     }
+    let isTrial = trialCheck(landlordUser.createdAt);
     return {
       ...landlordVerification,
       landlordAuth: {
         token: createSession(landlordUser, 'LANDLORD'),
-        landlord: landlordUser,
+        landlord: { ...landlordUser, trial: isTrial },
       },
     };
   },
