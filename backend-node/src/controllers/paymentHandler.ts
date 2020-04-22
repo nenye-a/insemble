@@ -4,6 +4,7 @@ import { prisma } from '../prisma';
 import stripe from '../config/stripe';
 import { subscriptionPlans } from '../constants/subscriptions';
 import { TenantTier, LandlordTier } from '@prisma/client';
+import { trialCheck } from '../helpers/trialCheck';
 
 const signingSecret = process.env.STRIPE_WH_SECRET || '';
 
@@ -43,12 +44,20 @@ export async function paymentHandler(request: Request, response: Response) {
       return;
     }
     if (subscriptionPlan.role === 'TENANT') {
-      let user = await prisma.tenantUser.update({
+      let user = await prisma.tenantUser.findOne({
+        where: {
+          stripeCustomerId,
+        },
+      });
+      if (!user) {
+        throw new Error('User not found');
+      }
+      user = await prisma.tenantUser.update({
         where: {
           stripeCustomerId,
         },
         data: {
-          tier: 'FREE',
+          tier: trialCheck(user.createdAt) ? 'PROFESSIONAL' : 'FREE',
           stripeSubscriptionId: null,
         },
       });
@@ -78,7 +87,7 @@ export async function paymentHandler(request: Request, response: Response) {
             stripeSubscriptionId: subscriptionId,
           },
           data: {
-            tier: 'NO_TIER',
+            tier: trialCheck(user.createdAt) ? 'PROFESSIONAL' : 'NO_TIER',
             stripeSubscriptionId: null,
           },
         });
