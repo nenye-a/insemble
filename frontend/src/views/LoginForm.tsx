@@ -131,10 +131,23 @@ export default function Login(props: Props) {
 
   if (landlordData) {
     let { loginLandlord } = landlordData;
-    let { token } = loginLandlord;
+    let {
+      token,
+      landlord: { tier },
+    } = loginLandlord; // TODO: get trial too
     saveCredentials({
       landlordToken: token,
       role: Role.LANDLORD,
+    });
+
+    client.writeQuery({
+      query: GET_TIER,
+      data: {
+        userState: {
+          __typename: 'UserState',
+          tier,
+        },
+      },
     });
 
     return <Redirect to={{ pathname: `/landlord/properties/`, state: { signedIn: true } }} />;
