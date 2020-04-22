@@ -2,6 +2,7 @@ import { queryField, FieldResolver, stringArg } from 'nexus';
 
 import { Root, Context } from 'serverTypes';
 import { createSession } from '../../helpers/auth';
+import { trialCheck } from '../../helpers/trialCheck';
 
 let tenantVerificationResolver: FieldResolver<
   'Query',
@@ -40,12 +41,12 @@ let tenantVerificationResolver: FieldResolver<
   }
 
   let brandId = tenantUser.brands.length ? tenantUser.brands[0].id : '';
-
+  let isTrial = trialCheck(tenantUser.createdAt);
   return {
     ...tenantVerification,
     tenantAuth: {
       token: createSession(tenantUser, 'TENANT'),
-      tenant: tenantUser,
+      tenant: { ...tenantUser, trial: isTrial },
       brandId: brandId || '',
     },
   };

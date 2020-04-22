@@ -6,6 +6,7 @@ import { sendVerificationEmail } from '../../helpers/sendEmail';
 import { HOST, NODE_ENV } from '../../constants/constants';
 import { uploadS3 } from '../../helpers/uploadUtils';
 import getRandomBytes from '../../helpers/getRandomBytes';
+import { trialCheck } from '../../helpers/trialCheck';
 
 let editProfileResolver: FieldResolver<
   'Mutation',
@@ -18,6 +19,15 @@ let editProfileResolver: FieldResolver<
   });
   if (!currentUser) {
     throw new Error('User not found');
+  }
+  let isTrial = trialCheck(currentUser.createdAt);
+  if (!isTrial) {
+    if (currentUser.tier !== 'FREE' && !currentUser.stripeSubscriptionId) {
+      await context.prisma.tenantUser.update({
+        where: { id: context.tenantUserId },
+        data: { tier: 'FREE' },
+      });
+    }
   }
   if (profile.email && profile.email !== currentUser.email) {
     let lowercasedEmail = profile.email?.toLocaleLowerCase();
@@ -87,7 +97,7 @@ let editProfileResolver: FieldResolver<
       id: context.tenantUserId,
     },
   });
-  return tenant;
+  return { ...tenant, trial: isTrial };
 };
 
 let editProfileTenant = mutationField('editProfileTenant', {

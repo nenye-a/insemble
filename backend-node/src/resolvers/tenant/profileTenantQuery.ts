@@ -1,6 +1,7 @@
 import { queryField, FieldResolver } from 'nexus';
 
 import { Root, Context } from 'serverTypes';
+import { trialCheck } from '../../helpers/trialCheck';
 
 let profileTenantResolver: FieldResolver<'Query', 'profileTenant'> = async (
   _: Root,
@@ -15,7 +16,16 @@ let profileTenantResolver: FieldResolver<'Query', 'profileTenant'> = async (
   if (!tenant) {
     throw new Error('user not found');
   }
-  return tenant;
+  let isTrial = trialCheck(tenant.createdAt);
+  if (!isTrial) {
+    if (tenant.tier !== 'FREE' && !tenant.stripeSubscriptionId) {
+      tenant = await context.prisma.tenantUser.update({
+        where: { id: context.tenantUserId },
+        data: { tier: 'FREE' },
+      });
+    }
+  }
+  return { ...tenant, trial: isTrial };
 };
 
 let profileTenant = queryField('profileTenant', {
