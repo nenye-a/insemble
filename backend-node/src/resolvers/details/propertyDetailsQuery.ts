@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Root, Context } from 'serverTypes';
 import { LEGACY_API_URI } from '../../constants/host';
 import { PropertyDetailsType, DemographicStatProperty } from 'dataTypes';
+import { trialCheck } from '../../helpers/trialCheck';
 
 let propertyDetailsResolver: FieldResolver<'Query', 'propertyDetails'> = async (
   _: Root,
@@ -14,13 +15,42 @@ let propertyDetailsResolver: FieldResolver<'Query', 'propertyDetails'> = async (
     where: { id: propertyId },
     include: {
       location: true,
+      landlordUser: true,
+      space: true,
     },
   });
+  // TODO: Authentication selected property with ctx.landlordUserId
   if (!selectedProperty) {
     throw new Error('Property not found!');
   }
   if (!selectedProperty.propertyId) {
     throw new Error('Your location details are loading.');
+  }
+  let isTrial = trialCheck(selectedProperty.landlordUser.createdAt);
+  if (!isTrial) {
+    if (
+      selectedProperty.space.some(
+        ({ stripeSubscriptionId, tier }) =>
+          !stripeSubscriptionId && tier !== 'NO_TIER',
+      )
+    ) {
+      selectedProperty = await context.prisma.property.update({
+        where: { id: selectedProperty.id },
+        data: {
+          space: {
+            updateMany: {
+              where: { stripeSubscriptionId: null },
+              data: { tier: 'NO_TIER' },
+            },
+          },
+        },
+        include: {
+          location: true,
+          landlordUser: true,
+          space: true,
+        },
+      });
+    }
   }
   let resultDetail;
   try {
