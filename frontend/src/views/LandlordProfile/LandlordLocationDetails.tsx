@@ -3,11 +3,8 @@ import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
-import { View, Text, LoadingIndicator } from '../../core-ui';
-import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD } from '../../constants/theme';
-import { LIGHTEST_GREY } from '../../constants/colors';
+import { View, LoadingIndicator } from '../../core-ui';
 import KeyFacts from '../DeepDivePage/KeyFacts';
-import RelevantConsumerCard from '../DeepDivePage/RelevantConsumerCard';
 import DemographicCard from '../DeepDivePage/Demographics';
 import { GET_PROPERTY_LOCATION_DETAILS } from '../../graphql/queries/server/deepdive';
 import { GET_PROPERTY } from '../../graphql/queries/server/properties';
@@ -18,6 +15,9 @@ import {
 import { Property, PropertyVariables } from '../../generated/Property';
 import { MAPS_IFRAME_URL_SEARCH } from '../../constants/googleMaps';
 import { ErrorComponent } from '../../components';
+import { GET_TIER } from '../../graphql/queries/client/userState';
+import { LandlordTier } from '../../generated/globalTypes';
+import RelevantConsumerPersonas from '../DeepDivePage/RelevantConsumerPersonas';
 
 type Params = {
   paramsId: string;
@@ -26,6 +26,8 @@ type Params = {
 const LOADING_ERROR = 'Your location details are loading';
 
 export default function LandlordLocationDetails() {
+  let { data: tierData } = useQuery(GET_TIER);
+  let isLocked = tierData.userState.tier === LandlordTier.NO_TIER; // TODO: check if trial too
   let { paramsId: propertyId = '' } = useParams<Params>();
 
   let { data, loading, error, refetch } = useQuery<
@@ -87,37 +89,23 @@ export default function LandlordLocationDetails() {
             commuteData={commuteData}
             withMargin={false}
           />
-          <ConsumerPersonaText>Local Consumer Personas (Psychographics)</ConsumerPersonaText>
-          <Container flex>
-            <CardsContainer>
-              {personasData &&
-                personasData.map((item, index) => <RelevantConsumerCard key={index} {...item} />)}
-            </CardsContainer>
-          </Container>
+          <RelevantConsumerPersonas
+            title="Local Consumer Personas"
+            isLocked={isLocked}
+            personasData={personasData}
+          />
           <GraphicContainer>
-            <DemographicCard demographicsData={demographicsData} withMargin={false} />
+            <DemographicCard
+              isLocked={isLocked}
+              demographicsData={demographicsData}
+              withMargin={false}
+            />
           </GraphicContainer>
         </>
       )}
     </View>
   );
 }
-
-const Container = styled(View)`
-  flex-wrap: wrap;
-  overflow-x: scroll;
-`;
-
-const ConsumerPersonaText = styled(Text)`
-  font-size: ${FONT_SIZE_MEDIUM};
-  font-weight: ${FONT_WEIGHT_BOLD};
-  margin: 30px 10px 10px;
-`;
-const CardsContainer = styled(View)`
-  padding: 30px;
-  flex-direction: row;
-  background-color: ${LIGHTEST_GREY};
-`;
 
 const GraphicContainer = styled(View)`
   margin: 0 14px;

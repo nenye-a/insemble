@@ -21,6 +21,7 @@ import {
 import { EmptyDataComponent, ErrorComponent } from '../../components';
 import { roundDecimal, useViewport } from '../../utils';
 import { VIEWPORT_TYPE } from '../../constants/viewports';
+import BlurredTenantMatches from '../../assets/images/blurred-tenant-matches.png';
 
 export type SelectedBrand = {
   matchId: string | null;
@@ -38,6 +39,7 @@ type Props = {
   refetch: (
     variables?: PropertyMatchesVariables | undefined
   ) => Promise<ApolloQueryResult<PropertyMatches>>;
+  isLocked?: boolean;
 };
 
 export default function LandlordTenantMatches({
@@ -46,8 +48,22 @@ export default function LandlordTenantMatches({
   loading,
   error,
   refetch,
+  isLocked,
 }: Props) {
-  let { viewportType } = useViewport();
+  let lockedMatches =
+    matchResult && matchResult[0] ? (
+      <>
+        <TenantCard item={matchResult[0]} onPress={onPress} />
+        <BlurredImage src={BlurredTenantMatches} />
+      </>
+    ) : null;
+  let allMatches =
+    matchResult &&
+    matchResult.map((item, index) => {
+      return <TenantCard key={index} item={item} onPress={onPress} />;
+    });
+
+  let content = isLocked ? lockedMatches : allMatches;
   return (
     <Container flex>
       {loading ? (
@@ -57,50 +73,56 @@ export default function LandlordTenantMatches({
       ) : !matchResult ? (
         <EmptyDataComponent />
       ) : (
-        matchResult &&
-        matchResult.map((item, index) => {
-          let matchScore = roundDecimal(item.matchValue);
-          return (
-            <TenantCard
-              key={index}
-              isInterested={item.interested}
-              viewportType={viewportType}
-              onPress={() =>
-                onPress({
-                  matchId: item.matchId,
-                  brandId: item.brandId,
-                  tenantPhoto: item.pictureUrl,
-                  matchScore: Number(matchScore),
-                  contacts: item.contacts[0],
-                })
-              }
-            >
-              {item.interested ? (
-                <InterestedContainer>
-                  <InterestedText>Interested</InterestedText>
-                </InterestedContainer>
-              ) : null}
-              <Image src={item.pictureUrl || imgPlaceholder} />
-              <DescriptionContainer>
-                <RowedView flex>
-                  <View style={{ flex: 1 }}>
-                    <CardTitle>{item.name}</CardTitle>
-                    <CardCategoryText>{item.category}</CardCategoryText>
-                  </View>
-                  <View>
-                    <CardPercentage>{matchScore}%</CardPercentage>
-                    <Text>Match</Text>
-                  </View>
-                </RowedView>
-                <CardExistingLocationText>
-                  {item.numExistingLocations} existing locations
-                </CardExistingLocationText>
-              </DescriptionContainer>
-            </TenantCard>
-          );
-        })
+        content
       )}
     </Container>
+  );
+}
+
+type TenantCardProps = {
+  item: PropertyMatchesProps;
+  onPress: (selectedData: SelectedBrand) => void;
+};
+
+function TenantCard({ item, onPress }: TenantCardProps) {
+  let matchScore = roundDecimal(item.matchValue);
+  let { viewportType } = useViewport();
+  return (
+    <TenantCardContainer
+      isInterested={item.interested}
+      viewportType={viewportType}
+      onPress={() =>
+        onPress({
+          matchId: item.matchId,
+          brandId: item.brandId,
+          tenantPhoto: item.pictureUrl,
+          matchScore: Number(matchScore),
+          contacts: item.contacts[0],
+        })
+      }
+    >
+      {item.interested ? (
+        <InterestedContainer>
+          <InterestedText>Interested</InterestedText>
+        </InterestedContainer>
+      ) : null}
+      <Image src={item.pictureUrl || imgPlaceholder} />
+      <DescriptionContainer>
+        <RowedView flex>
+          <View style={{ flex: 1 }}>
+            <CardTitle>{item.name}</CardTitle>
+            <CardCategoryText>{item.category}</CardCategoryText>
+          </View>
+          <View>
+            <CardPercentage>{matchScore}%</CardPercentage>
+            <Text>Match</Text>
+          </View>
+        </RowedView>
+        <CardExistingLocationText>
+          {item.numExistingLocations} existing locations
+        </CardExistingLocationText>
+      </DescriptionContainer>
+    </TenantCardContainer>
   );
 }
 
@@ -125,12 +147,12 @@ const InterestedText = styled(Text)`
   align-self: center;
 `;
 
-type TenantCardProps = ComponentProps<typeof TouchableOpacity> & {
+type TenantCardPropsContainer = ComponentProps<typeof TouchableOpacity> & {
   isInterested: boolean;
   viewportType: VIEWPORT_TYPE;
 };
 
-const TenantCard = styled(TouchableOpacity)<TenantCardProps>`
+const TenantCardContainer = styled(TouchableOpacity)<TenantCardPropsContainer>`
   border-radius: ${DEFAULT_BORDER_RADIUS};
   box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.1);
   background-color: ${WHITE};
@@ -199,4 +221,9 @@ const CardCategoryText = styled(Text)`
 
 const CardExistingLocationText = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
+`;
+
+const BlurredImage = styled.img`
+  width: 100%;
+  object-fit: cover;
 `;

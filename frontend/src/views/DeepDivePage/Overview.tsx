@@ -37,7 +37,12 @@ export default function Overview() {
         isLocked={isLocked}
         id="keyfacts"
       />
-      <RelevantConsumerPersonas id="personas" isLocked={isLocked} personasData={personasData} />
+      <RelevantConsumerPersonas
+        id="personas"
+        title="Relevant Consumer Personas"
+        isLocked={isLocked}
+        personasData={personasData}
+      />
       <Demographics
         id="demographics"
         isLocked={isLocked}

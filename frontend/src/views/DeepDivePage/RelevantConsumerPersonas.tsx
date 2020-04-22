@@ -9,6 +9,7 @@ import BlurredPersonas from '../../assets/images/blurred-personas.png';
 type Props = ViewProps & {
   personasData?: Array<LocationPersonas>;
   isLocked?: boolean;
+  title: string;
 };
 
 export default function RelevantConsumerPersonas(props: Props) {
