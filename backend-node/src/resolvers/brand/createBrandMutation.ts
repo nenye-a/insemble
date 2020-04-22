@@ -4,11 +4,29 @@ import axios from 'axios';
 import { LEGACY_API_URI } from '../../constants/host';
 import { Context } from 'serverTypes';
 import { FilterOptions } from 'dataTypes';
+import { trialCheck } from '../../helpers/trialCheck';
 
 export let createBrandResolver: FieldResolver<
   'Mutation',
   'createBrand'
 > = async (_, { business, filter }, context: Context) => {
+  let tenantUser = await context.prisma.tenantUser.findOne({
+    where: {
+      id: context.tenantUserId,
+    },
+  });
+  if (!tenantUser) {
+    throw new Error('User not found');
+  }
+  let isTrial = trialCheck(tenantUser.createdAt);
+  if (!isTrial) {
+    if (tenantUser.tier !== 'FREE' && tenantUser.stripeSubscriptionId) {
+      tenantUser = await context.prisma.tenantUser.update({
+        where: { id: tenantUser.id },
+        data: { tier: 'FREE' },
+      });
+    }
+  }
   let {
     categories = [],
     equipment = [],
