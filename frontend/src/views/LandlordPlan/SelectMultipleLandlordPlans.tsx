@@ -89,12 +89,13 @@ export default function SelectMultipleLandlordPlans() {
     if (filtered.length > 0) {
       // eslint-disable-next-line array-callback-return
       filtered.map((item) => {
+        let itemTier = item.tier as BilledLandlordTier;
         let price = item.isAnnual
-          ? LandlordTiers[item.tier as BilledLandlordTier].yearly.price
-          : LandlordTiers[item.tier as BilledLandlordTier].monthly.price;
+          ? LandlordTiers[itemTier].yearly.price
+          : LandlordTiers[itemTier].monthly.price;
         let planId = item.isAnnual
-          ? LandlordTiers[item.tier as BilledLandlordTier].yearly.id
-          : LandlordTiers[item.tier as BilledLandlordTier].monthly.id;
+          ? LandlordTiers[itemTier].yearly.id
+          : LandlordTiers[itemTier].monthly.id;
         let newInvoice = {
           spaceId: item.id,
           planId,
@@ -139,7 +140,11 @@ export default function SelectMultipleLandlordPlans() {
                 tier,
                 id,
                 isAnnual,
+                plan,
               } = space;
+              let annual = !isAnnual
+                ? plan.id === LandlordTiers[tier as BilledLandlordTier].yearly.id
+                : false;
               return (
                 <LandlordPlanRow
                   key={index}
@@ -147,7 +152,7 @@ export default function SelectMultipleLandlordPlans() {
                   address={address}
                   spaceNumber={spaceIndex}
                   tier={tier as BilledLandlordTier}
-                  isAnnual={isAnnual}
+                  isAnnual={annual}
                   onPlanSelect={(item) => onPlanSelect(item, id)}
                   onTermSelect={(item) => onTermSelect(item, id)}
                 />
