@@ -19,9 +19,11 @@ let propertyDetailsResolver: FieldResolver<'Query', 'propertyDetails'> = async (
       space: true,
     },
   });
-  // TODO: Authentication selected property with ctx.landlordUserId
   if (!selectedProperty) {
     throw new Error('Property not found!');
+  }
+  if (selectedProperty.landlordUser.id !== context.landlordUserId) {
+    throw new Error('This is not your propeerty. Not authenticated.');
   }
   if (!selectedProperty.propertyId) {
     throw new Error('Your location details are loading.');

@@ -22,9 +22,11 @@ let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
       space: true,
     },
   });
-  // TODO: Authentication selected property with ctx.landlordUserId
   if (!property) {
     throw new Error('Invalid property Id');
+  }
+  if (property.landlordUser.id !== context.landlordUserId) {
+    throw new Error('This is not your propeerty. Not authenticated.');
   }
   let isTrial = trialCheck(property.landlordUser.createdAt);
   if (!isTrial) {
