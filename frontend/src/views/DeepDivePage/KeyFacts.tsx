@@ -18,7 +18,7 @@ import {
 } from '../../generated/LocationDetails';
 import BlurredCommute from '../../assets/images/blurred-commute.png';
 
-type Props = {
+type Props = ViewProps & {
   withMargin?: boolean;
   keyFactsData?: LocationDetailsKeyFacts;
   commuteData?: Array<LocationDetailsCommute>;
@@ -36,7 +36,7 @@ function formatCommuteValue(value: number, totalValue: number) {
 }
 
 export default function KeyFacts(props: Props) {
-  let { withMargin, keyFactsData, commuteData, totalValue, isLocked } = props;
+  let { withMargin, keyFactsData, commuteData, totalValue, isLocked, ...otherProps } = props;
   let [selectedIndex, setSelectedIndex] = useState<number>(0);
   let history = useHistory();
   let [pieSize, setPieSize] = useState<Array<number>>([]);
@@ -213,7 +213,11 @@ export default function KeyFacts(props: Props) {
       </RowedView>
     </>
   );
-  return withMargin ? <Container>{content}</Container> : <WithoutMargin>{content}</WithoutMargin>;
+  return withMargin ? (
+    <Container {...otherProps}>{content}</Container>
+  ) : (
+    <WithoutMargin {...otherProps}>{content}</WithoutMargin>
+  );
 }
 
 const Container = styled(Card)`

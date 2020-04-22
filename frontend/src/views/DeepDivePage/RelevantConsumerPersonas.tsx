@@ -6,15 +6,20 @@ import RelevantConsumerCard from './RelevantConsumerCard';
 import { LocationDetails_locationDetails_result_topPersonas as LocationPersonas } from '../../generated/LocationDetails';
 import BlurredPersonas from '../../assets/images/blurred-personas.png';
 
-type Props = {
+type Props = ViewProps & {
   personasData?: Array<LocationPersonas>;
   isLocked?: boolean;
 };
 
 export default function RelevantConsumerPersonas(props: Props) {
-  let { personasData, isLocked } = props;
+  let { personasData, isLocked, ...otherProps } = props;
   return (
-    <Container titleBackground="white" title="Relevant Consumer Personas" isLocked={isLocked}>
+    <Container
+      titleBackground="white"
+      title="Relevant Consumer Personas"
+      isLocked={isLocked}
+      {...otherProps}
+    >
       {isLocked ? (
         <Image src={BlurredPersonas} />
       ) : (
