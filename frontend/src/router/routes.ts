@@ -126,6 +126,10 @@ const LANDLORD_ROUTES = [
     path: '/landlord/edit-profile',
     layout: LandlordProfileLayout,
     component: EditBasicProfile,
+    props: {
+      showButton: true,
+      showBanner: true,
+    },
     authorization: landlordAuthorization,
   },
   {
@@ -133,6 +137,10 @@ const LANDLORD_ROUTES = [
     layout: LandlordProfileLayout,
     exact: true,
     component: LandlordProperties,
+    props: {
+      showButton: true,
+      showBanner: true,
+    },
     authorization: landlordAuthorization,
   },
   {
@@ -163,6 +171,10 @@ const LANDLORD_ROUTES = [
     path: '/landlord/messages',
     layout: LandlordProfileLayout,
     component: Messages,
+    props: {
+      showButton: true,
+      showBanner: true,
+    },
     exact: true,
     authorization: landlordAuthorization,
   },
@@ -176,6 +188,10 @@ const LANDLORD_ROUTES = [
     path: '/landlord/billing',
     layout: LandlordProfileLayout,
     component: LandlordBilling,
+    props: {
+      showButton: true,
+      showBanner: true,
+    },
     authorization: landlordAuthorization,
   },
   {
