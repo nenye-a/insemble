@@ -5,6 +5,8 @@ import { prisma } from '../prisma';
 import { FRONTEND_HOST } from '../constants/constants';
 import { PendingDataType, ReceiverContact } from 'dataTypes';
 import { createSession } from '../helpers/auth';
+import { trialCheck } from '../helpers/trialCheck';
+import { LandlordTier } from '@prisma/client';
 
 export let emailRegisterLandlordInvitationHandler = async (
   req: Request,
@@ -49,6 +51,11 @@ export let emailRegisterLandlordInvitationHandler = async (
   if (existUser) {
     // TODO: Auto complete property Data expecting sending spaceId return whole property
     // TODO: If propertyId from above already exist just create Space else create whole property
+    let tier: LandlordTier = 'PROFESSIONAL';
+    let isTrial = trialCheck(existUser.createdAt);
+    if (!isTrial) {
+      tier = 'NO_TIER';
+    }
     let linkedProperty = await prisma.property.create({
       data: {
         name: 'Dummy property',
@@ -61,6 +68,9 @@ export let emailRegisterLandlordInvitationHandler = async (
           },
         },
         userRelation: 'Owner',
+        userRelations: {
+          set: ['Owner'],
+        },
         space: {
           create: {
             spaceId: pendingConversation.spaceId,
@@ -71,7 +81,7 @@ export let emailRegisterLandlordInvitationHandler = async (
             condition: 'White Space',
             sqft: 1000,
             pricePerSqft: 10,
-            tier: 'PROFESSIONAL',
+            tier,
             marketingPreference: 'PUBLIC',
           },
         },

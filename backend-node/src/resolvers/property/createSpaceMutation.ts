@@ -2,6 +2,8 @@ import { mutationField, arg, FieldResolver, stringArg } from 'nexus';
 
 import { Context } from 'serverTypes';
 import { uploadS3 } from '../../helpers/uploadUtils';
+import { LandlordTier } from '@prisma/client';
+import { trialCheck } from '../../helpers/trialCheck';
 
 export let createSpaceResolver: FieldResolver<
   'Mutation',
@@ -43,6 +45,11 @@ export let createSpaceResolver: FieldResolver<
       photoUrls.push(photoUrl);
     }
   }
+  let tier: LandlordTier = 'PROFESSIONAL';
+  let isTrial = trialCheck(property.landlordUser.createdAt);
+  if (!isTrial) {
+    tier = 'NO_TIER';
+  }
 
   let { Location: mainPhotoUrl } = await uploadS3(mainPhoto, 'MAIN_SPACE');
   let newSpace = await context.prisma.space.create({
@@ -59,7 +66,7 @@ export let createSpaceResolver: FieldResolver<
         set: spaceType,
       },
       property: { connect: { id: propertyId } },
-      tier: 'PROFESSIONAL',
+      tier,
       available: new Date(available),
     },
   });
