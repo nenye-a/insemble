@@ -76,6 +76,9 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
       });
     }
   }
+  if (selectedSpace.tier === 'NO_TIER') {
+    throw new Error('Space locked, please upgrade to basic or pro to access.');
+  }
 
   let {
     sqft,
@@ -160,7 +163,11 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
     });
     matchingBrands = newMatchingBrands;
   }
-  return matchingBrands ? matchingBrands : [];
+  return matchingBrands
+    ? selectedSpace.tier !== 'PROFESSIONAL'
+      ? matchingBrands
+      : matchingBrands.filter(({ interested }) => interested === true)
+    : [];
 };
 
 let propertyMatches = queryField('propertyMatches', {
