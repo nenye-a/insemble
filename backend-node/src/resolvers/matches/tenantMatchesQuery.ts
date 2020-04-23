@@ -10,6 +10,7 @@ import {
   MatchingProperty,
 } from 'dataTypes';
 import { axiosParamsSerializer } from '../../helpers/axiosParamsCustomSerializer';
+import { trialCheck } from '../../helpers/trialCheck';
 
 type PendingData = {
   location?: {
@@ -56,19 +57,30 @@ let tenantMatches = queryField('tenantMatches', {
       include: {
         location: true,
         nextLocations: true,
-        tenantUser: true,
+        tenantUser: { include: { brands: true } },
       },
     });
     if (!selectedBrand) {
       throw new Error('Brand not found!');
     }
-    if (!selectedBrand.tenantUser) {
+    let tenantUser = selectedBrand.tenantUser;
+    if (!tenantUser) {
       throw new Error('Tenant not found in this brand.');
     }
-    if (selectedBrand.tenantUser.id !== context.tenantUserId) {
+    if (tenantUser.id !== context.tenantUserId) {
       throw new Error('This is not your brand. Not Authorized!');
     }
 
+    let isTrial = trialCheck(tenantUser.createdAt);
+    if (!isTrial) {
+      if (tenantUser.tier !== 'FREE' && !tenantUser.stripeSubscriptionId) {
+        tenantUser = await context.prisma.tenantUser.update({
+          where: { id: context.tenantUserId },
+          data: { tier: 'FREE' },
+          include: { brands: true },
+        });
+      }
+    }
     let {
       matchId,
       tenantId,
