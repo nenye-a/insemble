@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { Context } from 'serverTypes';
 import { createSession } from '../../helpers/auth';
 import { PendingDataType, ReceiverContact } from 'dataTypes';
+import { trialCheck } from '../../helpers/trialCheck';
 
 export let registerLandlordInvitationResolver: FieldResolver<
   'Mutation',
@@ -145,10 +146,10 @@ export let registerLandlordInvitationResolver: FieldResolver<
       conversation: { connect: { id: convId } },
     },
   });
-
+  let isTrial = trialCheck(landlordUser.createdAt);
   return {
     token: createSession(landlordUser, 'LANDLORD'),
-    landlord: landlordUser,
+    landlord: { ...landlordUser, trial: isTrial },
   };
 };
 

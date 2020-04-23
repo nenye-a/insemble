@@ -2,11 +2,21 @@ import { mutationField, arg, FieldResolver } from 'nexus';
 
 import { Context } from 'serverTypes';
 import { uploadS3 } from '../../helpers/uploadUtils';
+import { LandlordTier } from '@prisma/client';
+import { trialCheck } from '../../helpers/trialCheck';
 
 export let createPropertyResolver: FieldResolver<
   'Mutation',
   'createProperty'
 > = async (_, { property, space }, context: Context) => {
+  let user = await context.prisma.landlordUser.findOne({
+    where: {
+      id: context.landlordUserId,
+    },
+  });
+  if (!user) {
+    throw new Error('User not found');
+  }
   let {
     businessType = [],
     exclusive = [],
@@ -35,6 +45,11 @@ export let createPropertyResolver: FieldResolver<
   }
 
   let { Location: mainPhotoUrl } = await uploadS3(mainPhoto, 'MAIN_SPACE');
+  let tier: LandlordTier = 'PROFESSIONAL';
+  let isTrial = trialCheck(user.createdAt);
+  if (!isTrial) {
+    tier = 'NO_TIER';
+  }
   let newProperty = await context.prisma.property.create({
     data: {
       ...propertyInput,
@@ -65,7 +80,7 @@ export let createPropertyResolver: FieldResolver<
           spaceType: {
             set: spaceType,
           },
-          tier: 'PROFESSIONAL',
+          tier,
           available: new Date(available),
         },
       },
