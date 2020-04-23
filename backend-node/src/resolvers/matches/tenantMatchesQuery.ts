@@ -81,6 +81,18 @@ let tenantMatches = queryField('tenantMatches', {
         });
       }
     }
+
+    if (tenantUser.tier === 'FREE') {
+      let latestBrandIndex = tenantUser.brands.length - 1;
+      let selectedBrandIndex = tenantUser.brands.findIndex(
+        ({ id }) => id === brandId,
+      );
+      if (latestBrandIndex !== selectedBrandIndex) {
+        throw new Error(
+          'Free tier can only edit latest brand. Upgrade to professional if you want to update.',
+        );
+      }
+    }
     let {
       matchId,
       tenantId,
