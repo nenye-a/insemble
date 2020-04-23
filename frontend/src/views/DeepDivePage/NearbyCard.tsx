@@ -34,6 +34,8 @@ export type DropdownSelection = 'Most Popular' | 'Distance' | 'Rating' | 'Simila
 export default function NearbyCard(props: ViewProps) {
   let [selectedView, setSelectedView] = useState<ViewMode>('list');
   let [selectedDropdownVal, setSelectedDropdownVal] = useState<DropdownSelection>('Most Popular');
+  let [selectedCard, setSelectedCard] = useState('');
+  let [hasSelectedCard, setHasSelectedCard] = useState(false);
   let isGridViewMode = selectedView === 'grid';
   let data = useContext(DeepDiveContext);
   let mile = data?.result?.keyFacts.mile;
@@ -90,7 +92,11 @@ export default function NearbyCard(props: ViewProps) {
         <Image src={BlurredNearby} />
       ) : (
         <RowedView flex>
-          <NearbyMap data={filteredData || []} />
+          <NearbyMap
+            hasSelected={hasSelectedCard}
+            selected={selectedCard}
+            data={filteredData || []}
+          />
           <View flex>
             <NearbyMapLegend />
             <RightContent flex>
@@ -117,7 +123,16 @@ export default function NearbyCard(props: ViewProps) {
                     />
                   ))
                 ) : (
-                  filteredData?.map((item, index) => <NearbyPlacesCard key={index} {...item} />)
+                  filteredData?.map((item, index) => (
+                    <NearbyPlacesCard
+                      onPress={(name) => {
+                        setSelectedCard(name);
+                        setHasSelectedCard(true);
+                      }}
+                      key={index}
+                      {...item}
+                    />
+                  ))
                 )}
               </NearbyPlacesCardContainer>
             </RightContent>
