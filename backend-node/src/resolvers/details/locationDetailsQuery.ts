@@ -4,6 +4,7 @@ import { Root, Context } from 'serverTypes';
 import { LEGACY_API_URI } from '../../constants/host';
 import { LocationDetailsType } from 'dataTypes';
 import { objectToArrayKeyObjectDemographics } from '../..DELETED_BASE64_STRING';
+import { trialCheck } from '../../helpers/trialCheck';
 
 let locationDetails = queryField('locationDetails', {
   type: 'LocationDetailsResult',
@@ -37,6 +38,17 @@ let locationDetails = queryField('locationDetails', {
     }
     if (selectedBrand.tenantUser.id !== context.tenantUserId) {
       throw new Error('This not your brand. Not authorized!');
+    }
+    let tenantUser = selectedBrand.tenantUser;
+    let isTrial = trialCheck(tenantUser.createdAt);
+    if (!isTrial) {
+      if (tenantUser.tier !== 'FREE' && tenantUser.stripeSubscriptionId) {
+        tenantUser = await context.prisma.tenantUser.update({
+          where: { id: tenantUser.id },
+          data: { tier: 'FREE' },
+          include: { savedProperties: true },
+        });
+      }
     }
 
     const minLat = 33.7036519;
@@ -147,7 +159,7 @@ let locationDetails = queryField('locationDetails', {
           })
         : undefined;
 
-      let savedPropertySpaceIds = selectedBrand.tenantUser.savedProperties.map(
+      let savedPropertySpaceIds = tenantUser.savedProperties.map(
         ({ spaceId }) => {
           return spaceId;
         },

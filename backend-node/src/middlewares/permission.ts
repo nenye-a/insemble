@@ -22,6 +22,9 @@ let permissions = shield({
     billingList: isTenantAuthenticated,
     paymentMethodList: isTenantAuthenticated,
     landlordSubscriptions: isLandlordAuthenticated,
+    propertyMatches: isLandlordAuthenticated,
+    propertyDetails: isLandlordAuthenticated,
+    tenantDetail: isLandlordAuthenticated,
   },
   Mutation: {
     editProfileTenant: isTenantAuthenticated,

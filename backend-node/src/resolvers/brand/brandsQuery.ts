@@ -2,12 +2,30 @@ import { queryField, FieldResolver } from 'nexus';
 
 import { Root, Context } from 'serverTypes';
 import { MatchingLocation } from 'dataTypes';
+import { trialCheck } from '../../helpers/trialCheck';
 
 let brandsResolver: FieldResolver<'Query', 'brands'> = async (
   _: Root,
   _args,
   context: Context,
 ) => {
+  let tenantUser = await context.prisma.tenantUser.findOne({
+    where: {
+      id: context.tenantUserId,
+    },
+  });
+  if (!tenantUser) {
+    throw new Error('User not found');
+  }
+  let isTrial = trialCheck(tenantUser.createdAt);
+  if (!isTrial) {
+    if (tenantUser.tier !== 'FREE' && tenantUser.stripeSubscriptionId) {
+      tenantUser = await context.prisma.tenantUser.update({
+        where: { id: tenantUser.id },
+        data: { tier: 'FREE' },
+      });
+    }
+  }
   let brands = await context.prisma.brand.findMany({
     select: {
       id: true,

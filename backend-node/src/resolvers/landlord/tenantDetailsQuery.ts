@@ -5,6 +5,7 @@ import { Root, Context } from 'serverTypes';
 import { LEGACY_API_URI } from '../../constants/host';
 import { TenantDetail } from 'dataTypes';
 import { DELETED_BASE64_STRING } from '../..DELETED_BASE64_STRING';
+import { trialCheck } from '../../helpers/trialCheck';
 
 let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
   _: Root,
@@ -15,9 +16,43 @@ let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
     where: {
       id: nodePropertyId,
     },
+    include: {
+      location: true,
+      landlordUser: true,
+      space: true,
+    },
   });
   if (!property) {
     throw new Error('Invalid property Id');
+  }
+  if (property.landlordUser.id !== context.landlordUserId) {
+    throw new Error('This is not your propeerty. Not authenticated.');
+  }
+  let isTrial = trialCheck(property.landlordUser.createdAt);
+  if (!isTrial) {
+    if (
+      property.space.some(
+        ({ stripeSubscriptionId, tier }) =>
+          !stripeSubscriptionId && tier !== 'NO_TIER',
+      )
+    ) {
+      property = await context.prisma.property.update({
+        where: { id: property.id },
+        data: {
+          space: {
+            updateMany: {
+              where: { stripeSubscriptionId: null, tier: { not: 'NO_TIER' } },
+              data: { tier: 'NO_TIER' },
+            },
+          },
+        },
+        include: {
+          location: true,
+          landlordUser: true,
+          space: true,
+        },
+      });
+    }
   }
   let {
     // eslint-disable-next-line @typescript-eslint/camelcase

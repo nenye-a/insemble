@@ -5,6 +5,7 @@ import { Root, Context } from 'serverTypes';
 import { LEGACY_API_URI } from '../../constants/host';
 import { PropertyMatchesType, ReceiverContact } from 'dataTypes';
 import { axiosParamsSerializer } from '../../helpers/axiosParamsCustomSerializer';
+import { trialCheck } from '../../helpers/trialCheck';
 
 type MatchBrand = {
   brandId: string;
@@ -31,10 +32,14 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
     where: { id: prismaPropId },
     include: {
       location: true,
+      landlordUser: true,
     },
   });
   if (!selectedProperty) {
     throw new Error('Property not found!');
+  }
+  if (selectedProperty.landlordUser.id !== context.landlordUserId) {
+    throw new Error('This is not your propeerty. Not authenticated.');
   }
   let {
     propertyId,
@@ -57,6 +62,19 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
 
   if (selectedSpace.property?.id !== selectedProperty.id) {
     throw new Error('Invalid spaceId');
+  }
+  let isTrial = trialCheck(selectedProperty.landlordUser.createdAt);
+  if (!isTrial) {
+    if (
+      selectedSpace.tier !== 'NO_TIER' &&
+      !selectedSpace.stripeSubscriptionId
+    ) {
+      selectedSpace = await context.prisma.space.update({
+        where: { id: selectedSpace.id },
+        data: { tier: 'NO_TIER' },
+        include: { property: true },
+      });
+    }
   }
 
   let {

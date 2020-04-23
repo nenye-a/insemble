@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 
 import { Root, Context } from 'serverTypes';
 import { createSession } from '../../helpers/auth';
+import { trialCheck } from '../../helpers/trialCheck';
 
 let loginTenant = mutationField('loginTenant', {
   type: 'TenantAuth',
@@ -28,9 +29,18 @@ let loginTenant = mutationField('loginTenant', {
     if (!validPassword) {
       throw new Error('Email not found or wrong password');
     }
+    let isTrial = trialCheck(tenantUser.createdAt);
+    if (!isTrial) {
+      if (tenantUser.tier !== 'FREE' && !tenantUser.stripeSubscriptionId) {
+        await context.prisma.tenantUser.update({
+          where: { id: context.tenantUserId },
+          data: { tier: 'FREE' },
+        });
+      }
+    }
     return {
       token: createSession(tenantUser, 'TENANT'),
-      tenant: tenantUser,
+      tenant: { ...tenantUser, trial: isTrial },
       brandId: brandId || '',
     };
   },

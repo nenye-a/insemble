@@ -6,6 +6,7 @@ import { uploadS3 } from '../../helpers/uploadUtils';
 import { NODE_ENV, HOST } from '../../constants/constants';
 import { sendVerificationEmail } from '../../helpers/sendEmail';
 import getRandomBytes from '../../helpers/getRandomBytes';
+import { trialCheck } from '../../helpers/trialCheck';
 
 let editProfileResolver: FieldResolver<
   'Mutation',
@@ -15,9 +16,35 @@ let editProfileResolver: FieldResolver<
     where: {
       id: context.landlordUserId,
     },
+    include: { properties: { include: { space: true } } },
   });
   if (!currentUser) {
     throw new Error('User not found');
+  }
+  let isTrial = trialCheck(currentUser.createdAt);
+  if (!isTrial) {
+    if (
+      currentUser.properties.some(({ space }) =>
+        space.some(
+          ({ stripeSubscriptionId, tier }) =>
+            !stripeSubscriptionId && tier !== 'NO_TIER',
+        ),
+      )
+    ) {
+      await context.prisma.space.updateMany({
+        where: {
+          stripeSubscriptionId: null,
+          property: {
+            landlordUser: {
+              id: currentUser.id,
+            },
+          },
+        },
+        data: {
+          tier: 'NO_TIER',
+        },
+      });
+    }
   }
 
   if (profile.email && profile.email !== currentUser.email) {
@@ -92,7 +119,7 @@ let editProfileResolver: FieldResolver<
       id: context.landlordUserId,
     },
   });
-  return landlord;
+  return { ...landlord, trial: isTrial };
 };
 
 let editProfileLandlord = mutationField('editProfileLandlord', {

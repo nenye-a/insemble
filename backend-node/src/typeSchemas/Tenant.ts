@@ -15,5 +15,6 @@ export let Tenant = objectType({
     t.model.pendingEmail();
     t.model.stripeCustomerId();
     t.model.stripeSubscriptionId();
+    t.boolean('trial');
   },
 });
