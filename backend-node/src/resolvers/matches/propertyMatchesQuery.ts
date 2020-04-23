@@ -164,7 +164,7 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
     matchingBrands = newMatchingBrands;
   }
   return matchingBrands
-    ? selectedSpace.tier !== 'PROFESSIONAL'
+    ? selectedSpace.tier === 'PROFESSIONAL'
       ? matchingBrands
       : matchingBrands.filter(({ interested }) => interested === true)
     : [];
