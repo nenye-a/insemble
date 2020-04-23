@@ -149,7 +149,6 @@ export default () => {
         >
           <SvgPlus style={{ marginRight: 8, color: THEME_COLOR }} />
           <AddBrandText color={THEME_COLOR}>New Retailer or Restaurant</AddBrandText>
-          {/* TODO: Redirect  */}
           <UpgradeButton
             text="Upgrade to Add"
             onPress={history.push('/user/plan')}
