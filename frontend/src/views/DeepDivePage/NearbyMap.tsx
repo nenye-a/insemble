@@ -15,10 +15,11 @@ type Props = {
   data: Array<NearbyPlace>;
   selected?: string;
   hasSelected?: boolean;
+  onClickMarker?: (name: string) => void;
 };
 
 function Map(props: Props) {
-  let { data, selected, hasSelected } = props;
+  let { data, selected, hasSelected, onClickMarker } = props;
   let context = useContext(DeepDiveContext);
   if (context?.selectedLocation) {
     let { lat, lng } = context.selectedLocation;
@@ -37,7 +38,7 @@ function Map(props: Props) {
           let selectedIcon = isSelected ? markerIcon : greyCircleIcon;
           return (
             <Marker
-              onClick={() => console.log('ONCLICK MARKER')}
+              onClick={() => onClickMarker && onClickMarker(name)}
               key={index}
               position={{ lat, lng }}
               icon={hasSelected ? selectedIcon : markerIcon}

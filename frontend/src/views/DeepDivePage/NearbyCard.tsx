@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo } from 'react';
+import React, { useState, useContext, useMemo, useRef } from 'react';
 import styled from 'styled-components';
 
 import { View, Card, TouchableOpacity, Dropdown } from '../../core-ui';
@@ -60,6 +60,23 @@ export default function NearbyCard(props: ViewProps) {
     }
   }, [selectedDropdownVal, nearbyData]);
 
+  // TODO: fix typing
+  const cardsRefs = useRef(
+    filteredData?.reduce((acc: any, { name }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      acc[name] = useRef();
+      return acc;
+    }, {})
+  );
+
+  const scrollTo = (target: string) => {
+    if (cardsRefs) {
+      cardsRefs.current[target].current.scrollIntoView({
+        behavior: 'smooth',
+      });
+    }
+  };
+
   let iconTab = (
     <RightTitleContainer>
       <IconContainer
@@ -96,6 +113,11 @@ export default function NearbyCard(props: ViewProps) {
             hasSelected={hasSelectedCard}
             selected={selectedCard}
             data={filteredData || []}
+            onClickMarker={(name) => {
+              setSelectedCard(name);
+              setHasSelectedCard(true);
+              scrollTo(name);
+            }}
           />
           <View flex>
             <NearbyMapLegend />
@@ -125,6 +147,8 @@ export default function NearbyCard(props: ViewProps) {
                 ) : (
                   filteredData?.map((item, index) => (
                     <NearbyPlacesCard
+                      forwardedRef={cardsRefs.current[item.name]}
+                      selectedCard={selectedCard}
                       onPress={(name) => {
                         setSelectedCard(name);
                         setHasSelectedCard(true);
