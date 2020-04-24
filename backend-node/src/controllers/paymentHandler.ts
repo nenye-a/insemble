@@ -90,6 +90,31 @@ export async function paymentHandler(request: Request, response: Response) {
         } catch {
           response.json({ received: true });
         }
+      } else {
+        let user = await prisma.tenantUser.findOne({
+          where: {
+            stripeCustomerId,
+          },
+        });
+        if (!user) {
+          throw new Error('User not found');
+        }
+        let { id: newSubscriptionId } = await stripe.subscriptions.create({
+          customer: user.stripeCustomerId,
+          items: [
+            {
+              plan: nextPlan,
+            },
+          ],
+        });
+        await prisma.tenantUser.update({
+          where: {
+            stripeCustomerId,
+          },
+          data: {
+            stripeSubscriptionId: newSubscriptionId,
+          },
+        });
       }
     } else {
       if (subscriptionPlan.role === 'TENANT') {
