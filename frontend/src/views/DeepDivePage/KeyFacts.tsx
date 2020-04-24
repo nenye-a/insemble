@@ -105,7 +105,7 @@ export default function KeyFacts(props: Props) {
     <>
       <TextView>
         <Title>Key Facts & Growth</Title>
-        {keyFactsData?.mile && <Radius>within {keyFactsData.mile} miles</Radius>}
+        <Radius>within 1 miles</Radius>g
       </TextView>
       <RowedView>
         <Tab
