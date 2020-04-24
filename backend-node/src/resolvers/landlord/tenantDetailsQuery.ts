@@ -54,6 +54,15 @@ let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
       });
     }
   }
+  let isHaveProSpace = property.space.some(
+    ({ tier }) => tier === 'PROFESSIONAL',
+  );
+  let isHaveBasicSpace = property.space.some(({ tier }) => tier === 'BASIC');
+  if (!isHaveBasicSpace && !isHaveProSpace) {
+    throw new Error(
+      'Property locked, please upgrade one space to basic or pro to access.',
+    );
+  }
   let {
     // eslint-disable-next-line @typescript-eslint/camelcase
     brand_name,
@@ -90,54 +99,68 @@ let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
       condition: tenant['physical requirements'].condition,
     },
     insightView: {
-      topPersonas: personas.map((persona) => {
-        return { ...persona, photo: persona.photo || '' };
-      }),
-      demographics1: {
-        age: objectToArrayKeyObjectDemographicsTenantDetail(demographics1.age),
-        income: objectToArrayKeyObjectDemographicsTenantDetail(
-          demographics1.income,
-        ),
-        ethnicity: objectToArrayKeyObjectDemographicsTenantDetail(
-          demographics1.ethnicity,
-        ),
-        education: objectToArrayKeyObjectDemographicsTenantDetail(
-          demographics1.education,
-        ),
-        gender: objectToArrayKeyObjectDemographicsTenantDetail(
-          demographics1.gender,
-        ),
-      },
-      demographics3: {
-        age: objectToArrayKeyObjectDemographicsTenantDetail(demographics2.age),
-        income: objectToArrayKeyObjectDemographicsTenantDetail(
-          demographics2.income,
-        ),
-        ethnicity: objectToArrayKeyObjectDemographicsTenantDetail(
-          demographics2.ethnicity,
-        ),
-        education: objectToArrayKeyObjectDemographicsTenantDetail(
-          demographics2.education,
-        ),
-        gender: objectToArrayKeyObjectDemographicsTenantDetail(
-          demographics2.gender,
-        ),
-      },
-      demographics5: {
-        age: objectToArrayKeyObjectDemographicsTenantDetail(demographics3.age),
-        income: objectToArrayKeyObjectDemographicsTenantDetail(
-          demographics3.income,
-        ),
-        ethnicity: objectToArrayKeyObjectDemographicsTenantDetail(
-          demographics3.ethnicity,
-        ),
-        education: objectToArrayKeyObjectDemographicsTenantDetail(
-          demographics3.education,
-        ),
-        gender: objectToArrayKeyObjectDemographicsTenantDetail(
-          demographics3.gender,
-        ),
-      },
+      topPersonas: isHaveProSpace
+        ? personas.map((persona) => {
+            return { ...persona, photo: persona.photo || '' };
+          })
+        : null,
+      demographics1: isHaveProSpace
+        ? {
+            age: objectToArrayKeyObjectDemographicsTenantDetail(
+              demographics1.age,
+            ),
+            income: objectToArrayKeyObjectDemographicsTenantDetail(
+              demographics1.income,
+            ),
+            ethnicity: objectToArrayKeyObjectDemographicsTenantDetail(
+              demographics1.ethnicity,
+            ),
+            education: objectToArrayKeyObjectDemographicsTenantDetail(
+              demographics1.education,
+            ),
+            gender: objectToArrayKeyObjectDemographicsTenantDetail(
+              demographics1.gender,
+            ),
+          }
+        : null,
+      demographics3: isHaveProSpace
+        ? {
+            age: objectToArrayKeyObjectDemographicsTenantDetail(
+              demographics2.age,
+            ),
+            income: objectToArrayKeyObjectDemographicsTenantDetail(
+              demographics2.income,
+            ),
+            ethnicity: objectToArrayKeyObjectDemographicsTenantDetail(
+              demographics2.ethnicity,
+            ),
+            education: objectToArrayKeyObjectDemographicsTenantDetail(
+              demographics2.education,
+            ),
+            gender: objectToArrayKeyObjectDemographicsTenantDetail(
+              demographics2.gender,
+            ),
+          }
+        : null,
+      demographics5: isHaveProSpace
+        ? {
+            age: objectToArrayKeyObjectDemographicsTenantDetail(
+              demographics3.age,
+            ),
+            income: objectToArrayKeyObjectDemographicsTenantDetail(
+              demographics3.income,
+            ),
+            ethnicity: objectToArrayKeyObjectDemographicsTenantDetail(
+              demographics3.ethnicity,
+            ),
+            education: objectToArrayKeyObjectDemographicsTenantDetail(
+              demographics3.education,
+            ),
+            gender: objectToArrayKeyObjectDemographicsTenantDetail(
+              demographics3.gender,
+            ),
+          }
+        : null,
     },
   };
 };

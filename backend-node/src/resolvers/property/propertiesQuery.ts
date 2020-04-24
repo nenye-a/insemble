@@ -55,14 +55,21 @@ let propertiesResolver: FieldResolver<'Query', 'properties'> = async (
       },
     },
   });
-  // TODO: Just return properties, should be work and adjust it with FE.
   return properties.map((property) => {
     let { space, ...restProperty } = property;
     let stringDateSpace = space.map((sp) => {
       let { available, ...restSpace } = sp;
       return { ...restSpace, available: available.toString() };
     });
-    return { ...restProperty, space: stringDateSpace };
+    let isHaveProSpace = property.space.some(
+      ({ tier }) => tier === 'PROFESSIONAL',
+    );
+    let isHaveBasicSpace = property.space.some(({ tier }) => tier === 'BASIC');
+    return {
+      ...restProperty,
+      space: stringDateSpace,
+      locked: !isHaveBasicSpace && !isHaveProSpace,
+    };
   });
 };
 

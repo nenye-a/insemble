@@ -79,12 +79,12 @@ export let createPendingConversationResolver: FieldResolver<
     if (spaceOrBrand.property.landlordUser.id !== context.landlordUserId) {
       throw new Error('This is not your property');
     }
-    let targetBrands = await context.prisma.brand.findOne({
+    let targetBrands = await context.prisma.brand.findMany({
       where: {
         tenantId: brandId,
       },
     });
-    if (targetBrands) {
+    if (targetBrands.length) {
       throw new Error('Brand already exist please reload your search');
     }
   }

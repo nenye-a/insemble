@@ -15,5 +15,6 @@ export let BrandThumbnail = objectType({
       list: true,
       nullable: true,
     });
+    t.boolean('locked');
   },
 });
