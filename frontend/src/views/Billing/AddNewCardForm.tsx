@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { View, TextInput, Alert } from '../../core-ui';
 import { NumberInput, ExpiryInput, CvcInput } from './CardInput';
 import { NewCardState, NewCardAction } from '../../reducers/addNewCardReducer';
-import { StripeError } from '@stripe/stripe-js';
 
 type Props = {
   onFinishCreatingPaymentMethod?: () => void;
