@@ -1,21 +1,24 @@
 import React, { Dispatch } from 'react';
 import styled from 'styled-components';
 
-import { View, TextInput } from '../../core-ui';
+import { View, TextInput, Alert } from '../../core-ui';
 import { NumberInput, ExpiryInput, CvcInput } from './CardInput';
 import { NewCardState, NewCardAction } from '../../reducers/addNewCardReducer';
+import { StripeError } from '@stripe/stripe-js';
 
 type Props = {
   onFinishCreatingPaymentMethod?: () => void;
   state: NewCardState;
   dispatch: Dispatch<NewCardAction>;
+  error?: string;
 };
 
 export default function AddNewCardForm(props: Props) {
-  let { state, dispatch } = props;
+  let { state, dispatch, error } = props;
 
   return (
     <View>
+      <Alert visible={!!error} text={error ? error : ''} />
       <RowView>
         <NumberInput />
         <ExpiryInput />

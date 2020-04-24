@@ -67,6 +67,7 @@ export default function EnterBillingInfo(props: Props) {
   let initialViewMode = paymentMethodList.length > 0 ? ViewMode.EXISTING_CARD : ViewMode.NO_CARD;
   let [selectedViewMode, setSelectedViewMode] = useState(initialViewMode);
   let [isSaving, setSaving] = useState(false);
+  let [error, setError] = useState('');
   let [registerPaymentMethod, { loading: registerPaymentMethodLoading }] = useMutation<
     RegisterPaymentMethod,
     RegisterPaymentMethodVariables
@@ -130,6 +131,7 @@ export default function EnterBillingInfo(props: Props) {
       if (result.error || !result.paymentMethod) {
         // eslint-disable-next-line no-console
         console.log('Failed creating payment method', result.error);
+        setError(result.error?.message || '');
         return;
       }
 
@@ -203,7 +205,7 @@ export default function EnterBillingInfo(props: Props) {
               />
             ) : (
               <View flex>
-                <AddNewCardForm state={state} dispatch={dispatch} />
+                <AddNewCardForm state={state} dispatch={dispatch} error={error} />
                 {paymentMethodList.length > 0 && (
                   <Button
                     text="Use existing card"
