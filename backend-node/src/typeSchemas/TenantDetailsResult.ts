@@ -34,15 +34,19 @@ export let InsightView = objectType({
     t.field('topPersonas', {
       type: 'PersonaDeepDive',
       list: true,
+      nullable: true,
     });
     t.field('demographics1', {
       type: 'DemographicTenantDetail',
+      nullable: true,
     });
     t.field('demographics3', {
       type: 'DemographicTenantDetail',
+      nullable: true,
     });
     t.field('demographics5', {
       type: 'DemographicTenantDetail',
+      nullable: true,
     });
   },
 });

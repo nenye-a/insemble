@@ -5,6 +5,7 @@ import { prisma } from '../prisma';
 import { FRONTEND_HOST } from '../constants/constants';
 import { PendingDataType, ReceiverContact } from 'dataTypes';
 import { createSession } from '../helpers/auth';
+import { trialCheck } from '../helpers/trialCheck';
 
 export let emailRegisterTenantInvitationHandler = async (
   req: Request,
@@ -45,9 +46,27 @@ export let emailRegisterTenantInvitationHandler = async (
 
   let existUser = await prisma.tenantUser.findOne({
     where: { email: receiverEmail.toLocaleLowerCase() },
+    include: { brands: true },
   });
   if (existUser) {
     // TODO: Auto complete brand Data
+    let isTrial = trialCheck(existUser.createdAt);
+    if (!isTrial) {
+      if (existUser.tier !== 'FREE' && existUser.stripeSubscriptionId) {
+        existUser = await prisma.tenantUser.update({
+          where: { id: existUser.id },
+          data: { tier: 'FREE' },
+          include: { brands: true },
+        });
+      }
+    }
+    if (existUser.tier === 'FREE' && existUser.brands.length > 1) {
+      let token = await createSession(existUser, 'TENANT');
+      res.redirect(`${FRONTEND_HOST}/redirect-login-tenant/${token}`);
+      throw new Error(
+        'Can not receive the message. Please upgrade to pro to make new brand and answer the message.',
+      );
+    }
     let newBrand = await prisma.brand.create({
       data: {
         name: 'Dummy brand',

@@ -24,6 +24,9 @@ let brandsResolver: FieldResolver<'Query', 'brands'> = async (
         where: { id: tenantUser.id },
         data: { tier: 'FREE' },
       });
+      if (!tenantUser) {
+        throw new Error('Update user tier failed.');
+      }
     }
   }
   let brands = await context.prisma.brand.findMany({
@@ -44,12 +47,16 @@ let brandsResolver: FieldResolver<'Query', 'brands'> = async (
       },
     },
   });
-
-  return brands.map((brand) => {
+  let isFreeUser = tenantUser.tier === 'FREE';
+  return brands.map((brand, index) => {
     let existMatchingLocations: Array<MatchingLocation> = brand.matchingLocations
       ? JSON.parse(brand.matchingLocations)
       : [];
-    return { ...brand, matchingLocations: existMatchingLocations };
+    let locked = false;
+    if (isFreeUser) {
+      locked = index !== 0;
+    } // NOTE: because orderBy desc the latest should be in the index 0
+    return { ...brand, matchingLocations: existMatchingLocations, locked };
   });
 };
 

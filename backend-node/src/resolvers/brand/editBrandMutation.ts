@@ -10,6 +10,32 @@ export let editBrandResolver: FieldResolver<'Mutation', 'editBrand'> = async (
   { business, filter, brandId },
   context: Context,
 ) => {
+  let selectedBrand = await context.prisma.brand.findOne({
+    where: { id: brandId },
+    include: { tenantUser: { include: { brands: true } } },
+  });
+  if (!selectedBrand) {
+    throw new Error('Brand not found');
+  }
+  let tenantUser = selectedBrand.tenantUser;
+  if (!tenantUser) {
+    throw new Error('Brand not connected to tenant.');
+  }
+  if (tenantUser.id !== context.tenantUserId) {
+    throw new Error('This is not your brand. Not authorized.');
+  }
+  if (tenantUser.tier === 'FREE') {
+    let latestBrandIndex = tenantUser.brands.length - 1;
+    let selectedBrandIndex = tenantUser.brands.findIndex(
+      ({ id }) => id === brandId,
+    );
+    if (latestBrandIndex !== selectedBrandIndex) {
+      throw new Error(
+        'Free tier can only edit latest brand. Upgrade to professional if you want to update.',
+      );
+    }
+  }
+
   let { education = [], commute = [], ethnicity = [], ...filterInput } =
     filter || {};
   let {

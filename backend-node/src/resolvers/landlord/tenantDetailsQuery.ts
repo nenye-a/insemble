@@ -54,6 +54,15 @@ let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
       });
     }
   }
+  let isHaveProSpace = property.space.some(
+    ({ tier }) => tier === 'PROFESSIONAL',
+  );
+  let isHaveBasicSpace = property.space.some(({ tier }) => tier === 'BASIC');
+  if (!isHaveBasicSpace && !isHaveProSpace) {
+    throw new Error(
+      'Property locked, please upgrade one space to basic or pro to access.',
+    );
+  }
   let {
     // eslint-disable-next-line @typescript-eslint/camelcase
     brand_name,
@@ -90,54 +99,68 @@ let tenantDetailResolver: FieldResolver<'Query', 'tenantDetail'> = async (
       condition: tenant['physical requirements'].condition,
     },
     insightView: {
-      topPersonas: personas.map((persona) => {
-        return { ...persona, photo: persona.photo || '' };
-      }),
-      demographics1: {
-        age: DELETED_BASE64_STRING(demographics1.age),
-        income: DELETED_BASE64_STRING(
-          demographics1.income,
-        ),
-        ethnicity: DELETED_BASE64_STRING(
-          demographics1.ethnicity,
-        ),
-        education: DELETED_BASE64_STRING(
-          demographics1.education,
-        ),
-        gender: DELETED_BASE64_STRING(
-          demographics1.gender,
-        ),
-      },
-      demographics3: {
-        age: DELETED_BASE64_STRING(demographics2.age),
-        income: DELETED_BASE64_STRING(
-          demographics2.income,
-        ),
-        ethnicity: DELETED_BASE64_STRING(
-          demographics2.ethnicity,
-        ),
-        education: DELETED_BASE64_STRING(
-          demographics2.education,
-        ),
-        gender: DELETED_BASE64_STRING(
-          demographics2.gender,
-        ),
-      },
-      demographics5: {
-        age: DELETED_BASE64_STRING(demographics3.age),
-        income: DELETED_BASE64_STRING(
-          demographics3.income,
-        ),
-        ethnicity: DELETED_BASE64_STRING(
-          demographics3.ethnicity,
-        ),
-        education: DELETED_BASE64_STRING(
-          demographics3.education,
-        ),
-        gender: DELETED_BASE64_STRING(
-          demographics3.gender,
-        ),
-      },
+      topPersonas: isHaveProSpace
+        ? personas.map((persona) => {
+            return { ...persona, photo: persona.photo || '' };
+          })
+        : null,
+      demographics1: isHaveProSpace
+        ? {
+            age: DELETED_BASE64_STRING(
+              demographics1.age,
+            ),
+            income: DELETED_BASE64_STRING(
+              demographics1.income,
+            ),
+            ethnicity: DELETED_BASE64_STRING(
+              demographics1.ethnicity,
+            ),
+            education: DELETED_BASE64_STRING(
+              demographics1.education,
+            ),
+            gender: DELETED_BASE64_STRING(
+              demographics1.gender,
+            ),
+          }
+        : null,
+      demographics3: isHaveProSpace
+        ? {
+            age: DELETED_BASE64_STRING(
+              demographics2.age,
+            ),
+            income: DELETED_BASE64_STRING(
+              demographics2.income,
+            ),
+            ethnicity: DELETED_BASE64_STRING(
+              demographics2.ethnicity,
+            ),
+            education: DELETED_BASE64_STRING(
+              demographics2.education,
+            ),
+            gender: DELETED_BASE64_STRING(
+              demographics2.gender,
+            ),
+          }
+        : null,
+      demographics5: isHaveProSpace
+        ? {
+            age: DELETED_BASE64_STRING(
+              demographics3.age,
+            ),
+            income: DELETED_BASE64_STRING(
+              demographics3.income,
+            ),
+            ethnicity: DELETED_BASE64_STRING(
+              demographics3.ethnicity,
+            ),
+            education: DELETED_BASE64_STRING(
+              demographics3.education,
+            ),
+            gender: DELETED_BASE64_STRING(
+              demographics3.gender,
+            ),
+          }
+        : null,
     },
   };
 };

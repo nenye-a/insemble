@@ -54,6 +54,17 @@ let propertyDetailsResolver: FieldResolver<'Query', 'propertyDetails'> = async (
       });
     }
   }
+  let isHaveProSpace = selectedProperty.space.some(
+    ({ tier }) => tier === 'PROFESSIONAL',
+  );
+  let isHaveBasicSpace = selectedProperty.space.some(
+    ({ tier }) => tier === 'BASIC',
+  );
+  if (!isHaveBasicSpace && !isHaveProSpace) {
+    throw new Error(
+      'Property locked, please upgrade one space to basic or pro to access.',
+    );
+  }
   let resultDetail;
   try {
     let { result }: PropertyDetailsType = (
@@ -128,65 +139,75 @@ let propertyDetailsResolver: FieldResolver<'Query', 'propertyDetails'> = async (
       totalHousehold,
       mediumHouseholdIncome,
     },
-    commute: commute ? objectToArrayKeyObjectCommute(commute) : [],
-    topPersonas,
-    demographics1: demographics1
-      ? {
-          age: objectToArrayKeyObjectDemographics(demographics1.age),
-          income: objectToArrayKeyObjectDemographics(demographics1.income),
-          ethnicity: objectToArrayKeyObjectDemographics(
-            demographics1.ethnicity,
-          ),
-          education: objectToArrayKeyObjectDemographics(
-            demographics1.education,
-          ),
-          gender: objectToArrayKeyObjectDemographics(demographics1.gender),
-        }
-      : {
-          age: [],
-          income: [],
-          ethnicity: [],
-          education: [],
-          gender: [],
-        },
-    demographics3: demographics3
-      ? {
-          age: objectToArrayKeyObjectDemographics(demographics3.age),
-          income: objectToArrayKeyObjectDemographics(demographics3.income),
-          ethnicity: objectToArrayKeyObjectDemographics(
-            demographics3.ethnicity,
-          ),
-          education: objectToArrayKeyObjectDemographics(
-            demographics3.education,
-          ),
-          gender: objectToArrayKeyObjectDemographics(demographics3.gender),
-        }
-      : {
-          age: [],
-          income: [],
-          ethnicity: [],
-          education: [],
-          gender: [],
-        },
-    demographics5: demographics5
-      ? {
-          age: objectToArrayKeyObjectDemographics(demographics5.age),
-          income: objectToArrayKeyObjectDemographics(demographics5.income),
-          ethnicity: objectToArrayKeyObjectDemographics(
-            demographics5.ethnicity,
-          ),
-          education: objectToArrayKeyObjectDemographics(
-            demographics5.education,
-          ),
-          gender: objectToArrayKeyObjectDemographics(demographics5.gender),
-        }
-      : {
-          age: [],
-          income: [],
-          ethnicity: [],
-          education: [],
-          gender: [],
-        },
+    commute: isHaveProSpace
+      ? commute
+        ? objectToArrayKeyObjectCommute(commute)
+        : []
+      : null,
+    topPersonas: isHaveProSpace ? topPersonas : null,
+    demographics1: isHaveProSpace
+      ? demographics1
+        ? {
+            age: objectToArrayKeyObjectDemographics(demographics1.age),
+            income: objectToArrayKeyObjectDemographics(demographics1.income),
+            ethnicity: objectToArrayKeyObjectDemographics(
+              demographics1.ethnicity,
+            ),
+            education: objectToArrayKeyObjectDemographics(
+              demographics1.education,
+            ),
+            gender: objectToArrayKeyObjectDemographics(demographics1.gender),
+          }
+        : {
+            age: [],
+            income: [],
+            ethnicity: [],
+            education: [],
+            gender: [],
+          }
+      : null,
+    demographics3: isHaveProSpace
+      ? demographics3
+        ? {
+            age: objectToArrayKeyObjectDemographics(demographics3.age),
+            income: objectToArrayKeyObjectDemographics(demographics3.income),
+            ethnicity: objectToArrayKeyObjectDemographics(
+              demographics3.ethnicity,
+            ),
+            education: objectToArrayKeyObjectDemographics(
+              demographics3.education,
+            ),
+            gender: objectToArrayKeyObjectDemographics(demographics3.gender),
+          }
+        : {
+            age: [],
+            income: [],
+            ethnicity: [],
+            education: [],
+            gender: [],
+          }
+      : null,
+    demographics5: isHaveProSpace
+      ? demographics5
+        ? {
+            age: objectToArrayKeyObjectDemographics(demographics5.age),
+            income: objectToArrayKeyObjectDemographics(demographics5.income),
+            ethnicity: objectToArrayKeyObjectDemographics(
+              demographics5.ethnicity,
+            ),
+            education: objectToArrayKeyObjectDemographics(
+              demographics5.education,
+            ),
+            gender: objectToArrayKeyObjectDemographics(demographics5.gender),
+          }
+        : {
+            age: [],
+            income: [],
+            ethnicity: [],
+            education: [],
+            gender: [],
+          }
+      : null,
   };
 };
 

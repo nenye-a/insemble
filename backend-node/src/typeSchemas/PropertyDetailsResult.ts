@@ -9,19 +9,24 @@ export let PropertyDetailsResult = objectType({
     t.field('commute', {
       type: 'CommuteDeepDive',
       list: true,
+      nullable: true,
     });
     t.field('topPersonas', {
       type: 'PersonaDeepDive',
       list: true,
+      nullable: true,
     });
     t.field('demographics1', {
       type: 'DemographicProperty',
+      nullable: true,
     });
     t.field('demographics3', {
       type: 'DemographicProperty',
+      nullable: true,
     });
     t.field('demographics5', {
       type: 'DemographicProperty',
+      nullable: true,
     });
   },
 });

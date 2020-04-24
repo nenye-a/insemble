@@ -15,5 +15,6 @@ export let PropertyThumbnail = objectType({
     t.model('Property').marketingPreference();
     t.model('Property').userRelations();
     t.model('Property').userRelation();
+    t.boolean('locked');
   },
 });
