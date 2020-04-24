@@ -6,6 +6,8 @@ import { changeDefaultPaymentMethodResolver } from './paymentMethodMutation';
 import { subscriptionPlansCheck } from '../../constants/subscriptions';
 import { getBillingAnchor } from '../../helpers/getBillingAnchor';
 import { defaultPaymentCheck } from '../../helpers/defaultPaymentCheck';
+import { upgradePlanCheck } from '../../helpers/upgradePlanCheck';
+import { BillingPlanType } from 'dataTypes';
 // TODO: Handle declined card
 // TODO: Handle recurring payment
 
@@ -357,62 +359,81 @@ export let editLandlordSubscription = mutationField(
       if (!plan) {
         throw new Error('Selected subscription plan not found');
       }
+      let currentPlanId = selectedSubscription.plan.id;
+      let currentSubscriptionPlan = subscriptionPlansCheck.find(
+        (plan) => plan.id === currentPlanId,
+      );
+      if (!currentSubscriptionPlan) {
+        throw new Error(
+          `Current subscription plan with ${currentPlanId} is not found.`,
+        );
+      }
       if (plan.id !== planId) {
-        let changedSubscriptionId = selectedSubscription.id;
-        let {
-          id: newSubscriptionId,
-          current_period_end: newCurrentPeriodEnd,
-          current_period_start: newCurrentPeriodStart,
-          plan: newPlan,
-          status: newStatus,
-        } = await stripe.subscriptions.create({
-          customer: user.stripeCustomerId,
-          items: [
-            {
-              plan: planId,
+        if (upgradePlanCheck(currentSubscriptionPlan, subscriptionPlan)) {
+          let changedSubscriptionId = selectedSubscription.id;
+          let {
+            id: newSubscriptionId,
+            current_period_end: newCurrentPeriodEnd,
+            current_period_start: newCurrentPeriodStart,
+            plan: newPlan,
+            status: newStatus,
+          } = await stripe.subscriptions.create({
+            customer: user.stripeCustomerId,
+            items: [
+              {
+                plan: planId,
+              },
+            ],
+            billing_cycle_anchor: getBillingAnchor(subscriptionPlan.cycle),
+            proration_behavior: 'always_invoice',
+            metadata: { spaceId },
+          });
+          if (!newPlan) {
+            throw new Error('Plan not found');
+          }
+          subscriptionId = newSubscriptionId;
+          currentPeriodEnd = newCurrentPeriodEnd;
+          currentPeriodStart = newCurrentPeriodStart;
+          plan = newPlan;
+          status = newStatus;
+          await context.prisma.space.update({
+            where: {
+              id: spaceId,
             },
-          ],
-          billing_cycle_anchor: getBillingAnchor(subscriptionPlan.cycle),
-          proration_behavior: 'always_invoice',
-          metadata: { spaceId },
-        });
-        // Note: Normal ways to update, doesn't work because it will reset the cycle anchor
-        // let {
-        //   id: subscriptionId,
-        //   current_period_end: currentPeriodEnd,
-        //   current_period_start: currentPeriodStart,
-        //   plan,
-        //   status,
-        // } = await stripe.subscriptions.update(space.stripeSubscriptionId, {
-        //   items: [
-        //     {
-        //       id: selectedSubscription.items.data[0].id,
-        //       plan: planId,
-        //     },
-        //   ],
-        //   proration_behavior: 'always_invoice',
-        //   cancel_at_period_end: false,
-        // });
-        if (!newPlan) {
-          throw new Error('Plan not found');
+            data: {
+              stripeSubscriptionId: subscriptionId,
+            },
+          });
+          await stripe.subscriptions.del(changedSubscriptionId, {
+            prorate: true,
+            invoice_now: true,
+          });
+        } else {
+          let {
+            id: newSubscriptionId,
+            current_period_end: newCurrentPeriodEnd,
+            current_period_start: newCurrentPeriodStart,
+            plan: newPlan,
+            status: newStatus,
+          } = await stripe.subscriptions.update(space.stripeSubscriptionId, {
+            items: [
+              {
+                id: selectedSubscription.items.data[0].id,
+                plan: planId,
+              },
+            ],
+            proration_behavior: 'none',
+            cancel_at_period_end: false,
+          });
+          if (!newPlan) {
+            throw new Error('Plan not found');
+          }
+          subscriptionId = newSubscriptionId;
+          currentPeriodEnd = newCurrentPeriodEnd;
+          currentPeriodStart = newCurrentPeriodStart;
+          plan = newPlan;
+          status = newStatus;
         }
-        subscriptionId = newSubscriptionId;
-        currentPeriodEnd = newCurrentPeriodEnd;
-        currentPeriodStart = newCurrentPeriodStart;
-        plan = newPlan;
-        status = newStatus;
-        await context.prisma.space.update({
-          where: {
-            id: spaceId,
-          },
-          data: {
-            stripeSubscriptionId: subscriptionId,
-          },
-        });
-        await stripe.subscriptions.del(changedSubscriptionId, {
-          prorate: true,
-          invoice_now: true,
-        });
         await context.prisma.subscriptionLandlordHistory.create({
           data: {
             subscriptionId,
@@ -473,7 +494,7 @@ export let editManyLandlordSubscription = mutationField(
       }
       let filteredInput: Array<SubscriptionInput & {
         stripeSubscriptionId: string;
-        cycle: 'MONTHLY' | 'ANNUALLY';
+        subscriptionPlan: BillingPlanType;
       }> = [];
       for (let subscriptionInput of subscriptionsInput) {
         let subscriptionPlan = subscriptionPlansCheck.find(
@@ -497,7 +518,7 @@ export let editManyLandlordSubscription = mutationField(
             filteredInput.push({
               ...subscriptionInput,
               stripeSubscriptionId: space.stripeSubscriptionId,
-              cycle: subscriptionPlan.cycle,
+              subscriptionPlan,
             });
           }
         }
@@ -536,70 +557,95 @@ export let editManyLandlordSubscription = mutationField(
         if (!plan) {
           throw new Error('Selected subscription plan not found');
         }
+        let currentPlanId = selectedSubscription.plan.id;
+        let currentSubscriptionPlan = subscriptionPlansCheck.find(
+          (plan) => plan.id === currentPlanId,
+        );
+        if (!currentSubscriptionPlan) {
+          throw new Error(
+            `Current subscription plan with ${currentPlanId} is not found.`,
+          );
+        }
         if (plan.id !== filteredSubscriptionInput.planId) {
-          let changedSubscriptionId = selectedSubscription.id;
-          let {
-            id: newSubscriptionId,
-            current_period_end: newCurrentPeriodEnd,
-            current_period_start: newCurrentPeriodStart,
-            plan: newPlan,
-            status: newStatus,
-          } = await stripe.subscriptions.create({
-            customer: user.stripeCustomerId,
-            items: [
-              {
-                plan: filteredSubscriptionInput.planId,
+          if (
+            upgradePlanCheck(
+              currentSubscriptionPlan,
+              filteredSubscriptionInput.subscriptionPlan,
+            )
+          ) {
+            let changedSubscriptionId = selectedSubscription.id;
+            let {
+              id: newSubscriptionId,
+              current_period_end: newCurrentPeriodEnd,
+              current_period_start: newCurrentPeriodStart,
+              plan: newPlan,
+              status: newStatus,
+            } = await stripe.subscriptions.create({
+              customer: user.stripeCustomerId,
+              items: [
+                {
+                  plan: filteredSubscriptionInput.planId,
+                },
+              ],
+              billing_cycle_anchor: getBillingAnchor(
+                filteredSubscriptionInput.subscriptionPlan.cycle,
+              ),
+              proration_behavior: 'always_invoice',
+              metadata: { spaceId: filteredSubscriptionInput.spaceId },
+            });
+            if (!newPlan) {
+              throw new Error('Plan not found');
+            }
+            subscriptionId = newSubscriptionId;
+            currentPeriodEnd = newCurrentPeriodEnd;
+            currentPeriodStart = newCurrentPeriodStart;
+            plan = newPlan;
+            status = newStatus;
+            await context.prisma.space.update({
+              where: {
+                id: filteredSubscriptionInput.spaceId,
               },
-            ],
-            billing_cycle_anchor: getBillingAnchor(
-              filteredSubscriptionInput.cycle,
-            ),
-            proration_behavior: 'always_invoice',
-            metadata: { spaceId: filteredSubscriptionInput.spaceId },
-          });
-          // Note: Normal ways to update, doesn't work because it will reset the cycle anchor
-          // let {
-          //   id: subscriptionId,
-          //   current_period_end: currentPeriodEnd,
-          //   current_period_start: currentPeriodStart,
-          //   plan,
-          //   status,
-          // } = await stripe.subscriptions.update(
-          //   filteredSubscriptionInput.stripeSubscriptionId,
-          //   {
-          //     items: [
-          //       {
-          //         id: selectedSubscription.items.data[0].id,
-          //         plan: filteredSubscriptionInput.planId,
-          //       },
-          //     ],
-          //     proration_behavior: 'always_invoice',
-          //     cancel_at_period_end: false,
-          //   },
-          // );
-          if (!newPlan) {
-            throw new Error('Plan not found');
+              data: {
+                stripeSubscriptionId: subscriptionId,
+              },
+            });
+            await stripe.subscriptions.del(changedSubscriptionId, {
+              prorate: true,
+              invoice_now: true,
+            });
+          } else {
+            let {
+              id: newSubscriptionId,
+              current_period_end: newCurrentPeriodEnd,
+              current_period_start: newCurrentPeriodStart,
+              plan: newPlan,
+              status: newStatus,
+            } = await stripe.subscriptions.update(
+              filteredSubscriptionInput.stripeSubscriptionId,
+              {
+                items: [
+                  {
+                    id: selectedSubscription.items.data[0].id,
+                    plan: filteredSubscriptionInput.planId,
+                  },
+                ],
+                proration_behavior: 'none',
+                cancel_at_period_end: false,
+              },
+            );
+            if (!newPlan) {
+              throw new Error('Plan not found');
+            }
+            subscriptionId = newSubscriptionId;
+            currentPeriodEnd = newCurrentPeriodEnd;
+            currentPeriodStart = newCurrentPeriodStart;
+            plan = newPlan;
+            status = newStatus;
           }
-          subscriptionId = newSubscriptionId;
-          currentPeriodEnd = newCurrentPeriodEnd;
-          currentPeriodStart = newCurrentPeriodStart;
-          plan = newPlan;
-          status = newStatus;
-          await context.prisma.space.update({
-            where: {
-              id: filteredSubscriptionInput.spaceId,
-            },
-            data: {
-              stripeSubscriptionId: subscriptionId,
-            },
-          });
-          await stripe.subscriptions.del(changedSubscriptionId, {
-            prorate: true,
-            invoice_now: true,
-          });
           await context.prisma.subscriptionLandlordHistory.create({
             data: {
               subscriptionId,
+              action: 'CHANGE',
               landlordUser: {
                 connect: {
                   id: context.landlordUserId,

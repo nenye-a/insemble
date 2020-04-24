@@ -163,7 +163,7 @@ export let editTenantSubscription = mutationField('editTenantSubscription', {
         'There is no default payment. Please register the card first.',
       );
     }
-    let currentPlanId = selectedSubscription.items.data[0].plan.id;
+    let currentPlanId = selectedSubscription.plan.id;
     let currentSubscriptionPlan = subscriptionPlansCheck.find(
       (plan) => plan.id === currentPlanId,
     );
