@@ -5,6 +5,7 @@ import stripe from '../../config/stripe';
 import { changeDefaultPaymentMethodResolver } from './paymentMethodMutation';
 import { subscriptionPlansCheck } from '../../constants/subscriptions';
 import { defaultPaymentCheck } from '../../helpers/defaultPaymentCheck';
+import { upgradePlanCheck } from '../../helpers/upgradePlanCheck';
 
 // TODO: Handle declined card
 // TODO: Handle recurring payment
@@ -162,6 +163,15 @@ export let editTenantSubscription = mutationField('editTenantSubscription', {
         'There is no default payment. Please register the card first.',
       );
     }
+    let currentPlanId = selectedSubscription.items.data[0].plan.id;
+    let currentSubscriptionPlan = subscriptionPlansCheck.find(
+      (plan) => plan.id === currentPlanId,
+    );
+    if (!currentSubscriptionPlan) {
+      throw new Error(
+        `Current subscription plan with ${currentPlanId} is not found.`,
+      );
+    }
     let {
       id: subscriptionId,
       current_period_end: currentPeriodEnd,
@@ -175,7 +185,12 @@ export let editTenantSubscription = mutationField('editTenantSubscription', {
           plan: planId,
         },
       ],
-      proration_behavior: 'always_invoice',
+      proration_behavior: upgradePlanCheck(
+        currentSubscriptionPlan,
+        subscriptionPlan,
+      )
+        ? 'always_invoice'
+        : 'none',
       cancel_at_period_end: false,
     });
     if (!plan) {
