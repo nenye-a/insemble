@@ -372,3 +372,10 @@ export type PendingDataType = {
     senderRole: 'LANDLORD' | 'TENANT';
   };
 };
+
+export type BillingPlanType = {
+  role: 'LANDLORD' | 'TENANT';
+  id: string;
+  cycle: 'MONTHLY' | 'ANNUALLY';
+  tier: 'BASIC' | 'PROFESSIONAL';
+};
