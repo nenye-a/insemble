@@ -14,6 +14,7 @@ export let createBrandResolver: FieldResolver<
     where: {
       id: context.tenantUserId,
     },
+    include: { brands: true },
   });
   if (!tenantUser) {
     throw new Error('User not found');
@@ -24,8 +25,14 @@ export let createBrandResolver: FieldResolver<
       tenantUser = await context.prisma.tenantUser.update({
         where: { id: tenantUser.id },
         data: { tier: 'FREE' },
+        include: { brands: true },
       });
     }
+  }
+  if (tenantUser.tier === 'FREE' && tenantUser.brands.length > 1) {
+    throw new Error(
+      'Can not create new brand. Please upgrade to pro to make new brand.',
+    );
   }
   let {
     categories = [],
