@@ -1,11 +1,12 @@
-import React from 'react';
-import styled from 'styled-components';
-import { Card, Text, Badge as BaseBadge } from '../../core-ui';
+import React, { RefObject } from 'react';
+import styled, { css } from 'styled-components';
+import { Card, Text, Badge as BaseBadge, TouchableOpacity } from '../../core-ui';
 import NearbyPlacesTag from './NearbyPlacesTag';
 import { DropdownSelection } from './NearbyCard';
 import { DEFAULT_BORDER_RADIUS, FONT_WEIGHT_MEDIUM, FONT_SIZE_SMALL } from '../../constants/theme';
 import { THEME_COLOR } from '../../constants/colors';
 import { roundDecimal, numberFormatter } from '../../utils';
+import { CardProps } from '../../core-ui/Card';
 
 type Props = {
   name: string;
@@ -15,10 +16,23 @@ type Props = {
   selectedDropdownValue: DropdownSelection;
   rating: number | null;
   numberRating: number;
+  forwardedRef?: RefObject<HTMLDivElement>;
+  isSelected?: boolean;
+  onPress: (name: string) => void;
 };
 
 export default function MiniNearbyPlacesCard(props: Props) {
-  let { name, distance, rating, numberRating, similar, selectedDropdownValue } = props;
+  let {
+    name,
+    distance,
+    rating,
+    numberRating,
+    similar,
+    selectedDropdownValue,
+    forwardedRef,
+    isSelected,
+    onPress,
+  } = props;
 
   const MiniNearbyTag: {
     [key in DropdownSelection]: {
@@ -47,31 +61,43 @@ export default function MiniNearbyPlacesCard(props: Props) {
   let selectedTag = MiniNearbyTag[selectedDropdownValue];
 
   return (
-    <Container>
-      {similar && (
-        <Badge
-          text="Similar"
-          textProps={{ style: { fontWeight: FONT_WEIGHT_MEDIUM, fontSize: FONT_SIZE_SMALL } }}
-        />
-      )}
-      <PlaceName>{name}</PlaceName>
-      {selectedTag.field != null && (
-        <NearbyPlacesTag
-          content={numberFormatter(roundDecimal(selectedTag.field))}
-          postfix={selectedTag.postfix}
-          style={{ margin: 0, marginTop: 3 }}
-        />
-      )}
+    <Container ref={forwardedRef} isSelected={isSelected}>
+      <TouchableOpacity onPress={() => onPress(name)}>
+        {similar && (
+          <Badge
+            text="Similar"
+            textProps={{ style: { fontWeight: FONT_WEIGHT_MEDIUM, fontSize: FONT_SIZE_SMALL } }}
+          />
+        )}
+        <PlaceName>{name}</PlaceName>
+        {selectedTag.field != null && (
+          <NearbyPlacesTag
+            content={numberFormatter(roundDecimal(selectedTag.field))}
+            postfix={selectedTag.postfix}
+            style={{ margin: 0, marginTop: 3 }}
+          />
+        )}
+      </TouchableOpacity>
     </Container>
   );
 }
 
 const MARGIN = '4px';
-const Container = styled(Card)`
+
+type ContainerProps = CardProps & {
+  isSelected: boolean;
+};
+
+const Container = styled(Card)<ContainerProps>`
   margin: ${MARGIN};
   padding: 12px;
   width: calc(100% / 3 - (2 * ${MARGIN}));
   overflow: visible;
+  ${({ isSelected }) =>
+    isSelected &&
+    css`
+      border: 1px solid ${THEME_COLOR};
+    `}
 `;
 
 const PlaceName = styled(Text)`

@@ -62,6 +62,7 @@ export default function NearbyCard(props: ViewProps) {
 
   // TODO: fix typing
   const cardsRefs = useRef(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     filteredData?.reduce((acc: any, { name }) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
       acc[name] = useRef();
@@ -140,7 +141,13 @@ export default function NearbyCard(props: ViewProps) {
                   filteredData?.map((item, index) => (
                     <MiniNearbyPlacesCard
                       key={index}
+                      forwardedRef={cardsRefs.current[item.name]}
                       selectedDropdownValue={selectedDropdownVal}
+                      isSelected={selectedCard === item.name}
+                      onPress={(name) => {
+                        setSelectedCard(name);
+                        setHasSelectedCard(true);
+                      }}
                       {...item}
                     />
                   ))
@@ -148,7 +155,7 @@ export default function NearbyCard(props: ViewProps) {
                   filteredData?.map((item, index) => (
                     <NearbyPlacesCard
                       forwardedRef={cardsRefs.current[item.name]}
-                      selectedCard={selectedCard}
+                      isSelected={selectedCard === item.name}
                       onPress={(name) => {
                         setSelectedCard(name);
                         setHasSelectedCard(true);

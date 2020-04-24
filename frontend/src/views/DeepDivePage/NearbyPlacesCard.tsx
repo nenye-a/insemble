@@ -13,7 +13,7 @@ import { CardProps } from '../../core-ui/Card';
 type Props = Nearby & {
   onPress: (name: string) => void;
   forwardedRef?: RefObject<HTMLDivElement>;
-  selectedCard?: string;
+  isSelected?: boolean;
 };
 
 export default function NearbyPlacesCard(props: Props) {
@@ -27,9 +27,8 @@ export default function NearbyPlacesCard(props: Props) {
     similar,
     onPress,
     forwardedRef,
-    selectedCard,
+    isSelected,
   } = props;
-  let isSelected = selectedCard === name;
 
   return (
     <Container ref={forwardedRef} isSelected={isSelected}>
