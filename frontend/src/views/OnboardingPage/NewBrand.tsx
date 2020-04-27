@@ -7,8 +7,8 @@ import OnboardingFooter from '../../components/layout/OnboardingFooter';
 import { useGoogleMaps } from '../../utils';
 import LocationsInput from '../LandingPage/LocationsInput';
 import OnboardingCard from './OnboardingCard';
-import { TEXT_COLOR } from '../../constants/colors';
-import { FONT_WEIGHT_BOLD } from '../../constants/theme';
+import { DARK_TEXT_COLOR } from '../../constants/colors';
+import { FONT_SIZE_NORMAL, FONT_WEIGHT_BOLD } from '../../constants/theme';
 
 export default function NewBrand() {
   let { isLoading } = useGoogleMaps();
@@ -24,7 +24,6 @@ export default function NewBrand() {
             <LocationsInput
               label="Please provide representative address:"
               placeholder="Enter the name or address of your top performing location"
-              buttonText="Find locations"
               onSubmit={(place: google.maps.places.PlaceResult) => {
                 let {
                   geometry,
@@ -48,6 +47,12 @@ export default function NewBrand() {
                   }
                 }
               }}
+              buttonProps={{
+                text: 'Find locations',
+                size: 'small',
+                style: { top: 7 },
+              }}
+              style={{ height: 42, fontSize: FONT_SIZE_NORMAL }}
             />
           )}
           <View>
@@ -71,10 +76,9 @@ export default function NewBrand() {
 }
 
 const NoAddressButton = styled(Button)`
-  margin: 0 12px 0 0;
   align-self: flex-end;
   ${Text} {
-    color: ${TEXT_COLOR};
+    color: ${DARK_TEXT_COLOR};
     font-weight: ${FONT_WEIGHT_BOLD};
   }
 `;

@@ -3,7 +3,13 @@ import { Range } from 'rc-slider';
 import styled from 'styled-components';
 
 import { View, Text } from '../../core-ui';
-import { THEME_COLOR, UNSELECTED_TEXT_COLOR, SLIDER_SECONDARY_COLOR } from '../../constants/colors';
+import {
+  THEME_COLOR,
+  UNSELECTED_TEXT_COLOR,
+  SLIDER_SECONDARY_COLOR,
+  SLIDER_DISABLED_RAIL_COLOR,
+  WHITE,
+} from '../../constants/colors';
 import { FONT_SIZE_SMALL } from '../../constants/theme';
 
 type Props = {
@@ -57,6 +63,7 @@ export default function SliderFilter(props: Props) {
           borderColor: SLIDER_SECONDARY_COLOR,
           borderWidth: 1,
           borderStyle: 'solid',
+          backgroundColor: disabled ? SLIDER_DISABLED_RAIL_COLOR : WHITE,
         }}
         handleStyle={[
           {

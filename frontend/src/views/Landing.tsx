@@ -152,7 +152,7 @@ function Landing() {
                 ? 'Enter the name or address of your top performing location'
                 : 'Enter your top retail address'
             }
-            buttonText={isDesktop ? 'Find locations' : 'Go'}
+            buttonProps={{ text: isDesktop ? 'Find locations' : 'Go', style: { height: 42 } }}
             onSubmit={(place) => {
               let {
                 geometry,

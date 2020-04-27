@@ -12,7 +12,7 @@ export const FONT_SIZE_XXLARGE = '28px';
 export const FONT_SIZE_XXXLARGE = '36px';
 export const FONT_SIZE_HUGE = '84px';
 
-export const DEFAULT_BORDER_RADIUS = '4px';
+export const DEFAULT_BORDER_RADIUS = '5px';
 export const SECONDARY_BORDER_RADIUS = '10px';
 export const NAVBAR_HEIGHT = '65px';
 

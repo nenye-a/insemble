@@ -21,7 +21,7 @@ import {
 } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_SIZE_NORMAL } from '../../constants/theme';
 import SliderFilter from './SliderFilter';
-import RangeInput from './RangeInput';
+import BaseRangeInput from './RangeInput';
 
 type Props = ComponentProps<typeof View> & {
   visible?: boolean;
@@ -316,4 +316,8 @@ const ClearButton = styled(Button)`
   ${Text} {
     color: ${THEME_COLOR};
   }
+`;
+
+const RangeInput = styled(BaseRangeInput)`
+  width: 220px;
 `;
