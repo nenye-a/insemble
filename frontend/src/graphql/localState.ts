@@ -9,6 +9,7 @@ export type UserContent = {
   company: string;
   tier: TenantTier | null;
   role: string;
+  brandId: string;
 };
 
 type UserState = { userState: { __typename: string } & UserContent };
@@ -26,5 +27,6 @@ export const defaultState: RootState = {
     company: '',
     tier: null,
     role: '',
+    brandId: '',
   },
 };

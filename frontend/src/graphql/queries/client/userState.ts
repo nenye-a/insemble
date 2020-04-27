@@ -7,3 +7,11 @@ export const GET_TIER = gql`
     }
   }
 `;
+
+export const GET_BRANDID = gql`
+  query GetBrandId {
+    userState @client {
+      brandId
+    }
+  }
+`;
