@@ -12,8 +12,7 @@ import { GetTenantProfile } from '../../generated/GetTenantProfile';
 import { GetLandlordProfile } from '../../generated/GetLandlordProfile';
 import { Role } from '../../types/types';
 import { useCredentials } from '../../utils';
-import { GET_BRANDS } from '../../graphql/queries/server/brand';
-import { GetBrands } from '../../generated/GetBrands';
+import { GET_BRANDID } from '../../graphql/queries/client/userState';
 
 type Props = {
   showButton?: boolean;
@@ -51,7 +50,7 @@ export default function HeaderNavigationBar(props: Props) {
     }
   };
 
-  let [getBrand, { data: brandData }] = useLazyQuery<GetBrands>(GET_BRANDS, {
+  let [getBrandId, { data: brandId }] = useLazyQuery(GET_BRANDID, {
     notifyOnNetworkStatusChange: true,
   });
 
@@ -74,21 +73,17 @@ export default function HeaderNavigationBar(props: Props) {
   }, [role, getTenantProfile, getLandlordProfile]);
 
   useEffect(() => {
-    if (brandData?.brands) {
-      if (brandData.brands.length > 0) {
-        let { id } = brandData.brands[0];
-
-        history.push(`/map/${id}`);
-      }
+    if (brandId) {
+      history.push(`/map/${brandId}`);
     }
-  }, [brandData, history]);
+  }, [brandId, history]);
 
   return (
     <Container>
       <TouchableOpacity
         onPress={() => {
           if (role === Role.TENANT) {
-            getBrand();
+            getBrandId();
           } else if (role === Role.LANDLORD) {
             history.push(`/landlord/properties/`);
           } else {
