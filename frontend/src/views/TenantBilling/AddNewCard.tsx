@@ -41,6 +41,7 @@ export function AddNewCardModal({
   preventClosingOnSubmit?: boolean;
 }) {
   let [isSaving, setSaving] = useState(false);
+  let [error, setError] = useState('');
   let [state, dispatch] = useReducer(addNewCardReducer, initialNewCardState);
   let stripe = useStripe();
   let elements = useElements();
@@ -74,6 +75,7 @@ export function AddNewCardModal({
       if (result.error || !result.paymentMethod) {
         // eslint-disable-next-line no-console
         console.log('Failed creating payment method', result.error);
+        setError(result.error?.message || '');
         return;
       }
 
@@ -93,7 +95,7 @@ export function AddNewCardModal({
       <PaymentsRowView>
         <RadioButton name="method" title="Credit Card" isSelected={true} onPress={() => {}} />
       </PaymentsRowView>
-      <AddNewCardForm state={state} dispatch={dispatch} />
+      <AddNewCardForm state={state} dispatch={dispatch} error={error} />
       <SaveButtonContainer>
         <Button text="Save" onPress={onSavePress} loading={disableSave} />
       </SaveButtonContainer>
