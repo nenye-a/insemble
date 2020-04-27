@@ -35,10 +35,16 @@ export default function Overview() {
         keyFactsData={keyFactsData}
         withMargin
         isLocked={isLocked}
+        id="keyfacts"
       />
-      <RelevantConsumerPersonas isLocked={isLocked} personasData={personasData} />
-      <Demographics isLocked={isLocked} demographicsData={demographicsData} withMargin={true} />
-      <NearbyCard />
+      <RelevantConsumerPersonas id="personas" isLocked={isLocked} personasData={personasData} />
+      <Demographics
+        id="demographics"
+        isLocked={isLocked}
+        demographicsData={demographicsData}
+        withMargin={true}
+      />
+      <NearbyCard id="ecosystem" />
     </View>
   );
 }

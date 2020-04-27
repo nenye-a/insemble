@@ -47,7 +47,7 @@ type Data = {
 
 type DataKey = Exclude<keyof Data, 'population'>;
 
-type Props = {
+type Props = ViewProps & {
   withMargin?: boolean;
   isLocked?: boolean;
   demographicsData?: Array<
@@ -65,7 +65,7 @@ function hasGrowth(
 }
 
 export default function Graphic(props: Props) {
-  let { demographicsData, withMargin, isLocked } = props;
+  let { demographicsData, withMargin, isLocked, ...otherProps } = props;
   let [activeIndex, setActiveIndex] = useState<number>(0);
   let [selectedFilter, setSelectedFilter] = useState<string>('Age');
   let chartContainerRef = useRef<HTMLDivElement | null>(null);
@@ -239,9 +239,13 @@ export default function Graphic(props: Props) {
   );
 
   return withMargin ? (
-    <Container flex>{content}</Container>
+    <Container flex {...otherProps}>
+      {content}
+    </Container>
   ) : (
-    <ViewContainer flex>{content}</ViewContainer>
+    <ViewContainer flex {...otherProps}>
+      {content}
+    </ViewContainer>
   );
 }
 

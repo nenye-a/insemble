@@ -27,24 +27,38 @@ export default function MatchPercentageCard() {
       name: 'Growth',
       description: 'Growth potential of this area',
       growthIcon: affinities?.growth,
+      id: 'keyfacts',
     },
     {
       name: 'Personas',
       description: 'Growth potential of this area',
       growthIcon: affinities?.personas,
+      id: 'personas',
     },
     {
       name: 'Demographics',
       description: 'Who lives & frequents this area',
       growthIcon: affinities?.demographics,
+      id: 'demographics',
     },
     {
       name: 'Ecosystem',
       description: 'The economic ecosystem nearby',
       growthIcon: affinities?.ecosystem,
+      id: 'ecosystem',
     },
   ];
+  let body = document.getElementById('deepdiveScrollView');
 
+  let scrollToId = (id: string) => {
+    let target = document.getElementById(id);
+    if (target && body) {
+      body.scrollTo({
+        top: target.getBoundingClientRect().top,
+        behavior: 'smooth',
+      });
+    }
+  };
   return (
     <Container>
       <PercentageContainer>
@@ -59,10 +73,15 @@ export default function MatchPercentageCard() {
         </Text>
         <FragmentedProgressBar progress={progress} style={{ marginTop: 30, marginBottom: 60 }} />
       </PercentageContainer>
-      <AspectsRowedView>
-        {ASPECTS.map(({ name, description, growthIcon }, index) => {
+      <RowedView>
+        {ASPECTS.map(({ name, description, growthIcon, id }, index) => {
           return (
-            <AspectContainer key={name + '_' + index.toString()}>
+            <AspectContainer
+              key={name + '_' + index.toString()}
+              onClick={() => {
+                scrollToId(id);
+              }}
+            >
               <RowedView>
                 <Text fontSize={FONT_SIZE_LARGE} fontWeight={FONT_WEIGHT_BOLD}>
                   {name}
@@ -75,8 +94,12 @@ export default function MatchPercentageCard() {
             </AspectContainer>
           );
         })}
-      </AspectsRowedView>
-      <SeeMoreContainer>
+      </RowedView>
+      <SeeMoreContainer
+        onClick={() => {
+          scrollToId('keyfacts');
+        }}
+      >
         <SvgArrowDownShort style={{ color: GREY_ICON }} />
         <Text fontColor={DARK_TEXT_COLOR}>See More</Text>
       </SeeMoreContainer>
@@ -95,8 +118,6 @@ const RowedView = styled(View)`
   flex-direction: row;
 `;
 
-const AspectsRowedView = styled(RowedView)``;
-
 const SeeMoreContainer = styled(TouchableOpacity)`
   flex-direction: row;
   justify-content: center;
@@ -107,6 +128,7 @@ const SeeMoreContainer = styled(TouchableOpacity)`
 const AspectContainer = styled(View)`
   align-items: center;
   width: 25%;
+  cursor: pointer;
 `;
 
 const PercentageText = styled(Text)`

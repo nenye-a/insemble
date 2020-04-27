@@ -129,7 +129,7 @@ export default function LocationDeepDiveModal(props: Props) {
         ) : (
           <>
             {noPropertyDetail ? (
-              <ScrollView flex onScroll={handleOnScroll}>
+              <ScrollView flex onScroll={handleOnScroll} id="deepdiveScrollView">
                 <PropertyDeepDiveHeader
                   showConnect={false}
                   matchScore={0}
@@ -153,7 +153,7 @@ export default function LocationDeepDiveModal(props: Props) {
                     setSelectedTabIndex(index);
                   }}
                 />
-                <ScrollView flex onScroll={handleOnScroll}>
+                <ScrollView flex onScroll={handleOnScroll} id="deepdiveScrollView">
                   <PropertyDeepDiveHeader
                     matchScore={data?.locationDetails.result.matchValue || 0}
                     brandId={brandId}
