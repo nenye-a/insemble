@@ -31,7 +31,7 @@ export default function OutOfBound() {
           </ContentContainer>
         </ContentContainer>
         <OnboardingFooter>
-          <Button text="Back" onPress={() => history.goBack()} />
+          <Button text="Back" onPress={() => history.push('/')} />
         </OnboardingFooter>
       </OnboardingCard>
     </Container>
