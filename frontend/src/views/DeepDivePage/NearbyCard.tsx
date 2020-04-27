@@ -31,7 +31,7 @@ export type NearbyPlace = {
 
 export type DropdownSelection = 'Most Popular' | 'Distance' | 'Rating' | 'Similar';
 
-export default function NearbyCard() {
+export default function NearbyCard(props: ViewProps) {
   let [selectedView, setSelectedView] = useState<ViewMode>('list');
   let [selectedDropdownVal, setSelectedDropdownVal] = useState<DropdownSelection>('Most Popular');
   let isGridViewMode = selectedView === 'grid';
@@ -84,6 +84,7 @@ export default function NearbyCard() {
       rightTitleComponent={iconTab}
       titleContainerProps={{ style: { height: 56 } }}
       isLocked={isLocked}
+      {...props}
     >
       {isLocked ? (
         <Image src={BlurredNearby} />
