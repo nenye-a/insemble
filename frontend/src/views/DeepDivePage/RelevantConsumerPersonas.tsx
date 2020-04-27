@@ -7,7 +7,7 @@ import { LocationDetails_locationDetails_result_topPersonas as LocationPersonas 
 import BlurredPersonas from '../../assets/images/blurred-personas.png';
 
 type Props = ViewProps & {
-  personasData?: Array<LocationPersonas>;
+  personasData?: Array<LocationPersonas> | null;
   isLocked?: boolean;
   title: string;
 };

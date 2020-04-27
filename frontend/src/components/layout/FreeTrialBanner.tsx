@@ -10,11 +10,11 @@ import {
   SUBSCRIBE_BUTTON_COLOR,
 } from '../../constants/colors';
 import { View, Text, Button } from '../../core-ui';
-import { GET_TIER } from '../../graphql/queries/client/userState';
+import { GET_USER_STATE } from '../../graphql/queries/client/userState';
 import { TenantTier, LandlordTier } from '../../generated/globalTypes';
 
 export default function FreeTrialBanner() {
-  let { data } = useQuery(GET_TIER);
+  let { data } = useQuery(GET_USER_STATE);
   let history = useHistory();
   let tier = data.userState.tier;
   let isFreeTier = tier === TenantTier.FREE || tier === LandlordTier.NO_TIER; // TODO: check if trial

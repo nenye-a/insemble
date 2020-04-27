@@ -30,9 +30,8 @@ export default function TenantPropertyDetailsView({ keyFacts, insightsView }: Pr
         <Container>
           <ConsumerPersonaText>Relevant Consumer Personas</ConsumerPersonaText>
           <CardsContainer>
-            {topPersonas.map((item, index) => (
-              <RelevantConsumerCard key={index} {...item} />
-            ))}
+            {topPersonas &&
+              topPersonas.map((item, index) => <RelevantConsumerCard key={index} {...item} />)}
           </CardsContainer>
         </Container>
 

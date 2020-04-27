@@ -15,7 +15,7 @@ import {
 import { Property, PropertyVariables } from '../../generated/Property';
 import { MAPS_IFRAME_URL_SEARCH } from '../../constants/googleMaps';
 import { ErrorComponent } from '../../components';
-import { GET_TIER } from '../../graphql/queries/client/userState';
+import { GET_USER_STATE } from '../../graphql/queries/client/userState';
 import { LandlordTier } from '../../generated/globalTypes';
 import RelevantConsumerPersonas from '../DeepDivePage/RelevantConsumerPersonas';
 
@@ -26,7 +26,7 @@ type Params = {
 const LOADING_ERROR = 'Your location details are loading';
 
 export default function LandlordLocationDetails() {
-  let { data: tierData } = useQuery(GET_TIER);
+  let { data: tierData } = useQuery(GET_USER_STATE);
   let isLocked = tierData.userState.tier === LandlordTier.NO_TIER; // TODO: check if trial too
   let { paramsId: propertyId = '' } = useParams<Params>();
 

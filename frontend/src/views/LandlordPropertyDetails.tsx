@@ -19,7 +19,7 @@ import { PropertyMatches, PropertyMatchesVariables } from '../generated/Property
 import { Property, PropertyVariables } from '../generated/Property';
 import { SelectedBrand } from './LandlordProfile/LandlordTenantMatches';
 import { ALERT_BACKGROUND_COLOR } from '../constants/colors';
-import { GET_TIER } from '../graphql/queries/client/userState';
+import { GET_USER_STATE } from '../graphql/queries/client/userState';
 import { LandlordTier } from '../generated/globalTypes';
 
 enum Tab {
@@ -59,7 +59,7 @@ export default function LandlordPropertyDetails() {
       },
     }
   );
-  let { data: tierData } = useQuery(GET_TIER);
+  let { data: tierData } = useQuery(GET_USER_STATE);
   let isLocked = tierData.userState.tier === LandlordTier.NO_TIER; // TODO: check if trial too
 
   let { data, loading, error: propertyMatchesError, refetch: propertyMatchesRefetch } = useQuery<
