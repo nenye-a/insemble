@@ -29,7 +29,7 @@ export default function ChangeLandlordPlanModal() {
   let planIdObj = Object.entries(LandlordTiers).find(
     (item) => item[1].monthly.id === planId || item[1].yearly.id === planId
   );
-  let isAnnual = planIdObj?.[1].monthly.id === planId ? false : true;
+  let isAnnual = planIdObj?.[1].monthly.id === planId;
   let {
     name = '',
     monthly: { price: monthlyPrice = 0 } = {},
