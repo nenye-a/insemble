@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 import HeatMapLayer from 'react-google-DELETED_BASE64_STRING';
 import { useParams, useHistory } from 'react-router-dom';
-import { useLazyQuery } from '@apollo/react-hooks';
+import { useLazyQuery, useApolloClient } from '@apollo/react-hooks';
 
 import { GET_LOCATION_PREVIEW } from '../graphql/queries/server/preview';
 import { View, LoadingIndicator } from '../core-ui';
@@ -20,6 +20,7 @@ import { GOOGLE_MAPS_STYLE } from '../constants/googleMaps';
 import MapTour from './MapPage/MapTour';
 import { getGroupedMatchingPropertiesByKey } from '../utils';
 import { SelectedLocation } from '../components/LocationInput';
+import { GET_BRANDID } from '../graphql/queries/client/userState';
 
 type LatLng = google.maps.LatLng;
 type LatLngLiteral = google.maps.LatLngLiteral;
@@ -56,6 +57,7 @@ function MapContainer({
 }: Props) {
   let history = useHistory();
   let { brandId = '' } = useParams();
+  let client = useApolloClient();
   let [getLocation, { data, loading, error }] = useLazyQuery<
     LocationPreview,
     LocationPreviewVariables
@@ -137,6 +139,18 @@ function MapContainer({
     setSelectedPropertyLatLng(latLng);
     setSelectedPropertyId(propertyId);
   };
+
+  useEffect(() => {
+    client.writeQuery({
+      query: GET_BRANDID,
+      data: {
+        userState: {
+          __typename: 'UserState',
+          brandId,
+        },
+      },
+    });
+  });
 
   useEffect(() => {
     if (error && onMapError) {
