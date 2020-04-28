@@ -1,4 +1,5 @@
 import { TenantTier, LandlordTier } from '@prisma/client';
+import { BillingPlanType } from 'dataTypes';
 
 export const subscriptionPlans: Array<{
   role: 'LANDLORD' | 'TENANT';
@@ -10,12 +11,7 @@ export const subscriptionPlans: Array<{
   { role: 'LANDLORD', tier: 'PROFESSIONAL', id: 'prod_Glh0kj8K2C44rw' },
 ];
 
-export const subscriptionPlansCheck: Array<{
-  role: 'LANDLORD' | 'TENANT';
-  id: string;
-  cycle: 'MONTHLY' | 'ANNUALLY';
-  tier: 'BASIC' | 'PROFESSIONAL';
-}> = [
+export const subscriptionPlansCheck: Array<BillingPlanType> = [
   {
     role: 'TENANT',
     id: 'plan_GlgyE9w9q7ILhB',

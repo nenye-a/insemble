@@ -2,9 +2,13 @@ import { Request, Response } from 'express';
 import Stripe from 'stripe';
 import { prisma } from '../prisma';
 import stripe from '../config/stripe';
-import { subscriptionPlans } from '../constants/subscriptions';
+import {
+  subscriptionPlans,
+  subscriptionPlansCheck,
+} from '../constants/subscriptions';
 import { TenantTier, LandlordTier } from '@prisma/client';
 import { trialCheck } from '../helpers/trialCheck';
+import { getBillingAnchor } from '../helpers/getBillingAnchor';
 
 const signingSecret = process.env.STRIPE_WH_SECRET || '';
 
@@ -43,69 +47,141 @@ export async function paymentHandler(request: Request, response: Response) {
         .send(`This invoice doesn't contain a recognized subscription product`);
       return;
     }
-    if (subscriptionPlan.role === 'TENANT') {
-      let user = await prisma.tenantUser.findOne({
-        where: {
-          stripeCustomerId,
-        },
-      });
-      if (!user) {
-        throw new Error('User not found');
-      }
-      user = await prisma.tenantUser.update({
-        where: {
-          stripeCustomerId,
-        },
-        data: {
-          tier: trialCheck(user.createdAt) ? 'PROFESSIONAL' : 'FREE',
-          stripeSubscriptionId: null,
-        },
-      });
-      await prisma.subscriptionTenantHistory.create({
-        data: {
-          subscriptionId,
-          action: 'CANCEL',
-          tenantUser: {
-            connect: {
-              id: user.id,
-            },
-          },
-        },
-      });
-    } else {
-      let user = await prisma.landlordUser.findOne({
-        where: {
-          stripeCustomerId,
-        },
-      });
-      if (!user) {
-        throw new Error('User not found');
-      }
-      try {
-        await prisma.space.update({
+    let { nextPlan, spaceId } = object.metadata;
+    if (nextPlan) {
+      if (subscriptionPlan.role === 'LANDLORD') {
+        let subsPlan = subscriptionPlansCheck.find(
+          (plan) => plan.id === nextPlan,
+        );
+        if (!subsPlan) {
+          throw new Error('No plan found.');
+        }
+        if (subsPlan.role === 'TENANT') {
+          throw new Error('This is tenant plan.');
+        }
+        let user = await prisma.landlordUser.findOne({
           where: {
-            stripeSubscriptionId: subscriptionId,
+            stripeCustomerId,
+          },
+        });
+        if (!user) {
+          throw new Error('User not found');
+        }
+        try {
+          let { id: newSubscriptionId } = await stripe.subscriptions.create({
+            customer: user.stripeCustomerId,
+            items: [
+              {
+                plan: nextPlan,
+              },
+            ],
+            billing_cycle_anchor: getBillingAnchor(subsPlan.cycle),
+            proration_behavior: 'always_invoice',
+            metadata: { spaceId },
+          });
+          await prisma.space.update({
+            where: {
+              id: spaceId,
+            },
+            data: {
+              stripeSubscriptionId: newSubscriptionId,
+            },
+          });
+        } catch {
+          response.json({ received: true });
+        }
+      } else {
+        let user = await prisma.tenantUser.findOne({
+          where: {
+            stripeCustomerId,
+          },
+        });
+        if (!user) {
+          throw new Error('User not found');
+        }
+        let { id: newSubscriptionId } = await stripe.subscriptions.create({
+          customer: user.stripeCustomerId,
+          items: [
+            {
+              plan: nextPlan,
+            },
+          ],
+        });
+        await prisma.tenantUser.update({
+          where: {
+            stripeCustomerId,
           },
           data: {
-            tier: trialCheck(user.createdAt) ? 'PROFESSIONAL' : 'NO_TIER',
+            stripeSubscriptionId: newSubscriptionId,
+          },
+        });
+      }
+    } else {
+      if (subscriptionPlan.role === 'TENANT') {
+        let user = await prisma.tenantUser.findOne({
+          where: {
+            stripeCustomerId,
+          },
+        });
+        if (!user) {
+          throw new Error('User not found');
+        }
+        user = await prisma.tenantUser.update({
+          where: {
+            stripeCustomerId,
+          },
+          data: {
+            tier: trialCheck(user.createdAt) ? 'PROFESSIONAL' : 'FREE',
             stripeSubscriptionId: null,
           },
         });
-        await prisma.subscriptionLandlordHistory.create({
+        await prisma.subscriptionTenantHistory.create({
           data: {
             subscriptionId,
             action: 'CANCEL',
-            landlordUser: {
+            tenantUser: {
               connect: {
                 id: user.id,
               },
             },
           },
         });
-      } catch {
-        response.json({ received: true });
+      } else {
+        let user = await prisma.landlordUser.findOne({
+          where: {
+            stripeCustomerId,
+          },
+        });
+        if (!user) {
+          throw new Error('User not found');
+        }
+        try {
+          await prisma.space.update({
+            where: {
+              stripeSubscriptionId: subscriptionId,
+            },
+            data: {
+              tier: trialCheck(user.createdAt) ? 'PROFESSIONAL' : 'NO_TIER',
+              stripeSubscriptionId: null,
+            },
+          });
+          await prisma.subscriptionLandlordHistory.create({
+            data: {
+              subscriptionId,
+              action: 'CANCEL',
+              landlordUser: {
+                connect: {
+                  id: user.id,
+                },
+              },
+            },
+          });
+        } catch {
+          response.json({ received: true });
+        }
       }
     }
+
     response.json({ received: true });
   }
 
