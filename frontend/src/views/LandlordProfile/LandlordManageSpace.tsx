@@ -233,7 +233,7 @@ export default function LandlordManageSpace(props: Props) {
               />
             </RowView>
             <RadioGroup<MarketingPreferenceRadio>
-              name="Marketing Preference"
+              label="Marketing Preference"
               options={MARKETING_PREFERENCE_OPTIONS}
               selectedOption={selectedMarketingPreference}
               onSelect={(item) => {
