@@ -9,16 +9,6 @@ import BasePlanCard from '../Billing/PlanCard';
 import CardFooter from '../../components/layout/OnboardingFooter';
 import { InvoiceList } from './SelectMultipleLandlordPlans';
 
-type Plan = {
-  tierName: string;
-  price: number;
-  isAnnual: boolean;
-};
-
-type Props = {
-  plans: Array<Plan>;
-};
-
 export default function ConfirmChangeMultiplePlans() {
   let history = useHistory();
   let invoiceList: Array<InvoiceList> = history.location.state.invoiceList || [];

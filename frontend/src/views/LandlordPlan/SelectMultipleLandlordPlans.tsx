@@ -56,9 +56,12 @@ export type InvoiceList = {
   isAnnual: boolean;
 };
 
-export default function SelectMultipleLandlordPlans() {
+type Props = {
+  subscriptionList: Array<BilledSubscriptions>;
+};
+
+export default function SelectMultipleLandlordPlans({ subscriptionList }: Props) {
   let history = useHistory();
-  let subscriptionList: Array<BilledSubscriptions> = history.location?.state?.subscriptionList;
 
   let [billingList, setBillingList] = useState(subscriptionList);
   let isBillingListEqual = isEqual(subscriptionList, billingList);
@@ -107,6 +110,7 @@ export default function SelectMultipleLandlordPlans() {
       });
     }
     history.push('/landlord/change-plans/confirm-plans', {
+      ...history.location.state,
       invoiceList,
     });
   };
