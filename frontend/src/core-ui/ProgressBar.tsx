@@ -33,7 +33,7 @@ const Bar = styled(View)<BarProps>`
   width: ${(props) => props.width}
   background-color: ${BAR_BACKGROUND}
   overflow: hidden;
-  border-radius: ${(props) => (props.width === '100%' ? '0' : '0 4px 4px 0')};
+  border-radius: ${(props) => (props.width === '100%' ? '0' : '0 5px 5px 0')};
   transition: 0.4s linear;
   transition-property: width, background-color;
 `;

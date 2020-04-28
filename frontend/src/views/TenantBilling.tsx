@@ -4,7 +4,7 @@ import { useMutation, useQuery, useLazyQuery } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
 import { SECONDARY_COLOR, THEME_COLOR, WHITE } from '../constants/colors';
-import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../constants/theme';
+import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD, DEFAULT_BORDER_RADIUS } from '../constants/theme';
 import { Button, Card, LoadingIndicator, Text, View, Alert } from '../core-ui';
 
 import { PaymentMethodList } from '../generated/PaymentMethodList';
@@ -156,7 +156,7 @@ const Title = styled(Text)`
 const SectionCard = styled(View)`
   margin-bottom: 30px;
   padding: 30px;
-  border-radius: 8px;
+  border-radius: ${DEFAULT_BORDER_RADIUS};
   box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.1);
   background-color: ${WHITE};
 `;
