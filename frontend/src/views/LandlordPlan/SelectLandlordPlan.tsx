@@ -16,7 +16,7 @@ export default function SelectLandlordPlan(props: Props) {
   return (
     <Container>
       <SegmentedControl
-        options={['Monthly', 'Anually']}
+        options={['Monthly', 'Annually']}
         selectedIndex={isAnnual}
         onPress={(index: number) => {
           setIsAnnual(index);

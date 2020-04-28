@@ -28,7 +28,7 @@ export default function PlanCard(props: Props) {
   let { role } = useCredentials();
   let pricePerMonth = isAnnual ? price / 12 : price;
   let subscriptionSubject = role === Role.TENANT ? 'User' : 'Space';
-  let subscriptionDuration = isAnnual ? 'Anual' : 'Monthly';
+  let subscriptionDuration = isAnnual ? 'Annual' : 'Monthly';
   let subscriptionDescription = `1 ${subscriptionSubject} | ${subscriptionDuration} Subscription`;
 
   return (
@@ -44,7 +44,7 @@ export default function PlanCard(props: Props) {
         <Text>USD per month</Text>
         {!!isAnnual && (
           <Text fontSize={FONT_SIZE_SMALL} fontWeight={FONT_WEIGHT_LIGHT} color={DARK_TEXT_COLOR}>
-            paid anually
+            paid annually
           </Text>
         )}
       </LeftContainer>

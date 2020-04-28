@@ -11,6 +11,7 @@ import { ViewportListener } from './core-ui';
 import MainRoute from './router/MainRoute';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
 
 const trackingID = 'UA-153536736-1';
 ReactGA.initialize(trackingID);
