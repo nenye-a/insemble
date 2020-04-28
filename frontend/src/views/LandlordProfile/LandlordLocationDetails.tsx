@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
-import { View, LoadingIndicator, Text, Button } from '../../core-ui';
+import { View, LoadingIndicator, Text } from '../../core-ui';
 import KeyFacts from '../DeepDivePage/KeyFacts';
 import DemographicCard from '../DeepDivePage/Demographics';
 import { GET_PROPERTY_LOCATION_DETAILS } from '../../graphql/queries/server/deepdive';
@@ -14,9 +14,9 @@ import {
 } from '../../generated/PropertyLocationDetails';
 import { Property, PropertyVariables } from '../../generated/Property';
 import { MAPS_IFRAME_URL_SEARCH } from '../../constants/googleMaps';
-import { ErrorComponent } from '../../components';
+import { ErrorComponent, TrialEndedAlert } from '../../components';
 import { GET_USER_STATE } from '../../graphql/queries/client/userState';
-import { ALERT_BACKGROUND_COLOR, LIGHTEST_GREY } from '../../constants/colors';
+import { LIGHTEST_GREY } from '../../constants/colors';
 import RelevantConsumerCard from '../DeepDivePage/RelevantConsumerCard';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD } from '../../constants/theme';
 import BlurredPersonas from '../../assets/images/blurred-personas.png';
@@ -28,7 +28,6 @@ type Params = {
 const LOADING_ERROR = 'Your location details are loading';
 
 export default function LandlordLocationDetails() {
-  let history = useHistory();
   let { data: tierData } = useQuery(GET_USER_STATE);
   let { trial } = tierData.userState;
   let { paramsId: propertyId = '' } = useParams<Params>();
@@ -85,16 +84,7 @@ export default function LandlordLocationDetails() {
         <ErrorContainer onRetry={refetch} />
       ) : (
         <>
-          {!trial ? (
-            <TrialEndedBanner>
-              <Text>{`Looks like your trial has ended, but it's easy to get back up and running`}</Text>
-              <Button
-                text="See Location Details"
-                onPress={() => history.push('/landlord/billing')}
-              />
-            </TrialEndedBanner>
-          ) : null}
-
+          {!trial ? <TrialEndedAlert text="See Location Details" /> : null}
           <Iframe src={iframeSource} />
           <KeyFacts
             totalValue={totalValue}
@@ -157,14 +147,6 @@ const Iframe = styled.iframe`
 const ErrorContainer = styled(ErrorComponent)`
   padding: 24px;
 `;
-
-const TrialEndedBanner = styled(View)`
-  background-color: ${ALERT_BACKGROUND_COLOR}
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  `;
 
 const Image = styled.img`
   width: 100%;

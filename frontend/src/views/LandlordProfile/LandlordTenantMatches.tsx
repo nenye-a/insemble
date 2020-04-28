@@ -18,7 +18,7 @@ import {
   PropertyMatchesVariables,
   PropertyMatches,
 } from '../../generated/PropertyMatches';
-import { EmptyDataComponent, ErrorComponent } from '../../components';
+import { EmptyDataComponent, ErrorComponent, TrialEndedAlert } from '../../components';
 import { roundDecimal, useViewport } from '../../utils';
 import { VIEWPORT_TYPE } from '../../constants/viewports';
 import BlurredTenantMatches from '../../assets/images/blurred-tenant-matches.png';
@@ -63,19 +63,26 @@ export default function LandlordTenantMatches({
       return <TenantCard key={index} item={item} onPress={onPress} />;
     });
 
-  let content = isLocked ? lockedMatches : allMatches;
+  let content = isLocked ? <Row flex>{lockedMatches}</Row> : allMatches;
   return (
-    <Container flex>
+    <>
       {loading ? (
-        <LoadingIndicator flex size="large" text="Loading the matches for your space." />
+        <Container flex>
+          <LoadingIndicator flex size="large" text="Loading the matches for your space." />
+        </Container>
       ) : error ? (
-        <ErrorComponent onRetry={refetch} />
+        <Container flex>
+          <ErrorComponent onRetry={refetch} />
+        </Container>
       ) : !matchResult ? (
         <EmptyDataComponent />
       ) : (
-        content
+        <>
+          {isLocked ? <TrialEndedAlert text="See All Retailers" /> : null}
+          <TenantContainer>{content}</TenantContainer>
+        </>
       )}
-    </Container>
+    </>
   );
 }
 
@@ -226,4 +233,12 @@ const CardExistingLocationText = styled(Text)`
 const BlurredImage = styled.img`
   width: 100%;
   object-fit: cover;
+`;
+
+const TenantContainer = styled(Container)`
+  padding: 0 20px;
+`;
+
+const Row = styled(View)`
+  flex-direction: row;
 `;

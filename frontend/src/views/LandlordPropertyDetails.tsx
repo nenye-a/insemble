@@ -164,7 +164,6 @@ export default function LandlordPropertyDetails() {
 }
 
 const ContentWrapper = styled(View)`
-  padding: 0 20px;
   height: 70vh;
   overflow-y: scroll;
 `;
