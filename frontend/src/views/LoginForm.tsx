@@ -14,7 +14,6 @@ import { CreateBrand, CreateBrandVariables } from '../generated/CreateBrand';
 import { getBusinessAndFilterParams, saveCredentials } from '../utils';
 import { Role } from '../types/types';
 import { State as OnboardingState } from '../reducers/tenantOnboardingReducer';
-import { GET_USER_STATE } from '../graphql/queries/client/userState';
 
 type Props = {
   role: Role;
@@ -74,7 +73,7 @@ export default function Login(props: Props) {
       let {
         token,
         brandId,
-        tenant: { tier },
+        tenant: { tier, trial },
       } = loginTenant;
 
       saveCredentials({
@@ -82,12 +81,12 @@ export default function Login(props: Props) {
         role: Role.TENANT,
       });
 
-      client.writeQuery({
-        query: GET_USER_STATE,
+      client.writeData({
         data: {
           userState: {
             __typename: 'UserState',
             tier,
+            trial,
           },
         },
       });
@@ -140,11 +139,11 @@ export default function Login(props: Props) {
       role: Role.LANDLORD,
     });
 
-    client.writeQuery({
-      query: GET_USER_STATE,
+    client.writeData({
       data: {
         userState: {
           __typename: 'UserState',
+          tier: null,
           trial,
         },
       },
