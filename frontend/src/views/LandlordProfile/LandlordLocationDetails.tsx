@@ -3,11 +3,8 @@ import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
-import { View, Text, LoadingIndicator } from '../../core-ui';
-import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD } from '../../constants/theme';
-import { LIGHTEST_GREY } from '../../constants/colors';
+import { View, LoadingIndicator, Text } from '../../core-ui';
 import KeyFacts from '../DeepDivePage/KeyFacts';
-import RelevantConsumerCard from '../DeepDivePage/RelevantConsumerCard';
 import DemographicCard from '../DeepDivePage/Demographics';
 import { GET_PROPERTY_LOCATION_DETAILS } from '../../graphql/queries/server/deepdive';
 import { GET_PROPERTY } from '../../graphql/queries/server/properties';
@@ -17,7 +14,12 @@ import {
 } from '../../generated/PropertyLocationDetails';
 import { Property, PropertyVariables } from '../../generated/Property';
 import { MAPS_IFRAME_URL_SEARCH } from '../../constants/googleMaps';
-import { ErrorComponent } from '../../components';
+import { ErrorComponent, TrialEndedAlert } from '../../components';
+import { GET_USER_STATE } from '../../graphql/queries/client/userState';
+import { LIGHTEST_GREY } from '../../constants/colors';
+import RelevantConsumerCard from '../DeepDivePage/RelevantConsumerCard';
+import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD } from '../../constants/theme';
+import BlurredPersonas from '../../assets/images/blurred-personas.png';
 
 type Params = {
   paramsId: string;
@@ -26,6 +28,8 @@ type Params = {
 const LOADING_ERROR = 'Your location details are loading';
 
 export default function LandlordLocationDetails() {
+  let { data: tierData } = useQuery(GET_USER_STATE);
+  let { trial } = tierData.userState;
   let { paramsId: propertyId = '' } = useParams<Params>();
 
   let { data, loading, error, refetch } = useQuery<
@@ -80,6 +84,7 @@ export default function LandlordLocationDetails() {
         <ErrorContainer onRetry={refetch} />
       ) : (
         <>
+          {!trial ? <TrialEndedAlert text="See Location Details" /> : null}
           <Iframe src={iframeSource} />
           <KeyFacts
             totalValue={totalValue}
@@ -88,14 +93,23 @@ export default function LandlordLocationDetails() {
             withMargin={false}
           />
           <ConsumerPersonaText>Local Consumer Personas (Psychographics)</ConsumerPersonaText>
-          <Container flex>
-            <CardsContainer>
-              {personasData &&
-                personasData.map((item, index) => <RelevantConsumerCard key={index} {...item} />)}
-            </CardsContainer>
-          </Container>
+          {!trial ? (
+            <Image src={BlurredPersonas} />
+          ) : (
+            <Container flex>
+              <CardsContainer>
+                {personasData &&
+                  personasData.map((item, index) => <RelevantConsumerCard key={index} {...item} />)}
+              </CardsContainer>
+            </Container>
+          )}
+
           <GraphicContainer>
-            <DemographicCard demographicsData={demographicsData} withMargin={false} />
+            <DemographicCard
+              isLocked={!trial}
+              demographicsData={demographicsData}
+              withMargin={false}
+            />
           </GraphicContainer>
         </>
       )}
@@ -113,6 +127,7 @@ const ConsumerPersonaText = styled(Text)`
   font-weight: ${FONT_WEIGHT_BOLD};
   margin: 30px 10px 10px;
 `;
+
 const CardsContainer = styled(View)`
   padding: 30px;
   flex-direction: row;
@@ -131,4 +146,9 @@ const Iframe = styled.iframe`
 `;
 const ErrorContainer = styled(ErrorComponent)`
   padding: 24px;
+`;
+
+const Image = styled.img`
+  width: 100%;
+  object-fit: cover;
 `;

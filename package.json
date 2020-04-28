@@ -27,6 +27,7 @@
     "@stripe/react-stripe-js": "^1.0.2",
     "@stripe/stripe-js": "^1.0.0",
     "apollo-cache-inmemory": "^1.6.5",
+    "apollo-cache-persist": "^0.1.1",
     "apollo-client": "^2.6.8",
     "apollo-link": "^1.2.13",
     "apollo-link-context": "^1.0.19",

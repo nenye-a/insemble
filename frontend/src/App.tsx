@@ -6,7 +6,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import ReactGA from 'react-ga';
 
 import client from './client';
-import apolloClient from './graphql/apolloClient';
+import { apolloClient } from '../src/graphql/apolloClient';
 import { ViewportListener } from './core-ui';
 import MainRoute from './router/MainRoute';
 

@@ -17,11 +17,12 @@ import {
   LocationDetails_locationDetails_result_keyFacts as LocationDetailsKeyFacts,
 } from '../../generated/LocationDetails';
 import BlurredCommute from '../../assets/images/blurred-commute.png';
+import { EmptyDataComponent } from '../../components';
 
 type Props = ViewProps & {
   withMargin?: boolean;
   keyFactsData?: LocationDetailsKeyFacts;
-  commuteData?: Array<LocationDetailsCommute>;
+  commuteData?: Array<LocationDetailsCommute> | null;
   totalValue: number;
   isLocked?: boolean;
 };
@@ -105,7 +106,7 @@ export default function KeyFacts(props: Props) {
     <>
       <TextView>
         <Title>Key Facts & Growth</Title>
-        <Radius>within 1 miles</Radius>g
+        <Radius>within 1 mile</Radius>
       </TextView>
       <RowedView>
         <Tab
@@ -137,27 +138,31 @@ export default function KeyFacts(props: Props) {
             </>
           ) : (
             <CommuteView flex id="commute-view">
-              <PieChart width={pieSize[0]} height={pieSize[1]}>
-                <Pie
-                  data={commuteData && commuteData}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={150}
-                  nameKey="name"
-                  dataKey="value"
-                  label={renderCustomizedLabel}
-                  labelLine={false}
-                >
-                  {sortedData &&
-                    sortedData.map((entry, index: number) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COMMUTE_CHART_COLORS[index % COMMUTE_CHART_COLORS.length]}
-                      />
-                    ))}
-                </Pie>
-                <Legend layout="vertical" verticalAlign="middle" align="left" />
-              </PieChart>
+              {commuteData ? (
+                <PieChart width={pieSize[0]} height={pieSize[1]}>
+                  <Pie
+                    data={commuteData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={150}
+                    nameKey="name"
+                    dataKey="value"
+                    label={renderCustomizedLabel}
+                    labelLine={false}
+                  >
+                    {sortedData &&
+                      sortedData.map((entry, index: number) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COMMUTE_CHART_COLORS[index % COMMUTE_CHART_COLORS.length]}
+                        />
+                      ))}
+                  </Pie>
+                  <Legend layout="vertical" verticalAlign="middle" align="left" />
+                </PieChart>
+              ) : (
+                <EmptyDataComponent />
+              )}
               {/* hiding this until data is ready */}
               {/* <TextView>
             <AverageTime>Average time to work: </AverageTime>

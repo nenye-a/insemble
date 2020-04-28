@@ -4,9 +4,16 @@ import { useHistory } from 'react-router-dom';
 import { Button } from '../core-ui';
 import SvgLock from './icons/lock';
 import { WHITE } from '../constants/colors';
+import { Role } from '../types/types';
 
-export default function UpgradeButton() {
+type Props = {
+  role?: Role;
+};
+
+export default function UpgradeButton({ role }: Props) {
   let history = useHistory();
+  let location =
+    role === Role.TENANT ? '/user/plan' : role === Role.LANDLORD ? '/landlord/billing' : '/';
   return (
     <>
       <SvgLock style={{ marginLeft: 14, marginRight: 20 }} />
@@ -14,7 +21,7 @@ export default function UpgradeButton() {
         textProps={{ style: { color: WHITE } }}
         size="small"
         text="Upgrade to Access"
-        onPress={() => history.push('/user/plan')}
+        onPress={() => history.push(location)}
       />
     </>
   );

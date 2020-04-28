@@ -8,6 +8,7 @@ import Demographics from './Demographics';
 import KeyFacts from './KeyFacts';
 import { DeepDiveContext } from './DeepDiveModal';
 import { TenantTier } from '../../generated/globalTypes';
+import { Role } from '../../types/types';
 
 export default function Overview() {
   let data = useContext(DeepDiveContext);
@@ -19,13 +20,14 @@ export default function Overview() {
     data?.result?.demographics3,
     data?.result?.demographics5,
   ];
-  let isLocked = data?.tier === TenantTier.FREE; // TODO: grant access to free trial users
+  let isLocked = !data?.trial || data?.tier === TenantTier.FREE;
   let totalValue = 0;
   commuteData &&
     commuteData.forEach((item) => {
       totalValue = totalValue + item.value;
     });
 
+  let role = Role.TENANT;
   return (
     <View>
       <MatchPercentageCard />
@@ -37,12 +39,18 @@ export default function Overview() {
         isLocked={isLocked}
         id="keyfacts"
       />
-      <RelevantConsumerPersonas id="personas" isLocked={isLocked} personasData={personasData} />
+      <RelevantConsumerPersonas
+        id="personas"
+        isLocked={isLocked}
+        personasData={personasData}
+        role={role}
+      />
       <Demographics
         id="demographics"
         isLocked={isLocked}
         demographicsData={demographicsData}
         withMargin={true}
+        role={role}
       />
       <NearbyCard id="ecosystem" />
     </View>

@@ -75,40 +75,46 @@ export default function LandlordProperties() {
             let { location } = item;
             let { lat, lng } = location;
             let iframeSource = MAPS_IFRAME_URL_SEARCH + '&q=' + lat + ', ' + lng;
-
+            let content = (
+              <Row>
+                <LeftContainer flex>
+                  <RowedView>
+                    <Text>Property</Text>
+                    <Text>{item.name}</Text>
+                  </RowedView>
+                  <RowedView>
+                    <Text>Number of Spaces</Text>
+                    <Text>{item.space.length}</Text>
+                  </RowedView>
+                  <AddSpaceButton
+                    text="Add Space"
+                    size="small"
+                    onPress={() => {
+                      history.push(`/landlord/add-space/step-1`, {
+                        propertyId: item.id,
+                        address: item.location.address,
+                      });
+                    }}
+                    onStopPropagation={true}
+                  />
+                </LeftContainer>
+                <Iframe src={iframeSource} />
+              </Row>
+            );
             return (
               <View key={index} style={{ flexDirection: 'row', marginBottom: 24 }}>
-                <TouchableOpacity
-                  flex
-                  onPress={() => {
-                    history.push(`/landlord/properties/${item.id}`, {});
-                  }}
-                >
-                  <Row>
-                    <LeftContainer flex>
-                      <RowedView>
-                        <Text>Property</Text>
-                        <Text>{item.name}</Text>
-                      </RowedView>
-                      <RowedView>
-                        <Text>Number of Spaces</Text>
-                        <Text>{item.space.length}</Text>
-                      </RowedView>
-                      <AddSpaceButton
-                        text="Add Space"
-                        size="small"
-                        onPress={() => {
-                          history.push(`/landlord/add-space/step-1`, {
-                            propertyId: item.id,
-                            address: item.location.address,
-                          });
-                        }}
-                        onStopPropagation={true}
-                      />
-                    </LeftContainer>
-                    <Iframe src={iframeSource} />
-                  </Row>
-                </TouchableOpacity>
+                {item.locked ? (
+                  <View>{content}</View>
+                ) : (
+                  <TouchableOpacity
+                    flex
+                    onPress={() => {
+                      history.push(`/landlord/properties/${item.id}`, {});
+                    }}
+                  >
+                    {content}
+                  </TouchableOpacity>
+                )}
                 <RemoveButton
                   onPress={() => {
                     setRemoveConfirmationVisible(true);
