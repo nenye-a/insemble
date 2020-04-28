@@ -1,17 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useQuery } from '@apollo/react-hooks';
 
-import { View, Card, Text } from '../../core-ui';
+import { View, Card } from '../../core-ui';
 import DemographicCard from './Demographics';
-import RelevantConsumerCard from './RelevantConsumerCard';
-import { LIGHTEST_GREY } from '../../constants/colors';
-import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD } from '../../constants/theme';
 import TenantKeyFacts from './TenantKeyFacts';
 import {
   TenantDetail_tenantDetail_keyFacts as KeyFactsProps,
   TenantDetail_tenantDetail_insightView as InsightViewProps,
 } from '../../generated/TenantDetail';
 import { EmptyDataComponent } from '../../components';
+import { GET_USER_STATE } from '../../graphql/queries/client/userState';
+import RelevantConsumerPersonas from './RelevantConsumerPersonas';
+import { Role } from '../../types/types';
 
 type Props = {
   keyFacts?: KeyFactsProps;
@@ -19,6 +20,9 @@ type Props = {
 };
 
 export default function TenantPropertyDetailsView({ keyFacts, insightsView }: Props) {
+  let { data: tierData } = useQuery(GET_USER_STATE);
+  let { trial } = tierData.userState;
+  let role = Role.LANDLORD;
   if (insightsView) {
     let { topPersonas, demographics1, demographics3, demographics5 } = insightsView;
     let demographics = [demographics1, demographics3, demographics5];
@@ -27,17 +31,14 @@ export default function TenantPropertyDetailsView({ keyFacts, insightsView }: Pr
         <Container>
           <TenantKeyFacts keyFacts={keyFacts} />
         </Container>
+        <RelevantConsumerPersonas role={role} isLocked={!trial} personasData={topPersonas} />
         <Container>
-          <ConsumerPersonaText>Relevant Consumer Personas</ConsumerPersonaText>
-          <CardsContainer>
-            {topPersonas.map((item, index) => (
-              <RelevantConsumerCard key={index} {...item} />
-            ))}
-          </CardsContainer>
-        </Container>
-
-        <Container>
-          <DemographicCard demographicsData={demographics} withMargin={false} />
+          <DemographicCard
+            role={role}
+            isLocked={!trial}
+            demographicsData={demographics}
+            withMargin={false}
+          />
         </Container>
       </View>
     );
@@ -45,18 +46,6 @@ export default function TenantPropertyDetailsView({ keyFacts, insightsView }: Pr
   return <EmptyDataComponent />;
 }
 
-const ConsumerPersonaText = styled(Text)`
-  font-size: ${FONT_SIZE_MEDIUM};
-  font-weight: ${FONT_WEIGHT_BOLD};
-  margin: 10px 10px;
-`;
-
 const Container = styled(Card)`
   margin: 16px;
-`;
-
-const CardsContainer = styled(View)`
-  padding: 30px;
-  flex-direction: row;
-  background-color: ${LIGHTEST_GREY};
 `;

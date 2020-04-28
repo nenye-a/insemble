@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
 
 import { View, Text, Card, SegmentedControl } from '../../core-ui';
-import { CarouselFilter, UpgradeButton } from '../../components';
+import { CarouselFilter, UpgradeButton, EmptyDataComponent } from '../../components';
 import SvgGreenArrow from '../../components/icons/green-arrow';
 import SvgRedArrow from '../../components/icons/red-arrow';
 import DemographicsLegend from './DemographicsLegend';
@@ -27,6 +27,7 @@ import BlurredDemographics from '../../assets/images/blurred-demographics.png';
 import { LocationDetails_locationDetails_result_demographics1 as LocationDetailsDemographics } from '../../generated/LocationDetails';
 import { PropertyLocationDetails_propertyDetails_demographics1 as PropertyDetailsDemographics } from '../../generated/PropertyLocationDetails';
 import { TenantDetail_tenantDetail_insightView_demographics1 as TenantDetailsDemographics } from '../../generated/TenantDetail';
+import { Role } from '../../types/types';
 
 //TODO Improve Typing for data
 type DemographicsStatus = {
@@ -50,11 +51,13 @@ type DataKey = Exclude<keyof Data, 'population'>;
 type Props = ViewProps & {
   withMargin?: boolean;
   isLocked?: boolean;
+  role?: Role;
   demographicsData?: Array<
     | LocationDetailsDemographics
     | PropertyDetailsDemographics
     | TenantDetailsDemographics
     | undefined
+    | null
   >;
 };
 
@@ -65,7 +68,7 @@ function hasGrowth(
 }
 
 export default function Graphic(props: Props) {
-  let { demographicsData, withMargin, isLocked, ...otherProps } = props;
+  let { demographicsData, withMargin, isLocked, role, ...otherProps } = props;
   let [activeIndex, setActiveIndex] = useState<number>(0);
   let [selectedFilter, setSelectedFilter] = useState<string>('Age');
   let chartContainerRef = useRef<HTMLDivElement | null>(null);
@@ -150,7 +153,7 @@ export default function Graphic(props: Props) {
       <RowedView>
         <Row>
           <Title>Demographics</Title>
-          {isLocked ? <UpgradeButton /> : null}
+          {isLocked ? <UpgradeButton role={role} /> : null}
         </Row>
 
         {isLocked ? null : (
@@ -176,56 +179,60 @@ export default function Graphic(props: Props) {
    <PopulationText>k</PopulationText>
  </RowedView> */}
           </RowedView>
-          <ChartContainer flex ref={chartContainerRef}>
-            <BarChart
-              width={chartContainerRef.current?.clientWidth || 720}
-              height={400}
-              data={
-                dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey]
-              }
-            >
-              <XAxis
-                dataKey="name"
-                tickFormatter={formatSnakeCaseLabel}
-                tick={{ color: LIGHT_GREY, fontSize: FONT_SIZE_SMALL, fontFamily: 'Avenir' }}
-              />
-              <YAxis
-                axisLine={false}
-                tick={{ color: LIGHT_GREY, fontSize: FONT_SIZE_SMALL, fontFamily: 'Avenir' }}
-                tickFormatter={(value: number) =>
-                  value
-                    .toString()
-                    .slice(0, -3)
-                    .concat('K')
+          {dataActiveIndex ? (
+            <ChartContainer flex ref={chartContainerRef}>
+              <BarChart
+                width={chartContainerRef.current?.clientWidth || 720}
+                height={400}
+                data={
+                  dataActiveIndex && dataActiveIndex[selectedFilter.toLocaleLowerCase() as DataKey]
                 }
-                domain={[0, (dataMax) => dataMax * 1.3]}
-                padding={{ top: 50, bottom: 0 }}
-                scale="linear"
-                orientation="left"
-                label={{
-                  value: 'Population',
-                  angle: -90,
-                  x: -100,
-                  position: 'insideLeft',
-                  style: { fill: DARK_TEXT_COLOR, fontFamily: 'Avenir' },
-                }}
-              />
-              <Bar
-                dataKey="targetLocation"
-                barSize={24}
-                fill={THEME_COLOR}
-                label={renderCustomBarLabel}
-                radius={[5, 5, 0, 0]}
-              />
-              <Bar
-                dataKey="myLocation"
-                barSize={24}
-                fill={HOVERED_LIST_ITEM_BG}
-                label={renderCustomSecondBarLabel}
-                radius={[5, 5, 0, 0]}
-              />
-            </BarChart>
-          </ChartContainer>
+              >
+                <XAxis
+                  dataKey="name"
+                  tickFormatter={formatSnakeCaseLabel}
+                  tick={{ color: LIGHT_GREY, fontSize: FONT_SIZE_SMALL, fontFamily: 'Avenir' }}
+                />
+                <YAxis
+                  axisLine={false}
+                  tick={{ color: LIGHT_GREY, fontSize: FONT_SIZE_SMALL, fontFamily: 'Avenir' }}
+                  tickFormatter={(value: number) =>
+                    value
+                      .toString()
+                      .slice(0, -3)
+                      .concat('K')
+                  }
+                  domain={[0, (dataMax) => dataMax * 1.3]}
+                  padding={{ top: 50, bottom: 0 }}
+                  scale="linear"
+                  orientation="left"
+                  label={{
+                    value: 'Population',
+                    angle: -90,
+                    x: -100,
+                    position: 'insideLeft',
+                    style: { fill: DARK_TEXT_COLOR, fontFamily: 'Avenir' },
+                  }}
+                />
+                <Bar
+                  dataKey="targetLocation"
+                  barSize={24}
+                  fill={THEME_COLOR}
+                  label={renderCustomBarLabel}
+                  radius={[5, 5, 0, 0]}
+                />
+                <Bar
+                  dataKey="myLocation"
+                  barSize={24}
+                  fill={HOVERED_LIST_ITEM_BG}
+                  label={renderCustomSecondBarLabel}
+                  radius={[5, 5, 0, 0]}
+                />
+              </BarChart>
+            </ChartContainer>
+          ) : (
+            <EmptyDataComponent />
+          )}
           <CarouselFilter
             selectedOption={selectedFilter}
             options={options}

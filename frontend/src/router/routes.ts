@@ -57,6 +57,7 @@ export type RouteType = {
   };
   props?: {
     showButton?: boolean;
+    showBanner?: boolean;
   };
 };
 
@@ -126,6 +127,9 @@ const LANDLORD_ROUTES = [
     path: '/landlord/edit-profile',
     layout: LandlordProfileLayout,
     component: EditBasicProfile,
+    props: {
+      showBanner: true,
+    },
     authorization: landlordAuthorization,
   },
   {
@@ -133,6 +137,9 @@ const LANDLORD_ROUTES = [
     layout: LandlordProfileLayout,
     exact: true,
     component: LandlordProperties,
+    props: {
+      showBanner: true,
+    },
     authorization: landlordAuthorization,
   },
   {
@@ -163,6 +170,9 @@ const LANDLORD_ROUTES = [
     path: '/landlord/messages',
     layout: LandlordProfileLayout,
     component: Messages,
+    props: {
+      showBanner: true,
+    },
     exact: true,
     authorization: landlordAuthorization,
   },
@@ -176,6 +186,9 @@ const LANDLORD_ROUTES = [
     path: '/landlord/billing',
     layout: LandlordProfileLayout,
     component: LandlordBilling,
+    props: {
+      showBanner: true,
+    },
     authorization: landlordAuthorization,
   },
   {

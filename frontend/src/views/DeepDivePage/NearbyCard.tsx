@@ -39,7 +39,7 @@ export default function NearbyCard(props: ViewProps) {
   let mile = data?.result?.keyFacts.mile;
   let nearbyData = data?.result?.nearby;
   let category = data?.categories;
-  let isLocked = data?.tier === TenantTier.FREE; // TODO: grant access to free trial users
+  let isLocked = !data?.trial || data?.tier === TenantTier.FREE;
 
   let filteredData = useMemo(() => {
     switch (selectedDropdownVal) {

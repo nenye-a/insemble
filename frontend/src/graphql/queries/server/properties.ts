@@ -21,6 +21,7 @@ export const GET_PROPERTIES = gql`
         lng
         lat
       }
+      locked
       space {
         id
         available
@@ -33,6 +34,7 @@ export const GET_PROPERTIES = gql`
         description
         spaceType
         marketingPreference
+        tier
       }
     }
   }

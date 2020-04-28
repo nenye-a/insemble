@@ -18,6 +18,7 @@ import { GET_PROPERTY } from '../graphql/queries/server/properties';
 import { PropertyMatches, PropertyMatchesVariables } from '../generated/PropertyMatches';
 import { Property, PropertyVariables } from '../generated/Property';
 import { SelectedBrand } from './LandlordProfile/LandlordTenantMatches';
+import { GET_USER_STATE } from '../graphql/queries/client/userState';
 
 enum Tab {
   TENANT_MATCH_INDEX,
@@ -56,6 +57,9 @@ export default function LandlordPropertyDetails() {
       },
     }
   );
+  let { data: tierData } = useQuery(GET_USER_STATE);
+  let { trial } = tierData.userState;
+
   let { data, loading, error: propertyMatchesError, refetch: propertyMatchesRefetch } = useQuery<
     PropertyMatches,
     PropertyMatchesVariables
@@ -129,6 +133,7 @@ export default function LandlordPropertyDetails() {
         {isTenantMatchSelected ? (
           <ContentWrapper>
             <LandlordTenantMatches
+              isLocked={!trial}
               loading={loading}
               matchResult={propertyMatches}
               error={propertyMatchesError}
@@ -159,7 +164,6 @@ export default function LandlordPropertyDetails() {
 }
 
 const ContentWrapper = styled(View)`
-  padding: 0 20px;
   height: 70vh;
   overflow-y: scroll;
 `;

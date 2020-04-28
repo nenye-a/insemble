@@ -11,6 +11,7 @@ import {
 } from '../constants/theme';
 import { THEME_COLOR, WHITE, CARD_GREY_HEADER, TEXT_COLOR } from '../constants/colors';
 import UpgradeButton from '../components/UpgradeButton';
+import { Role } from '../types/types';
 
 type TextProps = ComponentProps<typeof Text>;
 type ViewProps = ComponentProps<typeof View>;
@@ -26,6 +27,7 @@ type Props = ViewProps & {
   titleProps?: TextProps;
   rightTitleComponent?: ReactNode;
   mode?: CardMode;
+  role?: Role;
 };
 
 export default function Card(props: Props) {
@@ -40,6 +42,7 @@ export default function Card(props: Props) {
     rightTitleComponent,
     isLocked = false,
     mode = 'primary',
+    role,
     ...otherProps
   } = props;
 
@@ -64,7 +67,7 @@ export default function Card(props: Props) {
             {isLocked ? (
               <Row flex>
                 {titleContent}
-                <UpgradeButton />
+                <UpgradeButton role={role} />
               </Row>
             ) : (
               <View flex>{titleContent}</View>

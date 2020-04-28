@@ -25,6 +25,7 @@ export const LOGIN_TENANT = gql`
         avatar
         company
         tier
+        trial
       }
       brandId
     }
@@ -45,6 +46,7 @@ export const TENANT_VERIFICATION = gql`
           avatar
           company
           tier
+          trial
         }
         brandId
       }
@@ -68,6 +70,7 @@ export const LANDLORD_VERIFICATION = gql`
           company
           title
           description
+          trial
         }
       }
     }
@@ -87,6 +90,7 @@ export const LOGIN_LANDLORD = gql`
         company
         title
         description
+        trial
       }
     }
   }
@@ -114,6 +118,7 @@ export const REGISTER_LANDLORD_INVITATION = gql`
         company
         title
         description
+        trial
       }
     }
   }
@@ -136,6 +141,7 @@ export const REGISTER_TENANT_INVITATION = gql`
         tier
         pendingEmail
         stripeCustomerId
+        trial
       }
     }
   }

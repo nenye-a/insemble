@@ -18,7 +18,7 @@ import {
   LocationDetails_locationDetails_spaceDetails as LocationDetailsLocationDetailsSpaceDetails,
 } from '../../generated/LocationDetails';
 import { THEME_COLOR } from '../../constants/colors';
-import { GET_TIER } from '../../graphql/queries/client/userState';
+import { GET_USER_STATE } from '../../graphql/queries/client/userState';
 import { TenantTier } from '../../generated/globalTypes';
 
 type SelectedLocation = { lat: string; lng: string; address: string; targetNeighborhood: string };
@@ -30,6 +30,7 @@ type DeepDiveContextType =
       selectedLocation?: SelectedLocation;
       categories?: Array<string>;
       tier?: TenantTier;
+      trial?: boolean;
     }
   | undefined;
 
@@ -86,7 +87,7 @@ export default function LocationDeepDiveModal(props: Props) {
     }
   );
 
-  let { data: tierData } = useQuery(GET_TIER);
+  let { data: tierData } = useQuery(GET_USER_STATE);
 
   let handleOnScroll = (e: UIEvent<HTMLDivElement>) => {
     if (visible) {
@@ -115,6 +116,7 @@ export default function LocationDeepDiveModal(props: Props) {
         },
         categories,
         tier: tierData.userState.tier,
+        trial: tierData.userState.trial,
       }}
     >
       <Modal onClose={onClose} visible={visible} svgCloseProps={{ fill: THEME_COLOR }}>
