@@ -1,26 +1,22 @@
 import { ApolloCache } from 'apollo-cache';
 import { UserContent } from '../localState';
 
-export let loginSuccess = async (
-  _obj: ObjectKey,
+export function loginSuccess(
+  _: object,
   props: UserContent,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   { cache }: { cache: ApolloCache<any> }
-) => {
-  let { token, firstName, lastName, avatar, company, email, tier, role } = props;
-  let data = {
-    userState: {
-      __typename: 'UserState',
-      token,
-      email,
-      firstName,
-      lastName,
-      avatar,
-      company,
-      tier,
-      role,
+) {
+  let { tier, trial } = props;
+  cache.writeData({
+    data: {
+      userState: {
+        __typename: 'UserState',
+        tier,
+        trial,
+      },
     },
-  };
-  cache.writeData({ data });
+  });
+
   return null;
-};
+}
