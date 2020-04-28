@@ -11,13 +11,13 @@ import {
 } from '../../constants/colors';
 import { View, Text, Button } from '../../core-ui';
 import { GET_USER_STATE } from '../../graphql/queries/client/userState';
-import { TenantTier, LandlordTier } from '../../generated/globalTypes';
+import { TenantTier } from '../../generated/globalTypes';
 
 export default function FreeTrialBanner() {
   let { data } = useQuery(GET_USER_STATE);
   let history = useHistory();
-  let tier = data.userState.tier;
-  let isFreeTier = tier === TenantTier.FREE || tier === LandlordTier.NO_TIER; // TODO: check if trial
+  let { tier, trial } = data.userState;
+  let isFreeTier = tier === TenantTier.FREE || !trial;
   return (
     <Container>
       <StatusContainer flex>

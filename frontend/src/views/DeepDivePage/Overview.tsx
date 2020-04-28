@@ -8,6 +8,7 @@ import Demographics from './Demographics';
 import KeyFacts from './KeyFacts';
 import { DeepDiveContext } from './DeepDiveModal';
 import { TenantTier } from '../../generated/globalTypes';
+import { Role } from '../../types/types';
 
 export default function Overview() {
   let data = useContext(DeepDiveContext);
@@ -26,6 +27,7 @@ export default function Overview() {
       totalValue = totalValue + item.value;
     });
 
+  let role = Role.TENANT;
   return (
     <View>
       <MatchPercentageCard />
@@ -39,9 +41,11 @@ export default function Overview() {
       />
       <RelevantConsumerPersonas
         id="personas"
+        role={role}
         title="Relevant Consumer Personas"
         isLocked={isLocked}
-        personasData={personasData}
+        demographicsData={demographicsData}
+        withMargin={true}
       />
       <Demographics
         id="demographics"

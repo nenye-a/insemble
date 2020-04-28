@@ -18,9 +18,7 @@ import { GET_PROPERTY } from '../graphql/queries/server/properties';
 import { PropertyMatches, PropertyMatchesVariables } from '../generated/PropertyMatches';
 import { Property, PropertyVariables } from '../generated/Property';
 import { SelectedBrand } from './LandlordProfile/LandlordTenantMatches';
-import { ALERT_BACKGROUND_COLOR } from '../constants/colors';
 import { GET_USER_STATE } from '../graphql/queries/client/userState';
-import { LandlordTier } from '../generated/globalTypes';
 
 enum Tab {
   TENANT_MATCH_INDEX,
@@ -60,7 +58,7 @@ export default function LandlordPropertyDetails() {
     }
   );
   let { data: tierData } = useQuery(GET_USER_STATE);
-  let isLocked = tierData.userState.tier === LandlordTier.NO_TIER; // TODO: check if trial too
+  let { trial } = tierData.userState;
 
   let { data, loading, error: propertyMatchesError, refetch: propertyMatchesRefetch } = useQuery<
     PropertyMatches,
@@ -132,15 +130,10 @@ export default function LandlordPropertyDetails() {
           onPress={(index: number) => setSelectedTabIndex(index)}
           noSpaces={propertyData?.property.space.length === 0}
         />
-        {/*  TODO: check if trial ended
-        <TrialEndedBanner>
-          <Text>{`Looks like your trial has ended, but it's easy to get back up and running`}</Text>
-          <Button text="See Location Details" size="small" onPress={() => {}} />
-        </TrialEndedBanner> */}
         {isTenantMatchSelected ? (
           <ContentWrapper>
             <LandlordTenantMatches
-              isLocked={isLocked}
+              isLocked={!trial}
               loading={loading}
               matchResult={propertyMatches}
               error={propertyMatchesError}
@@ -179,8 +172,3 @@ const ContentWrapper = styled(View)`
 const PropertyDetailsCard = styled(Card)`
   overflow: visible;
 `;
-
-const TrialEndedBanner = styled(View)`
-  background-color: ${ALERT_BACKGROUND_COLOR}
-  flex-direction: row;
-  `;

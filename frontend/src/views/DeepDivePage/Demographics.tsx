@@ -27,6 +27,7 @@ import BlurredDemographics from '../../assets/images/blurred-demographics.png';
 import { LocationDetails_locationDetails_result_demographics1 as LocationDetailsDemographics } from '../../generated/LocationDetails';
 import { PropertyLocationDetails_propertyDetails_demographics1 as PropertyDetailsDemographics } from '../../generated/PropertyLocationDetails';
 import { TenantDetail_tenantDetail_insightView_demographics1 as TenantDetailsDemographics } from '../../generated/TenantDetail';
+import { Role } from '../../types/types';
 
 //TODO Improve Typing for data
 type DemographicsStatus = {
@@ -50,6 +51,7 @@ type DataKey = Exclude<keyof Data, 'population'>;
 type Props = ViewProps & {
   withMargin?: boolean;
   isLocked?: boolean;
+  role?: Role;
   demographicsData?: Array<
     | LocationDetailsDemographics
     | PropertyDetailsDemographics
@@ -66,7 +68,7 @@ function hasGrowth(
 }
 
 export default function Graphic(props: Props) {
-  let { demographicsData, withMargin, isLocked, ...otherProps } = props;
+  let { demographicsData, withMargin, isLocked, role, ...otherProps } = props;
   let [activeIndex, setActiveIndex] = useState<number>(0);
   let [selectedFilter, setSelectedFilter] = useState<string>('Age');
   let chartContainerRef = useRef<HTMLDivElement | null>(null);
@@ -151,7 +153,7 @@ export default function Graphic(props: Props) {
       <RowedView>
         <Row>
           <Title>Demographics</Title>
-          {isLocked ? <UpgradeButton /> : null}
+          {isLocked ? <UpgradeButton role={role} /> : null}
         </Row>
 
         {isLocked ? null : (
