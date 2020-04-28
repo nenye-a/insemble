@@ -41,17 +41,16 @@ export default function Overview() {
       />
       <RelevantConsumerPersonas
         id="personas"
-        role={role}
-        title="Relevant Consumer Personas"
         isLocked={isLocked}
-        demographicsData={demographicsData}
-        withMargin={true}
+        personasData={personasData}
+        role={role}
       />
       <Demographics
         id="demographics"
         isLocked={isLocked}
         demographicsData={demographicsData}
         withMargin={true}
+        role={role}
       />
       <NearbyCard id="ecosystem" />
     </View>
