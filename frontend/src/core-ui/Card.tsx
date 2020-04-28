@@ -1,4 +1,4 @@
-import React, { ReactNode, ComponentProps } from 'react';
+import React, { ReactNode, ComponentProps, forwardRef, Ref } from 'react';
 import styled, { css } from 'styled-components';
 
 import View from './View';
@@ -18,7 +18,7 @@ type ViewProps = ComponentProps<typeof View>;
 
 type CardMode = 'primary' | 'secondary';
 
-type Props = ViewProps & {
+export type CardProps = ViewProps & {
   titleBackground?: 'purple' | 'white' | 'grey';
   title?: string;
   subTitle?: string;
@@ -30,7 +30,7 @@ type Props = ViewProps & {
   role?: Role;
 };
 
-export default function Card(props: Props) {
+export default forwardRef((props: CardProps, forwardedRef: Ref<HTMLDivElement>) => {
   let {
     title,
     subTitle,
@@ -56,7 +56,7 @@ export default function Card(props: Props) {
   );
 
   return (
-    <StyledCard {...otherProps}>
+    <StyledCard ref={forwardedRef} {...otherProps}>
       {title && (
         <TitleContainer
           mode={mode}
@@ -79,7 +79,7 @@ export default function Card(props: Props) {
       {children}
     </StyledCard>
   );
-}
+});
 
 type TitleContainerProps = ViewProps & {
   titleBackground: string;
