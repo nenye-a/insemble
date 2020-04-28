@@ -1,8 +1,10 @@
 import React, { useState, useReducer } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useStripe, useElements, CardNumberElement } from '@stripe/react-stripe-js';
 
-import { View, Text, Button } from '../../core-ui';
+import { View, Text, Button, LoadingIndicator, Alert } from '../../core-ui';
 import { ContactInsemble } from '../../components';
 import {
   FONT_WEIGHT_LIGHT,
@@ -15,27 +17,126 @@ import CreditCardTable from '../Billing/CreditCardTable';
 import InvoicePreview from '../Billing/InvoicePreview';
 import AddNewCardForm from '../Billing/AddNewCardForm';
 import CardFooter from '../../components/layout/OnboardingFooter';
-import { PaymentMethodList_paymentMethodList as PaymentMethod } from '../../generated/PaymentMethodList';
+import {
+  PaymentMethodList_paymentMethodList as PaymentMethod,
+  PaymentMethodList,
+} from '../../generated/PaymentMethodList';
 import addNewCardReducer, { initialNewCardState } from '../../reducers/addNewCardReducer';
-
-type Plan = { tierName: string; price: number; isAnnual: boolean };
-
-type Props = {
-  paymentMethodList: Array<PaymentMethod>;
-  plans: Array<Plan>;
-};
+import { EDIT_MANY_LANDLORD_PLAN_SUSBCRIPTION } from '../..DELETED_BASE64_STRING';
+import {
+  EditManyLandlordSubscription,
+  EditManyLandlordSubscriptionVariables,
+} from '../../generated/EditManyLandlordSubscription';
+import {
+  REGISTER_PAYMENT_METHOD,
+  GET_PAYMENT_METHOD_LIST,
+} from '../../graphql/queries/server/billing';
+import {
+  RegisterPaymentMethod,
+  RegisterPaymentMethodVariables,
+} from '../../generated/RegisterPaymentMethod';
+import toBillingDetails from '../../utils/toBillingDetails';
+import { InvoiceList } from './SelectMultipleLandlordPlans';
 
 enum ViewMode {
   NO_CARD,
   EXISTING_CARD,
 }
 
-export default function ChangeMultipleLandlordPlansBillingInfo(props: Props) {
-  let { paymentMethodList, plans } = props;
+export default function ChangeMultipleLandlordPlansBillingInfo() {
   let history = useHistory();
-  let initialViewMode = paymentMethodList.length > 0 ? ViewMode.EXISTING_CARD : ViewMode.NO_CARD;
+  let invoiceList: Array<InvoiceList> = history.location.state.invoiceList || [];
+  let stripe = useStripe();
+  let elements = useElements();
+  let { data: paymentListData, loading: paymentListLoading } = useQuery<PaymentMethodList>(
+    GET_PAYMENT_METHOD_LIST
+  );
+  let initialViewMode =
+    paymentListData?.paymentMethodList && paymentListData?.paymentMethodList.length > 0
+      ? ViewMode.EXISTING_CARD
+      : ViewMode.NO_CARD;
   let [selectedViewMode, setSelectedViewMode] = useState(initialViewMode);
   let [state, dispatch] = useReducer(addNewCardReducer, initialNewCardState);
+  let [isSaving, setSaving] = useState(false);
+
+  let [editManySubscription, { loading: editManyLoading, error: editManyError }] = useMutation<
+    EditManyLandlordSubscription,
+    EditManyLandlordSubscriptionVariables
+  >(EDIT_MANY_LANDLORD_PLAN_SUSBCRIPTION);
+
+  let [
+    registerPaymentMethod,
+    { loading: registerPaymentMethodLoading, error: registerPaymentError },
+  ] = useMutation<RegisterPaymentMethod, RegisterPaymentMethodVariables>(REGISTER_PAYMENT_METHOD, {
+    refetchQueries: [
+      {
+        query: GET_PAYMENT_METHOD_LIST,
+      },
+    ],
+    awaitRefetchQueries: true,
+  });
+
+  let registerCard = async () => {
+    if (!stripe || !elements) {
+      return;
+    }
+    let cardNumberEl = elements.getElement(CardNumberElement);
+    if (cardNumberEl) {
+      setSaving(true);
+      let result = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardNumberEl,
+        billing_details: toBillingDetails(state),
+      });
+      setSaving(false);
+      if (result.error || !result.paymentMethod) {
+        // eslint-disable-next-line no-console
+        console.log('Failed creating payment method', result.error);
+        return;
+      }
+      let registerPaymentResult = await registerPaymentMethod({
+        variables: {
+          paymentMethodId: result.paymentMethod.id,
+        },
+      });
+      if (registerPaymentResult.data?.registerPaymentMethod?.id) {
+        upgradePlan(registerPaymentResult.data?.registerPaymentMethod?.id);
+      }
+    }
+  };
+
+  let upgradePlan = async (paymentMethodId?: string) => {
+    let upgradePlanResult = await editManySubscription({
+      variables: {
+        subscriptionsInput: invoiceList.map((item) => {
+          return {
+            planId: item.planId,
+            spaceId: item.spaceId,
+          };
+        }),
+        paymentMethodId: paymentMethodId || undefined,
+      },
+    });
+    if (upgradePlanResult.data?.editManyLandlordSubscription) {
+      history.push('/landlord/change-plans/upgrade-success', {
+        ...history.location.state,
+      });
+    }
+  };
+
+  let onConfirmPress = () => {
+    if (selectedViewMode === ViewMode.NO_CARD) {
+      registerCard();
+    } else if (selectedViewMode === ViewMode.EXISTING_CARD) {
+      upgradePlan();
+    }
+  };
+
+  let buttonLoading = isSaving && registerPaymentMethodLoading;
+
+  if (editManyLoading || paymentListLoading) {
+    return <LoadingIndicator />;
+  }
 
   return (
     <>
@@ -43,13 +144,15 @@ export default function ChangeMultipleLandlordPlansBillingInfo(props: Props) {
         <Title>Enter your billing info</Title>
         <ContactInsemble />
         <Content>
+          <ErrorAlert visible={!!registerPaymentError} text={registerPaymentError?.message || ''} />
+          <ErrorAlert visible={!!editManyError} text={editManyError?.message || ''} />
           <Text fontSize={FONT_SIZE_MEDIUM} color={THEME_COLOR} style={paddingStyle}>
             Payment Info
           </Text>
           <RowedView>
             {selectedViewMode === ViewMode.EXISTING_CARD ? (
               <ExistingCards
-                paymentMethodList={paymentMethodList}
+                paymentMethodList={paymentListData?.paymentMethodList || []}
                 onUseNewCardPress={() => setSelectedViewMode(ViewMode.NO_CARD)}
               />
             ) : (
@@ -65,18 +168,13 @@ export default function ChangeMultipleLandlordPlansBillingInfo(props: Props) {
               </View>
             )}
             <Spacing />
-            <InvoicePreview subscriptions={plans} />
+            <InvoicePreview subscriptions={invoiceList} />
           </RowedView>
         </Content>
       </Container>
       <CardFooter>
         <BackButton mode="transparent" text="Back" onPress={() => history.goBack()} />
-        <Button
-          text="Confirm"
-          onPress={() => {
-            // connect be
-          }}
-        />
+        <Button text="Confirm" onPress={onConfirmPress} loading={buttonLoading} />
       </CardFooter>
     </>
   );
@@ -145,4 +243,8 @@ const BackButton = styled(Button)`
 
 const Spacing = styled(View)`
   width: 24px;
+`;
+
+const ErrorAlert = styled(Alert)`
+  margin: 4px 0;
 `;

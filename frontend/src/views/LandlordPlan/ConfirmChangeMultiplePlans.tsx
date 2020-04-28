@@ -7,28 +7,18 @@ import { ContactInsemble } from '../../components';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_LIGHT } from '../../constants/theme';
 import BasePlanCard from '../Billing/PlanCard';
 import CardFooter from '../../components/layout/OnboardingFooter';
+import { InvoiceList } from './SelectMultipleLandlordPlans';
 
-type Plan = {
-  tierName: string;
-  price: number;
-  isAnnual: boolean;
-};
-
-type Props = {
-  plans: Array<Plan>;
-};
-
-export default function ConfirmChangeMultiplePlans(props: Props) {
-  let { plans } = props;
+export default function ConfirmChangeMultiplePlans() {
   let history = useHistory();
-
+  let invoiceList: Array<InvoiceList> = history.location.state.invoiceList || [];
   return (
     <View>
       <Container>
         <Title>Confirm Plan</Title>
         <ContactInsemble />
         <PlanCardsWrapper>
-          {plans.map(({ tierName, price, isAnnual }, index) => (
+          {invoiceList.map(({ tierName, price, isAnnual }, index) => (
             <PlanCard key={index} tierName={tierName} price={price} isAnnual={isAnnual} />
           ))}
         </PlanCardsWrapper>
@@ -44,7 +34,7 @@ export default function ConfirmChangeMultiplePlans(props: Props) {
         <Button
           text="Next"
           onPress={() => {
-            history.push('/landlord/change-plans/confirm-payment');
+            history.push('/landlord/change-plans/confirm-payment', { invoiceList });
           }}
         />
       </CardFooter>

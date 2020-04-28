@@ -15,7 +15,7 @@ export default function ViewLandlordPlans() {
     <>
       <Container>
         <SegmentedControl
-          options={['Monthly', 'Anually']}
+          options={['Monthly', 'Annually']}
           selectedIndex={isAnnual}
           onPress={(index: number) => {
             setIsAnnual(index);
@@ -45,7 +45,9 @@ export default function ViewLandlordPlans() {
         <Button
           text="Next"
           onPress={() => {
-            history.push('/landlord/change-plans/select-plans');
+            history.push('/landlord/change-plans/select-plans', {
+              ...history.location.state,
+            });
           }}
         />
       </CardFooter>

@@ -42,12 +42,17 @@ let landlordSubscriptionsResolver: FieldResolver<
           spaceId,
           cost,
           canceledAt,
+          plan,
         };
       } else {
         return {
           id: '',
           spaceId: '',
           cost: '$0/month',
+          plan: {
+            id: '',
+            productId: '',
+          },
         };
       }
     },
@@ -59,6 +64,7 @@ let landlordSubscriptionsResolver: FieldResolver<
     let spaceIndex;
     let tier = 'NO_TIER' as LandlordTier;
     let mainPhoto = '';
+
     if (subs.spaceId) {
       id = subs.spaceId;
       property = await context.prisma.space
@@ -95,6 +101,10 @@ let landlordSubscriptionsResolver: FieldResolver<
         tier,
         mainPhoto,
         location: property.location,
+        plan: {
+          id: subs.plan.id,
+          productId: subs.plan.product,
+        },
       });
     }
   }

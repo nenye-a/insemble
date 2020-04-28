@@ -79,6 +79,7 @@ export const GET_PROPERTY = gql`
         description
         spaceType
         marketingPreference
+        tier
       }
     }
   }

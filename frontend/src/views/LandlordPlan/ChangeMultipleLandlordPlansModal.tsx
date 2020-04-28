@@ -10,10 +10,14 @@ import ConfirmChangeMultiplePlans from './ConfirmChangeMultiplePlans';
 import ChangeMultipleLandlordPlansBillingInfo from './ChangeMultipleLandlordPlansBillingInfo';
 import LandlordBilling from '../LandlordBilling';
 import DELETED_BASE64_STRING from '.DELETED_BASE64_STRING';
-import { SUBSCRIPTIONS } from '../../fixtures/dummyData';
+import { GetSubscriptionsList_landlordSubscriptions as LandlordSubscriptions } from '../../generated/GetSubscriptionsList';
 
 type Param = {
   step: string;
+};
+
+export type BilledSubscriptions = LandlordSubscriptions & {
+  isAnnual?: boolean;
 };
 
 export default function ChangeMultipleLandlordPlansModal() {
@@ -21,7 +25,7 @@ export default function ChangeMultipleLandlordPlansModal() {
   let history = useHistory();
   let params = useParams<Param>();
   let { step = 'view-plans' } = params;
-
+  let { subscriptionList } = history.location.state;
   const SEGMENTS = [
     {
       title: "Let's confirm  your subscription",
@@ -30,19 +34,17 @@ export default function ChangeMultipleLandlordPlansModal() {
     },
     {
       title: "Let's confirm your subscription",
-      content: <SelectMultipleLandlordPlans />,
+      content: <SelectMultipleLandlordPlans subscriptionList={subscriptionList} />,
       path: 'select-plans',
     },
     {
       title: "Let's confirm your subscription",
-      content: <ConfirmChangeMultiplePlans plans={SUBSCRIPTIONS} />,
+      content: <ConfirmChangeMultiplePlans />,
       path: 'confirm-plans',
     },
     {
       title: "Let's confirm your subscription",
-      content: (
-        <ChangeMultipleLandlordPlansBillingInfo plans={SUBSCRIPTIONS} paymentMethodList={[]} />
-      ),
+      content: <ChangeMultipleLandlordPlansBillingInfo />,
       path: 'confirm-payment',
     },
     {

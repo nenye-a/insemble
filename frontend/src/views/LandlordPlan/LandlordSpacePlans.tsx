@@ -29,14 +29,17 @@ export default function LandlordSpacePlans() {
     <Container>
       <RowView>
         <SectionTitle>Billing Summary</SectionTitle>
-        <Button
-          text="Change multiple plans"
-          mode="transparent"
-          onPress={() => {
-            //TODO:Redirect to change multiple plans
-            history.push('/landlord/change-plans/view-plans');
-          }}
-        />
+        {subscriptionList && subscriptionList.length > 0 ? (
+          <Button
+            text="Change multiple plans"
+            mode="transparent"
+            onPress={() => {
+              history.push('/landlord/change-plans/view-plans', {
+                subscriptionList,
+              });
+            }}
+          />
+        ) : null}
       </RowView>
       <DataTable>
         <DataTable.HeaderRow>
@@ -118,6 +121,7 @@ const Container = styled(View)`
 `;
 const Image = styled.img`
   margin-right: 20px;
+  width: 100px;
 `;
 const RowView = styled(View)`
   flex-direction: row;
