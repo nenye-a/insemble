@@ -15,6 +15,7 @@ import {
   Button,
   Text,
   Alert,
+  Checkbox,
 } from '../../core-ui';
 import { FileWithPreview } from '../../core-ui/Dropzone';
 import PhotosPicker from '../LandlordOnboardingPage/PhotosPicker';
@@ -35,6 +36,11 @@ import { Popup } from '../../components';
 import { GET_PROPERTY, GET_PROPERTIES } from '../../graphql/queries/server/properties';
 import { Property, PropertyVariables } from '../../generated/Property';
 import { DeleteSpace, DeleteSpaceVariables } from '../../generated/DeleteSpace';
+import { SPACES_TYPE } from '../../constants/spaces';
+import {
+  MARKETING_PREFERENCE_OPTIONS,
+  MarketingPreferenceRadio,
+} from '../../constants/marketingPreference';
 
 type Props = {
   spaceIndex: number;
@@ -53,6 +59,9 @@ export default function LandlordManageSpace(props: Props) {
   let [additionalPhotos, setAdditionalPhotos] = useState<Array<string | FileWithPreview | null>>(
     []
   );
+  let [selectedMarketingPreference, setSelectedMarketingPreference] = useState<
+    MarketingPreferenceRadio
+  >(MARKETING_PREFERENCE_OPTIONS[0]);
   let {
     data: propertyData,
     error: propertyError,
@@ -61,6 +70,9 @@ export default function LandlordManageSpace(props: Props) {
   } = useQuery<Property, PropertyVariables>(GET_PROPERTY, {
     variables: { propertyId },
   });
+  let [selectedType, setSelectedType] = useState<Array<string>>(
+    propertyData?.property.space[spaceIndex].spaceType || []
+  );
 
   let [
     editSpace,
@@ -114,6 +126,8 @@ export default function LandlordManageSpace(props: Props) {
             pricePerSqft: Number(price),
             equipment: selectedEquipment,
             available: dateFormatter(date),
+            spaceType: selectedCondition,
+            marketingPreference: selectedMarketingPreference.value,
           },
         },
         refetchQueries: [
@@ -218,6 +232,16 @@ export default function LandlordManageSpace(props: Props) {
                 }}
               />
             </RowView>
+            <RadioGroup<MarketingPreferenceRadio>
+              label="Marketing Preference"
+              options={MARKETING_PREFERENCE_OPTIONS}
+              selectedOption={selectedMarketingPreference}
+              onSelect={(item) => {
+                setSelectedMarketingPreference(item);
+              }}
+              radioItemProps={{ style: { marginTop: 9 } }}
+              titleExtractor={(item: MarketingPreferenceRadio) => item.label}
+            />
             <PhotosPicker
               mainPhoto={mainPhoto}
               onMainPhotoChange={(file: PhotoFile) => {
@@ -248,6 +272,30 @@ export default function LandlordManageSpace(props: Props) {
               }}
               radioItemProps={{ style: { marginBottom: 8 } }}
             />
+            <FieldInput>
+              <LabelText text="What type of space is this?" />
+              {SPACES_TYPE.map((option, index) => {
+                let isChecked = selectedType.includes(option);
+                return (
+                  <Checkbox
+                    key={index}
+                    title={option}
+                    isChecked={isChecked}
+                    onPress={() => {
+                      if (isChecked) {
+                        let newSelectedType = selectedType.filter(
+                          (item: string) => item !== option
+                        );
+                        setSelectedType(newSelectedType);
+                      } else {
+                        setSelectedType([...selectedType, option]);
+                      }
+                    }}
+                    style={{ lineHeight: 2 }}
+                  />
+                );
+              })}
+            </FieldInput>
             <TextInput
               label="Sqft"
               name="sqft"
@@ -358,4 +406,8 @@ const TotalSpace = styled(Text)`
 const RemoveButton = styled(Button)`
   position: absolute;
   right: 0;
+`;
+
+const FieldInput = styled(View)`
+  padding: 12px 0;
 `;

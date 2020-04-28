@@ -16,7 +16,7 @@ import { getImageBlob } from '../../utils';
 import { CreateSpace, CreateSpaceVariables } from '../../generated/CreateSpace';
 import { Action, State as LandlordAddSpaceState } from '../../reducers/landlordAddSpaceReducer';
 import { GET_PROPERTIES, GET_PROPERTY } from '../../graphql/queries/server/properties';
-import { MarketingPreference } from '../../generated/globalTypes';
+import SvgPlayButton from '../../components/icons/playButton';
 
 type Props = {
   dispatch: Dispatch<Action>;
@@ -46,6 +46,8 @@ export default function PreviewSpace(props: Props) {
       pricePerSqft,
       equipments,
       availability,
+      marketingPreference,
+      spaceType,
     } = addSpace;
     if (mainPhoto && typeof mainPhoto !== 'string') {
       let mainPhotoBlob = getImageBlob(mainPhoto.file);
@@ -71,7 +73,8 @@ export default function PreviewSpace(props: Props) {
               photoUploads: additionalPhotosBlob.filter((item) => item != null),
               pricePerSqft: Number(pricePerSqft),
               sqft: Number(sqft),
-              marketingPreference: MarketingPreference.PUBLIC, // TODO: get marketing preference
+              spaceType,
+              marketingPreference: marketingPreference.value,
             },
           },
           refetchQueries: [
@@ -94,13 +97,18 @@ export default function PreviewSpace(props: Props) {
         <Title>Space 1</Title>
         <Alert visible text="This is how the Retailer will see your listing." />
       </RowView>
-      <TourContainer isShrink={false}>
+      <TourContainer
+        isShrink={false}
+        mainPhoto={(typeof addSpace.mainPhoto !== 'string' && addSpace?.mainPhoto?.preview) || ''}
+      >
         <PendingAlert visible text="Pending virtual tour" />
-        <Text>3D Tour</Text>
+        <SvgPlayButton />
+        <Text>{address}</Text>
       </TourContainer>
       <PropertyDeepDiveHeader
         address={address || ''}
         // TODO: ask where to get this info
+        clickable={false}
         targetNeighborhood=""
       />
       <RowedView flex>
@@ -115,7 +123,7 @@ export default function PreviewSpace(props: Props) {
             priceSqft={`$${addSpace.pricePerSqft.toString()}`}
             sqft={addSpace.sqft}
             tenacy="Multiple"
-            type={''}
+            type={addSpace.spaceType?.join(', ') || ''}
             condition={addSpace.condition}
           />
           <Spacing />
@@ -123,13 +131,7 @@ export default function PreviewSpace(props: Props) {
         </CardsContainer>
       </RowedView>
       <OnboardingFooter>
-        <TransparentButton
-          mode="transparent"
-          text="Back"
-          onPress={() => {
-            history.goBack();
-          }}
-        />
+        <TransparentButton mode="transparent" text="Back" onPress={() => history.goBack()} />
         <Button type="submit" text="Next" loading={createSpaceLoading} />
       </OnboardingFooter>
     </Form>
@@ -149,6 +151,7 @@ const RowedView = styled(View)`
 
 type TourContainerProps = {
   isShrink: boolean;
+  mainPhoto: string;
 };
 
 const TourContainer = styled(View)<TourContainerProps>`
@@ -156,7 +159,7 @@ const TourContainer = styled(View)<TourContainerProps>`
   transition: 0.3s height linear;
   justify-content: center;
   align-items: center;
-  background-color: grey;
+  background-image: ${(props) => (props.mainPhoto ? `url(${props.mainPhoto})` : '')};
 `;
 const RowView = styled(View)`
   flex-direction: row;
