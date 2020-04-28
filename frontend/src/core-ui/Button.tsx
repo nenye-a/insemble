@@ -11,6 +11,7 @@ import TouchableOpacity from './TouchableOpacity';
 import Text from './Text';
 import Badge from './Badge';
 import LoadingIndicator from './LoadingIndicator';
+import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
 
 type TextProps = ComponentProps<typeof Text>;
 
@@ -65,7 +66,7 @@ export default function Button(props: Props) {
 
 const Container = styled(TouchableOpacity)<Props>`
   background-color: ${THEME_COLOR};
-  border-radius: 4px;
+  border-radius: ${DEFAULT_BORDER_RADIUS};
   justify-content: center;
   padding: 0 12px;
   flex-direction: row;
