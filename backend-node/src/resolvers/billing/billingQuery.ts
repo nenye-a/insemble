@@ -23,7 +23,7 @@ let billingList = queryField('billingList', {
     context: Context,
   ) => {
     let { tenantUserId, landlordUserId } = context;
-    if (tenantUserId) {
+    if (tenantUserId || landlordUserId) {
       let userDetail = await getUserDetails(context);
       let invoices = await stripe.invoices.list({
         limit,
@@ -102,10 +102,6 @@ let billingList = queryField('billingList', {
           };
         },
       );
-    }
-    if (landlordUserId) {
-      // TODO: Handle this
-      throw new Error('Not implemented for landlord yet');
     }
     throw new Error('Not Authorized');
   },

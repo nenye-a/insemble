@@ -5,6 +5,7 @@ import stripe from '../../config/stripe';
 import { changeDefaultPaymentMethodResolver } from './paymentMethodMutation';
 import { subscriptionPlansCheck } from '../../constants/subscriptions';
 import { defaultPaymentCheck } from '../../helpers/defaultPaymentCheck';
+import { upgradePlanCheck } from '../../helpers/upgradePlanCheck';
 
 // TODO: Handle declined card
 // TODO: Handle recurring payment
@@ -168,30 +169,82 @@ export let editTenantSubscription = mutationField('editTenantSubscription', {
       current_period_start: currentPeriodStart,
       plan,
       status,
-    } = await stripe.subscriptions.update(user.stripeSubscriptionId, {
-      items: [
-        {
-          id: selectedSubscription.items.data[0].id,
-          plan: planId,
-        },
-      ],
-      proration_behavior: 'always_invoice',
-      cancel_at_period_end: false,
-    });
+    } = selectedSubscription;
     if (!plan) {
-      throw new Error('Plan not found');
+      throw new Error('Selected subscription plan not found');
     }
-    await context.prisma.subscriptionTenantHistory.create({
-      data: {
-        subscriptionId,
-        action: 'CHANGE',
-        tenantUser: {
-          connect: {
-            id: context.tenantUserId,
+    let currentPlanId = selectedSubscription.plan.id;
+    let currentSubscriptionPlan = subscriptionPlansCheck.find(
+      (plan) => plan.id === currentPlanId,
+    );
+    if (!currentSubscriptionPlan) {
+      throw new Error(
+        `Current subscription plan with ${currentPlanId} is not found.`,
+      );
+    }
+    if (plan.id !== planId) {
+      if (upgradePlanCheck(currentSubscriptionPlan, subscriptionPlan)) {
+        let {
+          id: newSubscriptionId,
+          current_period_end: newCurrentPeriodEnd,
+          current_period_start: newCurrentPeriodStart,
+          plan: newPlan,
+          status: newStatus,
+        } = await stripe.subscriptions.update(user.stripeSubscriptionId, {
+          items: [
+            {
+              id: selectedSubscription.items.data[0].id,
+              plan: planId,
+            },
+          ],
+          proration_behavior: 'always_invoice',
+          metadata: {
+            nextPlan: null,
+          },
+          cancel_at_period_end: false,
+        });
+        if (!newPlan) {
+          throw new Error('Plan not found');
+        }
+        subscriptionId = newSubscriptionId;
+        currentPeriodEnd = newCurrentPeriodEnd;
+        currentPeriodStart = newCurrentPeriodStart;
+        plan = newPlan;
+        status = newStatus;
+      } else {
+        let {
+          id: newSubscriptionId,
+          current_period_end: newCurrentPeriodEnd,
+          current_period_start: newCurrentPeriodStart,
+          plan: newPlan,
+          status: newStatus,
+        } = await stripe.subscriptions.update(user.stripeSubscriptionId, {
+          metadata: {
+            nextPlan: planId,
+          },
+          cancel_at_period_end: true,
+        });
+        if (!newPlan) {
+          throw new Error('Plan not found');
+        }
+        subscriptionId = newSubscriptionId;
+        currentPeriodEnd = newCurrentPeriodEnd;
+        currentPeriodStart = newCurrentPeriodStart;
+        plan = newPlan;
+        status = newStatus;
+      }
+      await context.prisma.subscriptionTenantHistory.create({
+        data: {
+          subscriptionId,
+          action: 'CHANGE',
+          tenantUser: {
+            connect: {
+              id: context.tenantUserId,
+            },
           },
         },
-      },
-    });
+      });
+    }
 
     let { product, id } = plan;
     return {
@@ -229,6 +282,9 @@ export let cancelTenantSubscriptionResolver: FieldResolver<
   try {
     let subs = await stripe.subscriptions.update(user.stripeSubscriptionId, {
       cancel_at_period_end: true,
+      metadata: {
+        nextPlan: null,
+      },
     });
     cancelAt = subs.cancel_at * 1000;
   } catch {
