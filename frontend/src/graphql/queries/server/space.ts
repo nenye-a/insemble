@@ -14,6 +14,7 @@ export const GET_SPACE = gql`
       description
       spaceType
       marketingPreference
+      stripeSubscriptionId
     }
   }
 `;
