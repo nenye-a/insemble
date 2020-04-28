@@ -126,8 +126,10 @@ export default function TenantGoals(props: Props) {
         <TransparentButton
           text="Back"
           mode="transparent"
-          type="submit"
-          onPress={() => history.goBack()}
+          onPress={() => {
+            saveFormState();
+            history.goBack();
+          }}
         />
         <Button text="Next" disabled={!allValid} type="submit" />
       </OnboardingFooter>
