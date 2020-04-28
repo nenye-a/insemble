@@ -6,7 +6,6 @@ from django.views.generic import TemplateView
 import django_js_reverse.views
 
 from rest_framework import routers
-from .legacy_api import CategoryMapAPI, SearchAPI, MatchesAPI
 from .tenant_api import TenantMatchAPI, FilterDetailAPI, LocationPreviewAPI, AutoPopulateAPI, FastLocationDetailsAPI
 from .landlord_api import PropertyTenantAPI, PropertyDetailsAPI, TenantDetailsAPI, PropertyAddressCheck
 
@@ -40,12 +39,5 @@ urlpatterns = [
     path(r'api/propertyTenants/<slug:property_id>/<slug:space_id>', PropertyTenantAPI.as_view(), name='propertyTenants'),
     path(r'api/propertyDetails/', PropertyDetailsAPI.as_view(), name='PropertyDetails'),
     path(r'api/tenantDetails/', TenantDetailsAPI.as_view(), name='TenantDetails'),
-    path(r'api/propertyCheck/<slug:address>', PropertyAddressCheck.as_view(), name='propertyCheck'),
-
-    # LEGACY API ROUTES
-    # TODO: remove the legacy api calls
-    path(r'api/category/', CategoryMapAPI.as_view(), name='category'),
-    path(r'api/search/', SearchAPI.as_view(), name='search'),
-    path(r'api/properties/<slug:_id>/', SearchAPI.as_view(), name='properties'),
-    path(r'api/matches/<slug:address>/', MatchesAPI.as_view(), name='matches')
+    path(r'api/propertyCheck/<slug:address>', PropertyAddressCheck.as_view(), name='propertyCheck')
 ]
