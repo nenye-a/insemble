@@ -39,6 +39,7 @@ export default function ContactModal(props: Props) {
 
   let isLandlord = role === SenderRole.LANDLORD;
   let variables = {
+    // TODO : use matchId on createConversation brandId:matchId if conversation start on landlord
     brandId,
     spaceId,
     matchScore: matchScore || 0,
