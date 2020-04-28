@@ -195,6 +195,7 @@ let locationDetails = queryField('locationDetails', {
             },
           )
         : [];
+      let isFreeTier = selectedBrand.tenantUser.tier === 'FREE';
 
       return {
         result: {
@@ -211,42 +212,60 @@ let locationDetails = queryField('locationDetails', {
             totalHousehold,
             mediumHouseholdIncome,
           },
-          commute: objectToArrayKeyObjectCommute(commute),
-          topPersonas,
-          demographics1: {
-            age: objectToArrayKeyObjectDemographics(demographics1.age),
-            income: objectToArrayKeyObjectDemographics(demographics1.income),
-            ethnicity: objectToArrayKeyObjectDemographics(
-              demographics1.ethnicity,
-            ),
-            education: objectToArrayKeyObjectDemographics(
-              demographics1.education,
-            ),
-            gender: objectToArrayKeyObjectDemographics(demographics1.gender),
-          },
-          demographics3: {
-            age: objectToArrayKeyObjectDemographics(demographics3.age),
-            income: objectToArrayKeyObjectDemographics(demographics3.income),
-            ethnicity: objectToArrayKeyObjectDemographics(
-              demographics3.ethnicity,
-            ),
-            education: objectToArrayKeyObjectDemographics(
-              demographics3.education,
-            ),
-            gender: objectToArrayKeyObjectDemographics(demographics3.gender),
-          },
-          demographics5: {
-            age: objectToArrayKeyObjectDemographics(demographics5.age),
-            income: objectToArrayKeyObjectDemographics(demographics5.income),
-            ethnicity: objectToArrayKeyObjectDemographics(
-              demographics5.ethnicity,
-            ),
-            education: objectToArrayKeyObjectDemographics(
-              demographics5.education,
-            ),
-            gender: objectToArrayKeyObjectDemographics(demographics5.gender),
-          },
-          nearby: tsNearby,
+          commute: isFreeTier ? null : objectToArrayKeyObjectCommute(commute),
+          topPersonas: isFreeTier ? null : topPersonas,
+          demographics1: isFreeTier
+            ? null
+            : {
+                age: objectToArrayKeyObjectDemographics(demographics1.age),
+                income: objectToArrayKeyObjectDemographics(
+                  demographics1.income,
+                ),
+                ethnicity: objectToArrayKeyObjectDemographics(
+                  demographics1.ethnicity,
+                ),
+                education: objectToArrayKeyObjectDemographics(
+                  demographics1.education,
+                ),
+                gender: objectToArrayKeyObjectDemographics(
+                  demographics1.gender,
+                ),
+              },
+          demographics3: isFreeTier
+            ? null
+            : {
+                age: objectToArrayKeyObjectDemographics(demographics3.age),
+                income: objectToArrayKeyObjectDemographics(
+                  demographics3.income,
+                ),
+                ethnicity: objectToArrayKeyObjectDemographics(
+                  demographics3.ethnicity,
+                ),
+                education: objectToArrayKeyObjectDemographics(
+                  demographics3.education,
+                ),
+                gender: objectToArrayKeyObjectDemographics(
+                  demographics3.gender,
+                ),
+              },
+          demographics5: isFreeTier
+            ? null
+            : {
+                age: objectToArrayKeyObjectDemographics(demographics5.age),
+                income: objectToArrayKeyObjectDemographics(
+                  demographics5.income,
+                ),
+                ethnicity: objectToArrayKeyObjectDemographics(
+                  demographics5.ethnicity,
+                ),
+                education: objectToArrayKeyObjectDemographics(
+                  demographics5.education,
+                ),
+                gender: objectToArrayKeyObjectDemographics(
+                  demographics5.gender,
+                ),
+              },
+          nearby: isFreeTier ? null : tsNearby,
         },
         spaceDetails: propertySpacesDetails,
       };
