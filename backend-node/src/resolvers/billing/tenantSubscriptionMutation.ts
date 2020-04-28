@@ -4,6 +4,7 @@ import { Context } from 'serverTypes';
 import stripe from '../../config/stripe';
 import { changeDefaultPaymentMethodResolver } from './paymentMethodMutation';
 import { subscriptionPlansCheck } from '../../constants/subscriptions';
+import { defaultPaymentCheck } from '../../helpers/defaultPaymentCheck';
 
 // TODO: Handle declined card
 // TODO: Handle recurring payment
@@ -48,6 +49,14 @@ export let createTenantSubscription = mutationField(
           info,
         );
       }
+      let thereIsDefaultPayment = await defaultPaymentCheck(
+        user.stripeCustomerId,
+      );
+      if (!thereIsDefaultPayment) {
+        throw new Error(
+          'There is no default payment. Please register the card first.',
+        );
+      }
       let {
         id: subscriptionId,
         current_period_end: currentPeriodEnd,
@@ -65,7 +74,7 @@ export let createTenantSubscription = mutationField(
       if (!plan) {
         throw new Error('Plan not found');
       }
-      context.prisma.tenantUser.update({
+      await context.prisma.tenantUser.update({
         where: {
           id: context.tenantUserId,
         },
@@ -73,7 +82,7 @@ export let createTenantSubscription = mutationField(
           stripeSubscriptionId: subscriptionId,
         },
       });
-      context.prisma.subscriptionTenantHistory.create({
+      await context.prisma.subscriptionTenantHistory.create({
         data: {
           subscriptionId,
           tenantUser: {
@@ -145,6 +154,14 @@ export let editTenantSubscription = mutationField('editTenantSubscription', {
         info,
       );
     }
+    let thereIsDefaultPayment = await defaultPaymentCheck(
+      user.stripeCustomerId,
+    );
+    if (!thereIsDefaultPayment) {
+      throw new Error(
+        'There is no default payment. Please register the card first.',
+      );
+    }
     let {
       id: subscriptionId,
       current_period_end: currentPeriodEnd,
@@ -164,7 +181,7 @@ export let editTenantSubscription = mutationField('editTenantSubscription', {
     if (!plan) {
       throw new Error('Plan not found');
     }
-    context.prisma.subscriptionTenantHistory.create({
+    await context.prisma.subscriptionTenantHistory.create({
       data: {
         subscriptionId,
         action: 'CHANGE',
@@ -225,5 +242,49 @@ export let cancelTenantSubscription = mutationField(
   {
     type: 'DateTime',
     resolve: cancelTenantSubscriptionResolver,
+  },
+);
+
+export let undoCancelTenantSubscriptionResolver: FieldResolver<
+  'Mutation',
+  'undoCancelTenantSubscription'
+> = async (_, __, context: Context) => {
+  let user = await context.prisma.tenantUser.findOne({
+    where: {
+      id: context.tenantUserId,
+    },
+  });
+  if (!user) {
+    throw new Error('User not found');
+  }
+  if (!user.stripeCustomerId) {
+    throw new Error('User has not been connected with Stripe');
+  }
+
+  if (!user.stripeSubscriptionId) {
+    throw new Error('User has not been connected to any subscription');
+  }
+  let thereIsDefaultPayment = await defaultPaymentCheck(user.stripeCustomerId);
+  if (!thereIsDefaultPayment) {
+    throw new Error(
+      'There is no default payment. Please register the card first.',
+    );
+  }
+  let message = 'Success';
+  try {
+    await stripe.subscriptions.update(user.stripeSubscriptionId, {
+      cancel_at_period_end: false,
+    });
+  } catch {
+    message = 'Failed to undo cancelation';
+  }
+  return message;
+};
+
+export let undoCancelTenantSubscription = mutationField(
+  'undoCancelTenantSubscription',
+  {
+    type: 'String',
+    resolve: undoCancelTenantSubscriptionResolver,
   },
 );

@@ -5,6 +5,7 @@ import stripe from '../../config/stripe';
 import { changeDefaultPaymentMethodResolver } from './paymentMethodMutation';
 import { subscriptionPlansCheck } from '../../constants/subscriptions';
 import { getBillingAnchor } from '../../helpers/getBillingAnchor';
+import { defaultPaymentCheck } from '../../helpers/defaultPaymentCheck';
 // TODO: Handle declined card
 // TODO: Handle recurring payment
 
@@ -47,6 +48,7 @@ export let createLandlordSubscription = mutationField(
         where: {
           id: spaceId,
         },
+        include: { property: { include: { landlordUser: true } } },
       });
       if (!space) {
         throw new Error('Space not found.');
@@ -54,12 +56,26 @@ export let createLandlordSubscription = mutationField(
       if (space.stripeSubscriptionId) {
         throw new Error('Space already have subscription');
       }
+      if (!space.property) {
+        throw new Error('Selected space does not connected to property');
+      }
+      if (space.property.landlordUser.id !== context.landlordUserId) {
+        throw new Error('You can not cancel other landlord subscription');
+      }
       if (paymentMethodId) {
         await changeDefaultPaymentMethodResolver(
           _,
           { paymentMethodId },
           context,
           info,
+        );
+      }
+      let thereIsDefaultPayment = await defaultPaymentCheck(
+        user.stripeCustomerId,
+      );
+      if (!thereIsDefaultPayment) {
+        throw new Error(
+          'There is no default payment. Please register the card first.',
         );
       }
       let {
@@ -152,10 +168,12 @@ export let createManyLandlordSubscription = mutationField(
             where: {
               id: subscriptionInput.spaceId,
             },
+            include: { property: { include: { landlordUser: true } } },
           });
           if (
             space &&
             !space.stripeSubscriptionId &&
+            space.property?.landlordUser.id === context.landlordUserId &&
             !filteredInput.some(
               ({ spaceId }) => spaceId === subscriptionInput.spaceId,
             )
@@ -184,6 +202,14 @@ export let createManyLandlordSubscription = mutationField(
           { paymentMethodId },
           context,
           info,
+        );
+      }
+      let thereIsDefaultPayment = await defaultPaymentCheck(
+        user.stripeCustomerId,
+      );
+      if (!thereIsDefaultPayment) {
+        throw new Error(
+          'There is no default payment. Please register the card first.',
         );
       }
       let arrayOfResult = [];
@@ -285,12 +311,19 @@ export let editLandlordSubscription = mutationField(
         where: {
           id: spaceId,
         },
+        include: { property: { include: { landlordUser: true } } },
       });
       if (!space) {
         throw new Error('Space not found.');
       }
       if (!space.stripeSubscriptionId) {
         throw new Error('Subscription space not found');
+      }
+      if (!space.property) {
+        throw new Error('Selected space does not connected to property');
+      }
+      if (space.property.landlordUser.id !== context.landlordUserId) {
+        throw new Error('You can not cancel other landlord subscription');
       }
       const selectedSubscription = await stripe.subscriptions.retrieve(
         space.stripeSubscriptionId,
@@ -304,6 +337,14 @@ export let editLandlordSubscription = mutationField(
           { paymentMethodId },
           context,
           info,
+        );
+      }
+      let thereIsDefaultPayment = await defaultPaymentCheck(
+        user.stripeCustomerId,
+      );
+      if (!thereIsDefaultPayment) {
+        throw new Error(
+          'There is no default payment. Please register the card first.',
         );
       }
       let {
@@ -443,10 +484,12 @@ export let editManyLandlordSubscription = mutationField(
             where: {
               id: subscriptionInput.spaceId,
             },
+            include: { property: { include: { landlordUser: true } } },
           });
           if (
             space &&
             space.stripeSubscriptionId &&
+            space.property?.landlordUser.id === context.landlordUserId &&
             !filteredInput.some(
               ({ spaceId }) => spaceId === subscriptionInput.spaceId,
             )
@@ -465,6 +508,14 @@ export let editManyLandlordSubscription = mutationField(
           { paymentMethodId },
           context,
           info,
+        );
+      }
+      let thereIsDefaultPayment = await defaultPaymentCheck(
+        user.stripeCustomerId,
+      );
+      if (!thereIsDefaultPayment) {
+        throw new Error(
+          'There is no default payment. Please register the card first.',
         );
       }
       let arrayOfResult = [];
@@ -595,12 +646,19 @@ export let cancelLandlordSubscriptionResolver: FieldResolver<
     where: {
       id: spaceId,
     },
+    include: { property: { include: { landlordUser: true } } },
   });
   if (!space) {
     throw new Error('Space not found.');
   }
   if (!space.stripeSubscriptionId) {
     throw new Error('Subscription space not found');
+  }
+  if (!space.property) {
+    throw new Error('Selected space does not connected to property');
+  }
+  if (space.property.landlordUser.id !== context.landlordUserId) {
+    throw new Error('You can not cancel other landlord subscription');
   }
   let cancelAt;
   try {
@@ -620,5 +678,67 @@ export let cancelLandlordSubscription = mutationField(
     type: 'DateTime',
     args: { spaceId: stringArg({ required: true }) },
     resolve: cancelLandlordSubscriptionResolver,
+  },
+);
+
+export let undoCancelLandlordSubscriptionResolver: FieldResolver<
+  'Mutation',
+  'undoCancelLandlordSubscription'
+> = async (_, { spaceIds }, context: Context) => {
+  let user = await context.prisma.landlordUser.findOne({
+    where: {
+      id: context.landlordUserId,
+    },
+  });
+  if (!user) {
+    throw new Error('User not found');
+  }
+  if (!user.stripeCustomerId) {
+    throw new Error('User has not been connected with Stripe');
+  }
+  let thereIsDefaultPayment = await defaultPaymentCheck(user.stripeCustomerId);
+  if (!thereIsDefaultPayment) {
+    throw new Error(
+      'There is no default payment. Please register the card first.',
+    );
+  }
+  let filteredInput: Array<string> = [];
+  for (let spaceId of spaceIds) {
+    if (!filteredInput.includes(spaceId)) {
+      filteredInput.push(spaceId);
+    }
+  }
+  let message = 'Success';
+  for (let spaceId of filteredInput) {
+    let space = await context.prisma.space.findOne({
+      where: {
+        id: spaceId,
+      },
+      include: { property: { include: { landlordUser: true } } },
+    });
+    if (
+      space &&
+      space.stripeSubscriptionId &&
+      space.property?.landlordUser.id === context.landlordUserId
+    ) {
+      try {
+        await stripe.subscriptions.update(space.stripeSubscriptionId, {
+          cancel_at_period_end: false,
+        });
+      } catch {
+        message = 'Some space has failed to undo cancelation.';
+      }
+    }
+  }
+
+  return message;
+};
+
+export let undoCancelLandlordSubscription = mutationField(
+  'undoCancelLandlordSubscription',
+  {
+    type: 'String',
+    args: { spaceIds: stringArg({ required: true, list: true }) },
+    resolve: undoCancelLandlordSubscriptionResolver,
   },
 );
