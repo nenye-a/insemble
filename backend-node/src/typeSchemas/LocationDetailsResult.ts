@@ -141,23 +141,29 @@ export let DeepDiveResultType = objectType({
     });
     t.field('commute', {
       type: 'CommuteDeepDive',
+      nullable: true,
       list: true,
     });
     t.field('topPersonas', {
       type: 'PersonaDeepDive',
+      nullable: true,
       list: true,
     });
     t.field('demographics1', {
       type: 'DemographicDeepDive',
+      nullable: true,
     });
     t.field('demographics3', {
       type: 'DemographicDeepDive',
+      nullable: true,
     });
     t.field('demographics5', {
       type: 'DemographicDeepDive',
+      nullable: true,
     });
     t.field('nearby', {
       type: 'NearbyDeepDive',
+      nullable: true,
       list: true,
     });
   },
