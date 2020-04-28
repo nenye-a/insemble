@@ -18,9 +18,9 @@ export let createConversationResolver: FieldResolver<
       OR: [
         { AND: [{ brand: { id: brandId } }, { space: { spaceId } }] },
         {
-          AND: [{ brand: { tenantId: brandId } }, { space: { id: spaceId } }],
+          AND: [{ brand: { matchId: brandId } }, { space: { id: spaceId } }],
         },
-      ], // Q: brandId is tenantId right?
+      ], // NOTE: brandId we get is actualy matchId. name still brandId because it can be brand.id
     },
   });
   if (existingConversation.length) {
@@ -50,7 +50,7 @@ export let createConversationResolver: FieldResolver<
           include: { property: { include: { landlordUser: true } } },
         })
       : await context.prisma.brand.findOne({
-          where: { tenantId: brandId },
+          where: { matchId: brandId },
           include: { tenantUser: true },
         });
     if (!spaceOrBrand) {
