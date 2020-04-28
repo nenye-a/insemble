@@ -5,13 +5,13 @@ import { setContext } from 'apollo-link-context';
 import { ApolloLink } from 'apollo-link';
 import { persistCache } from 'apollo-cache-persist';
 import { createUploadLink } from 'apollo-upload-client';
+import { PersistentStorage, PersistedData } from 'apollo-cache-persist/types';
 
 import { API_URI } from '../constants/uris';
 import { defaultState } from './localState';
 import { loginSuccess } from './resolvers';
 import { useCredentials } from '../utils';
 import { Role } from '../types/types';
-import { PersistentStorage, PersistedData } from 'apollo-cache-persist/types';
 
 const cache = new InMemoryCache();
 

@@ -17,7 +17,7 @@ export default function FreeTrialBanner() {
   let { data } = useQuery(GET_USER_STATE);
   let history = useHistory();
   let { tier, trial } = data.userState;
-  let isFreeTier = tier === TenantTier.FREE || !trial;
+  let isFreeTier = !trial || tier === TenantTier.FREE;
   return (
     <Container>
       <StatusContainer flex>

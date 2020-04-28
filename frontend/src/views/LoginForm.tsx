@@ -133,7 +133,7 @@ export default function Login(props: Props) {
     let {
       token,
       landlord: { trial },
-    } = loginLandlord; // TODO: get trial too
+    } = loginLandlord;
     saveCredentials({
       landlordToken: token,
       role: Role.LANDLORD,

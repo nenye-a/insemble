@@ -30,6 +30,7 @@ type DeepDiveContextType =
       selectedLocation?: SelectedLocation;
       categories?: Array<string>;
       tier?: TenantTier;
+      trial?: boolean;
     }
   | undefined;
 
@@ -115,6 +116,7 @@ export default function LocationDeepDiveModal(props: Props) {
         },
         categories,
         tier: tierData.userState.tier,
+        trial: tierData.userState.trial,
       }}
     >
       <Modal onClose={onClose} visible={visible} svgCloseProps={{ fill: THEME_COLOR }}>

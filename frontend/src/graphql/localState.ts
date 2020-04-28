@@ -13,7 +13,7 @@ export type RootState = UserState;
 export const defaultState: RootState = {
   userState: {
     __typename: 'UserState',
-    tier: TenantTier.FREE || null,
+    tier: null,
     trial: false,
     brandId: '',
   },
