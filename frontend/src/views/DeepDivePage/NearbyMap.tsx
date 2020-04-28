@@ -8,26 +8,18 @@ import { THEME_COLOR } from '../../constants/colors';
 import mapPin from '../../assets/images/map-pin.svg';
 import greenIcon from '../../assets/images/green-circle.svg';
 import { DeepDiveContext } from './DeepDiveModal';
-
-export type NearbyPlace = {
-  photo?: string;
-  name: string;
-  category: string;
-  rating: number | null;
-  numberRating: number;
-  distance: number;
-  placeType: Array<string>;
-  lat: number;
-  lng: number;
-  similar: boolean;
-};
+import { LocationDetails_locationDetails_result_nearby as NearbyPlace } from '../../generated/LocationDetails';
+import greyCircleIcon from '../../assets/images/grey-circle.svg';
 
 type Props = {
   data: Array<NearbyPlace>;
+  selected?: string;
+  hasSelected?: boolean;
+  onClickMarker?: (name: string) => void;
 };
 
 function Map(props: Props) {
-  let { data } = props;
+  let { data, selected, hasSelected, onClickMarker } = props;
   let context = useContext(DeepDiveContext);
   if (context?.selectedLocation) {
     let { lat, lng } = context.selectedLocation;
@@ -40,12 +32,16 @@ function Map(props: Props) {
 
     return (
       <GoogleMap defaultZoom={13} center={{ lat: Number(lat), lng: Number(lng) }}>
-        {data.map(({ lat, lng, placeType }, index) => {
+        {data.map(({ lat, lng, placeType, name }, index) => {
+          let markerIcon = LEGEND[placeType[0] as keyof typeof LEGEND] || greenIcon;
+          let isSelected = name === selected;
+          let selectedIcon = isSelected ? markerIcon : greyCircleIcon;
           return (
             <Marker
+              onClick={() => onClickMarker && onClickMarker(name)}
               key={index}
               position={{ lat, lng }}
-              icon={LEGEND[placeType[0] as keyof typeof LEGEND] || greenIcon}
+              icon={hasSelected ? selectedIcon : markerIcon}
             />
           );
         })}

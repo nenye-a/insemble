@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo } from 'react';
+import React, { useState, useContext, useMemo, useRef } from 'react';
 import styled from 'styled-components';
 
 import { View, Card, TouchableOpacity, Dropdown } from '../../core-ui';
@@ -34,6 +34,8 @@ export type DropdownSelection = 'Most Popular' | 'Distance' | 'Rating' | 'Simila
 export default function NearbyCard(props: ViewProps) {
   let [selectedView, setSelectedView] = useState<ViewMode>('list');
   let [selectedDropdownVal, setSelectedDropdownVal] = useState<DropdownSelection>('Most Popular');
+  let [selectedCard, setSelectedCard] = useState('');
+  let [hasSelectedCard, setHasSelectedCard] = useState(false);
   let isGridViewMode = selectedView === 'grid';
   let data = useContext(DeepDiveContext);
   let mile = data?.result?.keyFacts.mile;
@@ -57,6 +59,24 @@ export default function NearbyCard(props: ViewProps) {
       }
     }
   }, [selectedDropdownVal, nearbyData]);
+
+  // TODO: fix typing
+  const cardsRefs = useRef(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    filteredData?.reduce((acc: any, { name }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      acc[name] = useRef();
+      return acc;
+    }, {})
+  );
+
+  const scrollTo = (target: string) => {
+    if (cardsRefs) {
+      cardsRefs.current[target].current.scrollIntoView({
+        behavior: 'smooth',
+      });
+    }
+  };
 
   let iconTab = (
     <RightTitleContainer>
@@ -90,7 +110,16 @@ export default function NearbyCard(props: ViewProps) {
         <Image src={BlurredNearby} />
       ) : (
         <RowedView flex>
-          <NearbyMap data={filteredData || []} />
+          <NearbyMap
+            hasSelected={hasSelectedCard}
+            selected={selectedCard}
+            data={filteredData || []}
+            onClickMarker={(name) => {
+              setSelectedCard(name);
+              setHasSelectedCard(true);
+              scrollTo(name);
+            }}
+          />
           <View flex>
             <NearbyMapLegend />
             <RightContent flex>
@@ -112,12 +141,29 @@ export default function NearbyCard(props: ViewProps) {
                   filteredData?.map((item, index) => (
                     <MiniNearbyPlacesCard
                       key={index}
+                      forwardedRef={cardsRefs.current[item.name]}
                       selectedDropdownValue={selectedDropdownVal}
+                      isSelected={selectedCard === item.name}
+                      onPress={(name) => {
+                        setSelectedCard(name);
+                        setHasSelectedCard(true);
+                      }}
                       {...item}
                     />
                   ))
                 ) : (
-                  filteredData?.map((item, index) => <NearbyPlacesCard key={index} {...item} />)
+                  filteredData?.map((item, index) => (
+                    <NearbyPlacesCard
+                      forwardedRef={cardsRefs.current[item.name]}
+                      isSelected={selectedCard === item.name}
+                      onPress={(name) => {
+                        setSelectedCard(name);
+                        setHasSelectedCard(true);
+                      }}
+                      key={index}
+                      {...item}
+                    />
+                  ))
                 )}
               </NearbyPlacesCardContainer>
             </RightContent>
