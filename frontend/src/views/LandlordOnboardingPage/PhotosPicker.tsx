@@ -15,29 +15,46 @@ type Props = {
 export default function PhotosPicker(props: Props) {
   let { mainPhoto, onMainPhotoChange, additionalPhotos, onAdditionalPhotoChange } = props;
   let { isDesktop } = useViewport();
+  let photos = additionalPhotos;
   let onPhotoRemove = (index: number) => {
     if (index === 0) {
       onMainPhotoChange(null);
     } else {
-      let newPhotoList = additionalPhotos.map((item, i) => {
-        if (i + 1 === index) {
-          return null;
+      if (photos.length === 20) {
+        if (index === 20) {
+          let firstStack = photos.slice(0, index - 1);
+          photos = [...firstStack, null];
+          onAdditionalPhotoChange(photos);
         } else {
-          return item;
+          if (photos[photos.length - 1] == null) {
+            let firstStack = photos.slice(0, index - 1);
+            let secondStack = photos.slice(index, -1);
+            photos = [...firstStack, ...secondStack];
+          } else {
+            let firstStack = photos.slice(0, index - 1);
+            let secondStack = photos.slice(index, -1);
+            photos = [...firstStack, ...secondStack, null];
+          }
+          onAdditionalPhotoChange(photos);
         }
-      });
-      onAdditionalPhotoChange(newPhotoList);
+      } else {
+        let firstStack = photos.slice(0, index - 1);
+        let secondStack = photos.slice(index, -1);
+        photos = [...firstStack, ...secondStack];
+        onAdditionalPhotoChange(photos);
+      }
     }
   };
 
   let onAdditionalPhotosChange = (file: FileWithPreview, index: number) => {
-    let newList = additionalPhotos.map((item, idx) => {
-      if (index === idx) {
-        return file;
-      }
-      return item;
-    });
-    onAdditionalPhotoChange(newList);
+    if (index < 19) {
+      photos.unshift(file);
+    } else {
+      let firstStack = photos.slice(0, index - 1);
+      let secondStack = photos.slice(index, -1);
+      photos = [...firstStack, ...secondStack, file];
+    }
+    onAdditionalPhotoChange(photos);
   };
 
   return (
@@ -51,7 +68,7 @@ export default function PhotosPicker(props: Props) {
       />
       <LabelText text="Additional Property Photos" />
       <PhotosContainer flex>
-        {Array.from({ length: 4 }).map((_, index) => {
+        {additionalPhotos.map((_, index) => {
           let image = additionalPhotos[index];
           return (
             <PhotoWrapper isDesktop={isDesktop} key={index} is>
@@ -81,7 +98,7 @@ const LabelText = styled(Label)`
 const PhotosContainer = styled(View)`
   flex-wrap: wrap;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
 `;
 
 const PhotoWrapper = styled(TouchableOpacity)<PhotoWrapperProps>`
@@ -89,6 +106,7 @@ const PhotoWrapper = styled(TouchableOpacity)<PhotoWrapperProps>`
     props.isDesktop
       ? css`
           width: 24%;
+          margin-right: 6px;
         `
       : css`
           // so there is still 1% margin between each photo

@@ -1,10 +1,12 @@
 import { SelectedLocation } from '../components/LocationInput';
 import { FileWithPreview } from '../core-ui/Dropzone';
-import { MarketingPreference } from '../generated/globalTypes';
+import {
+  MarketingPreferenceRadio,
+  MARKETING_PREFERENCE_OPTIONS,
+} from '../constants/marketingPreference';
 
 type ConfirmLocation = {
   userRelations: Array<string>;
-  propertyType?: Array<string>;
   physicalAddress?: SelectedLocation;
 };
 
@@ -23,6 +25,8 @@ type SpaceListing = {
   pricePerSqft: string;
   equipments: Array<string>;
   availability: string;
+  marketingPreference: MarketingPreferenceRadio;
+  spaceType?: Array<string>;
 };
 
 export type State = {
@@ -58,7 +62,6 @@ export let landlordOnboardingInitialState = {
   canPressNext: false,
   confirmLocation: {
     userRelations: [],
-    marketingPreference: MarketingPreference.PUBLIC,
   },
   confirmTenant: {
     businessType: ['Retail', 'Restaurant', 'Fitness', 'Entertainment'],
@@ -66,13 +69,14 @@ export let landlordOnboardingInitialState = {
   },
   spaceListing: {
     mainPhoto: null,
-    propertyPhotos: [null, null, null, null],
+    propertyPhotos: [null],
     description: '',
     condition: '',
     sqft: '',
     pricePerSqft: '',
     equipments: [],
     availability: '',
+    marketingPreference: MARKETING_PREFERENCE_OPTIONS[0],
   },
 };
 

@@ -15,6 +15,7 @@ import {
   Text,
   Form,
   Button,
+  Checkbox,
 } from '../../core-ui';
 import PhotosPicker from './PhotosPicker';
 import { FileWithPreview } from '../../core-ui/Dropzone';
@@ -25,6 +26,11 @@ import { Equipments } from '../../generated/Equipments';
 import { validateNumber } from '../../utils/validation';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
 import { Action, State as LandlordAddSpaceState } from '../../reducers/landlordAddSpaceReducer';
+import { SPACES_TYPE } from '../../constants/spaces';
+import {
+  MARKETING_PREFERENCE_OPTIONS,
+  MarketingPreferenceRadio,
+} from '../../constants/marketingPreference';
 
 type Props = {
   state: LandlordAddSpaceState;
@@ -44,6 +50,10 @@ export default function AddSpace(props: Props) {
   let [additionalPhotos, setAdditionalPhotos] = useState<Array<string | FileWithPreview | null>>(
     addSpace.propertyPhotos
   );
+  let [selectedType, setSelectedType] = useState<Array<string>>(addSpace.spaceType || []);
+  let [selectedMarketingPreference, setSelectedMarketingPreference] = useState<
+    MarketingPreferenceRadio
+  >(state.addSpace.marketingPreference);
   let [description, setDescription] = useState<string>(addSpace.description);
   let [selectedCondition, setSelectedCondition] = useState(addSpace.condition || 'Whitebox');
   let [selectedEquipments, setSelectedEquipment] = useState<Array<string>>(addSpace.equipments);
@@ -66,6 +76,8 @@ export default function AddSpace(props: Props) {
               pricePerSqft: fieldValues ? fieldValues.price : price,
               equipments: selectedEquipments,
               availability: fieldValues ? fieldValues.date : date,
+              marketingPreference: selectedMarketingPreference,
+              spaceType: selectedType,
             },
           },
         });
@@ -82,6 +94,8 @@ export default function AddSpace(props: Props) {
       price,
       selectedEquipments,
       date,
+      selectedMarketingPreference,
+      selectedType,
     ]
   );
 
@@ -103,6 +117,8 @@ export default function AddSpace(props: Props) {
     price,
     selectedEquipments,
     date,
+    selectedMarketingPreference,
+    selectedType,
   ]);
 
   return (
@@ -117,6 +133,16 @@ export default function AddSpace(props: Props) {
         <Alert
           visible
           text="We provide complementary virtual tours & comprehensive photos to every listing."
+        />
+        <RadioGroup<MarketingPreferenceRadio>
+          label="Marketing Preference"
+          options={MARKETING_PREFERENCE_OPTIONS}
+          selectedOption={selectedMarketingPreference}
+          onSelect={(item) => {
+            setSelectedMarketingPreference(item);
+          }}
+          radioItemProps={{ lineHeight: 2 }}
+          titleExtractor={(item: MarketingPreferenceRadio) => item.label}
         />
         <PhotosPicker
           mainPhoto={mainPhoto}
@@ -145,8 +171,30 @@ export default function AddSpace(props: Props) {
           onSelect={(value: string) => {
             setSelectedCondition(value);
           }}
-          radioItemProps={{ style: { marginTop: 8 } }}
+          radioItemProps={{ lineHeight: 2 }}
         />
+        <FieldInput>
+          <LabelText text="What type of space is this?" />
+          {SPACES_TYPE.map((option, index) => {
+            let isChecked = selectedType.includes(option);
+            return (
+              <Checkbox
+                key={index}
+                title={option}
+                isChecked={isChecked}
+                onPress={() => {
+                  if (isChecked) {
+                    let newSelectedType = selectedType.filter((item: string) => item !== option);
+                    setSelectedType(newSelectedType);
+                  } else {
+                    setSelectedType([...selectedType, option]);
+                  }
+                }}
+                style={{ lineHeight: 2 }}
+              />
+            );
+          })}
+        </FieldInput>
         <ShortTextInput
           label="Sqft"
           name="sqft"
@@ -264,4 +312,8 @@ const DatePickerContainer = styled(RowView)`
 const TransparentButton = styled(Button)`
   margin-right: 8px;
   padding: 0 12px;
+`;
+
+const FieldInput = styled(View)`
+  padding: 12px 0;
 `;
