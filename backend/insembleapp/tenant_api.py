@@ -109,7 +109,7 @@ class TenantMatchAPI(AsynchronousAPI):
 
     GET /api/tenantMatch/:
         Parameters: {
-            brand_name: string,             (required)
+            brand_name: string,             (required -> not required with the provision of a brand_id)
             address: string,                (required -> not required if categories are provided)
             categories: list[string],       (required -> not required if brand_name and address provided)
             income: {                       (required -> not required if brand_name and address provided)
@@ -136,6 +136,7 @@ class TenantMatchAPI(AsynchronousAPI):
             frontage_width: int,            (optional)
             property_type: list[string]     (optional)
             match_id: string                (optional - only provide if wishing to update specific match)
+            brand_id: string                (optional - only provide if wishing to create match/id from a brand)
         }
 
         Response: {
@@ -198,6 +199,23 @@ class TenantMatchAPI(AsynchronousAPI):
                 }, status=status.HTTP_404_NOT_FOUND)
             params = location_match['params']
             params = self.update_params(validated_params, params)
+        elif 'brand_id' in validated_params:
+            brand = utils.DB_BRANDS.find_one({'_id': ObjectId(validated_params['brand_id'])})
+            validated_params['brand_name'] = brand['brand_name']
+            if not brand:
+                return Response({
+                    'status': status.HTTP_404_NOT_FOUND,
+                    'status_detail': ["Could not find a brand record that matches that Id."]
+                }, status=status.HTTP_404_NOT_FOUND)
+            if 'address' not in validated_params:
+                brand_place = utils.DB_PLACES.find_one({'brand_id': ObjectId(validated_params['brand_id'])}, {'address': 1})
+                if not brand_place:
+                    return Response({
+                        'status': status.HTTP_404_NOT_FOUND,
+                        'status_detail': ["Could not find a brand record that matches that Id."]
+                    }, status=status.HTTP_404_NOT_FOUND)
+                validated_params['address'] = brand_place['address'].split(',')[0]
+            params = self.update_params(validated_params)
         else:
             params = self.update_params(validated_params)
 
@@ -206,16 +224,20 @@ class TenantMatchAPI(AsynchronousAPI):
         if 'address' in params and params['address']:
             address = params['address']
             google_location = google.find(address, name=name, allow_non_establishments=True, save=False)
+            if not google_location:
+                google_location = google.find(address, name + ' restaurant', allow_non_establishments=True, save=False)
             lat = round(google_location["geometry"]["location"]["lat"], 6)
             lng = round(google_location["geometry"]["location"]["lng"], 6)
-
             # associate this location with a place and then a brand (assign one if exists already)
             place = utils.DB_PLACES.find_one({'google_place_id': google_location['place_id']})
-            if place:
-                brand_id = place['brand_id']
+            if 'brand_id' in validated_params:
+                brand_id = ObjectId(validated_params['brand_id'])
             else:
-                place = provider.import_place_details(google_location['place_id'])
-                brand_id = place['brand_id'] if place else None
+                if place:
+                    brand_id = place['brand_id']
+                else:
+                    place = provider.import_place_details(google_location['place_id'])
+                    brand_id = place['brand_id'] if place else None
         else:
             categories = params['categories']
             location = provider.get_representative_location(categories, params['income'])
@@ -250,9 +272,7 @@ class TenantMatchAPI(AsynchronousAPI):
         else:
             params['location_id'] = str(utils.DB_LOCATIONS.insert(location))
 
-        # GENERATE LOCATION & PROPERTY MATCHES
         best_matches, location_matches, property_matches = provider.generate_matches(location, params)
-        # property_matches = provider.generate_matching_properties(location, params)
 
         match_update = {
             'params': params,
