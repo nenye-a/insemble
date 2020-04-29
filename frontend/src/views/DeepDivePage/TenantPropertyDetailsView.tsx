@@ -12,7 +12,6 @@ import {
 import { EmptyDataComponent } from '../../components';
 import { GET_USER_STATE } from '../../graphql/queries/client/userState';
 import RelevantConsumerPersonas from './RelevantConsumerPersonas';
-import { Role } from '../../types/types';
 
 type Props = {
   keyFacts?: KeyFactsProps;
@@ -22,7 +21,6 @@ type Props = {
 export default function TenantPropertyDetailsView({ keyFacts, insightsView }: Props) {
   let { data: tierData } = useQuery(GET_USER_STATE);
   let { trial } = tierData.userState;
-  let role = Role.LANDLORD;
   if (insightsView) {
     let { topPersonas, demographics1, demographics3, demographics5 } = insightsView;
     let demographics = [demographics1, demographics3, demographics5];
@@ -31,14 +29,9 @@ export default function TenantPropertyDetailsView({ keyFacts, insightsView }: Pr
         <Container>
           <TenantKeyFacts keyFacts={keyFacts} />
         </Container>
-        <RelevantConsumerPersonas role={role} isLocked={!trial} personasData={topPersonas} />
+        <RelevantConsumerPersonas isLocked={!trial} personasData={topPersonas} />
         <Container>
-          <DemographicCard
-            role={role}
-            isLocked={!trial}
-            demographicsData={demographics}
-            withMargin={false}
-          />
+          <DemographicCard isLocked={!trial} demographicsData={demographics} withMargin={false} />
         </Container>
       </View>
     );

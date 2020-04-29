@@ -11,7 +11,6 @@ import {
 } from '../constants/theme';
 import { THEME_COLOR, WHITE, CARD_GREY_HEADER, TEXT_COLOR } from '../constants/colors';
 import UpgradeButton from '../components/UpgradeButton';
-import { Role } from '../types/types';
 
 type TextProps = ComponentProps<typeof Text>;
 type ViewProps = ComponentProps<typeof View>;
@@ -27,7 +26,6 @@ export type CardProps = ViewProps & {
   titleProps?: TextProps;
   rightTitleComponent?: ReactNode;
   mode?: CardMode;
-  role?: Role;
 };
 
 export default forwardRef((props: CardProps, forwardedRef: Ref<HTMLDivElement>) => {
@@ -42,7 +40,6 @@ export default forwardRef((props: CardProps, forwardedRef: Ref<HTMLDivElement>) 
     rightTitleComponent,
     isLocked = false,
     mode = 'primary',
-    role,
     ...otherProps
   } = props;
 
@@ -67,7 +64,7 @@ export default forwardRef((props: CardProps, forwardedRef: Ref<HTMLDivElement>) 
             {isLocked ? (
               <Row flex>
                 {titleContent}
-                <UpgradeButton role={role} />
+                <UpgradeButton />
               </Row>
             ) : (
               <View flex>{titleContent}</View>
