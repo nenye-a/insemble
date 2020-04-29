@@ -77,7 +77,9 @@ export default function MessageCard(props: Props) {
           </>
         ) : (
           <Row>
-            <SvgReply />
+            <TouchableOpacity onPress={onPress}>
+              <SvgReply />
+            </TouchableOpacity>
             <Popover button={<SvgInfoFilled style={{ color: THEME_COLOR, marginLeft: 10 }} />}>
               <LandlordPopover matchScore={matchScore} brandCategories={brandCategories} />
             </Popover>

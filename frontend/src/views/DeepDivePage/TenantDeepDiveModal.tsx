@@ -70,6 +70,7 @@ export default function TenantDeepDiveModal(props: Props) {
           <ScrollView flex onScroll={handleOnScroll}>
             <View style={{ backgroundColor: WHITE }}>
               <PropertyDeepDiveHeader
+                matchId={matchId}
                 brandId={brandId}
                 spaceId={spaceId}
                 contacts={contacts}

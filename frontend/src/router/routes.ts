@@ -146,6 +146,9 @@ const LANDLORD_ROUTES = [
     path: '/landlord/properties/:paramsId',
     layout: LandlordProfileLayout,
     component: LandlordPropertyDetails,
+    props: {
+      showBanner: true,
+    },
     authorization: landlordAuthorization,
   },
   {
@@ -180,6 +183,9 @@ const LANDLORD_ROUTES = [
     path: '/landlord/messages/:conversationId',
     layout: LandlordProfileLayout,
     component: LandlordMessageDetail,
+    props: {
+      showBanner: true,
+    },
     authorization: landlordAuthorization,
   },
   {
@@ -200,16 +206,25 @@ const LANDLORD_ROUTES = [
     path: '/landlord/add-space/:formStep',
     layout: BasicLayout,
     component: LandlordAddSpace,
+    props: {
+      showBanner: true,
+    },
     authorization: landlordAuthorization,
   },
   {
     path: '/landlord/change-plan/:step',
     layout: BasicLayout,
+    props: {
+      showBanner: true,
+    },
     component: ChangeLandlordPlanModal,
   },
   {
     path: '/landlord/change-plans/:step',
     layout: LandlordProfileLayout,
+    props: {
+      showBanner: true,
+    },
     component: ChangeMultipleLandlordPlansModal,
   },
 ];

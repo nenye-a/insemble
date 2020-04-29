@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
@@ -12,12 +12,25 @@ import {
 import { View, Text, Button } from '../../core-ui';
 import { GET_USER_STATE } from '../../graphql/queries/client/userState';
 import { TenantTier } from '../../generated/globalTypes';
+import { useCredentials } from '../../utils';
+import { Role } from '../../types/types';
 
 export default function FreeTrialBanner() {
-  let { data } = useQuery(GET_USER_STATE);
+  let { data, refetch } = useQuery(GET_USER_STATE, {
+    notifyOnNetworkStatusChange: true,
+  });
   let history = useHistory();
+  useEffect(() => {
+    let { tier, trial } = data.userState;
+    if (!tier || !trial) {
+      refetch();
+    }
+  }, [data.userState, refetch]);
+  let { role } = useCredentials();
   let { tier, trial } = data.userState;
   let isFreeTier = !trial || tier === TenantTier.FREE;
+  let location =
+    role === Role.TENANT ? '/user/plan' : role === Role.LANDLORD ? '/landlord/billing' : '/';
   return (
     <Container>
       <StatusContainer flex>
@@ -29,7 +42,7 @@ export default function FreeTrialBanner() {
           <SubscribeButton
             size="small"
             text="Subscribe Now"
-            onPress={() => history.push('/user/plan')}
+            onPress={() => history.push(location)}
           />
         ) : null}
       </Row>

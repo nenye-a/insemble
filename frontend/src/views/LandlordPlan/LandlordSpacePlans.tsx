@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import DataTable from '../../components/DataTable';
 import { SECONDARY_COLOR, DARK_TEXT_COLOR } from '../../constants/colors';
 import { Text, Button, View, LoadingIndicator } from '../../core-ui';
-import { FONT_WEIGHT_LIGHT } from '../../constants/theme';
+import { FONT_WEIGHT_LIGHT, DEFAULT_BORDER_RADIUS } from '../../constants/theme';
 import { GET_LANDLORD_SUBSCRIPTIONS_LIST } from '../..DELETED_BASE64_STRING';
 import { GetSubscriptionsList } from '../../generated/GetSubscriptionsList';
 
@@ -43,7 +43,7 @@ export default function LandlordSpacePlans() {
       </RowView>
       <DataTable>
         <DataTable.HeaderRow>
-          <DataTable.HeaderCell width={260} align="center">
+          <DataTable.HeaderCell width={400} align="center">
             Property
           </DataTable.HeaderCell>
           <DataTable.HeaderCell width={100} align="center">
@@ -84,10 +84,14 @@ function ListOfBilling(props: BillingRowProps) {
   let { photos, address, space, plan, cost, spaceId } = props;
   let history = useHistory();
   return (
-    <DataTable.Row height={'50px'}>
-      <DataTable.Cell width={260} align="center">
-        <Image src={photos} />
-        <TableText>{address}</TableText>
+    <DataTable.Row height={'60px'}>
+      <DataTable.Cell width={400} align="center">
+        <ImageContainer flex>
+          <Image src={photos} />
+        </ImageContainer>
+        <View style={{ flex: 2 }}>
+          <TableText>{address}</TableText>
+        </View>
       </DataTable.Cell>
       <DataTable.Cell width={100} align="center">
         <TableText>{space}</TableText>
@@ -96,7 +100,7 @@ function ListOfBilling(props: BillingRowProps) {
         <Button text={plan} onPress={() => {}} />
       </DataTable.Cell>
       <DataTable.Cell width={140} align="center">
-        <TableText>${cost}</TableText>
+        <TableText>{cost}</TableText>
       </DataTable.Cell>
       <DataTable.Cell width={140} align="center">
         <Button
@@ -121,7 +125,10 @@ const Container = styled(View)`
 `;
 const Image = styled.img`
   margin-right: 20px;
-  width: 100px;
+  width: 100%;
+  height: 100%;
+  border-radius: ${DEFAULT_BORDER_RADIUS};
+  object-fit: cover;
 `;
 const RowView = styled(View)`
   flex-direction: row;
@@ -132,4 +139,10 @@ const RowView = styled(View)`
 const TableText = styled(Text)`
   font-weight: ${FONT_WEIGHT_LIGHT};
   color: ${DARK_TEXT_COLOR};
+`;
+
+const ImageContainer = styled(View)`
+  width: 100px;
+  height: 40px;
+  margin-right: 20px;
 `;

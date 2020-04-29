@@ -44,7 +44,7 @@ export default function TenantEmailVerification() {
           newBrand: true,
         });
       } else {
-        history.push('/'); // TODO: maybe redirect user to other screen
+        history.push('/user/brands');
       }
     }
   }
