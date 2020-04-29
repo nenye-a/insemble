@@ -81,7 +81,16 @@ export default function SelectMultipleLandlordPlans({ subscriptionList }: Props)
   let onTermSelect = (selectedTerm: TermRadioGroup, id: string) => {
     let newBillingList = billingList.map((item) => {
       if (item.id === id) {
-        return { ...item, isAnnual: selectedTerm.value === 12 };
+        let isAnnual = selectedTerm.value === 12;
+        let itemTier = item.tier as BilledLandlordTier;
+        return {
+          ...item,
+          isAnnual,
+          plan: {
+            ...item.plan,
+            id: isAnnual ? LandlordTiers[itemTier].yearly.id : LandlordTiers[itemTier].monthly.id,
+          },
+        };
       }
       return item;
     });
@@ -149,7 +158,7 @@ export default function SelectMultipleLandlordPlans({ subscriptionList }: Props)
               } = space;
               let annual = !isAnnual
                 ? plan.id === LandlordTiers[tier as BilledLandlordTier].yearly.id
-                : false;
+                : true;
               return (
                 <LandlordPlanRow
                   key={index}
