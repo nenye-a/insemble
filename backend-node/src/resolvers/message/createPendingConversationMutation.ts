@@ -18,7 +18,7 @@ export let createPendingConversationResolver: FieldResolver<
 ) => {
   let notAvailable = true;
   if (notAvailable) {
-    throw new Error('Not availabel yet'); // TODO: Remove throw error when already available
+    throw new Error('Feature is not available yet'); // TODO: Remove throw error when already available
   }
   let userSender = context.tenantUserId
     ? await context.prisma.tenantUser.findOne({
