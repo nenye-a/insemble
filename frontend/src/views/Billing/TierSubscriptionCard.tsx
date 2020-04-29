@@ -13,8 +13,7 @@ import {
 } from '../../constants/theme';
 
 import getUnit from './helpers/getUnit';
-import { TenantTier } from '../../generated/globalTypes';
-import { LandlordTier } from '../../constants/SubscriptionTiers';
+import { TenantTier, LandlordTier } from '../../generated/globalTypes';
 
 type TierSubscriptionProps = {
   title: string;

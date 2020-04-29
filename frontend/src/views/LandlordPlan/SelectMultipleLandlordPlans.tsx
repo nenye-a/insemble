@@ -11,10 +11,11 @@ import {
   FONT_SIZE_LARGE,
   DEFAULT_BORDER_RADIUS,
 } from '../../constants/theme';
-import { LandlordTier, LandlordTiers } from '../../constants/SubscriptionTiers';
+import { LandlordTiers } from '../../constants/SubscriptionTiers';
 import { DARK_TEXT_COLOR } from '../../constants/colors';
 import { GetSubscriptionsList_landlordSubscriptions as LandlordSubscriptions } from '../../generated/GetSubscriptionsList';
 import { isEqual } from '../../utils';
+import { LandlordTier } from '../../generated/globalTypes';
 
 type BilledLandlordTier = LandlordTier.BASIC | LandlordTier.PROFESSIONAL;
 
