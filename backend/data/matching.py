@@ -138,7 +138,7 @@ FOURSQUARE_CATEGORIES = utils.DB_FOURSQUARE.find_one(
     {'name': 'foursquare_categories'})['foursquare_categories']
 
 
-def generate_matching_locations(location, options={}, db_connection=utils.SYSTEM_MONGO):
+def generate_matches(location, options={}, property_locations=[], db_connection=utils.SYSTEM_MONGO):
     """
     Given an address, will generate a ranking of addresses that are the most similar
     accross all aspects to this location.
@@ -149,10 +149,20 @@ def generate_matching_locations(location, options={}, db_connection=utils.SYSTEM
     my_location_df = landlord_matching.generate_match_df(location)
     options = process_options(options)
 
+    property_df = landlord_matching.generate_match_df(property_locations)
+    property_df.loc[:, 'is_property'] = "True"
+    num_properties = len(property_locations)
+
     # MATCHING (Pre-process)
     print("** Matching: Match Setup")
     info_df = MATCHING_DF.copy()
-    match_df = info_df.drop(columns=["_id", "lat", "lng", "loc_id"])
+    info_df.loc[:, 'is_property'] = "False"
+
+    if property_locations != []:
+        info_df = info_df.append(property_df)
+        match_df = info_df.drop(columns=["_id", "lat", "lng", "loc_id", "brand_name", "is_property"])
+    else:
+        match_df = info_df.drop(columns=["_id", "lat", "lng", "loc_id", "is_property"])
     match_df = match_df.append(my_location_df)
 
     if options['desired_min_daytime_pop']:
@@ -167,73 +177,47 @@ def generate_matching_locations(location, options={}, db_connection=utils.SYSTEM
         match_df = match_df.drop(columns=["brand_name"])
     if "_id" in match_df.columns:
         match_df = match_df.drop(columns=["_id"])
-
     match_df = match_df.fillna(0)
 
-    print("** Matching: Pre-processing start.")
+    print("** Matching: Pre-processing start...")
     prepared_match_df = preprocess_match_df(match_df)
     prepared_match_df = adjust_range(prepared_match_df, options)
     diff = prepared_match_df.subtract(prepared_match_df.iloc[-1]).iloc[:-1]
-    print("** Matching: Post-processing start.")
+    print("** Matching: Post-processing start...")
     processed_diff = postprocess_match_df(diff, options)
-    print("** Matching: Evaluation Ongoing.")
+    print("** Matching: Evaluation Ongoing...")
     weighted_df = weight_and_evaluate(standardize(processed_diff))
     # re-assign the important tracking information (location id & positioning)
-    weighted_df['lat'], weighted_df['lng'], weighted_df['loc_id'], weighted_df['_id'] = info_df['lat'].round(
-        6), info_df['lng'].round(6), info_df['loc_id'], info_df['_id']
-    print("** Matching: Matching complete, results immenent.")
+
+    weighted_df['lat'] = info_df['lat'].round(6)
+    weighted_df['lng'] = info_df['lng'].round(6)
+    weighted_df['loc_id'] = info_df['loc_id']
+    weighted_df['_id'] = info_df['_id']
+    weighted_df['is_property'] = info_df['is_property']
+
+    print("** Matching: Matching complete, parsing reuslts...")
     # calculate matches for all vectors
     weighted_df["match_value"] = weighted_df["error_sum"].apply(_map_difference_to_match)
+
+    # Process properties
+    property_results = []
+    if num_properties != 0:
+        property_details_df = weighted_df[weighted_df['is_property'] == "True"].copy()  # get the values in the df that were properties
+        property_details_df['location_id'] = property_details_df['_id'].apply(str)
+        property_results = property_details_df[['match_value', 'location_id']].to_dict(orient='records')
+
+    # Process best locations
+    weighted_df = weighted_df[weighted_df['is_property'] != "True"]
     best = weighted_df[weighted_df['error_sum'] < .3].copy()
     # Convert distance to match value, and convert any object ids to strings to allow JSON serialization
     best["match"] = best["error_sum"].apply(_map_difference_to_heatmap)
-
-    # RETURN VALUES AND UPDATE DATABASE
     # "match" referes to the heatmap rating (hasn't been changed due to frontend dependency)
     # "match_value" refers to the actual map value
     weighted_df['match_value'] = weighted_df['match_value'].round()
     match_values = weighted_df.set_index('_id')['match_value'].to_dict()
-
     best_values = best[['lat', 'lng', 'match']].to_dict(orient='records')
 
-    # insert items into database
-    # tenant_id = db_connection.get_collection(mongo_connect.AMD_TENANT).insert({'match_values': all_dict})
-
-    return best_values, match_values
-
-
-def generate_matching_properties(locations, options={}, db_connection=utils.SYSTEM_MONGO):
-
-    options = process_options(options)
-
-    info_df = landlord_matching.generate_match_df(locations)
-    match_df = info_df.drop(columns=['_id', 'brand_name'])
-
-    if options['desired_min_daytime_pop']:
-        match_df.iloc[-1].loc["DaytimePop1"] = max(match_df.iloc[-1].loc["DaytimePop1"], options['desired_min_daytime_pop'])
-        match_df = match_df[match_df["DaytimePop1"] > options['desired_min_daytime_pop']]
-
-        if len(match_df) < 1000:
-            # if min daytime is too high, then we can't evaluate
-            return []
-
-    print("** Matching (properties): Pre-processing start.")
-    prepared_match_df = preprocess_match_df(match_df.fillna(0)).fillna(0)
-    prepared_match_df = adjust_range(prepared_match_df, options)
-    match_diff = prepared_match_df.subtract(prepared_match_df.iloc[-1]).iloc[:-1]
-    print("** Matching (properties): Post-processing start.")
-    match_diff = postprocess_match_df(match_diff, options)
-    print("** Matching (properties): Evaluation Ongoing.")
-    weighted_df = weight_and_evaluate(landlord_matching.standardize(match_diff))
-
-    weighted_df['location_id'] = info_df['_id']
-    print("** Matching (properties): Matching complete, results immenent.")
-
-    # Showing all, no need to take the best
-    weighted_df['location_id'] = weighted_df['location_id'].apply(str)
-    weighted_df['match_value'] = weighted_df['error_sum'].apply(_map_difference_to_match)
-
-    return weighted_df[['match_value', 'location_id']].to_dict(orient='records')
+    return best_values, match_values, property_results
 
 
 def process_options(options):

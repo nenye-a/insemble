@@ -13,7 +13,7 @@ class TenantMatchSerializer(serializers.Serializer):
 
     """
     Parameters: {
-        brand_name: string,             (required)
+        brand_name: string,             (required -> not required with the provision of a brand_id)
         address: string,                (required -> not required if categories are provided)
         categories: list[string],       (required -> not required if brand_name and address provided)
         income: {                       (required -> not required if brand_name and address provided)
@@ -44,7 +44,7 @@ class TenantMatchSerializer(serializers.Serializer):
 
     """
 
-    brand_name = serializers.CharField(max_length=300)
+    brand_name = serializers.CharField(required=False, max_length=300)
     address = serializers.CharField(required=False, max_length=300)
     categories = serializers.JSONField(required=False)
     income = serializers.JSONField(required=False)
@@ -59,11 +59,14 @@ class TenantMatchSerializer(serializers.Serializer):
     frontage_width = serializers.IntegerField(required=False)
     property_type = serializers.JSONField(required=False)
     match_id = serializers.CharField(required=False, max_length=24)
+    brand_id = serializers.CharField(required=False, max_length=24)
 
     # Validatator to ensure the rules mentioned above
     def validate(self, data):
 
         has_address = 'address' in data
+        has_brand_name = 'brand_name' in data
+        has_brand_id = 'brand_id' in data
         has_categories = 'categories' in data
         has_income = 'income' in data
         has_age = 'age' in data
@@ -71,9 +74,12 @@ class TenantMatchSerializer(serializers.Serializer):
         has_sqft = 'sqft' in data
 
         error_message = {}
-        if not (has_address or (has_categories and has_income)):
+        if not (has_brand_id or has_brand_name):
             error_message['status_detail'] = [
-                "Please provide either address or (categories and income)"]
+                "Please provide either address, (categories and income), or a brand_id"]
+        if not (has_address or (has_categories and has_income) or has_brand_id):
+            error_message['status_detail'] = error_message.get(
+                'status_detail', []) + ["Please provide either address, (categories and income), or a brand_id"]
         if has_income and 'min' not in data['income']:
             error_message['status_detail'] = error_message.get(
                 'status_detail', []) + ['min must be provided if income provided']

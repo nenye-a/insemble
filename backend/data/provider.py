@@ -32,23 +32,12 @@ EQUIPMENT_LIST = ["Walk-in fridge", "Reach-in fridge", "Walk-in freezer", "Greas
 # {lat:float, lng:float, place_id:'place_id}
 
 
-# def generate_matching_locations(location, params):
-#     """
-#     Generate matches for matches for a location. Given the location details of the object
-#     vs. the actual details.
-#     """
-#     matches, match_values = matching.generate_location_matches(location, params)
-#     return matches, match_values
-
-
-def generate_matching_properties(location, params):
+def generate_matches(location, params):
     """
-    Generate matching properties for a location.
+    Generate matches for matches for a location. Given the location details of the object
+    vs. the actual details.
     """
 
-    # Fetch all the properties that are eligible.
-
-    # SET QUERY PARAMS:
     eval_properties = utils.DB_PROPERTY.find({})  # TODO: Query by region
     locations_dict = {}
     locations_list = []
@@ -59,11 +48,11 @@ def generate_matching_properties(location, params):
         locations_dict[str(eval_property["location_id"])] = eval_property
         locations_list.append(property_location)
 
-    locations_list.append(location)
-    matches = matching.generate_matching_properties(locations_list, options=params)
+    matches, match_values, property_results = matching.generate_matches(
+        location, options=params, property_locations=locations_list)
 
     result_spaces = {}
-    for match in matches:
+    for match in property_results:
 
         result_property = locations_dict[str(match['location_id'])]
         property_id = result_property['_id']
@@ -89,7 +78,8 @@ def generate_matching_properties(location, params):
             result_spaces[space['space_id']] = space  # ensure space uniqueness
 
     result_spaces = [value for key, value in result_spaces.items()]
-    return result_spaces
+
+    return matches, match_values, result_spaces
 
 
 def get_location(address, name=None):

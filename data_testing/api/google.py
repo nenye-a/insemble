@@ -5,7 +5,7 @@ sys.path.append(BASE_DIR)  # include data_testing
 
 from decouple import config
 import utils
-from . import safe_request
+import safe_request
 import pprint
 import urllib
 
@@ -313,7 +313,8 @@ def get_photo(photo_reference):
 if __name__ == "__main__":
 
     def test_find():
-        print(find('Spitz 371 E 2nd Street'))
+        print(find('371 E 2nd Street', 'Spitz', allow_non_establishments=True, save=False))
+        print(find('453 South Spring St', 'Restaurant Gather DTLA', allow_non_establishments=True, save=False))
 
     def test_nearby():
         item = nearby(34.0482327, -118.239857, 'restaurant')
@@ -344,6 +345,6 @@ if __name__ == "__main__":
 
     # test_portfolio()
 
-    # test_find()
+    test_find()
     # print(find("5011 S Western Ave, Los Angeles, CA 90062", name='Sonsonate Grill', allow_non_establishments=True))
-    test_reverse_geocode()
+    # test_reverse_geocode()
