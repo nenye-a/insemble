@@ -28,10 +28,11 @@ type Props = {
   matchScore?: number;
   spaceId: string;
   contacts?: Contacts;
+  matchId?: string | null;
 };
 
 export default function ContactModal(props: Props) {
-  let { visible, onClose, brandId, matchScore, spaceId, contacts } = props;
+  let { visible, onClose, brandId, matchScore, spaceId, contacts, matchId } = props;
   let [selectedSubject, setSelectedSubject] = useState('');
   let [message, setMessage] = useState('');
   let { role } = useCredentials();
@@ -39,8 +40,7 @@ export default function ContactModal(props: Props) {
 
   let isLandlord = role === SenderRole.LANDLORD;
   let variables = {
-    // TODO : use matchId on createConversation brandId:matchId if conversation start on landlord
-    brandId,
+    brandId: isLandlord && matchId ? matchId : brandId,
     spaceId,
     matchScore: matchScore || 0,
     header: selectedSubject,
