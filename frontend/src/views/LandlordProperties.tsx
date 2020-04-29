@@ -103,18 +103,15 @@ export default function LandlordProperties() {
             );
             return (
               <View key={index} style={{ flexDirection: 'row', marginBottom: 24 }}>
-                {item.locked ? (
-                  <View>{content}</View>
-                ) : (
-                  <TouchableOpacity
-                    flex
-                    onPress={() => {
-                      history.push(`/landlord/properties/${item.id}`, {});
-                    }}
-                  >
-                    {content}
-                  </TouchableOpacity>
-                )}
+                <TouchableOpacity
+                  flex
+                  disabled={item.locked}
+                  onPress={() => {
+                    history.push(`/landlord/properties/${item.id}`, {});
+                  }}
+                >
+                  {content}
+                </TouchableOpacity>
                 <RemoveButton
                   onPress={() => {
                     setRemoveConfirmationVisible(true);

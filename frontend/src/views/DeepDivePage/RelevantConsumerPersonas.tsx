@@ -5,16 +5,14 @@ import { View, Card } from '../../core-ui';
 import RelevantConsumerCard from './RelevantConsumerCard';
 import { LocationDetails_locationDetails_result_topPersonas as LocationPersonas } from '../../generated/LocationDetails';
 import BlurredPersonas from '../../assets/images/blurred-personas.png';
-import { Role } from '../../types/types';
 
 type Props = ViewProps & {
   personasData?: Array<LocationPersonas> | null;
   isLocked?: boolean;
-  role?: Role;
 };
 
 export default function RelevantConsumerPersonas(props: Props) {
-  let { personasData, isLocked, role, ...otherProps } = props;
+  let { personasData, isLocked, ...otherProps } = props;
   return (
     <Container
       titleBackground="white"
@@ -25,7 +23,7 @@ export default function RelevantConsumerPersonas(props: Props) {
       {isLocked ? (
         <Image src={BlurredPersonas} />
       ) : (
-        <CardsContainer role={role}>
+        <CardsContainer>
           {personasData &&
             personasData.map((item, index) => <RelevantConsumerCard key={index} {...item} />)}
         </CardsContainer>

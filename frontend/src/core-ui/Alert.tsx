@@ -18,7 +18,7 @@ type Props = ViewProps & {
 
 export default function Alert(props: Props) {
   let { visible, text, onClose, ...otherProps } = props;
-  // TODO: Discuss and change the fix regarding this issue https://github.com/apollographql/apollo-feature-requests/issues/46
+  // Current error includes `GraphQL error:`. It's removed only in Apollo Client 3.0. Ref: https://github.com/apollographql/apollo-feature-requests/issues/46
   let formattedText = formatGraphQLError(text);
   if (visible) {
     return (

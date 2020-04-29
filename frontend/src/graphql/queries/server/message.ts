@@ -146,6 +146,7 @@ export const GET_CONVERSATIONS = gql`
         propertyId
         name
         location {
+          id
           address
         }
         space {

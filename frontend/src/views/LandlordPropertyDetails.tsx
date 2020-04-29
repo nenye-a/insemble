@@ -66,6 +66,7 @@ export default function LandlordPropertyDetails() {
   >(GET_PROPERTY_MATCHES_DATA, {
     variables: { propertyId: params.paramsId, spaceId: selectedSpaceId },
     skip: !selectedSpaceId || !params.paramsId,
+    notifyOnNetworkStatusChange: true,
   });
 
   let propertyMatches = useMemo(() => {
