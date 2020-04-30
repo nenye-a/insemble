@@ -61,7 +61,7 @@ export default function TierSubscription(props: TierSubscriptionProps) {
                 <PlanPriceTextContainer>
                   <PriceText>
                     ${price}
-                    <Text>/{getUnit(isAnnual)}</Text>
+                    <Text>/{freeTier || isUserCurrentTier ? 'month' : getUnit(isAnnual)}</Text>
                   </PriceText>
                 </PlanPriceTextContainer>
               </PlanPriceContainer>

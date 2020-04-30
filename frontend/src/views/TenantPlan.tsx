@@ -67,7 +67,7 @@ export default function TenantPlan() {
                     benefits={benefits}
                     isAnnual={!!isAnnual}
                     planId={planId}
-                    price={price}
+                    price={tierType === TenantTier.FREE ? monthly.price : price}
                     isUserCurrentTier={tenantProfile?.profileTenant.tier === tierType}
                     freeTier={tierType === TenantTier.FREE}
                     onUpgradeButtonPress={() => {

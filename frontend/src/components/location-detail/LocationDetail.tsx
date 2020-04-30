@@ -5,6 +5,7 @@ import { Card, View, Text } from '../../core-ui';
 import styled from 'styled-components';
 import { THEME_COLOR } from '../../constants/colors';
 import { FONT_SIZE_SMALL, FONT_WEIGHT_MEDIUM } from '../../constants/theme';
+import { convertToKilos } from '../../utils';
 
 type LatLng = google.maps.LatLng;
 type MouseEvent = google.maps.MouseEvent;
@@ -41,7 +42,7 @@ export default function LocationDetail(props: Props) {
     '3 Mile Median Household Income:',
     '3 Mile Median Age:',
   ];
-  let rightText = [population, income, age + ' years'];
+  let rightText = [convertToKilos(population) + 'K', convertToKilos(income) + 'K', age + ' years'];
   let handleInfoBoxPress = (e: Event) => {
     e.stopPropagation();
     onPreviewPress();
