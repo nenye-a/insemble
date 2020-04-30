@@ -70,6 +70,7 @@ export default function TenantPlan() {
                     price={price}
                     isUserCurrentTier={tenantProfile?.profileTenant.tier === tierType}
                     freeTier={tierType === TenantTier.FREE}
+                    onTrial={tenantProfile?.profileTenant.trial}
                     onUpgradeButtonPress={() => {
                       history.push('/user/upgrade-plan/confirm-plan', {
                         planId,
