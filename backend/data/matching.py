@@ -160,6 +160,7 @@ def generate_matches(location, options={}, property_locations=[], db_connection=
 
     if property_locations != []:
         info_df = info_df.append(property_df)
+        info_df.reset_index(drop=True, inplace=True)
         match_df = info_df.drop(columns=["_id", "lat", "lng", "loc_id", "brand_name", "is_property"])
     else:
         match_df = info_df.drop(columns=["_id", "lat", "lng", "loc_id", "is_property"])
@@ -607,7 +608,7 @@ def postprocess_match_df(difference_dataframe, options):
         difference_dataframe[below_range1] = difference_dataframe[below_range1] * difference_multiplier
         difference_dataframe[above_range1] = difference_dataframe[above_range1] * difference_multiplier
         difference_dataframe[below_range3] = difference_dataframe[below_range3] * difference_multiplier
-        difference_dataframe[above_range3] = difference_dataframe[below_range3] * difference_multiplier
+        difference_dataframe[above_range3] = difference_dataframe[above_range3] * difference_multiplier
 
     category_set = set(difference_dataframe.columns)
     for category in FOURSQUARE_CATEGORIES:
