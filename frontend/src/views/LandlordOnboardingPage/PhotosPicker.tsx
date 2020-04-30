@@ -54,7 +54,10 @@ export default function PhotosPicker(props: Props) {
       let secondStack = photos.slice(index, -1);
       photos = [...firstStack, ...secondStack, file];
     }
-    onAdditionalPhotoChange(photos);
+    let newList = photos.map((item) => {
+      return item;
+    });
+    onAdditionalPhotoChange(newList);
   };
 
   return (

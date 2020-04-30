@@ -48,7 +48,6 @@ const StyledButton = styled(Button)`
   color: white;
   box-sizing: border-box;
   padding: 0 20px;
-  line-height: 40px;
   border: none;
   border-radius: ${DEFAULT_BORDER_RADIUS};
   background-color: #634fa2;
