@@ -76,6 +76,7 @@ export const GET_TENANT_MATCHES_DATA = gql`
         lat
         lng
         matchValue
+        thumbnail
       }
       matchingLocations {
         match
