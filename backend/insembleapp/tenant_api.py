@@ -273,10 +273,12 @@ class TenantMatchAPI(AsynchronousAPI):
             params['location_id'] = str(utils.DB_LOCATIONS.insert(location))
 
         best_matches, location_matches, property_matches = provider.generate_matches(location, params)
+        property_match_values = {p['property_id']: round(p['match_value']) for p in property_matches}
 
         match_update = {
             'params': params,
-            'location_match_values': location_matches
+            'location_match_values': location_matches,
+            'property_match_values': property_match_values
         }
 
         # update brand with the provided location details if none are currently had
@@ -572,14 +574,14 @@ class FastLocationDetailsAPI(AsynchronousAPI):
                 target_lat = round(validated_params["target_location"]["lat"], 6)
                 target_lng = round(validated_params["target_location"]["lng"], 6)
                 # grab the nearby stores asynchronously
-                n_process, nearby = TenantMatchAPI.get_nearby_places.delay(target_lat, target_lng, parallel_process=True), []
-                nearby_listener = self._celery_listener(n_process, nearby)
-                nearby_listener.start()
+                # n_process, nearby = TenantMatchAPI.get_nearby_places.delay(target_lat, target_lng, parallel_process=True), []
+                # nearby_listener = self._celery_listener(n_process, nearby)
+                # nearby_listener.start()
 
                 this_location = landlord_provider.build_location(target_lat, target_lng)
-                _, nearby = nearby_listener.join(), nearby[0]
+                # _, nearby = nearby_listener.join(), nearby[0]
 
-                this_location.update(nearby)
+                # this_location.update(nearby)
                 if '_id' in this_location:
                     utils.DB_LOCATIONS.update({"_id": this_location['_id']}, this_location)
                 else:
@@ -614,7 +616,7 @@ class FastLocationDetailsAPI(AsynchronousAPI):
                 key_facts.pop('DaytimeWorkingPop')
                 key_facts.pop('DaytimeResidentPop')
 
-            key_facts['num_metro'] = len(this_location['nearby_subway_station'] if 'neaby_subway_station' in this_location else google.nearby(
+            key_facts['num_metro'] = len(this_location['nearby_subway_station'] if 'nearby_subway_station' in this_location else google.nearby(
                 target_lat, target_lng, 'subway_station', radius=1))
             key_facts['num_universities'] = len(this_location['nearby_university'] if 'nearby_university' in this_location else google.nearby(
                 target_lat, target_lng, 'university', radius=1))
@@ -624,7 +626,10 @@ class FastLocationDetailsAPI(AsynchronousAPI):
                 target_lat, target_lng, 'apartments', radius=1))
 
             vector_id = provider.get_location_details({'lat': target_lat, 'lng': target_lng})['vector_id']
-            match_value = provider.get_match_value_from_id(match_id, vector_id)
+            if property_id:
+                match_value = provider.get_match_value_from_id(match_id, vector_id, property_id)
+            else:
+                match_value = provider.get_match_value_from_id(match_id, vector_id)
 
             response = {
                 'status': 200,
@@ -844,10 +849,10 @@ class FastLocationDetailsAPI(AsynchronousAPI):
     @staticmethod
     @celery_app.task
     def obtain_nearby(tenant, location, parallel_process=False):
-        connection = mongo_connect.Connect() if parallel_process else utils.SYSTEM_MONGO
+        # connection = mongo_connect.Connect() if parallel_process else utils.SYSTEM_MONGO
         categories = tenant['foursquare_categories'] if 'foursquare_categories' in tenant else []
         nearby = provider.obtain_nearby(location, categories)
-        connection.close() if connection != utils.SYSTEM_MONGO else None
+        # connection.close() if connection != utils.SYSTEM_MONGO else None
         return nearby
 
     def _register_tasks(self) -> None:
