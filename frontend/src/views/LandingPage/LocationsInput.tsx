@@ -27,7 +27,7 @@ type Props = Omit<InputProps, 'onSubmit' | 'ref'> & {
 };
 
 function LocationsInput(props: Props) {
-  let { placeholder, onSubmit, label, ...otherProps } = props;
+  let { placeholder, buttonProps, onSubmit, label, ...otherProps } = props;
   let inputRef = useRef<HTMLInputElement | null>(null);
   let selectedPlace = useRef<PlaceResult | null>(null);
 
@@ -69,6 +69,7 @@ function LocationsInput(props: Props) {
       <StyledTextInput
         ref={inputRef}
         placeholder={placeholder}
+        buttonProps={buttonProps}
         onSubmit={submitHandler}
         {...otherProps}
       />
