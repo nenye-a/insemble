@@ -26,6 +26,30 @@ def get_matching_tenants(eval_property, space_id):
         if item['space_id'] == space_id:
             my_space = item
 
+    wanted_types = [t.lower() for t in my_space['tenant_type']] if 'tenant_type' in my_space else None
+
+    def matches_filters(category):
+        if not wanted_types or len(wanted_types) == 0:
+            return True
+        if 'restaurant' not in wanted_types:
+            matching_types = ['restaurant', 'joint', 'place', 'snack']
+            for t in matching_types:
+                if t in category.lower():
+                    return False
+        if 'fitness' not in wanted_types:
+            matching_types = ['gym', 'yoga', 'fitness', 'camp']
+            for t in matching_types:
+                if t in category.lower():
+                    return False
+        if 'retail' not in wanted_types:
+            matching_types = ['shop', 'store']
+            for t in matching_types:
+                if t in category.lower():
+                    return False
+        if 'entertainment' not in wanted_types and 'entertainment' in category.lower():
+            return False
+        return True
+
     tenants = utils.DB_BRANDS.find({
         "$or": [{
             "$or": [{'regions_present.regions': "California"}, {'regions_present.regions': "Nationwide"}],
@@ -52,12 +76,12 @@ def get_matching_tenants(eval_property, space_id):
         categories = utils.flatten([[category['name'] for category in categories['categories']]
                                     for categories in brand['categories']])
         # break the loop if there's any exclusives.
-        exclusive = None
+        excluded = None
         for eval_category in categories:
-            exclusive = process.extractOne(eval_category, eval_property["exclusives"], score_cutoff=85)
-            if exclusive:
+            excluded = process.extractOne(eval_category, eval_property["exclusives"], score_cutoff=85)
+            if excluded:
                 break
-        if exclusive:
+        if excluded:
             continue
 
         for eval_category in categories:
@@ -72,11 +96,17 @@ def get_matching_tenants(eval_property, space_id):
         try:
             if "Foursquare" in category_dict:
                 category = category_dict["Foursquare"]['categories'][0]['name']
+                if not matches_filters(category):
+                    continue
             elif "Crittenden" in category_dict:
                 category = category_dict["Crittenden"]['categories'][0]['name']
+                if not matches_filters(category):
+                    continue
             elif "Google" in category_dict:
                 # Clean up google categories
                 category = category_dict["Google"]['categories'][0]['name']
+                if not matches_filters(category):
+                    continue
                 category = " ".join([word.capitlize() for word in category.split('_')]).strip()
             else:
                 category = ""
