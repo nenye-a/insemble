@@ -911,13 +911,17 @@ def get_match_value_from_id(match_id, vector_id, property_id=None, latest=True):
 
     if latest:
         query = 'location_match_values.' + string_vector_id
-        match_doc = utils.DB_LOCATION_MATCHES.find_one({'_id': ObjectId(match_id)}, {query: 1})
+        projection = {query: 1}
+        if property_id:
+            property_query = 'property_match_values.' + str(property_id)
+            projection[property_query] = 1
+        match_doc = utils.DB_LOCATION_MATCHES.find_one({'_id': ObjectId(match_id)}, projection)
         if matching.MATCHING_DF_PATH == matching.PRODUCTION_DF_PATH:
             if property_id:
                 try:
                     return match_doc['property_match_values'][str(property_id)]
                 except KeyError:
-                    pass  # folks prior to this change will get mis match
+                    pass  # folks operating with matches not included with this will have this mis match
             return match_doc['location_match_values'][string_vector_id]
         else:
             # purposefully made this a number that can't be achieved in reality

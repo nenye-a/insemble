@@ -273,7 +273,7 @@ class TenantMatchAPI(AsynchronousAPI):
             params['location_id'] = str(utils.DB_LOCATIONS.insert(location))
 
         best_matches, location_matches, property_matches = provider.generate_matches(location, params)
-        property_match_values = {p['property_id']: p['match_value'] for p in property_matches}
+        property_match_values = {p['property_id']: round(p['match_value']) for p in property_matches}
 
         match_update = {
             'params': params,
