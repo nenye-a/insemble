@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useMutation } from '@apollo/react-hooks';
 import { CardNumberElement, useElements, useStripe } from '@stripe/react-stripe-js';
 
-import { Label as BaseLabel, RadioButton, Button, Modal, View } from '../../core-ui';
+import { Button, Modal, View } from '../../core-ui';
 import AddNewCardForm from '../Billing/AddNewCardForm';
 import addNewCardReducer, { initialNewCardState } from '../../reducers/addNewCardReducer';
 import {
@@ -91,10 +91,6 @@ export function AddNewCardModal({
 
   return (
     <AddNewCardModalContainer visible={isModalVisible} onClose={onClose}>
-      <Label text="Payment Method" />
-      <PaymentsRowView>
-        <RadioButton name="method" title="Credit Card" isSelected={true} onPress={() => {}} />
-      </PaymentsRowView>
       <AddNewCardForm state={state} dispatch={dispatch} error={error} />
       <SaveButtonContainer>
         <Button text="Save" onPress={onSavePress} loading={disableSave} />
@@ -105,23 +101,11 @@ export function AddNewCardModal({
 
 const AddNewCardModalContainer = styled(Modal)`
   width: 640px;
-  height: 480px;
+  height: 360px;
   padding: 24px;
 `;
 
-const RowView = styled(View)`
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
-const PaymentsRowView = styled(RowView)`
-  margin-bottom: 12px;
-`;
-
-const Label = styled(BaseLabel)`
-  padding-bottom: 8px;
-`;
-
 const SaveButtonContainer = styled(View)`
+  margin-top: 4px;
   align-items: flex-end;
 `;

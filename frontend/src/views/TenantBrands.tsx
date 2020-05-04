@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { GoogleMap, withGoogleMap } from 'react-google-maps';
@@ -16,16 +16,13 @@ import {
   LoadingIndicator,
   Alert,
 } from '../core-ui';
+import { GET_USER_STATE } from '../graphql/queries/client/userState';
 import { GET_BRANDS, DELETE_BRAND } from '../graphql/queries/server/brand';
-import {
-  DEFAULT_BORDER_RADIUS,
-  FONT_SIZE_SMALL,
-  FONT_WEIGHT_MEDIUM,
-  FONT_WEIGHT_LIGHT,
-} from '../constants/theme';
+import { DEFAULT_BORDER_RADIUS, FONT_SIZE_SMALL, FONT_WEIGHT_MEDIUM } from '../constants/theme';
 import { WHITE, THEME_COLOR } from '../constants/colors';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import SvgPlus from '../components/icons/plus';
+import { TenantTier } from '../generated/globalTypes';
 import { GetBrands } from '../generated/GetBrands';
 import { MAP_DEFAULT_CENTER } from '../constants/googleMaps';
 import SvgCircleClose from '../components/icons/circle-close';
@@ -40,12 +37,23 @@ export default () => {
   let { data, loading } = useQuery<GetBrands>(GET_BRANDS);
   let [removeConfirmationVisible, setRemoveConfirmationVisible] = useState(false);
   let history = useHistory();
+  let { data: userData, refetch } = useQuery(GET_USER_STATE, {
+    notifyOnNetworkStatusChange: true,
+  });
   let [selectedBrandId, setSelectedBrandId] = useState('');
   let { isLoading: googleLoading } = useGoogleMaps();
   let [removeBrand, { error: removeBrandError, loading: removeBrandLoading }] = useMutation<
     DeleteBrand,
     DeleteBrandVariables
   >(DELETE_BRAND);
+  useEffect(() => {
+    let { tier, trial } = userData.userState;
+    if (!tier || !trial) {
+      refetch();
+    }
+  }, [userData.userState, refetch]);
+  let { tier, trial } = userData.userState;
+  let isPro = trial || tier === TenantTier.PROFESSIONAL;
   let closeDeleteConfirmation = () => {
     setRemoveConfirmationVisible(false);
   };
@@ -144,17 +152,28 @@ export default () => {
       <View>
         <AddButton
           onPress={() => {
-            history.push('/new-brand');
+            isPro ? (
+              history.push('/new-brand')
+            ) : (
+              <UpgradeModal>
+                <Card title="Upgrade  Now" titleBackground="purple">
+                  <UpgradeContent>
+                    <Text>
+                      {`Looks like your trial has ended, but it's easy to get back up and running.`}
+                    </Text>
+                    <Button
+                      style={{ marginTop: 12 }}
+                      text="Upgrade to Add"
+                      onPress={() => history.push('/user/plan')}
+                    />
+                  </UpgradeContent>
+                </Card>
+              </UpgradeModal>
+            );
           }}
         >
           <SvgPlus style={{ marginRight: 8, color: THEME_COLOR }} />
-          <AddBrandText color={THEME_COLOR}>New Retailer or Restaurant</AddBrandText>
-          <UpgradeButton
-            text="Upgrade to Add"
-            onPress={() => history.push('/user/plan')}
-            stopPropagation={true}
-            textProps={{ style: { fontWeight: FONT_WEIGHT_LIGHT } }}
-          />
+          <Text color={THEME_COLOR}>New Retailer or Restaurant</Text>
         </AddButton>
       </View>
     </View>
@@ -246,10 +265,17 @@ const RemoveButton = styled(TouchableOpacity)`
   right: -36px;
   top: 63px;
 `;
-const UpgradeButton = styled(Button)`
-  width: 160px;
+const UpgradeContent = styled(View)`
+  padding: 12px;
+  align-items: center;
 `;
 
-const AddBrandText = styled(Text)`
-  margin-right: 100px;
+const UpgradeModal = styled(View)`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 20%;
+  left: 40%;
+  align-content: center;
+  justify-content: center;
 `;
