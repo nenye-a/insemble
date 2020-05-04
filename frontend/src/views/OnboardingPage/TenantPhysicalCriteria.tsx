@@ -48,7 +48,6 @@ export default function TenantPhysicalCriteria(props: Props) {
   let [minSqft, setMinSqft] = useState(state.physicalSiteCriteria.minSize || '');
   let [maxSqft, setMaxSqft] = useState(state.physicalSiteCriteria.maxSize || '');
   let sqftError = useMemo(() => getRangeInputError(minSqft, maxSqft), [minSqft, maxSqft]);
-  // let inputContainerStyle = { paddingTop: 12, paddingBottom: 12 };
   let { errors, handleSubmit, watch } = useForm();
 
   let saveFormState = (fieldValues?: FieldValues) => {
@@ -120,15 +119,6 @@ export default function TenantPhysicalCriteria(props: Props) {
           onHighRangeInputChange={setMaxSqft}
         />
         {sqftError ? <ErrorMessage>{sqftError}</ErrorMessage> : null}
-        {/* <NumberTextInput
-          label="Minimum Frontage Width (ft)"
-          name="minFrontageWidth"
-          ref={register({
-            validate: (val) => validateNumber(val) || 'Input should be number',
-          })}
-          containerStyle={inputContainerStyle}
-          errorMessage={(errors?.minFrontageWidth as FieldError)?.message || ''}
-        /> */}
         <LabelText text="Features & Amenities" />
         {!equipmentLoading && equipmentData && (
           <MultiSelectInput
@@ -201,10 +191,6 @@ const Form = styled(BaseForm)`
 const Content = styled(View)`
   padding: 24px 48px;
 `;
-
-// const NumberTextInput = styled(TextInput)`
-//   width: 80px;
-// `;
 
 const LabelText = styled(Label)`
   padding-top: 12px;

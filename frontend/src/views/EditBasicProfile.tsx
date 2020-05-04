@@ -47,7 +47,6 @@ type Profile = {
 export default function BasicProfile() {
   let history = useHistory();
   let { role } = useCredentials();
-  let [profileEditable, setProfileEditable] = useState(false);
   let [passwordEditable, setPasswordEditable] = useState(false);
   let textInputContainerStyle = { marginTop: 12, marginBottom: 12 };
   let { register, watch, handleSubmit, errors } = useForm();
@@ -235,16 +234,10 @@ export default function BasicProfile() {
             <Alert visible={!!editTenantError || !!editLandlordError} text={errorMessage} />
             <RowedView>
               <Title>Profile</Title>
-              <Button
-                text="Edit Your Profile"
-                mode="transparent"
-                onPress={() => setProfileEditable(true)}
-              />
             </RowedView>
             <TextInput
               label="Email Address"
               placeholder="Email"
-              disabled={!profileEditable}
               containerStyle={textInputContainerStyle}
               defaultValue={profile.email}
               name="email"
@@ -261,7 +254,6 @@ export default function BasicProfile() {
               <TextInput
                 label="First Name"
                 placeholder="First Name"
-                disabled={!profileEditable}
                 defaultValue={profile.firstName}
                 containerStyle={{ ...textInputContainerStyle, flex: 1 }}
                 name="firstName"
@@ -274,7 +266,6 @@ export default function BasicProfile() {
               <TextInput
                 label="Last Name"
                 placeholder="Last Name"
-                disabled={!profileEditable}
                 defaultValue={profile.lastName}
                 containerStyle={{ ...textInputContainerStyle, flex: 1 }}
                 name="lastName"
@@ -288,7 +279,6 @@ export default function BasicProfile() {
               <TextInput
                 label="Company"
                 placeholder="Company"
-                disabled={!profileEditable}
                 defaultValue={profile.company}
                 containerStyle={{ ...textInputContainerStyle, flex: 1 }}
                 name="company"
@@ -299,7 +289,6 @@ export default function BasicProfile() {
               <TextInput
                 label="Title"
                 placeholder="Job Title"
-                disabled={!profileEditable}
                 defaultValue={profile.title ? profile.title : ''}
                 containerStyle={{ ...textInputContainerStyle, flex: 1 }}
                 name="jobTitle"
@@ -310,7 +299,6 @@ export default function BasicProfile() {
             <TextInput
               label="Phone Number"
               placeholder="Phone Number"
-              disabled={!profileEditable}
               containerStyle={{
                 ...textInputContainerStyle,
                 width: `calc(50% - ${(SPACING_WIDTH / 2).toString() + 'px'})`,
@@ -326,7 +314,6 @@ export default function BasicProfile() {
             <TextArea
               defaultValue={profile.description || ''}
               label="About"
-              disabled={!profileEditable}
               containerStyle={textInputContainerStyle}
               name="description"
               ref={register}

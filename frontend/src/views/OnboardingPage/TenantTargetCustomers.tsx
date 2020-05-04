@@ -5,8 +5,8 @@ import { useHistory } from 'react-router-dom';
 
 import { View, Alert, Label, Button, Text, TextInput, Form as BaseForm } from '../../core-ui';
 import { Filter } from '../../components';
-import { MUTED_TEXT_COLOR, DARK_TEXT_COLOR } from '../../constants/colors';
-import { FONT_SIZE_SMALL, FONT_SIZE_MEDIUMSMALL } from '../../constants/theme';
+import { MUTED_TEXT_COLOR } from '../../constants/colors';
+import { FONT_SIZE_MEDIUMSMALL } from '../../constants/theme';
 import { convertToKilos } from '../../utils';
 import { Action, State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import {
@@ -50,7 +50,6 @@ export default function TenantTargetCustomers(props: Props) {
     },
     skip: !confirmBusinessDetail.name || !confirmBusinessDetail.location?.address,
   });
-  let [editCriteriaDisabled, toggleEditCriteria] = useState(true);
   let [noAgePreference, setNoAgePreference] = useState(targetCustomers.noAgePreference);
   let [noPersonasPreference, setNoPersonasPreference] = useState(
     targetCustomers.noPersonasPreference
@@ -130,20 +129,7 @@ export default function TenantTargetCustomers(props: Props) {
           text="Your customer criteria has been pre-populated based on your store's location."
         />
         <DescriptionContainer>
-          <RowedView>
-            <Label text="Confirm your target customer criteria." />
-            <Button
-              mode="transparent"
-              text="Click here to edit criteria"
-              style={{ marginLeft: 12, height: 18 }}
-              textProps={{
-                style: { fontStyle: 'italic', fontSize: FONT_SIZE_SMALL, color: DARK_TEXT_COLOR },
-              }}
-              onPress={() => {
-                toggleEditCriteria(!editCriteriaDisabled);
-              }}
-            />
-          </RowedView>
+          <Label text="Confirm your target customer criteria." />
           <ItalicText fontSize={FONT_SIZE_MEDIUMSMALL} color={MUTED_TEXT_COLOR}>
             If you have no preference, select “no preference” and we will handle the rest.
           </ItalicText>
@@ -158,7 +144,6 @@ export default function TenantTargetCustomers(props: Props) {
           minimum={0}
           maximum={200}
           onSliderChange={(values: Array<number>) => setSelectedIncomeRange(values)}
-          disabled={editCriteriaDisabled}
           loading={autoPopulateLoading}
           noBottomWrapper={true}
         />
@@ -177,7 +162,6 @@ export default function TenantTargetCustomers(props: Props) {
           onSliderChange={(values: Array<number>) => {
             setSelectedAgeRange(values);
           }}
-          disabled={editCriteriaDisabled}
           sliderDisabled={noAgePreference}
           loading={autoPopulateLoading}
         />
@@ -209,7 +193,6 @@ export default function TenantTargetCustomers(props: Props) {
               setSelectedEducations(newSelectedOptions);
             }}
             onClear={() => setSelectedEducations([])}
-            disabled={editCriteriaDisabled}
           />
         )}
         {!personaLoading && personaData && (
@@ -238,13 +221,11 @@ export default function TenantTargetCustomers(props: Props) {
               setSelectedPersonas(newSelectedOptions);
             }}
             onClear={() => setSelectedPersonas([])}
-            disabled={editCriteriaDisabled}
             loading={autoPopulateLoading}
           />
         )}
         <DaytimeContainer>
           <MinDaytimePopulationInput
-            disabled={editCriteriaDisabled}
             onChange={(e) => {
               setMinDaytimePopulation(e.target.value);
             }}
@@ -258,7 +239,6 @@ export default function TenantTargetCustomers(props: Props) {
             text="No Preference"
             onPress={() => setNoMinDaytimePopulationPreference(!noMinDaytimePopulationPreference)}
             style={!noMinDaytimePopulationPreference ? { fontStyle: 'italic' } : undefined}
-            disabled={editCriteriaDisabled}
           />
         </DaytimeContainer>
       </Content>
@@ -292,12 +272,6 @@ const MinDaytimePopulationInput = styled(TextInput)`
 const DaytimeContainer = styled(View)`
   flex-direction: row;
   align-items: flex-end;
-  justify-content: space-between;
-`;
-
-const RowedView = styled(View)`
-  flex-direction: row;
-  align-items: center;
   justify-content: space-between;
 `;
 
