@@ -906,22 +906,27 @@ def get_location_details(location):
         return None
 
 
-def get_match_value_from_id(match_id, vector_id, latest=True):
-    string_id = str(vector_id)
+def get_match_value_from_id(match_id, vector_id, property_id=None, latest=True):
+    string_vector_id = str(vector_id)
 
     if latest:
-        query = 'location_match_values.' + string_id
+        query = 'location_match_values.' + string_vector_id
         match_doc = utils.DB_LOCATION_MATCHES.find_one({'_id': ObjectId(match_id)}, {query: 1})
         if matching.MATCHING_DF_PATH == matching.PRODUCTION_DF_PATH:
-            return match_doc['location_match_values'][string_id]
+            if property_id:
+                try:
+                    return match_doc['property_match_values'][str(property_id)]
+                except KeyError:
+                    pass  # folks prior to this change will get mis match
+            return match_doc['location_match_values'][string_vector_id]
         else:
             # purposefully made this a number that can't be achieved in reality
             return 102  # Random match value due to test_df not having all possible values
 
     else:
-        query = 'match_values.' + string_id
+        query = 'match_values.' + string_vector_id
         match_doc = utils.DB_TENANT.find_one({'_id': ObjectId(match_id)}, {query: 1})
-        return match_doc['match_values'][string_id]
+        return match_doc['match_values'][string_vector_id]
 
 
 def get_nearest_space(lat, lng, database='spaces'):
