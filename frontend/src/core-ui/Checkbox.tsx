@@ -1,4 +1,4 @@
-import React, { ComponentProps, useState, CSSProperties } from 'react';
+import React, { ComponentProps, useState, CSSProperties, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 import View from './View';
 import Label from './Label';
@@ -15,7 +15,7 @@ type CheckboxProps = ViewProps & {
   type?: 'primary' | 'secondary';
   isChecked: boolean;
   onPress: () => void;
-  title?: string;
+  title?: string | ReactNode;
   titleProps?: TextProps;
   size?: string;
   iconContainerStyle?: CSSProperties;
@@ -120,7 +120,7 @@ export default function Checkbox(props: CheckboxProps) {
           onBlur={() => setFocus(false)}
         />
       </Container>
-      <LabelText text={title} id={id} {...titleProps} />
+      {typeof title === 'string' ? <LabelText text={title} id={id} {...titleProps} /> : title}
     </RowedView>
   );
 }

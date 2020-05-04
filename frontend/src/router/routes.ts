@@ -129,6 +129,7 @@ const LANDLORD_ROUTES = [
     component: EditBasicProfile,
     props: {
       showBanner: true,
+      showFooter: true,
     },
     authorization: landlordAuthorization,
   },
@@ -139,6 +140,7 @@ const LANDLORD_ROUTES = [
     component: LandlordProperties,
     props: {
       showBanner: true,
+      showFooter: true,
     },
     authorization: landlordAuthorization,
   },
@@ -148,6 +150,7 @@ const LANDLORD_ROUTES = [
     component: LandlordPropertyDetails,
     props: {
       showBanner: true,
+      showFooter: true,
     },
     authorization: landlordAuthorization,
   },
@@ -175,6 +178,7 @@ const LANDLORD_ROUTES = [
     component: Messages,
     props: {
       showBanner: true,
+      showFooter: true,
     },
     exact: true,
     authorization: landlordAuthorization,
@@ -185,6 +189,7 @@ const LANDLORD_ROUTES = [
     component: LandlordMessageDetail,
     props: {
       showBanner: true,
+      showFooter: true,
     },
     authorization: landlordAuthorization,
   },
@@ -194,6 +199,7 @@ const LANDLORD_ROUTES = [
     component: LandlordBilling,
     props: {
       showBanner: true,
+      showFooter: true,
     },
     authorization: landlordAuthorization,
   },
@@ -208,6 +214,7 @@ const LANDLORD_ROUTES = [
     component: LandlordAddSpace,
     props: {
       showBanner: true,
+      showFooter: true,
     },
     authorization: landlordAuthorization,
   },
@@ -216,6 +223,7 @@ const LANDLORD_ROUTES = [
     layout: BasicLayout,
     props: {
       showBanner: true,
+      showFooter: true,
     },
     component: ChangeLandlordPlanModal,
   },
@@ -224,6 +232,7 @@ const LANDLORD_ROUTES = [
     layout: LandlordProfileLayout,
     props: {
       showBanner: true,
+      showFooter: true,
     },
     component: ChangeMultipleLandlordPlansModal,
   },
@@ -265,6 +274,9 @@ const TENANT_ROUTES = [
     path: '/user/edit-profile',
     layout: UserProfileLayout,
     component: EditBasicProfile,
+    props: {
+      showFooter: true,
+    },
     authorization: tenantAuthorization,
   },
   {

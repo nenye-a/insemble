@@ -5,7 +5,7 @@ import { View, Text, TouchableOpacity } from '../../core-ui';
 
 import { useViewport } from '../../utils';
 import { BLACK, WHITE } from '../../constants/colors';
-import { SUPPORT_EMAIL } from '../../constants/app';
+import { SUPPORT_EMAIL, PRIVACY_POLICY_PDF, TERMS_OF_SERVICE_PDF } from '../../constants/app';
 import { VIEWPORT_TYPE } from '../../constants/viewports';
 
 type ViewWithViewportType = ViewProps & {
@@ -21,19 +21,34 @@ export default function Footer() {
       <TouchableOpacity href={`mailto:${SUPPORT_EMAIL}`}>
         <WhiteText>Contact us!</WhiteText>
       </TouchableOpacity>
-      <CopyrightContainer isDesktop={isDesktop}>
-        <WhiteText>@2020 Insemble</WhiteText>
-        <WhiteText>Insemble Inc. All Rights Reserved.</WhiteText>
-      </CopyrightContainer>
+      <Row isDesktop={isDesktop}>
+        <CopyrightContainer isDesktop={isDesktop}>
+          <TouchableOpacity href={TERMS_OF_SERVICE_PDF} target="_blank">
+            <WhiteText>Terms of Service</WhiteText>
+          </TouchableOpacity>
+          <TouchableOpacity href={PRIVACY_POLICY_PDF} target="_blank">
+            <WhiteText>Privacy Policy</WhiteText>
+          </TouchableOpacity>
+        </CopyrightContainer>
+        <CopyrightContainer isDesktop={isDesktop}>
+          <WhiteText>@2020 Insemble</WhiteText>
+          <WhiteText>Insemble Inc. All Rights Reserved.</WhiteText>
+        </CopyrightContainer>
+      </Row>
     </Container>
   );
 }
 
+const Row = styled(View)<ViewWithViewportType>`
+  flex-direction: ${({ isDesktop }) => (isDesktop ? 'row' : 'column')};
+`;
 const Container = styled(View)<ViewWithViewportType>`
   align-items: center;
   background-color: ${BLACK};
   padding: 20px 5vw;
-  height: 160px;
+  bottom: 0;
+  width: 100%;
+  height: 140px;
   ${({ isDesktop }) =>
     isDesktop
       ? css`
@@ -51,10 +66,11 @@ const CopyrightContainer = styled(View)<ViewWithViewportType>`
     !isDesktop
       ? css`
           align-items: center;
-          padding-top: 35px;
+          padding-top: 20px;
         `
       : css`
           align-items: flex-end;
+          padding-left: 35px;
         `}
 `;
 

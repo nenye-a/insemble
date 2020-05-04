@@ -31,7 +31,7 @@ export const UNSELECTED_TEXT_COLOR = LIGHT_GREY;
 export const DARK_TEXT_COLOR = DETAIL_GREY;
 export const GREEN_TEXT = DARK_GREEN;
 
-export const LINK_COLOR = '#0000EE';
+export const LINK_COLOR = '#0366d6';
 
 export const HEADER_BORDER_COLOR = 'rgba(103,76,167,0.17)';
 export const BOTTOM_CARD_COLOR = LIGHTEST_GREY;
