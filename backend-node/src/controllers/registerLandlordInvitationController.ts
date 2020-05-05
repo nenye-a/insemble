@@ -51,6 +51,7 @@ export let emailRegisterLandlordInvitationHandler = async (
   if (existUser) {
     // TODO: Auto complete property Data expecting sending spaceId return whole property
     // TODO: If propertyId from above already exist just create Space else create whole property
+    // TODO: fix logic checking if conversation exist first
     let tier: LandlordTier = 'PROFESSIONAL';
     let isTrial = trialCheck(existUser.createdAt);
     if (!isTrial) {

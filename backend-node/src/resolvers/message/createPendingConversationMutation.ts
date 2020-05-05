@@ -13,13 +13,17 @@ export let createPendingConversationResolver: FieldResolver<
   'createPendingConversation'
 > = async (
   _,
-  { brandId, spaceId, matchScore, messageInput, header, receiverContact },
+  {
+    brandId,
+    spaceId,
+    matchScore,
+    messageInput,
+    header,
+    receiverContact,
+    brandInfo,
+  },
   context: Context,
 ) => {
-  let notAvailable = true;
-  if (notAvailable) {
-    throw new Error('Feature is not available yet'); // TODO: Remove throw error when already available
-  }
   let userSender = context.tenantUserId
     ? await context.prisma.tenantUser.findOne({
         where: {
@@ -83,20 +87,13 @@ export let createPendingConversationResolver: FieldResolver<
     if (spaceOrBrand.property.landlordUser.id !== context.landlordUserId) {
       throw new Error('This is not your property');
     }
-    let targetBrands = await context.prisma.brand.findMany({
-      where: {
-        tenantId: brandId,
-      },
-    });
-    if (targetBrands.length) {
-      throw new Error('Brand already exist please reload your search');
-    }
   }
 
   let pendingConversationData = {
     matchScore,
     header,
     messageInput,
+    brandInfo,
   };
 
   let pendingConversation = await context.prisma.pendingConversation.create({
@@ -150,6 +147,7 @@ export let createPendingConversation = mutationField(
     args: {
       brandId: stringArg({ required: true }),
       spaceId: stringArg({ required: true }),
+      brandInfo: arg({ type: 'BrandInfoInput' }),
       receiverContact: arg({ type: 'ReceiverContactInput', required: true }),
       matchScore: floatArg({ required: true }),
       messageInput: arg({ type: 'MessageInput', required: true }),
