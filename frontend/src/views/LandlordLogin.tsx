@@ -9,6 +9,7 @@ import LoginForm from '../views/LoginForm';
 import LandlordLanding from './LandlordLanding';
 import { Role } from '../types/types';
 import { useViewport } from '../utils';
+import Footer from './LandingPage/Footer';
 
 type ContainerProps = ViewProps & {
   isDesktop: boolean;
@@ -21,35 +22,38 @@ export default function LandlordSignUp() {
   let noAccount = "Don't have an account?";
   let noPassword = 'Forgot your password?';
   return (
-    <Container isDesktop={isDesktop}>
-      <LandlordLanding />
-      <FormContainer>
-        <TitleText>Landlord Log In</TitleText>
-        <LoginForm role={Role.LANDLORD} />
-        <NoAccountContainer>
-          <Text>{noAccount} </Text>
-          <Button
-            mode="transparent"
-            text="Sign Up here"
-            onPress={() => {
-              history.push('/landlord/signup');
-            }}
-          />
-        </NoAccountContainer>
-        <RowView>
-          <Text>{noPassword} </Text>
-          <Button
-            mode="transparent"
-            text="Click here"
-            onPress={() => {
-              history.push('/forgot-password', {
-                role: Role.LANDLORD,
-              });
-            }}
-          />
-        </RowView>
-      </FormContainer>
-    </Container>
+    <>
+      <Container isDesktop={isDesktop}>
+        <LandlordLanding />
+        <FormContainer>
+          <TitleText>Landlord Log In</TitleText>
+          <LoginForm role={Role.LANDLORD} />
+          <NoAccountContainer>
+            <Text>{noAccount} </Text>
+            <Button
+              mode="transparent"
+              text="Sign Up here"
+              onPress={() => {
+                history.push('/landlord/signup');
+              }}
+            />
+          </NoAccountContainer>
+          <RowView>
+            <Text>{noPassword} </Text>
+            <Button
+              mode="transparent"
+              text="Click here"
+              onPress={() => {
+                history.push('/forgot-password', {
+                  role: Role.LANDLORD,
+                });
+              }}
+            />
+          </RowView>
+        </FormContainer>
+      </Container>
+      <Footer />
+    </>
   );
 }
 

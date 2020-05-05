@@ -46,7 +46,6 @@ const Container = styled(View)<ViewWithViewportType>`
   align-items: center;
   background-color: ${BLACK};
   padding: 20px 5vw;
-  bottom: 0;
   width: 100%;
   height: 140px;
   ${({ isDesktop }) =>
@@ -66,10 +65,10 @@ const CopyrightContainer = styled(View)<ViewWithViewportType>`
     !isDesktop
       ? css`
           align-items: center;
-          padding-top: 20px;
+          padding-top: 16px;
         `
       : css`
-          align-items: flex-end;
+          align-items: flex-start;
           padding-left: 35px;
         `}
 `;
