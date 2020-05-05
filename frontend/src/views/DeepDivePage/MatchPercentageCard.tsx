@@ -100,8 +100,7 @@ export default function MatchPercentageCard() {
         })}
       </RowedView>
       <SeeMoreContainer
-        onClick={() => {
-          console.log('see more pressed');
+        onPress={() => {
           scrollToId('keyfacts');
         }}
       >
