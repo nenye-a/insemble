@@ -47,6 +47,7 @@ export * from './Property';
 export * from './Conversation';
 export * from './MessageInput';
 export * from './ReceiverContact';
+export * from './BrandInfoInput';
 
 export * from './GooglePlace';
 
