@@ -13,7 +13,6 @@ import {
 } from '../../constants/theme';
 
 import getUnit from './helpers/getUnit';
-import { TenantTier, LandlordTier } from '../../generated/globalTypes';
 
 type TierSubscriptionProps = {
   title: string;
@@ -26,6 +25,7 @@ type TierSubscriptionProps = {
   onPress?: (id: string) => void;
   onUpgradeButtonPress?: () => void;
   freeTier?: boolean;
+  onTrial?: boolean;
 };
 
 export default function TierSubscription(props: TierSubscriptionProps) {
@@ -33,11 +33,11 @@ export default function TierSubscription(props: TierSubscriptionProps) {
     price,
     isAnnual,
     benefits,
-    isUserCurrentTier,
     tierName,
     title,
     onUpgradeButtonPress,
     freeTier,
+    onTrial,
   } = props;
 
   return (
@@ -72,15 +72,10 @@ export default function TierSubscription(props: TierSubscriptionProps) {
           ))}
         </PlanSection>
       </Content>
-      {onUpgradeButtonPress && !isUserCurrentTier && !freeTier && (
+      {onUpgradeButtonPress && !freeTier && (
         <UpgradeButton
           onPress={onUpgradeButtonPress}
-          text={
-            tierName === LandlordTier.PROFESSIONAL || TenantTier.PROFESSIONAL
-              ? 'Upgrade (Free Trial Currently Active)'
-              : 'Upgrade'
-          }
-          disabled={isUserCurrentTier}
+          text={onTrial ? 'Upgrade (Free Trial Currently Active)' : 'Upgrade'}
         />
       )}
     </TierSubscriptionWrapper>

@@ -19,6 +19,7 @@ describe('getGroupedMatchingPropertiesByKey', () => {
         lat: '1',
         lng: '1',
         matchValue: 90,
+        thumbnail: '',
       },
       {
         __typename: 'MatchingProperty',
@@ -35,6 +36,7 @@ describe('getGroupedMatchingPropertiesByKey', () => {
         lat: '1',
         lng: '1',
         matchValue: 90,
+        thumbnail: '',
       },
       {
         __typename: 'MatchingProperty',
@@ -51,6 +53,7 @@ describe('getGroupedMatchingPropertiesByKey', () => {
         lat: '1',
         lng: '1',
         matchValue: 90,
+        thumbnail: '',
       },
       {
         __typename: 'MatchingProperty',
@@ -67,6 +70,7 @@ describe('getGroupedMatchingPropertiesByKey', () => {
         lat: '1',
         lng: '1',
         matchValue: 90,
+        thumbnail: '',
       },
     ];
 
@@ -87,6 +91,7 @@ describe('getGroupedMatchingPropertiesByKey', () => {
         lat: '1',
         lng: '1',
         matchValue: 90,
+        thumbnail: '',
       },
       {
         __typename: 'MatchingProperty',
@@ -103,6 +108,7 @@ describe('getGroupedMatchingPropertiesByKey', () => {
         lat: '1',
         lng: '1',
         matchValue: 90,
+        thumbnail: '',
       },
       {
         __typename: 'MatchingProperty',
@@ -119,6 +125,7 @@ describe('getGroupedMatchingPropertiesByKey', () => {
         lat: '1',
         lng: '1',
         matchValue: 90,
+        thumbnail: '',
       },
     ]);
   });

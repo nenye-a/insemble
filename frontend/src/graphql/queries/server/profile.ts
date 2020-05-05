@@ -12,6 +12,7 @@ export const GET_TENANT_PROFILE = gql`
       description
       title
       tier
+      trial
       pendingEmail
       stripeSubscriptionId
     }
