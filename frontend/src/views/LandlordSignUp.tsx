@@ -10,6 +10,7 @@ import { WHITE, THEME_COLOR } from '../constants/colors';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_BOLD } from '../constants/theme';
 import { useViewport } from '../utils';
 import { VIEWPORT_TYPE } from '../constants/viewports';
+import Footer from './LandingPage/Footer';
 
 type ViewWithViewportType = ViewProps & {
   isDesktop: boolean;
@@ -19,23 +20,26 @@ export default function LandlordSignUp() {
   let history = useHistory();
   let { viewportType } = useViewport();
   return (
-    <Container isDesktop={viewportType === VIEWPORT_TYPE.DESKTOP}>
-      <LandlordLanding />
-      <RightContainer flex>
-        <TitleText>Landlord Sign Up</TitleText>
-        <SignUpForm role={Role.LANDLORD} />
-        <SignUpRowView>
-          <Text>Already have an account? </Text>
-          <Button
-            mode="transparent"
-            text="Log in here"
-            onPress={() => {
-              history.push('/landlord/login');
-            }}
-          />
-        </SignUpRowView>
-      </RightContainer>
-    </Container>
+    <>
+      <Container isDesktop={viewportType === VIEWPORT_TYPE.DESKTOP}>
+        <LandlordLanding />
+        <RightContainer flex>
+          <TitleText>Landlord Sign Up</TitleText>
+          <SignUpForm role={Role.LANDLORD} />
+          <SignUpRowView>
+            <Text>Already have an account? </Text>
+            <Button
+              mode="transparent"
+              text="Log in here"
+              onPress={() => {
+                history.push('/landlord/login');
+              }}
+            />
+          </SignUpRowView>
+        </RightContainer>
+      </Container>
+      <Footer />
+    </>
   );
 }
 

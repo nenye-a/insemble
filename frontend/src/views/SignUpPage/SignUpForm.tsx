@@ -1,17 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useForm, FieldError, FieldValues } from 'react-hook-form';
 import { useMutation } from '@apollo/react-hooks';
 import { Redirect } from 'react-router-dom';
 
-import { View, TextInput, Form, Button, Alert } from '../../core-ui';
+import {
+  View,
+  TextInput,
+  Form,
+  Button,
+  Alert,
+  Checkbox,
+  Text,
+  TouchableOpacity,
+} from '../../core-ui';
 import { validateEmail } from '../../utils/validation';
-import { WHITE } from '../../constants/colors';
+import { WHITE, LINK_COLOR } from '../../constants/colors';
 import { REGISTER_TENANT, REGISTER_LANDLORD } from '../../graphql/queries/server/auth';
 import { RegisterTenant, RegisterTenantVariables } from '../../generated/RegisterTenant';
 import { State as OnboardingState } from '../../reducers/tenantOnboardingReducer';
 import { Role } from '../../types/types';
 import { formatGraphQLError, getBusinessAndFilterParams } from '../../utils';
+import { PRIVACY_POLICY_PDF, TERMS_OF_SERVICE_PDF } from '../../constants/app';
 
 type Props = {
   role: Role;
@@ -21,6 +31,7 @@ type Props = {
 export default function SignUpForm(props: Props) {
   let { onboardingState, role } = props;
   let { register, handleSubmit, errors, watch } = useForm();
+  let [hasAgreed, setHasAgreed] = useState(false);
   let [registerTenant, { data, loading, error }] = useMutation<
     RegisterTenant,
     RegisterTenantVariables
@@ -74,7 +85,7 @@ export default function SignUpForm(props: Props) {
   };
 
   let onSubmit = (data: FieldValues) => {
-    if (Object.keys(errors).length === 0) {
+    if (Object.keys(errors).length === 0 && hasAgreed) {
       if (role === Role.LANDLORD) {
         submitRegisterLandlord(data);
       } else {
@@ -177,8 +188,21 @@ export default function SignUpForm(props: Props) {
           errorMessage={(errors?.confirmPassword as FieldError)?.message || ''}
           containerStyle={inputContainerStyle}
         />
+        <Checkbox
+          type="primary"
+          title={
+            <View style={{ flexDirection: 'row' }}>
+              <Text> I accept the </Text>
+              <TouchableText text="Privacy Policy" link={PRIVACY_POLICY_PDF} />
+              <Text> and the </Text>
+              <TouchableText text="Terms of Service" link={TERMS_OF_SERVICE_PDF} />
+            </View>
+          }
+          isChecked={hasAgreed}
+          onPress={() => setHasAgreed(!hasAgreed)}
+        />
         <SubmitButton
-          text="Create and Find Tenants"
+          text={role === Role.LANDLORD ? 'Create and Find Tenants' : 'Create and Submit'}
           type="submit"
           loading={loading || registerLandlordLoading}
         />
@@ -187,6 +211,17 @@ export default function SignUpForm(props: Props) {
   );
 }
 
+type TouchableTextProps = {
+  link: string;
+  text: string;
+};
+function TouchableText({ text, link }: TouchableTextProps) {
+  return (
+    <TouchableOpacity href={link}>
+      <Text style={{ color: LINK_COLOR }}>{text}</Text>
+    </TouchableOpacity>
+  );
+}
 const FormContent = styled(View)`
   background-color: ${WHITE};
 `;
