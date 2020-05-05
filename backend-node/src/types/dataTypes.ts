@@ -373,6 +373,12 @@ export type PendingDataType = {
   };
 };
 
+export type BrandInfo = {
+  brandName: string;
+  brandId: string;
+  category: string;
+};
+
 export type BillingPlanType = {
   role: 'LANDLORD' | 'TENANT';
   id: string;
