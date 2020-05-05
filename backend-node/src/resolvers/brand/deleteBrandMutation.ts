@@ -21,6 +21,12 @@ let deleteBrandResolver: FieldResolver<'Mutation', 'deleteBrand'> = async (
   if (brand.tenantUser?.id !== context.tenantUserId) {
     throw new Error('User not authorized to delete');
   }
+  await context.prisma.location.deleteMany({
+    where: { brand: { id: brandId } },
+  });
+  await context.prisma.conversation.deleteMany({
+    where: { brand: { id: brandId } },
+  });
   await context.prisma.brand.delete({
     where: {
       id: brandId,

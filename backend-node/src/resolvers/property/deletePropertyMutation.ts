@@ -14,6 +14,7 @@ let deletePropertyResolver: FieldResolver<
     },
     include: {
       landlordUser: true,
+      space: true,
     },
   });
   if (!property) {
@@ -34,6 +35,17 @@ let deletePropertyResolver: FieldResolver<
     if (resultStatus !== 304 && resultStatus !== 200) {
       throw new Error('Cannot delete property!');
     }
+  }
+  let spaces = property.space;
+  for (let space of spaces) {
+    await context.prisma.conversation.deleteMany({
+      where: { space: { id: space.id } },
+    });
+    await context.prisma.space.delete({
+      where: {
+        id: space.id,
+      },
+    });
   }
 
   await context.prisma.property.delete({

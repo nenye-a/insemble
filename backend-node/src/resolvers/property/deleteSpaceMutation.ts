@@ -47,6 +47,10 @@ export let deleteSpaceResolver: FieldResolver<
     }
   }
 
+  await context.prisma.conversation.deleteMany({
+    where: { space: { id: spaceId } },
+  });
+
   let deletedSpace = await context.prisma.space.delete({
     where: {
       id: spaceId,
