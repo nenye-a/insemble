@@ -126,12 +126,10 @@ let tenantMatches = queryField('tenantMatches', {
       // NOTE: data for update Matches
       pendingUpdate,
     } = selectedBrand;
-    if (!tenantId) {
-      if (!(name && location) && !(categories.length > 0 && minIncome)) {
-        throw new Error(
-          'Please update your brand and provide either (address and brand_name) or (categories and income)',
-        );
-      }
+    if (!(name && location) && !(categories.length > 0 && minIncome)) {
+      throw new Error(
+        'Please update your brand and provide either (address and brand_name) or (categories and income)',
+      );
     }
     let matchingLocations;
     let matchingProperties;
