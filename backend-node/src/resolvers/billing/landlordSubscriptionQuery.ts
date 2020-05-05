@@ -58,6 +58,36 @@ let landlordSubscriptionsResolver: FieldResolver<
     },
   );
   let spacePlan = [];
+
+  let spaces = await context.prisma.space.findMany({
+    where: {
+      property: { landlordUser: { id: context.landlordUserId } },
+      stripeSubscriptionId: null,
+    },
+    include: {
+      property: { include: { space: true, location: true } },
+    },
+  });
+  for (let space of spaces) {
+    if (space.property) {
+      let spaceIndex =
+        space.property.space.findIndex(({ id }) => id === space.id) + 1;
+      spacePlan.push({
+        id: space.id,
+        cost: '$0/month',
+        space,
+        spaceIndex,
+        tier: space.tier,
+        mainPhoto: space.mainPhoto,
+        location: space.property.location,
+        plan: {
+          id: '',
+          productId: '',
+        },
+      });
+    }
+  }
+
   for (let subs of formatedSubsList) {
     let property;
     let id = '';
