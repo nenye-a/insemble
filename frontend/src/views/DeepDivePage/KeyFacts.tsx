@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, View, Text, TabBar, Button } from '../../core-ui';
+import { Card, View, Text, TabBar } from '../../core-ui';
 import { PieChart, Pie, Cell, Legend } from 'recharts';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
@@ -18,6 +18,7 @@ import {
 } from '../../generated/LocationDetails';
 import BlurredCommute from '../../assets/images/blurred-commute.png';
 import { EmptyDataComponent } from '../../components';
+import UpgradeToAccess from '../../components/UpgradeToAccess';
 
 type Props = ViewProps & {
   withMargin?: boolean;
@@ -121,20 +122,12 @@ export default function KeyFacts(props: Props) {
           isLocked ? (
             <>
               <Image src={BlurredCommute} />
-              <LockedContainer>
-                <Card title="Upgrade  Now" titleBackground="purple">
-                  <LockedContent>
-                    <Text>
-                      {`Looks like your trial has ended, but it's easy to get back up and running.`}
-                    </Text>
-                    <Button
-                      style={{ marginTop: 12 }}
-                      text="Upgrade to Access"
-                      onPress={() => history.push('/user/plan')}
-                    />
-                  </LockedContent>
-                </Card>
-              </LockedContainer>
+              <UpgradeToAccess
+                title="Upgrade Now"
+                text={`Looks like your trial has ended, but it's easy to get back up and running.`}
+                buttonText="Upgrade to Access"
+                onPress={() => history.push('/user/plan')}
+              />
             </>
           ) : (
             <CommuteView flex id="commute-view">
@@ -300,19 +293,4 @@ const EconomicColumn = styled(View)`
 const Image = styled.img`
   width: 100%;
   object-fit: contain;
-`;
-
-const LockedContent = styled(View)`
-  padding: 12px;
-  align-items: center;
-`;
-
-const LockedContainer = styled(View)`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 20%;
-  left: 40%;
-  align-content: center;
-  justify-content: center;
 `;
