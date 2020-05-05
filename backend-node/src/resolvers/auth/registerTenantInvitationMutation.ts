@@ -167,6 +167,10 @@ export let registerTenantInvitationResolver: FieldResolver<
   }
   let newBrand = await context.prisma.brand.create({
     data: {
+      name: newBrandName,
+      categories: {
+        set: newBrandCategories,
+      },
       matchingLocations: JSON.stringify(newBrandMatchingLoaction),
       matchingProperties: JSON.stringify(newBrandMatchingProperties),
       tenantId: newBrandTenantId,

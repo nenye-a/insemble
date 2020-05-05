@@ -175,6 +175,10 @@ export let emailRegisterTenantInvitationHandler = async (
     }
     let newBrand = await prisma.brand.create({
       data: {
+        name: newBrandName,
+        categories: {
+          set: newBrandCategories,
+        },
         matchingLocations: JSON.stringify(newBrandMatchingLoaction),
         matchingProperties: JSON.stringify(newBrandMatchingProperties),
         tenantId: newBrandTenantId,
