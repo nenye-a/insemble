@@ -7,6 +7,7 @@ async function createdAtUserNow() {
     await prisma.tenantUser.update({
       data: {
         createdAt: new Date(),
+        tier: 'PROFESSIONAL',
       },
       where: {
         id: tUser.id,
@@ -20,6 +21,12 @@ async function createdAtUserNow() {
       },
       where: {
         id: lUser.id,
+      },
+    });
+    await prisma.space.updateMany({
+      where: { property: { landlordUser: { id: lUser.id } } },
+      data: {
+        tier: 'PROFESSIONAL',
       },
     });
   }
