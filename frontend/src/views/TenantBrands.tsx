@@ -27,6 +27,7 @@ import { GetBrands } from '../generated/GetBrands';
 import { MAP_DEFAULT_CENTER } from '../constants/googleMaps';
 import SvgCircleClose from '../components/icons/circle-close';
 import { DeleteBrand, DeleteBrandVariables } from '../generated/DeleteBrand';
+import UpgradeToAccess from '../components/UpgradeToAccess';
 
 type HeatmapProps = {
   heatmapData: google.maps.MVCArray<google.maps.visualization.WeightedLocation>;
@@ -155,20 +156,12 @@ export default () => {
             isPro ? (
               history.push('/new-brand')
             ) : (
-              <UpgradeModal>
-                <Card title="Upgrade  Now" titleBackground="purple">
-                  <UpgradeContent>
-                    <Text>
-                      {`Looks like your trial has ended, but it's easy to get back up and running.`}
-                    </Text>
-                    <Button
-                      style={{ marginTop: 12 }}
-                      text="Upgrade to Add"
-                      onPress={() => history.push('/user/plan')}
-                    />
-                  </UpgradeContent>
-                </Card>
-              </UpgradeModal>
+              <UpgradeToAccess
+                title="UpgradeNow"
+                text={`Looks like your trial has ended, but it's easy to get back up and running.`}
+                onPress={() => history.push('/user/plan')}
+                buttonText="Upgrade to Add"
+              />
             );
           }}
         >
@@ -264,18 +257,4 @@ const RemoveButton = styled(TouchableOpacity)`
   position: absolute;
   right: -36px;
   top: 63px;
-`;
-const UpgradeContent = styled(View)`
-  padding: 12px;
-  align-items: center;
-`;
-
-const UpgradeModal = styled(View)`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 20%;
-  left: 40%;
-  align-content: center;
-  justify-content: center;
 `;
