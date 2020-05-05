@@ -1,10 +1,19 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { mutationField, FieldResolver, stringArg } from 'nexus';
 import bcrypt from 'bcrypt';
 
 import { Context } from 'serverTypes';
 import { createSession } from '../../helpers/auth';
-import { PendingDataType, ReceiverContact } from 'dataTypes';
+import {
+  PendingDataType,
+  ReceiverContact,
+  BrandInfo,
+  TenantMatchesType,
+} from 'dataTypes';
 import { trialCheck } from '../../helpers/trialCheck';
+import axios from 'axios';
+import { LEGACY_API_URI } from '../../constants/host';
+import { axiosParamsSerializer } from '../../helpers/axiosParamsCustomSerializer';
 
 export let registerTenantInvitationResolver: FieldResolver<
   'Mutation',
@@ -60,34 +69,121 @@ export let registerTenantInvitationResolver: FieldResolver<
   });
 
   // TODO: Auto complete brand Data
-  let newBrand = await context.prisma.brand.create({
-    data: {
-      name: 'Dummy brand',
-      tenantId: pendingConversation.brandId,
-      location: {
-        create: { address: 'Dummy', lat: '1', lng: '1' },
-      },
-      userRelation: 'Owner',
-      tenantUser: {
-        connect: {
-          id: tenantUser.id,
+  let { pendingConversationData, spaceId } = pendingConversation;
+  let {
+    header,
+    matchScore,
+    messageInput,
+    brandInfo,
+  }: PendingDataType & { brandInfo?: BrandInfo } = JSON.parse(
+    pendingConversationData,
+  );
+
+  let newBrandName = brandInfo ? brandInfo.brandName : 'No name';
+  let newBrandCategories = brandInfo ? [brandInfo.category] : [];
+  let newBrandTenantId = brandInfo ? brandInfo.brandId : undefined;
+  let newBrandMatchId = '';
+  let newBrandMatchingProperties = [];
+  let newBrandMatchingLoaction = [];
+  try {
+    let {
+      match_id: newMatchId,
+      matching_locations: newMatchingLocations,
+      matching_properties: rawMatchingProperties = [],
+    }: TenantMatchesType = (
+      await axios.get(`${LEGACY_API_URI}/api/tenantMatches/`, {
+        params: {
+          brand_name: newBrandName,
+          categories: newBrandCategories.length
+            ? JSON.stringify([newBrandCategories])
+            : undefined,
+          brand_id: newBrandTenantId,
+        },
+        paramsSerializer: axiosParamsSerializer,
+      })
+    ).data;
+    newBrandMatchId = newMatchId;
+
+    let rawMatchingPropertiesIds = rawMatchingProperties?.map(
+      ({ space_id }) => space_id,
+    );
+    let spaces = await context.prisma.space.findMany({
+      where: {
+        spaceId: {
+          in: rawMatchingPropertiesIds,
         },
       },
+    });
+
+    let spacesMap = new Map(
+      spaces.map(({ spaceId, ...rest }) => [spaceId, rest]),
+    );
+    let prismaSpaceIds = [...spacesMap.keys()];
+    let filteredMatchingProperties = rawMatchingProperties?.filter(
+      ({ space_id }) => prismaSpaceIds.includes(space_id),
+    );
+
+    let savedPropertySpaceIds = (
+      await context.prisma.savedProperty.findMany({
+        where: {
+          tenantUser: {
+            id: tenantUser.id,
+          },
+        },
+      })
+    ).map(({ spaceId }) => {
+      return spaceId;
+    });
+    newBrandMatchingLoaction = newMatchingLocations ? newMatchingLocations : [];
+    newBrandMatchingProperties = filteredMatchingProperties?.map(
+      ({
+        space_id: spaceId,
+        property_id: propertyId,
+        space_condition: spaceCondition,
+        tenant_type: tenantType,
+        match_value: matchValue,
+        lng: numberLng,
+        lat: numberLat,
+        type,
+        ...other
+      }) => {
+        return {
+          spaceId,
+          propertyId,
+          spaceCondition,
+          tenantType,
+          type,
+          matchValue,
+          thumbnail: spacesMap.get(spaceId)?.mainPhoto || '',
+          lng: numberLng.toString(),
+          lat: numberLat.toString(),
+          ...other,
+          liked: savedPropertySpaceIds.includes(spaceId),
+        };
+      },
+    );
+  } catch {
+    throw new Error('Cannot create new brand, please try again!');
+  }
+  let newBrand = await context.prisma.brand.create({
+    data: {
+      matchingLocations: JSON.stringify(newBrandMatchingLoaction),
+      matchingProperties: JSON.stringify(newBrandMatchingProperties),
+      tenantId: newBrandTenantId,
+      matchId: newBrandMatchId,
     },
   });
   if (!newBrand) {
     throw new Error('Brand failed to be created');
   }
 
-  let { brandId, pendingConversationData, spaceId } = pendingConversation;
-  let { header, matchScore, messageInput }: PendingDataType = JSON.parse(
-    pendingConversationData,
-  );
-
   let convId;
   let existingConversation = await context.prisma.conversation.findMany({
     where: {
-      AND: [{ brand: { tenantId: brandId } }, { space: { id: spaceId } }],
+      AND: [
+        { brand: { matchId: newBrand.matchId } },
+        { space: { id: spaceId } },
+      ],
     },
   });
   if (existingConversation.length) {
