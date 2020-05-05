@@ -36,6 +36,7 @@ export default function TierSubscription(props: TierSubscriptionProps) {
     tierName,
     title,
     onUpgradeButtonPress,
+    isUserCurrentTier,
     freeTier,
     onTrial,
   } = props;

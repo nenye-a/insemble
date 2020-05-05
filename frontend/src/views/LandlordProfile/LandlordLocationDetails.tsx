@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
-import { View, LoadingIndicator, Text } from '../../core-ui';
+import { View, LoadingIndicator, Text, TouchableOpacity } from '../../core-ui';
 import KeyFacts from '../DeepDivePage/KeyFacts';
 import DemographicCard from '../DeepDivePage/Demographics';
 import { GET_PROPERTY_LOCATION_DETAILS } from '../../graphql/queries/server/deepdive';
@@ -16,10 +16,11 @@ import { Property, PropertyVariables } from '../../generated/Property';
 import { MAPS_IFRAME_URL_SEARCH } from '../../constants/googleMaps';
 import { ErrorComponent, TrialEndedAlert } from '../../components';
 import { GET_USER_STATE } from '../../graphql/queries/client/userState';
-import { LIGHTEST_GREY } from '../../constants/colors';
+import { LIGHTEST_GREY, LINK_COLOR } from '../../constants/colors';
 import RelevantConsumerCard from '../DeepDivePage/RelevantConsumerCard';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD } from '../../constants/theme';
 import BlurredPersonas from '../../assets/images/blurred-personas.png';
+import { PSYCHOGRAPHIC_LINK } from '../../constants/app';
 
 type Params = {
   paramsId: string;
@@ -92,7 +93,15 @@ export default function LandlordLocationDetails() {
             commuteData={commuteData}
             withMargin={false}
           />
-          <ConsumerPersonaText>Local Consumer Personas (Psychographics)</ConsumerPersonaText>
+          <View style={{ flexDirection: 'row' }}>
+            <ConsumerPersonaText>Local Consumer Personas</ConsumerPersonaText>
+            <TouchableOpacity href={PSYCHOGRAPHIC_LINK}>
+              <Psychographics>
+                {' '}
+                (<Psychographics style={{ color: LINK_COLOR }}>Psychographics</Psychographics>)
+              </Psychographics>
+            </TouchableOpacity>
+          </View>
           {!trial ? (
             <Image src={BlurredPersonas} />
           ) : (
@@ -125,7 +134,12 @@ const Container = styled(View)`
 const ConsumerPersonaText = styled(Text)`
   font-size: ${FONT_SIZE_MEDIUM};
   font-weight: ${FONT_WEIGHT_BOLD};
-  margin: 30px 10px 10px;
+  margin: 30px 0px 10px 16px;
+`;
+
+const Psychographics = styled(Text)`
+  margin: 30px 0px 10px;
+  font-size: ${FONT_SIZE_MEDIUM};
 `;
 
 const CardsContainer = styled(View)`

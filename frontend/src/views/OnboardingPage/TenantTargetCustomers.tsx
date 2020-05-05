@@ -21,6 +21,7 @@ import {
 } from '../../generated/AutoPopulateFilter';
 import { LocationState } from './types';
 import OnboardingFooter from '../../components/layout/OnboardingFooter';
+import { PSYCHOGRAPHIC_LINK } from '../../constants/app';
 
 // remove this when it's connected to endpoint that returns prefilled values
 const INITIAL_MIN_INCOME = 100;
@@ -200,7 +201,7 @@ export default function TenantTargetCustomers(props: Props) {
             visible
             search
             noPreferenceButton
-            link="https://taxonomy.spatial.ai/"
+            link={PSYCHOGRAPHIC_LINK}
             linkTitle="Psychographics"
             hasPreference={!noPersonasPreference}
             onNoPreferencePress={() => {
