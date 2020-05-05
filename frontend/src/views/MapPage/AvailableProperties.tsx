@@ -36,7 +36,7 @@ export default function AvailableProperties(props: Props) {
           onPress={onShowOrHide}
           style={{ height: 'fit-content' }}
           textProps={{
-            style: { color: THEME_COLOR, fontStyle: 'italic', transition: 'all linear 500ms' },
+            style: { color: THEME_COLOR, fontStyle: 'italic', transition: 'all linear 100ms' },
           }}
         />
       </UpperTextContainer>
@@ -104,7 +104,7 @@ const Container = styled(View)<ContainerProps>`
   right: 0px;
   background-color: white;
   padding: 16px;
-  transition: transform 500ms linear;
+  transition: transform 100ms linear;
   transform: translateX(${(props) => (props.visible ? '0px' : '350px')});
   height: 100%;
   overflow-y: scroll;
