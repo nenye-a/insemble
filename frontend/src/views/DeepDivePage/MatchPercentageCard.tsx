@@ -21,6 +21,7 @@ export default function MatchPercentageCard() {
   let data = useContext(DeepDiveContext);
   let progress = data?.result?.matchValue;
   let affinities = data?.result?.affinities;
+  let height = data?.headerHeight;
 
   const ASPECTS = [
     {
@@ -54,7 +55,10 @@ export default function MatchPercentageCard() {
     let target = document.getElementById(id);
     if (target && body) {
       body.scrollTo({
-        top: target.getBoundingClientRect().top,
+        top: height
+          ? target.getBoundingClientRect().top - height
+          : target.getBoundingClientRect().top,
+        left: target.getBoundingClientRect().left,
         behavior: 'smooth',
       });
     }
@@ -97,6 +101,7 @@ export default function MatchPercentageCard() {
       </RowedView>
       <SeeMoreContainer
         onClick={() => {
+          console.log('see more pressed');
           scrollToId('keyfacts');
         }}
       >
