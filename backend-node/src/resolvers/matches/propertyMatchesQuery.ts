@@ -108,7 +108,7 @@ let propertyMatchesResolver: FieldResolver<'Query', 'propertyMatches'> = async (
           space_type: JSON.stringify([condition]),
           tenant_type: JSON.stringify(businessType),
           sqft,
-          asking_rent: sqft * pricePerSqft,
+          asking_rent: pricePerSqft,
           target_categories:
             categories.length > 0 ? JSON.stringify(categories) : undefined,
           exclusives:
