@@ -19,7 +19,7 @@ export default function Overview() {
     data?.result?.demographics3,
     data?.result?.demographics5,
   ];
-  let isLocked = !data?.trial || data?.tier === TenantTier.FREE;
+  let isLocked = data?.tier === TenantTier.FREE || !data?.trial;
   let totalValue = 0;
   commuteData &&
     commuteData.forEach((item) => {

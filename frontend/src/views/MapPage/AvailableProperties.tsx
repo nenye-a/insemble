@@ -49,11 +49,10 @@ export default function AvailableProperties(props: Props) {
       </RowedFlex>
       {matchingProperties.length > 0 ? (
         matchingProperties.map(
-          ({ lat, lng, address, rent, sqft, propertyId, matchValue }, index) => (
+          ({ lat, lng, address, rent, sqft, propertyId, matchValue, thumbnail }, index) => (
             <AvailablePropertyCard
               key={index}
-              // TODO: pass photo when BE is ready
-              photo=""
+              photo={thumbnail}
               address={address}
               price={rent}
               area={sqft}
