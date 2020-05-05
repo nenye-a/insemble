@@ -20,6 +20,7 @@ import {
 import { THEME_COLOR } from '../../constants/colors';
 import { GET_USER_STATE } from '../../graphql/queries/client/userState';
 import { TenantTier } from '../../generated/globalTypes';
+import { TAB_BAR_HEIGHT, TOUR_DEFAULT_HEIGHT, TOUR_SHRINK_HEIGHT } from '../../constants/theme';
 
 type SelectedLocation = { lat: string; lng: string; address: string; targetNeighborhood: string };
 
@@ -31,6 +32,7 @@ type DeepDiveContextType =
       categories?: Array<string>;
       tier?: TenantTier;
       trial?: boolean;
+      headerHeight?: number;
     }
   | undefined;
 
@@ -117,6 +119,11 @@ export default function LocationDeepDiveModal(props: Props) {
         categories,
         tier: tierData.userState.tier,
         trial: tierData.userState.trial,
+        headerHeight: noPropertyDetail
+          ? 0
+          : headerShrink
+          ? TOUR_SHRINK_HEIGHT + TAB_BAR_HEIGHT
+          : TOUR_DEFAULT_HEIGHT + TAB_BAR_HEIGHT,
       }}
     >
       <Modal onClose={onClose} visible={visible} svgCloseProps={{ fill: THEME_COLOR }}>

@@ -21,3 +21,7 @@ export const FONT_WEIGHT_NORMAL = '400';
 export const FONT_WEIGHT_MEDIUM = '500';
 export const FONT_WEIGHT_BOLD = '700';
 export const FONT_WEIGHT_HEAVY = '900';
+
+export const TAB_BAR_HEIGHT = 36;
+export const TOUR_SHRINK_HEIGHT = 160;
+export const TOUR_DEFAULT_HEIGHT = 320;

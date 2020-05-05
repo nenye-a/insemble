@@ -1,4 +1,5 @@
 import React from 'react';
+import { TOUR_SHRINK_HEIGHT, TOUR_DEFAULT_HEIGHT } from '../../constants/theme';
 
 type Props = {
   tourSource?: string;
@@ -11,7 +12,7 @@ export default function VirtualTour(props: Props) {
 
   let style = {
     transition: '0.3s height linear',
-    height: isShrink ? 160 : 320,
+    height: isShrink ? TOUR_SHRINK_HEIGHT : TOUR_DEFAULT_HEIGHT,
     width: '100%',
     'object-fit': 'cover',
   };

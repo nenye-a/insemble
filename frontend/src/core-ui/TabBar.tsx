@@ -4,7 +4,12 @@ import Text from './Text';
 import View from './View';
 import TouchableOpacity from './TouchableOpacity';
 import { WHITE, BACKGROUND_COLOR, THEME_COLOR, TEXT_COLOR } from '../constants/colors';
-import { FONT_WEIGHT_MEDIUM, FONT_SIZE_MEDIUM, FONT_WEIGHT_NORMAL } from '../constants/theme';
+import {
+  FONT_WEIGHT_MEDIUM,
+  FONT_SIZE_MEDIUM,
+  FONT_WEIGHT_NORMAL,
+  TAB_BAR_HEIGHT,
+} from '../constants/theme';
 
 type Props = {
   options: Array<string>;
@@ -81,7 +86,7 @@ const VerticalView = styled(View)`
 const HorizontalView = styled(View)`
   flex-direction: row;
   width: 100%;
-  height: 36px;
+  height: ${TAB_BAR_HEIGHT}px;
 `;
 const SegmentText = styled(Text)<SegmentProps>`
   color: ${(props) => (props.isActive ? THEME_COLOR : TEXT_COLOR)};
