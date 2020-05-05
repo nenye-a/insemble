@@ -57,7 +57,7 @@ let tenantMatches = queryField('tenantMatches', {
       include: {
         location: true,
         nextLocations: true,
-        tenantUser: { include: { brands: true } },
+        tenantUser: { include: { brands: { orderBy: { id: 'desc' } } } },
       },
     });
     if (!selectedBrand) {
@@ -77,13 +77,13 @@ let tenantMatches = queryField('tenantMatches', {
         tenantUser = await context.prisma.tenantUser.update({
           where: { id: context.tenantUserId },
           data: { tier: 'FREE' },
-          include: { brands: true },
+          include: { brands: { orderBy: { id: 'desc' } } },
         });
       }
     }
 
     if (tenantUser.tier === 'FREE') {
-      let latestBrandIndex = tenantUser.brands.length - 1;
+      let latestBrandIndex = 0;
       let selectedBrandIndex = tenantUser.brands.findIndex(
         ({ id }) => id === brandId,
       );
@@ -126,11 +126,12 @@ let tenantMatches = queryField('tenantMatches', {
       // NOTE: data for update Matches
       pendingUpdate,
     } = selectedBrand;
-
-    if (!(name && location) && !(categories.length > 0 && minIncome)) {
-      throw new Error(
-        'Please update your brand and provide either (address and brand_name) or (categories and income)',
-      );
+    if (!tenantId) {
+      if (!(name && location) && !(categories.length > 0 && minIncome)) {
+        throw new Error(
+          'Please update your brand and provide either (address and brand_name) or (categories and income)',
+        );
+      }
     }
     let matchingLocations;
     let matchingProperties;
