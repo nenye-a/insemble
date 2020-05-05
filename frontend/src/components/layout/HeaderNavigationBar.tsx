@@ -73,8 +73,9 @@ export default function HeaderNavigationBar(props: Props) {
   }, [role, getTenantProfile, getLandlordProfile]);
 
   useEffect(() => {
-    if (brandId) {
-      history.push(`/map/${brandId}`);
+    if (brandId?.userState) {
+      let formattedId = brandId.userState.brandId.replace(/"/g, '');
+      history.push(`/map/${formattedId}`);
     }
   }, [brandId, history]);
 
