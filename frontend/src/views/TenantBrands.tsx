@@ -89,7 +89,7 @@ export default () => {
       ) : (
         data &&
         data.brands.map((brandData, index) => {
-          let { name, categories, matchingLocations, id } = brandData;
+          let { name, categories, matchingLocations, id, locked } = brandData;
           let heatmapData = ((matchingLocations
             ? matchingLocations.map(({ lat, lng, match }) => {
                 return {
@@ -100,7 +100,7 @@ export default () => {
             : []) as unknown) as google.maps.MVCArray<google.maps.visualization.WeightedLocation>;
           return (
             <View key={index}>
-              <TouchableOpacity style={{ marginBottom: 24 }}>
+              <TouchableOpacity style={{ marginBottom: 24 }} disabled={locked}>
                 <HistoryContainer>
                   <LeftContainer
                     flex
