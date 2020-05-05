@@ -35,6 +35,7 @@ export const GET_BRANDS = gql`
         lng
         lat
       }
+      locked
     }
   }
 `;
