@@ -5,6 +5,7 @@ import { View } from '../core-ui';
 import ProfileCard from '../views/ProfilePage/ProfileCard';
 import HeaderNavigationBar from '../components/layout/HeaderNavigationBar';
 import { Role } from '../types/types';
+import Footer from '../views/LandingPage/Footer';
 
 type Props = {
   role: Role;
@@ -20,6 +21,7 @@ export default function ProfileLayout(props: Props) {
         <Spacing />
         {props.children}
       </Container>
+      <Footer />
     </View>
   );
 }
@@ -27,6 +29,7 @@ export default function ProfileLayout(props: Props) {
 const Container = styled(View)`
   flex-direction: row;
   padding: 24px 10vw;
+  min-height: 80vh;
 `;
 
 const Spacing = styled(View)`
