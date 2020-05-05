@@ -75,7 +75,7 @@ export let emailRegisterTenantInvitationHandler = async (
         'Can not receive the message. Please upgrade to pro to make new brand and answer the message.',
       );
     }
-    let { pendingConversationData, spaceId } = pendingConversation;
+    let { pendingConversationData, spaceId, brandId } = pendingConversation;
     let {
       header,
       matchScore,
@@ -87,7 +87,7 @@ export let emailRegisterTenantInvitationHandler = async (
 
     let newBrandName = brandInfo ? brandInfo.brandName : 'No name';
     let newBrandCategories = brandInfo ? [brandInfo.category] : [];
-    let newBrandTenantId = brandInfo ? brandInfo.brandId : undefined;
+    let newBrandTenantId = brandId;
     let newBrandMatchId = '';
     let newBrandMatchingProperties = [];
     let newBrandMatchingLoaction = [];

@@ -375,7 +375,6 @@ export type PendingDataType = {
 
 export type BrandInfo = {
   brandName: string;
-  brandId: string;
   category: string;
 };
 

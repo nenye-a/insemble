@@ -5,6 +5,5 @@ export let BrandInfoInput = inputObjectType({
   definition(t) {
     t.string('brandName', { required: true });
     t.string('category', { required: true });
-    t.string('brandId', { required: true });
   },
 });
