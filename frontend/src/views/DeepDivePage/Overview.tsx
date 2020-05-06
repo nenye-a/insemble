@@ -7,7 +7,6 @@ import NearbyCard from './NearbyCard';
 import Demographics from './Demographics';
 import KeyFacts from './KeyFacts';
 import { DeepDiveContext } from './DeepDiveModal';
-import { TenantTier } from '../../generated/globalTypes';
 import { useGetUserState } from '../../utils/hooks/useGetUserState';
 
 export default function Overview() {
