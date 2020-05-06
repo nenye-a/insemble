@@ -1,5 +1,6 @@
 import React, { useState, UIEvent } from 'react';
 import styled from 'styled-components';
+import { useQuery } from '@apollo/react-hooks';
 
 import { View, Modal, TabBar, LoadingIndicator } from '../../core-ui';
 import PropertyDeepDiveHeader from './PropertyDeepDiveHeader';
@@ -7,7 +8,6 @@ import TenantPropertyDetailsView from './TenantPropertyDetailsView';
 import TenantOverview from './TenantOverview';
 import { WHITE, BACKGROUND_COLOR } from '../../constants/colors';
 import { GET_TENANT_DETAILS } from '../../graphql/queries/server/deepdive';
-import { useQuery } from '@apollo/react-hooks';
 import { TenantDetail, TenantDetailVariables } from '../../generated/TenantDetail';
 import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
 import { SelectedBrand } from '../LandlordProfile/LandlordTenantMatches';
@@ -27,7 +27,7 @@ export default function TenantDeepDiveModal(props: Props) {
     visible,
     onClose,
     spaceId,
-    brand: { brandId, tenantPhoto, matchScore, contacts, matchId },
+    brand: { brandId, tenantPhoto, matchScore, contacts, matchId, brandName, category },
   } = props;
   let [selectedTabIndex, setSelectedTabIndex] = useState(0);
   let [headerShrink, setHeaderShrink] = useState(false);
@@ -74,6 +74,8 @@ export default function TenantDeepDiveModal(props: Props) {
                 brandId={brandId}
                 spaceId={spaceId}
                 contacts={contacts}
+                brandName={brandName}
+                category={category}
                 matchScore={matchScore}
                 address={data?.tenantDetail.name || ''}
                 targetNeighborhood={data?.tenantDetail.category || ''}

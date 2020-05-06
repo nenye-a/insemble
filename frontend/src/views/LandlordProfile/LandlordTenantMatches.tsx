@@ -29,6 +29,8 @@ export type SelectedBrand = {
   tenantPhoto: string;
   matchScore: number;
   contacts: Contacts;
+  brandName: string;
+  category: string;
 };
 
 type Props = {
@@ -105,6 +107,8 @@ function TenantCard({ item, onPress }: TenantCardProps) {
           tenantPhoto: item.pictureUrl,
           matchScore: Number(matchScore),
           contacts: item.contacts[0],
+          brandName: item.name,
+          category: item.category,
         })
       }
     >

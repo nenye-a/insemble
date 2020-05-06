@@ -17,6 +17,8 @@ type Props = {
   contacts?: Contacts;
   sqft?: number;
   matchId?: string | null;
+  brandName?: string;
+  category?: string;
 };
 
 export default function PropertyDeepDiveHeader({
@@ -30,6 +32,8 @@ export default function PropertyDeepDiveHeader({
   showConnect = true,
   sqft,
   matchId,
+  brandName,
+  category,
 }: Props) {
   let [contactModalVisible, toggleContactModalVisibility] = useState(false);
   return (
@@ -51,6 +55,8 @@ export default function PropertyDeepDiveHeader({
           />
           {brandId && spaceId && contacts && (
             <ContactModal
+              brandName={brandName}
+              category={category}
               matchId={matchId}
               matchScore={matchScore}
               brandId={brandId}
