@@ -26,6 +26,7 @@ export const CREATE_PENDING_CONVERSATION = gql`
     $matchScore: Float!
     $header: String!
     $messageInput: MessageInput!
+    $brandInfo: BrandInfoInput
   ) {
     createPendingConversation(
       brandId: $brandId
@@ -34,6 +35,7 @@ export const CREATE_PENDING_CONVERSATION = gql`
       matchScore: $matchScore
       header: $header
       messageInput: $messageInput
+      brandInfo: $brandInfo
     )
   }
 `;

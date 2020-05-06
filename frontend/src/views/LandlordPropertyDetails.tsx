@@ -43,6 +43,8 @@ export default function LandlordPropertyDetails() {
     matchScore: 0,
     brandId: '',
     contacts: { __typename: 'ReceiverContact', name: '', email: '', phone: '', role: '' },
+    brandName: '',
+    category: '',
   });
   let isTenantMatchSelected = selectedTabIndex === Tab.TENANT_MATCH_INDEX;
   let isLocationDetailSelected = selectedTabIndex === Tab.LOCATION_DETAIL_INDEX;

@@ -29,10 +29,22 @@ type Props = {
   spaceId: string;
   contacts?: Contacts;
   matchId?: string | null;
+  brandName?: string;
+  category?: string;
 };
 
 export default function ContactModal(props: Props) {
-  let { visible, onClose, brandId, matchScore, spaceId, contacts, matchId } = props;
+  let {
+    visible,
+    onClose,
+    brandId,
+    matchScore,
+    spaceId,
+    contacts,
+    matchId,
+    brandName,
+    category,
+  } = props;
   let [selectedSubject, setSelectedSubject] = useState('');
   let [message, setMessage] = useState('');
   let { role } = useCredentials();
@@ -62,6 +74,10 @@ export default function ContactModal(props: Props) {
           variables: {
             ...variables,
             receiverContact: contacts,
+            brandInfo: {
+              brandName: brandName || '',
+              category: category || '',
+            },
           },
         });
       }
