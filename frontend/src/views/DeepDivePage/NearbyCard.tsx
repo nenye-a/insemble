@@ -11,8 +11,8 @@ import SvgGrid from '../../components/icons/grid';
 import SvgList from '../../components/icons/list';
 import { DeepDiveContext } from './DeepDiveModal';
 import { EmptyDataComponent } from '../../components';
-import { TenantTier } from '../../generated/globalTypes';
 import BlurredNearby from '../../assets/images/blurred-nearby.png';
+import { useGetUserState } from '../../utils/hooks/useGetUserState';
 
 type ViewMode = 'grid' | 'list';
 
@@ -41,7 +41,7 @@ export default function NearbyCard(props: ViewProps) {
   let mile = data?.result?.keyFacts.mile;
   let nearbyData = data?.result?.nearby;
   let category = data?.categories;
-  let isLocked = data?.tier === TenantTier.FREE || !data?.trial;
+  let { isLocked } = useGetUserState();
 
   let filteredData = useMemo(() => {
     switch (selectedDropdownVal) {

@@ -18,8 +18,6 @@ import {
   LocationDetails_locationDetails_spaceDetails as LocationDetailsLocationDetailsSpaceDetails,
 } from '../../generated/LocationDetails';
 import { THEME_COLOR } from '../../constants/colors';
-import { GET_USER_STATE } from '../../graphql/queries/client/userState';
-import { TenantTier } from '../../generated/globalTypes';
 import { TAB_BAR_HEIGHT, TOUR_DEFAULT_HEIGHT, TOUR_SHRINK_HEIGHT } from '../../constants/theme';
 
 type SelectedLocation = { lat: string; lng: string; address: string; targetNeighborhood: string };
@@ -30,8 +28,6 @@ type DeepDiveContextType =
       spaceDetails?: Array<LocationDetailsLocationDetailsSpaceDetails>;
       selectedLocation?: SelectedLocation;
       categories?: Array<string>;
-      tier?: TenantTier;
-      trial?: boolean;
       headerHeight?: number;
     }
   | undefined;
@@ -89,8 +85,6 @@ export default function LocationDeepDiveModal(props: Props) {
     }
   );
 
-  let { data: tierData } = useQuery(GET_USER_STATE);
-
   let handleOnScroll = (e: UIEvent<HTMLDivElement>) => {
     if (visible) {
       let target = e.target as HTMLDivElement;
@@ -117,8 +111,6 @@ export default function LocationDeepDiveModal(props: Props) {
           targetNeighborhood,
         },
         categories,
-        tier: tierData.userState.tier,
-        trial: tierData.userState.trial,
         headerHeight: noPropertyDetail
           ? 0
           : headerShrink
