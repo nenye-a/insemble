@@ -15,12 +15,12 @@ import {
 import { Property, PropertyVariables } from '../../generated/Property';
 import { MAPS_IFRAME_URL_SEARCH } from '../../constants/googleMaps';
 import { ErrorComponent, TrialEndedAlert } from '../../components';
-import { GET_USER_STATE } from '../../graphql/queries/client/userState';
 import { LIGHTEST_GREY, LINK_COLOR } from '../../constants/colors';
 import RelevantConsumerCard from '../DeepDivePage/RelevantConsumerCard';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD } from '../../constants/theme';
 import BlurredPersonas from '../../assets/images/blurred-personas.png';
 import { PSYCHOGRAPHIC_LINK } from '../../constants/app';
+import { useGetUserState } from '../../utils/hooks/useGetUserState';
 
 type Params = {
   paramsId: string;
@@ -29,8 +29,7 @@ type Params = {
 const LOADING_ERROR = 'Your location details are loading';
 
 export default function LandlordLocationDetails() {
-  let { data: tierData } = useQuery(GET_USER_STATE);
-  let { trial } = tierData.userState;
+  let { trial } = useGetUserState();
   let { paramsId: propertyId = '' } = useParams<Params>();
 
   let { data, loading, error, refetch } = useQuery<

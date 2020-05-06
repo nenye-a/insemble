@@ -4,8 +4,8 @@ import { useHistory } from 'react-router-dom';
 import { GoogleMap, withGoogleMap } from 'react-google-maps';
 import HeatMapLayer from 'react-google-maps/lib/components/visualization/HeatmapLayer';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Popup } from '../components';
 
+import { Popup } from '../components';
 import {
   View,
   Card,
@@ -16,18 +16,17 @@ import {
   LoadingIndicator,
   Alert,
 } from '../core-ui';
-import { GET_USER_STATE } from '../graphql/queries/client/userState';
 import { GET_BRANDS, DELETE_BRAND } from '../graphql/queries/server/brand';
 import { DEFAULT_BORDER_RADIUS, FONT_SIZE_SMALL, FONT_WEIGHT_MEDIUM } from '../constants/theme';
 import { WHITE, THEME_COLOR } from '../constants/colors';
 import useGoogleMaps from '../utils/useGoogleMaps';
 import SvgPlus from '../components/icons/plus';
-import { TenantTier } from '../generated/globalTypes';
 import { GetBrands } from '../generated/GetBrands';
 import { MAP_DEFAULT_CENTER } from '../constants/googleMaps';
 import SvgCircleClose from '../components/icons/circle-close';
 import { DeleteBrand, DeleteBrandVariables } from '../generated/DeleteBrand';
 import UpgradeToAccess from '../components/UpgradeToAccess';
+import { useGetUserState } from '../utils/hooks/useGetUserState';
 
 type HeatmapProps = {
   heatmapData: google.maps.MVCArray<google.maps.visualization.WeightedLocation>;
@@ -38,9 +37,7 @@ export default () => {
   let { data, loading } = useQuery<GetBrands>(GET_BRANDS);
   let [removeConfirmationVisible, setRemoveConfirmationVisible] = useState(false);
   let history = useHistory();
-  let { data: userData, refetch } = useQuery(GET_USER_STATE, {
-    notifyOnNetworkStatusChange: true,
-  });
+  let { tier, trial, refetch, isTenantPro } = useGetUserState();
   let [selectedBrandId, setSelectedBrandId] = useState('');
   let { isLoading: googleLoading } = useGoogleMaps();
   let [removeBrand, { error: removeBrandError, loading: removeBrandLoading }] = useMutation<
@@ -48,13 +45,10 @@ export default () => {
     DeleteBrandVariables
   >(DELETE_BRAND);
   useEffect(() => {
-    let { tier, trial } = userData.userState;
     if (!tier || !trial) {
       refetch();
     }
-  }, [userData.userState, refetch]);
-  let { tier, trial } = userData.userState;
-  let isPro = trial || tier === TenantTier.PROFESSIONAL;
+  }, [refetch, tier, trial]);
   let closeDeleteConfirmation = () => {
     setRemoveConfirmationVisible(false);
   };
@@ -153,11 +147,11 @@ export default () => {
       <View>
         <AddButton
           onPress={() => {
-            isPro ? (
+            isTenantPro ? (
               history.push('/new-brand')
             ) : (
               <UpgradeToAccess
-                title="UpgradeNow"
+                title="Upgrade Now"
                 text={`Looks like your trial has ended, but it's easy to get back up and running.`}
                 onPress={() => history.push('/user/plan')}
                 buttonText="Upgrade to Add"
