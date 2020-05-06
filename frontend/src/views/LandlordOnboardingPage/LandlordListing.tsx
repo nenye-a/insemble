@@ -266,7 +266,6 @@ export default function LandlordListing(props: Props) {
             saveFormState();
             history.goBack();
           }}
-          disabled={!allValid}
         />
         <Button text="Next" disabled={!allValid} type="submit" />
       </OnboardingFooter>
