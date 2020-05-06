@@ -18,7 +18,7 @@ import { GET_PROPERTY } from '../graphql/queries/server/properties';
 import { PropertyMatches, PropertyMatchesVariables } from '../generated/PropertyMatches';
 import { Property, PropertyVariables } from '../generated/Property';
 import { SelectedBrand } from './LandlordProfile/LandlordTenantMatches';
-import { GET_USER_STATE } from '../graphql/queries/client/userState';
+import { useGetUserState } from '../utils/hooks/useGetUserState';
 
 enum Tab {
   TENANT_MATCH_INDEX,
@@ -59,8 +59,8 @@ export default function LandlordPropertyDetails() {
       },
     }
   );
-  let { data: tierData } = useQuery(GET_USER_STATE);
-  let { trial } = tierData.userState;
+
+  let { trial } = useGetUserState();
 
   let { data, loading, error: propertyMatchesError, refetch: propertyMatchesRefetch } = useQuery<
     PropertyMatches,

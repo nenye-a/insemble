@@ -7,7 +7,7 @@ import NearbyCard from './NearbyCard';
 import Demographics from './Demographics';
 import KeyFacts from './KeyFacts';
 import { DeepDiveContext } from './DeepDiveModal';
-import { TenantTier } from '../../generated/globalTypes';
+import { useGetUserState } from '../../utils/hooks/useGetUserState';
 
 export default function Overview() {
   let data = useContext(DeepDiveContext);
@@ -19,7 +19,7 @@ export default function Overview() {
     data?.result?.demographics3,
     data?.result?.demographics5,
   ];
-  let isLocked = data?.tier === TenantTier.FREE || !data?.trial;
+  let { isLocked } = useGetUserState();
   let totalValue = 0;
   commuteData &&
     commuteData.forEach((item) => {

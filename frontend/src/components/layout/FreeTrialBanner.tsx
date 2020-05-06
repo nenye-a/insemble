@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { useQuery } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
 import {
@@ -10,35 +9,31 @@ import {
   SUBSCRIBE_BUTTON_COLOR,
 } from '../../constants/colors';
 import { View, Text, Button } from '../../core-ui';
-import { GET_USER_STATE } from '../../graphql/queries/client/userState';
-import { TenantTier } from '../../generated/globalTypes';
 import { useCredentials } from '../../utils';
 import { Role } from '../../types/types';
+import { useGetUserState } from '../../utils/hooks/useGetUserState';
 
 export default function FreeTrialBanner() {
-  let { data, refetch } = useQuery(GET_USER_STATE, {
-    notifyOnNetworkStatusChange: true,
-  });
   let history = useHistory();
+  let { tier, trial, isTenantFreeTier, refetch } = useGetUserState();
   useEffect(() => {
-    let { tier, trial } = data.userState;
     if (!tier || !trial) {
       refetch();
     }
-  }, [data.userState, refetch]);
+  }, [refetch, tier, trial]);
   let { role } = useCredentials();
-  let { tier, trial } = data.userState;
-  let isFreeTier = !trial || tier === TenantTier.FREE;
   let location =
     role === Role.TENANT ? '/user/plan' : role === Role.LANDLORD ? '/landlord/billing' : '/';
   return (
     <Container>
       <StatusContainer flex>
-        <BannerText>{isFreeTier ? `Free Trial` : `Full Platform`}</BannerText>
+        <BannerText>
+          {trial ? `Free Trial` : isTenantFreeTier ? `On Free Plan` : `Full Platform`}
+        </BannerText>
       </StatusContainer>
       <Row flex>
         <BannerText>Service only available for Los Angeles and Orange County</BannerText>
-        {isFreeTier ? (
+        {trial ? (
           <SubscribeButton
             size="small"
             text="Subscribe Now"
