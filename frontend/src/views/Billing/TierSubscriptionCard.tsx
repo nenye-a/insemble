@@ -12,8 +12,6 @@ import {
   DEFAULT_BORDER_RADIUS,
 } from '../../constants/theme';
 
-import getUnit from './helpers/getUnit';
-
 type TierSubscriptionProps = {
   title: string;
   tierName: string;
@@ -36,7 +34,6 @@ export default function TierSubscription(props: TierSubscriptionProps) {
     tierName,
     title,
     onUpgradeButtonPress,
-    isUserCurrentTier,
     freeTier,
     onTrial,
   } = props;
@@ -58,19 +55,22 @@ export default function TierSubscription(props: TierSubscriptionProps) {
               <PriceText>Free</PriceText>
             ) : (
               <PlanPriceContainer>
-                <PlanTitleText>Starting at</PlanTitleText>
+                <SmallText>Starting at</SmallText>
                 <PlanPriceTextContainer>
                   <PriceText>
                     ${price}
-                    <Text>/{freeTier || isUserCurrentTier ? 'month' : getUnit(isAnnual)}</Text>
+                    <Text>/month</Text>
                   </PriceText>
                 </PlanPriceTextContainer>
+                {isAnnual && <SmallText>paid anually</SmallText>}
               </PlanPriceContainer>
             )}
           </PlanPrice>
-          {benefits.map((text, index) => (
-            <BenefitItem benefit={text} key={index} />
-          ))}
+          <View>
+            {benefits.map((text, index) => (
+              <BenefitItem benefit={text} key={index} />
+            ))}
+          </View>
         </PlanSection>
       </Content>
       {onUpgradeButtonPress && !freeTier && (
@@ -96,7 +96,7 @@ type TypeWrapperProps = ViewProps & {
   hasTitle: boolean;
 };
 
-const PlanTitleText = styled(Text)`
+const SmallText = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
 `;
 
@@ -122,6 +122,7 @@ const BenefitCheck = styled(View)`
 `;
 const BenefitItemContainer = styled(View)`
   flex-direction: row;
+  align-items: center;
   flex: 1;
 `;
 const BenefitItemText = styled(Text)`

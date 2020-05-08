@@ -16,7 +16,9 @@ export default function Messages() {
   let history = useHistory();
   let { role } = useCredentials();
 
-  let { data, loading } = useQuery<Conversations>(GET_CONVERSATIONS);
+  let { data, loading } = useQuery<Conversations>(GET_CONVERSATIONS, {
+    fetchPolicy: 'network-only',
+  });
 
   return (
     <Container flex>
