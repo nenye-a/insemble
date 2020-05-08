@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { GoogleMap, withGoogleMap } from 'react-google-maps';
@@ -37,21 +37,18 @@ export default () => {
   let { data, loading } = useQuery<GetBrands>(GET_BRANDS);
   let [removeConfirmationVisible, setRemoveConfirmationVisible] = useState(false);
   let history = useHistory();
-  let { tier, trial, refetch, isTenantPro } = useGetUserState();
+  let { isTenantPro } = useGetUserState();
   let [selectedBrandId, setSelectedBrandId] = useState('');
   let { isLoading: googleLoading } = useGoogleMaps();
   let [removeBrand, { error: removeBrandError, loading: removeBrandLoading }] = useMutation<
     DeleteBrand,
     DeleteBrandVariables
   >(DELETE_BRAND);
-  useEffect(() => {
-    if (!tier || !trial) {
-      refetch();
-    }
-  }, [refetch, tier, trial]);
+
   let closeDeleteConfirmation = () => {
     setRemoveConfirmationVisible(false);
   };
+
   let onRemovePress = () => {
     if (selectedBrandId) {
       removeBrand({
