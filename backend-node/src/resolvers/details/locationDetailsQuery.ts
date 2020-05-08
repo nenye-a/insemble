@@ -42,7 +42,7 @@ let locationDetails = queryField('locationDetails', {
     let tenantUser = selectedBrand.tenantUser;
     let isTrial = trialCheck(tenantUser.createdAt);
     if (!isTrial) {
-      if (tenantUser.tier !== 'FREE' && tenantUser.stripeSubscriptionId) {
+      if (tenantUser.tier !== 'FREE' && !tenantUser.stripeSubscriptionId) {
         tenantUser = await context.prisma.tenantUser.update({
           where: { id: tenantUser.id },
           data: { tier: 'FREE' },
