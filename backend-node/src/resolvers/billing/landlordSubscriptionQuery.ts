@@ -17,13 +17,16 @@ let landlordSubscriptionsResolver: FieldResolver<
   if (!user) {
     throw new Error('Not Authorized');
   }
+  let dataSubscription = [];
+  if (user.stripeCustomerId) {
+    let { data } = await stripe.subscriptions.list({
+      customer: user.stripeCustomerId,
+      status: 'active',
+    });
+    dataSubscription = data;
+  }
 
-  let { data } = await stripe.subscriptions.list({
-    customer: user.stripeCustomerId,
-    status: 'active',
-  });
-
-  let formatedSubsList = data.map(
+  let formatedSubsList = dataSubscription.map(
     // eslint-disable-next-line
     // @ts-ignore
     ({ plan, metadata, id, cancel_at: cancelAt }) => {
