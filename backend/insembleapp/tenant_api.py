@@ -573,15 +573,9 @@ class FastLocationDetailsAPI(AsynchronousAPI):
             else:
                 target_lat = round(validated_params["target_location"]["lat"], 6)
                 target_lng = round(validated_params["target_location"]["lng"], 6)
-                # grab the nearby stores asynchronously
-                # n_process, nearby = TenantMatchAPI.get_nearby_places.delay(target_lat, target_lng, parallel_process=True), []
-                # nearby_listener = self._celery_listener(n_process, nearby)
-                # nearby_listener.start()
 
                 this_location = landlord_provider.build_location(target_lat, target_lng)
-                # _, nearby = nearby_listener.join(), nearby[0]
 
-                # this_location.update(nearby)
                 if '_id' in this_location:
                     utils.DB_LOCATIONS.update({"_id": this_location['_id']}, this_location)
                 else:

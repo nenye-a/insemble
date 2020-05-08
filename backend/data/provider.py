@@ -533,14 +533,6 @@ def obtain_nearby(target_location, categories, db_connection=utils.SYSTEM_MONGO)
 
     """
 
-    nearby_dict = {}
-
-    def item_into_dict(full_dict, place):
-        full_dict[place['place_id']] = {
-            'place_id': place['place_id'],
-            'distance': place['distance'] if place['distance'] else None
-        }
-
     if 'geometry' in target_location:
         # Old way of obtainining coordinates
         lat = target_location['geometry']['location']['lat']
@@ -549,6 +541,30 @@ def obtain_nearby(target_location, categories, db_connection=utils.SYSTEM_MONGO)
         # Latest way of obtaining coordinates
         lat = target_location['location']['coordinates'][1]
         lng = target_location['location']['coordinates'][0]
+
+    queries = [
+        'store', 'restaurant',  # general categories
+        'subway_station',  # transportation
+        'hospital',  # key services
+        'university',
+        'apartments'
+    ]
+
+    for query in queries.copy():
+        if 'nearby_' + query in target_location:
+            queries.remove(query)
+
+    if len(queries) > 0:
+        target_location.update(get_nearby_places(lat, lng, queries=queries, db_connection=db_connection))
+        utils.DB_LOCATIONS.update({"_id": target_location['_id']}, target_location)
+
+    nearby_dict = {}
+
+    def item_into_dict(full_dict, place):
+        full_dict[place['place_id']] = {
+            'place_id': place['place_id'],
+            'distance': place['distance'] if place['distance'] else None
+        }
 
     for place in target_location['nearby_store']:
         if place["place_id"] not in nearby_dict:
@@ -1011,7 +1027,7 @@ def update_tenant_details(_id, update):
         return False
 
 
-def get_nearby_places(lat, lng, radius=1, db_connection=utils.SYSTEM_MONGO):
+def get_nearby_places(lat, lng, radius=1, db_connection=utils.SYSTEM_MONGO, queries=None):
 
     queries = [
         'store', 'restaurant',  # general categories
@@ -1019,7 +1035,7 @@ def get_nearby_places(lat, lng, radius=1, db_connection=utils.SYSTEM_MONGO):
         'hospital',  # key services
         'university',
         'apartments'
-    ]
+    ] if queries is None else queries
 
     nearby = {}
 
