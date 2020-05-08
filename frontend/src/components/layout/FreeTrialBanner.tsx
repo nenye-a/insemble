@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
@@ -15,15 +15,14 @@ import { useGetUserState } from '../../utils/hooks/useGetUserState';
 
 export default function FreeTrialBanner() {
   let history = useHistory();
-  let { tier, trial, isTenantFreeTier, refetch } = useGetUserState();
-  useEffect(() => {
-    if (!tier || !trial) {
-      refetch();
-    }
-  }, [refetch, tier, trial]);
+  let { loading, trial, isTenantFreeTier } = useGetUserState();
   let { role } = useCredentials();
   let location =
     role === Role.TENANT ? '/user/plan' : role === Role.LANDLORD ? '/landlord/billing' : '/';
+
+  if (loading) {
+    return null;
+  }
   return (
     <Container>
       <StatusContainer flex>
