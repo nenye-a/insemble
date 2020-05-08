@@ -37,7 +37,7 @@ export default function TierSubscription(props: TierSubscriptionProps) {
     freeTier,
     onTrial,
   } = props;
-  let pricePerMonth = isAnnual ? price / 12 : price;
+
   return (
     <TierSubscriptionWrapper>
       <Content>
@@ -55,19 +55,22 @@ export default function TierSubscription(props: TierSubscriptionProps) {
               <PriceText>Free</PriceText>
             ) : (
               <PlanPriceContainer>
-                <PlanTitleText>Starting at</PlanTitleText>
+                <SmallText>Starting at</SmallText>
                 <PlanPriceTextContainer>
                   <PriceText>
-                    ${pricePerMonth}
+                    ${price}
                     <Text>/month</Text>
                   </PriceText>
                 </PlanPriceTextContainer>
+                {isAnnual && <SmallText>paid anually</SmallText>}
               </PlanPriceContainer>
             )}
           </PlanPrice>
-          {benefits.map((text, index) => (
-            <BenefitItem benefit={text} key={index} />
-          ))}
+          <View>
+            {benefits.map((text, index) => (
+              <BenefitItem benefit={text} key={index} />
+            ))}
+          </View>
         </PlanSection>
       </Content>
       {onUpgradeButtonPress && !freeTier && (
@@ -93,7 +96,7 @@ type TypeWrapperProps = ViewProps & {
   hasTitle: boolean;
 };
 
-const PlanTitleText = styled(Text)`
+const SmallText = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
 `;
 
