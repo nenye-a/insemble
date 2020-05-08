@@ -18,8 +18,8 @@ export const LandlordTiers = {
   [LandlordTier.PROFESSIONAL]: {
     id: 'prod_Glh0kj8K2C44rw',
     name: 'Professional',
-    monthly: { id: 'plan_Glh0alOVw1hDJh', price: 800 },
-    yearly: { id: 'plan_Glh0neF7FfBXcw', price: 4000 },
+    monthly: { id: 'plan_Glh0alOVw1hDJh', price: 450 },
+    yearly: { id: 'plan_Glh0neF7FfBXcw', price: 4020 },
     title: 'Popular',
     benefits: [
       'See expanding tenants that fit property',

@@ -12,8 +12,6 @@ import {
   DEFAULT_BORDER_RADIUS,
 } from '../../constants/theme';
 
-import getUnit from './helpers/getUnit';
-
 type TierSubscriptionProps = {
   title: string;
   tierName: string;
@@ -36,11 +34,10 @@ export default function TierSubscription(props: TierSubscriptionProps) {
     tierName,
     title,
     onUpgradeButtonPress,
-    isUserCurrentTier,
     freeTier,
     onTrial,
   } = props;
-
+  let pricePerMonth = isAnnual ? price / 12 : price;
   return (
     <TierSubscriptionWrapper>
       <Content>
@@ -61,8 +58,8 @@ export default function TierSubscription(props: TierSubscriptionProps) {
                 <PlanTitleText>Starting at</PlanTitleText>
                 <PlanPriceTextContainer>
                   <PriceText>
-                    ${price}
-                    <Text>/{freeTier || isUserCurrentTier ? 'month' : getUnit(isAnnual)}</Text>
+                    ${pricePerMonth}
+                    <Text>/month</Text>
                   </PriceText>
                 </PlanPriceTextContainer>
               </PlanPriceContainer>
@@ -122,6 +119,7 @@ const BenefitCheck = styled(View)`
 `;
 const BenefitItemContainer = styled(View)`
   flex-direction: row;
+  align-items: center;
   flex: 1;
 `;
 const BenefitItemText = styled(Text)`
