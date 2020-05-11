@@ -155,7 +155,7 @@ let locationDetails = queryField('locationDetails', {
       let property = selectedPropertyId
         ? await context.prisma.property.findOne({
             where: { propertyId: selectedPropertyId },
-            include: { space: true },
+            include: { space: { orderBy: { createdAt: 'asc' } } },
           })
         : undefined;
 

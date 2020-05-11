@@ -16,7 +16,7 @@ let propertyDetailsResolver: FieldResolver<'Query', 'propertyDetails'> = async (
     include: {
       location: true,
       landlordUser: true,
-      space: true,
+      space: { orderBy: { createdAt: 'asc' } },
     },
   });
   if (!selectedProperty) {
@@ -49,7 +49,7 @@ let propertyDetailsResolver: FieldResolver<'Query', 'propertyDetails'> = async (
         include: {
           location: true,
           landlordUser: true,
-          space: true,
+          space: { orderBy: { createdAt: 'asc' } },
         },
       });
     }

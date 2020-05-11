@@ -68,7 +68,9 @@ let landlordSubscriptionsResolver: FieldResolver<
       stripeSubscriptionId: null,
     },
     include: {
-      property: { include: { space: true, location: true } },
+      property: {
+        include: { space: { orderBy: { createdAt: 'asc' } }, location: true },
+      },
     },
   });
   for (let space of spaces) {
@@ -102,7 +104,9 @@ let landlordSubscriptionsResolver: FieldResolver<
       id = subs.spaceId;
       property = await context.prisma.space
         .findOne({ where: { id: subs.spaceId } })
-        .property({ include: { location: true, space: true } });
+        .property({
+          include: { location: true, space: { orderBy: { createdAt: 'asc' } } },
+        });
       if (property) {
         spaceIndex = property.space.findIndex(({ id }) => id === subs.spaceId);
         tier = property.space[spaceIndex].tier;
@@ -113,7 +117,9 @@ let landlordSubscriptionsResolver: FieldResolver<
     } else {
       property = await context.prisma.space
         .findOne({ where: { stripeSubscriptionId: subs.id } })
-        .property({ include: { location: true, space: true } });
+        .property({
+          include: { location: true, space: { orderBy: { createdAt: 'asc' } } },
+        });
       if (property) {
         spaceIndex = property.space.findIndex(
           ({ stripeSubscriptionId }) => stripeSubscriptionId === subs.id,
