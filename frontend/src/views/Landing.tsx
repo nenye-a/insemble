@@ -55,6 +55,7 @@ function Landing() {
   );
   let [getBrand] = useLazyQuery<GetBrands>(GET_BRANDS, {
     notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'network-only',
     onCompleted: (data) => {
       if (data.brands.length > 0) {
         let { id } = data.brands[0];
@@ -66,6 +67,7 @@ function Landing() {
   });
   let [getProperties] = useLazyQuery<GetProperties>(GET_PROPERTIES, {
     notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'network-only',
     onCompleted: (data) => {
       if (data?.properties.length > 0) {
         let { id, locked } = data?.properties[0];

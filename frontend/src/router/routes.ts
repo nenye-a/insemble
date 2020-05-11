@@ -213,7 +213,7 @@ const LANDLORD_ROUTES = [
   },
   {
     path: '/landlord/change-plan/:step',
-    layout: BasicLayout,
+    layout: LandlordProfileLayout,
     props: {
       showBanner: true,
     },

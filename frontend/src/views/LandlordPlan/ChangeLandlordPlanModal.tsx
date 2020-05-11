@@ -10,6 +10,8 @@ import { PaymentMethodList } from '../../generated/PaymentMethodList';
 import LandlordBillingInfo from './LandlordBillingInfo';
 import { GET_PAYMENT_METHOD_LIST } from '../../graphql/queries/server/billing';
 import SelectLandlordPlan from './SelectLandlordPlan';
+import LandlordBilling from '../LandlordBilling';
+import UpgradeSuccess from '../Billing/UpgradeSuccess';
 import { LandlordTiers } from '../../constants/SubscriptionTiers';
 
 type Param = {
@@ -29,7 +31,7 @@ export default function ChangeLandlordPlanModal() {
   let planIdObj = Object.entries(LandlordTiers).find(
     (item) => item[1].monthly.id === planId || item[1].yearly.id === planId
   );
-  let isAnnual = planIdObj?.[1].monthly.id === planId;
+  let isAnnual = planIdObj?.[1].yearly.id === planId;
   let {
     name = '',
     monthly: { price: monthlyPrice = 0 } = {},
@@ -67,6 +69,11 @@ export default function ChangeLandlordPlanModal() {
       ),
       path: 'select-payment',
     },
+    {
+      title: 'Thank You!',
+      content: <UpgradeSuccess />,
+      path: 'upgrade-success',
+    },
   ];
 
   let selectedPage = SEGMENTS[selectedStepIndex];
@@ -79,27 +86,30 @@ export default function ChangeLandlordPlanModal() {
   }, [SEGMENTS, step]);
 
   return (
-    <Container
-      visible={true}
-      hideCloseButton={true}
-      onClose={() => {
-        history.push('/landlord/billing');
-      }}
-    >
-      <Card
-        titleBackground="purple"
-        title="Lets confirm your subscription"
-        // TODO: make this default Card styling
-        titleProps={{
-          style: {
-            fontWeight: FONT_WEIGHT_NORMAL,
-            textAlign: 'center',
-          },
+    <>
+      <LandlordBilling />
+      <Container
+        visible={true}
+        hideCloseButton={true}
+        onClose={() => {
+          history.push('/landlord/billing');
         }}
       >
-        {paymentListLoading ? <LoadingIndicator /> : Content}
-      </Card>
-    </Container>
+        <Card
+          titleBackground="purple"
+          title={selectedPage.title}
+          // TODO: make this default Card styling
+          titleProps={{
+            style: {
+              fontWeight: FONT_WEIGHT_NORMAL,
+              textAlign: 'center',
+            },
+          }}
+        >
+          {paymentListLoading ? <LoadingIndicator /> : Content}
+        </Card>
+      </Container>
+    </>
   );
 }
 

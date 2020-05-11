@@ -33,7 +33,7 @@ export default function SelectLandlordPlan(props: Props) {
               tierName={name}
               benefits={benefits}
               planId={isAnnual ? yearly.id : monthly.id}
-              price={isAnnual ? yearly.price : monthly.price}
+              price={isAnnual ? yearly.price / 12 : monthly.price}
               // TODO: change to tierType
               isUserCurrentTier={false}
               isAnnual={!!isAnnual}
