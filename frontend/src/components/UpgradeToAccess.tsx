@@ -1,27 +1,40 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
-import { Button, Text, View, Card } from '../core-ui';
+import { Button, Text, View, Card, Modal } from '../core-ui';
+import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
 
 type Props = {
-  title: string;
-  text: string;
-  buttonText: string;
-  onPress: () => void;
+  visible?: boolean;
+  onRequestClose?: () => void;
+  modal?: boolean;
 };
 
 export default function UpgradeToAccess(props: Props) {
-  let { text, buttonText, onPress, title } = props;
-  return (
-    <UpgradeModal>
-      <Card title={title} titleBackground="purple">
-        <UpgradeContent>
-          <Text>{text}</Text>
-          <Button style={{ marginTop: 12 }} text={buttonText} onPress={onPress} />
-        </UpgradeContent>
-      </Card>
-    </UpgradeModal>
+  let { visible = true, onRequestClose, modal } = props;
+  let history = useHistory();
+  let content = (
+    <Card title="Upgrade to Access" titleBackground="purple">
+      <UpgradeContent>
+        <Text>Looks like your trial has ended, but it's easy to get back up and running.</Text>
+        <Button
+          style={{ marginTop: 12 }}
+          text="Upgrade to Add"
+          onPress={() => history.push('/user/plan')}
+        />
+      </UpgradeContent>
+    </Card>
   );
+
+  if (modal) {
+    return (
+      <UpgradeModal visible={visible} onRequestClose={onRequestClose} hideCloseButton={true}>
+        {content}
+      </UpgradeModal>
+    );
+  }
+  return <Container>{content}</Container>;
 }
 
 const UpgradeContent = styled(View)`
@@ -29,12 +42,17 @@ const UpgradeContent = styled(View)`
   align-items: center;
 `;
 
-const UpgradeModal = styled(View)`
-  position: absolute;
+const Container = styled(View)`
+  width: 440px;
+  justify-content: center;
+  align-self: center;
   top: 0;
   bottom: 0;
-  right: 20%;
-  left: 40%;
-  align-content: center;
-  justify-content: center;
+  position: absolute;
+`;
+
+const UpgradeModal = styled(Modal)`
+  width: 440px;
+  height: fit-content;
+  border-radius: ${DEFAULT_BORDER_RADIUS};
 `;
