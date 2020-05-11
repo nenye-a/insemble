@@ -26,6 +26,7 @@ import { GET_PROPERTIES } from '../graphql/queries/server/properties';
 import { GET_BRANDS } from '../graphql/queries/server/brand';
 import { GetBrands } from '../generated/GetBrands';
 import { GetProperties } from '../generated/GetProperties';
+import { useGetUserState } from '../utils/hooks/useGetUserState';
 
 type LogoViewProps = ViewProps & {
   isDesktop?: boolean;
@@ -36,6 +37,7 @@ function Landing() {
   let { role, landlordToken, tenantToken } = useCredentials();
   let history = useHistory();
   let { viewportType } = useViewport();
+  let { trial } = useGetUserState();
   let isDesktop = viewportType === VIEWPORT_TYPE.DESKTOP;
 
   let [getTenantProfile, { data: tenantData }] = useLazyQuery<GetTenantProfile>(
@@ -66,8 +68,12 @@ function Landing() {
     notifyOnNetworkStatusChange: true,
     onCompleted: (data) => {
       if (data?.properties.length > 0) {
-        let { id } = data?.properties[0];
-        history.push(`/landlord/properties/${id}`);
+        let { id, locked } = data?.properties[0];
+        if (trial) {
+          history.push(`/landlord/properties/${id}`);
+        } else if (locked) {
+          history.push('/landlord/properties');
+        }
       } else {
         history.push('/landlord/properties');
       }

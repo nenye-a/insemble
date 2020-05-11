@@ -28,7 +28,7 @@ export default function LandlordSpacePlans() {
   return (
     <Container>
       <RowView>
-        <SectionTitle>Billing Summary</SectionTitle>
+        <SectionTitle>Space Plans</SectionTitle>
         {subscriptionList && subscriptionList.length > 0 ? (
           <Button
             text="Change multiple plans"
