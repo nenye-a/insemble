@@ -16,9 +16,12 @@ import LandlordManageProperty from './LandlordProfile/LandlordManageProperty';
 import { GET_PROPERTY_MATCHES_DATA } from '../graphql/queries/server/matches';
 import { GET_PROPERTY } from '../graphql/queries/server/properties';
 import { PropertyMatches, PropertyMatchesVariables } from '../generated/PropertyMatches';
-import { Property, PropertyVariables } from '../generated/Property';
+import {
+  Property,
+  PropertyVariables,
+  Property_property_space as Space,
+} from '../generated/Property';
 import { SelectedBrand } from './LandlordProfile/LandlordTenantMatches';
-import { useGetUserState } from '../utils/hooks/useGetUserState';
 
 enum Tab {
   TENANT_MATCH_INDEX,
@@ -36,7 +39,7 @@ export default function LandlordPropertyDetails() {
   let params = useParams<Params>();
   let [selectedTabIndex, setSelectedTabIndex] = useState(Tab.TENANT_MATCH_INDEX);
   let [selectedSpaceIndex, setSelectedSpaceIndex] = useState(0);
-  let [selectedSpaceId, setSelectedSpaceId] = useState('');
+  let [selectedSpace, setSelectedSpace] = useState<Space | null>(null);
   let [selectedBrand, setSelectedBrand] = useState<SelectedBrand>({
     matchId: null,
     tenantPhoto: '',
@@ -60,14 +63,12 @@ export default function LandlordPropertyDetails() {
     }
   );
 
-  let { trial } = useGetUserState();
-
   let { data, loading, error: propertyMatchesError, refetch: propertyMatchesRefetch } = useQuery<
     PropertyMatches,
     PropertyMatchesVariables
   >(GET_PROPERTY_MATCHES_DATA, {
-    variables: { propertyId: params.paramsId, spaceId: selectedSpaceId },
-    skip: !selectedSpaceId || !params.paramsId,
+    variables: { propertyId: params.paramsId, spaceId: selectedSpace?.id || '' },
+    skip: !selectedSpace?.id || !params.paramsId,
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'network-only',
   });
@@ -99,11 +100,11 @@ export default function LandlordPropertyDetails() {
       if (space.length <= selectedSpaceIndex) {
         setSelectedSpaceIndex(selectedSpaceIndex - 1 || 0);
       }
-      if (space.length > 0 && !selectedSpaceId) {
-        setSelectedSpaceId(space[0].id);
+      if (space.length > 0 && !selectedSpace) {
+        setSelectedSpace(space[0]);
       }
     }
-  }, [propertyData, selectedSpaceIndex, selectedSpaceId]);
+  }, [propertyData, selectedSpaceIndex, selectedSpace]);
 
   return (
     <View flex>
@@ -114,8 +115,8 @@ export default function LandlordPropertyDetails() {
           request="1" // TODO
           selectedSpaceIndex={selectedSpaceIndex}
           onPressSpace={(index: number) => {
-            if (propertyData?.property.space[index].id) {
-              setSelectedSpaceId(propertyData.property.space[index].id);
+            if (propertyData?.property.space[index]) {
+              setSelectedSpace(propertyData.property.space[index]);
             }
             setSelectedSpaceIndex(index);
           }}
@@ -137,7 +138,7 @@ export default function LandlordPropertyDetails() {
         {isTenantMatchSelected ? (
           <ContentWrapper>
             <LandlordTenantMatches
-              isLocked={!trial}
+              tier={selectedSpace?.tier}
               loading={loading}
               matchResult={propertyMatches}
               error={propertyMatchesError}
@@ -156,13 +157,15 @@ export default function LandlordPropertyDetails() {
           <LandlordManageProperty />
         ) : null}
       </PropertyDetailsCard>
-      <TenantDeepDiveModal
-        brand={selectedBrand}
-        spaceId={selectedSpaceId}
-        propertyId={params.paramsId}
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-      />
+      {selectedSpace && (
+        <TenantDeepDiveModal
+          brand={selectedBrand}
+          spaceId={selectedSpace.id}
+          propertyId={params.paramsId}
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+        />
+      )}
     </View>
   );
 }

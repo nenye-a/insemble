@@ -17,7 +17,7 @@ export default function UpgradeToAccess(props: Props) {
   let content = (
     <Card title="Upgrade to Access" titleBackground="purple">
       <UpgradeContent>
-        <Text>Looks like your trial has ended, but it's easy to get back up and running.</Text>
+        <Text>{`Looks like your trial has ended, but it's easy to get back up and running.`}</Text>
         <Button
           style={{ marginTop: 12 }}
           text="Upgrade to Add"

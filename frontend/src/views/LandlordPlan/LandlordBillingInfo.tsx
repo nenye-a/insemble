@@ -43,6 +43,7 @@ import {
   EditLandlordSubscriptionVariables,
 } from '../../generated/EditLandlordSubscription';
 import { GetSpace } from '../../generated/GetSpace';
+import { GET_PROPERTIES } from '../../graphql/queries/server/properties';
 
 type Props = {
   paymentMethodList: Array<PaymentMethod>;
@@ -146,6 +147,8 @@ export default function EnterBillingInfo(props: Props) {
           spaceId,
           paymentMethodId: paymentMethodId || undefined,
         },
+        refetchQueries: [{ query: GET_PROPERTIES }],
+        awaitRefetchQueries: true,
       });
       if (upgradePlanResult.data?.createLandlordSubscription) {
         history.push('/landlord/change-plan/upgrade-success', {
@@ -159,6 +162,8 @@ export default function EnterBillingInfo(props: Props) {
           spaceId,
           paymentMethodId: paymentMethodId || undefined,
         },
+        refetchQueries: [{ query: GET_PROPERTIES }],
+        awaitRefetchQueries: true,
       });
       if (upgradePlanResult.data?.createLandlordSubscription) {
         history.push('/landlord/change-plan/upgrade-success', {
