@@ -67,7 +67,7 @@ export default function TenantPlan() {
                     benefits={benefits}
                     isAnnual={!!isAnnual}
                     planId={planId}
-                    price={tierType === TenantTier.PROFESSIONAL ? yearly.price / 12 : price}
+                    price={isAnnual ? price / 12 : price}
                     isUserCurrentTier={tenantProfile?.profileTenant.tier === tierType}
                     freeTier={tierType === TenantTier.FREE}
                     onTrial={tenantProfile?.profileTenant.trial}
