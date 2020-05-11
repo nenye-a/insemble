@@ -36,6 +36,7 @@ type Props = {
   containerStyle?: CSSProperties;
   inputContainerStyle?: CSSProperties;
   defaultSelected?: Array<string>;
+  optionsContainerStyle?: CSSProperties;
 };
 
 export default function MultiSelectInput(props: Props) {
@@ -46,6 +47,7 @@ export default function MultiSelectInput(props: Props) {
     containerStyle,
     inputContainerStyle,
     defaultSelected,
+    optionsContainerStyle,
   } = props;
   let [selectedValues, setSelectedValues] = useState<Array<string>>(defaultSelected || []);
   let [inputValue, setInputValue] = useState<string>('');
@@ -92,7 +94,7 @@ export default function MultiSelectInput(props: Props) {
               }
             }
           }}
-          autoComplete="on"
+          autoComplete="off"
           containerStyle={inputContainerStyle}
         />
       </SearchContainer>
@@ -103,7 +105,7 @@ export default function MultiSelectInput(props: Props) {
             setFocus(document.getElementById('search') === document.activeElement);
           }}
         >
-          <OptionContainer>
+          <OptionContainer style={optionsContainerStyle}>
             {newOptionList.map((item, i) => {
               return (
                 <Option
@@ -160,6 +162,7 @@ const OptionContainer = styled(Card)`
   margin-top: 5px;
   background-color: ${WHITE};
   position: absolute;
+  z-index: 999;
 `;
 
 const Option = styled(TouchableOpacity)`
