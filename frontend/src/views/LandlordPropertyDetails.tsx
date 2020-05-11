@@ -69,6 +69,7 @@ export default function LandlordPropertyDetails() {
     variables: { propertyId: params.paramsId, spaceId: selectedSpaceId },
     skip: !selectedSpaceId || !params.paramsId,
     notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'network-only',
   });
 
   let propertyMatches = useMemo(() => {
