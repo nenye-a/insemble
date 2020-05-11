@@ -47,7 +47,7 @@ export default function LandlordSpacePlans() {
             Property
           </DataTable.HeaderCell>
           <DataTable.HeaderCell align="center">Space</DataTable.HeaderCell>
-          <DataTable.HeaderCell width={100} align="center">
+          <DataTable.HeaderCell width={140} align="center">
             Plan
           </DataTable.HeaderCell>
           <DataTable.HeaderCell align="center">Cost</DataTable.HeaderCell>
@@ -92,7 +92,7 @@ function ListOfBilling(props: BillingRowProps) {
       <DataTable.Cell align="center">
         <TableText>{space}</TableText>
       </DataTable.Cell>
-      <DataTable.Cell width={100} align="center">
+      <DataTable.Cell width={140} align="center">
         <Button text={plan} onPress={() => {}} />
       </DataTable.Cell>
       <DataTable.Cell align="center">
