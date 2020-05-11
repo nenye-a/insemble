@@ -78,7 +78,7 @@ export default () => {
       <Alert visible={!!removeBrandError} text={removeBrandError?.message || ''} />
       <UpgradeToAccessModal
         visible={upgradeAccessVisible}
-        onRequestClose={() => setUpgradeSuccessVisible(false)}
+        onClose={() => setUpgradeSuccessVisible(false)}
         modal={true}
       />
 

@@ -7,12 +7,12 @@ import { DEFAULT_BORDER_RADIUS } from '../constants/theme';
 
 type Props = {
   visible?: boolean;
-  onRequestClose?: () => void;
+  onClose?: () => void;
   modal?: boolean;
 };
 
 export default function UpgradeToAccess(props: Props) {
-  let { visible = true, onRequestClose, modal } = props;
+  let { visible = true, onClose, modal } = props;
   let history = useHistory();
   let content = (
     <Card title="Upgrade to Access" titleBackground="purple">
@@ -29,7 +29,7 @@ export default function UpgradeToAccess(props: Props) {
 
   if (modal) {
     return (
-      <UpgradeModal visible={visible} onRequestClose={onRequestClose} hideCloseButton={true}>
+      <UpgradeModal visible={visible} onClose={onClose} hideCloseButton={true}>
         {content}
       </UpgradeModal>
     );

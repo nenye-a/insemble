@@ -42,7 +42,6 @@ type Props = {
   refetch: (
     variables?: PropertyMatchesVariables | undefined
   ) => Promise<ApolloQueryResult<PropertyMatches>>;
-  isTrial?: boolean;
   tier?: LandlordTier;
 };
 
