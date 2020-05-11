@@ -83,7 +83,7 @@ export default function ChangeLandlordPlanModal() {
       visible={true}
       hideCloseButton={true}
       onClose={() => {
-        history.push('landlord/billing');
+        history.push('/landlord/billing');
       }}
     >
       <Card
