@@ -7,6 +7,7 @@ import {
   TEXT_INPUT_BORDER_COLOR,
   DISABLED_TEXT_INPUT_BACKGROUND,
   MUTED_TEXT_COLOR,
+  RED_TEXT,
 } from '../constants/colors';
 import { DEFAULT_BORDER_RADIUS, FONT_FAMILY_NORMAL, FONT_SIZE_NORMAL } from '../constants/theme';
 import { useID } from '../utils';
@@ -27,6 +28,7 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLTextAreaElement>)
     label,
     characterLimit = 500,
     showCharacterLimit,
+    required,
     containerStyle,
     ...otherProps
   } = props;
@@ -37,7 +39,10 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLTextAreaElement>)
   return (
     <View style={containerStyle}>
       <RowedView>
-        {label ? <Label text={label} id={id} /> : <View />}
+        <Row>
+          {label ? <Label text={label} id={id} /> : <View />}
+          {required && <Label text="*required" color={RED_TEXT} style={{ marginLeft: 8 }} />}
+        </Row>
         {showCharacterLimit && (
           <RemainingCharacters text={`${remainingCharacters} characters left`} />
         )}
@@ -81,4 +86,9 @@ const TextAreaBox = styled.textarea`
 const RemainingCharacters = styled(Label)`
   font-style: italic;
   color: ${MUTED_TEXT_COLOR};
+`;
+
+const Row = styled(View)`
+  flex-direction: row;
+  align-items: center;
 `;
