@@ -43,6 +43,7 @@ import {
   EditLandlordSubscriptionVariables,
 } from '../../generated/EditLandlordSubscription';
 import { GetSpace } from '../../generated/GetSpace';
+import { GET_PROPERTIES } from '../../graphql/queries/server/properties';
 
 type Props = {
   paymentMethodList: Array<PaymentMethod>;
@@ -127,7 +128,6 @@ export default function EnterBillingInfo(props: Props) {
         console.log('Failed creating payment method', result.error);
         return;
       }
-
       let registerPaymentResult = await registerPaymentMethod({
         variables: {
           paymentMethodId: result.paymentMethod.id,
@@ -147,9 +147,11 @@ export default function EnterBillingInfo(props: Props) {
           spaceId,
           paymentMethodId: paymentMethodId || undefined,
         },
+        refetchQueries: [{ query: GET_PROPERTIES }],
+        awaitRefetchQueries: true,
       });
       if (upgradePlanResult.data?.createLandlordSubscription) {
-        history.push('/user/upgrade-plan/upgrade-success', {
+        history.push('/landlord/change-plan/upgrade-success', {
           ...history.location.state,
         });
       }
@@ -160,9 +162,11 @@ export default function EnterBillingInfo(props: Props) {
           spaceId,
           paymentMethodId: paymentMethodId || undefined,
         },
+        refetchQueries: [{ query: GET_PROPERTIES }],
+        awaitRefetchQueries: true,
       });
       if (upgradePlanResult.data?.createLandlordSubscription) {
-        history.push('/user/upgrade-plan/upgrade-success', {
+        history.push('/landlord/change-plan/upgrade-success', {
           ...history.location.state,
         });
       }
@@ -250,6 +254,8 @@ let paddingStyle = { paddingTop: 4, paddingBottom: 4 };
 const Container = styled(View)`
   padding: 24px;
   align-items: center;
+  height: 400px;
+  overflow-y: scroll;
 `;
 
 const Title = styled(Text)`

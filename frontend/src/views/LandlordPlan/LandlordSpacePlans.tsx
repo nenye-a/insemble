@@ -28,7 +28,7 @@ export default function LandlordSpacePlans() {
   return (
     <Container>
       <RowView>
-        <SectionTitle>Billing Summary</SectionTitle>
+        <SectionTitle>Space Plans</SectionTitle>
         {subscriptionList && subscriptionList.length > 0 ? (
           <Button
             text="Change multiple plans"
@@ -43,18 +43,14 @@ export default function LandlordSpacePlans() {
       </RowView>
       <DataTable>
         <DataTable.HeaderRow>
-          <DataTable.HeaderCell width={400} align="center">
+          <DataTable.HeaderCell width={300} align="center">
             Property
           </DataTable.HeaderCell>
-          <DataTable.HeaderCell width={100} align="center">
-            Space
-          </DataTable.HeaderCell>
-          <DataTable.HeaderCell width={100} align="center">
+          <DataTable.HeaderCell align="center">Space</DataTable.HeaderCell>
+          <DataTable.HeaderCell width={140} align="center">
             Plan
           </DataTable.HeaderCell>
-          <DataTable.HeaderCell width={140} align="center">
-            Cost
-          </DataTable.HeaderCell>
+          <DataTable.HeaderCell align="center">Cost</DataTable.HeaderCell>
           <DataTable.HeaderCell width={140} align="center"></DataTable.HeaderCell>
         </DataTable.HeaderRow>
         {subListLoading ? (
@@ -84,8 +80,8 @@ function ListOfBilling(props: BillingRowProps) {
   let { photos, address, space, plan, cost, spaceId } = props;
   let history = useHistory();
   return (
-    <DataTable.Row height={'60px'}>
-      <DataTable.Cell width={400} align="center">
+    <DataTable.Row height="60px">
+      <DataTable.Cell width={300} align="center">
         <ImageContainer flex>
           <Image src={photos} />
         </ImageContainer>
@@ -93,13 +89,13 @@ function ListOfBilling(props: BillingRowProps) {
           <TableText>{address}</TableText>
         </View>
       </DataTable.Cell>
-      <DataTable.Cell width={100} align="center">
+      <DataTable.Cell align="center">
         <TableText>{space}</TableText>
       </DataTable.Cell>
-      <DataTable.Cell width={100} align="center">
+      <DataTable.Cell width={140} align="center">
         <Button text={plan} onPress={() => {}} />
       </DataTable.Cell>
-      <DataTable.Cell width={140} align="center">
+      <DataTable.Cell align="center">
         <TableText>{cost}</TableText>
       </DataTable.Cell>
       <DataTable.Cell width={140} align="center">

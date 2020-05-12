@@ -37,6 +37,7 @@ import {
 } from '../../generated/RegisterPaymentMethod';
 import toBillingDetails from '../../utils/toBillingDetails';
 import { InvoiceList } from './SelectMultipleLandlordPlans';
+import { GET_PROPERTIES } from '../../graphql/queries/server/properties';
 
 enum ViewMode {
   NO_CARD,
@@ -116,6 +117,8 @@ export default function ChangeMultipleLandlordPlansBillingInfo() {
         }),
         paymentMethodId: paymentMethodId || undefined,
       },
+      refetchQueries: [{ query: GET_PROPERTIES }],
+      awaitRefetchQueries: true,
     });
     if (upgradePlanResult.data?.editManyLandlordSubscription) {
       history.push('/landlord/change-plans/upgrade-success', {

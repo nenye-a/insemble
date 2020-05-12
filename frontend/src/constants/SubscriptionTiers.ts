@@ -1,5 +1,4 @@
-import { LandlordTier } from './../generated/globalTypes';
-import { TenantTier } from '../generated/globalTypes';
+import { TenantTier, LandlordTier } from '../generated/globalTypes';
 
 export const LandlordTiers = {
   [LandlordTier.BASIC]: {

@@ -16,7 +16,7 @@ type TierSubscriptionProps = {
   title: string;
   tierName: string;
   benefits: Array<string>;
-  price: number;
+  price: number; // price in month
   isAnnual: boolean;
   planId: string;
   isUserCurrentTier: boolean;

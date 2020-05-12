@@ -22,6 +22,7 @@ import { EmptyDataComponent, ErrorComponent, TrialEndedAlert } from '../../compo
 import { roundDecimal, useViewport } from '../../utils';
 import { VIEWPORT_TYPE } from '../../constants/viewports';
 import BlurredTenantMatches from '../../assets/images/blurred-tenant-matches.png';
+import { LandlordTier } from '../../generated/globalTypes';
 
 export type SelectedBrand = {
   matchId: string | null;
@@ -41,7 +42,7 @@ type Props = {
   refetch: (
     variables?: PropertyMatchesVariables | undefined
   ) => Promise<ApolloQueryResult<PropertyMatches>>;
-  isLocked?: boolean;
+  tier?: LandlordTier;
 };
 
 export default function LandlordTenantMatches({
@@ -50,22 +51,27 @@ export default function LandlordTenantMatches({
   loading,
   error,
   refetch,
-  isLocked,
+  tier,
 }: Props) {
-  let lockedMatches =
-    matchResult && matchResult[0] ? (
-      <>
-        <TenantCard item={matchResult[0]} onPress={onPress} />
-        <BlurredImage src={BlurredTenantMatches} />
-      </>
-    ) : null;
+  let lockedMatches = (
+    <>
+      {matchResult && matchResult[0] && <TenantCard item={matchResult[0]} onPress={onPress} />}
+      <BlurredImage src={BlurredTenantMatches} />
+    </>
+  );
+
   let allMatches =
     matchResult &&
     matchResult.map((item, index) => {
       return <TenantCard key={index} item={item} onPress={onPress} />;
     });
 
-  let content = isLocked ? <Row flex>{lockedMatches}</Row> : allMatches;
+  let content =
+    tier === LandlordTier.PROFESSIONAL ? (
+      allMatches
+    ) : tier === LandlordTier.BASIC ? (
+      <Row flex>{lockedMatches}</Row>
+    ) : null;
   return (
     <>
       {loading ? (
@@ -80,7 +86,7 @@ export default function LandlordTenantMatches({
         <EmptyDataComponent />
       ) : (
         <>
-          {isLocked ? <TrialEndedAlert text="See All Retailers" /> : null}
+          {tier === LandlordTier.BASIC && <TrialEndedAlert text="See All Retailers" />}
           <TenantContainer>{content}</TenantContainer>
         </>
       )}
@@ -241,6 +247,8 @@ const BlurredImage = styled.img`
 
 const TenantContainer = styled(Container)`
   padding: 0 20px;
+  /* to make the cards left aligned if there's less than 3 card per row */
+  justify-content: flex-start;
 `;
 
 const Row = styled(View)`

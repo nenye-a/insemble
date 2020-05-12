@@ -29,7 +29,7 @@ export default function ConfirmLandlordPlanUpgrade(props: Props) {
         <Button
           text="Next"
           onPress={() => {
-            history.push('/user/upgrade-plan/select-payment', {
+            history.push('/landlord/change-plan/select-payment', {
               ...history.location.state,
             });
           }}
