@@ -327,6 +327,7 @@ export default function LandlordManageSpace(props: Props) {
                 inputContainerStyle={{ flex: 1 }}
                 containerStyle={{ marginBottom: 12 }}
                 defaultSelected={selectedEquipment}
+                optionsContainerStyle={{ height: 170 }}
               />
             )}
             <LabelText text="Availability" />

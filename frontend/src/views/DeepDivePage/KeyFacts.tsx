@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Card, View, Text, TabBar } from '../../core-ui';
 import { PieChart, Pie, Cell, Legend } from 'recharts';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
 
 import {
   FONT_WEIGHT_BOLD,
@@ -40,7 +39,6 @@ function formatCommuteValue(value: number, totalValue: number) {
 export default function KeyFacts(props: Props) {
   let { withMargin, keyFactsData, commuteData, totalValue, isLocked, ...otherProps } = props;
   let [selectedIndex, setSelectedIndex] = useState<number>(0);
-  let history = useHistory();
   let [pieSize, setPieSize] = useState<Array<number>>([]);
   let isCommuteSelected = selectedIndex === 1;
   useEffect(() => {
@@ -120,15 +118,10 @@ export default function KeyFacts(props: Props) {
         />
         {isCommuteSelected ? (
           isLocked ? (
-            <>
+            <View>
               <Image src={BlurredCommute} />
-              <UpgradeToAccess
-                title="Upgrade Now"
-                text={`Looks like your trial has ended, but it's easy to get back up and running.`}
-                buttonText="Upgrade to Access"
-                onPress={() => history.push('/user/plan')}
-              />
-            </>
+              <UpgradeToAccess visible={isLocked} />
+            </View>
           ) : (
             <CommuteView flex id="commute-view">
               {commuteData ? (

@@ -168,41 +168,39 @@ export default function LandlordManageProperty() {
               })}
             </InputWrapper>
             {categoriesData && (
-              <>
-                <InputWrapper>
-                  <LabelText text="Do you have any existing exclusives?" />
-                  <TouchableOpacity
-                    onPress={() =>
-                      toggleExistingCategorySelectionVisible(!existingCategorySelectionVisible)
-                    }
-                  >
-                    <SelectCategories
-                      disabled
-                      placeholder="Select retailer categories"
-                      value={selectedExistingCategories.join(', ')}
-                    />
-                  </TouchableOpacity>
-                  <ClickAway onClickAway={() => toggleExistingCategorySelectionVisible(false)}>
-                    <FilterContainer
-                      search
-                      visible={existingCategorySelectionVisible}
-                      selectedOptions={selectedExistingCategories}
-                      allOptions={categoriesData.categories}
-                      onSelect={(category: string) => {
-                        setExistingSelectedCategories([...selectedExistingCategories, category]);
-                      }}
-                      onUnSelect={(category: string) => {
-                        let newSelectedCategories = selectedExistingCategories.filter(
-                          (el: string) => !el.includes(category)
-                        );
-                        setExistingSelectedCategories(newSelectedCategories);
-                      }}
-                      onDone={() => toggleExistingCategorySelectionVisible(false)}
-                      onClear={() => setExistingSelectedCategories([])}
-                    />
-                  </ClickAway>
-                </InputWrapper>
-              </>
+              <InputWrapper>
+                <LabelText text="Do you have any existing exclusives?" />
+                <TouchableOpacity
+                  onPress={() =>
+                    toggleExistingCategorySelectionVisible(!existingCategorySelectionVisible)
+                  }
+                >
+                  <SelectCategories
+                    disabled
+                    placeholder="Select retailer categories"
+                    value={selectedExistingCategories.join(', ')}
+                  />
+                </TouchableOpacity>
+                <ClickAway onClickAway={() => toggleExistingCategorySelectionVisible(false)}>
+                  <FilterContainer
+                    search
+                    visible={existingCategorySelectionVisible}
+                    selectedOptions={selectedExistingCategories}
+                    allOptions={categoriesData.categories}
+                    onSelect={(category: string) => {
+                      setExistingSelectedCategories([...selectedExistingCategories, category]);
+                    }}
+                    onUnSelect={(category: string) => {
+                      let newSelectedCategories = selectedExistingCategories.filter(
+                        (el: string) => !el.includes(category)
+                      );
+                      setExistingSelectedCategories(newSelectedCategories);
+                    }}
+                    onDone={() => toggleExistingCategorySelectionVisible(false)}
+                    onClear={() => setExistingSelectedCategories([])}
+                  />
+                </ClickAway>
+              </InputWrapper>
             )}
           </>
         ) : (
@@ -234,6 +232,7 @@ const SelectCategories = styled(TextInput)`
 const FilterContainer = styled(Filter)`
   position: absolute;
   z-index: 3;
+  bottom: 45px;
   background-color: ${WHITE};
 `;
 

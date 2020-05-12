@@ -15,6 +15,7 @@ import {
   SavedSpaces_savedProperties as SavedProperty,
 } from '../generated/SavedSpaces';
 import { GET_SAVED_SPACES } from '../graphql/queries/server/space';
+import { roundDecimal } from '../utils';
 
 export default function TenantSavedProperties() {
   let { data, loading, refetch } = useQuery<SavedSpaces>(GET_SAVED_SPACES);
@@ -42,7 +43,7 @@ export default function TenantSavedProperties() {
                   <DescriptionContainer>
                     <Text color={THEME_COLOR}>{item.address}</Text>
                     <MatchPercentage color={THEME_COLOR} fontSize={FONT_SIZE_SMALL}>
-                      {item.matchValue}% customer match
+                      {roundDecimal(item.matchValue)}% customer match
                     </MatchPercentage>
                     <RowedView flex>
                       <RowedView flex>

@@ -25,6 +25,7 @@ export default function LandlordProperties() {
     { error: removePropertyError, loading: removePropertyLoading },
   ] = useMutation<DeleteProperty, DeletePropertyVariables>(DELETE_PROPERTY);
   let properties = data?.properties;
+  let unlockedProperty = properties?.find((property) => !property.locked);
 
   let closeDeleteConfirmation = () => {
     setRemoveConfirmationVisible(false);
@@ -44,8 +45,8 @@ export default function LandlordProperties() {
     }
   };
 
-  if (!loading && data && history.location.state?.signedIn && data.properties.length > 0) {
-    let { id } = data?.properties[0];
+  if (!loading && data && history.location.state?.signedIn && unlockedProperty) {
+    let { id } = unlockedProperty;
     return (
       <Redirect
         to={{

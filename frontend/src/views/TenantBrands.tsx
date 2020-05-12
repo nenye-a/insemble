@@ -25,7 +25,7 @@ import { GetBrands } from '../generated/GetBrands';
 import { MAP_DEFAULT_CENTER } from '../constants/googleMaps';
 import SvgCircleClose from '../components/icons/circle-close';
 import { DeleteBrand, DeleteBrandVariables } from '../generated/DeleteBrand';
-import UpgradeToAccess from '../components/UpgradeToAccess';
+import UpgradeToAccessModal from '../components/UpgradeToAccess';
 import { useGetUserState } from '../utils/hooks/useGetUserState';
 
 type HeatmapProps = {
@@ -39,6 +39,7 @@ export default () => {
   let history = useHistory();
   let { isTenantPro } = useGetUserState();
   let [selectedBrandId, setSelectedBrandId] = useState('');
+  let [upgradeAccessVisible, setUpgradeSuccessVisible] = useState(false);
   let { isLoading: googleLoading } = useGoogleMaps();
   let [removeBrand, { error: removeBrandError, loading: removeBrandLoading }] = useMutation<
     DeleteBrand,
@@ -75,6 +76,12 @@ export default () => {
         ]}
       />
       <Alert visible={!!removeBrandError} text={removeBrandError?.message || ''} />
+      <UpgradeToAccessModal
+        visible={upgradeAccessVisible}
+        onClose={() => setUpgradeSuccessVisible(false)}
+        modal={true}
+      />
+
       {loading || googleLoading || removeBrandLoading ? (
         <LoadingIndicator />
       ) : (
@@ -144,16 +151,7 @@ export default () => {
       <View>
         <AddButton
           onPress={() => {
-            isTenantPro ? (
-              history.push('/new-brand')
-            ) : (
-              <UpgradeToAccess
-                title="Upgrade Now"
-                text={`Looks like your trial has ended, but it's easy to get back up and running.`}
-                onPress={() => history.push('/user/plan')}
-                buttonText="Upgrade to Add"
-              />
-            );
+            isTenantPro ? history.push('/new-brand') : setUpgradeSuccessVisible(true);
           }}
         >
           <SvgPlus style={{ marginRight: 8, color: THEME_COLOR }} />
