@@ -13,7 +13,7 @@ let propertiesResolver: FieldResolver<'Query', 'properties'> = async (
       id: context.landlordUserId,
     },
     include: {
-      properties: { include: { space: true } },
+      properties: { include: { space: { orderBy: { createdAt: 'asc' } } } },
     },
   });
   if (!landlordUser) {
@@ -47,7 +47,7 @@ let propertiesResolver: FieldResolver<'Query', 'properties'> = async (
   let properties = await context.prisma.property.findMany({
     orderBy: { id: 'desc' },
     include: {
-      space: true,
+      space: { orderBy: { createdAt: 'asc' } },
     },
     where: {
       landlordUser: {
