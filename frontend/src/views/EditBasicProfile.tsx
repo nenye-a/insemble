@@ -47,7 +47,6 @@ type Profile = {
 export default function BasicProfile() {
   let history = useHistory();
   let { role } = useCredentials();
-  let [passwordEditable, setPasswordEditable] = useState(false);
   let textInputContainerStyle = { marginTop: 12, marginBottom: 12 };
   let { register, watch, handleSubmit, errors } = useForm();
 
@@ -225,7 +224,7 @@ export default function BasicProfile() {
         !tenantLoading &&
         !landlordLoading &&
         (tenantData || landlordData) && (
-          <Form onSubmit={handleSubmit(onSubmit)}>
+          <Form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
             {/* TODO: change to status message returned by the endpoint */}
             <Alert
               visible={!!editTenantData || !!editLandlordData}
@@ -318,28 +317,20 @@ export default function BasicProfile() {
               name="description"
               ref={register}
             />
-            <RowedView>
-              <Title>Password</Title>
-              <Button
-                text="Change your password"
-                mode="transparent"
-                onPress={() => setPasswordEditable(true)}
-              />
-            </RowedView>
+            <Title>Password</Title>
             <TextInput
               label="Current Password"
               placeholder="Enter Your Current Password"
-              disabled={!passwordEditable}
               type="password"
               containerStyle={textInputContainerStyle}
               name="currentPassword"
               ref={register}
               errorMessage={(errors?.password as FieldError)?.message || ''}
+              autoComplete="new-password"
             />
             <TextInput
               label="New Password"
               placeholder="Enter Your New Password"
-              disabled={!passwordEditable}
               type="password"
               name="newPassword"
               ref={register({
@@ -350,7 +341,6 @@ export default function BasicProfile() {
             <TextInput
               label="Confirm New Password"
               placeholder="Re-Enter Your New Password"
-              disabled={!passwordEditable}
               type="password"
               containerStyle={textInputContainerStyle}
               name="confirmNewPassword"
