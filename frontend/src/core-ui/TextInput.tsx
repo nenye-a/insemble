@@ -42,6 +42,7 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) =>
     disabled,
     containerStyle,
     errorMessage,
+    required,
     ...otherProps
   } = props;
   let fallbackID = useID();
@@ -50,7 +51,10 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) =>
   let isError = !!errorMessage;
   return (
     <View style={containerStyle}>
-      {label && <LabelWrapper color={isError ? RED_TEXT : THEME_COLOR} id={id} text={label} />}
+      <Row>
+        {label && <LabelWrapper color={isError ? RED_TEXT : THEME_COLOR} id={id} text={label} />}
+        {required && <LabelWrapper color={RED_TEXT} text="*required" style={{ marginLeft: 8 }} />}
+      </Row>
       <InputBox
         id={id}
         type="text"
@@ -62,6 +66,7 @@ export default forwardRef((props: Props, forwardedRef: Ref<HTMLInputElement>) =>
           }
         }}
         disabled={disabled}
+        required={required}
         {...otherProps}
       />
       {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
@@ -96,4 +101,9 @@ const ErrorMessage = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
   color: ${RED_TEXT};
   margin-top: 6px;
+`;
+
+const Row = styled(View)`
+  flex-direction: row;
+  align-items: center;
 `;

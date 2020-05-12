@@ -23,6 +23,7 @@ type RadioGroupProps<T> = ViewProps & {
   disabled?: boolean;
   errorMessage?: string;
   labelProps?: TextProps;
+  required?: boolean;
 };
 
 const defaultTitleExtractor = (item: unknown) => String(item);
@@ -41,6 +42,7 @@ export default function RadioGroup<T>(props: RadioGroupProps<T>) {
     disabled = false,
     errorMessage,
     labelProps,
+    required,
     ...otherProps
   } = props;
   let fallbackName = useID();
@@ -48,7 +50,11 @@ export default function RadioGroup<T>(props: RadioGroupProps<T>) {
   let name = providedName || fallbackName;
   return (
     <View {...otherProps}>
-      {label && <LabelWrapper id={name} text={label} />}
+      <Row>
+        {label && <LabelWrapper id={name} text={label} />}
+        {required && <LabelWrapper text="*required" color={RED_TEXT} style={{ marginLeft: 8 }} />}
+      </Row>
+
       {options.map((item, i) => {
         let key = keyExtractor(item, i);
         return (
@@ -77,4 +83,9 @@ const LabelWrapper = styled(Label)`
 const ErrorMessage = styled(Text)`
   font-size: ${FONT_SIZE_SMALL};
   color: ${RED_TEXT};
+`;
+
+const Row = styled(View)`
+  flex-direction: row;
+  align-items: center;
 `;
