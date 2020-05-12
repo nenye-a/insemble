@@ -261,61 +261,43 @@ export default function MainMap() {
   };
 
   let onPublishChangesPress = async () => {
-    if (tenantMatchesData) {
-      let { demographics, categories, property } = filters;
-      let {
-        minIncome,
-        maxIncome,
-        minAge,
-        maxAge,
-        personas,
-        commute,
-        education,
-        ethnicity,
-      } = demographics;
-      let { minSize, maxSize, minRent, maxRent, spaceType, amenities } = property;
-      let {
-        name,
-        location,
-        userRelation,
-        locationCount,
-        newLocationPlan,
-        nextLocations,
-      } = tenantMatchesData.tenantMatches;
+    let { demographics, categories, property } = filters;
+    let {
+      minIncome,
+      maxIncome,
+      minAge,
+      maxAge,
+      personas,
+      commute,
+      education,
+      ethnicity,
+    } = demographics;
+    let { minSize, maxSize, minRent, maxRent, spaceType, amenities } = property;
 
-      let result = await editBrand({
-        variables: {
-          filter: {
-            categories,
-            personas,
-            minAge: Number(minAge),
-            maxAge: Number(maxAge),
-            minIncome: Number(minIncome) * 1000,
-            maxIncome: Number(maxIncome) * 1000,
-            minSize,
-            maxSize,
-            minRent,
-            maxRent,
-            spaceType,
-            commute,
-            education,
-            ethnicity,
-            equipment: amenities,
-          },
-          business: {
-            name,
-            location: location ? (omitTypename(location) as LocationInput) : null,
-            userRelation,
-            locationCount,
-            newLocationPlan,
-            nextLocations,
-          },
-          brandId,
+    let result = await editBrand({
+      variables: {
+        filter: {
+          categories,
+          personas,
+          minAge: Number(minAge),
+          maxAge: Number(maxAge),
+          minIncome: Number(minIncome) * 1000,
+          maxIncome: Number(maxIncome) * 1000,
+          minSize,
+          maxSize,
+          minRent,
+          maxRent,
+          spaceType,
+          commute,
+          education,
+          ethnicity,
+          equipment: amenities,
         },
-      });
-      if (result.data?.editBrand) {
-        tenantMatchesRefetch({ brandId });
-      }
+        brandId,
+      },
+    });
+    if (result.data?.editBrand) {
+      tenantMatchesRefetch({ brandId });
     }
   };
 
