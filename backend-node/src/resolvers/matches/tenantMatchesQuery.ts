@@ -136,30 +136,38 @@ let tenantMatches = queryField('tenantMatches', {
     if (pendingUpdate) {
       try {
         let {
-          categories: pendingCategories = [],
-          commute: pendingCommute = [],
-          education: pendingEducation = [],
-          ethnicity: pendingEthnicity = [],
+          categories: pendingCategories,
+          commute: pendingCommute,
+          education: pendingEducation,
+          ethnicity: pendingEthnicity,
           location: pendingLocation,
           name: pendingName,
           maxIncome: pendingMaxIncome,
           minIncome: pendingMinIncome,
           minAge: pendingMinAge,
           maxAge: pendingMaxAge,
-          personas: pendingPersonas = [],
+          personas: pendingPersonas,
           minRent: pendingMinRent,
           maxRent: pendingMaxRent,
           minSize: pendingMinSize,
           maxSize: pendingMaxSize,
           minDaytimePopulation: pendingMinDaytimePopulation,
           minFrontageWidth: pendingMinFrontageWidth,
-          spaceType: pendingSpaceType = [],
-          equipment: pendingEquipment = [],
+          spaceType: pendingSpaceType,
+          equipment: pendingEquipment,
           locationCount: pendingLocationCount,
           newLocationPlan: pendingNewLocationPlan,
           userRelation: pendingUserRelation,
           nextLocations: pendingNextLocations,
         }: PendingData = JSON.parse(pendingUpdate);
+        pendingCategories = pendingCategories || categories;
+        pendingPersonas = pendingPersonas || personas;
+        pendingCommute = pendingCommute || commute;
+        pendingEducation = pendingEducation || education;
+        pendingEthnicity = pendingEthnicity || ethnicity;
+        pendingEquipment = pendingEquipment || equipment;
+        pendingSpaceType = pendingSpaceType || spaceType;
+
         let {
           brand_id: newTenantId,
           match_id: newMatchId,
@@ -168,24 +176,25 @@ let tenantMatches = queryField('tenantMatches', {
         }: TenantMatchesType = (
           await axios.get(`${LEGACY_API_URI}/api/tenantMatches/`, {
             params: {
-              address: pendingLocation?.address,
-              brand_name: pendingName,
+              address: pendingLocation?.address || location?.address,
+              brand_name: pendingName || name,
               categories:
                 pendingCategories.length > 0
                   ? JSON.stringify(pendingCategories)
                   : undefined,
               income:
-                typeof pendingMinIncome === 'number'
+                typeof pendingMinIncome === 'number' ||
+                typeof minIncome === 'number'
                   ? {
-                      min: pendingMinIncome,
-                      max: pendingMaxIncome,
+                      min: pendingMinIncome || minIncome,
+                      max: pendingMaxIncome || maxIncome,
                     }
                   : undefined,
               age:
-                typeof pendingMinAge === 'number'
+                typeof pendingMinAge === 'number' || typeof minAge === 'number'
                   ? {
-                      min: pendingMinAge,
-                      max: pendingMaxAge,
+                      min: pendingMinAge || minAge,
+                      max: pendingMaxAge || maxAge,
                     }
                   : undefined,
               personas:
@@ -205,25 +214,28 @@ let tenantMatches = queryField('tenantMatches', {
                   ? JSON.stringify(pendingEthnicity)
                   : undefined,
               rent:
-                typeof pendingMinRent === 'number'
+                typeof pendingMinRent === 'number' ||
+                typeof minRent === 'number'
                   ? {
-                      min: pendingMinRent,
-                      max: pendingMaxRent,
+                      min: pendingMinRent || minRent,
+                      max: pendingMaxRent || maxRent,
                     }
                   : undefined,
               sqft:
-                typeof pendingMinSize === 'number'
+                typeof pendingMinSize === 'number' ||
+                typeof minSize === 'number'
                   ? {
-                      min: pendingMinSize,
-                      max: pendingMaxSize,
+                      min: pendingMinSize || minSize,
+                      max: pendingMaxSize || maxSize,
                     }
                   : undefined,
-              frontage_width: pendingMinFrontageWidth,
+              frontage_width: pendingMinFrontageWidth || minFrontageWidth,
               propertyType:
                 pendingSpaceType.length > 0
                   ? JSON.stringify(pendingSpaceType)
                   : undefined,
-              min_daytime_pop: pendingMinDaytimePopulation,
+              min_daytime_pop:
+                pendingMinDaytimePopulation || minDaytimePopulation,
               match_id: matchId,
             },
             paramsSerializer: axiosParamsSerializer,
