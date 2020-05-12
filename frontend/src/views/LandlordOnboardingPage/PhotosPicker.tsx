@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 import { View, Label, TouchableOpacity, Dropzone } from '../../core-ui';
 import { FileWithPreview } from '../../core-ui/Dropzone';
 import { useViewport } from '../../utils';
+import { RED_TEXT } from '../../constants/colors';
 
 type Props = {
   mainPhoto: string | FileWithPreview | null;
@@ -62,14 +63,20 @@ export default function PhotosPicker(props: Props) {
 
   return (
     <View>
-      <LabelText text="Temporary Main Photo" />
+      <Row>
+        <LabelText text="Temporary Main Photo" />
+        <LabelText text="*required" color={RED_TEXT} style={{ marginLeft: 8 }} />
+      </Row>
       <Dropzone
         source={typeof mainPhoto === 'string' ? mainPhoto : mainPhoto?.preview}
         getPreview={onMainPhotoChange}
         onPhotoRemove={() => onPhotoRemove(0)}
         isMainPhoto={true}
       />
-      <LabelText text="Additional Property Photos" />
+      <Row>
+        <LabelText text="Additional Property Photos" />
+        <LabelText text="*required" color={RED_TEXT} style={{ marginLeft: 8 }} />
+      </Row>
       <PhotosContainer flex>
         {additionalPhotos.map((_, index) => {
           let image = additionalPhotos[index];
@@ -116,4 +123,9 @@ const PhotoWrapper = styled(TouchableOpacity)<PhotoWrapperProps>`
           width: 49%;
           margin-top: 8px;
         `}
+`;
+
+const Row = styled(View)`
+  flex-direction: row;
+  align-items: center;
 `;

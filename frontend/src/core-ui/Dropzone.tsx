@@ -88,6 +88,7 @@ const Image = styled('img')<ImageProps>`
   object-fit: cover;
   border: 1px solid ${BORDER_COLOR};
   border-radius: ${DEFAULT_BORDER_RADIUS};
+  cursor: pointer;
 `;
 
 const CloseButtonWrapper = styled(TouchableOpacity)`

@@ -19,7 +19,7 @@ import {
 } from '../../core-ui';
 import PhotosPicker from './PhotosPicker';
 import { FileWithPreview } from '../../core-ui/Dropzone';
-import { THEME_COLOR, DARK_TEXT_COLOR } from '../../constants/colors';
+import { THEME_COLOR, DARK_TEXT_COLOR, RED_TEXT } from '../../constants/colors';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD, FONT_SIZE_SMALL } from '../../constants/theme';
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
 import { Equipments } from '../../generated/Equipments';
@@ -58,7 +58,17 @@ export default function AddSpace(props: Props) {
   let [selectedCondition, setSelectedCondition] = useState(addSpace.condition || 'Whitebox');
   let [selectedEquipments, setSelectedEquipment] = useState<Array<string>>(addSpace.equipments);
   let today = new Date().toISOString().slice(0, 10);
-  let allValid = mainPhoto && selectedCondition && Object.keys(errors).length === 0;
+  let allValid =
+    mainPhoto &&
+    additionalPhotos.filter((photo) => !!photo).length > 0 &&
+    selectedCondition &&
+    description &&
+    selectedType.length > 0 &&
+    sqft &&
+    price &&
+    date &&
+    Object.keys(errors).length === 0;
+
   let { propertyId, address } = history.location.state;
 
   let saveFormState = useCallback(
@@ -101,7 +111,7 @@ export default function AddSpace(props: Props) {
 
   let onSubmit = async (fieldValues: FieldValues) => {
     saveFormState(fieldValues);
-    if (propertyId) {
+    if (propertyId && allValid) {
       history.push('/landlord/add-space/step-2', { propertyId: propertyId, address: address });
     }
   };
@@ -130,7 +140,7 @@ export default function AddSpace(props: Props) {
           {/* TODO: fetch dari properties */}
           <Address>{address}</Address>
         </TitleContainer>
-        <Alert
+        <ListingAlert
           visible
           text="We provide complementary virtual tours & comprehensive photos to every listing."
         />
@@ -162,6 +172,7 @@ export default function AddSpace(props: Props) {
             setDescription(e.target.value);
           }}
           showCharacterLimit
+          required={true}
           containerStyle={{ marginTop: 12, marginBottom: 12 }}
         />
         <RadioGroupContainer
@@ -171,10 +182,14 @@ export default function AddSpace(props: Props) {
           onSelect={(value: string) => {
             setSelectedCondition(value);
           }}
+          required={true}
           radioItemProps={{ lineHeight: 2 }}
         />
         <FieldInput>
-          <LabelText text="What type of space is this?" />
+          <RowView>
+            <LabelText text="What type of space is this?" />
+            <LabelText text="*required" color={RED_TEXT} style={{ marginLeft: 8 }} />
+          </RowView>
           {SPACES_TYPE.map((option, index) => {
             let isChecked = selectedType.includes(option);
             return (
@@ -206,6 +221,7 @@ export default function AddSpace(props: Props) {
           defaultValue={sqft}
           containerStyle={{ marginTop: 12, marginBottom: 12 }}
           errorMessage={(errors?.sqft as FieldError)?.message || ''}
+          required={true}
         />
         <ShortTextInput
           label="Price/Sqft"
@@ -218,6 +234,7 @@ export default function AddSpace(props: Props) {
           defaultValue={price}
           containerStyle={{ marginTop: 12, marginBottom: 12 }}
           errorMessage={(errors?.price as FieldError)?.message || ''}
+          required={true}
         />
         <View style={{ paddingTop: 12, paddingBottom: 12, zIndex: 2 }}>
           <LabelText text="Features & Amenities" />
@@ -242,6 +259,7 @@ export default function AddSpace(props: Props) {
               required: 'Date should not be empty',
             })}
             errorMessage={(errors?.date as FieldError)?.message || ''}
+            required={true}
           />
           <SpaceAlert
             style={{ alignSelf: 'flex-end' }}
@@ -316,4 +334,8 @@ const TransparentButton = styled(Button)`
 
 const FieldInput = styled(View)`
   padding: 12px 0;
+`;
+
+const ListingAlert = styled(Alert)`
+  margin-bottom: 8px;
 `;

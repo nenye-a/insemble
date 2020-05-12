@@ -26,7 +26,7 @@ import {
 } from '../../core-ui';
 import PhotosPicker from './PhotosPicker';
 import { FileWithPreview } from '../../core-ui/Dropzone';
-import { THEME_COLOR, DARK_TEXT_COLOR } from '../../constants/colors';
+import { THEME_COLOR, DARK_TEXT_COLOR, RED_TEXT } from '../../constants/colors';
 import { FONT_SIZE_MEDIUM, FONT_WEIGHT_BOLD, FONT_SIZE_SMALL } from '../../constants/theme';
 import { Action, State as LandlordOnboardingState } from '../../reducers/landlordOnboardingReducer';
 import { GET_EQUIPMENT_LIST } from '../../graphql/queries/server/filters';
@@ -67,7 +67,16 @@ export default function LandlordListing(props: Props) {
   let [selectedEquipments, setSelectedEquipment] = useState<Array<string>>(spaceListing.equipments);
   let today = new Date().toISOString().slice(0, 10);
 
-  let allValid = mainPhoto && selectedCondition && Object.keys(errors).length === 0;
+  let allValid =
+    mainPhoto &&
+    additionalPhotos.filter((photo) => !!photo).length > 0 &&
+    selectedCondition &&
+    description &&
+    selectedType.length > 0 &&
+    sqft &&
+    price &&
+    date &&
+    Object.keys(errors).length === 0;
 
   let saveFormState = useCallback(
     (fieldValues?: FieldValues) => {
@@ -138,7 +147,7 @@ export default function LandlordListing(props: Props) {
           <Title>Space 1</Title>
           <Address>{confirmLocation?.physicalAddress?.address || ''}</Address>
         </TitleContainer>
-        <Alert
+        <ListingAlert
           visible
           text="We provide complementary virtual tours & comprehensive photos to every listing."
         />
@@ -151,6 +160,7 @@ export default function LandlordListing(props: Props) {
           }}
           radioItemProps={{ lineHeight: 2 }}
           titleExtractor={(item: MarketingPreferenceRadio) => item.label}
+          required={true}
         />
         <PhotosPicker
           mainPhoto={mainPhoto}
@@ -171,6 +181,7 @@ export default function LandlordListing(props: Props) {
           }}
           showCharacterLimit
           containerStyle={{ marginTop: 12, marginBottom: 12 }}
+          required={true}
         />
         <RadioGroupContainer
           label="Condition"
@@ -180,9 +191,13 @@ export default function LandlordListing(props: Props) {
             setSelectedCondition(value);
           }}
           radioItemProps={{ lineHeight: 2 }}
+          required={true}
         />
         <FieldInput>
-          <LabelText text="What type of space is this?" />
+          <RowView>
+            <LabelText text="What type of space is this?" />
+            <LabelText text="*required" color={RED_TEXT} style={{ marginLeft: 8 }} />
+          </RowView>
           {SPACES_TYPE.map((option, index) => {
             let isChecked = selectedType.includes(option);
             return (
@@ -212,6 +227,7 @@ export default function LandlordListing(props: Props) {
             validate: (val) => validateNumber(val) || 'Input should be number',
           })}
           defaultValue={sqft}
+          required={true}
           containerStyle={{ marginTop: 12, marginBottom: 12 }}
           errorMessage={(errors?.sqft as FieldError)?.message || ''}
         />
@@ -224,6 +240,7 @@ export default function LandlordListing(props: Props) {
             validate: (val) => validateNumber(val) || 'Input should be number',
           })}
           defaultValue={price}
+          required={true}
           containerStyle={{ marginTop: 12, marginBottom: 12 }}
           errorMessage={(errors?.price as FieldError)?.message || ''}
         />
@@ -246,6 +263,7 @@ export default function LandlordListing(props: Props) {
             label="Availability"
             min={today}
             defaultValue={date || today}
+            required={true}
             ref={register({
               required: 'Date should not be empty',
             })}
@@ -338,4 +356,8 @@ const TransparentButton = styled(Button)`
 
 const FieldInput = styled(View)`
   padding: 12px 0;
+`;
+
+const ListingAlert = styled(Alert)`
+  margin-bottom: 8px;
 `;

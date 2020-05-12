@@ -12,7 +12,7 @@ import { DeepDiveContext } from './DeepDiveModal';
 import { TEXT_COLOR, THEME_COLOR, WHITE } from '../../constants/colors';
 import { FONT_WEIGHT_MEDIUM } from '../../constants/theme';
 import SvgHeart from '../../components/icons/heart';
-import { SAVE_SPACE } from '../../graphql/queries/server/space';
+import { SAVE_SPACE, GET_SAVED_SPACES } from '../../graphql/queries/server/space';
 import { LocationDetails_locationDetails_spaceDetails as SpaceDetails } from '../../generated/LocationDetails';
 import { SaveSpace, SaveSpaceVariables } from '../../generated/SaveSpace';
 
@@ -78,6 +78,8 @@ export default function PropertyDetailView(props: Props) {
                     propertyId,
                     matchValue: contextValue?.result?.matchValue || 0,
                   },
+                  refetchQueries: [{ query: GET_SAVED_SPACES }],
+                  awaitRefetchQueries: true,
                 });
               }}
               style={{ marginRight: 14 }}

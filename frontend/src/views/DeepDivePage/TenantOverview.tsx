@@ -41,7 +41,7 @@ export default function TenantOverview({ keyFacts, tenantView }: Props) {
         <Container>
           <TenantKeyFacts keyFacts={keyFacts} />
         </Container>
-        <View>
+        <BottomContainer>
           <Row flex>
             <OverviewCard title="Expansion Plans" content={overview} />
             <OverviewCard title="Description" content={description} />
@@ -62,7 +62,7 @@ export default function TenantOverview({ keyFacts, tenantView }: Props) {
               </TextRow>
             </OverviewCard>
           </SpaceContainer>
-        </View>
+        </BottomContainer>
       </View>
     );
   }
@@ -82,7 +82,7 @@ const SpaceContainer = styled(View)`
 `;
 
 const CardsContainer = styled(Card)`
-  margin: 16px;
+  margin: 8px;
   height: 200px;
   flex: 1;
 `;
@@ -99,4 +99,8 @@ const ContentContainer = styled(View)`
 
 const Row = styled(View)`
   flex-direction: row;
+`;
+
+const BottomContainer = styled(View)`
+  padding: 8px;
 `;
