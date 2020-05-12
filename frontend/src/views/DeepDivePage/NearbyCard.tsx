@@ -61,18 +61,12 @@ export default function NearbyCard(props: ViewProps) {
   }, [selectedDropdownVal, nearbyData]);
 
   // TODO: fix typing
-  const cardsRefs = useRef(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    filteredData?.reduce((acc: any, { name }) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      acc[name] = useRef();
-      return acc;
-    }, {})
-  );
-
-  const scrollTo = (target: string) => {
-    if (cardsRefs) {
-      cardsRefs.current[target].current.scrollIntoView({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let cardsRefs = useRef<Array<any>>([]);
+  let scrollTo = (target: string) => {
+    let foundIndex = filteredData?.map((item) => item.name).indexOf(target);
+    if (cardsRefs && foundIndex) {
+      cardsRefs.current[foundIndex].current.scrollIntoView({
         behavior: 'smooth',
       });
     }
@@ -127,6 +121,7 @@ export default function NearbyCard(props: ViewProps) {
                 options={['Most Popular', 'Distance', 'Rating', 'Similar']}
                 onSelect={(newValue) => {
                   setSelectedDropdownVal(newValue);
+                  setSelectedCard('');
                 }}
                 selectedOption={selectedDropdownVal}
                 containerStyle={{ paddingLeft: 6, paddingBottom: 12 }}
@@ -138,32 +133,38 @@ export default function NearbyCard(props: ViewProps) {
                     text={category && mile ? `No ${category} within ${mile} mile(s)` : ''}
                   />
                 ) : isGridViewMode ? (
-                  filteredData?.map((item, index) => (
-                    <MiniNearbyPlacesCard
-                      key={index}
-                      forwardedRef={cardsRefs.current[item.name]}
-                      selectedDropdownValue={selectedDropdownVal}
-                      isSelected={selectedCard === item.name}
-                      onPress={(name) => {
-                        setSelectedCard(name);
-                        setHasSelectedCard(true);
-                      }}
-                      {...item}
-                    />
-                  ))
+                  filteredData?.map((item, index) => {
+                    cardsRefs.current.push(item);
+                    return (
+                      <MiniNearbyPlacesCard
+                        key={index}
+                        forwardedRef={cardsRefs.current[index]}
+                        selectedDropdownValue={selectedDropdownVal}
+                        isSelected={selectedCard === item.name}
+                        onPress={(name) => {
+                          setSelectedCard(name);
+                          setHasSelectedCard(true);
+                        }}
+                        {...item}
+                      />
+                    );
+                  })
                 ) : (
-                  filteredData?.map((item, index) => (
-                    <NearbyPlacesCard
-                      forwardedRef={cardsRefs.current[item.name]}
-                      isSelected={selectedCard === item.name}
-                      onPress={(name) => {
-                        setSelectedCard(name);
-                        setHasSelectedCard(true);
-                      }}
-                      key={index}
-                      {...item}
-                    />
-                  ))
+                  filteredData?.map((item, index) => {
+                    cardsRefs.current.push(item);
+                    return (
+                      <NearbyPlacesCard
+                        forwardedRef={cardsRefs.current[index]}
+                        isSelected={selectedCard === item.name}
+                        onPress={(name) => {
+                          setSelectedCard(name);
+                          setHasSelectedCard(true);
+                        }}
+                        key={index}
+                        {...item}
+                      />
+                    );
+                  })
                 )}
               </NearbyPlacesCardContainer>
             </RightContent>
