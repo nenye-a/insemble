@@ -16,15 +16,8 @@ let propertyResolver: FieldResolver<'Query', 'property'> = async (
   if (!property) {
     throw new Error('Property not found!');
   }
-  // console.log(
-  //   property.space.map(({ createdAt, description }) => {
-  //     return { description, createdAt };
-  //   }),
-  // );
 
-  return {
-    ...property,
-  };
+  return property;
 };
 
 let property = queryField('property', {
