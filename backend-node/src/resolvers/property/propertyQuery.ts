@@ -11,7 +11,7 @@ let propertyResolver: FieldResolver<'Query', 'property'> = async (
     where: {
       id: propertyId,
     },
-    include: { location: true, space: true },
+    include: { location: true },
   });
   if (!property) {
     throw new Error('Property not found!');
