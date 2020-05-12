@@ -53,7 +53,7 @@ export default function PropertyDeepDiveHeader({
             text="Connect"
             onPress={clickable ? () => toggleContactModalVisibility(true) : undefined}
           />
-          {brandId && spaceId && contacts && (
+          {brandId && spaceId && (
             <ContactModal
               brandName={brandName}
               category={category}
