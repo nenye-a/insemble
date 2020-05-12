@@ -27,7 +27,11 @@ export default function TenantPropertyDetailsView({ keyFacts, insightsView }: Pr
         <Container>
           <TenantKeyFacts keyFacts={keyFacts} />
         </Container>
-        <RelevantConsumerPersonas isLocked={!trial} personasData={topPersonas} />
+        <RelevantConsumerPersonas
+          isLocked={!trial}
+          personasData={topPersonas}
+          style={{ margin: 16 }}
+        />
         <Container>
           <DemographicCard isLocked={!trial} demographicsData={demographics} withMargin={false} />
         </Container>
