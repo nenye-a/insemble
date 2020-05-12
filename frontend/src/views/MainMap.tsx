@@ -20,7 +20,7 @@ import { WHITE, HEADER_BORDER_COLOR, THEME_COLOR } from '../constants/colors';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_MEDIUM } from '../constants/theme';
 import { TenantMatches, TenantMatchesVariables } from '../generated/TenantMatches';
 
-import { useGoogleMaps, isEqual, useViewport, omitTypename } from '../utils';
+import { useGoogleMaps, isEqual, useViewport } from '../utils';
 import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer';
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 import { LocationInput } from '../generated/globalTypes';
