@@ -306,33 +306,51 @@ let tenantMatches = queryField('tenantMatches', {
             locationCount: pendingLocationCount,
             newLocationPlan: pendingNewLocationPlan,
             userRelation: pendingUserRelation,
-            nextLocations: {
-              create: pendingNextLocations,
-            },
-            categories: {
-              set: pendingCategories,
-            },
-            equipment: {
-              set: pendingEquipment,
-            },
-            personas: {
-              set: pendingPersonas,
-            },
-            spaceType: {
-              set: pendingSpaceType,
-            },
-            education: {
-              set: pendingEducation,
-            },
-            commute: {
-              set: pendingCommute,
-            },
-            ethnicity: {
-              set: pendingEthnicity,
-            },
-            location: {
-              update: pendingLocation,
-            },
+            nextLocations: pendingNextLocations
+              ? {
+                  create: pendingNextLocations,
+                }
+              : undefined,
+            categories: pendingCategories
+              ? {
+                  set: pendingCategories,
+                }
+              : undefined,
+            equipment: pendingEquipment
+              ? {
+                  set: pendingEquipment,
+                }
+              : undefined,
+            personas: pendingPersonas
+              ? {
+                  set: pendingPersonas,
+                }
+              : undefined,
+            spaceType: pendingSpaceType
+              ? {
+                  set: pendingSpaceType,
+                }
+              : undefined,
+            education: pendingEducation
+              ? {
+                  set: pendingEducation,
+                }
+              : undefined,
+            commute: pendingCommute
+              ? {
+                  set: pendingCommute,
+                }
+              : undefined,
+            ethnicity: pendingEthnicity
+              ? {
+                  set: pendingEthnicity,
+                }
+              : undefined,
+            location: pendingLocation
+              ? {
+                  update: pendingLocation,
+                }
+              : undefined,
             matchingLocations: JSON.stringify(newMatchingLocations),
             matchingProperties: JSON.stringify(newMatchingProperties),
             tenantId,
