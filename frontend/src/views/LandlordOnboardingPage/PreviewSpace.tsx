@@ -160,6 +160,7 @@ const TourContainer = styled(View)<TourContainerProps>`
   justify-content: center;
   align-items: center;
   background-image: ${(props) => (props.mainPhoto ? `url(${props.mainPhoto})` : '')};
+  background-size: cover;
 `;
 const RowView = styled(View)`
   flex-direction: row;
