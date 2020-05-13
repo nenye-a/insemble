@@ -26,7 +26,8 @@ type ContainerProps = ComponentProps<typeof TouchableOpacity> & {
 export default function MessageCard(props: Props) {
   let { isEven, conversation, onPress } = props;
   let {
-    tenant: { avatar },
+    tenant: { avatar: tenantAvatar },
+    landlord: { avatar: landlordAvatar },
     property: {
       name: propertyName,
       location: { address },
@@ -45,7 +46,7 @@ export default function MessageCard(props: Props) {
   return (
     <Root isEven={isEven}>
       <Container flex onPress={onPress}>
-        <Avatar size="medium" image={avatar} />
+        <Avatar size="medium" image={role === Role.TENANT ? landlordAvatar : tenantAvatar} />
         <MessageContent flex>
           <Text fontSize={FONT_SIZE_MEDIUM} color={THEME_COLOR}>
             {propertyName}
