@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory, useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
@@ -13,9 +13,7 @@ import {
   LandlordManageSpace,
 } from './LandlordProfile';
 import LandlordManageProperty from './LandlordProfile/LandlordManageProperty';
-import { GET_PROPERTY_MATCHES_DATA } from '../graphql/queries/server/matches';
 import { GET_PROPERTY } from '../graphql/queries/server/properties';
-import { PropertyMatches, PropertyMatchesVariables } from '../generated/PropertyMatches';
 import {
   Property,
   PropertyVariables,
@@ -63,34 +61,6 @@ export default function LandlordPropertyDetails() {
     }
   );
 
-  let { data, loading, error: propertyMatchesError, refetch: propertyMatchesRefetch } = useQuery<
-    PropertyMatches,
-    PropertyMatchesVariables
-  >(GET_PROPERTY_MATCHES_DATA, {
-    variables: { propertyId: params.paramsId, spaceId: selectedSpace?.id || '' },
-    skip: !selectedSpace?.id || !params.paramsId,
-    notifyOnNetworkStatusChange: true,
-    fetchPolicy: 'network-only',
-  });
-
-  let propertyMatches = useMemo(() => {
-    if (!data) {
-      return data;
-    }
-    return data.propertyMatches.sort(
-      (
-        { matchValue: matchValueA, numExistingLocations: numExistingLocationsA },
-        { matchValue: matchValueB, numExistingLocations: numExistingLocationsB }
-      ) => {
-        let sortValue = matchValueB - matchValueA;
-        if (sortValue === 0) {
-          sortValue = numExistingLocationsB - numExistingLocationsA;
-        }
-        return sortValue;
-      }
-    );
-  }, [data]);
-
   useEffect(() => {
     if (propertyData) {
       let { space } = propertyData.property;
@@ -137,17 +107,17 @@ export default function LandlordPropertyDetails() {
         />
         {isTenantMatchSelected ? (
           <ContentWrapper>
-            <LandlordTenantMatches
-              tier={selectedSpace?.tier}
-              loading={loading}
-              matchResult={propertyMatches}
-              error={propertyMatchesError}
-              refetch={propertyMatchesRefetch}
-              onPress={(selectedBrand) => {
-                setSelectedBrand(selectedBrand);
-                setModalVisible(true);
-              }}
-            />
+            {selectedSpace && (
+              <LandlordTenantMatches
+                tier={selectedSpace?.tier}
+                onPress={(selectedBrand) => {
+                  setSelectedBrand(selectedBrand);
+                  setModalVisible(true);
+                }}
+                selectedSpace={selectedSpace}
+                propertyId={params.paramsId}
+              />
+            )}
           </ContentWrapper>
         ) : isLocationDetailSelected ? (
           <LandlordLocationDetails />
