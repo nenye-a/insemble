@@ -32,7 +32,7 @@ export default function NearbyPlacesCard(props: Props) {
 
   return (
     <Container ref={forwardedRef} isSelected={isSelected}>
-      <TouchableOpacity onPress={() => onPress(name)}>
+      <TouchableContainer onPress={() => onPress(name)}>
         {similar && (
           <Badge
             text="Similar"
@@ -53,7 +53,7 @@ export default function NearbyPlacesCard(props: Props) {
           <NearbyPlacesTag content={numberRating} postfix="Reviews" />
           <NearbyPlacesTag content={numberFormatter(roundDecimal(distance))} postfix="Miles" />
         </TagsContainer>
-      </TouchableOpacity>
+      </TouchableContainer>
     </Container>
   );
 }
@@ -66,13 +66,16 @@ type ContainerProps = CardProps & {
 const Container = styled(Card)<ContainerProps>`
   margin: ${MARGIN};
   width: calc(50% - (2 * ${MARGIN}));
-  padding: 12px;
   overflow: visible;
   ${({ isSelected }) =>
     isSelected &&
     css`
       border: 1px solid ${THEME_COLOR};
     `}
+`;
+
+const TouchableContainer = styled(TouchableOpacity)`
+  padding: 12px;
 `;
 
 const RowedView = styled(View)`
