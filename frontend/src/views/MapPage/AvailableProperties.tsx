@@ -80,10 +80,10 @@ export default function AvailableProperties(props: Props) {
     return (
       <SwipeableBottomSheet
         open={visible}
-        overflowHeight={75}
+        overflowHeight={70}
         style={{ zIndex: 99 }}
         overlay={false}
-        bodyStyle={{ padding: 16, height: 'calc(100vh - 95px)' }}
+        bodyStyle={{ padding: 16, height: 'calc(100vh - 220px)' }}
         onChange={onShowOrHide}
       >
         {content}
@@ -103,7 +103,7 @@ const Container = styled(View)<ContainerProps>`
   right: 0px;
   background-color: white;
   padding: 16px;
-  transition: transform 100ms linear;
+  transition: transform 250ms linear;
   transform: translateX(${(props) => (props.visible ? '0px' : '350px')});
   height: 100%;
   overflow-y: scroll;
