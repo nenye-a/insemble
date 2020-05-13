@@ -28,6 +28,7 @@ export * from './EditProfileInput';
 export * from './LocationDetailsResult';
 export * from './SpaceType';
 export * from './PropertyThumbnail';
+export * from './PropertyMatchesPolling';
 export * from './PropertyMatchesThumbnail';
 export * from './PropertyDetailsResult';
 export * from './TenantDetailsResult';

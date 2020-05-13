@@ -1,6 +1,6 @@
-import React, { ComponentProps } from 'react';
+import React, { ComponentProps, useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
-import { ApolloError, ApolloQueryResult } from 'apollo-client';
+import { useQuery } from '@apollo/react-hooks';
 
 import { View, Text, TouchableOpacity, LoadingIndicator } from '../../core-ui';
 import imgPlaceholder from '../../assets/images/image-placeholder.jpg';
@@ -12,17 +12,19 @@ import {
   DEFAULT_BORDER_RADIUS,
 } from '../../constants/theme';
 import { DARK_TEXT_COLOR, WHITE, SECONDARY_COLOR, THEME_COLOR } from '../../constants/colors';
+import { GET_PROPERTY_MATCHES_DATA } from '../../graphql/queries/server/matches';
 import {
-  PropertyMatches_propertyMatches as PropertyMatchesProps,
-  PropertyMatches_propertyMatches_contacts as Contacts,
+  PropertyMatches_propertyMatches_data as PropertyMatchesData,
+  PropertyMatches_propertyMatches_data_contacts as Contacts,
   PropertyMatchesVariables,
   PropertyMatches,
 } from '../../generated/PropertyMatches';
+import { Property_property_space as Space } from '../../generated/Property';
+import { LandlordTier } from '../../generated/globalTypes';
 import { EmptyDataComponent, ErrorComponent, TrialEndedAlert } from '../../components';
 import { roundDecimal, useViewport } from '../../utils';
 import { VIEWPORT_TYPE } from '../../constants/viewports';
 import BlurredTenantMatches from '../../assets/images/blurred-tenant-matches.png';
-import { LandlordTier } from '../../generated/globalTypes';
 
 export type SelectedBrand = {
   matchId: string | null;
@@ -36,23 +38,41 @@ export type SelectedBrand = {
 
 type Props = {
   onPress: (selectedData: SelectedBrand) => void;
-  matchResult?: Array<PropertyMatchesProps>;
-  loading: boolean;
-  error?: ApolloError;
-  refetch: (
-    variables?: PropertyMatchesVariables | undefined
-  ) => Promise<ApolloQueryResult<PropertyMatches>>;
   tier?: LandlordTier;
+  selectedSpace: Space;
+  propertyId: string;
 };
 
-export default function LandlordTenantMatches({
-  onPress,
-  matchResult,
-  loading,
-  error,
-  refetch,
-  tier,
-}: Props) {
+export default function LandlordTenantMatches({ onPress, tier, selectedSpace, propertyId }: Props) {
+  let { data, loading, error, refetch, stopPolling } = useQuery<
+    PropertyMatches,
+    PropertyMatchesVariables
+  >(GET_PROPERTY_MATCHES_DATA, {
+    variables: { propertyId, spaceId: selectedSpace?.id || '' },
+    skip: !selectedSpace?.id || !propertyId,
+    notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'network-only',
+    pollInterval: 10000,
+  });
+
+  let matchResult = useMemo(() => {
+    if (!data?.propertyMatches.data) {
+      return data?.propertyMatches.data;
+    }
+    return data.propertyMatches.data.sort(
+      (
+        { matchValue: matchValueA, numExistingLocations: numExistingLocationsA },
+        { matchValue: matchValueB, numExistingLocations: numExistingLocationsB }
+      ) => {
+        let sortValue = matchValueB - matchValueA;
+        if (sortValue === 0) {
+          sortValue = numExistingLocationsB - numExistingLocationsA;
+        }
+        return sortValue;
+      }
+    );
+  }, [data]);
+
   let lockedMatches = (
     <>
       {matchResult && matchResult[0] && <TenantCard item={matchResult[0]} onPress={onPress} />}
@@ -72,17 +92,23 @@ export default function LandlordTenantMatches({
     ) : tier === LandlordTier.BASIC ? (
       <Row flex>{lockedMatches}</Row>
     ) : null;
+
+  useEffect(() => {
+    if (!data?.propertyMatches.polling) {
+      stopPolling();
+    }
+  }, [data, stopPolling]);
   return (
     <>
-      {loading ? (
+      {loading || data?.propertyMatches.polling ? (
         <Container flex>
           <LoadingIndicator flex size="large" text="Loading the matches for your space." />
         </Container>
-      ) : error ? (
+      ) : error || data?.propertyMatches.error ? (
         <Container flex>
           <ErrorComponent onRetry={refetch} />
         </Container>
-      ) : !matchResult ? (
+      ) : !matchResult || matchResult.length === 0 ? (
         <EmptyDataComponent />
       ) : (
         <>
@@ -95,7 +121,7 @@ export default function LandlordTenantMatches({
 }
 
 type TenantCardProps = {
-  item: PropertyMatchesProps;
+  item: PropertyMatchesData;
   onPress: (selectedData: SelectedBrand) => void;
 };
 

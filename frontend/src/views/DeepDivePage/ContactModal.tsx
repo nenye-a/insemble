@@ -19,7 +19,7 @@ import {
   CreatePendingConversation,
   CreatePendingConversationVariables,
 } from '../../generated/CreatePendingConversation';
-import { PropertyMatches_propertyMatches_contacts as Contacts } from '../../generated/PropertyMatches';
+import { PropertyMatches_propertyMatches_data_contacts as Contacts } from '../../generated/PropertyMatches';
 
 type Props = {
   visible: boolean;
