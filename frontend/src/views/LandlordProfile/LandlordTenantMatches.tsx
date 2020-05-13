@@ -108,7 +108,7 @@ export default function LandlordTenantMatches({ onPress, tier, selectedSpace, pr
         <Container flex>
           <ErrorComponent onRetry={refetch} />
         </Container>
-      ) : !data?.propertyMatches.data ? (
+      ) : !matchResult || matchResult.length === 0 ? (
         <EmptyDataComponent />
       ) : (
         <>
