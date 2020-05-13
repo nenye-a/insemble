@@ -20,11 +20,12 @@ import { WHITE, HEADER_BORDER_COLOR, THEME_COLOR } from '../constants/colors';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_MEDIUM } from '../constants/theme';
 import { TenantMatches, TenantMatchesVariables } from '../generated/TenantMatches';
 
-import { useGoogleMaps, isEqual, useViewport, omitTypename } from '../utils';
+import { useGoogleMaps, isEqual, useViewport } from '../utils';
 import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer';
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 import { LocationInput } from '../generated/globalTypes';
 import SvgPropertyLocation from '../components/icons/property-location';
+import { SUPPORT_EMAIL } from '../constants/app';
 
 type BrandId = {
   brandId: string;
@@ -113,6 +114,7 @@ export default function MainMap() {
   let [mapErrorMessage, setMapErrorMessage] = useState('');
   let [addressSearchLocation, setAddressSearchLocation] = useState<SelectedLocation | null>(null);
   let [alertUpdateMapVisible, setAlertUpdateMapVisible] = useState(false);
+  let [failCount, setFailCount] = useState(0);
   let { isLoading } = useGoogleMaps();
   let { isDesktop } = useViewport();
   let params = useParams<BrandId>();
@@ -129,6 +131,7 @@ export default function MainMap() {
     fetchPolicy: 'network-only',
     notifyOnNetworkStatusChange: true,
     onError: () => {
+      setFailCount(failCount++);
       setMapErrorMessage('Failed to load heatmap, please adjust filters and try again.');
       tenantMatchesRefetch();
     },
@@ -261,61 +264,43 @@ export default function MainMap() {
   };
 
   let onPublishChangesPress = async () => {
-    if (tenantMatchesData) {
-      let { demographics, categories, property } = filters;
-      let {
-        minIncome,
-        maxIncome,
-        minAge,
-        maxAge,
-        personas,
-        commute,
-        education,
-        ethnicity,
-      } = demographics;
-      let { minSize, maxSize, minRent, maxRent, spaceType, amenities } = property;
-      let {
-        name,
-        location,
-        userRelation,
-        locationCount,
-        newLocationPlan,
-        nextLocations,
-      } = tenantMatchesData.tenantMatches;
+    let { demographics, categories, property } = filters;
+    let {
+      minIncome,
+      maxIncome,
+      minAge,
+      maxAge,
+      personas,
+      commute,
+      education,
+      ethnicity,
+    } = demographics;
+    let { minSize, maxSize, minRent, maxRent, spaceType, amenities } = property;
 
-      let result = await editBrand({
-        variables: {
-          filter: {
-            categories,
-            personas,
-            minAge: Number(minAge),
-            maxAge: Number(maxAge),
-            minIncome: Number(minIncome) * 1000,
-            maxIncome: Number(maxIncome) * 1000,
-            minSize,
-            maxSize,
-            minRent,
-            maxRent,
-            spaceType,
-            commute,
-            education,
-            ethnicity,
-            equipment: amenities,
-          },
-          business: {
-            name,
-            location: location ? (omitTypename(location) as LocationInput) : null,
-            userRelation,
-            locationCount,
-            newLocationPlan,
-            nextLocations,
-          },
-          brandId,
+    let result = await editBrand({
+      variables: {
+        filter: {
+          categories,
+          personas,
+          minAge: Number(minAge),
+          maxAge: Number(maxAge),
+          minIncome: Number(minIncome) * 1000,
+          maxIncome: Number(maxIncome) * 1000,
+          minSize,
+          maxSize,
+          minRent,
+          maxRent,
+          spaceType,
+          commute,
+          education,
+          ethnicity,
+          equipment: amenities,
         },
-      });
-      if (result.data?.editBrand) {
-        tenantMatchesRefetch({ brandId });
-      }
+        brandId,
+      },
+    });
+    if (result.data?.editBrand) {
+      tenantMatchesRefetch({ brandId });
     }
   };
 
@@ -377,6 +362,9 @@ export default function MainMap() {
         ethnicity,
         equipment,
       } = tenantMatchesData.tenantMatches;
+      if (mapErrorMessage) {
+        setMapErrorMessage('');
+      }
       setFilters({
         demographics: {
           minIncome: typeof minIncome === 'number' ? minIncome / 1000 : null,
@@ -399,11 +387,17 @@ export default function MainMap() {
         categories,
       });
     }
-  }, [tenantMatchesLoading, tenantMatchesData]);
+  }, [tenantMatchesLoading, tenantMatchesData, mapErrorMessage]);
 
   useEffect(() => {
     setAlertUpdateMapVisible(!filtersAreEqual);
   }, [filtersAreEqual]);
+
+  useEffect(() => {
+    if (failCount >= 3) {
+      setMapErrorMessage(`An error has occurred. Please try again or contact ${SUPPORT_EMAIL}`);
+    }
+  }, [failCount]);
 
   return (
     <TenantMatchesContext.Provider
@@ -451,7 +445,7 @@ export default function MainMap() {
             text={mapErrorMessage}
             onClose={() => setMapErrorMessage('')}
           />
-          {!tenantMatchesLoading && !tenantMatchesError && (
+          {!tenantMatchesLoading && !tenantMatchesError && !filtersAreEqual && (
             <MapAlert
               visible={alertUpdateMapVisible}
               text="Please press the Update button below to update the maps with your desired filters."
