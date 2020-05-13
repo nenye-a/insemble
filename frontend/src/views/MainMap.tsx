@@ -25,6 +25,7 @@ import { State as SideBarFiltersState } from '../reducers/sideBarFiltersReducer'
 import { EditBrand, EditBrandVariables } from '../generated/EditBrand';
 import { LocationInput } from '../generated/globalTypes';
 import SvgPropertyLocation from '../components/icons/property-location';
+import { SUPPORT_EMAIL } from '../constants/app';
 
 type BrandId = {
   brandId: string;
@@ -113,6 +114,7 @@ export default function MainMap() {
   let [mapErrorMessage, setMapErrorMessage] = useState('');
   let [addressSearchLocation, setAddressSearchLocation] = useState<SelectedLocation | null>(null);
   let [alertUpdateMapVisible, setAlertUpdateMapVisible] = useState(false);
+  let [failCount, setFailCount] = useState(0);
   let { isLoading } = useGoogleMaps();
   let { isDesktop } = useViewport();
   let params = useParams<BrandId>();
@@ -129,6 +131,7 @@ export default function MainMap() {
     fetchPolicy: 'network-only',
     notifyOnNetworkStatusChange: true,
     onError: () => {
+      setFailCount(failCount++);
       setMapErrorMessage('Failed to load heatmap, please adjust filters and try again.');
       tenantMatchesRefetch();
     },
@@ -386,6 +389,12 @@ export default function MainMap() {
   useEffect(() => {
     setAlertUpdateMapVisible(!filtersAreEqual);
   }, [filtersAreEqual]);
+
+  useEffect(() => {
+    if (failCount >= 3) {
+      setMapErrorMessage(`An error has occurred. Please try again or contact ${SUPPORT_EMAIL}`);
+    }
+  }, [failCount]);
 
   return (
     <TenantMatchesContext.Provider
