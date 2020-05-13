@@ -1,5 +1,6 @@
 from . import utils, matching, mongo_connect, places
 from bson import ObjectId
+from fuzzywuzzy import process
 import numpy as np
 import re
 import pandas as pd
@@ -875,7 +876,13 @@ def get_personas(categories):
         if 'positive_personas' not in category:
             continue
 
-        personas += category['positive_personas']
+        for potential_personas in category['positive_personas']:
+            new_personas = process.extractOne(potential_personas, matching.SPATIAL_CATEGORIES)
+            new_personas = new_personas[0] if new_personas else None
+            if new_personas:
+                personas.append(new_personas)
+
+        # personas += category['positive_personas']
 
     return personas
 
