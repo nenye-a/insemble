@@ -126,7 +126,7 @@ export default function LandlordManageSpace(props: Props) {
             pricePerSqft: Number(price),
             equipment: selectedEquipment,
             available: dateFormatter(date),
-            spaceType: selectedCondition,
+            spaceType: selectedType,
             marketingPreference: selectedMarketingPreference.value,
           },
         },
