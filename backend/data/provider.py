@@ -551,7 +551,8 @@ def obtain_nearby(target_location, categories, db_connection=utils.SYSTEM_MONGO)
     ]
 
     for query in queries.copy():
-        if 'nearby_' + query in target_location:
+        query_string = 'nearby_' + query
+        if query_string in target_location and target_location[query_string] is not None:
             queries.remove(query)
 
     if len(queries) > 0:
