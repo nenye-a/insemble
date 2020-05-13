@@ -234,6 +234,11 @@ def process_options(options):
     desired_ethnicity = options['ethnicity'] if 'ethnicity' in options else []
     desired_min_daytime_pop = options['min_daytime_pop'] if 'min_daytime_pop' in options else None
 
+    # hot fix to address late-night leisure bug, needs to be handled more robustly.
+    if 'Late-night Leisure' in options['personas']:
+        options['personas'].remove('Late-night Leisure')
+        options['personas'].append('Late-Night Leisure')
+
     # re_package option values
     options = {
         'desired_min_income': desired_min_income,
