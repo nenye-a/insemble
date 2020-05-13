@@ -362,6 +362,9 @@ export default function MainMap() {
         ethnicity,
         equipment,
       } = tenantMatchesData.tenantMatches;
+      if (mapErrorMessage) {
+        setMapErrorMessage('');
+      }
       setFilters({
         demographics: {
           minIncome: typeof minIncome === 'number' ? minIncome / 1000 : null,
@@ -384,7 +387,7 @@ export default function MainMap() {
         categories,
       });
     }
-  }, [tenantMatchesLoading, tenantMatchesData]);
+  }, [tenantMatchesLoading, tenantMatchesData, mapErrorMessage]);
 
   useEffect(() => {
     setAlertUpdateMapVisible(!filtersAreEqual);
@@ -442,7 +445,7 @@ export default function MainMap() {
             text={mapErrorMessage}
             onClose={() => setMapErrorMessage('')}
           />
-          {!tenantMatchesLoading && !tenantMatchesError && (
+          {!tenantMatchesLoading && !tenantMatchesError && !filtersAreEqual && (
             <MapAlert
               visible={alertUpdateMapVisible}
               text="Please press the Update button below to update the maps with your desired filters."
