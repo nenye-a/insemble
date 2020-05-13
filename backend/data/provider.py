@@ -1,5 +1,6 @@
 from . import utils, matching, mongo_connect, places
 from bson import ObjectId
+from fuzzywuzzy import process
 import numpy as np
 import re
 import pandas as pd
@@ -551,7 +552,8 @@ def obtain_nearby(target_location, categories, db_connection=utils.SYSTEM_MONGO)
     ]
 
     for query in queries.copy():
-        if 'nearby_' + query in target_location:
+        query_string = 'nearby_' + query
+        if query_string in target_location and target_location[query_string] is not None:
             queries.remove(query)
 
     if len(queries) > 0:
@@ -874,7 +876,13 @@ def get_personas(categories):
         if 'positive_personas' not in category:
             continue
 
-        personas += category['positive_personas']
+        for potential_personas in category['positive_personas']:
+            new_personas = process.extractOne(potential_personas, matching.SPATIAL_CATEGORIES)
+            new_personas = new_personas[0] if new_personas else None
+            if new_personas:
+                personas.append(new_personas)
+
+        # personas += category['positive_personas']
 
     return personas
 
