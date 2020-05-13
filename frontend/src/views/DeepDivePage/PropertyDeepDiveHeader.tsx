@@ -4,7 +4,7 @@ import { View, Text, Button } from '../../core-ui';
 import { numberFormatter } from '../../utils';
 import ContactModal from './ContactModal';
 import { FONT_SIZE_LARGE, FONT_WEIGHT_MEDIUM } from '../../constants/theme';
-import { PropertyMatches_propertyMatches_contacts as Contacts } from '../../generated/PropertyMatches';
+import { PropertyMatches_propertyMatches_data_contacts as Contacts } from '../../generated/PropertyMatches';
 
 type Props = {
   address: string;

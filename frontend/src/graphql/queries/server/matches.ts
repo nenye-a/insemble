@@ -3,20 +3,24 @@ import gql from 'graphql-tag';
 export const GET_PROPERTY_MATCHES_DATA = gql`
   query PropertyMatches($propertyId: String!, $spaceId: String!) {
     propertyMatches(propertyId: $propertyId, spaceId: $spaceId) {
-      brandId
-      matchId
-      pictureUrl
-      name
-      category
-      numExistingLocations
-      matchValue
-      interested
-      contacts {
+      data {
+        brandId
+        matchId
+        pictureUrl
         name
-        email
-        phone
-        role
+        category
+        numExistingLocations
+        matchValue
+        interested
+        contacts {
+          name
+          email
+          phone
+          role
+        }
       }
+      polling
+      error
     }
   }
 `;
