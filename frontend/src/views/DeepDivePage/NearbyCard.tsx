@@ -122,6 +122,7 @@ export default function NearbyCard(props: ViewProps) {
                 onSelect={(newValue) => {
                   setSelectedDropdownVal(newValue);
                   setSelectedCard('');
+                  setHasSelectedCard(false);
                 }}
                 selectedOption={selectedDropdownVal}
                 containerStyle={{ paddingLeft: 6, paddingBottom: 12 }}
