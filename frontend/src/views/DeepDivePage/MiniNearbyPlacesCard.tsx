@@ -62,7 +62,7 @@ export default function MiniNearbyPlacesCard(props: Props) {
 
   return (
     <Container ref={forwardedRef} isSelected={isSelected}>
-      <TouchableOpacity onPress={() => onPress(name)}>
+      <TouchableContainer onPress={() => onPress(name)}>
         {similar && (
           <Badge
             text="Similar"
@@ -77,7 +77,7 @@ export default function MiniNearbyPlacesCard(props: Props) {
             style={{ margin: 0, marginTop: 3 }}
           />
         )}
-      </TouchableOpacity>
+      </TouchableContainer>
     </Container>
   );
 }
@@ -90,7 +90,6 @@ type ContainerProps = CardProps & {
 
 const Container = styled(Card)<ContainerProps>`
   margin: ${MARGIN};
-  padding: 12px;
   width: calc(100% / 3 - (2 * ${MARGIN}));
   overflow: visible;
   ${({ isSelected }) =>
@@ -114,4 +113,8 @@ const Badge = styled(BaseBadge)`
   border-radius: ${DEFAULT_BORDER_RADIUS} ${DEFAULT_BORDER_RADIUS} 0 0;
   width: 100%;
   background-color: ${THEME_COLOR};
+`;
+
+const TouchableContainer = styled(TouchableOpacity)`
+  padding: 12px;
 `;
