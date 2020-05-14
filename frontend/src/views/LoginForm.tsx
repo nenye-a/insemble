@@ -176,10 +176,6 @@ export default function Login(props: Props) {
           name="password"
           ref={register({
             required: 'Password should not be empty',
-            minLength: {
-              value: 8,
-              message: 'Password must be at least 8 characters',
-            },
           })}
           label="Password"
           placeholder="Enter Password"
