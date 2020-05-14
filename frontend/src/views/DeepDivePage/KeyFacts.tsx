@@ -137,14 +137,20 @@ export default function KeyFacts(props: Props) {
                     labelLine={false}
                   >
                     {sortedData &&
-                      sortedData.map((entry, index: number) => (
+                      sortedData.map((_entry, index: number) => (
                         <Cell
                           key={`cell-${index}`}
                           fill={COMMUTE_CHART_COLORS[index % COMMUTE_CHART_COLORS.length]}
                         />
                       ))}
                   </Pie>
-                  <Legend layout="vertical" verticalAlign="middle" align="left" />
+                  <Legend
+                    layout="vertical"
+                    verticalAlign="middle"
+                    align="left"
+                    iconType="square"
+                    wrapperStyle={{ fontFamily: 'Avenir' }}
+                  />
                 </PieChart>
               ) : (
                 <EmptyDataComponent />
@@ -258,7 +264,7 @@ const Value = styled.text`
 const CommuteView = styled(View)`
   flex: 1;
   justify-content: space-between;
-  padding-left: 10px;
+  padding: 0 10px;
 `;
 
 const NumberText = styled(Text)`
