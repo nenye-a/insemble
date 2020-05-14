@@ -69,7 +69,7 @@ export let landlordOnboardingInitialState = {
   },
   spaceListing: {
     mainPhoto: null,
-    propertyPhotos: [null],
+    propertyPhotos: [],
     description: '',
     condition: '',
     sqft: '',
