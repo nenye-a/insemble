@@ -94,7 +94,7 @@ export default function LandlordTenantMatches({ onPress, tier, selectedSpace, pr
     ) : null;
 
   useEffect(() => {
-    if (!data?.propertyMatches.polling) {
+    if (data?.propertyMatches && !data.propertyMatches.polling) {
       stopPolling();
     }
   }, [data, stopPolling]);
