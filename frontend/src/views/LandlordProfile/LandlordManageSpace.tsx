@@ -161,9 +161,6 @@ export default function LandlordManageSpace(props: Props) {
       } = space[spaceIndex];
 
       let newPhotos: Array<string | null> = [...prevPhotos];
-      while (newPhotos.length < 4) {
-        newPhotos.push(null);
-      }
       setSelectedCondition(prevCondition);
       setDescription(prevDescription);
       setMainPhoto(prevMainPhoto);
