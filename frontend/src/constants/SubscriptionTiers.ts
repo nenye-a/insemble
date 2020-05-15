@@ -2,10 +2,10 @@ import { TenantTier, LandlordTier } from '../generated/globalTypes';
 
 export const LandlordTiers = {
   [LandlordTier.BASIC]: {
-    id: 'prod_GlgyphMKy4y1RY',
+    id: 'prod_HDc3uHkkDD4ntV',
     name: 'Basic',
-    monthly: { id: 'plan_GlgzmsDFYNivMf', price: 30 },
-    yearly: { id: 'plan_Glgzi3McWzuZ1v', price: 300 },
+    monthly: { id: 'plan_HDc33fDsBvmagA', price: 30 },
+    yearly: { id: 'plan_HDc3AjhLp9vT8c', price: 300 },
     title: '',
     benefits: [
       'Access thousands of pre-qualified tenants',
@@ -15,10 +15,10 @@ export const LandlordTiers = {
     type: LandlordTier.BASIC,
   },
   [LandlordTier.PROFESSIONAL]: {
-    id: 'prod_Glh0kj8K2C44rw',
+    id: 'prod_HDc1BYnsaxpMvI',
     name: 'Professional',
-    monthly: { id: 'plan_Glh0alOVw1hDJh', price: 450 },
-    yearly: { id: 'plan_Glh0neF7FfBXcw', price: 4020 },
+    monthly: { id: 'plan_HDcAikW8sAsb27', price: 450 },
+    yearly: { id: 'plan_HDc9bJ50fc4vrp', price: 4020 },
     title: 'Popular',
     benefits: [
       'See expanding tenants that fit property',
@@ -46,10 +46,10 @@ export const TenantTiers = {
     type: TenantTier.FREE,
   },
   [TenantTier.PROFESSIONAL]: {
-    id: 'prod_GlgxaiFQlz2C0g',
+    id: 'prod_HDc5ojbg2wWAyX',
     name: 'Professional',
-    monthly: { id: 'plan_GlgyRHQ6XPof6v', price: 30 },
-    yearly: { id: 'plan_GlgyE9w9q7ILhB', price: 300 },
+    monthly: { id: 'plan_HDc5c9lhrISfr6', price: 30 },
+    yearly: { id: 'plan_HDc552tQmFb09D', price: 300 },
     title: 'Popular with Experts',
     benefits: [
       'All “Explore” features',

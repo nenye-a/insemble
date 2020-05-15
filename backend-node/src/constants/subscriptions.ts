@@ -6,45 +6,45 @@ export const subscriptionPlans: Array<{
   tier: TenantTier | LandlordTier;
   id: string;
 }> = [
-  { role: 'TENANT', tier: 'PROFESSIONAL', id: 'prod_GlgxaiFQlz2C0g' },
-  { role: 'LANDLORD', tier: 'BASIC', id: 'prod_GlgyphMKy4y1RY' },
-  { role: 'LANDLORD', tier: 'PROFESSIONAL', id: 'prod_Glh0kj8K2C44rw' },
+  { role: 'TENANT', tier: 'PROFESSIONAL', id: 'prod_HDc5ojbg2wWAyX' },
+  { role: 'LANDLORD', tier: 'BASIC', id: 'prod_HDc3uHkkDD4ntV' },
+  { role: 'LANDLORD', tier: 'PROFESSIONAL', id: 'prod_HDc1BYnsaxpMvI' },
 ];
 
 export const subscriptionPlansCheck: Array<BillingPlanType> = [
   {
     role: 'TENANT',
-    id: 'plan_GlgyE9w9q7ILhB',
+    id: 'plan_HDc552tQmFb09D',
     tier: 'PROFESSIONAL',
     cycle: 'ANNUALLY',
   },
   {
     role: 'TENANT',
-    id: 'plan_GlgyRHQ6XPof6v',
+    id: 'plan_HDc5c9lhrISfr6',
     tier: 'PROFESSIONAL',
     cycle: 'MONTHLY',
   },
   {
     role: 'LANDLORD',
-    id: 'plan_Glgzi3McWzuZ1v',
+    id: 'plan_HDc3AjhLp9vT8c',
     tier: 'BASIC',
     cycle: 'ANNUALLY',
   },
   {
     role: 'LANDLORD',
-    id: 'plan_GlgzmsDFYNivMf',
+    id: 'plan_HDc33fDsBvmagA',
     tier: 'BASIC',
     cycle: 'MONTHLY',
   },
   {
     role: 'LANDLORD',
-    id: 'plan_Glh0neF7FfBXcw',
+    id: 'plan_HDc9bJ50fc4vrp',
     tier: 'PROFESSIONAL',
     cycle: 'ANNUALLY',
   },
   {
     role: 'LANDLORD',
-    id: 'plan_Glh0alOVw1hDJh',
+    id: 'plan_HDcAikW8sAsb27',
     tier: 'PROFESSIONAL',
     cycle: 'MONTHLY',
   },

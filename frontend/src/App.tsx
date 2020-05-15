@@ -18,7 +18,7 @@ ReactGA.initialize(trackingID);
 
 // TODO: Move the key to env, btw this is just our testing key so we need to
 // change it later anyway.
-let stripePromise = loadStripe('pk_n7E17YLoCCGMNWARfluYdTrVI1wiz');
+let stripePromise = loadStripe('pk_live_jTNwRuWQ09w2ooV5Ojqk4eX100uc0RpJpm');
 
 export default function App() {
   return (
