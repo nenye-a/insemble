@@ -18,7 +18,7 @@ File to process and parse files from the compiled crittenden sheet
 
 def process_csv():
 
-    with open('raw_data/crittenden-v2.csv', 'r', encoding='utf-8-sig') as f:
+    with open('data_testing/scripts/raw_data/crittenden-v3.csv', 'r', encoding='utf-8-sig') as f:
         read_file = list(csv.reader(f))
 
         businesses = []
@@ -75,6 +75,9 @@ def process_business(business):
         brand['average_demographics'] = {}
         brand['average_psychographics'] = {}
         brand['average_sales'] = {}
+        brand['cobrands'] = business['cobrands']
+        brand['website'] = business['website']
+        brand['num_national_locations'] = business['num_locations']
         brand['contacts'] = {'owners': business['contacts']}
         brand['match_requests'] = {}
     else:
@@ -86,6 +89,9 @@ def process_business(business):
         brand['typical_squarefoot'] = business['typical_squarefoot']
         brand['description'] = business['description']
         brand['categories'].append(business['categories'])
+        brand['cobrands'] = business['cobrands']
+        brand['website'] = business['website']
+        brand['num_national_locations'] = business['num_locations']
         brand['contacts'] = {'owners': business['contacts']}
         brand['regions_present'] = business['regions_present']
 
@@ -117,12 +123,14 @@ def process_dict(business_dict):
     business_dict['contacts'] = [
         {
             'name': business_dict.pop('Name'),
+            'title': business_dict.pop('Designation'),
             'phone': business_dict.pop('Phone'),
-            'email': business_dict.pop('Email')
+            'email': business_dict.pop('Email'), 
+            'address': business_dict.pop('Address'), 
+            'region': business_dict.pop('Region')
         }
     ] if 'Name' != '' else ''
 
-    business_dict.pop('Address')
     if business_dict['Business Name'] == '':
         # No need to process remaining sheet if it's empty
         return business_dict
@@ -131,6 +139,12 @@ def process_dict(business_dict):
     business_dict['brand_name'] = business_dict.pop('Business Name').replace("Business Name: ", "")
     business_dict['parent_company'] = business_dict.pop('Parent Company').replace("Parent Company: ", "")
     business_dict['headquarters_city'] = business_dict.pop('Headquarters').replace("Headquarters: ", "")
+    business_dict['website'] = business_dict.pop("Website")
+    business_dict['cobrands'] = business_dict.pop("Cobrands")
+    try:
+        business_dict['num_locations'] = int(business_dict.pop('Locations'))
+    except Exception: 
+        business_dict['num_locations'] = None
     business_dict['categories'] = {
         'source': 'Crittenden',
         'categories': [{
